@@ -1,0 +1,242 @@
+scalar Unknown
+scalar DateTime
+scalar Attachment
+scalar Address
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+type KnowledgeNoteLocalState {
+    lastViewedAt: DateTime
+    personalTags: [PersonalTag!]!
+}
+
+type PersonalTag {
+    id: OID!
+    name: String!
+}
+
+enum NoteStatus {
+    DRAFT
+    IN_REVIEW
+    CANONICAL
+    ARCHIVED
+}
+
+enum SourceOrigin {
+    MANUAL
+    SESSION_MINE
+    IMPORT
+    DERIVED
+}
+
+enum LinkType {
+    RELATES_TO
+    BUILDS_ON
+    CONTRADICTS
+    SUPERSEDES
+    DERIVED_FROM
+}
+
+type KnowledgeNoteState {
+    title: String
+    description: String
+    noteType: String
+    content: String
+    status: NoteStatus
+    provenance: Provenance
+    links: [NoteLink!]!
+    topics: [Topic!]!
+    scope: String
+    confidence: String
+    severity: String
+    editor: String
+    models: [String!]!
+    hooksUsed: [String!]!
+    dispatchTargets: [String!]!
+    modelId: String
+    modules: [String!]!
+    version: String
+    filePath: String
+    computes: String
+    inputs: [String!]!
+    outputs: [String!]!
+    consumedBy: [String!]!
+    context: String
+    alternatives: [String!]!
+    consequences: [String!]!
+    decisionStatus: String
+    model: String
+    sourceType: String
+    targetType: String
+    relationType: String
+    cardinality: String
+    errorMessage: String
+    rootCause: String
+    correctPattern: String
+    lifecycleEvents: [LifecycleEvent!]!
+}
+
+type Provenance {
+    author: String
+    sourceOrigin: SourceOrigin
+    sessionId: String
+    createdAt: DateTime
+    updatedAt: DateTime
+}
+
+type NoteLink {
+    id: OID!
+    targetDocumentId: String
+    targetTitle: String
+    linkType: LinkType
+}
+
+type Topic {
+    id: OID!
+    name: String!
+    topicDocumentId: String
+}
+
+type LifecycleEvent {
+    id: OID!
+    fromStatus: NoteStatus
+    toStatus: NoteStatus
+    actor: String
+    timestamp: DateTime
+    comment: String
+}
+
+# content
+
+input SetTitleInput {
+    title: String!
+    updatedAt: DateTime!
+}
+
+input SetDescriptionInput {
+    description: String!
+    updatedAt: DateTime!
+}
+
+input SetNoteTypeInput {
+    noteType: String!
+    updatedAt: DateTime!
+}
+
+input SetContentInput {
+    content: String!
+    updatedAt: DateTime!
+}
+
+input PatchContentInput {
+    offset: Int!
+    removeCount: Int!
+    insert: String!
+    updatedAt: DateTime!
+}
+
+input SetMetadataFieldInput {
+    field: String!
+    value: String
+    updatedAt: DateTime!
+}
+
+input SetMetadataListFieldInput {
+    field: String!
+    values: [String!]!
+    updatedAt: DateTime!
+}
+
+# provenance
+
+input SetProvenanceInput {
+    author: String!
+    sourceOrigin: SourceOrigin!
+    sessionId: String
+    createdAt: DateTime!
+}
+
+# linking
+
+input AddLinkInput {
+    id: OID!
+    targetDocumentId: String!
+    targetTitle: String
+    linkType: LinkType!
+}
+
+input RemoveLinkInput {
+    id: OID!
+}
+
+input UpdateLinkTypeInput {
+    id: OID!
+    linkType: LinkType!
+}
+
+input AddTopicInput {
+    id: OID!
+    name: String!
+    topicDocumentId: String
+}
+
+input RemoveTopicInput {
+    id: OID!
+}
+
+# lifecycle
+
+input SubmitForReviewInput {
+    id: OID!
+    actor: String!
+    timestamp: DateTime!
+    comment: String
+}
+
+input ApproveNoteInput {
+    id: OID!
+    actor: String!
+    timestamp: DateTime!
+    comment: String
+}
+
+input RejectNoteInput {
+    id: OID!
+    actor: String!
+    timestamp: DateTime!
+    comment: String!
+}
+
+input ArchiveNoteInput {
+    id: OID!
+    actor: String!
+    timestamp: DateTime!
+    comment: String!
+}
+
+input RestoreNoteInput {
+    id: OID!
+    actor: String!
+    timestamp: DateTime!
+    comment: String
+}
+
+# local
+
+input SetLastViewedInput {
+    lastViewedAt: DateTime!
+}
