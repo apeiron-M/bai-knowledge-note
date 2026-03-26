@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import {
-  useSelectedDriveId,
   useSelectedDrive,
   useNodesInSelectedDrive,
   addDocument,

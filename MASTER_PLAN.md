@@ -8,289 +8,144 @@ Based on the [Ars Contexta Remote Knowledge Base Specification](arscontexta-remo
 
 ---
 
-## Current Status (2026-03-26)
+## Status: 2026-03-26
 
-### Document Models — 11 total, ALL DONE
+### DONE
 
-| # | Model ID | Name | Operations | Purpose | Location |
-|---|----------|------|-----------|---------|----------|
-| 1 | `bai/knowledge-note` | KnowledgeNote | 26 ops, 5 modules | Atomic knowledge claim | `document-models/knowledge-note/v1/` |
-| 2 | `bai/knowledge-graph` | KnowledgeGraph | 7 ops, 3 modules | Materialized graph (nodes + edges) | `document-models/knowledge-graph/v1/` |
-| 3 | `bai/moc` | Moc | 12 ops, 1 module | Map of Content — navigation + synthesis | `document-models/moc/v1/` |
-| 4 | `bai/source` | Source | 4 ops, 1 module | Ingested source material | `document-models/source/v1/` |
-| 5 | `bai/pipeline-queue` | PipelineQueue | 7 ops, 1 module | Processing pipeline state (singleton) | `document-models/pipeline-queue/v1/` |
-| 6 | `bai/observation` | Observation | 4 ops, 1 module | Operational learning signal | `document-models/observation/v1/` |
-| 7 | `bai/tension` | Tension | 4 ops, 1 module | Unresolved contradiction | `document-models/tension/v1/` |
-| 8 | `bai/vault-config` | VaultConfig | 8 ops, 1 module | Live vault configuration (singleton) | `document-models/vault-config/v1/` |
-| 9 | `bai/derivation` | Derivation | 4 ops, 1 module | Derivation audit trail (singleton) | `document-models/derivation/v1/` |
-| 10 | `bai/health-report` | HealthReport | 2 ops, 1 module | Vault diagnostics | `document-models/health-report/v1/` |
-| 11 | `bai/research-claim` | ResearchClaim | 4 ops, 1 module | Bundled research (249 claims) | `document-models/research-claim/v1/` |
+| Component | Details |
+|-----------|---------|
+| **11 Document Models** | knowledge-note (26 ops), knowledge-graph (7), moc (12), source (4), pipeline-queue (7), observation (4), tension (4), vault-config (8), derivation (4), health-report (2), research-claim (4) — 82 ops total |
+| **8 Editors** | knowledge-note, knowledge-graph, moc, source, pipeline-queue, observation, vault-config + Knowledge Vault drive app — all dark-themed Catppuccin Mocha |
+| **Graph Indexer Processor** | Watches `bai/knowledge-note` ops via `onOperations`, uses resultingState reconciliation, `startFrom: "beginning"` for replay, imports from `@powerhousedao/shared/processors` |
+| **Knowledge Graph Subgraph** | 9 GraphQL queries (nodes, edges, stats, orphans, connections, backlinks, density, nodesByStatus, debug). Uses `GraphIndexerProcessor.query(driveId, db)` for namespaced access |
+| **Claude Code Plugin** | 11 skills (search, extract, connect, verify, health, graph, seed, pipeline, watch, import, export) + knowledge-agent + CONFIGURATION.md |
+| **Vault App** | 6 tabs (Notes, Graph, Sources, Pipeline→editor, Health→live, Config→editor), folder tree sidebar, create dialog with folder placement, auto-init drive structure |
+| **Drive Auto-Init** | Nested Ars Contexta folder structure (/knowledge/notes, /sources, /ops/queue, /self, /research) + 3 singletons (PipelineQueue, KnowledgeGraph, VaultConfig) |
+| **Health Dashboard** | Live-computed metrics from all docs, 7 check categories, actionable buttons (click note name → opens editor) |
+| **Dark Theme** | All editors + revision history via CSS scoped to `data-document-type^="bai/"` |
+| **Tests** | 184 tests across 35 files: reducer state mutations, lifecycle state machine, pipeline queue, graph DB operations, query layer (orphans/BFS/density), integration |
+| **Documentation** | MASTER_PLAN.md, USER_GUIDE.md, DocumentToolbarStyling.md, CONFIGURATION.md |
 
-**Total: ~82 operations, 34 test files, 133 tests passing**
+### Key Patterns Learned
 
-### Editors — 3 DONE
-
-| Editor | Type | Document Types | Location |
-|--------|------|---------------|----------|
-| KnowledgeNoteEditor | Document editor | `bai/knowledge-note` | `editors/knowledge-note-editor/` |
-| KnowledgeGraphEditor | Document editor | `bai/knowledge-graph` | `editors/knowledge-graph-editor/` |
-| KnowledgeVault | Drive app | `bai/knowledge-note`, `bai/knowledge-graph` | `editors/knowledge-vault/` |
-
-### Processor — DONE
-
-| Processor | Watches | Writes to | Location |
-|-----------|---------|-----------|----------|
-| GraphIndexerProcessor | `bai/knowledge-note` ops | `graph_nodes` + `graph_edges` tables | `processors/graph-indexer/` |
-
-Uses **resultingState reconciliation** pattern from recipes repo: deduplicates operations per document, reads full state, upserts node, reconciles edges. Handles DELETE_DOCUMENT with cascade.
-
-### Subgraph — DONE
-
-| Subgraph | Queries | Location |
-|----------|---------|----------|
-| KnowledgeGraphSubgraph | nodes, edges, stats, orphans, connections (BFS) | `subgraphs/knowledge-graph/` |
-
-Extends `BaseSubgraph` from `@powerhousedao/reactor-api`. Uses `GraphIndexerProcessor.query()` for namespaced DB access.
-
-### Plugin — DONE
-
-| Plugin | Skills | Location |
-|--------|--------|----------|
-| powerhouse-knowledge | 7 skills + 1 agent | `/home/p/Powerhouse/powerhouse-knowledge/` |
-
-Skills: search, extract, connect, verify, health, graph, seed. MCP-backed agent with pipeline awareness.
-
-### Infrastructure — DONE
-
-| Component | Status |
-|-----------|--------|
-| Package.json (dev105) | Done |
-| CLAUDE.md | Done |
-| Dark theme (Catppuccin Mocha) | Done — editor, vault app, revision history |
-| DocumentToolbar styling guide | Done — `DocumentToolbarStyling.md` |
-| Bun as package manager | Done |
+| Pattern | Details |
+|---------|---------|
+| **MCP createDocument** | Use `driveId` (UUID, never slug) + `parentFolder` (UUID) for correct folder placement. Works for knowledge-note. Source/other types: create with driveId (no parentFolder) → lands at root → DELETE_NODE + ADD_FILE to move to folder |
+| **Processor imports** | Use `@powerhousedao/shared/processors` for `RelationalDbProcessor`, `ProcessorFilter`, `IRelationalDb`. Use `@powerhousedao/shared/document-model` for `OperationWithContext` |
+| **Processor factory** | Must be synchronous (not async). Returns async inner function. Call `initAndUpgrade()` in factory. Add `startFrom: "beginning"` |
+| **Subgraph queries** | Use `GraphIndexerProcessor.query(driveId, db as any)` for namespaced DB access (not `withSchema`) |
+| **GraphQL mutations** | Need `timestampUtcMs` as ISO string on each action |
+| **Drive hooks** | Use `useSelectedDriveId()` in React components (Connect handles routing). Use `useSelectedDrive()[0].header.id` only in hooks that call `addDocument`/`addFolder` |
 
 ---
 
 ## What Remains
 
-### Phase E: Integrate New Doc Models into Knowledge Vault App
+### Phase F: Enhanced Subgraph Queries (Partial)
 
-The vault app currently only shows `bai/knowledge-note` documents. It needs updating to support all 11 doc types.
+Done:
+- `knowledgeGraphNodesByStatus`, `knowledgeGraphBacklinks`, `knowledgeGraphDensity`, `knowledgeGraphDebug`
 
-**E1. MOC Navigation Sidebar**
-- Replace status-grouped note list with MOC hierarchy tree (Hub → Domain → Topic)
-- Each MOC shows its core ideas as child nodes
-- Click MOC to see its detail view with orientation, tensions, open questions
-
-**E2. Source Inbox Tab**
-- New tab alongside Notes and Graph: "Sources"
-- Shows `bai/source` documents grouped by status (INBOX, EXTRACTING, EXTRACTED)
-- "Ingest Source" button to create new source docs
-
-**E3. Pipeline Dashboard Tab**
-- New tab: "Pipeline"
-- Shows `bai/pipeline-queue` singleton with tasks by phase/status
-- Visual pipeline progress (extract → reflect → reweave → verify)
-- Task assignment and status updates
-
-**E4. Observations & Tensions Panel**
-- Collapsible panel showing pending observations and open tensions
-- Quick capture buttons for new observations/tensions
-- Promote observation → creates knowledge note
-
-**E5. Health Dashboard Tab**
-- Shows latest `bai/health-report` document
-- Graph metrics visualization (density, orphans, MOC coverage)
-- Recommendations list with action buttons
-
-**E6. Vault Configuration Editor**
-- New document editor for `bai/vault-config`
-- 8 dimension sliders (granularity, organization, linking, etc.)
-- Vocabulary mapper table
-- Feature toggle switches
-- Pipeline config form
-- Maintenance threshold inputs
-
-**E7. Drive Folder Organization**
-- Auto-create folder structure on drive init:
-  - `/knowledge/` — notes + MOCs
-  - `/sources/` — source documents
-  - `/operations/` — pipeline-queue, health-reports, observations, tensions
-  - `/system/` — vault-config, derivation
-  - `/research/` — research claims
-
-**E8. Update Vault App Config**
-- Add all doc types to `allowedDocumentTypes` in config.ts
-- Update processor filter to watch new doc types
-- Update subgraph to expose new doc type queries
-
-### Phase F: Enhanced Subgraph Queries
-
-Extend the GraphQL API with queries from the Ars Contexta spec:
-
-```graphql
-# Note queries
-searchNotes(query: String!, limit: Int): [NoteResult!]!
-notesByKind(kind: NoteKind!): [NoteResult!]!
-notesByStatus(status: NoteStatus!): [NoteResult!]!
-backlinks(noteId: PHID!): [NoteResult!]!
-
-# Graph analysis
-triangles(limit: Int): [Triangle!]!
-bridges: [NoteResult!]!
-density: Float!
-
-# MOC queries
-mocsByTier(tier: MocTier!): [MocResult!]!
-mocNotes(mocId: PHID!): [NoteResult!]!
-
-# Pipeline queries
-queueStatus: QueueSummary!
-tasksByPhase(phase: String!): [TaskResult!]!
-
-# Health queries
-latestHealth: HealthSummary!
-
-# Traversal
-traverseForward(noteId: PHID!, depth: Int!): [TraversalNode!]!
-traverseBackward(noteId: PHID!, depth: Int!): [TraversalNode!]!
-```
+Still needed:
+- `searchNotes(query, limit)` — full-text search across titles/descriptions
+- `triangles(limit)` — find synthesis opportunities (A→C, B→C, A-/→B)
+- `bridges` — critical nodes whose removal disconnects the graph
+- `mocsByTier(tier)` — MOCs grouped by hub/domain/topic
+- `traverseForward/Backward(noteId, depth)` — N-hop traversal
+- `queueStatus` — pipeline task summary
 
 ### Phase G: Migration Tooling
 
 **G1. Import Script Updates**
-- Update `scripts/import-vault.mjs` to create MOCs alongside notes
-- Extract wiki links as typed connections with context phrases
-- Create pipeline-queue singleton on import
-- Organize into folder structure
+- Update `scripts/import-vault.mjs` for new folder structure
+- Two-pass: create docs → resolve wiki links as typed connections
+- Create MOCs from folder/tag structure
+- Use the proven create+move pattern for folder placement
 
 **G2. Research Claim Population**
-- Import 249 research claims from Ars Contexta methodology directory
-- Create research claim documents with full content and connections
-- Populate `/research/` folder
+- Import 249 research claims from `/home/p/Powerhouse/arscontexta/` methodology directory
+- Create `bai/research-claim` documents in `/research/` folder
+- Resolve inter-claim connections
 
 ### Phase H: Production Deployment
 
 **H1. Publish npm Package**
-- Publish `knowledge-note` package to npm
-- Add to remote reactor's packages config
-- Re-import data to production drive
+- Publish `knowledge-note` to npm
+- Deploy to remote reactor
+- Re-import vault data
 
 **H2. Plugin Distribution**
-- Publish `powerhouse-knowledge` to GitHub
+- Push `powerhouse-knowledge` to GitHub repo
 - Submit to Claude Code marketplace
-- Document installation and configuration
+- Write installation guide
+
+### Known Issues
+
+| Issue | Severity | Workaround |
+|-------|----------|------------|
+| MCP `createDocument` with `parentFolder` fails silently for some doc types (source, observation) | Medium | Create at root → DELETE_NODE + ADD_FILE to move |
+| Codegen generates `KnowledgeNote_Local_State` (wrong type name) in `gen/local/operations.ts` | Low | Manual fix after each `ph generate` |
+| Graph View auto-sync fingerprint only checks note count/titles/links — misses content changes | Low | Manual refresh or open Graph tab |
+| Source docs created via MCP before server restart become orphan children (relationship exists but no file node) | Medium | Create standalone → ADD_FILE on drive, or use switchboard CLI |
 
 ---
 
-## Architecture Diagram
+## Architecture
 
 ```
 ┌─────────────────────────────────────────────────────────┐
 │                    HUMAN INTERFACE                       │
 │                                                         │
-│  ┌─────────────┐  ┌──────────────┐  ┌───────────────┐  │
-│  │ Knowledge   │  │ Note Editor  │  │ Graph Editor  │  │
-│  │ Vault App   │  │ (dark theme) │  │ (sync + viz)  │  │
-│  └──────┬──────┘  └──────┬───────┘  └──────┬────────┘  │
-│         │                │                  │           │
-│         └────────────────┼──────────────────┘           │
-│                          │                              │
-└──────────────────────────┼──────────────────────────────┘
-                           │
-                    ┌──────┴──────┐
-                    │   Connect   │
-                    │   (React)   │
-                    └──────┬──────┘
+│  Knowledge Vault App (6 tabs)                           │
+│  ├── Notes (card grid)                                  │
+│  ├── Graph (Cytoscape force-directed)                   │
+│  ├── Sources (grouped by status)                        │
+│  ├── Pipeline → opens PipelineQueue editor              │
+│  ├── Health (live metrics + actionable buttons)         │
+│  └── Config → opens VaultConfig editor                  │
+│                                                         │
+│  8 Document Editors (dark theme)                        │
+│  Sidebar: Notes | MOCs | Signals | Folder Tree          │
+│  Create Dialog with folder placement                    │
+└─────────────────────────────────────────────────────────┘
                            │
 ┌──────────────────────────┼──────────────────────────────┐
 │                    POWERHOUSE REACTOR                    │
 │                                                         │
-│  ┌─────────────────────────────────────────────────┐    │
-│  │              11 Document Models                  │    │
-│  │  knowledge-note | knowledge-graph | moc          │    │
-│  │  source | pipeline-queue | observation           │    │
-│  │  tension | vault-config | derivation             │    │
-│  │  health-report | research-claim                  │    │
-│  └─────────────────────┬───────────────────────────┘    │
-│                        │                                │
-│  ┌─────────────────────┼───────────────────────────┐    │
-│  │  GraphIndexerProcessor                          │    │
-│  │  (watches note ops → updates relational DB)     │    │
-│  └─────────────────────┬───────────────────────────┘    │
-│                        │                                │
-│  ┌─────────────────────┼───────────────────────────┐    │
-│  │  KnowledgeGraphSubgraph                         │    │
-│  │  (GraphQL API: nodes, edges, stats, orphans)    │    │
-│  └─────────────────────┬───────────────────────────┘    │
-│                        │                                │
-│  ┌─────────────────────┼───────────────────────────┐    │
-│  │  MCP Server (localhost:4001/mcp)                │    │
-│  │  + WebSocket (localhost:4001/graphql/subscriptions) │ │
-│  └─────────────────────┬───────────────────────────┘    │
-│                        │                                │
-└────────────────────────┼────────────────────────────────┘
-                         │
-┌────────────────────────┼────────────────────────────────┐
+│  11 Document Models (82 operations)                     │
+│  GraphIndexer Processor (PGlite relational DB)          │
+│  KnowledgeGraph Subgraph (9 GraphQL queries)            │
+│  MCP Server (localhost:4001/mcp)                        │
+│  WebSocket (localhost:4001/graphql/subscriptions)        │
+│  Drive REST (localhost:4001/d/<slug>)                   │
+└─────────────────────────────────────────────────────────┘
+                           │
+┌──────────────────────────┼──────────────────────────────┐
 │                   AI AGENT INTERFACE                     │
 │                                                         │
-│  ┌─────────────────────────────────────────────────┐    │
-│  │  powerhouse-knowledge plugin                    │    │
-│  │  7 skills: search, extract, connect, verify,    │    │
-│  │           health, graph, seed                   │    │
-│  │  1 agent: knowledge-agent (Opus)                │    │
-│  │  MCP → reactor-mcp                              │    │
-│  └─────────────────────────────────────────────────┘    │
-│                                                         │
+│  powerhouse-knowledge plugin (11 skills + agent)        │
+│  ├── Core: search, extract, connect, verify,            │
+│  │         health, graph, seed                          │
+│  ├── Automation: pipeline, watch, import, export        │
+│  └── Connection: MCP (default) + WebSocket (real-time)  │
 └─────────────────────────────────────────────────────────┘
 ```
 
-## Processing Pipeline (The 6 Rs)
+## Processing Pipeline
 
 ```
-Source Material
-      │
-      ▼
-  1. RECORD (/seed)
-      │ Creates bai/source + pipeline task
-      ▼
-  2. REDUCE (/extract)
-      │ Extracts bai/knowledge-note claims
-      ▼
-  3. REFLECT (/connect)
-      │ Finds connections, updates MOCs
-      ▼
-  4. REWEAVE (backward connections)
-      │ Updates older notes with new context
-      ▼
-  5. VERIFY (/verify)
-      │ Recite test + schema + health check
-      ▼
-  6. RETHINK (/reassess)
-      │ Challenge assumptions against evidence
-      ▼
-  Canonical Knowledge Graph
+Source → SEED → EXTRACT claims → CONNECT to graph → REWEAVE older notes → VERIFY quality
+              ↓                    ↓                    ↓                    ↓
+         bai/source           bai/knowledge-note    ADD_LINK ops       RECORD_VERIFICATION
+         INGEST_SOURCE        SET_TITLE/CONTENT     (typed links)      (recite+schema+health)
+              ↓                    ↓                    ↓                    ↓
+         Pipeline Queue tracks each phase via ADVANCE_PHASE with handoff data
 ```
-
-Each phase advances `bai/pipeline-queue` tasks via ADVANCE_PHASE operations.
-
-## Key Reference Files
-
-| Purpose | File |
-|---------|------|
-| Ars Contexta full spec | `arscontexta-remote-knowledge-base.md` |
-| Processor patterns | `/home/p/Powerhouse/recipes/relational-db-subgraph/src/` |
-| Subgraph patterns | `/home/p/Powerhouse/recipes/audit-trail/src/subgraph.ts` |
-| BaseSubgraph type | `node_modules/@powerhousedao/reactor-api/dist/src/graphql/base-subgraph.d.ts` |
-| OperationWithContext | `node_modules/@powerhousedao/shared/dist/document-model/core/operations.d.ts` |
-| Plugin | `/home/p/Powerhouse/powerhouse-knowledge/` |
-| Ars Contexta local plugin | `/home/p/Powerhouse/arscontexta/` |
-| Toolbar styling guide | `DocumentToolbarStyling.md` |
 
 ## Quality Metrics
 
-- **TypeScript**: Zero errors (`bun run tsc`)
+- **TypeScript**: Zero errors
 - **Build**: Clean (`bun run build`)
-- **Tests**: 133/133 passing across 34 test files
-- **Lint**: Zero errors in project code (warnings only in gen/ files)
+- **Tests**: 184 passing across 35 files (34 passed, 1 skipped)
+- **Processor**: Live-indexing via `onOperations` with resultingState reconciliation
+- **Subgraph**: 9 GraphQL queries including debug endpoint

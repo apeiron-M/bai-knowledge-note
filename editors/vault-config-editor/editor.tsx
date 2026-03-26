@@ -34,8 +34,20 @@ export default function Editor() {
         <div className="p-6 space-y-6">
           {/* Header */}
           <div className="rounded-xl bg-[#181825] p-6 ring-1 ring-white/10">
-            <h1 className="text-xl font-bold text-gray-100">{state.name}</h1>
-            <p className="text-sm text-gray-500 mt-1">{state.domain}</p>
+            <input type="text" defaultValue={state.name ?? ""}
+              placeholder="Vault name"
+              onBlur={(e) => {
+                const val = e.target.value.trim();
+                if (val && val !== state.name) dispatch(actions.initializeConfig({ name: val, domain: state.domain ?? "", updatedAt: ts() }));
+              }}
+              className="w-full border-0 bg-transparent text-xl font-bold text-gray-100 outline-none placeholder:text-gray-600" />
+            <input type="text" defaultValue={state.domain ?? ""}
+              placeholder="Domain description"
+              onBlur={(e) => {
+                const val = e.target.value.trim();
+                if (val && val !== state.domain) dispatch(actions.initializeConfig({ name: state.name ?? "", domain: val, updatedAt: ts() }));
+              }}
+              className="mt-1 w-full border-0 bg-transparent text-sm text-gray-500 outline-none placeholder:text-gray-600" />
             {state.updatedAt && <p className="text-[10px] text-gray-600 mt-1">Updated: {new Date(state.updatedAt).toLocaleString()}</p>}
           </div>
 

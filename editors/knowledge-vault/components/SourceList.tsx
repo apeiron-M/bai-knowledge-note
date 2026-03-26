@@ -1,9 +1,9 @@
-import { useMemo } from "react";
+import { useState, useMemo } from "react";
 import {
   setSelectedNode,
   useDocumentsInSelectedDrive,
-  showCreateDocumentModal,
 } from "@powerhousedao/reactor-browser";
+import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 
 const STATUS_COLORS: Record<string, string> = {
   INBOX: "bg-amber-500/20 text-amber-300 border-amber-500/30",
@@ -13,6 +13,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export function SourceList() {
+  const [createOpen, setCreateOpen] = useState(false);
   const documents = useDocumentsInSelectedDrive();
 
   const sources = useMemo(() => {
@@ -41,57 +42,72 @@ export function SourceList() {
     return groups;
   }, [sources]);
 
-  if (sources.length === 0) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="text-center">
-          <p className="text-lg text-gray-500">No sources yet</p>
-          <p className="mt-1 text-sm text-gray-600">Ingest source material to start the extraction pipeline</p>
-          <button type="button" onClick={() => showCreateDocumentModal("bai/source")}
-            className="mt-4 rounded-lg bg-[#cba6f7] px-4 py-2 text-sm font-medium text-[#1e1e2e] hover:bg-[#cba6f7]/80">
-            Ingest Source
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="p-4 space-y-4">
-      {(["INBOX", "EXTRACTING", "EXTRACTED", "ARCHIVED"] as const).map((status) => {
-        const items = grouped[status];
-        if (items.length === 0) return null;
-        return (
-          <div key={status}>
-            <h3 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
-              <span className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[status]?.split(" ")[0]}`} />
-              {status.replace("_", " ")} ({items.length})
-            </h3>
-            <div className="space-y-1">
-              {items.map((source) => (
-                <button key={source.id} type="button" onClick={() => setSelectedNode(source.id)}
-                  className="group flex w-full items-center gap-3 rounded-lg border border-white/5 bg-[#1e1e2e] px-4 py-3 text-left hover:border-[#cba6f7]/30">
-                  <div className="flex-1 min-w-0">
-                    <p className="truncate text-sm font-medium text-gray-300 group-hover:text-[#cba6f7]">{source.title}</p>
-                    <div className="flex items-center gap-2 mt-0.5">
-                      {source.sourceType && (
-                        <span className="rounded bg-[#313244] px-1.5 py-0.5 text-[10px] text-gray-500">{source.sourceType}</span>
-                      )}
-                      {source.createdBy && <span className="text-[10px] text-gray-600">by {source.createdBy}</span>}
-                    </div>
-                  </div>
-                  {source.claimCount > 0 && (
-                    <span className="text-[10px] text-gray-600">{source.claimCount} claims</span>
-                  )}
-                  <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium ${STATUS_COLORS[source.status]}`}>
-                    {source.status}
-                  </span>
-                </button>
-              ))}
-            </div>
+      {/* Header with create button */}
+      <div className="flex items-center justify-between">
+        <h2 className="text-sm font-semibold text-gray-400">Sources ({sources.length})</h2>
+        <button type="button" onClick={() => setCreateOpen(true)}
+          className="flex items-center gap-1.5 rounded-md bg-[#cba6f7] px-3 py-1.5 text-xs font-medium text-[#1e1e2e] transition-colors hover:bg-[#cba6f7]/80">
+          <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+          Ingest Source
+        </button>
+      </div>
+
+      {sources.length === 0 ? (
+        <div className="flex h-64 items-center justify-center rounded-xl bg-[#181825] ring-1 ring-white/10">
+          <div className="text-center">
+            <p className="text-sm text-gray-500">No sources yet</p>
+            <p className="mt-1 text-xs text-gray-600">Ingest source material to start the extraction pipeline</p>
           </div>
-        );
-      })}
+        </div>
+      ) : (
+        <>
+          {(["INBOX", "EXTRACTING", "EXTRACTED", "ARCHIVED"] as const).map((status) => {
+            const items = grouped[status];
+            if (items.length === 0) return null;
+            return (
+              <div key={status}>
+                <h3 className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-gray-500">
+                  <span className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[status]?.split(" ")[0]}`} />
+                  {status.replace("_", " ")} ({items.length})
+                </h3>
+                <div className="space-y-1">
+                  {items.map((source) => (
+                    <button key={source.id} type="button" onClick={() => setSelectedNode(source.id)}
+                      className="group flex w-full items-center gap-3 rounded-lg border border-white/5 bg-[#1e1e2e] px-4 py-3 text-left hover:border-[#cba6f7]/30">
+                      <div className="flex-1 min-w-0">
+                        <p className="truncate text-sm font-medium text-gray-300 group-hover:text-[#cba6f7]">{source.title}</p>
+                        <div className="flex items-center gap-2 mt-0.5">
+                          {source.sourceType && (
+                            <span className="rounded bg-[#313244] px-1.5 py-0.5 text-[10px] text-gray-500">{source.sourceType}</span>
+                          )}
+                          {source.createdBy && <span className="text-[10px] text-gray-600">by {source.createdBy}</span>}
+                        </div>
+                      </div>
+                      {source.claimCount > 0 && (
+                        <span className="text-[10px] text-gray-600">{source.claimCount} claims</span>
+                      )}
+                      <span className={`shrink-0 rounded-full border px-2 py-0.5 text-[10px] font-medium ${STATUS_COLORS[source.status]}`}>
+                        {source.status}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            );
+          })}
+        </>
+      )}
+
+      <CreateDocumentDialog
+        open={createOpen}
+        documentType="bai/source"
+        documentTypeLabel="Source"
+        onClose={() => setCreateOpen(false)}
+      />
     </div>
   );
 }

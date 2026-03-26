@@ -3,8 +3,6 @@ import type { EditorProps } from "document-model";
 import {
   setSelectedNode,
   useFileNodesInSelectedDrive,
-  useSelectedDriveId,
-  addDocument,
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";

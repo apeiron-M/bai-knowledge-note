@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import {
   useDocumentsInSelectedDrive,
+  setSelectedNode,
 } from "@powerhousedao/reactor-browser";
 import { generateId } from "document-model/core";
 
@@ -134,12 +135,17 @@ export function HealthDashboard() {
 
     const overallStatus = checks.some((c) => c.status === "FAIL") ? "FAIL" : checks.some((c) => c.status === "WARN") ? "WARN" : "PASS";
 
-    const recommendations: string[] = [];
-    if (orphans.length > 0) recommendations.push(`Run /connect on ${orphans.length} orphan note(s) to integrate them into the graph`);
-    if (avgLinks < 2) recommendations.push("Add more links between notes — aim for 2+ connections per note");
-    if (noDesc.length > 0) recommendations.push(`Add descriptions to ${noDesc.length} note(s) for progressive disclosure`);
-    if (noType.length > 0) recommendations.push(`Set note types on ${noType.length} note(s) for better classification`);
-    if (noTopics.length > 0) recommendations.push(`Tag ${noTopics.length} note(s) with topics for MOC navigation`);
+    // Build recommendations with actionable note IDs
+    type Recommendation = { text: string; noteIds: string[] };
+    const recommendations: Recommendation[] = [];
+    if (orphans.length > 0) recommendations.push({ text: `Connect ${orphans.length} orphan note(s) — open each and add links via the Links tab`, noteIds: orphans.map((n) => n.id) });
+    if (avgLinks < 2) {
+      const lowLink = noteStates.filter((n) => n.links.length < 2);
+      recommendations.push({ text: `${lowLink.length} note(s) have fewer than 2 links — open and add connections`, noteIds: lowLink.map((n) => n.id) });
+    }
+    if (noDesc.length > 0) recommendations.push({ text: `Add descriptions to ${noDesc.length} note(s)`, noteIds: noDesc.map((n) => n.id) });
+    if (noType.length > 0) recommendations.push({ text: `Set note types on ${noType.length} note(s)`, noteIds: noType.map((n) => n.id) });
+    if (noTopics.length > 0) recommendations.push({ text: `Tag ${noTopics.length} note(s) with topics`, noteIds: noTopics.map((n) => n.id) });
 
     return {
       noteCount: noteStates.length,
@@ -202,9 +208,19 @@ export function HealthDashboard() {
                 <p className="mt-0.5 text-xs text-gray-500">{check.message}</p>
                 {check.affectedItems.length > 0 && check.status !== "PASS" && (
                   <div className="mt-1 flex flex-wrap gap-1">
-                    {check.affectedItems.slice(0, 5).map((item, i) => (
-                      <span key={i} className="rounded bg-[#313244] px-1.5 py-0.5 text-[10px] text-gray-600">{item}</span>
-                    ))}
+                    {check.affectedItems.slice(0, 5).map((item, i) => {
+                      // Find the note ID for this item so we can navigate to it
+                      const noteDoc = (documents ?? []).find((d) =>
+                        d.header.documentType === "bai/knowledge-note" &&
+                        ((d.state as unknown as { global: { title?: string } }).global.title === item || d.header.name === item)
+                      );
+                      return noteDoc ? (
+                        <button key={i} type="button" onClick={() => setSelectedNode(noteDoc.header.id)}
+                          className="rounded bg-[#313244] px-1.5 py-0.5 text-[10px] text-[#cba6f7] hover:bg-[#cba6f7]/20 cursor-pointer">{item}</button>
+                      ) : (
+                        <span key={i} className="rounded bg-[#313244] px-1.5 py-0.5 text-[10px] text-gray-600">{item}</span>
+                      );
+                    })}
                     {check.affectedItems.length > 5 && (
                       <span className="text-[10px] text-gray-600">+{check.affectedItems.length - 5} more</span>
                     )}
@@ -220,11 +236,32 @@ export function HealthDashboard() {
       {health.recommendations.length > 0 && (
         <div className="rounded-xl bg-[#181825] p-6 ring-1 ring-white/10">
           <h3 className="mb-3 text-xs font-semibold uppercase tracking-wider text-gray-500">Recommendations</h3>
-          <ul className="space-y-1.5">
+          <ul className="space-y-3">
             {health.recommendations.map((rec, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs text-gray-400">
-                <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#cba6f7]" />
-                {rec}
+              <li key={i}>
+                <div className="flex items-start gap-2 text-xs text-gray-400">
+                  <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-[#cba6f7]" />
+                  {rec.text}
+                </div>
+                {rec.noteIds.length > 0 && (
+                  <div className="mt-1.5 ml-3.5 flex flex-wrap gap-1">
+                    {rec.noteIds.slice(0, 5).map((noteId) => {
+                      const doc = (documents ?? []).find((d) => d.header.id === noteId);
+                      const title = doc
+                        ? ((doc.state as unknown as { global: { title?: string } }).global.title ?? doc.header.name)
+                        : noteId.slice(0, 8);
+                      return (
+                        <button key={noteId} type="button" onClick={() => setSelectedNode(noteId)}
+                          className="rounded bg-[#313244] px-2 py-1 text-[10px] text-[#cba6f7] hover:bg-[#cba6f7]/20">
+                          {typeof title === "string" && title.length > 35 ? title.slice(0, 35) + "\u2026" : title}
+                        </button>
+                      );
+                    })}
+                    {rec.noteIds.length > 5 && (
+                      <span className="text-[10px] text-gray-600">+{rec.noteIds.length - 5} more</span>
+                    )}
+                  </div>
+                )}
               </li>
             ))}
           </ul>
