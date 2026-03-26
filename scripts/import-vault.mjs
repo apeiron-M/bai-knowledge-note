@@ -83,7 +83,11 @@ function parseFrontmatter(content) {
     if (currentList && /^\s+-\s+/.test(line)) {
       let val = line.replace(/^\s+-\s+/, "").trim();
       // Strip wikilink brackets and quotes
-      val = val.replace(/^\[\[/, "").replace(/\]\]$/, "").replace(/^"/, "").replace(/"$/, "");
+      val = val
+        .replace(/^\[\[/, "")
+        .replace(/\]\]$/, "")
+        .replace(/^"/, "")
+        .replace(/"$/, "");
       currentList.push(val);
       continue;
     }
@@ -101,7 +105,9 @@ function parseFrontmatter(content) {
       } else {
         currentList = null;
         // Strip quotes
-        frontmatter[currentKey] = value.replace(/^["']/, "").replace(/["']$/, "");
+        frontmatter[currentKey] = value
+          .replace(/^["']/, "")
+          .replace(/["']$/, "");
       }
     }
   }
@@ -151,7 +157,9 @@ function parseBody(body) {
   // Content is everything after the title line, before the first --- separator
   let content = mainContent;
   if (titleMatch) {
-    content = content.slice(content.indexOf(titleMatch[0]) + titleMatch[0].length).trim();
+    content = content
+      .slice(content.indexOf(titleMatch[0]) + titleMatch[0].length)
+      .trim();
   }
 
   return { title, content, topics, relevantNotes };
@@ -175,9 +183,10 @@ function buildActions(frontmatter, parsed, filename) {
 
   // Description
   if (frontmatter.description) {
-    const desc = frontmatter.description.length > 200
-      ? frontmatter.description.slice(0, 197) + "..."
-      : frontmatter.description;
+    const desc =
+      frontmatter.description.length > 200
+        ? frontmatter.description.slice(0, 197) + "..."
+        : frontmatter.description;
     actions.push({
       type: "SET_DESCRIPTION",
       input: { description: desc, updatedAt: created },
@@ -219,7 +228,11 @@ function buildActions(frontmatter, parsed, filename) {
     if (frontmatter[fmKey] && fmKey !== "type") {
       actions.push({
         type: "SET_METADATA_FIELD",
-        input: { field: schemaField, value: frontmatter[fmKey], updatedAt: created },
+        input: {
+          field: schemaField,
+          value: frontmatter[fmKey],
+          updatedAt: created,
+        },
         scope: "global",
       });
     }
@@ -230,7 +243,11 @@ function buildActions(frontmatter, parsed, filename) {
     if (frontmatter[fmKey] && Array.isArray(frontmatter[fmKey])) {
       actions.push({
         type: "SET_METADATA_LIST_FIELD",
-        input: { field: schemaField, values: frontmatter[fmKey], updatedAt: created },
+        input: {
+          field: schemaField,
+          values: frontmatter[fmKey],
+          updatedAt: created,
+        },
         scope: "global",
       });
     }
@@ -239,7 +256,11 @@ function buildActions(frontmatter, parsed, filename) {
   // Frontmatter topics (some notes have topics in frontmatter as a list)
   if (frontmatter.topics && Array.isArray(frontmatter.topics)) {
     for (const topicName of frontmatter.topics) {
-      const cleanName = topicName.replace(/^\[\[/, "").replace(/\]\]$/, "").replace(/^"/, "").replace(/"$/, "");
+      const cleanName = topicName
+        .replace(/^\[\[/, "")
+        .replace(/\]\]$/, "")
+        .replace(/^"/, "")
+        .replace(/"$/, "");
       actions.push({
         type: "ADD_TOPIC",
         input: { id: generateId(), name: cleanName },
@@ -328,11 +349,14 @@ async function dispatchActions(documentId, actions) {
 // ─── Main ───
 
 async function main() {
-  const files = fs.readdirSync(VAULT_NOTES_DIR)
+  const files = fs
+    .readdirSync(VAULT_NOTES_DIR)
     .filter((f) => f.endsWith(".md"))
     .slice(0, LIMIT);
 
-  console.log(`\nImporting ${files.length} notes from vault${DRY_RUN ? " (DRY RUN)" : ""}...\n`);
+  console.log(
+    `\nImporting ${files.length} notes from vault${DRY_RUN ? " (DRY RUN)" : ""}...\n`,
+  );
 
   const results = { success: 0, skipped: 0, failed: 0, errors: [] };
   const documentMap = []; // title → documentId for future link resolution
@@ -350,9 +374,10 @@ async function main() {
     if (DRY_RUN) {
       console.log(`  [dry] ${title} (${type}) — ${actions.length} actions`);
       for (const a of actions) {
-        const preview = a.type === "SET_CONTENT"
-          ? `${a.input.content.slice(0, 60)}...`
-          : JSON.stringify(a.input).slice(0, 80);
+        const preview =
+          a.type === "SET_CONTENT"
+            ? `${a.input.content.slice(0, 60)}...`
+            : JSON.stringify(a.input).slice(0, 80);
         console.log(`         ${a.type}: ${preview}`);
       }
       results.success++;
@@ -363,7 +388,9 @@ async function main() {
       const docId = await createDocument(title);
       await dispatchActions(docId, actions);
       documentMap.push({ title, docId, type });
-      console.log(`  [ok] ${title} (${type}) — ${actions.length} actions → ${docId}`);
+      console.log(
+        `  [ok] ${title} (${type}) — ${actions.length} actions → ${docId}`,
+      );
       results.success++;
     } catch (err) {
       console.error(`  [FAIL] ${title}: ${err.message}`);
@@ -384,10 +411,16 @@ async function main() {
 
   // Write document map for link resolution
   if (!DRY_RUN && documentMap.length > 0) {
-    const mapPath = path.join(process.cwd(), "scripts", "import-document-map.json");
+    const mapPath = path.join(
+      process.cwd(),
+      "scripts",
+      "import-document-map.json",
+    );
     fs.writeFileSync(mapPath, JSON.stringify(documentMap, null, 2));
     console.log(`\n  Document map written to ${mapPath}`);
-    console.log(`  Use this to resolve 'unresolved' targetDocumentId values in links.`);
+    console.log(
+      `  Use this to resolve 'unresolved' targetDocumentId values in links.`,
+    );
   }
 }
 

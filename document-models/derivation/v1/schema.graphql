@@ -1,0 +1,104 @@
+scalar Unknown
+scalar DateTime
+scalar Attachment
+scalar Address
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+type DerivationSignal {
+    id: OID!
+    utterance: String!
+    influencedDimensions: [String!]!
+    interpretation: String!
+}
+
+type DimensionRationale {
+    dimension: String!
+    position: Int!
+    confidence: Float!
+    rationale: String!
+    supportingClaims: [String!]!
+    failureModes: [String!]!
+}
+
+type ClaimReference {
+    id: OID!
+    claimRef: String!
+    supportsDecision: String!
+    strength: String!
+}
+
+type FeatureDecision {
+    feature: String!
+    enabled: Boolean!
+    rationale: String!
+    supportingClaims: [String!]!
+}
+
+type CoherenceCheck {
+    dimensionPair: [String!]!
+    coherent: Boolean!
+    explanation: String!
+}
+
+type ReseedEntry {
+    id: OID!
+    reseededAt: DateTime!
+    reason: String!
+    changes: [String!]!
+}
+
+type DerivationState {
+    engineVersion: String
+    derivedAt: DateTime
+    signals: [DerivationSignal!]!
+    dimensionRationale: [DimensionRationale!]!
+    claimReferences: [ClaimReference!]!
+    featureDecisions: [FeatureDecision!]!
+    coherenceResults: [CoherenceCheck!]!
+    reseedHistory: [ReseedEntry!]!
+}
+
+# derivation-management
+
+input InitializeDerivationInput {
+    engineVersion: String!
+    derivedAt: DateTime!
+}
+
+input AddSignalInput {
+    id: OID!
+    utterance: String!
+    influencedDimensions: [String!]!
+    interpretation: String!
+}
+
+input AddReseedEntryInput {
+    id: OID!
+    reseededAt: DateTime!
+    reason: String!
+    changes: [String!]!
+}
+
+input UpdateDimensionRationaleInput {
+    dimension: String!
+    position: Int!
+    confidence: Float!
+    rationale: String!
+    supportingClaims: [String!]!
+    failureModes: [String!]!
+}

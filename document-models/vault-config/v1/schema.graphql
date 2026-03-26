@@ -1,0 +1,150 @@
+scalar Unknown
+scalar DateTime
+scalar Attachment
+scalar Address
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+type DimensionPosition {
+    value: Int!
+    confidence: Float!
+    rationale: String
+}
+
+type DimensionConfig {
+    granularity: DimensionPosition!
+    organization: DimensionPosition!
+    linking: DimensionPosition!
+    processing: DimensionPosition!
+    navigation: DimensionPosition!
+    maintenance: DimensionPosition!
+    schema: DimensionPosition!
+    automation: DimensionPosition!
+}
+
+type VocabularyMap {
+    notes: String!
+    inbox: String!
+    reduce: String!
+    reflect: String!
+    reweave: String!
+    verify: String!
+    rethink: String!
+    topicMap: String!
+    description: String!
+}
+
+type PipelineConfig {
+    depth: String!
+    autoChain: Boolean!
+    extractionSelectivity: Float!
+}
+
+type MaintenanceConfig {
+    orphanThreshold: Int!
+    danglingThreshold: Int!
+    inboxPressure: Int!
+    observationAccumulation: Int!
+    tensionAccumulation: Int!
+    mocOversize: Int!
+    staleNoteDays: Int!
+}
+
+type ExtractionCategory {
+    id: OID!
+    name: String!
+    description: String!
+    active: Boolean!
+}
+
+type NoteSchemaConfig {
+    requiredFields: [String!]!
+    optionalFields: [String!]!
+    kindValues: [String!]!
+    confidenceValues: [String!]!
+}
+
+type MocSchemaConfig {
+    requiredFields: [String!]!
+    tierValues: [String!]!
+}
+
+type VaultConfigState {
+    name: String
+    domain: String
+    dimensions: DimensionConfig
+    vocabulary: VocabularyMap
+    features: [String!]!
+    pipeline: PipelineConfig
+    maintenance: MaintenanceConfig
+    extractionCategories: [ExtractionCategory!]!
+    noteSchema: NoteSchemaConfig
+    mocSchema: MocSchemaConfig
+    updatedAt: DateTime
+}
+
+# config-management
+
+input InitializeConfigInput {
+    name: String!
+    domain: String!
+    updatedAt: DateTime!
+}
+
+input UpdateDimensionInput {
+    dimension: String!
+    value: Int!
+    confidence: Float!
+    rationale: String
+    updatedAt: DateTime!
+}
+
+input UpdateVocabularyInput {
+    key: String!
+    value: String!
+    updatedAt: DateTime!
+}
+
+input UpdatePipelineConfigInput {
+    depth: String
+    autoChain: Boolean
+    extractionSelectivity: Float
+    updatedAt: DateTime!
+}
+
+input UpdateMaintenanceThresholdInput {
+    condition: String!
+    threshold: Int!
+    updatedAt: DateTime!
+}
+
+input AddExtractionCategoryInput {
+    id: OID!
+    name: String!
+    description: String!
+    active: Boolean!
+}
+
+input ToggleExtractionCategoryInput {
+    id: OID!
+    active: Boolean!
+}
+
+input ToggleFeatureInput {
+    feature: String!
+    enabled: Boolean!
+}

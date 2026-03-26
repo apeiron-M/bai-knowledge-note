@@ -1,0 +1,188 @@
+import type { DocumentModelGlobalState } from "document-model";
+
+export const documentModel: DocumentModelGlobalState = {
+  id: "bai/pipeline-queue",
+  name: "PipelineQueue",
+  author: {
+    name: "BAI",
+    website: "https://bai.dev",
+  },
+  extension: "pq.phd",
+  description:
+    "Processing pipeline state \u2014 singleton document per vault tracking tasks through extract, connect, reweave, and verify phases with handoff protocol.",
+  specifications: [
+    {
+      state: {
+        local: {
+          schema: "",
+          examples: [],
+          initialValue: "",
+        },
+        global: {
+          schema:
+            "enum TaskStatus {\n    PENDING\n    IN_PROGRESS\n    BLOCKED\n    DONE\n    FAILED\n}\n\nenum LearningCategory {\n    FRICTION\n    SURPRISE\n    METHODOLOGY\n    PROCESS_GAP\n}\n\ntype PhaseLearning {\n    id: OID!\n    category: LearningCategory!\n    description: String!\n}\n\ntype PhaseHandoff {\n    id: OID!\n    phase: String!\n    workDone: String!\n    filesModified: [String!]!\n    learnings: [PhaseLearning!]!\n    completedAt: DateTime!\n    completedBy: String\n}\n\ntype PipelineTask {\n    id: OID!\n    taskType: String!\n    status: TaskStatus!\n    target: String!\n    batchId: String\n    documentRef: String\n    currentPhase: String\n    completedPhases: [String!]!\n    handoffs: [PhaseHandoff!]!\n    assignedTo: String\n    createdAt: DateTime!\n    updatedAt: DateTime\n}\n\ntype PhaseOrderEntry {\n    taskType: String!\n    phases: [String!]!\n}\n\ntype PipelineQueueState {\n    schemaVersion: Int!\n    phaseOrder: [PhaseOrderEntry!]!\n    tasks: [PipelineTask!]!\n    completedCount: Int!\n    activeCount: Int!\n    lastProcessedAt: DateTime\n}",
+          examples: [],
+          initialValue:
+            '{\n    "schemaVersion": 3,\n    "phaseOrder": [\n        { "taskType": "claim", "phases": ["create", "reflect", "reweave", "verify"] },\n        { "taskType": "enrichment", "phases": ["enrich", "reflect", "reweave", "verify"] }\n    ],\n    "tasks": [],\n    "completedCount": 0,\n    "activeCount": 0,\n    "lastProcessedAt": null\n}',
+        },
+      },
+      modules: [
+        {
+          id: "queue-management",
+          name: "queue-management",
+          description: "Pipeline task lifecycle and phase progression",
+          operations: [
+            {
+              id: "add-task",
+              name: "ADD_TASK",
+              description: "Add a new task to the pipeline",
+              schema:
+                "input AddTaskInput {\n    id: OID!\n    taskType: String!\n    target: String!\n    batchId: String\n    documentRef: String\n    currentPhase: String\n    createdAt: DateTime!\n}",
+              template: "Add a new task to the pipeline",
+              reducer:
+                'const phaseEntry = state.phaseOrder.find(p => p.taskType === action.input.taskType);\nconst firstPhase = action.input.currentPhase || (phaseEntry ? phaseEntry.phases[0] : null);\nstate.tasks.push({\n    id: action.input.id,\n    taskType: action.input.taskType,\n    status: "PENDING",\n    target: action.input.target,\n    batchId: action.input.batchId || null,\n    documentRef: action.input.documentRef || null,\n    currentPhase: firstPhase || null,\n    completedPhases: [],\n    handoffs: [],\n    assignedTo: null,\n    createdAt: action.input.createdAt,\n    updatedAt: null,\n});\nstate.activeCount = (state.activeCount || 0) + 1;',
+              errors: [],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "assign-task",
+              name: "ASSIGN_TASK",
+              description: "Assign task to a processor or user",
+              schema:
+                "input AssignTaskInput {\n    taskId: OID!\n    assignedTo: String!\n    updatedAt: DateTime!\n}",
+              template: "Assign task to a processor or user",
+              reducer:
+                'const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError("Task not found");\ntask.assignedTo = action.input.assignedTo;\ntask.status = "IN_PROGRESS";\ntask.updatedAt = action.input.updatedAt;\nstate.lastProcessedAt = action.input.updatedAt;',
+              errors: [
+                {
+                  id: "err-task-not-found-assign",
+                  name: "TaskNotFoundError",
+                  code: "TASK_NOT_FOUND",
+                  description: "Task not found",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "advance-phase",
+              name: "ADVANCE_PHASE",
+              description: "Complete current phase, advance to next",
+              schema:
+                "input PhaseHandoffInput {\n    id: OID!\n    phase: String!\n    workDone: String!\n    filesModified: [String!]!\n    completedAt: DateTime!\n    completedBy: String\n}\n\ninput AdvancePhaseInput {\n    taskId: OID!\n    handoff: PhaseHandoffInput!\n    updatedAt: DateTime!\n}",
+              template: "Complete current phase, advance to next",
+              reducer:
+                'const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError("Task not found");\nconst handoff = action.input.handoff;\ntask.handoffs.push({\n    id: handoff.id,\n    phase: handoff.phase,\n    workDone: handoff.workDone,\n    filesModified: handoff.filesModified,\n    learnings: [],\n    completedAt: handoff.completedAt,\n    completedBy: handoff.completedBy || null,\n});\nif (task.currentPhase) {\n    task.completedPhases.push(task.currentPhase);\n}\nconst phaseEntry = state.phaseOrder.find(p => p.taskType === task.taskType);\nif (phaseEntry) {\n    const currentIdx = phaseEntry.phases.indexOf(task.currentPhase || "");\n    const nextPhase = phaseEntry.phases[currentIdx + 1];\n    if (nextPhase) {\n        task.currentPhase = nextPhase;\n        task.status = "PENDING";\n    } else {\n        task.currentPhase = null;\n        task.status = "DONE";\n        state.completedCount = (state.completedCount || 0) + 1;\n        state.activeCount = Math.max(0, (state.activeCount || 0) - 1);\n    }\n}\ntask.assignedTo = null;\ntask.updatedAt = action.input.updatedAt;\nstate.lastProcessedAt = action.input.updatedAt;',
+              errors: [
+                {
+                  id: "err-task-not-found-advance",
+                  name: "TaskNotFoundError",
+                  code: "TASK_NOT_FOUND",
+                  description: "Task not found",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "complete-task",
+              name: "COMPLETE_TASK",
+              description: "Mark task as done",
+              schema:
+                "input CompleteTaskInput {\n    taskId: OID!\n    updatedAt: DateTime!\n}",
+              template: "Mark task as done",
+              reducer:
+                'const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError("Task not found");\ntask.status = "DONE";\ntask.currentPhase = null;\ntask.updatedAt = action.input.updatedAt;\nstate.completedCount = (state.completedCount || 0) + 1;\nstate.activeCount = Math.max(0, (state.activeCount || 0) - 1);\nstate.lastProcessedAt = action.input.updatedAt;',
+              errors: [
+                {
+                  id: "err-task-not-found-complete",
+                  name: "TaskNotFoundError",
+                  code: "TASK_NOT_FOUND",
+                  description: "Task not found",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "fail-task",
+              name: "FAIL_TASK",
+              description: "Mark task as failed",
+              schema:
+                "input FailTaskInput {\n    taskId: OID!\n    reason: String!\n    updatedAt: DateTime!\n}",
+              template: "Mark task as failed",
+              reducer:
+                'const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError("Task not found");\ntask.status = "FAILED";\ntask.updatedAt = action.input.updatedAt;\nstate.activeCount = Math.max(0, (state.activeCount || 0) - 1);\nstate.lastProcessedAt = action.input.updatedAt;',
+              errors: [
+                {
+                  id: "err-task-not-found-fail",
+                  name: "TaskNotFoundError",
+                  code: "TASK_NOT_FOUND",
+                  description: "Task not found",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "block-task",
+              name: "BLOCK_TASK",
+              description: "Mark task as blocked",
+              schema:
+                "input BlockTaskInput {\n    taskId: OID!\n    reason: String!\n    updatedAt: DateTime!\n}",
+              template: "Mark task as blocked",
+              reducer:
+                'const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError("Task not found");\ntask.status = "BLOCKED";\ntask.updatedAt = action.input.updatedAt;',
+              errors: [
+                {
+                  id: "err-task-not-found-block",
+                  name: "TaskNotFoundError",
+                  code: "TASK_NOT_FOUND",
+                  description: "Task not found",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+            {
+              id: "unblock-task",
+              name: "UNBLOCK_TASK",
+              description: "Unblock a task",
+              schema:
+                "input UnblockTaskInput {\n    taskId: OID!\n    updatedAt: DateTime!\n}",
+              template: "Unblock a task",
+              reducer:
+                'const task = state.tasks.find(t => t.id === action.input.taskId);\nif (!task) throw new TaskNotFoundError("Task not found");\nif (task.status !== "BLOCKED") throw new InvalidTaskStatusError("Task is not blocked");\ntask.status = "PENDING";\ntask.updatedAt = action.input.updatedAt;',
+              errors: [
+                {
+                  id: "err-task-not-found-unblock",
+                  name: "TaskNotFoundError",
+                  code: "TASK_NOT_FOUND",
+                  description: "Task not found",
+                  template: "",
+                },
+                {
+                  id: "err-invalid-task-status",
+                  name: "InvalidTaskStatusError",
+                  code: "INVALID_TASK_STATUS",
+                  description: "Task is not in the expected status",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
+            },
+          ],
+        },
+      ],
+      version: 1,
+      changeLog: [],
+    },
+  ],
+};

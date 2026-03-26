@@ -4,10 +4,123 @@
 @theme {
   /* You can customize the theme by overriding the theme variables here */
   /* See https://tailwindcss.com/docs/theme#using-a-custom-theme for details */
+}
 
-  /* If you would prefer to use plain css, add your styles below this @theme tag as you normally would */
+/*
+ * Dark theme overrides for the Revision History panel and DocumentToolbar
+ * Applied to ALL bai/ document types via comma-separated selectors.
+ *
+ * The revision history is rendered by Connect inside #document-editor-context
+ * with data-document-type="bai/xxx". We scope all overrides to our doc types.
+ */
 
-  /* A sensible CSS reset is applied by default. If you would prefer to use a different reset or none at all, uncomment the following line */
+/* Selector shorthand — all bai/ document types */
+#document-editor-context[data-document-type="bai/knowledge-note"],
+#document-editor-context[data-document-type="bai/knowledge-graph"],
+#document-editor-context[data-document-type="bai/moc"],
+#document-editor-context[data-document-type="bai/source"],
+#document-editor-context[data-document-type="bai/pipeline-queue"],
+#document-editor-context[data-document-type="bai/observation"],
+#document-editor-context[data-document-type="bai/tension"],
+#document-editor-context[data-document-type="bai/vault-config"],
+#document-editor-context[data-document-type="bai/derivation"],
+#document-editor-context[data-document-type="bai/health-report"],
+#document-editor-context[data-document-type="bai/research-claim"] {
+  background-color: #1e1e2e;
+  color: #cdd6f4;
+}
 
-  /* --*: initial; */
+/* --- Revision History container --- */
+#document-editor-context[data-document-type^="bai/"] > div > .p-6 {
+  background-color: #1e1e2e;
+}
+
+/* Header back button + info pills (bg-slate-50 / bg-gray-50) */
+#document-editor-context[data-document-type^="bai/"] button[name="close-revision-history"],
+#document-editor-context[data-document-type^="bai/"] .bg-slate-50,
+#document-editor-context[data-document-type^="bai/"] [class*="bg-slate-50"],
+#document-editor-context[data-document-type^="bai/"] [class*="bg-gray-50"] {
+  background-color: #313244 !important;
+  color: #a6adc8 !important;
+}
+
+/* Pill text (doc id, branch value) */
+#document-editor-context[data-document-type^="bai/"] .text-gray-900 {
+  color: #cdd6f4 !important;
+}
+
+/* Pill label text */
+#document-editor-context[data-document-type^="bai/"] .text-stone-300 {
+  color: #a6adc8 !important;
+}
+
+/* Timeline content area */
+#document-editor-context[data-document-type^="bai/"] .rounded-md.bg-slate-50 {
+  background-color: #181825 !important;
+}
+
+/* Revision cards */
+#document-editor-context[data-document-type^="bai/"] article {
+  background-color: #1e1e2e !important;
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* --- Text color overrides --- */
+#document-editor-context[data-document-type^="bai/"] .text-gray-600 {
+  color: #7f849c !important;
+}
+#document-editor-context[data-document-type^="bai/"] .text-gray-500 {
+  color: #6c7086 !important;
+}
+#document-editor-context[data-document-type^="bai/"] .text-gray-300 {
+  color: #a6adc8 !important;
+}
+
+/* Timeline left border */
+#document-editor-context[data-document-type^="bai/"] .border-slate-100 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Day separator headers */
+#document-editor-context[data-document-type^="bai/"] h2.bg-slate-50 {
+  background-color: #181825 !important;
+}
+#document-editor-context[data-document-type^="bai/"] .text-slate-100 {
+  color: #7f849c !important;
+}
+
+/* Icons */
+#document-editor-context[data-document-type^="bai/"] svg {
+  color: inherit;
+}
+
+/* Scope select dropdown */
+#document-editor-context[data-document-type^="bai/"] [id="scope select"] {
+  background-color: #313244 !important;
+  color: #a6adc8 !important;
+}
+
+/* Border overrides */
+#document-editor-context[data-document-type^="bai/"] .border-gray-200 {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Title */
+#document-editor-context[data-document-type^="bai/"] h1 {
+  color: #cdd6f4;
+}
+
+/* Empty state text */
+#document-editor-context[data-document-type^="bai/"] h3 {
+  color: #6c7086 !important;
+}
+
+/* Buttons/cards with bg-white */
+#document-editor-context[data-document-type^="bai/"] .bg-white {
+  background-color: #1e1e2e !important;
+}
+
+/* Separator lines */
+#document-editor-context[data-document-type^="bai/"] hr {
+  border-color: rgba(255, 255, 255, 0.1) !important;
 }

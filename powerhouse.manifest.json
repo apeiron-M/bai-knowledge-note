@@ -9,13 +9,107 @@
     "documentModels": [
         {
             "id": "bai/knowledge-note",
-            "name": "KnowledgeNote",
-            "extension": "kn.phd",
-            "documentType": "bai/knowledge-note"
+            "name": "KnowledgeNote"
+        },
+        {
+            "id": "bai/knowledge-graph",
+            "name": "KnowledgeGraph"
+        },
+        {
+            "id": "bai/moc",
+            "name": "Moc"
+        },
+        {
+            "id": "bai/source",
+            "name": "Source"
+        },
+        {
+            "id": "bai/pipeline-queue",
+            "name": "PipelineQueue"
+        },
+        {
+            "id": "bai/observation",
+            "name": "Observation"
+        },
+        {
+            "id": "bai/tension",
+            "name": "Tension"
+        },
+        {
+            "id": "bai/vault-config",
+            "name": "VaultConfig"
+        },
+        {
+            "id": "bai/derivation",
+            "name": "Derivation"
+        },
+        {
+            "id": "bai/health-report",
+            "name": "HealthReport"
+        },
+        {
+            "id": "bai/research-claim",
+            "name": "ResearchClaim"
         }
     ],
-    "editors": [],
-    "apps": [],
+    "editors": [
+        {
+            "id": "knowledge-note-editor",
+            "name": "KnowledgeNoteEditor",
+            "documentTypes": [
+                "bai/knowledge-note"
+            ]
+        },
+        {
+            "id": "knowledge-graph-editor",
+            "name": "KnowledgeGraphEditor",
+            "documentTypes": [
+                "bai/knowledge-graph"
+            ]
+        },
+        {
+            "id": "moc-editor",
+            "name": "MocEditor",
+            "documentTypes": [
+                "bai/moc"
+            ]
+        },
+        {
+            "id": "source-editor",
+            "name": "SourceEditor",
+            "documentTypes": [
+                "bai/source"
+            ]
+        },
+        {
+            "id": "pipeline-queue-editor",
+            "name": "PipelineQueueEditor",
+            "documentTypes": [
+                "bai/pipeline-queue"
+            ]
+        },
+        {
+            "id": "observation-editor",
+            "name": "ObservationEditor",
+            "documentTypes": [
+                "bai/observation"
+            ]
+        },
+        {
+            "id": "vault-config-editor",
+            "name": "VaultConfigEditor",
+            "documentTypes": [
+                "bai/vault-config"
+            ]
+        }
+    ],
+    "apps": [
+        {
+            "id": "knowledge-vault",
+            "name": "KnowledgeVault",
+            "driveEditor": "knowledge-vault"
+        }
+    ],
     "subgraphs": [],
     "importScripts": []
 }

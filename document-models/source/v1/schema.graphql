@@ -1,0 +1,99 @@
+scalar Unknown
+scalar DateTime
+scalar Attachment
+scalar Address
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+enum SourceType {
+    ARTICLE
+    PAPER
+    BOOK_CHAPTER
+    TRANSCRIPT
+    DOCUMENTATION
+    CONVERSATION
+    WEB_PAGE
+    MANUAL_ENTRY
+}
+
+enum SourceStatus {
+    INBOX
+    EXTRACTING
+    EXTRACTED
+    ARCHIVED
+}
+
+type SourceProvenance {
+    url: String
+    author: String
+    publishedAt: DateTime
+    method: String
+    tool: String
+}
+
+type ExtractionStats {
+    claimCount: Int!
+    skippedCount: Int!
+    skipRate: Float!
+    extractedAt: DateTime
+    extractedBy: String
+}
+
+type SourceState {
+    title: String
+    description: String
+    content: String
+    sourceType: SourceType
+    status: SourceStatus
+    provenance: SourceProvenance
+    extractedClaims: [String!]!
+    extractionStats: ExtractionStats
+    createdAt: DateTime
+    createdBy: String
+}
+
+# source-management
+
+input IngestSourceInput {
+    title: String!
+    content: String!
+    sourceType: SourceType!
+    description: String
+    url: String
+    author: String
+    publishedAt: DateTime
+    method: String
+    tool: String
+    createdAt: DateTime!
+    createdBy: String
+}
+
+input SetSourceStatusInput {
+    status: SourceStatus!
+}
+
+input AddExtractedClaimInput {
+    claimRef: String!
+}
+
+input RecordExtractionStatsInput {
+    claimCount: Int!
+    skippedCount: Int!
+    skipRate: Float!
+    extractedAt: DateTime!
+    extractedBy: String
+}

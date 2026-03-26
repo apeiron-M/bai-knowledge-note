@@ -1,0 +1,13 @@
+import { createAction } from "document-model/core";
+import { SyncGraphInputSchema } from "../schema/zod.js";
+import type { SyncGraphInput } from "../types.js";
+import type { SyncGraphAction } from "./actions.js";
+
+export const syncGraph = (input: SyncGraphInput) =>
+  createAction<SyncGraphAction>(
+    "SYNC_GRAPH",
+    { ...input },
+    undefined,
+    SyncGraphInputSchema,
+    "global",
+  );

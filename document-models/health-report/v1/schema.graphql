@@ -1,0 +1,96 @@
+scalar Unknown
+scalar DateTime
+scalar Attachment
+scalar Address
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+enum HealthStatus {
+    PASS
+    WARN
+    FAIL
+}
+
+enum HealthCategory {
+    SCHEMA_COMPLIANCE
+    ORPHAN_DETECTION
+    LINK_HEALTH
+    DESCRIPTION_QUALITY
+    THREE_SPACE_BOUNDARIES
+    PROCESSING_THROUGHPUT
+    STALE_NOTES
+    MOC_COHERENCE
+}
+
+type HealthCheck {
+    id: OID!
+    category: HealthCategory!
+    status: HealthStatus!
+    message: String!
+    affectedItems: [String!]!
+}
+
+type GraphMetrics {
+    noteCount: Int!
+    mocCount: Int!
+    connectionCount: Int!
+    density: Float!
+    orphanCount: Int!
+    danglingLinkCount: Int!
+    mocCoverage: Float!
+    averageLinksPerNote: Float!
+}
+
+type HealthReportState {
+    generatedAt: DateTime
+    generatedBy: String
+    mode: String
+    overallStatus: HealthStatus
+    checks: [HealthCheck!]!
+    graphMetrics: GraphMetrics
+    recommendations: [String!]!
+}
+
+# report-management
+
+input GraphMetricsInput {
+    noteCount: Int!
+    mocCount: Int!
+    connectionCount: Int!
+    density: Float!
+    orphanCount: Int!
+    danglingLinkCount: Int!
+    mocCoverage: Float!
+    averageLinksPerNote: Float!
+}
+
+input GenerateReportInput {
+    generatedAt: DateTime!
+    generatedBy: String
+    mode: String!
+    overallStatus: HealthStatus!
+    graphMetrics: GraphMetricsInput!
+    recommendations: [String!]!
+}
+
+input AddCheckInput {
+    id: OID!
+    category: HealthCategory!
+    status: HealthStatus!
+    message: String!
+    affectedItems: [String!]!
+}

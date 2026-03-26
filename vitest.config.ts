@@ -7,7 +7,7 @@ export default defineConfig({
   test: {
     globals: true,
   },
-  plugins: [react()],
+  plugins: [react() as any],
   resolve: {
     alias: {
       [packageJson.name]: join(import.meta.dirname),

@@ -36,7 +36,10 @@ function parseFrontmatter(content) {
   for (const line of raw.split("\n")) {
     const kvMatch = line.match(/^([a-z_]+):\s*(.*)/);
     if (kvMatch) {
-      frontmatter[kvMatch[1]] = kvMatch[2].trim().replace(/^["']/, "").replace(/["']$/, "");
+      frontmatter[kvMatch[1]] = kvMatch[2]
+        .trim()
+        .replace(/^["']/, "")
+        .replace(/["']$/, "");
     }
   }
   return { frontmatter, body: content.slice(match[0].length).trim() };
@@ -93,7 +96,9 @@ async function dispatchActions(documentId, actions) {
 }
 
 async function main() {
-  const files = fs.readdirSync(VAULT_NOTES_DIR).filter((f) => f.endsWith(".md"));
+  const files = fs
+    .readdirSync(VAULT_NOTES_DIR)
+    .filter((f) => f.endsWith(".md"));
 
   let resolved = 0;
   let unresolvable = 0;
@@ -165,7 +170,9 @@ async function main() {
       if (DRY_RUN) {
         console.log(`  [dry] ${title} — ${actions.length} resolved links`);
         for (const a of actions) {
-          console.log(`         → ${a.input.targetTitle} (${a.input.targetDocumentId.slice(0, 8)}...)`);
+          console.log(
+            `         → ${a.input.targetTitle} (${a.input.targetDocumentId.slice(0, 8)}...)`,
+          );
         }
       } else {
         try {

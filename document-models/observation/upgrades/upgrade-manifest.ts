@@ -1,0 +1,11 @@
+import type { UpgradeManifest } from "document-model";
+import { latestVersion, supportedVersions } from "./versions.js";
+
+export const observationUpgradeManifest: UpgradeManifest<
+  typeof supportedVersions
+> = {
+  documentType: "bai/observation",
+  latestVersion,
+  supportedVersions,
+  upgrades: {},
+};

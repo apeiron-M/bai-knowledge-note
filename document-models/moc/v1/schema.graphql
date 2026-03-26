@@ -1,0 +1,129 @@
+scalar Unknown
+scalar DateTime
+scalar Attachment
+scalar Address
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+enum MocTier {
+    HUB
+    DOMAIN
+    TOPIC
+}
+
+type MocEntry {
+    id: OID!
+    noteRef: String!
+    contextPhrase: String!
+    sortOrder: Int!
+    addedAt: DateTime
+    addedBy: String
+}
+
+type MocTensionEntry {
+    id: OID!
+    description: String!
+    involvedRefs: [String!]!
+    addedAt: DateTime
+}
+
+type MocState {
+    title: String
+    description: String
+    orientation: String
+    tier: MocTier
+    coreIdeas: [MocEntry!]!
+    tensions: [MocTensionEntry!]!
+    openQuestions: [String!]!
+    agentNotes: [String!]!
+    parentRef: String
+    childRefs: [String!]!
+    noteCount: Int
+    createdAt: DateTime
+    updatedAt: DateTime
+}
+
+# moc-management
+
+input CreateMocInput {
+    title: String!
+    description: String!
+    orientation: String!
+    tier: MocTier!
+    parentRef: String
+    createdAt: DateTime!
+}
+
+input UpdateOrientationInput {
+    orientation: String!
+    updatedAt: DateTime!
+}
+
+input UpdateDescriptionInput {
+    description: String!
+    updatedAt: DateTime!
+}
+
+input AddCoreIdeaInput {
+    id: OID!
+    noteRef: String!
+    contextPhrase: String!
+    sortOrder: Int!
+    addedAt: DateTime!
+    addedBy: String
+}
+
+input UpdateCoreIdeaInput {
+    id: OID!
+    contextPhrase: String
+    sortOrder: Int
+}
+
+input RemoveCoreIdeaInput {
+    id: OID!
+}
+
+input ReorderCoreIdeasInput {
+    ids: [OID!]!
+}
+
+input AddTensionInput {
+    id: OID!
+    description: String!
+    involvedRefs: [String!]!
+    addedAt: DateTime!
+}
+
+input RemoveTensionInput {
+    id: OID!
+}
+
+input AddOpenQuestionInput {
+    question: String!
+}
+
+input RemoveOpenQuestionInput {
+    question: String!
+}
+
+input AddChildMocInput {
+    childRef: String!
+}
+
+input RemoveChildMocInput {
+    childRef: String!
+}

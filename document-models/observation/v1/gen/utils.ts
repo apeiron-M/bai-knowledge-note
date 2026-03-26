@@ -1,0 +1,79 @@
+import type { DocumentModelUtils } from "document-model";
+import {
+  baseCreateDocument,
+  baseSaveToFileHandle,
+  baseLoadFromInput,
+  defaultBaseState,
+  generateId,
+} from "document-model/core";
+import type { ObservationGlobalState, ObservationLocalState } from "./types.js";
+import type { ObservationPHState } from "./types.js";
+import { reducer } from "./reducer.js";
+import { observationDocumentType } from "./document-type.js";
+import {
+  isObservationDocument,
+  assertIsObservationDocument,
+  isObservationState,
+  assertIsObservationState,
+} from "./document-schema.js";
+
+export const initialGlobalState: ObservationGlobalState = {
+  title: null,
+  description: null,
+  content: null,
+  category: null,
+  status: "PENDING",
+  observedAt: null,
+  observedBy: null,
+  promotedTo: null,
+  promotedAt: null,
+};
+export const initialLocalState: ObservationLocalState = {};
+
+export const utils: DocumentModelUtils<ObservationPHState> = {
+  fileExtension: "obs.phd",
+  createState(state) {
+    return {
+      ...defaultBaseState(),
+      global: { ...initialGlobalState, ...state?.global },
+      local: { ...initialLocalState, ...state?.local },
+    };
+  },
+  createDocument(state) {
+    const document = baseCreateDocument(utils.createState, state);
+
+    document.header.documentType = observationDocumentType;
+
+    // for backwards compatibility, but this is NOT a valid signed document id
+    document.header.id = generateId();
+
+    return document;
+  },
+  saveToFileHandle(document, input) {
+    return baseSaveToFileHandle(document, input);
+  },
+  loadFromInput(input) {
+    return baseLoadFromInput(input, reducer);
+  },
+  isStateOfType(state) {
+    return isObservationState(state);
+  },
+  assertIsStateOfType(state) {
+    return assertIsObservationState(state);
+  },
+  isDocumentOfType(document) {
+    return isObservationDocument(document);
+  },
+  assertIsDocumentOfType(document) {
+    return assertIsObservationDocument(document);
+  },
+};
+
+export const createDocument = utils.createDocument;
+export const createState = utils.createState;
+export const saveToFileHandle = utils.saveToFileHandle;
+export const loadFromInput = utils.loadFromInput;
+export const isStateOfType = utils.isStateOfType;
+export const assertIsStateOfType = utils.assertIsStateOfType;
+export const isDocumentOfType = utils.isDocumentOfType;
+export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

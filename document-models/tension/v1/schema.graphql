@@ -1,0 +1,63 @@
+scalar Unknown
+scalar DateTime
+scalar Attachment
+scalar Address
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+enum TensionStatus {
+    OPEN
+    RESOLVED
+    DISSOLVED
+}
+
+type TensionState {
+    title: String
+    description: String
+    content: String
+    involvedRefs: [String!]!
+    status: TensionStatus
+    observedAt: DateTime
+    observedBy: String
+    resolution: String
+    resolvedAt: DateTime
+}
+
+# tension-management
+
+input CreateTensionInput {
+    title: String!
+    description: String!
+    content: String
+    involvedRefs: [String!]!
+    observedAt: DateTime!
+    observedBy: String
+}
+
+input ResolveTensionInput {
+    resolution: String!
+    resolvedAt: DateTime!
+}
+
+input DissolveTensionInput {
+    resolution: String!
+    resolvedAt: DateTime!
+}
+
+input AddInvolvedRefInput {
+    ref: String!
+}
