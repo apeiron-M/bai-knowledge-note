@@ -61,6 +61,17 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
       knowledgeGraphNodesByStatus(driveId: ID!, status: String!): [KnowledgeGraphNode!]!
       knowledgeGraphBacklinks(driveId: ID!, documentId: String!): [KnowledgeGraphEdge!]!
       knowledgeGraphDensity(driveId: ID!): Float!
+
+      """Debug: raw processor DB tables"""
+      knowledgeGraphDebug(driveId: ID!): GraphDebugInfo!
+    }
+
+    type GraphDebugInfo {
+      rawNodeCount: Int!
+      rawEdgeCount: Int!
+      rawNodes: [KnowledgeGraphNode!]!
+      rawEdges: [KnowledgeGraphEdge!]!
+      processorNamespace: String!
     }
   `;
 
@@ -70,6 +81,7 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         _: unknown,
         args: { driveId: string },
       ) => {
+        await this.ensureGraphDoc(args.driveId);
         const query = this.getQuery(args.driveId);
         return query.allNodes();
       },
@@ -78,6 +90,7 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         _: unknown,
         args: { driveId: string },
       ) => {
+        await this.ensureGraphDoc(args.driveId);
         const query = this.getQuery(args.driveId);
         return query.allEdges();
       },
@@ -86,6 +99,7 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         _: unknown,
         args: { driveId: string },
       ) => {
+        await this.ensureGraphDoc(args.driveId);
         const query = this.getQuery(args.driveId);
         return query.stats();
       },
@@ -137,6 +151,45 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         const query = this.getQuery(args.driveId);
         return query.density();
       },
+
+      knowledgeGraphDebug: async (
+        _: unknown,
+        args: { driveId: string },
+      ) => {
+        const namespace = GraphIndexerProcessor.getNamespace(args.driveId);
+        try {
+          const rawNodes = await GraphIndexerProcessor.query(args.driveId, this.relationalDb as any)
+            .selectFrom("graph_nodes")
+            .selectAll()
+            .execute();
+          const rawEdges = await GraphIndexerProcessor.query(args.driveId, this.relationalDb as any)
+            .selectFrom("graph_edges")
+            .selectAll()
+            .execute();
+          return {
+            rawNodeCount: rawNodes.length,
+            rawEdgeCount: rawEdges.length,
+            rawNodes: rawNodes.map((r: any) => ({
+              id: r.id, documentId: r.document_id, title: r.title,
+              description: r.description, noteType: r.note_type,
+              status: r.status, updatedAt: r.updated_at,
+            })),
+            rawEdges: rawEdges.map((r: any) => ({
+              id: r.id, sourceDocumentId: r.source_document_id,
+              targetDocumentId: r.target_document_id, linkType: r.link_type,
+              targetTitle: r.target_title, updatedAt: r.updated_at,
+            })),
+            processorNamespace: namespace,
+          };
+        } catch (err: unknown) {
+          console.warn(`[KnowledgeGraphSubgraph] Debug query failed for ${namespace}:`, err);
+          return {
+            rawNodeCount: 0, rawEdgeCount: 0,
+            rawNodes: [], rawEdges: [],
+            processorNamespace: namespace,
+          };
+        }
+      },
     },
   };
 
@@ -145,8 +198,52 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
   }
 
   private getQuery(driveId: string) {
-    const namespace = GraphIndexerProcessor.getNamespace(driveId);
-    const scopedDb = this.relationalDb.withSchema(namespace) as unknown as Kysely<DB>;
-    return createGraphQuery(scopedDb);
+    // Use the processor's static query method for correct namespace scoping
+    // (same pattern as the working workstreams example)
+    const queryBuilder = GraphIndexerProcessor.query(driveId, this.relationalDb as any);
+    return createGraphQuery(queryBuilder as unknown as Kysely<DB>);
+  }
+
+  /**
+   * Ensures a bai/knowledge-graph document exists in the given drive.
+   * Called lazily on first query — supports API/plugin access without
+   * requiring the Connect UI to have initialized the drive first.
+   */
+  private ensuredDrives = new Set<string>();
+
+  private async ensureGraphDoc(driveId: string): Promise<void> {
+    if (this.ensuredDrives.has(driveId)) return;
+    this.ensuredDrives.add(driveId);
+
+    try {
+      // Check if a knowledge-graph doc already exists anywhere in the drive
+      const drive = await this.reactorClient.get(driveId);
+      const nodes = (drive.state as unknown as {
+        global: { nodes: Array<{ kind: string; documentType?: string; id: string; name: string; parentFolder?: string | null }> };
+      }).global.nodes;
+
+      const hasGraph = nodes.some(
+        (n) => n.kind === "file" && n.documentType === "bai/knowledge-graph",
+      );
+
+      if (!hasGraph) {
+        // Find the /self folder to place the graph doc in the correct location
+        const selfFolder = nodes.find(
+          (n) => n.kind === "folder" && n.name === "self" && n.parentFolder == null,
+        );
+        const parentFolder = selfFolder?.id;
+
+        await this.reactorClient.createEmpty("bai/knowledge-graph", {
+          parentIdentifier: parentFolder ?? driveId,
+        });
+        console.log(
+          `[KnowledgeGraphSubgraph] Auto-created KnowledgeGraph in drive ${driveId}` +
+          (parentFolder ? ` (folder: /self/)` : ` (drive root — /self/ folder not found)`),
+        );
+      }
+    } catch (err: unknown) {
+      console.error(`[KnowledgeGraphSubgraph] Failed to ensure graph doc:`, err);
+      // Don't block queries if this fails — processor data still works
+    }
   }
 }

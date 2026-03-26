@@ -1,22 +1,8 @@
-import { RelationalDbProcessor } from "@powerhousedao/reactor-browser";
-import type { OperationWithContext } from "document-model";
+import { RelationalDbProcessor } from "@powerhousedao/shared/processors";
+import type { OperationWithContext } from "@powerhousedao/shared/document-model";
 import { up } from "./migrations.js";
 import type { DB } from "./schema.js";
 
-/**
- * Graph Indexer Processor
- *
- * Watches bai/knowledge-note operations and maintains a relational index
- * of graph nodes (notes) and edges (links between notes).
- *
- * Uses the resultingState reconciliation pattern:
- * - Deduplicates operations per document (keeps last resulting state)
- * - Upserts node from full state
- * - Reconciles edges by deleting old + inserting new from state.links
- *
- * This keeps the graph in sync regardless of whether changes come from
- * the UI or the API.
- */
 export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
   static override getNamespace(driveId: string): string {
     return super.getNamespace(driveId);
@@ -26,7 +12,9 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     await up(this.relationalDb);
   }
 
-  async onOperations(operations: OperationWithContext[]): Promise<void> {
+  override async onOperations(
+    operations: OperationWithContext[],
+  ): Promise<void> {
     if (operations.length === 0) return;
 
     // Deduplicate: keep the last operation per document
@@ -36,12 +24,19 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       const { operation, context } = entry;
       const documentId = context.documentId;
 
-      // Handle document deletion immediately
-      if (operation.action.type === "DELETE_DOCUMENT") {
-        await this.deleteNode(documentId);
-        lastByDocument.delete(documentId);
+      // Handle document/drive deletion
+      if (
+        context.documentType === "powerhouse/document-drive" &&
+        operation.action.type === "DELETE_NODE"
+      ) {
+        const deleteInput = operation.action.input as { id: string };
+        await this.deleteNode(deleteInput.id);
+        lastByDocument.delete(deleteInput.id);
         continue;
       }
+
+      // Only process knowledge-note documents
+      if (context.documentType !== "bai/knowledge-note") continue;
 
       // Collect last state per document
       if (context.resultingState) {
@@ -55,10 +50,9 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         const stateJson = entry.context.resultingState;
         if (!stateJson) continue;
 
-        const state = JSON.parse(stateJson) as {
-          global: Record<string, unknown>;
-        };
-        const global = state.global;
+        const parsed = JSON.parse(stateJson);
+        // resultingState may be wrapped in { global: ... } or be the global state directly
+        const global = (parsed.global ?? parsed) as Record<string, unknown>;
         const now = new Date().toISOString();
 
         // Upsert node
@@ -90,8 +84,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           .where("source_document_id", "=", documentId)
           .execute();
 
-        const links =
-          (global.links as Array<Record<string, unknown>>) ?? [];
+        const links = (global.links as Array<Record<string, unknown>>) ?? [];
         if (links.length > 0) {
           await this.relationalDb
             .insertInto("graph_edges")
@@ -110,6 +103,10 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             )
             .execute();
         }
+
+        console.log(
+          `[GraphIndexer] Reconciled ${documentId}: ${links.length} edges`,
+        );
       } catch (err: unknown) {
         console.error(
           `[GraphIndexer] Error reconciling document ${documentId}:`,
@@ -120,7 +117,13 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
   }
 
   async onDisconnect(): Promise<void> {
-    // Cleanup if needed
+    try {
+      await this.relationalDb.deleteFrom("graph_edges").execute();
+      await this.relationalDb.deleteFrom("graph_nodes").execute();
+      console.log(`[GraphIndexer] Cleaned up namespace: ${this.namespace}`);
+    } catch (err: unknown) {
+      console.error(`[GraphIndexer] Error cleaning up:`, err);
+    }
   }
 
   private async deleteNode(documentId: string): Promise<void> {
@@ -134,16 +137,13 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           ]),
         )
         .execute();
-
       await this.relationalDb
         .deleteFrom("graph_nodes")
         .where("document_id", "=", documentId)
         .execute();
+      console.log(`[GraphIndexer] Deleted node ${documentId}`);
     } catch (err: unknown) {
-      console.error(
-        `[GraphIndexer] Error deleting node ${documentId}:`,
-        err,
-      );
+      console.error(`[GraphIndexer] Error deleting node ${documentId}:`, err);
     }
   }
 }

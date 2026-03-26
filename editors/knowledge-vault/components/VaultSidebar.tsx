@@ -4,9 +4,12 @@ import {
   showCreateDocumentModal,
   useDocumentsInSelectedDrive,
   useNodesInSelectedDrive,
+  useSelectedDriveId,
+  addDocument,
 } from "@powerhousedao/reactor-browser";
 import type { Node } from "document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
+import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 
 type VaultSidebarProps = {
   notes: KnowledgeNoteInfo[];
@@ -99,10 +102,7 @@ export function VaultSidebar({ notes }: VaultSidebarProps) {
             title="Back to vault overview">
             Knowledge Vault
           </button>
-          <button type="button" onClick={() => showCreateDocumentModal("bai/knowledge-note")}
-            className="rounded p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-[#cba6f7]" title="New note">
-            <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
-          </button>
+          <QuickCreateButton />
         </div>
       </div>
 
@@ -313,5 +313,24 @@ function TreeItem({ node, depth }: { node: { id: string; name: string; kind: str
         <TreeItem key={child.id} node={child} depth={depth + 1} />
       ))}
     </div>
+  );
+}
+
+function QuickCreateButton() {
+  const [dialogOpen, setDialogOpen] = useState(false);
+
+  return (
+    <>
+      <button type="button" onClick={() => setDialogOpen(true)}
+        className="rounded p-1 text-gray-500 transition-colors hover:bg-white/10 hover:text-[#cba6f7]" title="New note">
+        <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 5v14M5 12h14" /></svg>
+      </button>
+      <CreateDocumentDialog
+        open={dialogOpen}
+        documentType="bai/knowledge-note"
+        documentTypeLabel="Knowledge Note"
+        onClose={() => setDialogOpen(false)}
+      />
+    </>
   );
 }

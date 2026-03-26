@@ -1,9 +1,5 @@
-import { useEffect, useMemo, useCallback, useRef } from "react";
+import { useMemo } from "react";
 import { generateId } from "document-model/core";
-import {
-  useSelectedDriveId,
-  addDocument,
-} from "@powerhousedao/reactor-browser";
 import {
   useKnowledgeGraphDocumentsInSelectedDrive,
 } from "knowledge-note/document-models/knowledge-graph";
@@ -18,28 +14,14 @@ export type GraphState = {
   lastSyncedAt?: string | null;
 };
 
+/**
+ * Returns the first KnowledgeGraph document in the drive (created by use-drive-init).
+ * Does NOT auto-create — that's handled solely by useDriveInit to avoid duplicates.
+ */
 export function useKnowledgeGraph(notes: KnowledgeNoteInfo[]) {
   const graphDocs = useKnowledgeGraphDocumentsInSelectedDrive();
-  const driveId = useSelectedDriveId();
   const graphDoc = graphDocs?.[0] as KnowledgeGraphDocument | undefined;
   const graphState: GraphState | null = graphDoc?.state.global ?? null;
-  const initAttempted = useRef(false);
-
-  // Auto-create graph document if it doesn't exist
-  useEffect(() => {
-    if (!driveId || graphDoc || initAttempted.current) return;
-    if (graphDocs === undefined) return; // still loading
-
-    initAttempted.current = true;
-    addDocument(driveId, "KnowledgeGraph", "bai/knowledge-graph")
-      .then(() => {
-        console.log("[KnowledgeVault] Auto-created knowledge-graph document");
-      })
-      .catch((err: unknown) => {
-        console.error("[KnowledgeVault] Failed to auto-create graph doc:", err);
-        initAttempted.current = false; // allow retry
-      });
-  }, [driveId, graphDoc, graphDocs]);
 
   return {
     graphDoc,
