@@ -645,40 +645,40 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
       {/* Hover tooltip */}
       {hoverInfo && !selectedDetail && (
         <div
-          className="pointer-events-none absolute z-30 w-64 rounded-lg border border-white/10 bg-[#1e1e2e]/95 p-3 shadow-xl backdrop-blur-sm"
+          className="pointer-events-none absolute z-30 w-96 rounded-lg border border-white/10 bg-[#1e1e2e]/95 p-5 shadow-xl backdrop-blur-sm"
           style={{
             left: Math.min(
               hoverInfo.x + 16,
-              (containerRef.current?.offsetWidth ?? 800) - 280,
+              (containerRef.current?.offsetWidth ?? 800) - 410,
             ),
             top: Math.max(8, hoverInfo.y - 20),
           }}
         >
-          <div className="mb-1.5 flex items-center gap-2">
+          <div className="mb-2 flex items-center gap-2">
             <span
-              className="inline-block h-2.5 w-2.5 flex-shrink-0 rounded-full"
+              className="inline-block h-3 w-3 flex-shrink-0 rounded-full"
               style={{
                 backgroundColor:
                   STATUS_NODE_COLORS[hoverInfo.node.status] ??
                   DEFAULT_NODE_COLOR,
               }}
             />
-            <span className="truncate text-xs font-semibold text-gray-200">
+            <span className="truncate text-base font-semibold text-gray-200">
               {hoverInfo.node.label}
             </span>
           </div>
 
-          <div className="mb-1.5 flex flex-wrap items-center gap-1.5">
-            <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-400">
+          <div className="mb-2 flex flex-wrap items-center gap-2">
+            <span className="rounded bg-white/5 px-2 py-0.5 text-[11px] text-gray-400">
               {hoverInfo.node.status.replace("_", " ")}
             </span>
             {hoverInfo.node.noteType && (
-              <span className="rounded bg-[#cba6f7]/10 px-1.5 py-0.5 text-[10px] text-[#cba6f7]">
+              <span className="rounded bg-[#cba6f7]/10 px-2 py-0.5 text-[11px] text-[#cba6f7]">
                 {hoverInfo.node.noteType}
               </span>
             )}
             {hoverInfo.node.linkCount > 0 && (
-              <span className="text-[10px] text-gray-500">
+              <span className="text-[11px] text-gray-500">
                 {hoverInfo.node.linkCount} connection
                 {hoverInfo.node.linkCount !== 1 ? "s" : ""}
               </span>
@@ -686,17 +686,17 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
           </div>
 
           {hoverInfo.node.description && (
-            <p className="mb-1.5 line-clamp-3 text-[11px] leading-relaxed text-gray-400">
+            <p className="mb-2.5 line-clamp-5 text-sm leading-relaxed text-gray-400">
               {hoverInfo.node.description}
             </p>
           )}
 
           {hoverInfo.node.topics.length > 0 && (
-            <div className="flex flex-wrap gap-1">
+            <div className="flex flex-wrap gap-1.5">
               {hoverInfo.node.topics.map((topic) => (
                 <span
                   key={topic.id}
-                  className="rounded-full bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-500"
+                  className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-gray-500"
                 >
                   {topic.name}
                 </span>
