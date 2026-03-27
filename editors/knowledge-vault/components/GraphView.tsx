@@ -38,10 +38,18 @@ type MocInfo = {
   coreIdeas: { noteRef: string; contextPhrase: string }[];
 };
 
+type TensionInfo = {
+  id: string;
+  title: string;
+  status: string | null;
+  involvedRefs: string[];
+};
+
 type GraphViewProps = {
   notes: KnowledgeNoteInfo[];
   graphState?: PersistedGraphState;
   mocs?: MocInfo[];
+  tensions?: TensionInfo[];
 };
 
 type NodeDetail = {
@@ -76,6 +84,8 @@ const LINK_TYPE_COLORS: Record<string, string> = {
 
 const MOC_NODE_COLOR = "#cba6f7";
 const MOC_EDGE_COLOR = "#cba6f7";
+const TENSION_NODE_COLOR = "#ef4444";
+const TENSION_EDGE_COLOR = "#ef4444";
 const DEFAULT_NODE_COLOR = "#6b7280";
 const DEFAULT_EDGE_COLOR = "#64748b";
 
@@ -87,6 +97,7 @@ function buildElements(
   notes: KnowledgeNoteInfo[],
   graphState: PersistedGraphState,
   mocs?: MocInfo[],
+  tensions?: TensionInfo[],
 ) {
   const elements: cytoscape.ElementDefinition[] = [];
   const noteMap = new Map(notes.map((n) => [n.id, n]));
@@ -189,8 +200,10 @@ function buildElements(
     });
   }
 
-  // Add MOC nodes and their edges to core ideas
+  // Track existing node IDs for MOC + tension edge targets
   const existingNodeIds = new Set(elements.filter((e) => !e.data.source).map((e) => e.data.id));
+
+  // Add MOC nodes and their edges to core ideas
   if (mocs?.length) {
     for (const moc of mocs) {
       elements.push({
@@ -218,6 +231,41 @@ function buildElements(
               color: MOC_EDGE_COLOR,
             },
           });
+        }
+      }
+    }
+  }
+
+  // Add tension nodes and edges to involved notes
+  if (tensions?.length) {
+    for (const tension of tensions) {
+      if (tension.status === "OPEN") {
+        elements.push({
+          data: {
+            id: tension.id,
+            label: tension.title,
+            status: "TENSION",
+            noteType: `Tension (${tension.status})`,
+            description: null,
+            topics: [],
+            linkCount: tension.involvedRefs.length,
+            color: TENSION_NODE_COLOR,
+            isTension: true,
+          },
+        });
+
+        for (const ref of tension.involvedRefs) {
+          if (existingNodeIds.has(ref)) {
+            elements.push({
+              data: {
+                id: `ten-${tension.id}-${ref}`,
+                source: tension.id,
+                target: ref,
+                linkType: "CONTRADICTS",
+                color: TENSION_EDGE_COLOR,
+              },
+            });
+          }
         }
       }
     }
@@ -277,6 +325,20 @@ const cyStylesheet: cytoscape.StylesheetStyle[] = [
       "font-weight": "bold",
       "border-width": 2,
       "border-color": "#cba6f7",
+      "border-opacity": 0.5,
+    } as cytoscape.Css.Node,
+  },
+  // Tension nodes — triangle shape, red
+  {
+    selector: "node[?isTension]",
+    style: {
+      shape: "triangle",
+      width: 30,
+      height: 30,
+      "font-size": "10px",
+      "font-weight": "bold",
+      "border-width": 2,
+      "border-color": "#ef4444",
       "border-opacity": 0.5,
     } as cytoscape.Css.Node,
   },
@@ -364,7 +426,7 @@ function getLayoutOptions(): cytoscape.LayoutOptions {
 /*  Component                                                         */
 /* ------------------------------------------------------------------ */
 
-export function GraphView({ notes, graphState, mocs }: GraphViewProps) {
+export function GraphView({ notes, graphState, mocs, tensions }: GraphViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
   const [selectedDetail, setSelectedDetail] = useState<NodeDetail | null>(null);
@@ -377,7 +439,7 @@ export function GraphView({ notes, graphState, mocs }: GraphViewProps) {
 
   // Build elements from data
   const elements = useMemo(
-    () => buildElements(notes, graphState ?? null, mocs),
+    () => buildElements(notes, graphState ?? null, mocs, tensions),
     [notes, graphState],
   );
 
@@ -745,6 +807,16 @@ export function GraphView({ notes, graphState, mocs }: GraphViewProps) {
               }}
             />
             <span style={{ color: "var(--bai-text-tertiary)" }}>MOC</span>
+          </div>
+          <div className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-3 w-3"
+              style={{
+                backgroundColor: TENSION_NODE_COLOR,
+                clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
+              }}
+            />
+            <span style={{ color: "var(--bai-text-tertiary)" }}>Tension</span>
           </div>
         </div>
         {/* Edge types */}

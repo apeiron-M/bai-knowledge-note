@@ -17,7 +17,7 @@ import {
   assertIsVaultConfigDocument,
   isVaultConfigState,
   assertIsVaultConfigState,
-} from "knowledge-note/document-models/vault-config/v1";
+} from "@powerhousedao/knowledge-note/document-models/vault-config/v1";
 import { ZodError } from "zod";
 
 describe("VaultConfig Document Model", () => {

@@ -12,7 +12,7 @@ import {
   AddResearchConnectionInputSchema,
   RemoveResearchConnectionInputSchema,
   UpdateClaimContentInputSchema,
-} from "knowledge-note/document-models/research-claim/v1";
+} from "@powerhousedao/knowledge-note/document-models/research-claim/v1";
 
 describe("ClaimManagementOperations", () => {
   it("should handle createClaim operation", () => {

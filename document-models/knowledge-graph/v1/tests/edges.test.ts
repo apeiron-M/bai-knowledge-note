@@ -10,7 +10,7 @@ import {
   AddEdgeInputSchema,
   RemoveEdgeInputSchema,
   UpdateEdgeInputSchema,
-} from "knowledge-note/document-models/knowledge-graph/v1";
+} from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
 
 describe("EdgesOperations", () => {
   it("should handle addEdge operation", () => {

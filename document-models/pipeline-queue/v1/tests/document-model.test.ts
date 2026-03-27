@@ -17,7 +17,7 @@ import {
   assertIsPipelineQueueDocument,
   isPipelineQueueState,
   assertIsPipelineQueueState,
-} from "knowledge-note/document-models/pipeline-queue/v1";
+} from "@powerhousedao/knowledge-note/document-models/pipeline-queue/v1";
 import { ZodError } from "zod";
 
 describe("PipelineQueue Document Model", () => {

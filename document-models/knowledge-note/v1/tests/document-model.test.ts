@@ -17,7 +17,7 @@ import {
   assertIsKnowledgeNoteDocument,
   isKnowledgeNoteState,
   assertIsKnowledgeNoteState,
-} from "knowledge-note/document-models/knowledge-note/v1";
+} from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
 import { ZodError } from "zod";
 
 describe("KnowledgeNote Document Model", () => {

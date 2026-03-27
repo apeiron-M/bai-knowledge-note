@@ -17,7 +17,7 @@ import {
   assertIsDerivationDocument,
   isDerivationState,
   assertIsDerivationState,
-} from "knowledge-note/document-models/derivation/v1";
+} from "@powerhousedao/knowledge-note/document-models/derivation/v1";
 import { ZodError } from "zod";
 
 describe("Derivation Document Model", () => {

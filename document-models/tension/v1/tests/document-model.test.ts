@@ -17,7 +17,7 @@ import {
   assertIsTensionDocument,
   isTensionState,
   assertIsTensionState,
-} from "knowledge-note/document-models/tension/v1";
+} from "@powerhousedao/knowledge-note/document-models/tension/v1";
 import { ZodError } from "zod";
 
 describe("Tension Document Model", () => {

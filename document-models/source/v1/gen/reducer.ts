@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { SourcePHState } from "knowledge-note/document-models/source/v1";
+import type { SourcePHState } from "@powerhousedao/knowledge-note/document-models/source/v1";
 
 import { sourceSourceManagementOperations } from "../src/reducers/source-management.js";
 

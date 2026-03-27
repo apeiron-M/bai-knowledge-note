@@ -8,7 +8,7 @@ import {
 import type {
   KnowledgeGraphAction,
   KnowledgeGraphDocument,
-} from "knowledge-note/document-models/knowledge-graph/v1";
+} from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
 import {
   assertIsKnowledgeGraphDocument,
   isKnowledgeGraphDocument,

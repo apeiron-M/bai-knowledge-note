@@ -8,7 +8,7 @@ import {
 import type {
   TensionAction,
   TensionDocument,
-} from "knowledge-note/document-models/tension/v1";
+} from "@powerhousedao/knowledge-note/document-models/tension/v1";
 import {
   assertIsTensionDocument,
   isTensionDocument,

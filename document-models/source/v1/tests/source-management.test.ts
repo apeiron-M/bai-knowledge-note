@@ -12,7 +12,7 @@ import {
   SetSourceStatusInputSchema,
   AddExtractedClaimInputSchema,
   RecordExtractionStatsInputSchema,
-} from "knowledge-note/document-models/source/v1";
+} from "@powerhousedao/knowledge-note/document-models/source/v1";
 
 describe("SourceManagementOperations", () => {
   it("should handle ingestSource operation", () => {

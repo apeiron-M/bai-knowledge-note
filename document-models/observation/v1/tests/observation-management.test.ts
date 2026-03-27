@@ -12,7 +12,7 @@ import {
   PromoteObservationInputSchema,
   ImplementObservationInputSchema,
   ArchiveObservationInputSchema,
-} from "knowledge-note/document-models/observation/v1";
+} from "@powerhousedao/knowledge-note/document-models/observation/v1";
 
 describe("ObservationManagementOperations", () => {
   it("should handle createObservation operation", () => {

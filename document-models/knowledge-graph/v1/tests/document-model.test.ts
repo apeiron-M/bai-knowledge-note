@@ -17,7 +17,7 @@ import {
   assertIsKnowledgeGraphDocument,
   isKnowledgeGraphState,
   assertIsKnowledgeGraphState,
-} from "knowledge-note/document-models/knowledge-graph/v1";
+} from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
 import { ZodError } from "zod";
 
 describe("KnowledgeGraph Document Model", () => {

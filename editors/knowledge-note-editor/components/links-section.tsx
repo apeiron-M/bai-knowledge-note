@@ -1,6 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { generateId } from "document-model/core";
-import { useKnowledgeNoteDocumentsInSelectedDrive } from "knowledge-note/document-models/knowledge-note";
+import { useKnowledgeNoteDocumentsInSelectedDrive } from "@powerhousedao/knowledge-note/document-models/knowledge-note";
 import type {
   NoteLink,
   LinkType,

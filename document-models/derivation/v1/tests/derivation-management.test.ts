@@ -12,7 +12,7 @@ import {
   AddSignalInputSchema,
   AddReseedEntryInputSchema,
   UpdateDimensionRationaleInputSchema,
-} from "knowledge-note/document-models/derivation/v1";
+} from "@powerhousedao/knowledge-note/document-models/derivation/v1";
 
 describe("DerivationManagementOperations", () => {
   it("should handle initializeDerivation operation", () => {

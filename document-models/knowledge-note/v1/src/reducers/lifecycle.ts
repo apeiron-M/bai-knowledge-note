@@ -1,4 +1,4 @@
-import type { KnowledgeNoteLifecycleOperations } from "knowledge-note/document-models/knowledge-note/v1";
+import type { KnowledgeNoteLifecycleOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
 import {
   InvalidStatusTransitionError,
   SelfApprovalError,

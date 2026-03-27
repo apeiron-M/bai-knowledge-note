@@ -20,7 +20,7 @@ import {
   AddExtractionCategoryInputSchema,
   ToggleExtractionCategoryInputSchema,
   ToggleFeatureInputSchema,
-} from "knowledge-note/document-models/vault-config/v1";
+} from "@powerhousedao/knowledge-note/document-models/vault-config/v1";
 
 describe("ConfigManagementOperations", () => {
   it("should handle initializeConfig operation", () => {

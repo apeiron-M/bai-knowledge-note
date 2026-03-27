@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { DerivationPHState } from "knowledge-note/document-models/derivation/v1";
+import type { DerivationPHState } from "@powerhousedao/knowledge-note/document-models/derivation/v1";
 
 import { derivationDerivationManagementOperations } from "../src/reducers/derivation-management.js";
 

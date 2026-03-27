@@ -1,4 +1,4 @@
-import type { VaultConfigConfigManagementOperations } from "knowledge-note/document-models/vault-config/v1";
+import type { VaultConfigConfigManagementOperations } from "@powerhousedao/knowledge-note/document-models/vault-config/v1";
 
 export const vaultConfigConfigManagementOperations: VaultConfigConfigManagementOperations =
   {

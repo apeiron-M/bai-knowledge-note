@@ -1,4 +1,4 @@
-import type { KnowledgeGraphNodesOperations } from "knowledge-note/document-models/knowledge-graph/v1";
+import type { KnowledgeGraphNodesOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
 import {
   DuplicateNodeError,
   NodeNotFoundError,

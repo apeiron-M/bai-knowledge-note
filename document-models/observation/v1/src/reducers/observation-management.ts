@@ -1,4 +1,4 @@
-import type { ObservationObservationManagementOperations } from "knowledge-note/document-models/observation/v1";
+import type { ObservationObservationManagementOperations } from "@powerhousedao/knowledge-note/document-models/observation/v1";
 
 export const observationObservationManagementOperations: ObservationObservationManagementOperations =
   {

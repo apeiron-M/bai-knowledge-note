@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { TensionPHState } from "knowledge-note/document-models/tension/v1";
+import type { TensionPHState } from "@powerhousedao/knowledge-note/document-models/tension/v1";
 
 import { tensionTensionManagementOperations } from "../src/reducers/tension-management.js";
 

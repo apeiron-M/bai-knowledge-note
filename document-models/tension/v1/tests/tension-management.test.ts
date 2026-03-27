@@ -12,7 +12,7 @@ import {
   ResolveTensionInputSchema,
   DissolveTensionInputSchema,
   AddInvolvedRefInputSchema,
-} from "knowledge-note/document-models/tension/v1";
+} from "@powerhousedao/knowledge-note/document-models/tension/v1";
 
 describe("TensionManagementOperations", () => {
   it("should handle createTension operation", () => {

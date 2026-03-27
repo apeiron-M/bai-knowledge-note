@@ -14,7 +14,7 @@ import {
   RejectNoteInputSchema,
   ArchiveNoteInputSchema,
   RestoreNoteInputSchema,
-} from "knowledge-note/document-models/knowledge-note/v1";
+} from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
 
 describe("LifecycleOperations", () => {
   it("should handle submitForReview operation", () => {

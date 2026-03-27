@@ -4,7 +4,7 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   useSelectedMocDocument,
   actions,
-} from "knowledge-note/document-models/moc";
+} from "@powerhousedao/knowledge-note/document-models/moc";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 
 const TIERS = ["HUB", "DOMAIN", "TOPIC"] as const;

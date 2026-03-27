@@ -1,4 +1,4 @@
-import type { KnowledgeNoteContentOperations } from "knowledge-note/document-models/knowledge-note/v1";
+import type { KnowledgeNoteContentOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
 import {
   DescriptionTooLongError,
   PatchOutOfBoundsError,

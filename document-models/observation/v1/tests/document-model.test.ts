@@ -17,7 +17,7 @@ import {
   assertIsObservationDocument,
   isObservationState,
   assertIsObservationState,
-} from "knowledge-note/document-models/observation/v1";
+} from "@powerhousedao/knowledge-note/document-models/observation/v1";
 import { ZodError } from "zod";
 
 describe("Observation Document Model", () => {

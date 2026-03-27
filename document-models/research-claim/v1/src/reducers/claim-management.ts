@@ -1,4 +1,4 @@
-import type { ResearchClaimClaimManagementOperations } from "knowledge-note/document-models/research-claim/v1";
+import type { ResearchClaimClaimManagementOperations } from "@powerhousedao/knowledge-note/document-models/research-claim/v1";
 
 export const researchClaimClaimManagementOperations: ResearchClaimClaimManagementOperations =
   {

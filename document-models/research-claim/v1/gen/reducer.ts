@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { ResearchClaimPHState } from "knowledge-note/document-models/research-claim/v1";
+import type { ResearchClaimPHState } from "@powerhousedao/knowledge-note/document-models/research-claim/v1";
 
 import { researchClaimClaimManagementOperations } from "../src/reducers/claim-management.js";
 

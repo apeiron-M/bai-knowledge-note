@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { KnowledgeGraphPHState } from "knowledge-note/document-models/knowledge-graph/v1";
+import type { KnowledgeGraphPHState } from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
 
 import { knowledgeGraphNodesOperations } from "../src/reducers/nodes.js";
 import { knowledgeGraphEdgesOperations } from "../src/reducers/edges.js";

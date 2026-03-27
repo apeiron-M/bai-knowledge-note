@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { ObservationPHState } from "knowledge-note/document-models/observation/v1";
+import type { ObservationPHState } from "@powerhousedao/knowledge-note/document-models/observation/v1";
 
 import { observationObservationManagementOperations } from "../src/reducers/observation-management.js";
 

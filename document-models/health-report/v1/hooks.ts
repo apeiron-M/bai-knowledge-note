@@ -8,7 +8,7 @@ import {
 import type {
   HealthReportAction,
   HealthReportDocument,
-} from "knowledge-note/document-models/health-report/v1";
+} from "@powerhousedao/knowledge-note/document-models/health-report/v1";
 import {
   assertIsHealthReportDocument,
   isHealthReportDocument,

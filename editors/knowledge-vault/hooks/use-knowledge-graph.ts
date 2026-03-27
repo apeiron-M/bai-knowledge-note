@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { generateId } from "document-model/core";
-import { useKnowledgeGraphDocumentsInSelectedDrive } from "knowledge-note/document-models/knowledge-graph";
-import type { KnowledgeGraphDocument } from "knowledge-note/document-models/knowledge-graph";
+import { useKnowledgeGraphDocumentsInSelectedDrive } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
+import type { KnowledgeGraphDocument } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 
 export type GraphState = {

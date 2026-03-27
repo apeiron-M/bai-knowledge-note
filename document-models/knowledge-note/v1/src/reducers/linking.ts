@@ -1,4 +1,4 @@
-import type { KnowledgeNoteLinkingOperations } from "knowledge-note/document-models/knowledge-note/v1";
+import type { KnowledgeNoteLinkingOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
 import {
   DuplicateLinkIdError,
   LinkNotFoundError,

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { HealthReportPHState } from "knowledge-note/document-models/health-report/v1";
+import type { HealthReportPHState } from "@powerhousedao/knowledge-note/document-models/health-report/v1";
 
 import { healthReportReportManagementOperations } from "../src/reducers/report-management.js";
 

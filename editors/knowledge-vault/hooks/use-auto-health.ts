@@ -4,7 +4,7 @@ import {
   useDocumentsInSelectedDrive,
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
-import { useHealthReportDocumentsInSelectedDrive } from "knowledge-note/document-models/health-report";
+import { useHealthReportDocumentsInSelectedDrive } from "@powerhousedao/knowledge-note/document-models/health-report";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 import type { GraphState } from "./use-knowledge-graph.js";
 

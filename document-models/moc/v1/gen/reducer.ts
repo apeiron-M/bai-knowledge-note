@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { MocPHState } from "knowledge-note/document-models/moc/v1";
+import type { MocPHState } from "@powerhousedao/knowledge-note/document-models/moc/v1";
 
 import { mocMocManagementOperations } from "../src/reducers/moc-management.js";
 

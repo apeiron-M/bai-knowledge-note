@@ -8,7 +8,7 @@ import {
 import type {
   SourceAction,
   SourceDocument,
-} from "knowledge-note/document-models/source/v1";
+} from "@powerhousedao/knowledge-note/document-models/source/v1";
 import {
   assertIsSourceDocument,
   isSourceDocument,

@@ -3,7 +3,7 @@ import {
   reducer,
   utils,
   actions,
-} from "knowledge-note/document-models/pipeline-queue/v1";
+} from "@powerhousedao/knowledge-note/document-models/pipeline-queue/v1";
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 

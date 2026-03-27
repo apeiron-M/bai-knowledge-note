@@ -17,7 +17,7 @@ import {
   assertIsMocDocument,
   isMocState,
   assertIsMocState,
-} from "knowledge-note/document-models/moc/v1";
+} from "@powerhousedao/knowledge-note/document-models/moc/v1";
 import { ZodError } from "zod";
 
 describe("Moc Document Model", () => {

@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { KnowledgeNotePHState } from "knowledge-note/document-models/knowledge-note/v1";
+import type { KnowledgeNotePHState } from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
 
 import { knowledgeNoteContentOperations } from "../src/reducers/content.js";
 import { knowledgeNoteProvenanceOperations } from "../src/reducers/provenance.js";

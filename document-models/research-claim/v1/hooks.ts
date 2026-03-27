@@ -8,7 +8,7 @@ import {
 import type {
   ResearchClaimAction,
   ResearchClaimDocument,
-} from "knowledge-note/document-models/research-claim/v1";
+} from "@powerhousedao/knowledge-note/document-models/research-claim/v1";
 import {
   assertIsResearchClaimDocument,
   isResearchClaimDocument,

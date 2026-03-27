@@ -17,7 +17,7 @@ import {
   assertIsSourceDocument,
   isSourceState,
   assertIsSourceState,
-} from "knowledge-note/document-models/source/v1";
+} from "@powerhousedao/knowledge-note/document-models/source/v1";
 import { ZodError } from "zod";
 
 describe("Source Document Model", () => {

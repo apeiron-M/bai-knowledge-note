@@ -1,4 +1,4 @@
-import type { MocMocManagementOperations } from "knowledge-note/document-models/moc/v1";
+import type { MocMocManagementOperations } from "@powerhousedao/knowledge-note/document-models/moc/v1";
 import {
   DuplicateCoreIdeaError,
   CoreIdeaNotFoundError,

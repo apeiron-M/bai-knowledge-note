@@ -18,7 +18,7 @@ import {
   FailTaskInputSchema,
   BlockTaskInputSchema,
   UnblockTaskInputSchema,
-} from "knowledge-note/document-models/pipeline-queue/v1";
+} from "@powerhousedao/knowledge-note/document-models/pipeline-queue/v1";
 
 describe("QueueManagementOperations", () => {
   it("should handle addTask operation", () => {

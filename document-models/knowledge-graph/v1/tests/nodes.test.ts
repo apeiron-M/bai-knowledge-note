@@ -10,7 +10,7 @@ import {
   AddNodeInputSchema,
   RemoveNodeInputSchema,
   UpdateNodeInputSchema,
-} from "knowledge-note/document-models/knowledge-graph/v1";
+} from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
 
 describe("NodesOperations", () => {
   it("should handle addNode operation", () => {

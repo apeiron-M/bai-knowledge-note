@@ -3,7 +3,7 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   useSelectedVaultConfigDocument,
   actions,
-} from "knowledge-note/document-models/vault-config";
+} from "@powerhousedao/knowledge-note/document-models/vault-config";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 
 function ts() {

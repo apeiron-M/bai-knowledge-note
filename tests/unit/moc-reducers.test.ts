@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { reducer, utils, actions } from "knowledge-note/document-models/moc/v1";
+import { reducer, utils, actions } from "@powerhousedao/knowledge-note/document-models/moc/v1";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 

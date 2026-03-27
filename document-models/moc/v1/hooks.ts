@@ -8,7 +8,7 @@ import {
 import type {
   MocAction,
   MocDocument,
-} from "knowledge-note/document-models/moc/v1";
+} from "@powerhousedao/knowledge-note/document-models/moc/v1";
 import { assertIsMocDocument, isMocDocument } from "./gen/document-schema.js";
 
 /** Hook to get a Moc document by its id */

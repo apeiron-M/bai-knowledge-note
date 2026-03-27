@@ -3,7 +3,7 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   useSelectedResearchClaimDocument,
   actions,
-} from "knowledge-note/document-models/research-claim";
+} from "@powerhousedao/knowledge-note/document-models/research-claim";
 import { generateId } from "document-model/core";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";

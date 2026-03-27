@@ -8,7 +8,7 @@ import {
 import type {
   PipelineQueueAction,
   PipelineQueueDocument,
-} from "knowledge-note/document-models/pipeline-queue/v1";
+} from "@powerhousedao/knowledge-note/document-models/pipeline-queue/v1";
 import {
   assertIsPipelineQueueDocument,
   isPipelineQueueDocument,

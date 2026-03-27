@@ -1,4 +1,4 @@
-import type { PipelineQueueQueueManagementOperations } from "knowledge-note/document-models/pipeline-queue/v1";
+import type { PipelineQueueQueueManagementOperations } from "@powerhousedao/knowledge-note/document-models/pipeline-queue/v1";
 import {
   TaskNotFoundError,
   InvalidTaskStatusError,

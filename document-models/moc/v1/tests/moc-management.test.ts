@@ -30,7 +30,7 @@ import {
   RemoveOpenQuestionInputSchema,
   AddChildMocInputSchema,
   RemoveChildMocInputSchema,
-} from "knowledge-note/document-models/moc/v1";
+} from "@powerhousedao/knowledge-note/document-models/moc/v1";
 
 describe("MocManagementOperations", () => {
   it("should handle createMoc operation", () => {

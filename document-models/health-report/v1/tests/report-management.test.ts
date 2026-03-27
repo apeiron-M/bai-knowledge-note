@@ -8,7 +8,7 @@ import {
   addCheck,
   GenerateReportInputSchema,
   AddCheckInputSchema,
-} from "knowledge-note/document-models/health-report/v1";
+} from "@powerhousedao/knowledge-note/document-models/health-report/v1";
 
 describe("ReportManagementOperations", () => {
   it("should handle generateReport operation", () => {

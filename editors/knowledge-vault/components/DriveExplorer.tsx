@@ -18,8 +18,8 @@ import {
   buildSyncPayload,
 } from "../hooks/use-knowledge-graph.js";
 import { useAutoHealth } from "../hooks/use-auto-health.js";
-import { useKnowledgeGraphDocumentById } from "knowledge-note/document-models/knowledge-graph";
-import { actions as graphActions } from "knowledge-note/document-models/knowledge-graph";
+import { useKnowledgeGraphDocumentById } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
+import { actions as graphActions } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
 import { ThemeToggle } from "../../shared/theme-context.js";
 
 type ViewMode =
@@ -52,6 +52,21 @@ export function DriveExplorer({ children }: EditorProps) {
             noteRef: ci.noteRef,
             contextPhrase: ci.contextPhrase,
           })),
+        };
+      });
+  }, [allDocuments]);
+
+  // Read tension documents for the graph view
+  const tensions = useMemo(() => {
+    return (allDocuments ?? [])
+      .filter((d) => d.header.documentType === "bai/tension")
+      .map((d) => {
+        const state = (d.state as unknown as { global: Record<string, unknown> }).global;
+        return {
+          id: d.header.id,
+          title: (state.title as string) ?? d.header.name,
+          status: (state.status as string) ?? null,
+          involvedRefs: (state.involvedRefs as string[]) ?? [],
         };
       });
   }, [allDocuments]);
@@ -324,7 +339,7 @@ export function DriveExplorer({ children }: EditorProps) {
           {showDocumentEditor ? (
             <div className="h-full">{children}</div>
           ) : viewMode === "graph" ? (
-            <GraphView notes={notes} graphState={graphState} mocs={mocs} />
+            <GraphView notes={notes} graphState={graphState} mocs={mocs} tensions={tensions} />
           ) : viewMode === "sources" ? (
             <SourceList />
           ) : viewMode === "health" ? (

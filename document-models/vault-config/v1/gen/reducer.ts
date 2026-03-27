@@ -3,7 +3,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { StateReducer } from "document-model";
 import { isDocumentAction, createReducer } from "document-model/core";
-import type { VaultConfigPHState } from "knowledge-note/document-models/vault-config/v1";
+import type { VaultConfigPHState } from "@powerhousedao/knowledge-note/document-models/vault-config/v1";
 
 import { vaultConfigConfigManagementOperations } from "../src/reducers/config-management.js";
 

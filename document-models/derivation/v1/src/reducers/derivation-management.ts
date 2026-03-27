@@ -1,4 +1,4 @@
-import type { DerivationDerivationManagementOperations } from "knowledge-note/document-models/derivation/v1";
+import type { DerivationDerivationManagementOperations } from "@powerhousedao/knowledge-note/document-models/derivation/v1";
 
 export const derivationDerivationManagementOperations: DerivationDerivationManagementOperations =
   {

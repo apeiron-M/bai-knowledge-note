@@ -1,4 +1,4 @@
-import type { KnowledgeGraphEdgesOperations } from "knowledge-note/document-models/knowledge-graph/v1";
+import type { KnowledgeGraphEdgesOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
 import {
   DuplicateEdgeError,
   EdgeNotFoundError,

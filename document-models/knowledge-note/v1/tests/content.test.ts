@@ -18,7 +18,7 @@ import {
   PatchContentInputSchema,
   SetMetadataFieldInputSchema,
   SetMetadataListFieldInputSchema,
-} from "knowledge-note/document-models/knowledge-note/v1";
+} from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
 
 describe("ContentOperations", () => {
   it("should handle setTitle operation", () => {
