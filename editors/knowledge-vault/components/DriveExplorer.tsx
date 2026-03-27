@@ -3,6 +3,7 @@ import type { EditorProps } from "document-model";
 import {
   setSelectedNode,
   useFileNodesInSelectedDrive,
+  useDocumentsInSelectedDrive,
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
@@ -34,7 +35,26 @@ export function DriveExplorer({ children }: EditorProps) {
   const { notes } = useKnowledgeNotes();
   const { graphDoc, graphState, hasGraphDoc } = useKnowledgeGraph(notes);
   const fileNodes = useFileNodesInSelectedDrive();
+  const allDocuments = useDocumentsInSelectedDrive();
   const showDocumentEditor = !!children;
+
+  // Read MOC documents for the graph view
+  const mocs = useMemo(() => {
+    return (allDocuments ?? [])
+      .filter((d) => d.header.documentType === "bai/moc")
+      .map((d) => {
+        const state = (d.state as unknown as { global: Record<string, unknown> }).global;
+        return {
+          id: d.header.id,
+          title: (state.title as string) ?? d.header.name,
+          tier: (state.tier as string) ?? null,
+          coreIdeas: ((state.coreIdeas as Array<{ noteRef: string; contextPhrase: string }>) ?? []).map((ci) => ({
+            noteRef: ci.noteRef,
+            contextPhrase: ci.contextPhrase,
+          })),
+        };
+      });
+  }, [allDocuments]);
 
   // Auto-generate health metrics
   useAutoHealth(notes, graphState);
@@ -82,6 +102,9 @@ export function DriveExplorer({ children }: EditorProps) {
   const pipelineDocId = allFiles.find(
     (n) => n.documentType === "bai/pipeline-queue",
   )?.id;
+  const healthReportDocId = allFiles.find(
+    (n) => n.documentType === "bai/health-report",
+  )?.id;
   const vaultConfigDocId = allFiles.find(
     (n) => n.documentType === "bai/vault-config",
   )?.id;
@@ -93,6 +116,10 @@ export function DriveExplorer({ children }: EditorProps) {
     // For singleton tabs, navigate directly to the document (opens its editor)
     if (mode === "pipeline" && pipelineDocId) {
       setSelectedNode(pipelineDocId);
+      return;
+    }
+    if (mode === "health" && healthReportDocId) {
+      setSelectedNode(healthReportDocId);
       return;
     }
     if (mode === "config" && vaultConfigDocId) {
@@ -297,7 +324,7 @@ export function DriveExplorer({ children }: EditorProps) {
           {showDocumentEditor ? (
             <div className="h-full">{children}</div>
           ) : viewMode === "graph" ? (
-            <GraphView notes={notes} graphState={graphState} />
+            <GraphView notes={notes} graphState={graphState} mocs={mocs} />
           ) : viewMode === "sources" ? (
             <SourceList />
           ) : viewMode === "health" ? (

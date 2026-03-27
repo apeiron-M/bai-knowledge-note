@@ -99,9 +99,12 @@ export default function Editor() {
             >
               Orientation
             </h3>
+            <p className="mb-1.5 text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
+              A synthesis paragraph explaining what this topic covers, key themes, and how the core ideas relate to each other.
+            </p>
             <textarea
               defaultValue={state.orientation ?? ""}
-              placeholder="2-3 sentence synthesis..."
+              placeholder="Write a 2-3 paragraph synthesis of this topic area — what are the key themes, how do the core ideas connect, and what's the current state of understanding..."
               onBlur={(e) =>
                 dispatch(
                   actions.updateOrientation({
@@ -111,11 +114,12 @@ export default function Editor() {
                 )
               }
               className="w-full resize-y rounded-lg px-4 py-3 text-sm leading-relaxed outline-none placeholder:opacity-50 focus:border-[#cba6f7]/50"
-              rows={4}
+              rows={10}
               style={{
                 backgroundColor: "var(--bai-deep)",
                 color: "var(--bai-text-secondary)",
                 border: "1px solid var(--bai-border)",
+                minHeight: "160px",
               }}
             />
           </div>

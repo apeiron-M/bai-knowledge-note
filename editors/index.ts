@@ -1,3 +1,4 @@
+export { HealthReportEditor } from "./health-report-editor/module.js";
 export { KnowledgeGraphEditor } from "./knowledge-graph-editor/module.js";
 export { KnowledgeNoteEditor } from "./knowledge-note-editor/module.js";
 export { KnowledgeVault } from "./knowledge-vault/module.js";

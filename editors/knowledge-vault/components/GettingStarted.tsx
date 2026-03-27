@@ -8,7 +8,8 @@ export function GettingStartedButton() {
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="rounded-md px-2 py-1.5 text-xs text-gray-500 transition-colors hover:bg-white/5 hover:text-gray-300"
+        className="rounded-md px-2 py-1.5 text-xs transition-colors"
+        style={{ color: "var(--bai-text-muted)" }}
         title="Getting started guide"
       >
         <svg
@@ -43,19 +44,26 @@ function GettingStartedModal({ onClose }: { onClose: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
-      <div className="relative z-10 flex h-[80vh] w-[720px] max-w-[90vw] flex-col rounded-2xl bg-[#181825] shadow-2xl ring-1 ring-white/10">
+      <div
+        className="relative z-10 flex h-[80vh] w-[720px] max-w-[90vw] flex-col rounded-2xl shadow-2xl"
+        style={{ backgroundColor: "var(--bai-surface)", border: "1px solid var(--bai-border)" }}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-white/10 px-6 py-4">
+        <div
+          className="flex items-center justify-between px-6 py-4"
+          style={{ borderBottom: "1px solid var(--bai-border)" }}
+        >
           <div>
-            <h2 className="text-lg font-bold text-gray-100">Getting Started</h2>
-            <p className="text-xs text-gray-500">
+            <h2 className="text-lg font-bold" style={{ color: "var(--bai-text)" }}>Getting Started</h2>
+            <p className="text-xs" style={{ color: "var(--bai-text-muted)" }}>
               Learn how to use the Knowledge Vault
             </p>
           </div>
           <button
             type="button"
             onClick={onClose}
-            className="rounded-lg p-2 text-gray-500 transition-colors hover:bg-white/5 hover:text-gray-300"
+            className="rounded-lg p-2 transition-colors"
+            style={{ color: "var(--bai-text-muted)" }}
           >
             <svg
               className="h-5 w-5"
@@ -71,17 +79,18 @@ function GettingStartedModal({ onClose }: { onClose: () => void }) {
 
         <div className="flex flex-1 overflow-hidden">
           {/* Left nav */}
-          <div className="w-44 shrink-0 border-r border-white/10 py-3">
+          <div className="w-44 shrink-0 py-3" style={{ borderRight: "1px solid var(--bai-border)" }}>
             {sections.map((s) => (
               <button
                 key={s.id}
                 type="button"
                 onClick={() => setActiveSection(s.id)}
-                className={`flex w-full px-4 py-2 text-left text-xs transition-colors ${
-                  activeSection === s.id
-                    ? "bg-[#cba6f7]/10 text-[#cba6f7] font-medium"
-                    : "text-gray-400 hover:bg-white/5 hover:text-gray-300"
-                }`}
+                className="flex w-full px-4 py-2 text-left text-xs transition-colors"
+                style={{
+                  backgroundColor: activeSection === s.id ? "var(--bai-accent-soft)" : "transparent",
+                  color: activeSection === s.id ? "var(--bai-accent)" : "var(--bai-text-tertiary)",
+                  fontWeight: activeSection === s.id ? 500 : 400,
+                }}
               >
                 {s.label}
               </button>
@@ -104,10 +113,10 @@ function GettingStartedModal({ onClose }: { onClose: () => void }) {
 }
 
 const H = ({ children }: { children: React.ReactNode }) => (
-  <h3 className="mb-3 text-sm font-semibold text-gray-100">{children}</h3>
+  <h3 className="mb-3 text-sm font-semibold" style={{ color: "var(--bai-text)" }}>{children}</h3>
 );
 const P = ({ children }: { children: React.ReactNode }) => (
-  <p className="mb-4 text-xs leading-relaxed text-gray-400">{children}</p>
+  <p className="mb-4 text-xs leading-relaxed" style={{ color: "var(--bai-text-tertiary)" }}>{children}</p>
 );
 const Step = ({
   n,
@@ -119,18 +128,24 @@ const Step = ({
   children: React.ReactNode;
 }) => (
   <div className="mb-4 flex gap-3">
-    <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-[#cba6f7]/10 text-[10px] font-bold text-[#cba6f7]">
+    <span
+      className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
+      style={{ backgroundColor: "var(--bai-accent-soft)", color: "var(--bai-accent)" }}
+    >
       {n}
     </span>
     <div>
-      <p className="text-xs font-medium text-gray-200">{title}</p>
-      <p className="mt-0.5 text-xs text-gray-500">{children}</p>
+      <p className="text-xs font-medium" style={{ color: "var(--bai-text)" }}>{title}</p>
+      <p className="mt-0.5 text-xs" style={{ color: "var(--bai-text-muted)" }}>{children}</p>
     </div>
   </div>
 );
 const Tip = ({ children }: { children: React.ReactNode }) => (
-  <div className="mb-4 rounded-lg border border-[#cba6f7]/20 bg-[#cba6f7]/5 px-4 py-3">
-    <p className="text-xs text-[#cba6f7]/80">{children}</p>
+  <div
+    className="mb-4 rounded-lg px-4 py-3"
+    style={{ border: "1px solid var(--bai-accent-soft)", backgroundColor: "var(--bai-accent-soft)" }}
+  >
+    <p className="text-xs" style={{ color: "var(--bai-accent)", opacity: 0.8 }}>{children}</p>
   </div>
 );
 
@@ -174,12 +189,13 @@ function OverviewSection() {
         ].map((item) => (
           <div
             key={item.tab}
-            className="flex gap-2 rounded-lg bg-[#1e1e2e] px-3 py-2"
+            className="flex gap-2 rounded-lg px-3 py-2"
+            style={{ backgroundColor: "var(--bai-bg)" }}
           >
-            <span className="shrink-0 text-xs font-semibold text-[#cba6f7] w-16">
+            <span className="shrink-0 text-xs font-semibold w-16" style={{ color: "var(--bai-accent)" }}>
               {item.tab}
             </span>
-            <span className="text-xs text-gray-400">{item.desc}</span>
+            <span className="text-xs" style={{ color: "var(--bai-text-tertiary)" }}>{item.desc}</span>
           </div>
         ))}
       </div>
@@ -241,7 +257,8 @@ function SourcesSection() {
         ].map((t) => (
           <span
             key={t}
-            className="rounded bg-[#1e1e2e] px-2 py-1 text-[10px] text-gray-400"
+            className="rounded px-2 py-1 text-[10px]"
+            style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text-tertiary)" }}
           >
             {t}
           </span>
@@ -309,12 +326,13 @@ function NotesSection() {
         ].map((item) => (
           <div
             key={item.field}
-            className="flex gap-2 rounded bg-[#1e1e2e] px-3 py-1.5"
+            className="flex gap-2 rounded px-3 py-1.5"
+            style={{ backgroundColor: "var(--bai-bg)" }}
           >
-            <span className="shrink-0 text-[10px] font-semibold text-gray-300 w-20">
+            <span className="shrink-0 text-[10px] font-semibold w-20" style={{ color: "var(--bai-text-secondary)" }}>
               {item.field}
             </span>
-            <span className="text-[10px] text-gray-500">{item.desc}</span>
+            <span className="text-[10px]" style={{ color: "var(--bai-text-muted)" }}>{item.desc}</span>
           </div>
         ))}
       </div>
@@ -374,13 +392,14 @@ function PipelineSection() {
         ].map((item) => (
           <div
             key={item.phase}
-            className="flex items-center gap-3 rounded-lg bg-[#1e1e2e] px-3 py-2"
+            className="flex items-center gap-3 rounded-lg px-3 py-2"
+            style={{ backgroundColor: "var(--bai-bg)" }}
           >
             <span className={`h-2.5 w-8 rounded-full ${item.color}`} />
-            <span className="text-xs font-medium text-gray-200 w-16">
+            <span className="text-xs font-medium w-16" style={{ color: "var(--bai-text)" }}>
               {item.phase}
             </span>
-            <span className="text-[10px] text-gray-500">{item.desc}</span>
+            <span className="text-[10px]" style={{ color: "var(--bai-text-muted)" }}>{item.desc}</span>
           </div>
         ))}
       </div>
@@ -436,12 +455,13 @@ function GraphSection() {
         ].map((item) => (
           <div
             key={item.type}
-            className="flex gap-2 rounded bg-[#1e1e2e] px-3 py-1.5"
+            className="flex gap-2 rounded px-3 py-1.5"
+            style={{ backgroundColor: "var(--bai-bg)" }}
           >
-            <span className="shrink-0 text-[10px] font-mono font-medium text-[#cba6f7] w-28">
+            <span className="shrink-0 text-[10px] font-mono font-medium w-28" style={{ color: "var(--bai-accent)" }}>
               {item.type}
             </span>
-            <span className="text-[10px] text-gray-500">{item.desc}</span>
+            <span className="text-[10px]" style={{ color: "var(--bai-text-muted)" }}>{item.desc}</span>
           </div>
         ))}
       </div>
@@ -469,12 +489,13 @@ function GraphSection() {
         ].map((item) => (
           <div
             key={item.metric}
-            className="flex gap-2 rounded bg-[#1e1e2e] px-3 py-1.5"
+            className="flex gap-2 rounded px-3 py-1.5"
+            style={{ backgroundColor: "var(--bai-bg)" }}
           >
-            <span className="shrink-0 text-[10px] font-medium text-gray-300 w-20">
+            <span className="shrink-0 text-[10px] font-medium w-20" style={{ color: "var(--bai-text-secondary)" }}>
               {item.metric}
             </span>
-            <span className="text-[10px] text-gray-500">{item.desc}</span>
+            <span className="text-[10px]" style={{ color: "var(--bai-text-muted)" }}>{item.desc}</span>
           </div>
         ))}
       </div>
@@ -516,20 +537,23 @@ function PluginSection() {
         running locally. Edit .mcp.json in the plugin directory to point to the
         remote reactor:
       </P>
-      <div className="mb-4 rounded-lg bg-[#1e1e2e] px-4 py-3 font-mono text-[11px] text-gray-300">
-        <span className="text-gray-500">{`{`}</span>
+      <div
+        className="mb-4 rounded-lg px-4 py-3 font-mono text-[11px]"
+        style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text-secondary)" }}
+      >
+        <span style={{ color: "var(--bai-text-muted)" }}>{`{`}</span>
         <br />
-        <span className="text-gray-500">{`  "mcpServers": { "reactor-mcp": {`}</span>
+        <span style={{ color: "var(--bai-text-muted)" }}>{`  "mcpServers": { "reactor-mcp": {`}</span>
         <br />
-        <span className="text-gray-500">{`    "url": "`}</span>
+        <span style={{ color: "var(--bai-text-muted)" }}>{`    "url": "`}</span>
         <span className="text-emerald-400">
           https://your-switchboard.example.com/mcp
         </span>
-        <span className="text-gray-500">{`"`}</span>
+        <span style={{ color: "var(--bai-text-muted)" }}>{`"`}</span>
         <br />
-        <span className="text-gray-500">{`  }}`}</span>
+        <span style={{ color: "var(--bai-text-muted)" }}>{`  }}`}</span>
         <br />
-        <span className="text-gray-500">{`}`}</span>
+        <span style={{ color: "var(--bai-text-muted)" }}>{`}`}</span>
       </div>
       <Tip>
         No local reactor needed when connecting remotely. The plugin talks to
@@ -557,12 +581,13 @@ function PluginSection() {
         ].map((item) => (
           <div
             key={item.cmd}
-            className="flex gap-2 rounded bg-[#1e1e2e] px-3 py-1.5"
+            className="flex gap-2 rounded px-3 py-1.5"
+            style={{ backgroundColor: "var(--bai-bg)" }}
           >
             <span className="shrink-0 text-[10px] font-mono font-medium text-emerald-400 w-20">
               {item.cmd}
             </span>
-            <span className="text-[10px] text-gray-500">{item.desc}</span>
+            <span className="text-[10px]" style={{ color: "var(--bai-text-muted)" }}>{item.desc}</span>
           </div>
         ))}
       </div>

@@ -31,9 +31,17 @@ type PersistedGraphState = {
   lastSyncedAt?: string | null;
 } | null;
 
+type MocInfo = {
+  id: string;
+  title: string;
+  tier: string | null;
+  coreIdeas: { noteRef: string; contextPhrase: string }[];
+};
+
 type GraphViewProps = {
   notes: KnowledgeNoteInfo[];
   graphState?: PersistedGraphState;
+  mocs?: MocInfo[];
 };
 
 type NodeDetail = {
@@ -66,6 +74,8 @@ const LINK_TYPE_COLORS: Record<string, string> = {
   DERIVED_FROM: "#f59e0b",
 };
 
+const MOC_NODE_COLOR = "#cba6f7";
+const MOC_EDGE_COLOR = "#cba6f7";
 const DEFAULT_NODE_COLOR = "#6b7280";
 const DEFAULT_EDGE_COLOR = "#64748b";
 
@@ -76,6 +86,7 @@ const DEFAULT_EDGE_COLOR = "#64748b";
 function buildElements(
   notes: KnowledgeNoteInfo[],
   graphState: PersistedGraphState,
+  mocs?: MocInfo[],
 ) {
   const elements: cytoscape.ElementDefinition[] = [];
   const noteMap = new Map(notes.map((n) => [n.id, n]));
@@ -178,6 +189,40 @@ function buildElements(
     });
   }
 
+  // Add MOC nodes and their edges to core ideas
+  const existingNodeIds = new Set(elements.filter((e) => !e.data.source).map((e) => e.data.id));
+  if (mocs?.length) {
+    for (const moc of mocs) {
+      elements.push({
+        data: {
+          id: moc.id,
+          label: moc.title,
+          status: "MOC",
+          noteType: `MOC (${moc.tier ?? "TOPIC"})`,
+          description: null,
+          topics: [],
+          linkCount: moc.coreIdeas.length,
+          color: MOC_NODE_COLOR,
+          isMoc: true,
+        },
+      });
+
+      for (const idea of moc.coreIdeas) {
+        if (existingNodeIds.has(idea.noteRef)) {
+          elements.push({
+            data: {
+              id: `moc-${moc.id}-${idea.noteRef}`,
+              source: moc.id,
+              target: idea.noteRef,
+              linkType: "CORE_IDEA",
+              color: MOC_EDGE_COLOR,
+            },
+          });
+        }
+      }
+    }
+  }
+
   return elements;
 }
 
@@ -219,6 +264,30 @@ const cyStylesheet: cytoscape.StylesheetStyle[] = [
       opacity: 0.4,
       "transition-property": "opacity, width, line-color",
       "transition-duration": 150,
+    } as cytoscape.Css.Edge,
+  },
+  // MOC nodes — diamond shape, larger
+  {
+    selector: "node[?isMoc]",
+    style: {
+      shape: "diamond",
+      width: 35,
+      height: 35,
+      "font-size": "11px",
+      "font-weight": "bold",
+      "border-width": 2,
+      "border-color": "#cba6f7",
+      "border-opacity": 0.5,
+    } as cytoscape.Css.Node,
+  },
+  // MOC edges — dashed
+  {
+    selector: "edge[linkType = 'CORE_IDEA']",
+    style: {
+      "line-style": "dashed",
+      "line-dash-pattern": [6, 3],
+      opacity: 0.6,
+      width: 1,
     } as cytoscape.Css.Edge,
   },
   // Highlighted node (hovered or selected)
@@ -295,7 +364,7 @@ function getLayoutOptions(): cytoscape.LayoutOptions {
 /*  Component                                                         */
 /* ------------------------------------------------------------------ */
 
-export function GraphView({ notes, graphState }: GraphViewProps) {
+export function GraphView({ notes, graphState, mocs }: GraphViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
   const [selectedDetail, setSelectedDetail] = useState<NodeDetail | null>(null);
@@ -308,7 +377,7 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
 
   // Build elements from data
   const elements = useMemo(
-    () => buildElements(notes, graphState ?? null),
+    () => buildElements(notes, graphState ?? null, mocs),
     [notes, graphState],
   );
 
@@ -648,12 +717,14 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
 
       {/* Legend */}
       <div
-        className="absolute bottom-4 left-4 flex flex-col gap-2 rounded-lg px-3 py-2 text-[10px] backdrop-blur-sm"
+        className="absolute bottom-4 left-4 flex flex-col gap-2 rounded-lg px-3 py-2.5 text-[10px] backdrop-blur-sm"
         style={{
           backgroundColor: "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
+          border: "1px solid var(--bai-border)",
         }}
       >
-        <div className="flex gap-3">
+        {/* Node types */}
+        <div className="flex items-center gap-3">
           {Object.entries(STATUS_NODE_COLORS).map(([status, color]) => (
             <div key={status} className="flex items-center gap-1.5">
               <span
@@ -665,12 +736,23 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
               </span>
             </div>
           ))}
+          <div className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-3 w-3"
+              style={{
+                backgroundColor: MOC_NODE_COLOR,
+                clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
+              }}
+            />
+            <span style={{ color: "var(--bai-text-tertiary)" }}>MOC</span>
+          </div>
         </div>
-        <div className="flex gap-3">
+        {/* Edge types */}
+        <div className="flex items-center gap-3">
           {Object.entries(LINK_TYPE_COLORS).map(([type, color]) => (
             <div key={type} className="flex items-center gap-1.5">
               <span
-                className="inline-block h-3 w-3 border-t-2"
+                className="inline-block h-0 w-3 border-t-2"
                 style={{ borderColor: color }}
               />
               <span style={{ color: "var(--bai-text-muted)" }}>
@@ -678,6 +760,13 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
               </span>
             </div>
           ))}
+          <div className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-0 w-3 border-t-2 border-dashed"
+              style={{ borderColor: MOC_EDGE_COLOR }}
+            />
+            <span style={{ color: "var(--bai-text-muted)" }}>core idea</span>
+          </div>
         </div>
       </div>
 
