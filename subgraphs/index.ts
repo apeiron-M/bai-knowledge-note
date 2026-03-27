@@ -1,1 +1,1 @@
-export * as knowledgeGraph from "./knowledge-graph/index.js";
+export * as KnowledgeGraphSubgraph from "./knowledge-graph/index.js";

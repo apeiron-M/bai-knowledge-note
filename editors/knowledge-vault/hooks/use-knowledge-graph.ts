@@ -1,16 +1,23 @@
 import { useMemo } from "react";
 import { generateId } from "document-model/core";
-import {
-  useKnowledgeGraphDocumentsInSelectedDrive,
-} from "knowledge-note/document-models/knowledge-graph";
-import type {
-  KnowledgeGraphDocument,
-} from "knowledge-note/document-models/knowledge-graph";
+import { useKnowledgeGraphDocumentsInSelectedDrive } from "knowledge-note/document-models/knowledge-graph";
+import type { KnowledgeGraphDocument } from "knowledge-note/document-models/knowledge-graph";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 
 export type GraphState = {
-  nodes: { id: string; documentId: string; title?: string | null; noteType?: string | null; status?: string | null }[];
-  edges: { id: string; sourceDocumentId: string; targetDocumentId: string; linkType?: string | null }[];
+  nodes: {
+    id: string;
+    documentId: string;
+    title?: string | null;
+    noteType?: string | null;
+    status?: string | null;
+  }[];
+  edges: {
+    id: string;
+    sourceDocumentId: string;
+    targetDocumentId: string;
+    linkType?: string | null;
+  }[];
   lastSyncedAt?: string | null;
 };
 
@@ -20,7 +27,7 @@ export type GraphState = {
  */
 export function useKnowledgeGraph(notes: KnowledgeNoteInfo[]) {
   const graphDocs = useKnowledgeGraphDocumentsInSelectedDrive();
-  const graphDoc = graphDocs?.[0] as KnowledgeGraphDocument | undefined;
+  const graphDoc = graphDocs?.[0];
   const graphState: GraphState | null = graphDoc?.state.global ?? null;
 
   return {

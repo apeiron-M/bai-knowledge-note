@@ -62,8 +62,19 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
       knowledgeGraphBacklinks(driveId: ID!, documentId: String!): [KnowledgeGraphEdge!]!
       knowledgeGraphDensity(driveId: ID!): Float!
 
+      knowledgeGraphSearch(driveId: ID!, query: String!, limit: Int): [KnowledgeGraphNode!]!
+      knowledgeGraphTriangles(driveId: ID!, limit: Int): [Triangle!]!
+      knowledgeGraphBridges(driveId: ID!): [KnowledgeGraphNode!]!
+      knowledgeGraphForwardLinks(driveId: ID!, documentId: String!): [KnowledgeGraphEdge!]!
+
       """Debug: raw processor DB tables"""
       knowledgeGraphDebug(driveId: ID!): GraphDebugInfo!
+    }
+
+    type Triangle {
+      noteA: KnowledgeGraphNode!
+      noteB: KnowledgeGraphNode!
+      sharedTarget: KnowledgeGraphNode!
     }
 
     type GraphDebugInfo {
@@ -150,6 +161,39 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
       ) => {
         const query = this.getQuery(args.driveId);
         return query.density();
+      },
+
+      knowledgeGraphSearch: async (
+        _: unknown,
+        args: { driveId: string; query: string; limit?: number },
+      ) => {
+        const query = this.getQuery(args.driveId);
+        return query.searchNodes(args.query, args.limit ?? 50);
+      },
+
+      knowledgeGraphTriangles: async (
+        _: unknown,
+        args: { driveId: string; limit?: number },
+      ) => {
+        const query = this.getQuery(args.driveId);
+        const triangles = await query.triangles(args.limit ?? 20);
+        return triangles.map((t) => ({ noteA: t.a, noteB: t.b, sharedTarget: t.sharedTarget }));
+      },
+
+      knowledgeGraphBridges: async (
+        _: unknown,
+        args: { driveId: string },
+      ) => {
+        const query = this.getQuery(args.driveId);
+        return query.bridges();
+      },
+
+      knowledgeGraphForwardLinks: async (
+        _: unknown,
+        args: { driveId: string; documentId: string },
+      ) => {
+        const query = this.getQuery(args.driveId);
+        return query.forwardLinks(args.documentId);
       },
 
       knowledgeGraphDebug: async (

@@ -6,11 +6,36 @@ type StatusBarProps = {
   status: NoteStatus | null;
   provenanceAuthor: string | null;
   hasProvenance: boolean;
-  onSubmitForReview: (id: string, actor: string, timestamp: string, comment?: string) => void;
-  onApprove: (id: string, actor: string, timestamp: string, comment?: string) => void;
-  onReject: (id: string, actor: string, timestamp: string, comment: string) => void;
-  onArchive: (id: string, actor: string, timestamp: string, comment: string) => void;
-  onRestore: (id: string, actor: string, timestamp: string, comment?: string) => void;
+  onSubmitForReview: (
+    id: string,
+    actor: string,
+    timestamp: string,
+    comment?: string,
+  ) => void;
+  onApprove: (
+    id: string,
+    actor: string,
+    timestamp: string,
+    comment?: string,
+  ) => void;
+  onReject: (
+    id: string,
+    actor: string,
+    timestamp: string,
+    comment: string,
+  ) => void;
+  onArchive: (
+    id: string,
+    actor: string,
+    timestamp: string,
+    comment: string,
+  ) => void;
+  onRestore: (
+    id: string,
+    actor: string,
+    timestamp: string,
+    comment?: string,
+  ) => void;
 };
 
 const STATUS_STYLES: Record<string, string> = {
@@ -55,9 +80,13 @@ export function StatusBar({
   const style = STATUS_STYLES[currentStatus] ?? STATUS_STYLES.DRAFT;
   const label = STATUS_LABELS[currentStatus] ?? currentStatus;
 
-  function openForm(action: "submit" | "approve" | "reject" | "archive" | "restore") {
+  function openForm(
+    action: "submit" | "approve" | "reject" | "archive" | "restore",
+  ) {
     const defaultActor =
-      action === "approve" || action === "reject" ? "" : provenanceAuthor ?? "";
+      action === "approve" || action === "reject"
+        ? ""
+        : (provenanceAuthor ?? "");
     setForm({ action, actor: defaultActor, comment: "" });
   }
 
@@ -114,54 +143,77 @@ export function StatusBar({
   return (
     <div className="space-y-2">
       <div className="flex items-center gap-3">
-        <span className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${style}`}>
+        <span
+          className={`inline-flex items-center rounded-full border px-3 py-1 text-xs font-semibold ${style}`}
+        >
           {label}
         </span>
 
         {!hasProvenance && currentStatus === "DRAFT" && (
-          <span className="text-[10px] text-amber-400/70">Set provenance first \u2192</span>
+          <span className="text-[10px] text-amber-400/70">
+            Set provenance first \u2192
+          </span>
         )}
 
         {hasProvenance && currentStatus === "DRAFT" && !form && (
-          <button type="button" onClick={() => openForm("submit")}
-            className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700">
+          <button
+            type="button"
+            onClick={() => openForm("submit")}
+            className="rounded bg-blue-600 px-3 py-1 text-xs font-medium text-white hover:bg-blue-700"
+          >
             Submit for Review
           </button>
         )}
 
         {currentStatus === "IN_REVIEW" && !form && (
           <>
-            <button type="button" onClick={() => openForm("approve")}
-              className="rounded bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700">
+            <button
+              type="button"
+              onClick={() => openForm("approve")}
+              className="rounded bg-emerald-600 px-3 py-1 text-xs font-medium text-white hover:bg-emerald-700"
+            >
               Approve
             </button>
-            <button type="button" onClick={() => openForm("reject")}
-              className="rounded bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700">
+            <button
+              type="button"
+              onClick={() => openForm("reject")}
+              className="rounded bg-red-600 px-3 py-1 text-xs font-medium text-white hover:bg-red-700"
+            >
               Reject
             </button>
           </>
         )}
 
         {currentStatus === "CANONICAL" && !form && (
-          <button type="button" onClick={() => openForm("archive")}
-            className="rounded bg-gray-600 px-3 py-1 text-xs font-medium text-white hover:bg-gray-700">
+          <button
+            type="button"
+            onClick={() => openForm("archive")}
+            className="rounded bg-gray-600 px-3 py-1 text-xs font-medium text-white hover:bg-gray-700"
+          >
             Archive
           </button>
         )}
 
         {currentStatus === "ARCHIVED" && !form && (
-          <button type="button" onClick={() => openForm("restore")}
-            className="rounded bg-amber-600 px-3 py-1 text-xs font-medium text-white hover:bg-amber-700">
+          <button
+            type="button"
+            onClick={() => openForm("restore")}
+            className="rounded bg-amber-600 px-3 py-1 text-xs font-medium text-white hover:bg-amber-700"
+          >
             Restore to Draft
           </button>
         )}
 
-        <span className="ml-auto text-[10px] text-gray-600">{FLOW_HINT[currentStatus]}</span>
+        <span className="ml-auto text-[10px] text-gray-600">
+          {FLOW_HINT[currentStatus]}
+        </span>
       </div>
 
       {form && (
-        <form onSubmit={handleSubmit}
-          className="space-y-2 rounded-lg border border-white/10 bg-[#1e1e2e] p-3">
+        <form
+          onSubmit={handleSubmit}
+          className="space-y-2 rounded-lg border border-white/10 bg-[#1e1e2e] p-3"
+        >
           <div className="flex items-center gap-2">
             <span className="text-xs font-medium text-gray-400">
               {ACTION_LABELS[form.action]}
@@ -175,29 +227,50 @@ export function StatusBar({
 
           <div className="flex gap-2">
             <div className="flex-1 space-y-1.5">
-              <input type="text" value={form.actor}
+              <input
+                type="text"
+                value={form.actor}
                 onChange={(e) => setForm({ ...form, actor: e.target.value })}
-                placeholder={needsReviewer ? "Reviewer name..." : "Actor name..."}
+                placeholder={
+                  needsReviewer ? "Reviewer name..." : "Actor name..."
+                }
                 autoFocus
-                className="w-full rounded border border-white/10 bg-[#11111b] px-2.5 py-1.5 text-xs text-gray-300 outline-none focus:border-[#cba6f7]/50" />
+                className="w-full rounded border border-white/10 bg-[#11111b] px-2.5 py-1.5 text-xs text-gray-300 outline-none focus:border-[#cba6f7]/50"
+              />
 
               {(needsComment || form.comment) && (
-                <input type="text" value={form.comment}
-                  onChange={(e) => setForm({ ...form, comment: e.target.value })}
-                  placeholder={needsComment ? "Reason (required)..." : "Comment (optional)..."}
-                  className="w-full rounded border border-white/10 bg-[#11111b] px-2.5 py-1.5 text-xs text-gray-300 outline-none focus:border-[#cba6f7]/50" />
+                <input
+                  type="text"
+                  value={form.comment}
+                  onChange={(e) =>
+                    setForm({ ...form, comment: e.target.value })
+                  }
+                  placeholder={
+                    needsComment
+                      ? "Reason (required)..."
+                      : "Comment (optional)..."
+                  }
+                  className="w-full rounded border border-white/10 bg-[#11111b] px-2.5 py-1.5 text-xs text-gray-300 outline-none focus:border-[#cba6f7]/50"
+                />
               )}
             </div>
           </div>
 
           <div className="flex justify-end gap-2">
-            <button type="button" onClick={() => setForm(null)}
-              className="rounded px-2.5 py-1 text-xs text-gray-500 hover:bg-white/5">
+            <button
+              type="button"
+              onClick={() => setForm(null)}
+              className="rounded px-2.5 py-1 text-xs text-gray-500 hover:bg-white/5"
+            >
               Cancel
             </button>
-            <button type="submit"
-              disabled={!form.actor.trim() || (needsComment && !form.comment.trim())}
-              className={`rounded px-3 py-1 text-xs font-medium text-white disabled:opacity-40 ${ACTION_COLORS[form.action]}`}>
+            <button
+              type="submit"
+              disabled={
+                !form.actor.trim() || (needsComment && !form.comment.trim())
+              }
+              className={`rounded px-3 py-1 text-xs font-medium text-white disabled:opacity-40 ${ACTION_COLORS[form.action]}`}
+            >
               {ACTION_LABELS[form.action]}
             </button>
           </div>

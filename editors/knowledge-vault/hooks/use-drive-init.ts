@@ -31,26 +31,16 @@ type FolderDef = {
 const FOLDER_TREE: FolderDef[] = [
   {
     name: "knowledge",
-    children: [
-      { name: "notes" },
-      { name: "inbox" },
-      { name: "insights" },
-    ],
+    children: [{ name: "notes" }, { name: "inbox" }, { name: "insights" }],
   },
   { name: "sources" },
   {
     name: "ops",
-    children: [
-      { name: "sessions" },
-      { name: "health" },
-      { name: "queue" },
-    ],
+    children: [{ name: "sessions" }, { name: "health" }, { name: "queue" }],
   },
   {
     name: "self",
-    children: [
-      { name: "methodology" },
-    ],
+    children: [{ name: "methodology" }],
   },
   { name: "research" },
 ];
@@ -62,7 +52,16 @@ type SingletonDef = {
 };
 
 const SINGLETONS: SingletonDef[] = [
-  { name: "PipelineQueue", type: "bai/pipeline-queue", folderPath: "ops/queue" },
+  {
+    name: "PipelineQueue",
+    type: "bai/pipeline-queue",
+    folderPath: "ops/queue",
+  },
+  {
+    name: "HealthReport",
+    type: "bai/health-report",
+    folderPath: "ops/health",
+  },
   { name: "KnowledgeGraph", type: "bai/knowledge-graph", folderPath: "self" },
   { name: "VaultConfig", type: "bai/vault-config", folderPath: "self" },
 ];
@@ -80,7 +79,8 @@ export function useDriveInit() {
 
     // Check if the root "knowledge" folder exists (our init marker)
     const hasKnowledgeFolder = (nodes ?? []).some(
-      (n) => n.kind === "folder" && n.name === "knowledge" && n.parentFolder == null,
+      (n) =>
+        n.kind === "folder" && n.name === "knowledge" && n.parentFolder == null,
     );
 
     if (hasKnowledgeFolder) return; // already initialized
@@ -108,7 +108,10 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
     const existingTypes = new Set(
       existingNodes
         .filter((n) => n.kind === "file")
-        .map((n) => (n as Node & { kind: "file"; documentType: string }).documentType),
+        .map(
+          (n) =>
+            (n as Node & { kind: "file"; documentType: string }).documentType,
+        ),
     );
 
     for (const singleton of SINGLETONS) {
@@ -120,8 +123,15 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
       const parentFolderId = folderIds.get(singleton.folderPath);
       try {
         // addDocument uses the drive UUID internally
-        await addDocument(driveId, singleton.name, singleton.type, parentFolderId);
-        console.log(`[VaultInit] Created ${singleton.name} in /${singleton.folderPath}/`);
+        await addDocument(
+          driveId,
+          singleton.name,
+          singleton.type,
+          parentFolderId,
+        );
+        console.log(
+          `[VaultInit] Created ${singleton.name} in /${singleton.folderPath}/`,
+        );
         // Small delay between document creations to avoid revision conflicts
         await new Promise((resolve) => setTimeout(resolve, 500));
       } catch (err: unknown) {
@@ -159,7 +169,13 @@ async function createFolderTree(
     }
 
     if (def.children) {
-      await createFolderTree(driveId, def.children, folderIds.get(path), path, folderIds);
+      await createFolderTree(
+        driveId,
+        def.children,
+        folderIds.get(path),
+        path,
+        folderIds,
+      );
     }
   }
 }

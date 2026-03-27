@@ -1,5 +1,9 @@
 import { useState, useEffect, useRef } from "react";
-import { addDocument, setSelectedNode, useSelectedDriveId } from "@powerhousedao/reactor-browser";
+import {
+  addDocument,
+  setSelectedNode,
+  useSelectedDriveId,
+} from "@powerhousedao/reactor-browser";
 import { useFolderMap } from "../hooks/use-drive-init.js";
 
 type CreateDocumentDialogProps = {
@@ -58,8 +62,15 @@ export function CreateDocumentDialog({
     setLoading(true);
     try {
       const targetFolder = DOC_TYPE_FOLDER[documentType];
-      const parentFolderId = targetFolder ? folderMap.get(targetFolder) : undefined;
-      const result = await addDocument(driveId, name.trim(), documentType, parentFolderId);
+      const parentFolderId = targetFolder
+        ? folderMap.get(targetFolder)
+        : undefined;
+      const result = await addDocument(
+        driveId,
+        name.trim(),
+        documentType,
+        parentFolderId,
+      );
       onClose();
       if (result?.id) {
         setSelectedNode(result.id);
@@ -79,15 +90,19 @@ export function CreateDocumentDialog({
       <div className="absolute inset-0 bg-black/60" onClick={onClose} />
       <form
         onSubmit={handleSubmit}
-        className="relative z-10 w-[420px] rounded-2xl bg-[#181825] p-6 shadow-2xl ring-1 ring-white/10"
+        className="relative z-10 w-[420px] rounded-2xl p-6 shadow-2xl"
+        style={{
+          backgroundColor: "var(--bai-surface)",
+          border: "1px solid var(--bai-border)",
+        }}
       >
-        <h2 className="text-lg font-bold text-gray-100">
+        <h2 className="text-lg font-bold" style={{ color: "var(--bai-text)" }}>
           Create {documentTypeLabel}
         </h2>
-        <p className="mt-1 text-xs text-gray-500">
+        <p className="mt-1 text-xs" style={{ color: "var(--bai-text-muted)" }}>
           {documentType}
           {targetFolder && (
-            <span className="ml-2 text-gray-600">
+            <span className="ml-2" style={{ color: "var(--bai-text-faint)" }}>
               &rarr; /{targetFolder}/
             </span>
           )}
@@ -100,7 +115,12 @@ export function CreateDocumentDialog({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={`Name your ${documentTypeLabel.toLowerCase()}...`}
-            className="w-full rounded-xl border border-white/10 bg-[#1e1e2e] px-4 py-3 text-sm text-gray-200 outline-none placeholder:text-gray-600 focus:border-[#cba6f7]/50 focus:ring-1 focus:ring-[#cba6f7]/20"
+            className="w-full rounded-xl px-4 py-3 text-sm outline-none"
+            style={{
+              backgroundColor: "var(--bai-bg)",
+              border: "1px solid var(--bai-border)",
+              color: "var(--bai-text-secondary)",
+            }}
           />
         </div>
 
@@ -108,14 +128,19 @@ export function CreateDocumentDialog({
           <button
             type="button"
             onClick={onClose}
-            className="rounded-xl px-5 py-2.5 text-sm font-medium text-gray-400 transition-colors hover:bg-white/5"
+            className="rounded-xl px-5 py-2.5 text-sm font-medium transition-colors hover:bg-white/5"
+            style={{ color: "var(--bai-text-tertiary)" }}
           >
             Cancel
           </button>
           <button
             type="submit"
             disabled={!name.trim() || loading}
-            className="rounded-xl bg-[#cba6f7] px-5 py-2.5 text-sm font-semibold text-[#1e1e2e] transition-colors hover:bg-[#cba6f7]/80 disabled:opacity-40"
+            className="rounded-xl px-5 py-2.5 text-sm font-semibold transition-colors hover:opacity-80 disabled:opacity-40"
+            style={{
+              backgroundColor: "var(--bai-accent)",
+              color: "var(--bai-accent-text)",
+            }}
           >
             {loading ? "Creating..." : "Create"}
           </button>

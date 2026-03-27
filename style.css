@@ -7,14 +7,69 @@
 }
 
 /*
- * Dark theme overrides for the Revision History panel and DocumentToolbar
+ * BAI Theme — CSS custom properties
+ * Dark = Catppuccin Mocha, Light = clean neutral
+ * Toggled via data-bai-theme attribute on .bai-theme wrapper
+ */
+
+/* Default: dark theme */
+.bai-theme,
+[data-bai-theme="dark"] {
+  --bai-bg: #1e1e2e;
+  --bai-surface: #181825;
+  --bai-deep: #11111b;
+  --bai-hover: #313244;
+  --bai-border: rgba(255, 255, 255, 0.1);
+  --bai-ring: rgba(255, 255, 255, 0.1);
+  --bai-text: #e4e4e7;
+  --bai-text-secondary: #d4d4d8;
+  --bai-text-tertiary: #9ca3af;
+  --bai-text-muted: #6b7280;
+  --bai-text-faint: #4b5563;
+  --bai-accent: #cba6f7;
+  --bai-accent-text: #1e1e2e;
+  --bai-accent-soft: rgba(203, 166, 247, 0.1);
+  --bai-accent-hover: rgba(203, 166, 247, 0.8);
+  --bai-status-draft: #f59e0b;
+  --bai-status-review: #3b82f6;
+  --bai-status-canonical: #10b981;
+  --bai-status-archived: #6b7280;
+}
+
+[data-bai-theme="light"] {
+  --bai-bg: #f8f9fc;
+  --bai-surface: #ffffff;
+  --bai-deep: #f1f3f8;
+  --bai-hover: #e8eaf0;
+  --bai-border: #e2e4e9;
+  --bai-ring: #e2e4e9;
+  --bai-text: #1f2937;
+  --bai-text-secondary: #374151;
+  --bai-text-tertiary: #6b7280;
+  --bai-text-muted: #9ca3af;
+  --bai-text-faint: #d1d5db;
+  --bai-accent: #7c3aed;
+  --bai-accent-text: #ffffff;
+  --bai-accent-soft: rgba(124, 58, 237, 0.08);
+  --bai-accent-hover: rgba(124, 58, 237, 0.85);
+  --bai-status-draft: #d97706;
+  --bai-status-review: #2563eb;
+  --bai-status-canonical: #059669;
+  --bai-status-archived: #6b7280;
+}
+
+/*
+ * Theme overrides for the Revision History panel and DocumentToolbar
  * Applied to ALL bai/ document types via comma-separated selectors.
  *
  * The revision history is rendered by Connect inside #document-editor-context
  * with data-document-type="bai/xxx". We scope all overrides to our doc types.
+ *
+ * These dark overrides only apply when NOT inside a light theme wrapper.
+ * Light theme uses Connect's default (light) styles, so no overrides needed.
  */
 
-/* Selector shorthand — all bai/ document types */
+/* Selector shorthand — all bai/ document types (dark theme = default) */
 #document-editor-context[data-document-type="bai/knowledge-note"],
 #document-editor-context[data-document-type="bai/knowledge-graph"],
 #document-editor-context[data-document-type="bai/moc"],
@@ -26,101 +81,90 @@
 #document-editor-context[data-document-type="bai/derivation"],
 #document-editor-context[data-document-type="bai/health-report"],
 #document-editor-context[data-document-type="bai/research-claim"] {
-  background-color: #1e1e2e;
-  color: #cdd6f4;
+  background-color: var(--bai-bg, #1e1e2e);
+  color: var(--bai-text, #cdd6f4);
 }
 
-/* --- Revision History container --- */
-#document-editor-context[data-document-type^="bai/"] > div > .p-6 {
-  background-color: #1e1e2e;
+/*
+ * --- DARK THEME: Revision History overrides ---
+ * These ONLY apply inside [data-bai-theme="dark"] so light theme
+ * falls through to Connect's default (light) styles.
+ */
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] > div > .p-6 {
+  background-color: var(--bai-bg) !important;
 }
 
-/* Header back button + info pills (bg-slate-50 / bg-gray-50) */
-#document-editor-context[data-document-type^="bai/"] button[name="close-revision-history"],
-#document-editor-context[data-document-type^="bai/"] .bg-slate-50,
-#document-editor-context[data-document-type^="bai/"] [class*="bg-slate-50"],
-#document-editor-context[data-document-type^="bai/"] [class*="bg-gray-50"] {
-  background-color: #313244 !important;
-  color: #a6adc8 !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] button[name="close-revision-history"],
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .bg-slate-50,
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] [class*="bg-slate-50"],
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] [class*="bg-gray-50"] {
+  background-color: var(--bai-hover) !important;
+  color: var(--bai-text-secondary) !important;
 }
 
-/* Pill text (doc id, branch value) */
-#document-editor-context[data-document-type^="bai/"] .text-gray-900 {
-  color: #cdd6f4 !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .text-gray-900 {
+  color: var(--bai-text) !important;
 }
 
-/* Pill label text */
-#document-editor-context[data-document-type^="bai/"] .text-stone-300 {
-  color: #a6adc8 !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .text-stone-300 {
+  color: var(--bai-text-secondary) !important;
 }
 
-/* Timeline content area */
-#document-editor-context[data-document-type^="bai/"] .rounded-md.bg-slate-50 {
-  background-color: #181825 !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .rounded-md.bg-slate-50 {
+  background-color: var(--bai-surface) !important;
 }
 
-/* Revision cards */
-#document-editor-context[data-document-type^="bai/"] article {
-  background-color: #1e1e2e !important;
-  border-color: rgba(255, 255, 255, 0.1) !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] article {
+  background-color: var(--bai-bg) !important;
+  border-color: var(--bai-border) !important;
 }
 
-/* --- Text color overrides --- */
-#document-editor-context[data-document-type^="bai/"] .text-gray-600 {
-  color: #7f849c !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .text-gray-600 {
+  color: var(--bai-text-muted) !important;
 }
-#document-editor-context[data-document-type^="bai/"] .text-gray-500 {
-  color: #6c7086 !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .text-gray-500 {
+  color: var(--bai-text-muted) !important;
 }
-#document-editor-context[data-document-type^="bai/"] .text-gray-300 {
-  color: #a6adc8 !important;
-}
-
-/* Timeline left border */
-#document-editor-context[data-document-type^="bai/"] .border-slate-100 {
-  border-color: rgba(255, 255, 255, 0.1) !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .text-gray-300 {
+  color: var(--bai-text-secondary) !important;
 }
 
-/* Day separator headers */
-#document-editor-context[data-document-type^="bai/"] h2.bg-slate-50 {
-  background-color: #181825 !important;
-}
-#document-editor-context[data-document-type^="bai/"] .text-slate-100 {
-  color: #7f849c !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .border-slate-100 {
+  border-color: var(--bai-border) !important;
 }
 
-/* Icons */
-#document-editor-context[data-document-type^="bai/"] svg {
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] h2.bg-slate-50 {
+  background-color: var(--bai-surface) !important;
+}
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .text-slate-100 {
+  color: var(--bai-text-muted) !important;
+}
+
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] svg {
   color: inherit;
 }
 
-/* Scope select dropdown */
-#document-editor-context[data-document-type^="bai/"] [id="scope select"] {
-  background-color: #313244 !important;
-  color: #a6adc8 !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] [id="scope select"] {
+  background-color: var(--bai-hover) !important;
+  color: var(--bai-text-secondary) !important;
 }
 
-/* Border overrides */
-#document-editor-context[data-document-type^="bai/"] .border-gray-200 {
-  border-color: rgba(255, 255, 255, 0.1) !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .border-gray-200 {
+  border-color: var(--bai-border) !important;
 }
 
-/* Title */
-#document-editor-context[data-document-type^="bai/"] h1 {
-  color: #cdd6f4;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] h1 {
+  color: var(--bai-text);
 }
 
-/* Empty state text */
-#document-editor-context[data-document-type^="bai/"] h3 {
-  color: #6c7086 !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] h3 {
+  color: var(--bai-text-muted) !important;
 }
 
-/* Buttons/cards with bg-white */
-#document-editor-context[data-document-type^="bai/"] .bg-white {
-  background-color: #1e1e2e !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] .bg-white {
+  background-color: var(--bai-bg) !important;
 }
 
-/* Separator lines */
-#document-editor-context[data-document-type^="bai/"] hr {
-  border-color: rgba(255, 255, 255, 0.1) !important;
+[data-bai-theme="dark"] #document-editor-context[data-document-type^="bai/"] hr {
+  border-color: var(--bai-border) !important;
 }

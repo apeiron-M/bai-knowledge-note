@@ -1,13 +1,12 @@
-
 import type { EditorModule } from "document-model";
 import { lazy } from "react";
 
 /** Document editor module for the "["bai/knowledge-graph"]" document type */
 export const KnowledgeGraphEditor: EditorModule = {
-    Component: lazy(() => import("./editor.js")),
-    documentTypes: ["bai/knowledge-graph"],
-    config: {
-        id: "knowledge-graph-editor",
-        name: "KnowledgeGraphEditor",
-    },
+  Component: lazy(() => import("./editor.js")),
+  documentTypes: ["bai/knowledge-graph"],
+  config: {
+    id: "knowledge-graph-editor",
+    name: "KnowledgeGraphEditor",
+  },
 };

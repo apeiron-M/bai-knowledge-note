@@ -29,7 +29,10 @@ function renderMarkdown(md: string): string {
         codeBuffer = [];
         inCodeBlock = false;
       } else {
-        if (inList) { html.push("</ul>"); inList = false; }
+        if (inList) {
+          html.push("</ul>");
+          inList = false;
+        }
         inCodeBlock = true;
       }
       continue;
@@ -47,7 +50,10 @@ function renderMarkdown(md: string): string {
 
     // Empty line
     if (line.trim() === "") {
-      if (inList) { html.push("</ul>"); inList = false; }
+      if (inList) {
+        html.push("</ul>");
+        inList = false;
+      }
       continue;
     }
 
@@ -55,13 +61,17 @@ function renderMarkdown(md: string): string {
     const h = line.match(/^(#{1,6})\s+(.*)/);
     if (h) {
       const level = h[1].length;
-      html.push(`<h${level} class="md-h${level}">${inlineFormat(h[2])}</h${level}>`);
+      html.push(
+        `<h${level} class="md-h${level}">${inlineFormat(h[2])}</h${level}>`,
+      );
       continue;
     }
 
     // Blockquote
     if (line.startsWith("> ")) {
-      html.push(`<blockquote class="md-blockquote">${inlineFormat(line.slice(2))}</blockquote>`);
+      html.push(
+        `<blockquote class="md-blockquote">${inlineFormat(line.slice(2))}</blockquote>`,
+      );
       continue;
     }
 
@@ -74,7 +84,10 @@ function renderMarkdown(md: string): string {
     // Unordered list
     const li = line.match(/^[-*]\s+(.*)/);
     if (li) {
-      if (!inList) { html.push('<ul class="md-list">'); inList = true; }
+      if (!inList) {
+        html.push('<ul class="md-list">');
+        inList = true;
+      }
       html.push(`<li>${inlineFormat(li[1])}</li>`);
       continue;
     }
@@ -84,7 +97,9 @@ function renderMarkdown(md: string): string {
   }
 
   if (inCodeBlock) {
-    html.push(`<pre class="md-code-block"><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>`);
+    html.push(
+      `<pre class="md-code-block"><code>${escapeHtml(codeBuffer.join("\n"))}</code></pre>`,
+    );
   }
   if (inList) html.push("</ul>");
 

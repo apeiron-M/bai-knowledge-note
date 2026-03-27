@@ -1,1 +1,1 @@
-export { KnowledgeGraphSubgraph as knowledgeGraph } from "./subgraph.js";
+export { KnowledgeGraphSubgraph } from "./subgraph.js";

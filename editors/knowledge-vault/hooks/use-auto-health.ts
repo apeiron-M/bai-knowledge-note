@@ -4,9 +4,7 @@ import {
   useDocumentsInSelectedDrive,
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
-import {
-  useHealthReportDocumentsInSelectedDrive,
-} from "knowledge-note/document-models/health-report";
+import { useHealthReportDocumentsInSelectedDrive } from "knowledge-note/document-models/health-report";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 import type { GraphState } from "./use-knowledge-graph.js";
 
@@ -40,12 +38,16 @@ export function useAutoHealth(
     for (const note of notes) {
       for (const link of note.links) {
         if (link.targetDocumentId && noteIds.has(link.targetDocumentId)) {
-          incomingCounts.set(link.targetDocumentId, (incomingCounts.get(link.targetDocumentId) ?? 0) + 1);
+          incomingCounts.set(
+            link.targetDocumentId,
+            (incomingCounts.get(link.targetDocumentId) ?? 0) + 1,
+          );
         }
       }
     }
     const orphanCount = notes.filter((n) => !incomingCounts.has(n.id)).length;
-    const density = nodeCount > 1 ? edgeCount / (nodeCount * (nodeCount - 1)) : 0;
+    const density =
+      nodeCount > 1 ? edgeCount / (nodeCount * (nodeCount - 1)) : 0;
     const avgLinksPerNote = nodeCount > 0 ? edgeCount / nodeCount : 0;
 
     // Count by status
@@ -76,10 +78,12 @@ export function useAutoHealth(
     checks.push({
       id: generateId(),
       category: "ORPHAN_DETECTION",
-      status: orphans.length === 0 ? "PASS" : orphans.length <= 3 ? "WARN" : "FAIL",
-      message: orphans.length === 0
-        ? "All notes have incoming links"
-        : `${orphans.length} note(s) have no incoming links`,
+      status:
+        orphans.length === 0 ? "PASS" : orphans.length <= 3 ? "WARN" : "FAIL",
+      message:
+        orphans.length === 0
+          ? "All notes have incoming links"
+          : `${orphans.length} note(s) have no incoming links`,
       affectedItems: orphans.map((n) => n.title ?? n.name),
     });
 
@@ -87,9 +91,12 @@ export function useAutoHealth(
     checks.push({
       id: generateId(),
       category: "LINK_HEALTH",
-      status: avgLinksPerNote >= 2 ? "PASS" : avgLinksPerNote >= 1 ? "WARN" : "FAIL",
+      status:
+        avgLinksPerNote >= 2 ? "PASS" : avgLinksPerNote >= 1 ? "WARN" : "FAIL",
       message: `Average ${avgLinksPerNote.toFixed(1)} links per note${avgLinksPerNote < 2 ? " (target: 2+)" : ""}`,
-      affectedItems: notes.filter((n) => n.links.length < 2).map((n) => n.title ?? n.name),
+      affectedItems: notes
+        .filter((n) => n.links.length < 2)
+        .map((n) => n.title ?? n.name),
     });
 
     // Stale notes check (no description)
@@ -97,10 +104,12 @@ export function useAutoHealth(
     checks.push({
       id: generateId(),
       category: "DESCRIPTION_QUALITY",
-      status: noDesc.length === 0 ? "PASS" : noDesc.length <= 2 ? "WARN" : "FAIL",
-      message: noDesc.length === 0
-        ? "All notes have descriptions"
-        : `${noDesc.length} note(s) missing descriptions`,
+      status:
+        noDesc.length === 0 ? "PASS" : noDesc.length <= 2 ? "WARN" : "FAIL",
+      message:
+        noDesc.length === 0
+          ? "All notes have descriptions"
+          : `${noDesc.length} note(s) missing descriptions`,
       affectedItems: noDesc.map((n) => n.title ?? n.name),
     });
 
@@ -111,11 +120,16 @@ export function useAutoHealth(
         : "PASS";
 
     const recommendations: string[] = [];
-    if (orphans.length > 0) recommendations.push(`Run /connect on ${orphans.length} orphan note(s)`);
-    if (avgLinksPerNote < 2) recommendations.push("Increase link density — aim for 2+ links per note");
-    if (noDesc.length > 0) recommendations.push(`Add descriptions to ${noDesc.length} note(s)`);
+    if (orphans.length > 0)
+      recommendations.push(`Run /connect on ${orphans.length} orphan note(s)`);
+    if (avgLinksPerNote < 2)
+      recommendations.push("Increase link density — aim for 2+ links per note");
+    if (noDesc.length > 0)
+      recommendations.push(`Add descriptions to ${noDesc.length} note(s)`);
 
     // Log the report (the health-report doc gets updated via the editor or plugin)
-    console.log(`[AutoHealth] ${overallStatus}: ${nodeCount} notes, ${edgeCount} edges, ${orphanCount} orphans, density ${(density * 100).toFixed(1)}%`);
+    console.log(
+      `[AutoHealth] ${overallStatus}: ${nodeCount} notes, ${edgeCount} edges, ${orphanCount} orphans, density ${(density * 100).toFixed(1)}%`,
+    );
   }, [healthDoc, driveId, notes, graphState]);
 }

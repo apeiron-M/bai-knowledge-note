@@ -97,7 +97,7 @@ export function FolderTree() {
         allowPinning={false}
         showStatusFilter={false}
         initialWidth={256}
-        defaultLevel={2}
+        defaultLevel={0}
       />
     </SidebarProvider>
   );

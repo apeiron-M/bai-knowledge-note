@@ -532,13 +532,18 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
   if (notes.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
-        <p className="text-gray-500">No notes to display in graph</p>
+        <p style={{ color: "var(--bai-text-muted)" }}>
+          No notes to display in graph
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[#11111b]">
+    <div
+      className="relative h-full w-full overflow-hidden"
+      style={{ backgroundColor: "var(--bai-deep)" }}
+    >
       {/* Cytoscape container */}
       <div ref={containerRef} className="h-full w-full" />
 
@@ -547,7 +552,12 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
         <button
           type="button"
           onClick={handleZoomIn}
-          className="flex h-8 w-8 items-center justify-center rounded-md bg-[#1e1e2e]/90 text-gray-300 backdrop-blur-sm transition-colors hover:bg-[#313244] hover:text-white"
+          className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
+          style={{
+            backgroundColor:
+              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
+            color: "var(--bai-text-secondary)",
+          }}
           title="Zoom in"
         >
           <svg
@@ -563,7 +573,12 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
         <button
           type="button"
           onClick={handleZoomOut}
-          className="flex h-8 w-8 items-center justify-center rounded-md bg-[#1e1e2e]/90 text-gray-300 backdrop-blur-sm transition-colors hover:bg-[#313244] hover:text-white"
+          className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
+          style={{
+            backgroundColor:
+              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
+            color: "var(--bai-text-secondary)",
+          }}
           title="Zoom out"
         >
           <svg
@@ -579,7 +594,12 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
         <button
           type="button"
           onClick={handleFit}
-          className="flex h-8 w-8 items-center justify-center rounded-md bg-[#1e1e2e]/90 text-gray-300 backdrop-blur-sm transition-colors hover:bg-[#313244] hover:text-white"
+          className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
+          style={{
+            backgroundColor:
+              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
+            color: "var(--bai-text-secondary)",
+          }}
           title="Fit to screen"
         >
           <svg
@@ -595,7 +615,12 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
         <button
           type="button"
           onClick={handleRelayout}
-          className="flex h-8 w-8 items-center justify-center rounded-md bg-[#1e1e2e]/90 text-gray-300 backdrop-blur-sm transition-colors hover:bg-[#313244] hover:text-white"
+          className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
+          style={{
+            backgroundColor:
+              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
+            color: "var(--bai-text-secondary)",
+          }}
           title="Re-run layout"
         >
           <svg
@@ -609,13 +634,25 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
             <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" />
           </svg>
         </button>
-        <div className="mt-1 rounded-md bg-[#1e1e2e]/90 px-1.5 py-1 text-center text-[9px] text-gray-500 backdrop-blur-sm">
+        <div
+          className="mt-1 rounded-md px-1.5 py-1 text-center text-[9px] backdrop-blur-sm"
+          style={{
+            backgroundColor:
+              "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
+            color: "var(--bai-text-muted)",
+          }}
+        >
           {Math.round(zoomLevel * 100)}%
         </div>
       </div>
 
       {/* Legend */}
-      <div className="absolute bottom-4 left-4 flex flex-col gap-2 rounded-lg bg-[#1e1e2e]/90 px-3 py-2 text-[10px] backdrop-blur-sm">
+      <div
+        className="absolute bottom-4 left-4 flex flex-col gap-2 rounded-lg px-3 py-2 text-[10px] backdrop-blur-sm"
+        style={{
+          backgroundColor: "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
+        }}
+      >
         <div className="flex gap-3">
           {Object.entries(STATUS_NODE_COLORS).map(([status, color]) => (
             <div key={status} className="flex items-center gap-1.5">
@@ -623,7 +660,9 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
                 className="inline-block h-2.5 w-2.5 rounded-full"
                 style={{ backgroundColor: color }}
               />
-              <span className="text-gray-400">{status.replace("_", " ")}</span>
+              <span style={{ color: "var(--bai-text-tertiary)" }}>
+                {status.replace("_", " ")}
+              </span>
             </div>
           ))}
         </div>
@@ -634,7 +673,7 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
                 className="inline-block h-3 w-3 border-t-2"
                 style={{ borderColor: color }}
               />
-              <span className="text-gray-500">
+              <span style={{ color: "var(--bai-text-muted)" }}>
                 {type.replace(/_/g, " ").toLowerCase()}
               </span>
             </div>
@@ -645,13 +684,16 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
       {/* Hover tooltip */}
       {hoverInfo && !selectedDetail && (
         <div
-          className="pointer-events-none absolute z-30 w-96 rounded-lg border border-white/10 bg-[#1e1e2e]/95 p-5 shadow-xl backdrop-blur-sm"
+          className="pointer-events-none absolute z-30 w-96 rounded-lg border p-5 shadow-xl backdrop-blur-sm"
           style={{
             left: Math.min(
               hoverInfo.x + 16,
               (containerRef.current?.offsetWidth ?? 800) - 410,
             ),
             top: Math.max(8, hoverInfo.y - 20),
+            backgroundColor:
+              "color-mix(in srgb, var(--bai-bg) 95%, transparent)",
+            borderColor: "var(--bai-border)",
           }}
         >
           <div className="mb-2 flex items-center gap-2">
@@ -663,22 +705,40 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
                   DEFAULT_NODE_COLOR,
               }}
             />
-            <span className="truncate text-base font-semibold text-gray-200">
+            <span
+              className="truncate text-base font-semibold"
+              style={{ color: "var(--bai-text)" }}
+            >
               {hoverInfo.node.label}
             </span>
           </div>
 
           <div className="mb-2 flex flex-wrap items-center gap-2">
-            <span className="rounded bg-white/5 px-2 py-0.5 text-[11px] text-gray-400">
+            <span
+              className="rounded px-2 py-0.5 text-[11px]"
+              style={{
+                backgroundColor: "var(--bai-hover)",
+                color: "var(--bai-text-tertiary)",
+              }}
+            >
               {hoverInfo.node.status.replace("_", " ")}
             </span>
             {hoverInfo.node.noteType && (
-              <span className="rounded bg-[#cba6f7]/10 px-2 py-0.5 text-[11px] text-[#cba6f7]">
+              <span
+                className="rounded px-2 py-0.5 text-[11px]"
+                style={{
+                  backgroundColor: "var(--bai-accent-soft)",
+                  color: "var(--bai-accent)",
+                }}
+              >
                 {hoverInfo.node.noteType}
               </span>
             )}
             {hoverInfo.node.linkCount > 0 && (
-              <span className="text-[11px] text-gray-500">
+              <span
+                className="text-[11px]"
+                style={{ color: "var(--bai-text-muted)" }}
+              >
                 {hoverInfo.node.linkCount} connection
                 {hoverInfo.node.linkCount !== 1 ? "s" : ""}
               </span>
@@ -686,7 +746,10 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
           </div>
 
           {hoverInfo.node.description && (
-            <p className="mb-2.5 line-clamp-5 text-sm leading-relaxed text-gray-400">
+            <p
+              className="mb-2.5 line-clamp-5 text-sm leading-relaxed"
+              style={{ color: "var(--bai-text-tertiary)" }}
+            >
               {hoverInfo.node.description}
             </p>
           )}
@@ -696,7 +759,11 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
               {hoverInfo.node.topics.map((topic) => (
                 <span
                   key={topic.id}
-                  className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-gray-500"
+                  className="rounded-full px-2 py-0.5 text-[11px]"
+                  style={{
+                    backgroundColor: "var(--bai-hover)",
+                    color: "var(--bai-text-muted)",
+                  }}
                 >
                   {topic.name}
                 </span>
@@ -708,11 +775,21 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
 
       {/* Detail panel */}
       {selectedDetail && (
-        <div className="absolute right-14 top-4 w-72 rounded-lg border border-white/10 bg-[#1e1e2e]/95 p-4 shadow-xl backdrop-blur-sm">
+        <div
+          className="absolute right-14 top-4 w-72 rounded-lg border p-4 shadow-xl backdrop-blur-sm"
+          style={{
+            backgroundColor:
+              "color-mix(in srgb, var(--bai-bg) 95%, transparent)",
+            borderColor: "var(--bai-border)",
+          }}
+        >
           {/* Header */}
           <div className="mb-3 flex items-start justify-between">
             <div className="min-w-0 flex-1">
-              <h3 className="truncate text-sm font-semibold text-gray-200">
+              <h3
+                className="truncate text-sm font-semibold"
+                style={{ color: "var(--bai-text)" }}
+              >
                 {selectedDetail.label}
               </h3>
               <div className="mt-1 flex items-center gap-2">
@@ -724,11 +801,20 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
                       DEFAULT_NODE_COLOR,
                   }}
                 />
-                <span className="text-[10px] text-gray-400">
+                <span
+                  className="text-[10px]"
+                  style={{ color: "var(--bai-text-tertiary)" }}
+                >
                   {selectedDetail.status}
                 </span>
                 {selectedDetail.noteType && (
-                  <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] text-gray-500">
+                  <span
+                    className="rounded px-1.5 py-0.5 text-[10px]"
+                    style={{
+                      backgroundColor: "var(--bai-hover)",
+                      color: "var(--bai-text-muted)",
+                    }}
+                  >
                     {selectedDetail.noteType}
                   </span>
                 )}
@@ -740,7 +826,8 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
                 setSelectedDetail(null);
                 if (cyRef.current) clearHighlight(cyRef.current);
               }}
-              className="ml-2 text-gray-500 hover:text-gray-300"
+              className="ml-2"
+              style={{ color: "var(--bai-text-muted)" }}
             >
               <svg
                 className="h-4 w-4"
@@ -756,7 +843,10 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
 
           {/* Description */}
           {selectedDetail.description && (
-            <p className="mb-3 line-clamp-3 text-xs leading-relaxed text-gray-400">
+            <p
+              className="mb-3 line-clamp-3 text-xs leading-relaxed"
+              style={{ color: "var(--bai-text-tertiary)" }}
+            >
               {selectedDetail.description}
             </p>
           )}
@@ -767,7 +857,11 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
               {selectedDetail.topics.map((topic) => (
                 <span
                   key={topic.id}
-                  className="rounded-full bg-[#cba6f7]/10 px-2 py-0.5 text-[10px] text-[#cba6f7]"
+                  className="rounded-full px-2 py-0.5 text-[10px]"
+                  style={{
+                    backgroundColor: "var(--bai-accent-soft)",
+                    color: "var(--bai-accent)",
+                  }}
                 >
                   {topic.name}
                 </span>
@@ -778,7 +872,10 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
           {/* Connections */}
           {selectedDetail.neighbors.length > 0 && (
             <div>
-              <h4 className="mb-1.5 text-[10px] font-medium uppercase tracking-wider text-gray-500">
+              <h4
+                className="mb-1.5 text-[10px] font-medium uppercase tracking-wider"
+                style={{ color: "var(--bai-text-muted)" }}
+              >
                 Connections ({selectedDetail.neighbors.length})
               </h4>
               <div className="max-h-40 space-y-1 overflow-y-auto">
@@ -787,7 +884,8 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
                     key={neighbor.id}
                     type="button"
                     onClick={() => handleFocusNode(neighbor.id)}
-                    className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs text-gray-300 transition-colors hover:bg-white/5"
+                    className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs transition-colors"
+                    style={{ color: "var(--bai-text-secondary)" }}
                   >
                     <span
                       className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
@@ -800,7 +898,10 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
                     <span className="min-w-0 flex-1 truncate">
                       {neighbor.label}
                     </span>
-                    <span className="flex-shrink-0 text-[9px] text-gray-600">
+                    <span
+                      className="flex-shrink-0 text-[9px]"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
                       {(neighbor.edgeType ?? "untyped")
                         .replace(/_/g, " ")
                         .toLowerCase()}
@@ -815,7 +916,11 @@ export function GraphView({ notes, graphState }: GraphViewProps) {
           <button
             type="button"
             onClick={() => setSelectedNode(selectedDetail.id)}
-            className="mt-3 w-full rounded-md bg-[#cba6f7]/20 py-1.5 text-xs font-medium text-[#cba6f7] transition-colors hover:bg-[#cba6f7]/30"
+            className="mt-3 w-full rounded-md py-1.5 text-xs font-medium transition-colors hover:opacity-80"
+            style={{
+              backgroundColor: "var(--bai-accent-soft)",
+              color: "var(--bai-accent)",
+            }}
           >
             Open Note
           </button>

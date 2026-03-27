@@ -5,4 +5,5 @@ export { MocEditor } from "./moc-editor/module.js";
 export { ObservationEditor } from "./observation-editor/module.js";
 export { PipelineQueueEditor } from "./pipeline-queue-editor/module.js";
 export { SourceEditor } from "./source-editor/module.js";
+export { ResearchClaimEditor } from "./research-claim-editor/module.js";
 export { VaultConfigEditor } from "./vault-config-editor/module.js";

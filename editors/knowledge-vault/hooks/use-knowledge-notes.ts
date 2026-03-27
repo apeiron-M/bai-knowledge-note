@@ -13,8 +13,17 @@ export type KnowledgeNoteInfo = {
   status: string | null;
   description: string | null;
   topics: { id: string; name: string }[];
-  links: { id: string; targetDocumentId: string | null; targetTitle: string | null; linkType: string | null }[];
-  provenance: { author: string | null; createdAt: string | null; updatedAt: string | null } | null;
+  links: {
+    id: string;
+    targetDocumentId: string | null;
+    targetTitle: string | null;
+    linkType: string | null;
+  }[];
+  provenance: {
+    author: string | null;
+    createdAt: string | null;
+    updatedAt: string | null;
+  } | null;
 };
 
 export function useKnowledgeNotes() {
@@ -22,7 +31,8 @@ export function useKnowledgeNotes() {
   const documents = useDocumentsInSelectedDrive();
 
   const knowledgeFileNodes = useMemo(
-    () => (fileNodes ?? []).filter((n) => n.documentType === "bai/knowledge-note"),
+    () =>
+      (fileNodes ?? []).filter((n) => n.documentType === "bai/knowledge-note"),
     [fileNodes],
   );
 
@@ -43,28 +53,30 @@ export function useKnowledgeNotes() {
       const docState = doc.state as { global: KnowledgeNoteState } | undefined;
       if (!docState) return [];
       const state = docState.global;
-      return [{
-        id: node.id,
-        name: node.name,
-        title: state.title ?? null,
-        noteType: state.noteType ?? null,
-        status: (state.status as string) ?? "DRAFT",
-        description: state.description ?? null,
-        topics: (state.topics ?? []).map((t) => ({ id: t.id, name: t.name })),
-        links: (state.links ?? []).map((l) => ({
-          id: l.id,
-          targetDocumentId: l.targetDocumentId ?? null,
-          targetTitle: l.targetTitle ?? null,
-          linkType: (l.linkType as string) ?? null,
-        })),
-        provenance: state.provenance
-          ? {
-              author: state.provenance.author ?? null,
-              createdAt: (state.provenance.createdAt as string) ?? null,
-              updatedAt: (state.provenance.updatedAt as string) ?? null,
-            }
-          : null,
-      }];
+      return [
+        {
+          id: node.id,
+          name: node.name,
+          title: state.title ?? null,
+          noteType: state.noteType ?? null,
+          status: (state.status as string) ?? "DRAFT",
+          description: state.description ?? null,
+          topics: (state.topics ?? []).map((t) => ({ id: t.id, name: t.name })),
+          links: (state.links ?? []).map((l) => ({
+            id: l.id,
+            targetDocumentId: l.targetDocumentId ?? null,
+            targetTitle: l.targetTitle ?? null,
+            linkType: (l.linkType as string) ?? null,
+          })),
+          provenance: state.provenance
+            ? {
+                author: state.provenance.author ?? null,
+                createdAt: (state.provenance.createdAt as string) ?? null,
+                updatedAt: (state.provenance.updatedAt as string) ?? null,
+              }
+            : null,
+        },
+      ];
     });
   }, [knowledgeFileNodes, docMap]);
 
