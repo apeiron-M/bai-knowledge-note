@@ -133,6 +133,38 @@ curl -s http://localhost:4001/graphql/r/ -H "Content-Type: application/json" \
 
 ---
 
+## Bug 7: `docs apply` reverses operation order for dependent actions
+
+**Severity:** High — breaks any reducer with sequential dependencies
+
+**Steps to reproduce:**
+```bash
+switchboard docs apply <pipeline-queue-id> --wait --actions '[
+  {"type":"ADD_TASK","input":{"id":"task-1",...},"scope":"global"},
+  {"type":"ASSIGN_TASK","input":{"taskId":"task-1",...},"scope":"global"},
+  {"type":"ADVANCE_PHASE","input":{"taskId":"task-1",...},"scope":"global"}
+]'
+```
+
+**Expected:** Operations execute in array order: ADD_TASK first, then ASSIGN_TASK, then ADVANCE_PHASE.
+
+**Actual:** Operations are stored in reversed order. ASSIGN_TASK and ADVANCE_PHASE execute before ADD_TASK, causing "Task not found" errors because the task doesn't exist yet.
+
+**Visible in Connect:** Revision history shows ADD_TASK at the highest revision number (last) and ASSIGN_TASK at the lowest (first). All dependent operations have `Error: Task not found`.
+
+**Root cause:** The batch submission stores operations with reversed indices, or the reactor processes them in LIFO order instead of FIFO.
+
+**Workaround:** Dispatch dependent operations **one at a time** via `docs mutate`:
+```bash
+switchboard docs mutate <id> --op addTask --input '{...}'
+switchboard docs mutate <id> --op assignTask --input '{...}'
+switchboard docs mutate <id> --op advancePhase --input '{...}'
+```
+
+**Note:** `docs apply` is safe for **independent** actions on the same document (e.g., SET_TITLE + SET_DESCRIPTION + SET_CONTENT). Only fails when later actions depend on earlier ones creating state.
+
+---
+
 ## Summary
 
 | Bug | Severity | Blocks | Workaround |
