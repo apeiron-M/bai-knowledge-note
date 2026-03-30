@@ -165,6 +165,40 @@ switchboard docs mutate <id> --op advancePhase --input '{...}'
 
 ---
 
+## Bug 8: MCP server crashes on rapid concurrent connections (bulk import)
+
+**Severity:** Critical — crashes the entire reactor
+
+**Steps to reproduce:**
+```bash
+# Run import script that sends 249 MCP createDocument calls with 100ms delays
+node scripts/import-research-claims.mjs --drive-id <uuid> --vault-path data/methodology/
+```
+
+**Expected:** All 249 documents created successfully.
+
+**Actual:** Server crashes after ~100-150 documents with:
+```
+Error: Already connected to a transport. Call close() before connecting to a new transport
+```
+
+**Root cause:** The MCP SSE transport in `@powerhousedao/reactor-mcp` creates a new protocol connection per HTTP request. Rapid sequential requests cause connection overlap — a new request arrives before the previous SSE connection is closed.
+
+**File:** `node_modules/@modelcontextprotocol/sdk/dist/esm/shared/protocol.js:217`
+
+**Workaround:** Use the switchboard CLI for bulk imports instead of MCP:
+```bash
+python3 scripts/import-methodology.py <drive-slug>
+# Uses switchboard docs create + switchboard docs mutate (GraphQL, not MCP)
+```
+
+**Fix needed:** The MCP server should either:
+- Queue incoming connections and process them serially
+- Close the previous transport before accepting a new one
+- Use a connection pool instead of single-transport design
+
+---
+
 ## Summary
 
 | Bug | Severity | Blocks | Workaround |
