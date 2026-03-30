@@ -313,9 +313,21 @@ describe("Lifecycle state machine — DRAFT → IN_REVIEW → CANONICAL → ARCH
     expect(restored.state.global.lifecycleEvents).toHaveLength(4);
 
     const events = restored.state.global.lifecycleEvents;
-    expect(events[0]).toMatchObject({ fromStatus: "DRAFT", toStatus: "IN_REVIEW" });
-    expect(events[1]).toMatchObject({ fromStatus: "IN_REVIEW", toStatus: "CANONICAL" });
-    expect(events[2]).toMatchObject({ fromStatus: "CANONICAL", toStatus: "ARCHIVED" });
-    expect(events[3]).toMatchObject({ fromStatus: "ARCHIVED", toStatus: "DRAFT" });
+    expect(events[0]).toMatchObject({
+      fromStatus: "DRAFT",
+      toStatus: "IN_REVIEW",
+    });
+    expect(events[1]).toMatchObject({
+      fromStatus: "IN_REVIEW",
+      toStatus: "CANONICAL",
+    });
+    expect(events[2]).toMatchObject({
+      fromStatus: "CANONICAL",
+      toStatus: "ARCHIVED",
+    });
+    expect(events[3]).toMatchObject({
+      fromStatus: "ARCHIVED",
+      toStatus: "DRAFT",
+    });
   });
 });

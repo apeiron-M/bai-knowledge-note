@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { reducer, utils, actions } from "@powerhousedao/knowledge-note/document-models/moc/v1";
+import {
+  reducer,
+  utils,
+  actions,
+} from "@powerhousedao/knowledge-note/document-models/moc/v1";
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -310,7 +314,9 @@ describe("MOC — UPDATE_DESCRIPTION", () => {
       }),
     );
 
-    expect(updated.state.global.description).toBe("New and improved description");
+    expect(updated.state.global.description).toBe(
+      "New and improved description",
+    );
     expect(updated.state.global.updatedAt).toBe("2026-02-01T00:00:00Z");
   });
 });

@@ -94,8 +94,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
                   (link.id as string) ??
                   `${documentId}-${link.targetDocumentId as string}`,
                 source_document_id: documentId,
-                target_document_id:
-                  (link.targetDocumentId as string) ?? "",
+                target_document_id: (link.targetDocumentId as string) ?? "",
                 link_type: (link.linkType as string) ?? null,
                 target_title: (link.targetTitle as string) ?? null,
                 updated_at: now,

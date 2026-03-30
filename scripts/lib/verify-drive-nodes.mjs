@@ -14,7 +14,7 @@ async function mcpCall(toolName, toolArgs) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json, text/event-stream",
+      Accept: "application/json, text/event-stream",
     },
     body: JSON.stringify({
       jsonrpc: "2.0",
@@ -47,13 +47,20 @@ async function mcpCall(toolName, toolArgs) {
  * @param {string|null} parentFolder - Folder ID to place missing nodes in
  * @returns {Promise<{ verified: number, repaired: number }>}
  */
-export async function verifyDriveNodes(driveId, titleToDocId, documentType, parentFolder) {
+export async function verifyDriveNodes(
+  driveId,
+  titleToDocId,
+  documentType,
+  parentFolder,
+) {
   console.log("=== Verifying drive nodes ===\n");
 
   // Get current drive state
   const driveResult = await mcpCall("getDocument", { id: driveId });
   const nodes = driveResult?.document?.state?.global?.nodes ?? [];
-  const existingNodeIds = new Set(nodes.filter((n) => n.kind === "file").map((n) => n.id));
+  const existingNodeIds = new Set(
+    nodes.filter((n) => n.kind === "file").map((n) => n.id),
+  );
 
   // Find missing documents
   const missing = [];
@@ -85,7 +92,9 @@ export async function verifyDriveNodes(driveId, titleToDocId, documentType, pare
     });
 
     await mcpCall("addActions", { documentId: driveId, actions });
-    console.log(`  Repaired ${i + 1}-${Math.min(i + batchSize, missing.length)} of ${missing.length}`);
+    console.log(
+      `  Repaired ${i + 1}-${Math.min(i + batchSize, missing.length)} of ${missing.length}`,
+    );
 
     if (i + batchSize < missing.length) {
       await new Promise((r) => setTimeout(r, 200));
@@ -93,5 +102,8 @@ export async function verifyDriveNodes(driveId, titleToDocId, documentType, pare
   }
 
   console.log(`\nRepaired ${missing.length} missing drive nodes.\n`);
-  return { verified: titleToDocId.size - missing.length, repaired: missing.length };
+  return {
+    verified: titleToDocId.size - missing.length,
+    repaired: missing.length,
+  };
 }

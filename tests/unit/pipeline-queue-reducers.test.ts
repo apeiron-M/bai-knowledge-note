@@ -131,7 +131,10 @@ describe("PipelineQueue — queue management reducers", () => {
       }),
     );
 
-    expect(after2.state.global.tasks[0].completedPhases).toEqual(["create", "reflect"]);
+    expect(after2.state.global.tasks[0].completedPhases).toEqual([
+      "create",
+      "reflect",
+    ]);
     expect(after2.state.global.tasks[0].currentPhase).toBe("reweave");
   });
 
@@ -208,7 +211,12 @@ describe("PipelineQueue — queue management reducers", () => {
     const task = completed.state.global.tasks[0];
     expect(task.status).toBe("DONE");
     expect(task.currentPhase).toBeNull();
-    expect(task.completedPhases).toEqual(["create", "reflect", "reweave", "verify"]);
+    expect(task.completedPhases).toEqual([
+      "create",
+      "reflect",
+      "reweave",
+      "verify",
+    ]);
     expect(completed.state.global.completedCount).toBe(1);
     expect(completed.state.global.activeCount).toBe(0);
   });
@@ -251,7 +259,9 @@ describe("PipelineQueue — queue management reducers", () => {
     );
 
     expect(unblocked.state.global.tasks[0].status).toBe("PENDING");
-    expect(unblocked.state.global.tasks[0].updatedAt).toBe("2026-01-01T02:00:00Z");
+    expect(unblocked.state.global.tasks[0].updatedAt).toBe(
+      "2026-01-01T02:00:00Z",
+    );
   });
 
   // ── Test 7 ──────────────────────────────────────────────────────────────────

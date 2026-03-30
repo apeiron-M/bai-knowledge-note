@@ -201,7 +201,9 @@ function buildElements(
   }
 
   // Track existing node IDs for MOC + tension edge targets
-  const existingNodeIds = new Set(elements.filter((e) => !e.data.source).map((e) => e.data.id));
+  const existingNodeIds = new Set(
+    elements.filter((e) => !e.data.source).map((e) => e.data.id),
+  );
 
   // Add MOC nodes and their edges to core ideas
   if (mocs?.length) {
@@ -426,7 +428,12 @@ function getLayoutOptions(): cytoscape.LayoutOptions {
 /*  Component                                                         */
 /* ------------------------------------------------------------------ */
 
-export function GraphView({ notes, graphState, mocs, tensions }: GraphViewProps) {
+export function GraphView({
+  notes,
+  graphState,
+  mocs,
+  tensions,
+}: GraphViewProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const cyRef = useRef<cytoscape.Core | null>(null);
   const [selectedDetail, setSelectedDetail] = useState<NodeDetail | null>(null);

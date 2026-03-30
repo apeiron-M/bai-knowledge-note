@@ -43,12 +43,19 @@ export function DriveExplorer({ children }: EditorProps) {
     return (allDocuments ?? [])
       .filter((d) => d.header.documentType === "bai/moc")
       .map((d) => {
-        const state = (d.state as unknown as { global: Record<string, unknown> }).global;
+        const state = (
+          d.state as unknown as { global: Record<string, unknown> }
+        ).global;
         return {
           id: d.header.id,
           title: (state.title as string) ?? d.header.name,
           tier: (state.tier as string) ?? null,
-          coreIdeas: ((state.coreIdeas as Array<{ noteRef: string; contextPhrase: string }>) ?? []).map((ci) => ({
+          coreIdeas: (
+            (state.coreIdeas as Array<{
+              noteRef: string;
+              contextPhrase: string;
+            }>) ?? []
+          ).map((ci) => ({
             noteRef: ci.noteRef,
             contextPhrase: ci.contextPhrase,
           })),
@@ -61,7 +68,9 @@ export function DriveExplorer({ children }: EditorProps) {
     return (allDocuments ?? [])
       .filter((d) => d.header.documentType === "bai/tension")
       .map((d) => {
-        const state = (d.state as unknown as { global: Record<string, unknown> }).global;
+        const state = (
+          d.state as unknown as { global: Record<string, unknown> }
+        ).global;
         return {
           id: d.header.id,
           title: (state.title as string) ?? d.header.name,
@@ -339,7 +348,12 @@ export function DriveExplorer({ children }: EditorProps) {
           {showDocumentEditor ? (
             <div className="h-full">{children}</div>
           ) : viewMode === "graph" ? (
-            <GraphView notes={notes} graphState={graphState} mocs={mocs} tensions={tensions} />
+            <GraphView
+              notes={notes}
+              graphState={graphState}
+              mocs={mocs}
+              tensions={tensions}
+            />
           ) : viewMode === "sources" ? (
             <SourceList />
           ) : viewMode === "health" ? (

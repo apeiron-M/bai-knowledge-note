@@ -2,6 +2,10 @@ import { useState, useCallback } from "react";
 import { generateId } from "document-model/core";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
+  setSelectedNode,
+  useDocumentsInSelectedDrive,
+} from "@powerhousedao/reactor-browser";
+import {
   useSelectedMocDocument,
   actions,
 } from "@powerhousedao/knowledge-note/document-models/moc";
@@ -20,6 +24,7 @@ function ts() {
 export default function Editor() {
   const [document, dispatch] = useSelectedMocDocument();
   const state = document.state.global;
+  const allDocs = useDocumentsInSelectedDrive();
   const [newQuestion, setNewQuestion] = useState("");
   const [newIdeaRef, setNewIdeaRef] = useState("");
   const [newIdeaPhrase, setNewIdeaPhrase] = useState("");
@@ -99,8 +104,12 @@ export default function Editor() {
             >
               Orientation
             </h3>
-            <p className="mb-1.5 text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
-              A synthesis paragraph explaining what this topic covers, key themes, and how the core ideas relate to each other.
+            <p
+              className="mb-1.5 text-[10px]"
+              style={{ color: "var(--bai-text-faint)" }}
+            >
+              A synthesis paragraph explaining what this topic covers, key
+              themes, and how the core ideas relate to each other.
             </p>
             <textarea
               defaultValue={state.orientation ?? ""}
@@ -140,41 +149,78 @@ export default function Editor() {
                 Core Ideas ({(state.coreIdeas ?? []).length})
               </h3>
               <div className="space-y-2">
-                {(state.coreIdeas ?? []).map((idea) => (
-                  <div
-                    key={idea.id}
-                    className="group flex items-start gap-2 rounded-lg px-3 py-2"
-                    style={{
-                      backgroundColor: "var(--bai-bg)",
-                      boxShadow: "0 0 0 1px var(--bai-ring)",
-                    }}
-                  >
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className="text-xs"
-                        style={{ color: "var(--bai-text-secondary)" }}
-                      >
-                        {idea.contextPhrase}
-                      </p>
-                      <p
-                        className="text-[10px] font-mono mt-0.5"
+                {(state.coreIdeas ?? []).map((idea) => {
+                  const linkedDoc = (allDocs ?? []).find(
+                    (d) => d.header.id === idea.noteRef,
+                  );
+                  const noteTitle = linkedDoc
+                    ? ((
+                        linkedDoc.state as unknown as {
+                          global: { title?: string };
+                        }
+                      ).global.title ?? linkedDoc.header.name)
+                    : null;
+                  return (
+                    <div
+                      key={idea.id}
+                      className="group flex items-start gap-2 rounded-lg px-3 py-2"
+                      style={{
+                        backgroundColor: "var(--bai-bg)",
+                        boxShadow: "0 0 0 1px var(--bai-ring)",
+                      }}
+                    >
+                      <div className="flex-1 min-w-0">
+                        <p
+                          className="text-xs"
+                          style={{ color: "var(--bai-text-secondary)" }}
+                        >
+                          {idea.contextPhrase}
+                        </p>
+                        {idea.noteRef &&
+                          (noteTitle ? (
+                            <button
+                              type="button"
+                              onClick={() => setSelectedNode(idea.noteRef)}
+                              className="mt-0.5 text-[10px] text-left truncate max-w-full transition-colors hover:underline"
+                              style={{ color: "var(--bai-accent)" }}
+                              title={`Open note: ${noteTitle}`}
+                            >
+                              {noteTitle}
+                              <svg
+                                className="ml-1 inline h-2.5 w-2.5"
+                                style={{ color: "var(--bai-text-faint)" }}
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                                <path d="M15 3h6v6" />
+                                <path d="M10 14L21 3" />
+                              </svg>
+                            </button>
+                          ) : (
+                            <p
+                              className="text-[10px] font-mono mt-0.5"
+                              style={{ color: "var(--bai-text-faint)" }}
+                            >
+                              {idea.noteRef.slice(0, 12)}
+                            </p>
+                          ))}
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          dispatch(actions.removeCoreIdea({ id: idea.id }))
+                        }
+                        className="opacity-0 hover:text-red-400 group-hover:opacity-100"
                         style={{ color: "var(--bai-text-faint)" }}
                       >
-                        {idea.noteRef?.slice(0, 12)}
-                      </p>
+                        &times;
+                      </button>
                     </div>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        dispatch(actions.removeCoreIdea({ id: idea.id }))
-                      }
-                      className="opacity-0 hover:text-red-400 group-hover:opacity-100"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      &times;
-                    </button>
-                  </div>
-                ))}
+                  );
+                })}
                 <form
                   className="flex gap-2"
                   onSubmit={(e) => {

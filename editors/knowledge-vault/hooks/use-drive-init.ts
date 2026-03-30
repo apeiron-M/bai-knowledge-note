@@ -51,7 +51,11 @@ const FOLDERS: FolderSpec[] = [
 ];
 
 const SINGLETONS: SingletonSpec[] = [
-  { name: "PipelineQueue", type: "bai/pipeline-queue", folderPath: "ops/queue" },
+  {
+    name: "PipelineQueue",
+    type: "bai/pipeline-queue",
+    folderPath: "ops/queue",
+  },
   { name: "HealthReport", type: "bai/health-report", folderPath: "ops/health" },
   { name: "KnowledgeGraph", type: "bai/knowledge-graph", folderPath: "self" },
   { name: "VaultConfig", type: "bai/vault-config", folderPath: "self" },
@@ -68,7 +72,8 @@ export function useDriveInit() {
 
     // Check if already initialized (knowledge folder exists)
     const hasKnowledgeFolder = (nodes ?? []).some(
-      (n) => n.kind === "folder" && n.name === "knowledge" && n.parentFolder == null,
+      (n) =>
+        n.kind === "folder" && n.name === "knowledge" && n.parentFolder == null,
     );
     if (hasKnowledgeFolder) {
       initStartedForDrives.add(driveId);
@@ -89,13 +94,17 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
     const folderIds = new Map<string, string>(existingFolderMap);
 
     for (const folder of FOLDERS) {
-      const path = folder.parentPath ? `${folder.parentPath}/${folder.name}` : folder.name;
+      const path = folder.parentPath
+        ? `${folder.parentPath}/${folder.name}`
+        : folder.name;
 
       if (folderIds.has(path)) {
         continue;
       }
 
-      const parentId = folder.parentPath ? folderIds.get(folder.parentPath) : undefined;
+      const parentId = folder.parentPath
+        ? folderIds.get(folder.parentPath)
+        : undefined;
 
       try {
         const result = await addFolder(driveId, folder.name, parentId);
@@ -118,7 +127,10 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
     const existingTypes = new Set(
       existingNodes
         .filter((n) => n.kind === "file")
-        .map((n) => (n as Node & { kind: "file"; documentType: string }).documentType),
+        .map(
+          (n) =>
+            (n as Node & { kind: "file"; documentType: string }).documentType,
+        ),
     );
 
     for (const singleton of SINGLETONS) {
@@ -130,8 +142,15 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
       const parentFolderId = folderIds.get(singleton.folderPath);
 
       try {
-        await addDocument(driveId, singleton.name, singleton.type, parentFolderId);
-        console.log(`[VaultInit] Created ${singleton.name} in /${singleton.folderPath}/`);
+        await addDocument(
+          driveId,
+          singleton.name,
+          singleton.type,
+          parentFolderId,
+        );
+        console.log(
+          `[VaultInit] Created ${singleton.name} in /${singleton.folderPath}/`,
+        );
         await new Promise((r) => setTimeout(r, 1000));
       } catch (err) {
         console.error(`[VaultInit] Failed to create ${singleton.name}:`, err);
@@ -156,7 +175,9 @@ function buildExistingFolderMap(nodes: Node[]): Map<string, string> {
     let current: Node | undefined = folder;
     while (current) {
       pathParts.unshift(current.name);
-      current = current.parentFolder ? folderById.get(current.parentFolder) : undefined;
+      current = current.parentFolder
+        ? folderById.get(current.parentFolder)
+        : undefined;
     }
     map.set(pathParts.join("/"), folder.id);
   }

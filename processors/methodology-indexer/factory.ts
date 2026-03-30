@@ -26,11 +26,7 @@ export const methodologyIndexerProcessorFactory =
       scope: ["global"],
     };
 
-    const processor = new MethodologyIndexerProcessor(
-      namespace,
-      filter,
-      store,
-    );
+    const processor = new MethodologyIndexerProcessor(namespace, filter, store);
     await processor.initAndUpgrade();
 
     console.log(

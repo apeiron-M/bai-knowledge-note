@@ -28,13 +28,18 @@ const driveIdIdx = args.indexOf("--drive-id");
 const DRIVE_ID = driveIdIdx !== -1 ? args[driveIdIdx + 1] : null;
 
 const vaultPathIdx = args.indexOf("--vault-path");
-const VAULT_PATH = vaultPathIdx !== -1 ? args[vaultPathIdx + 1] : "/home/p/Powerhouse/arscontexta/methodology/";
+const VAULT_PATH =
+  vaultPathIdx !== -1
+    ? args[vaultPathIdx + 1]
+    : "/home/p/Powerhouse/arscontexta/methodology/";
 
 const MCP_URL = "http://localhost:4001/mcp";
 const DOCUMENT_TYPE = "bai/research-claim";
 
 if (!DRIVE_ID) {
-  console.error("Usage: node import-research-claims.mjs --drive-id <UUID> [--vault-path <path>] [--dry-run] [--limit N]");
+  console.error(
+    "Usage: node import-research-claims.mjs --drive-id <UUID> [--vault-path <path>] [--dry-run] [--limit N]",
+  );
   process.exit(1);
 }
 
@@ -46,7 +51,7 @@ async function mcpCall(toolName, toolArgs) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json, text/event-stream",
+      Accept: "application/json, text/event-stream",
     },
     body: JSON.stringify({
       jsonrpc: "2.0",
@@ -86,7 +91,10 @@ function parseFrontmatter(content) {
     if (kv) {
       let value = kv[2].trim();
       if (value.startsWith("[") && value.endsWith("]")) {
-        value = value.slice(1, -1).split(",").map((s) => s.trim().replace(/^["']|["']$/g, ""));
+        value = value
+          .slice(1, -1)
+          .split(",")
+          .map((s) => s.trim().replace(/^["']|["']$/g, ""));
       }
       if (typeof value === "string") {
         value = value.replace(/^["']|["']$/g, "");
@@ -100,18 +108,24 @@ function parseFrontmatter(content) {
 
 // ─── Extract Relevant Notes section ───
 function extractRelevantNotes(body) {
-  const relevantMatch = body.match(/(?:^|\n)(?:Relevant Notes|Related Notes|Relevant notes):?\s*\n([\s\S]*?)(?:\n(?:Topics|---)|$)/i);
+  const relevantMatch = body.match(
+    /(?:^|\n)(?:Relevant Notes|Related Notes|Relevant notes):?\s*\n([\s\S]*?)(?:\n(?:Topics|---)|$)/i,
+  );
   if (!relevantMatch) return [];
 
-  const lines = relevantMatch[1].split("\n").filter((l) => l.trim().startsWith("-"));
-  return lines.map((line) => {
-    const linkMatch = line.match(/\[\[([^\]]+)\]\]/);
-    const contextMatch = line.match(/\]\]\s*[-\u2013\u2014]\s*(.+)/);
-    return {
-      targetTitle: linkMatch?.[1] ?? null,
-      contextPhrase: contextMatch?.[1]?.trim() ?? "",
-    };
-  }).filter((l) => l.targetTitle);
+  const lines = relevantMatch[1]
+    .split("\n")
+    .filter((l) => l.trim().startsWith("-"));
+  return lines
+    .map((line) => {
+      const linkMatch = line.match(/\[\[([^\]]+)\]\]/);
+      const contextMatch = line.match(/\]\]\s*[-\u2013\u2014]\s*(.+)/);
+      return {
+        targetTitle: linkMatch?.[1] ?? null,
+        contextPhrase: contextMatch?.[1]?.trim() ?? "",
+      };
+    })
+    .filter((l) => l.targetTitle);
 }
 
 // ─── Extract Topics section ───
@@ -137,7 +151,9 @@ function extractTopics(body, frontmatter) {
 
 // ─── Strip wiki links from content for clean storage ───
 function getContentBody(body) {
-  const sectionMatch = body.match(/^([\s\S]*?)(?:\n(?:Relevant Notes|Topics|Related Notes):)/i);
+  const sectionMatch = body.match(
+    /^([\s\S]*?)(?:\n(?:Relevant Notes|Topics|Related Notes):)/i,
+  );
   return (sectionMatch?.[1] ?? body).trim();
 }
 
@@ -145,7 +161,10 @@ function getContentBody(body) {
 async function findResearchFolder(driveId) {
   const result = await mcpCall("getDocument", { id: driveId });
   const nodes = result?.document?.state?.global?.nodes ?? [];
-  const researchFolder = nodes.find((n) => n.kind === "folder" && n.name === "research" && n.parentFolder == null);
+  const researchFolder = nodes.find(
+    (n) =>
+      n.kind === "folder" && n.name === "research" && n.parentFolder == null,
+  );
   return researchFolder?.id ?? null;
 }
 
@@ -160,10 +179,13 @@ async function main() {
 
   // Find research folder
   const researchFolderId = await findResearchFolder(DRIVE_ID);
-  console.log(`Research folder: ${researchFolderId ?? "NOT FOUND (will add to drive root)"}\n`);
+  console.log(
+    `Research folder: ${researchFolderId ?? "NOT FOUND (will add to drive root)"}\n`,
+  );
 
   // Read all .md files
-  const files = fs.readdirSync(VAULT_PATH)
+  const files = fs
+    .readdirSync(VAULT_PATH)
     .filter((f) => f.endsWith(".md"))
     .slice(0, LIMIT);
 
@@ -183,8 +205,12 @@ async function main() {
     const title = file.replace(/\.md$/, "");
     const description = frontmatter.description ?? "";
     const kind = frontmatter.kind ?? "research";
-    const methodology = Array.isArray(frontmatter.methodology) ? frontmatter.methodology : [];
-    const sources = frontmatter.source ? [String(frontmatter.source).replace(/\[\[|\]\]/g, "")] : [];
+    const methodology = Array.isArray(frontmatter.methodology)
+      ? frontmatter.methodology
+      : [];
+    const sources = frontmatter.source
+      ? [String(frontmatter.source).replace(/\[\[|\]\]/g, "")]
+      : [];
     const topics = extractTopics(body, frontmatter);
     const content = getContentBody(body);
     const relevantNotes = extractRelevantNotes(body);
@@ -194,7 +220,9 @@ async function main() {
     const progress = `[${i + 1}/${files.length}]`;
 
     if (DRY_RUN) {
-      console.log(`${progress} ${title} (${topics.join(", ")}) \u2014 ${relevantNotes.length} links`);
+      console.log(
+        `${progress} ${title} (${topics.join(", ")}) \u2014 ${relevantNotes.length} links`,
+      );
       titleToDocId.set(title, `dry-run-${i}`);
       continue;
     }
@@ -219,11 +247,21 @@ async function main() {
       // Step 2: Populate claim data via MCP addActions
       await mcpCall("addActions", {
         documentId: docId,
-        actions: [{
-          type: "CREATE_CLAIM",
-          input: { title, description, content, kind, methodology, sources, topics },
-          scope: "global",
-        }],
+        actions: [
+          {
+            type: "CREATE_CLAIM",
+            input: {
+              title,
+              description,
+              content,
+              kind,
+              methodology,
+              sources,
+              topics,
+            },
+            scope: "global",
+          },
+        ],
       });
 
       titleToDocId.set(title, docId);
@@ -237,10 +275,15 @@ async function main() {
   }
 
   // Save document map
-  const mapPath = path.join(path.dirname(new URL(import.meta.url).pathname), "research-claims-map.json");
+  const mapPath = path.join(
+    path.dirname(new URL(import.meta.url).pathname),
+    "research-claims-map.json",
+  );
   const mapData = Object.fromEntries(titleToDocId);
   fs.writeFileSync(mapPath, JSON.stringify(mapData, null, 2));
-  console.log(`\nSaved document map to ${mapPath} (${titleToDocId.size} entries)\n`);
+  console.log(
+    `\nSaved document map to ${mapPath} (${titleToDocId.size} entries)\n`,
+  );
 
   if (DRY_RUN) {
     console.log("Dry run complete. No documents created.\n");
@@ -248,7 +291,12 @@ async function main() {
   }
 
   // ─── VERIFY: Ensure all docs have drive file nodes ───
-  await verifyDriveNodes(DRIVE_ID, titleToDocId, DOCUMENT_TYPE, researchFolderId);
+  await verifyDriveNodes(
+    DRIVE_ID,
+    titleToDocId,
+    DOCUMENT_TYPE,
+    researchFolderId,
+  );
 
   // ─── PASS 2: Resolve links ───
   console.log("=== PASS 2: Resolving cross-claim links ===\n");
@@ -282,7 +330,10 @@ async function main() {
 
     if (linkActions.length > 0) {
       try {
-        await mcpCall("addActions", { documentId: docId, actions: linkActions });
+        await mcpCall("addActions", {
+          documentId: docId,
+          actions: linkActions,
+        });
       } catch (err) {
         console.error(`Link error for "${title}": ${err.message}`);
       }

@@ -34,27 +34,47 @@ const VAULT_PATH = vaultPathIdx !== -1 ? args[vaultPathIdx + 1] : null;
 const MCP_URL = "http://localhost:4001/mcp";
 
 if (!DRIVE_ID || !VAULT_PATH) {
-  console.error("Usage: node import-vault.mjs --drive-id <UUID> --vault-path <path> [--dry-run] [--limit N] [--create-mocs]");
+  console.error(
+    "Usage: node import-vault.mjs --drive-id <UUID> --vault-path <path> [--dry-run] [--limit N] [--create-mocs]",
+  );
   process.exit(1);
 }
 
 // ─── Frontmatter fields → metadata field mapping ───
 const STRING_FIELD_MAP = {
-  scope: "scope", confidence: "confidence", severity: "severity",
-  editor: "editor", model_id: "modelId", model: "model", version: "version",
-  file_path: "filePath", computes: "computes", context: "context",
-  decision_status: "decisionStatus", source_type: "sourceType",
-  target_type: "targetType", relation_type: "relationType",
-  cardinality: "cardinality", error_message: "errorMessage",
-  root_cause: "rootCause", correct_pattern: "correctPattern",
+  scope: "scope",
+  confidence: "confidence",
+  severity: "severity",
+  editor: "editor",
+  model_id: "modelId",
+  model: "model",
+  version: "version",
+  file_path: "filePath",
+  computes: "computes",
+  context: "context",
+  decision_status: "decisionStatus",
+  source_type: "sourceType",
+  target_type: "targetType",
+  relation_type: "relationType",
+  cardinality: "cardinality",
+  error_message: "errorMessage",
+  root_cause: "rootCause",
+  correct_pattern: "correctPattern",
   status: "decisionStatus",
 };
 
 const LIST_FIELD_MAP = {
-  modules: "modules", models: "models", hooks_used: "hooksUsed",
-  dispatch_targets: "dispatchTargets", inputs: "inputs", outputs: "outputs",
-  consumed_by: "consumedBy", alternatives: "alternatives",
-  consequences: "consequences", applies_to: "models", editors: "models",
+  modules: "modules",
+  models: "models",
+  hooks_used: "hooksUsed",
+  dispatch_targets: "dispatchTargets",
+  inputs: "inputs",
+  outputs: "outputs",
+  consumed_by: "consumedBy",
+  alternatives: "alternatives",
+  consequences: "consequences",
+  applies_to: "models",
+  editors: "models",
 };
 
 // ─── MCP HTTP Client (Streamable HTTP / SSE) ───
@@ -65,7 +85,7 @@ async function mcpCall(toolName, toolArgs) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "Accept": "application/json, text/event-stream",
+      Accept: "application/json, text/event-stream",
     },
     body: JSON.stringify({
       jsonrpc: "2.0",
@@ -106,7 +126,11 @@ function parseFrontmatter(content) {
   for (const line of raw.split("\n")) {
     if (currentList && /^\s+-\s+/.test(line)) {
       let val = line.replace(/^\s+-\s+/, "").trim();
-      val = val.replace(/^\[\[/, "").replace(/\]\]$/, "").replace(/^"/, "").replace(/"$/, "");
+      val = val
+        .replace(/^\[\[/, "")
+        .replace(/\]\]$/, "")
+        .replace(/^"/, "")
+        .replace(/"$/, "");
       currentList.push(val);
       continue;
     }
@@ -120,7 +144,9 @@ function parseFrontmatter(content) {
         frontmatter[currentKey] = currentList;
       } else {
         currentList = null;
-        frontmatter[currentKey] = value.replace(/^["']/, "").replace(/["']$/, "");
+        frontmatter[currentKey] = value
+          .replace(/^["']/, "")
+          .replace(/["']$/, "");
       }
     }
   }
@@ -144,8 +170,14 @@ function parseBody(body) {
     let currentSection = null;
 
     for (const line of lines) {
-      if (line.startsWith("Topics:")) { currentSection = "topics"; continue; }
-      if (/^Relevant Notes:|^Related Notes:/.test(line)) { currentSection = "relevant"; continue; }
+      if (line.startsWith("Topics:")) {
+        currentSection = "topics";
+        continue;
+      }
+      if (/^Relevant Notes:|^Related Notes:/.test(line)) {
+        currentSection = "relevant";
+        continue;
+      }
       if (currentSection && line.startsWith("- ")) {
         const wikiMatch = line.match(/\[\[(.+?)\]\]/);
         if (wikiMatch) {
@@ -158,7 +190,9 @@ function parseBody(body) {
 
   let content = mainContent;
   if (titleMatch) {
-    content = content.slice(content.indexOf(titleMatch[0]) + titleMatch[0].length).trim();
+    content = content
+      .slice(content.indexOf(titleMatch[0]) + titleMatch[0].length)
+      .trim();
   }
 
   return { title, content, topics, relevantNotes };
@@ -166,52 +200,107 @@ function parseBody(body) {
 
 function buildActions(frontmatter, parsed, filename) {
   const now = new Date().toISOString();
-  const created = frontmatter.created ? new Date(frontmatter.created).toISOString() : now;
+  const created = frontmatter.created
+    ? new Date(frontmatter.created).toISOString()
+    : now;
   const actions = [];
 
   const title = parsed.title || filename.replace(/\.md$/, "");
-  actions.push({ type: "SET_TITLE", input: { title, updatedAt: created }, scope: "global" });
+  actions.push({
+    type: "SET_TITLE",
+    input: { title, updatedAt: created },
+    scope: "global",
+  });
 
   if (frontmatter.description) {
-    const desc = frontmatter.description.length > 200 ? frontmatter.description.slice(0, 197) + "..." : frontmatter.description;
-    actions.push({ type: "SET_DESCRIPTION", input: { description: desc, updatedAt: created }, scope: "global" });
+    const desc =
+      frontmatter.description.length > 200
+        ? frontmatter.description.slice(0, 197) + "..."
+        : frontmatter.description;
+    actions.push({
+      type: "SET_DESCRIPTION",
+      input: { description: desc, updatedAt: created },
+      scope: "global",
+    });
   }
 
   if (frontmatter.type) {
-    actions.push({ type: "SET_NOTE_TYPE", input: { noteType: frontmatter.type, updatedAt: created }, scope: "global" });
+    actions.push({
+      type: "SET_NOTE_TYPE",
+      input: { noteType: frontmatter.type, updatedAt: created },
+      scope: "global",
+    });
   }
 
   if (parsed.content) {
-    actions.push({ type: "SET_CONTENT", input: { content: parsed.content, updatedAt: created }, scope: "global" });
+    actions.push({
+      type: "SET_CONTENT",
+      input: { content: parsed.content, updatedAt: created },
+      scope: "global",
+    });
   }
 
-  actions.push({ type: "SET_PROVENANCE", input: { author: "apeiron", sourceOrigin: "IMPORT", createdAt: created }, scope: "global" });
+  actions.push({
+    type: "SET_PROVENANCE",
+    input: { author: "apeiron", sourceOrigin: "IMPORT", createdAt: created },
+    scope: "global",
+  });
 
   for (const [fmKey, schemaField] of Object.entries(STRING_FIELD_MAP)) {
     if (frontmatter[fmKey] && fmKey !== "type") {
-      actions.push({ type: "SET_METADATA_FIELD", input: { field: schemaField, value: frontmatter[fmKey], updatedAt: created }, scope: "global" });
+      actions.push({
+        type: "SET_METADATA_FIELD",
+        input: {
+          field: schemaField,
+          value: frontmatter[fmKey],
+          updatedAt: created,
+        },
+        scope: "global",
+      });
     }
   }
 
   for (const [fmKey, schemaField] of Object.entries(LIST_FIELD_MAP)) {
     if (frontmatter[fmKey] && Array.isArray(frontmatter[fmKey])) {
-      actions.push({ type: "SET_METADATA_LIST_FIELD", input: { field: schemaField, values: frontmatter[fmKey], updatedAt: created }, scope: "global" });
+      actions.push({
+        type: "SET_METADATA_LIST_FIELD",
+        input: {
+          field: schemaField,
+          values: frontmatter[fmKey],
+          updatedAt: created,
+        },
+        scope: "global",
+      });
     }
   }
 
   // Topics from frontmatter
   if (frontmatter.topics && Array.isArray(frontmatter.topics)) {
     for (const topicName of frontmatter.topics) {
-      const cleanName = topicName.replace(/^\[\[/, "").replace(/\]\]$/, "").replace(/^"/, "").replace(/"$/, "");
-      actions.push({ type: "ADD_TOPIC", input: { id: generateId(), name: cleanName }, scope: "global" });
+      const cleanName = topicName
+        .replace(/^\[\[/, "")
+        .replace(/\]\]$/, "")
+        .replace(/^"/, "")
+        .replace(/"$/, "");
+      actions.push({
+        type: "ADD_TOPIC",
+        input: { id: generateId(), name: cleanName },
+        scope: "global",
+      });
     }
   }
 
   // Topics from body
   for (const topicName of parsed.topics) {
-    const alreadyAdded = actions.some((a) => a.type === "ADD_TOPIC" && a.input.name === topicName);
+    const alreadyAdded = actions.some(
+      (a) => a.type === "ADD_TOPIC" && a.input.name === topicName,
+    );
     if (!alreadyAdded) {
-      actions.push({ type: "ADD_TOPIC", input: { id: generateId(), name: topicName }, scope: "global" });
+      actions.push({
+        type: "ADD_TOPIC",
+        input: { id: generateId(), name: topicName },
+        scope: "global",
+      });
     }
   }
 
@@ -224,10 +313,18 @@ async function findFolders(driveId) {
   const nodes = result?.document?.state?.global?.nodes ?? [];
 
   // Find /knowledge/ folder
-  const knowledgeFolder = nodes.find((n) => n.kind === "folder" && n.name === "knowledge" && n.parentFolder == null);
+  const knowledgeFolder = nodes.find(
+    (n) =>
+      n.kind === "folder" && n.name === "knowledge" && n.parentFolder == null,
+  );
   // Find /knowledge/notes/ subfolder
   const notesFolder = knowledgeFolder
-    ? nodes.find((n) => n.kind === "folder" && n.name === "notes" && n.parentFolder === knowledgeFolder.id)
+    ? nodes.find(
+        (n) =>
+          n.kind === "folder" &&
+          n.name === "notes" &&
+          n.parentFolder === knowledgeFolder.id,
+      )
     : null;
 
   return {
@@ -248,12 +345,15 @@ async function main() {
   // Find folder IDs
   const { knowledgeFolderId, notesFolderId } = await findFolders(DRIVE_ID);
   console.log(`Knowledge folder: ${knowledgeFolderId ?? "NOT FOUND"}`);
-  console.log(`Notes folder:     ${notesFolderId ?? "NOT FOUND (will use knowledge folder)"}\n`);
+  console.log(
+    `Notes folder:     ${notesFolderId ?? "NOT FOUND (will use knowledge folder)"}\n`,
+  );
 
   const parentFolder = notesFolderId ?? knowledgeFolderId;
 
   // Read all .md files
-  const files = fs.readdirSync(VAULT_PATH)
+  const files = fs
+    .readdirSync(VAULT_PATH)
     .filter((f) => f.endsWith(".md"))
     .slice(0, LIMIT);
 
@@ -273,7 +373,11 @@ async function main() {
     const raw = fs.readFileSync(filePath, "utf-8");
     const { frontmatter, body } = parseFrontmatter(raw);
     const parsed = parseBody(body);
-    const { actions, relevantNotes, title } = buildActions(frontmatter, parsed, file);
+    const { actions, relevantNotes, title } = buildActions(
+      frontmatter,
+      parsed,
+      file,
+    );
 
     noteData.push({ title, relevantNotes });
 
@@ -295,7 +399,9 @@ async function main() {
     const type = frontmatter.type || "unknown";
 
     if (DRY_RUN) {
-      console.log(`${progress} ${title} (${type}) \u2014 ${actions.length} actions, ${relevantNotes.length} links`);
+      console.log(
+        `${progress} ${title} (${type}) \u2014 ${actions.length} actions, ${relevantNotes.length} links`,
+      );
       titleToDocId.set(title, `dry-run-${i}`);
       results.success++;
       continue;
@@ -321,7 +427,10 @@ async function main() {
 
       // Populate note data (exclude link actions — those go in pass 2)
       const contentActions = actions.filter((a) => a.type !== "ADD_LINK");
-      await mcpCall("addActions", { documentId: docId, actions: contentActions });
+      await mcpCall("addActions", {
+        documentId: docId,
+        actions: contentActions,
+      });
 
       titleToDocId.set(title, docId);
       console.log(`${progress} ${title} (${type}) \u2192 ${docId}`);
@@ -337,24 +446,35 @@ async function main() {
   }
 
   // Save document map
-  const mapPath = path.join(path.dirname(new URL(import.meta.url).pathname), "import-document-map.json");
+  const mapPath = path.join(
+    path.dirname(new URL(import.meta.url).pathname),
+    "import-document-map.json",
+  );
   const mapData = Object.fromEntries(titleToDocId);
   fs.writeFileSync(mapPath, JSON.stringify(mapData, null, 2));
-  console.log(`\nSaved document map to ${mapPath} (${titleToDocId.size} entries)\n`);
+  console.log(
+    `\nSaved document map to ${mapPath} (${titleToDocId.size} entries)\n`,
+  );
 
   if (DRY_RUN) {
     console.log("Dry run complete. No documents created.\n");
     if (CREATE_MOCS) {
       console.log(`Would create ${topicToNotes.size} MOCs:`);
       for (const [topic, notes] of topicToNotes) {
-        if (notes.length >= 2) console.log(`  ${topic} (${notes.length} notes)`);
+        if (notes.length >= 2)
+          console.log(`  ${topic} (${notes.length} notes)`);
       }
     }
     return;
   }
 
   // ─── VERIFY: Ensure all docs have drive file nodes ───
-  await verifyDriveNodes(DRIVE_ID, titleToDocId, "bai/knowledge-note", parentFolder);
+  await verifyDriveNodes(
+    DRIVE_ID,
+    titleToDocId,
+    "bai/knowledge-note",
+    parentFolder,
+  );
 
   // ─── PASS 2: Resolve links ───
   console.log("=== PASS 2: Resolving links ===\n");
@@ -389,7 +509,10 @@ async function main() {
 
     if (linkActions.length > 0) {
       try {
-        await mcpCall("addActions", { documentId: docId, actions: linkActions });
+        await mcpCall("addActions", {
+          documentId: docId,
+          actions: linkActions,
+        });
       } catch (err) {
         console.error(`Link error for "${title}": ${err.message}`);
       }
@@ -405,7 +528,9 @@ async function main() {
 
     let mocsCreated = 0;
     // Only create MOCs for topics with 2+ notes
-    const mocTopics = [...topicToNotes.entries()].filter(([, notes]) => notes.length >= 2);
+    const mocTopics = [...topicToNotes.entries()].filter(
+      ([, notes]) => notes.length >= 2,
+    );
 
     for (const [topic, noteTitles] of mocTopics) {
       try {
@@ -425,8 +550,18 @@ async function main() {
         // Build MOC actions: set title + add core ideas
         const mocActions = [
           { type: "SET_MOC_TITLE", input: { title: topic }, scope: "global" },
-          { type: "SET_MOC_DESCRIPTION", input: { description: `Map of Content for ${topic} — ${noteTitles.length} notes` }, scope: "global" },
-          { type: "SET_TIER", input: { tier: noteTitles.length >= 10 ? "DOMAIN" : "TOPIC" }, scope: "global" },
+          {
+            type: "SET_MOC_DESCRIPTION",
+            input: {
+              description: `Map of Content for ${topic} — ${noteTitles.length} notes`,
+            },
+            scope: "global",
+          },
+          {
+            type: "SET_TIER",
+            input: { tier: noteTitles.length >= 10 ? "DOMAIN" : "TOPIC" },
+            scope: "global",
+          },
         ];
 
         // Add core ideas linking to notes
@@ -447,7 +582,9 @@ async function main() {
         }
 
         await mcpCall("addActions", { documentId: mocId, actions: mocActions });
-        console.log(`  MOC: ${topic} (${noteTitles.length} notes) \u2192 ${mocId}`);
+        console.log(
+          `  MOC: ${topic} (${noteTitles.length} notes) \u2192 ${mocId}`,
+        );
         mocsCreated++;
       } catch (err) {
         console.error(`  MOC error for "${topic}": ${err.message}`);
@@ -464,7 +601,9 @@ async function main() {
   console.log(`  Links resolved:   ${linksResolved}`);
   console.log(`  Links unresolved: ${linksUnresolved}`);
   if (CREATE_MOCS) {
-    const mocCount = [...topicToNotes.values()].filter((n) => n.length >= 2).length;
+    const mocCount = [...topicToNotes.values()].filter(
+      (n) => n.length >= 2,
+    ).length;
     console.log(`  MOCs created:     ${mocCount}`);
   }
   console.log(`\n=== Import complete ===\n`);

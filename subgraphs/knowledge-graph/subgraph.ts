@@ -58,16 +58,31 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         documentId: String!
         depth: Int
       ): [ConnectionResult!]!
-      knowledgeGraphNodesByStatus(driveId: ID!, status: String!): [KnowledgeGraphNode!]!
-      knowledgeGraphBacklinks(driveId: ID!, documentId: String!): [KnowledgeGraphEdge!]!
+      knowledgeGraphNodesByStatus(
+        driveId: ID!
+        status: String!
+      ): [KnowledgeGraphNode!]!
+      knowledgeGraphBacklinks(
+        driveId: ID!
+        documentId: String!
+      ): [KnowledgeGraphEdge!]!
       knowledgeGraphDensity(driveId: ID!): Float!
 
-      knowledgeGraphSearch(driveId: ID!, query: String!, limit: Int): [KnowledgeGraphNode!]!
+      knowledgeGraphSearch(
+        driveId: ID!
+        query: String!
+        limit: Int
+      ): [KnowledgeGraphNode!]!
       knowledgeGraphTriangles(driveId: ID!, limit: Int): [Triangle!]!
       knowledgeGraphBridges(driveId: ID!): [KnowledgeGraphNode!]!
-      knowledgeGraphForwardLinks(driveId: ID!, documentId: String!): [KnowledgeGraphEdge!]!
+      knowledgeGraphForwardLinks(
+        driveId: ID!
+        documentId: String!
+      ): [KnowledgeGraphEdge!]!
 
-      """Debug: raw processor DB tables"""
+      """
+      Debug: raw processor DB tables
+      """
       knowledgeGraphDebug(driveId: ID!): GraphDebugInfo!
     }
 
@@ -88,28 +103,19 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
 
   override resolvers = {
     Query: {
-      knowledgeGraphNodes: async (
-        _: unknown,
-        args: { driveId: string },
-      ) => {
+      knowledgeGraphNodes: async (_: unknown, args: { driveId: string }) => {
         await this.ensureGraphDoc(args.driveId);
         const query = this.getQuery(args.driveId);
         return query.allNodes();
       },
 
-      knowledgeGraphEdges: async (
-        _: unknown,
-        args: { driveId: string },
-      ) => {
+      knowledgeGraphEdges: async (_: unknown, args: { driveId: string }) => {
         await this.ensureGraphDoc(args.driveId);
         const query = this.getQuery(args.driveId);
         return query.allEdges();
       },
 
-      knowledgeGraphStats: async (
-        _: unknown,
-        args: { driveId: string },
-      ) => {
+      knowledgeGraphStats: async (_: unknown, args: { driveId: string }) => {
         await this.ensureGraphDoc(args.driveId);
         const query = this.getQuery(args.driveId);
         return query.stats();
@@ -123,10 +129,7 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         return query.nodeByDocumentId(args.documentId) ?? null;
       },
 
-      knowledgeGraphOrphans: async (
-        _: unknown,
-        args: { driveId: string },
-      ) => {
+      knowledgeGraphOrphans: async (_: unknown, args: { driveId: string }) => {
         const query = this.getQuery(args.driveId);
         return query.orphanNodes();
       },
@@ -155,10 +158,7 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         return query.backlinks(args.documentId);
       },
 
-      knowledgeGraphDensity: async (
-        _: unknown,
-        args: { driveId: string },
-      ) => {
+      knowledgeGraphDensity: async (_: unknown, args: { driveId: string }) => {
         const query = this.getQuery(args.driveId);
         return query.density();
       },
@@ -177,13 +177,14 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
       ) => {
         const query = this.getQuery(args.driveId);
         const triangles = await query.triangles(args.limit ?? 20);
-        return triangles.map((t) => ({ noteA: t.a, noteB: t.b, sharedTarget: t.sharedTarget }));
+        return triangles.map((t) => ({
+          noteA: t.a,
+          noteB: t.b,
+          sharedTarget: t.sharedTarget,
+        }));
       },
 
-      knowledgeGraphBridges: async (
-        _: unknown,
-        args: { driveId: string },
-      ) => {
+      knowledgeGraphBridges: async (_: unknown, args: { driveId: string }) => {
         const query = this.getQuery(args.driveId);
         return query.bridges();
       },
@@ -196,17 +197,20 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         return query.forwardLinks(args.documentId);
       },
 
-      knowledgeGraphDebug: async (
-        _: unknown,
-        args: { driveId: string },
-      ) => {
+      knowledgeGraphDebug: async (_: unknown, args: { driveId: string }) => {
         const namespace = GraphIndexerProcessor.getNamespace(args.driveId);
         try {
-          const rawNodes = await GraphIndexerProcessor.query(args.driveId, this.relationalDb as any)
+          const rawNodes = await GraphIndexerProcessor.query(
+            args.driveId,
+            this.relationalDb as any,
+          )
             .selectFrom("graph_nodes")
             .selectAll()
             .execute();
-          const rawEdges = await GraphIndexerProcessor.query(args.driveId, this.relationalDb as any)
+          const rawEdges = await GraphIndexerProcessor.query(
+            args.driveId,
+            this.relationalDb as any,
+          )
             .selectFrom("graph_edges")
             .selectAll()
             .execute();
@@ -214,22 +218,34 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
             rawNodeCount: rawNodes.length,
             rawEdgeCount: rawEdges.length,
             rawNodes: rawNodes.map((r: any) => ({
-              id: r.id, documentId: r.document_id, title: r.title,
-              description: r.description, noteType: r.note_type,
-              status: r.status, updatedAt: r.updated_at,
+              id: r.id,
+              documentId: r.document_id,
+              title: r.title,
+              description: r.description,
+              noteType: r.note_type,
+              status: r.status,
+              updatedAt: r.updated_at,
             })),
             rawEdges: rawEdges.map((r: any) => ({
-              id: r.id, sourceDocumentId: r.source_document_id,
-              targetDocumentId: r.target_document_id, linkType: r.link_type,
-              targetTitle: r.target_title, updatedAt: r.updated_at,
+              id: r.id,
+              sourceDocumentId: r.source_document_id,
+              targetDocumentId: r.target_document_id,
+              linkType: r.link_type,
+              targetTitle: r.target_title,
+              updatedAt: r.updated_at,
             })),
             processorNamespace: namespace,
           };
         } catch (err: unknown) {
-          console.warn(`[KnowledgeGraphSubgraph] Debug query failed for ${namespace}:`, err);
+          console.warn(
+            `[KnowledgeGraphSubgraph] Debug query failed for ${namespace}:`,
+            err,
+          );
           return {
-            rawNodeCount: 0, rawEdgeCount: 0,
-            rawNodes: [], rawEdges: [],
+            rawNodeCount: 0,
+            rawEdgeCount: 0,
+            rawNodes: [],
+            rawEdges: [],
             processorNamespace: namespace,
           };
         }
@@ -244,7 +260,10 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
   private getQuery(driveId: string) {
     // Use the processor's static query method for correct namespace scoping
     // (same pattern as the working workstreams example)
-    const queryBuilder = GraphIndexerProcessor.query(driveId, this.relationalDb as any);
+    const queryBuilder = GraphIndexerProcessor.query(
+      driveId,
+      this.relationalDb as any,
+    );
     return createGraphQuery(queryBuilder as unknown as Kysely<DB>);
   }
 
@@ -262,9 +281,19 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
     try {
       // Check if a knowledge-graph doc already exists anywhere in the drive
       const drive = await this.reactorClient.get(driveId);
-      const nodes = (drive.state as unknown as {
-        global: { nodes: Array<{ kind: string; documentType?: string; id: string; name: string; parentFolder?: string | null }> };
-      }).global.nodes;
+      const nodes = (
+        drive.state as unknown as {
+          global: {
+            nodes: Array<{
+              kind: string;
+              documentType?: string;
+              id: string;
+              name: string;
+              parentFolder?: string | null;
+            }>;
+          };
+        }
+      ).global.nodes;
 
       const hasGraph = nodes.some(
         (n) => n.kind === "file" && n.documentType === "bai/knowledge-graph",
@@ -273,7 +302,8 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
       if (!hasGraph) {
         // Find the /self folder to place the graph doc in the correct location
         const selfFolder = nodes.find(
-          (n) => n.kind === "folder" && n.name === "self" && n.parentFolder == null,
+          (n) =>
+            n.kind === "folder" && n.name === "self" && n.parentFolder == null,
         );
         const parentFolder = selfFolder?.id;
 
@@ -282,11 +312,16 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         });
         console.log(
           `[KnowledgeGraphSubgraph] Auto-created KnowledgeGraph in drive ${driveId}` +
-          (parentFolder ? ` (folder: /self/)` : ` (drive root — /self/ folder not found)`),
+            (parentFolder
+              ? ` (folder: /self/)`
+              : ` (drive root — /self/ folder not found)`),
         );
       }
     } catch (err: unknown) {
-      console.error(`[KnowledgeGraphSubgraph] Failed to ensure graph doc:`, err);
+      console.error(
+        `[KnowledgeGraphSubgraph] Failed to ensure graph doc:`,
+        err,
+      );
       // Don't block queries if this fails — processor data still works
     }
   }

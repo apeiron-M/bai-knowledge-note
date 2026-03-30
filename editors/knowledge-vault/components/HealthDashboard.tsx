@@ -297,26 +297,48 @@ export function HealthDashboard() {
         </div>
         <span
           className="rounded-full border px-3 py-1 text-[10px] font-medium"
-          style={{ borderColor: "var(--bai-border)", color: "var(--bai-text-muted)" }}
+          style={{
+            borderColor: "var(--bai-border)",
+            color: "var(--bai-text-muted)",
+          }}
         >
           {agentReport ? "Agent" : "Live"}
         </span>
       </div>
 
       {/* Agent recommendations (from bai/health-report document) */}
-      {agentReport?.recommendations && agentReport.recommendations.length > 0 && (
-        <div className="rounded-xl p-4" style={{ backgroundColor: "var(--bai-accent-soft)", border: "1px solid var(--bai-border)" }}>
-          <h3 className="mb-2 text-xs font-semibold" style={{ color: "var(--bai-accent)" }}>Agent Recommendations</h3>
-          <ul className="space-y-1">
-            {agentReport.recommendations.map((rec, i) => (
-              <li key={i} className="flex items-start gap-2 text-xs" style={{ color: "var(--bai-text-secondary)" }}>
-                <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full" style={{ backgroundColor: "var(--bai-accent)" }} />
-                {rec}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {agentReport?.recommendations &&
+        agentReport.recommendations.length > 0 && (
+          <div
+            className="rounded-xl p-4"
+            style={{
+              backgroundColor: "var(--bai-accent-soft)",
+              border: "1px solid var(--bai-border)",
+            }}
+          >
+            <h3
+              className="mb-2 text-xs font-semibold"
+              style={{ color: "var(--bai-accent)" }}
+            >
+              Agent Recommendations
+            </h3>
+            <ul className="space-y-1">
+              {agentReport.recommendations.map((rec, i) => (
+                <li
+                  key={i}
+                  className="flex items-start gap-2 text-xs"
+                  style={{ color: "var(--bai-text-secondary)" }}
+                >
+                  <span
+                    className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full"
+                    style={{ backgroundColor: "var(--bai-accent)" }}
+                  />
+                  {rec}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
 
       {/* Metrics — prefer agent report, fallback to live */}
       <div className="grid grid-cols-4 gap-3">
@@ -342,7 +364,8 @@ export function HealthDashboard() {
             },
             {
               label: "Edges",
-              value: agentReport?.graphMetrics?.connectionCount ?? health.edgeCount,
+              value:
+                agentReport?.graphMetrics?.connectionCount ?? health.edgeCount,
               colorClass: "text-emerald-400",
               colorStyle: undefined,
             },
@@ -354,16 +377,24 @@ export function HealthDashboard() {
             },
             {
               label: "Orphans",
-              value: agentReport?.graphMetrics?.orphanCount ?? health.orphanCount,
+              value:
+                agentReport?.graphMetrics?.orphanCount ?? health.orphanCount,
               colorClass:
-                (agentReport?.graphMetrics?.orphanCount ?? health.orphanCount) > 0 ? "text-amber-400" : "text-emerald-400",
+                (agentReport?.graphMetrics?.orphanCount ?? health.orphanCount) >
+                0
+                  ? "text-amber-400"
+                  : "text-emerald-400",
               colorStyle: undefined,
             },
             {
               label: "Avg Links",
-              value: (agentReport?.graphMetrics?.averageLinksPerNote ?? health.avgLinksPerNote).toFixed(1),
+              value: (
+                agentReport?.graphMetrics?.averageLinksPerNote ??
+                health.avgLinksPerNote
+              ).toFixed(1),
               colorClass:
-                (agentReport?.graphMetrics?.averageLinksPerNote ?? health.avgLinksPerNote) < 2
+                (agentReport?.graphMetrics?.averageLinksPerNote ??
+                  health.avgLinksPerNote) < 2
                   ? "text-amber-400"
                   : "text-emerald-400",
               colorStyle: undefined,

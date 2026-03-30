@@ -1,8 +1,5 @@
 import { gql } from "graphql-tag";
-import {
-  BaseSubgraph,
-  type SubgraphArgs,
-} from "@powerhousedao/reactor-api";
+import { BaseSubgraph, type SubgraphArgs } from "@powerhousedao/reactor-api";
 import { MethodologyIndexerProcessor } from "../../processors/methodology-indexer/index.js";
 import { createMethodologyQuery } from "../../processors/methodology-indexer/query.js";
 import type { MethodologyDB } from "../../processors/methodology-indexer/schema.js";
@@ -38,14 +35,27 @@ export class MethodologySubgraph extends BaseSubgraph {
     }
 
     extend type Query {
-      methodologySearch(driveId: ID!, query: String!, limit: Int): [MethodologyClaim!]!
+      methodologySearch(
+        driveId: ID!
+        query: String!
+        limit: Int
+      ): [MethodologyClaim!]!
       methodologyClaims(driveId: ID!): [MethodologyClaim!]!
       methodologyClaimsByKind(driveId: ID!, kind: String!): [MethodologyClaim!]!
-      methodologyClaimsByTopic(driveId: ID!, topic: String!): [MethodologyClaim!]!
+      methodologyClaimsByTopic(
+        driveId: ID!
+        topic: String!
+      ): [MethodologyClaim!]!
       methodologyClaimById(driveId: ID!, documentId: String!): MethodologyClaim
       methodologyStats(driveId: ID!): MethodologyStats!
-      methodologyConnectionsFrom(driveId: ID!, documentId: String!): [MethodologyConnection!]!
-      methodologyConnectionsTo(driveId: ID!, targetRef: String!): [MethodologyConnection!]!
+      methodologyConnectionsFrom(
+        driveId: ID!
+        documentId: String!
+      ): [MethodologyConnection!]!
+      methodologyConnectionsTo(
+        driveId: ID!
+        targetRef: String!
+      ): [MethodologyConnection!]!
     }
   `;
 
@@ -59,10 +69,7 @@ export class MethodologySubgraph extends BaseSubgraph {
         return query.searchClaims(args.query, args.limit ?? 50);
       },
 
-      methodologyClaims: async (
-        _: unknown,
-        args: { driveId: string },
-      ) => {
+      methodologyClaims: async (_: unknown, args: { driveId: string }) => {
         const query = this.getQuery(args.driveId);
         return query.allClaims();
       },
@@ -91,10 +98,7 @@ export class MethodologySubgraph extends BaseSubgraph {
         return query.claimByDocumentId(args.documentId) ?? null;
       },
 
-      methodologyStats: async (
-        _: unknown,
-        args: { driveId: string },
-      ) => {
+      methodologyStats: async (_: unknown, args: { driveId: string }) => {
         const query = this.getQuery(args.driveId);
         return query.stats();
       },
@@ -126,6 +130,8 @@ export class MethodologySubgraph extends BaseSubgraph {
       driveId,
       this.relationalDb as any,
     );
-    return createMethodologyQuery(queryBuilder as unknown as Kysely<MethodologyDB>);
+    return createMethodologyQuery(
+      queryBuilder as unknown as Kysely<MethodologyDB>,
+    );
   }
 }

@@ -1,5 +1,9 @@
 import type { Kysely } from "kysely";
-import type { MethodologyDB, MethodologyClaim, MethodologyConnection } from "./schema.js";
+import type {
+  MethodologyDB,
+  MethodologyClaim,
+  MethodologyConnection,
+} from "./schema.js";
 
 export interface ClaimResult {
   id: string;
@@ -46,16 +50,24 @@ function rowToConnection(row: MethodologyConnection): ConnectionResult {
 export function createMethodologyQuery(db: Kysely<MethodologyDB>) {
   return {
     async allClaims(): Promise<ClaimResult[]> {
-      const rows = await db.selectFrom("methodology_claims").selectAll().execute();
+      const rows = await db
+        .selectFrom("methodology_claims")
+        .selectAll()
+        .execute();
       return rows.map(rowToClaim);
     },
 
     async claimCount(): Promise<number> {
-      const rows = await db.selectFrom("methodology_claims").selectAll().execute();
+      const rows = await db
+        .selectFrom("methodology_claims")
+        .selectAll()
+        .execute();
       return rows.length;
     },
 
-    async claimByDocumentId(documentId: string): Promise<ClaimResult | undefined> {
+    async claimByDocumentId(
+      documentId: string,
+    ): Promise<ClaimResult | undefined> {
       const row = await db
         .selectFrom("methodology_claims")
         .where("document_id", "=", documentId)
@@ -94,7 +106,7 @@ export function createMethodologyQuery(db: Kysely<MethodologyDB>) {
       const q = `%"${topic.toLowerCase()}"%`;
       const rows = await db
         .selectFrom("methodology_claims")
-        .where(eb => eb(eb.fn("lower", ["topics"]), "like", q))
+        .where((eb) => eb(eb.fn("lower", ["topics"]), "like", q))
         .selectAll()
         .execute();
       return rows.map(rowToClaim);
@@ -118,9 +130,19 @@ export function createMethodologyQuery(db: Kysely<MethodologyDB>) {
       return rows.map(rowToConnection);
     },
 
-    async stats(): Promise<{ claimCount: number; connectionCount: number; kindDistribution: Record<string, number> }> {
-      const claims = await db.selectFrom("methodology_claims").selectAll().execute();
-      const connections = await db.selectFrom("methodology_connections").selectAll().execute();
+    async stats(): Promise<{
+      claimCount: number;
+      connectionCount: number;
+      kindDistribution: Record<string, number>;
+    }> {
+      const claims = await db
+        .selectFrom("methodology_claims")
+        .selectAll()
+        .execute();
+      const connections = await db
+        .selectFrom("methodology_connections")
+        .selectAll()
+        .execute();
 
       const kindDist: Record<string, number> = {};
       for (const c of claims) {

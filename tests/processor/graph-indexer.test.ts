@@ -49,7 +49,10 @@ describe("graph_nodes table", () => {
     expect(row!.updated_at).toBe("2024-01-01T00:00:00Z");
 
     // cleanup
-    await db.deleteFrom("graph_nodes").where("document_id", "=", "doc-1").execute();
+    await db
+      .deleteFrom("graph_nodes")
+      .where("document_id", "=", "doc-1")
+      .execute();
   });
 });
 
@@ -264,7 +267,10 @@ describe("upsert on conflict", () => {
     expect(rows[0].updated_at).toBe("2024-06-01T00:00:00Z");
 
     // cleanup
-    await db.deleteFrom("graph_nodes").where("document_id", "=", docId).execute();
+    await db
+      .deleteFrom("graph_nodes")
+      .where("document_id", "=", docId)
+      .execute();
   });
 });
 

@@ -106,7 +106,9 @@ export function createGraphQuery(db: Kysely<DB>) {
       const edges = await db.selectFrom("graph_edges").selectAll().execute();
 
       const targetIds = new Set(edges.map((e) => e.target_document_id));
-      const orphanCount = nodes.filter((n) => !targetIds.has(n.document_id)).length;
+      const orphanCount = nodes.filter(
+        (n) => !targetIds.has(n.document_id),
+      ).length;
 
       return {
         nodeCount: nodes.length,
@@ -203,11 +205,19 @@ export function createGraphQuery(db: Kysely<DB>) {
       return rows.map(rowToEdge);
     },
 
-    async triangles(limit = 20): Promise<Array<{ a: GraphNodeResult; b: GraphNodeResult; sharedTarget: GraphNodeResult }>> {
+    async triangles(limit = 20): Promise<
+      Array<{
+        a: GraphNodeResult;
+        b: GraphNodeResult;
+        sharedTarget: GraphNodeResult;
+      }>
+    > {
       // Find pairs (A,B) that both link to C but A doesn't link to B
       const edges = await db.selectFrom("graph_edges").selectAll().execute();
       const nodeRows = await db.selectFrom("graph_nodes").selectAll().execute();
-      const nodeMap = new Map(nodeRows.map((n) => [n.document_id, rowToNode(n)]));
+      const nodeMap = new Map(
+        nodeRows.map((n) => [n.document_id, rowToNode(n)]),
+      );
 
       // Build incoming map: target → [source1, source2, ...]
       const incoming = new Map<string, string[]>();
@@ -219,7 +229,11 @@ export function createGraphQuery(db: Kysely<DB>) {
         edgeSet.add(`${e.source_document_id}->${e.target_document_id}`);
       }
 
-      const results: Array<{ a: GraphNodeResult; b: GraphNodeResult; sharedTarget: GraphNodeResult }> = [];
+      const results: Array<{
+        a: GraphNodeResult;
+        b: GraphNodeResult;
+        sharedTarget: GraphNodeResult;
+      }> = [];
 
       for (const [targetId, sources] of incoming) {
         if (sources.length < 2) continue;
@@ -227,11 +241,18 @@ export function createGraphQuery(db: Kysely<DB>) {
         if (!target) continue;
 
         for (let i = 0; i < sources.length && results.length < limit; i++) {
-          for (let j = i + 1; j < sources.length && results.length < limit; j++) {
+          for (
+            let j = i + 1;
+            j < sources.length && results.length < limit;
+            j++
+          ) {
             const aId = sources[i];
             const bId = sources[j];
             // Check if A→B or B→A exists
-            if (!edgeSet.has(`${aId}->${bId}`) && !edgeSet.has(`${bId}->${aId}`)) {
+            if (
+              !edgeSet.has(`${aId}->${bId}`) &&
+              !edgeSet.has(`${bId}->${aId}`)
+            ) {
               const a = nodeMap.get(aId);
               const b = nodeMap.get(bId);
               if (a && b) {
@@ -249,13 +270,17 @@ export function createGraphQuery(db: Kysely<DB>) {
       // Find articulation points using a simplified DFS approach
       const edges = await db.selectFrom("graph_edges").selectAll().execute();
       const nodeRows = await db.selectFrom("graph_nodes").selectAll().execute();
-      const nodeMap = new Map(nodeRows.map((n) => [n.document_id, rowToNode(n)]));
+      const nodeMap = new Map(
+        nodeRows.map((n) => [n.document_id, rowToNode(n)]),
+      );
 
       // Build undirected adjacency list
       const adj = new Map<string, Set<string>>();
       for (const e of edges) {
-        if (!adj.has(e.source_document_id)) adj.set(e.source_document_id, new Set());
-        if (!adj.has(e.target_document_id)) adj.set(e.target_document_id, new Set());
+        if (!adj.has(e.source_document_id))
+          adj.set(e.source_document_id, new Set());
+        if (!adj.has(e.target_document_id))
+          adj.set(e.target_document_id, new Set());
         adj.get(e.source_document_id)!.add(e.target_document_id);
         adj.get(e.target_document_id)!.add(e.source_document_id);
       }

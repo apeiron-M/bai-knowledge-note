@@ -150,16 +150,27 @@ export default function Editor() {
                 }
               />
 
-              <input
-                type="text"
+              <textarea
                 defaultValue={state.title ?? ""}
                 placeholder="Untitled Note"
                 onBlur={(e) => handleSetTitle(e.target.value.trim())}
                 onKeyDown={(e) => {
-                  if (e.key === "Enter") e.currentTarget.blur();
+                  if (e.key === "Enter" && !e.shiftKey) e.currentTarget.blur();
                 }}
-                className="w-full border-0 bg-transparent text-2xl font-bold outline-none"
-                style={{ color: "var(--bai-text)" }}
+                onInput={(e) => {
+                  const el = e.currentTarget;
+                  el.style.height = "auto";
+                  el.style.height = `${el.scrollHeight}px`;
+                }}
+                ref={(el) => {
+                  if (el) {
+                    el.style.height = "auto";
+                    el.style.height = `${el.scrollHeight}px`;
+                  }
+                }}
+                rows={1}
+                className="w-full resize-y border-0 bg-transparent text-2xl font-bold leading-snug outline-none"
+                style={{ color: "var(--bai-text)", overflow: "hidden" }}
               />
             </div>
 

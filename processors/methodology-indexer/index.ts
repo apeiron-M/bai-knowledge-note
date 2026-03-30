@@ -118,9 +118,7 @@ export class MethodologyIndexerProcessor extends RelationalDbProcessor<Methodolo
 
   async onDisconnect(): Promise<void> {
     try {
-      await this.relationalDb
-        .deleteFrom("methodology_connections")
-        .execute();
+      await this.relationalDb.deleteFrom("methodology_connections").execute();
       await this.relationalDb.deleteFrom("methodology_claims").execute();
       console.log(
         `[MethodologyIndexer] Cleaned up namespace: ${this.namespace}`,
