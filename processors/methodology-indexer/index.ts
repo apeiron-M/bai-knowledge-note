@@ -5,7 +5,7 @@ import type { MethodologyDB } from "./schema.js";
 
 export class MethodologyIndexerProcessor extends RelationalDbProcessor<MethodologyDB> {
   static override getNamespace(driveId: string): string {
-    return `MethodologyIndexerProcessor_${driveId.replace(/-/g, "_")}`;
+    return super.getNamespace(driveId);
   }
 
   override async initAndUpgrade(): Promise<void> {
