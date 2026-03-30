@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect } from "react";
 import {
   useSelectedDrive,
   useNodesInSelectedDrive,
@@ -10,108 +10,115 @@ import type { Node } from "document-drive";
 /**
  * Drive folder structure matching Ars Contexta layout:
  *
- * /knowledge/              ← notes, MOCs, knowledge graph
- *   /knowledge/inbox/      ← unprocessed sources waiting for extraction
- *   /knowledge/insights/   ← extracted atomic claims (knowledge notes)
- * /sources/                ← archived source material
- * /ops/                    ← operational coordination
- *   /ops/sessions/         ← session transcripts
- *   /ops/health/           ← health reports
- *   /ops/queue/            ← pipeline queue singleton
- * /self/                   ← system identity & config
- *   /self/methodology/     ← methodology notes
- * /research/               ← bundled research claims
+ * /knowledge/              <- notes, MOCs, knowledge graph
+ *   /knowledge/notes/      <- knowledge notes
+ *   /knowledge/inbox/      <- unprocessed captures
+ *   /knowledge/insights/   <- synthesized insights
+ * /sources/                <- archived source material
+ * /ops/                    <- operational coordination
+ *   /ops/sessions/         <- session transcripts
+ *   /ops/health/           <- health reports
+ *   /ops/queue/            <- pipeline queue singleton
+ * /self/                   <- system identity & config
+ *   /self/methodology/     <- methodology notes
+ * /research/               <- bundled research claims
+ *
+ * Pattern: follows contributor-billing's proven approach —
+ * module-level tracking Set per drive prevents duplicates,
+ * sequential creation with delays for sync compatibility.
  */
 
-type FolderDef = {
-  name: string;
-  children?: FolderDef[];
-};
+// ─── Module-level state (survives re-renders, prevents duplicates) ───
+const initStartedForDrives = new Set<string>();
 
-const FOLDER_TREE: FolderDef[] = [
-  {
-    name: "knowledge",
-    children: [{ name: "notes" }, { name: "inbox" }, { name: "insights" }],
-  },
+type FolderSpec = { name: string; parentPath?: string };
+type SingletonSpec = { name: string; type: string; folderPath: string };
+
+// Flat list of folders to create (order matters — parents first)
+const FOLDERS: FolderSpec[] = [
+  { name: "knowledge" },
+  { name: "notes", parentPath: "knowledge" },
+  { name: "inbox", parentPath: "knowledge" },
+  { name: "insights", parentPath: "knowledge" },
   { name: "sources" },
-  {
-    name: "ops",
-    children: [{ name: "sessions" }, { name: "health" }, { name: "queue" }],
-  },
-  {
-    name: "self",
-    children: [{ name: "methodology" }],
-  },
+  { name: "ops" },
+  { name: "sessions", parentPath: "ops" },
+  { name: "health", parentPath: "ops" },
+  { name: "queue", parentPath: "ops" },
+  { name: "self" },
+  { name: "methodology", parentPath: "self" },
   { name: "research" },
 ];
 
-type SingletonDef = {
-  name: string;
-  type: string;
-  folderPath: string;
-};
-
-const SINGLETONS: SingletonDef[] = [
-  {
-    name: "PipelineQueue",
-    type: "bai/pipeline-queue",
-    folderPath: "ops/queue",
-  },
-  {
-    name: "HealthReport",
-    type: "bai/health-report",
-    folderPath: "ops/health",
-  },
+const SINGLETONS: SingletonSpec[] = [
+  { name: "PipelineQueue", type: "bai/pipeline-queue", folderPath: "ops/queue" },
+  { name: "HealthReport", type: "bai/health-report", folderPath: "ops/health" },
   { name: "KnowledgeGraph", type: "bai/knowledge-graph", folderPath: "self" },
   { name: "VaultConfig", type: "bai/vault-config", folderPath: "self" },
 ];
 
 export function useDriveInit() {
-  // Use the drive ID (UUID), never the slug
   const [selectedDrive] = useSelectedDrive();
   const driveId = selectedDrive?.header.id;
   const nodes = useNodesInSelectedDrive();
-  const initAttempted = useRef(false);
 
   useEffect(() => {
-    if (!driveId || initAttempted.current) return;
-    if (nodes === undefined) return; // still loading
+    if (!driveId || nodes === undefined) return;
+    if (initStartedForDrives.has(driveId)) return;
 
-    // Check if the root "knowledge" folder exists (our init marker)
+    // Check if already initialized (knowledge folder exists)
     const hasKnowledgeFolder = (nodes ?? []).some(
-      (n) =>
-        n.kind === "folder" && n.name === "knowledge" && n.parentFolder == null,
+      (n) => n.kind === "folder" && n.name === "knowledge" && n.parentFolder == null,
     );
+    if (hasKnowledgeFolder) {
+      initStartedForDrives.add(driveId);
+      return;
+    }
 
-    if (hasKnowledgeFolder) return; // already initialized
-
-    initAttempted.current = true;
-    initDrive(driveId, nodes ?? []);
+    initStartedForDrives.add(driveId);
+    void initDrive(driveId, nodes ?? []);
   }, [driveId, nodes]);
 }
 
+// ─── Single sequential init: folders then singletons ───
 async function initDrive(driveId: string, existingNodes: Node[]) {
   try {
-    console.log(`[VaultInit] Initializing drive ${driveId}...`);
+    // Phase 1: Create folders
+    console.log(`[VaultInit] Creating folders for drive ${driveId}...`);
+    const existingFolderMap = buildExistingFolderMap(existingNodes);
+    const folderIds = new Map<string, string>(existingFolderMap);
 
-    // Build map of existing folders: path -> id
-    const existingFolderIds = buildExistingFolderMap(existingNodes);
-    const folderIds = new Map<string, string>(existingFolderIds);
+    for (const folder of FOLDERS) {
+      const path = folder.parentPath ? `${folder.parentPath}/${folder.name}` : folder.name;
 
-    // Create folder tree recursively
-    await createFolderTree(driveId, FOLDER_TREE, undefined, "", folderIds);
+      if (folderIds.has(path)) {
+        continue;
+      }
 
-    // Wait a beat for the reactor to process folder creation
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+      const parentId = folder.parentPath ? folderIds.get(folder.parentPath) : undefined;
 
-    // Create singleton documents in their folders
+      try {
+        const result = await addFolder(driveId, folder.name, parentId);
+        folderIds.set(path, result.id);
+        console.log(`[VaultInit] Created folder: /${path}/`);
+        await new Promise((r) => setTimeout(r, 500));
+      } catch (err) {
+        console.error(`[VaultInit] Failed to create folder /${path}/:`, err);
+      }
+    }
+
+    console.log("[VaultInit] Folders complete");
+
+    // Wait for reactor to process all folder operations
+    await new Promise((r) => setTimeout(r, 1500));
+
+    // Phase 2: Create singletons
+    console.log(`[VaultInit] Creating singletons...`);
+
     const existingTypes = new Set(
       existingNodes
         .filter((n) => n.kind === "file")
-        .map(
-          (n) =>
-            (n as Node & { kind: "file"; documentType: string }).documentType,
-        ),
+        .map((n) => (n as Node & { kind: "file"; documentType: string }).documentType),
     );
 
     for (const singleton of SINGLETONS) {
@@ -121,64 +128,23 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
       }
 
       const parentFolderId = folderIds.get(singleton.folderPath);
+
       try {
-        // addDocument uses the drive UUID internally
-        await addDocument(
-          driveId,
-          singleton.name,
-          singleton.type,
-          parentFolderId,
-        );
-        console.log(
-          `[VaultInit] Created ${singleton.name} in /${singleton.folderPath}/`,
-        );
-        // Small delay between document creations to avoid revision conflicts
-        await new Promise((resolve) => setTimeout(resolve, 500));
-      } catch (err: unknown) {
+        await addDocument(driveId, singleton.name, singleton.type, parentFolderId);
+        console.log(`[VaultInit] Created ${singleton.name} in /${singleton.folderPath}/`);
+        await new Promise((r) => setTimeout(r, 1000));
+      } catch (err) {
         console.error(`[VaultInit] Failed to create ${singleton.name}:`, err);
       }
     }
 
     console.log("[VaultInit] Drive initialization complete");
-  } catch (err: unknown) {
+  } catch (err) {
     console.error("[VaultInit] Drive initialization failed:", err);
   }
 }
 
-async function createFolderTree(
-  driveId: string,
-  defs: FolderDef[],
-  parentFolderId: string | undefined,
-  pathPrefix: string,
-  folderIds: Map<string, string>,
-) {
-  for (const def of defs) {
-    const path = pathPrefix ? `${pathPrefix}/${def.name}` : def.name;
-
-    if (!folderIds.has(path)) {
-      try {
-        const result = await addFolder(driveId, def.name, parentFolderId);
-        folderIds.set(path, result.id);
-        console.log(`[VaultInit] Created folder: /${path}/`);
-        // Small delay to avoid revision conflicts
-        await new Promise((resolve) => setTimeout(resolve, 200));
-      } catch (err: unknown) {
-        console.error(`[VaultInit] Failed to create folder /${path}/:`, err);
-        continue;
-      }
-    }
-
-    if (def.children) {
-      await createFolderTree(
-        driveId,
-        def.children,
-        folderIds.get(path),
-        path,
-        folderIds,
-      );
-    }
-  }
-}
+// ─── Helpers ───
 
 function buildExistingFolderMap(nodes: Node[]): Map<string, string> {
   const map = new Map<string, string>();
@@ -190,9 +156,7 @@ function buildExistingFolderMap(nodes: Node[]): Map<string, string> {
     let current: Node | undefined = folder;
     while (current) {
       pathParts.unshift(current.name);
-      current = current.parentFolder
-        ? folderById.get(current.parentFolder)
-        : undefined;
+      current = current.parentFolder ? folderById.get(current.parentFolder) : undefined;
     }
     map.set(pathParts.join("/"), folder.id);
   }
