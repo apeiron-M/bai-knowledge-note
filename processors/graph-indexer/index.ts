@@ -116,13 +116,11 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
   }
 
   async onDisconnect(): Promise<void> {
-    try {
-      await this.relationalDb.deleteFrom("graph_edges").execute();
-      await this.relationalDb.deleteFrom("graph_nodes").execute();
-      console.log(`[GraphIndexer] Cleaned up namespace: ${this.namespace}`);
-    } catch (err: unknown) {
-      console.error(`[GraphIndexer] Error cleaning up:`, err);
-    }
+    // Intentionally no-op: preserve indexed data across restarts.
+    // The reactor does not replay historical operations on reconnect,
+    // so wiping tables here would leave the index permanently empty
+    // until new operations arrive. Use knowledgeGraphReindex mutation
+    // to rebuild if needed.
   }
 
   private async deleteNode(documentId: string): Promise<void> {

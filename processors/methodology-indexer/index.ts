@@ -117,15 +117,9 @@ export class MethodologyIndexerProcessor extends RelationalDbProcessor<Methodolo
   }
 
   async onDisconnect(): Promise<void> {
-    try {
-      await this.relationalDb.deleteFrom("methodology_connections").execute();
-      await this.relationalDb.deleteFrom("methodology_claims").execute();
-      console.log(
-        `[MethodologyIndexer] Cleaned up namespace: ${this.namespace}`,
-      );
-    } catch (err: unknown) {
-      console.error(`[MethodologyIndexer] Error cleaning up:`, err);
-    }
+    // Intentionally no-op: preserve indexed data across restarts.
+    // The reactor does not replay historical operations on reconnect,
+    // so wiping tables here would leave the index permanently empty.
   }
 
   private async deleteClaim(documentId: string): Promise<void> {

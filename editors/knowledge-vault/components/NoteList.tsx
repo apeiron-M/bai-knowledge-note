@@ -1,10 +1,12 @@
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
-import type { CSSProperties } from "react";
+import { memo, useState, type CSSProperties } from "react";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 
 type NoteListProps = {
   notes: KnowledgeNoteInfo[];
 };
+
+const PAGE_SIZE = 30;
 
 const STATUS_BADGE_STYLES: Record<string, CSSProperties> = {
   DRAFT: {
@@ -30,6 +32,8 @@ const STATUS_BADGE_STYLES: Record<string, CSSProperties> = {
 };
 
 export function NoteList({ notes }: NoteListProps) {
+  const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
   if (notes.length === 0) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -48,16 +52,36 @@ export function NoteList({ notes }: NoteListProps) {
     );
   }
 
+  const hasMore = visibleCount < notes.length;
+
   return (
-    <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
-      {notes.map((note) => (
-        <NoteCard key={note.id} note={note} />
-      ))}
+    <div className="p-4">
+      <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+        {notes.slice(0, visibleCount).map((note) => (
+          <NoteCard key={note.id} note={note} />
+        ))}
+      </div>
+      {hasMore && (
+        <div className="mt-4 flex justify-center">
+          <button
+            type="button"
+            onClick={() => setVisibleCount((c) => c + PAGE_SIZE)}
+            className="rounded-lg border px-4 py-2 text-sm transition-colors"
+            style={{
+              borderColor: "var(--bai-border)",
+              color: "var(--bai-text-muted)",
+              background: "var(--bai-surface)",
+            }}
+          >
+            Show more ({notes.length - visibleCount} remaining)
+          </button>
+        </div>
+      )}
     </div>
   );
 }
 
-function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
+const NoteCard = memo(function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
   const title = note.title ?? note.name;
   const status = note.status ?? "DRAFT";
   const badgeStyle = STATUS_BADGE_STYLES[status] ?? STATUS_BADGE_STYLES.DRAFT;
@@ -66,18 +90,11 @@ function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
     <button
       type="button"
       onClick={() => setSelectedNode(note.id)}
-      className="note-card group flex flex-col rounded-xl border p-4 text-left transition-all"
-      style={{
-        background: "var(--bai-surface)",
-        borderColor: "var(--bai-border)",
-      }}
+      className="group flex flex-col rounded-xl border border-[var(--bai-border)] bg-[var(--bai-surface)] p-4 text-left transition-all hover:border-[var(--bai-accent)] hover:bg-[var(--bai-hover)]"
     >
       {/* Header */}
       <div className="mb-2 flex items-start justify-between gap-2">
-        <h3
-          className="note-card-title flex-1 truncate text-sm font-semibold"
-          style={{ color: "var(--bai-text)" }}
-        >
+        <h3 className="flex-1 truncate text-sm font-semibold text-[var(--bai-text)] group-hover:text-[var(--bai-accent)]">
           {title}
         </h3>
         <span
@@ -148,16 +165,6 @@ function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
           )}
         </div>
       )}
-
-      <style>{`
-        .note-card:hover {
-          background: var(--bai-hover) !important;
-          border-color: var(--bai-accent) !important;
-        }
-        .note-card:hover .note-card-title {
-          color: var(--bai-accent) !important;
-        }
-      `}</style>
     </button>
   );
-}
+});

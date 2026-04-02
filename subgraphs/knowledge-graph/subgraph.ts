@@ -1,13 +1,10 @@
 import { gql } from "graphql-tag";
-import {
-  BaseSubgraph,
-  type SubgraphArgs,
-  type Context,
-} from "@powerhousedao/reactor-api";
+import { BaseSubgraph, type SubgraphArgs } from "@powerhousedao/reactor-api";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
 import { createGraphQuery } from "../../processors/graph-indexer/query.js";
 import type { DB } from "../../processors/graph-indexer/schema.js";
 import type { Kysely } from "kysely";
+import type { IRelationalDb } from "@powerhousedao/shared/processors";
 
 export class KnowledgeGraphSubgraph extends BaseSubgraph {
   override name = "knowledgeGraph";
@@ -99,9 +96,27 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
       rawEdges: [KnowledgeGraphEdge!]!
       processorNamespace: String!
     }
+
+    type ReindexResult {
+      indexedNodes: Int!
+      indexedEdges: Int!
+      errors: [String!]!
+    }
+
+    extend type Mutation {
+      """
+      Backfill the graph index by reading all bai/knowledge-note documents
+      in the drive. Use when the processor missed historical operations.
+      """
+      knowledgeGraphReindex(driveId: ID!): ReindexResult!
+    }
   `;
 
   override resolvers = {
+    Mutation: {
+      knowledgeGraphReindex: (_: unknown, args: { driveId: string }) =>
+        this.reindexDrive(args.driveId),
+    },
     Query: {
       knowledgeGraphNodes: async (_: unknown, args: { driveId: string }) => {
         await this.ensureGraphDoc(args.driveId);
@@ -200,24 +215,19 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
       knowledgeGraphDebug: async (_: unknown, args: { driveId: string }) => {
         const namespace = GraphIndexerProcessor.getNamespace(args.driveId);
         try {
-          const rawNodes = await GraphIndexerProcessor.query(
-            args.driveId,
-            this.relationalDb as any,
-          )
+          const db = this.getDb(args.driveId);
+          const rawNodes = await db
             .selectFrom("graph_nodes")
             .selectAll()
             .execute();
-          const rawEdges = await GraphIndexerProcessor.query(
-            args.driveId,
-            this.relationalDb as any,
-          )
+          const rawEdges = await db
             .selectFrom("graph_edges")
             .selectAll()
             .execute();
           return {
             rawNodeCount: rawNodes.length,
             rawEdgeCount: rawEdges.length,
-            rawNodes: rawNodes.map((r: any) => ({
+            rawNodes: rawNodes.map((r) => ({
               id: r.id,
               documentId: r.document_id,
               title: r.title,
@@ -226,7 +236,7 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
               status: r.status,
               updatedAt: r.updated_at,
             })),
-            rawEdges: rawEdges.map((r: any) => ({
+            rawEdges: rawEdges.map((r) => ({
               id: r.id,
               sourceDocumentId: r.source_document_id,
               targetDocumentId: r.target_document_id,
@@ -257,14 +267,19 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
     super(args);
   }
 
-  private getQuery(driveId: string) {
-    // Use the processor's static query method for correct namespace scoping
-    // (same pattern as the working workstreams example)
-    const queryBuilder = GraphIndexerProcessor.query(
+  /**
+   * Returns a Kysely<DB> instance scoped to the processor's namespace
+   * for the given drive. Centralizes the Legacy → IRelationalDb cast.
+   */
+  private getDb(driveId: string): Kysely<DB> {
+    return GraphIndexerProcessor.query(
       driveId,
-      this.relationalDb as any,
-    );
-    return createGraphQuery(queryBuilder as unknown as Kysely<DB>);
+      this.relationalDb as unknown as IRelationalDb,
+    ) as unknown as Kysely<DB>;
+  }
+
+  private getQuery(driveId: string) {
+    return createGraphQuery(this.getDb(driveId));
   }
 
   /**
@@ -273,6 +288,107 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
    * requiring the Connect UI to have initialized the drive first.
    */
   private ensuredDrives = new Set<string>();
+
+  private async reindexDrive(
+    driveId: string,
+  ): Promise<{ indexedNodes: number; indexedEdges: number; errors: string[] }> {
+    const errors: string[] = [];
+    let indexedNodes = 0;
+    let indexedEdges = 0;
+
+    try {
+      const drive = await this.reactorClient.get(driveId);
+      const nodes = (
+        drive.state as unknown as {
+          global: {
+            nodes: Array<{
+              kind: string;
+              documentType?: string;
+              id: string;
+            }>;
+          };
+        }
+      ).global.nodes;
+
+      const noteNodes = nodes.filter(
+        (n) => n.kind === "file" && n.documentType === "bai/knowledge-note",
+      );
+
+      const db = this.getDb(driveId);
+      const now = new Date().toISOString();
+
+      for (const node of noteNodes) {
+        try {
+          const doc = await this.reactorClient.get(node.id);
+          const state = doc.state as unknown as {
+            global: Record<string, unknown>;
+          };
+          const global = state.global;
+
+          await db
+            .insertInto("graph_nodes")
+            .values({
+              id: node.id,
+              document_id: node.id,
+              title: (global.title as string) ?? null,
+              description: (global.description as string) ?? null,
+              note_type: (global.noteType as string) ?? null,
+              status: (global.status as string) ?? "DRAFT",
+              updated_at: now,
+            })
+            .onConflict((oc) =>
+              oc.column("document_id").doUpdateSet({
+                title: (global.title as string) ?? null,
+                description: (global.description as string) ?? null,
+                note_type: (global.noteType as string) ?? null,
+                status: (global.status as string) ?? "DRAFT",
+                updated_at: now,
+              }),
+            )
+            .execute();
+          indexedNodes++;
+
+          // Reconcile edges
+          await db
+            .deleteFrom("graph_edges")
+            .where("source_document_id", "=", node.id)
+            .execute();
+
+          const links = (global.links as Array<Record<string, unknown>>) ?? [];
+          if (links.length > 0) {
+            await db
+              .insertInto("graph_edges")
+              .values(
+                links.map((link) => ({
+                  id:
+                    (link.id as string) ??
+                    `${node.id}-${link.targetDocumentId as string}`,
+                  source_document_id: node.id,
+                  target_document_id: (link.targetDocumentId as string) ?? "",
+                  link_type: (link.linkType as string) ?? null,
+                  target_title: (link.targetTitle as string) ?? null,
+                  updated_at: now,
+                })),
+              )
+              .execute();
+            indexedEdges += links.length;
+          }
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : String(err);
+          errors.push(`${node.id}: ${msg}`);
+        }
+      }
+
+      console.log(
+        `[KnowledgeGraphSubgraph] Reindex complete: ${indexedNodes} nodes, ${indexedEdges} edges, ${errors.length} errors`,
+      );
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`Drive read failed: ${msg}`);
+    }
+
+    return { indexedNodes, indexedEdges, errors };
+  }
 
   private async ensureGraphDoc(driveId: string): Promise<void> {
     if (this.ensuredDrives.has(driveId)) return;
