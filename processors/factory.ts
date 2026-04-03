@@ -9,7 +9,6 @@ import type {
 } from "@powerhousedao/reactor-browser";
 import type { PHDocumentHeader } from "document-model";
 import { graphIndexerProcessorFactory } from "./graph-indexer/factory.js";
-import { methodologyIndexerProcessorFactory } from "./methodology-indexer/factory.js";
 
 export const processorFactory = (module: IProcessorHostModule) => {
   console.log(
@@ -20,9 +19,6 @@ export const processorFactory = (module: IProcessorHostModule) => {
 
   // Register graph indexer (watches bai/knowledge-note)
   factories.push(graphIndexerProcessorFactory(module));
-
-  // Register methodology indexer (watches bai/research-claim)
-  factories.push(methodologyIndexerProcessorFactory(module));
 
   console.log(`[processorFactory] Loaded ${factories.length} factories`);
 

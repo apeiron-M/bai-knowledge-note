@@ -1,14 +1,14 @@
 import { useRef, useState, useEffect, useCallback, useMemo } from "react";
 import cytoscape from "cytoscape";
 
-// @ts-expect-error - no types available for cytoscape-cose-bilkent
-import coseBilkent from "cytoscape-cose-bilkent";
+// @ts-expect-error - no types available for cytoscape-fcose
+import fcose from "cytoscape-fcose";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 
-// Register the cose-bilkent layout once
-
-cytoscape.use(coseBilkent as cytoscape.Ext);
+// Register the fcose layout once
+// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+cytoscape.use(fcose);
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -90,6 +90,43 @@ const DEFAULT_NODE_COLOR = "#6b7280";
 const DEFAULT_EDGE_COLOR = "#64748b";
 
 /* ------------------------------------------------------------------ */
+/*  Position persistence                                              */
+/* ------------------------------------------------------------------ */
+
+const POSITIONS_STORAGE_KEY = "bai-graph-positions";
+type StoredPositions = Record<string, { x: number; y: number }>;
+
+function loadPositions(): StoredPositions | null {
+  try {
+    const raw = localStorage.getItem(POSITIONS_STORAGE_KEY);
+    return raw ? (JSON.parse(raw) as StoredPositions) : null;
+  } catch {
+    return null;
+  }
+}
+
+function savePositions(cy: cytoscape.Core): void {
+  try {
+    const positions: StoredPositions = {};
+    cy.nodes().forEach((node) => {
+      const pos = node.position();
+      positions[node.id()] = { x: pos.x, y: pos.y };
+    });
+    localStorage.setItem(POSITIONS_STORAGE_KEY, JSON.stringify(positions));
+  } catch {
+    // localStorage unavailable or full — silently fail
+  }
+}
+
+function clearStoredPositions(): void {
+  try {
+    localStorage.removeItem(POSITIONS_STORAGE_KEY);
+  } catch {
+    // ignore
+  }
+}
+
+/* ------------------------------------------------------------------ */
 /*  Build cytoscape elements from data                                */
 /* ------------------------------------------------------------------ */
 
@@ -102,8 +139,40 @@ function buildElements(
   const elements: cytoscape.ElementDefinition[] = [];
   const noteMap = new Map(notes.map((n) => [n.id, n]));
 
+  // Build MOC membership: note → primary MOC id
+  const noteToMoc = new Map<string, string>();
+  if (mocs?.length) {
+    const refCounts = new Map<string, Map<string, number>>();
+    for (const moc of mocs) {
+      for (const idea of moc.coreIdeas) {
+        if (!refCounts.has(idea.noteRef))
+          refCounts.set(idea.noteRef, new Map());
+        const counts = refCounts.get(idea.noteRef)!;
+        counts.set(moc.id, (counts.get(moc.id) ?? 0) + 1);
+      }
+    }
+    for (const [noteId, counts] of refCounts) {
+      let bestMoc = "";
+      let bestCount = 0;
+      for (const [mocId, count] of counts) {
+        if (count > bestCount) {
+          bestMoc = mocId;
+          bestCount = count;
+        }
+      }
+      if (bestMoc) noteToMoc.set(noteId, bestMoc);
+    }
+  }
+
+  // Helper: check if an edge crosses MOC cluster boundaries
+  const isCrossCluster = (sourceId: string, targetId: string): boolean => {
+    const sMoc = noteToMoc.get(sourceId);
+    const tMoc = noteToMoc.get(targetId);
+    if (!sMoc && !tMoc) return false; // both orphans — not cross-cluster
+    return sMoc !== tMoc;
+  };
+
   if (graphState?.nodes.length) {
-    // Use persisted graph state
     const linkCounts = new Map<string, number>();
     for (const edge of graphState.edges) {
       linkCounts.set(
@@ -140,12 +209,15 @@ function buildElements(
           source: edge.sourceDocumentId,
           target: edge.targetDocumentId,
           linkType: edge.linkType ?? null,
+          crossCluster: isCrossCluster(
+            edge.sourceDocumentId,
+            edge.targetDocumentId,
+          ),
           color: LINK_TYPE_COLORS[edge.linkType ?? ""] ?? DEFAULT_EDGE_COLOR,
         },
       });
     }
   } else {
-    // Compute from notes
     const nodeIds = new Set(notes.map((n) => n.id));
     const edgeList: {
       source: string;
@@ -194,6 +266,7 @@ function buildElements(
           source: edge.source,
           target: edge.target,
           linkType: edge.linkType ?? null,
+          crossCluster: isCrossCluster(edge.source, edge.target),
           color: LINK_TYPE_COLORS[edge.linkType ?? ""] ?? DEFAULT_EDGE_COLOR,
         },
       });
@@ -205,7 +278,7 @@ function buildElements(
     elements.filter((e) => !e.data.source).map((e) => e.data.id),
   );
 
-  // Add MOC nodes and their edges to core ideas
+  // Add MOC nodes as compound parents + edges for non-parented refs
   if (mocs?.length) {
     for (const moc of mocs) {
       elements.push({
@@ -316,18 +389,19 @@ const cyStylesheet: cytoscape.StylesheetStyle[] = [
       "transition-duration": 150,
     } as cytoscape.Css.Edge,
   },
-  // MOC nodes — diamond shape, larger
+  // MOC nodes — diamond, prominent cluster anchors
   {
     selector: "node[?isMoc]",
     style: {
       shape: "diamond",
-      width: 35,
-      height: 35,
-      "font-size": "11px",
+      width: 45,
+      height: 45,
+      "font-size": "12px",
       "font-weight": "bold",
-      "border-width": 2,
+      "border-width": 2.5,
       "border-color": "#cba6f7",
-      "border-opacity": 0.5,
+      "border-opacity": 0.7,
+      "text-max-width": "140px",
     } as cytoscape.Css.Node,
   },
   // Tension nodes — triangle shape, red
@@ -343,6 +417,16 @@ const cyStylesheet: cytoscape.StylesheetStyle[] = [
       "border-color": "#ef4444",
       "border-opacity": 0.5,
     } as cytoscape.Css.Node,
+  },
+  // Cross-cluster edges — very faint, don't distract from clusters
+  {
+    selector: "edge[?crossCluster]",
+    style: {
+      opacity: 0.15,
+      width: 0.8,
+      "line-style": "dotted",
+      "line-dash-pattern": [2, 4],
+    } as cytoscape.Css.Edge,
   },
   // MOC edges — dashed
   {
@@ -408,19 +492,66 @@ const cyStylesheet: cytoscape.StylesheetStyle[] = [
 /*  Layout options                                                    */
 /* ------------------------------------------------------------------ */
 
-function getLayoutOptions(): cytoscape.LayoutOptions {
+function getLayoutOptions(opts?: {
+  savedPositions?: StoredPositions | null;
+  newNodeIds?: Set<string>;
+}): cytoscape.LayoutOptions {
+  const saved = opts?.savedPositions;
+  const hasPositions = saved && Object.keys(saved).length > 0;
+
+  // All nodes have saved positions — instant preset layout
+  if (hasPositions && !opts?.newNodeIds?.size) {
+    return {
+      name: "preset",
+      positions: (node: cytoscape.NodeSingular) => {
+        const id = node.id();
+        return saved[id] ?? { x: 0, y: 0 };
+      },
+      fit: false,
+      padding: 60,
+    } as cytoscape.LayoutOptions;
+  }
+
+  // Some or all nodes need computation.
+  // Per-edge idealEdgeLength pulls MOC clusters tight and keeps
+  // derivation chains compact while general notes spread out.
   return {
-    name: "cose-bilkent",
+    name: "fcose",
     animate: false,
-    nodeRepulsion: 6000,
-    idealEdgeLength: 120,
-    edgeElasticity: 0.1,
+    quality: "default",
+    randomize: !hasPositions,
+    nodeRepulsion: (node: cytoscape.NodeSingular) =>
+      node.data("isMoc") ? 30000 : 8000,
+    idealEdgeLength: (edge: cytoscape.EdgeSingular) => {
+      const lt = edge.data("linkType") as string | null;
+      const cross = edge.data("crossCluster") as boolean;
+      if (lt === "CORE_IDEA") return 70;
+      if (cross) return 350;
+      if (lt === "BUILDS_ON" || lt === "DERIVED_FROM") return 90;
+      return 150;
+    },
+    edgeElasticity: (edge: cytoscape.EdgeSingular) => {
+      const lt = edge.data("linkType") as string | null;
+      const cross = edge.data("crossCluster") as boolean;
+      if (lt === "CORE_IDEA") return 0.45;
+      if (cross) return 0.01;
+      if (lt === "BUILDS_ON" || lt === "DERIVED_FROM") return 0.3;
+      return 0.1;
+    },
     nestingFactor: 0.1,
-    gravity: 0.25,
-    numIter: 2500,
+    gravity: 0.08,
+    numIter: 500,
     tile: true,
-    fit: true,
-    padding: 40,
+    fit: false,
+    padding: 60,
+    // Pin existing nodes, only layout new ones
+    ...(hasPositions
+      ? {
+          fixedNodeConstraint: Object.entries(saved)
+            .filter(([id]) => !opts?.newNodeIds?.has(id))
+            .map(([id, pos]) => ({ nodeId: id, position: pos })),
+        }
+      : {}),
   } as cytoscape.LayoutOptions;
 }
 
@@ -447,7 +578,7 @@ export function GraphView({
   // Build elements from data
   const elements = useMemo(
     () => buildElements(notes, graphState ?? null, mocs, tensions),
-    [notes, graphState],
+    [notes, graphState, mocs, tensions],
   );
 
   // Gather neighbor info for the detail panel
@@ -524,11 +655,26 @@ export function GraphView({
   useEffect(() => {
     if (!containerRef.current) return;
 
+    // Detect which nodes are new vs have saved positions
+    const savedPositions = loadPositions();
+    const savedNodeIds = savedPositions
+      ? new Set(Object.keys(savedPositions))
+      : new Set<string>();
+    const currentNodeIds = new Set(
+      elements.filter((e) => !e.data.source).map((e) => e.data.id as string),
+    );
+    const newNodeIds = new Set(
+      [...currentNodeIds].filter((id) => !savedNodeIds.has(id)),
+    );
+
     const cy = cytoscape({
       container: containerRef.current,
       elements,
       style: cyStylesheet,
-      layout: getLayoutOptions(),
+      layout: getLayoutOptions({
+        savedPositions,
+        newNodeIds: newNodeIds.size > 0 ? newNodeIds : undefined,
+      }),
       zoom: 1,
       minZoom: 0.1,
       maxZoom: 5,
@@ -538,14 +684,54 @@ export function GraphView({
 
     cyRef.current = cy;
 
-    // After layout settles, ensure zoom is 100% with nodes centered.
-    // fit:true already centered the graph; now pin zoom to 1 around
-    // the midpoint of the bounding box so pan stays correct.
-    cy.one("layoutstop", () => {
-      const bb = cy.elements().boundingBox();
-      const modelCenter = { x: (bb.x1 + bb.x2) / 2, y: (bb.y1 + bb.y2) / 2 };
-      cy.zoom({ level: 1, position: modelCenter });
+    // After layout settles, save positions and center view.
+    const centerGraph = () => {
+      cy.fit(cy.elements(), 60);
+      if (cy.zoom() > 0.8) cy.zoom(0.8);
       cy.center();
+    };
+
+    cy.one("layoutstop", () => {
+      savePositions(cy);
+      centerGraph();
+    });
+
+    // For preset layout, also center immediately since layoutstop
+    // fires synchronously before the viewport may have adjusted.
+    requestAnimationFrame(() => centerGraph());
+
+    // Drag MOC nodes with their cluster children
+    const mocDragState = new Map<string, { x: number; y: number }>();
+
+    cy.on("grab", "node[?isMoc]", (evt) => {
+      const node = evt.target as cytoscape.NodeSingular;
+      const pos = node.position();
+      mocDragState.set(node.id(), { x: pos.x, y: pos.y });
+    });
+
+    cy.on("drag", "node[?isMoc]", (evt) => {
+      const moc = evt.target as cytoscape.NodeSingular;
+      const prev = mocDragState.get(moc.id());
+      if (!prev) return;
+      const curr = moc.position();
+      const dx = curr.x - prev.x;
+      const dy = curr.y - prev.y;
+      mocDragState.set(moc.id(), { x: curr.x, y: curr.y });
+
+      // Move all CORE_IDEA-connected notes along with the MOC
+      moc.connectedEdges().forEach((edge) => {
+        if (edge.data("linkType") !== "CORE_IDEA") return;
+        const child = edge.source().id() === moc.id()
+          ? edge.target()
+          : edge.source();
+        if (child.grabbed()) return; // don't fight if user is dragging it
+        child.shift({ x: dx, y: dy });
+      });
+    });
+
+    // Persist position after manual drag
+    cy.on("dragfree", "node", () => {
+      savePositions(cy);
     });
 
     // Track zoom level for UI
@@ -664,7 +850,12 @@ export function GraphView({
   const handleRelayout = useCallback(() => {
     const cy = cyRef.current;
     if (!cy) return;
-    cy.layout(getLayoutOptions()).run();
+    clearStoredPositions();
+    const layout = cy.layout(getLayoutOptions());
+    layout.run();
+    cy.one("layoutstop", () => {
+      savePositions(cy);
+    });
   }, []);
 
   if (notes.length === 0) {

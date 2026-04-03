@@ -21,7 +21,6 @@ import type { Node } from "document-drive";
  *   /ops/queue/            <- pipeline queue singleton
  * /self/                   <- system identity & config
  *   /self/methodology/     <- methodology notes
- * /research/               <- bundled research claims
  *
  * Pattern: follows contributor-billing's proven approach —
  * module-level tracking Set per drive prevents duplicates,
@@ -47,7 +46,6 @@ const FOLDERS: FolderSpec[] = [
   { name: "queue", parentPath: "ops" },
   { name: "self" },
   { name: "methodology", parentPath: "self" },
-  { name: "research" },
 ];
 
 const SINGLETONS: SingletonSpec[] = [
