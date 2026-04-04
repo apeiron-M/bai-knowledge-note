@@ -382,6 +382,25 @@ bun prettier --write <file>
 bun test
 ```
 
+### Subgraph Endpoint Configuration
+
+The Search tab and other editor features that query the Knowledge Graph subgraph need to reach the reactor's GraphQL endpoint. The endpoint is resolved automatically in most cases:
+
+| Environment | How it works |
+|-------------|-------------|
+| **`ph vetra --watch`** (local dev) | Auto-detected: Vite runs on port 3000/3001, subgraph at `http://localhost:4001/graphql/knowledgeGraph` |
+| **Connect production** (same origin) | Auto-detected: relative path `/graphql/knowledgeGraph` |
+| **Deployed** (Connect and Switchboard on different domains) | Set `VITE_SUBGRAPH_URL` env var |
+
+For deployed environments where Connect runs on a different domain than the Switchboard (e.g., `connect.example.com` vs `switchboard-dev.powerhouse.xyz`), create a `.env` file:
+
+```bash
+# .env
+VITE_SUBGRAPH_URL=https://switchboard-dev.powerhouse.xyz/graphql/knowledgeGraph
+```
+
+This is only needed when the app and reactor are on different origins. Local development and same-origin deployments work without any configuration.
+
 ## Graph View
 
 The knowledge graph visualization uses `cytoscape-fcose` (force-directed layout) with semantic clustering:

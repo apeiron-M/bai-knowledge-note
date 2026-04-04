@@ -11,6 +11,7 @@ import { GraphView } from "./GraphView.js";
 import { NoteList } from "./NoteList.js";
 import { SourceList } from "./SourceList.js";
 import { HealthDashboard } from "./HealthDashboard.js";
+import { SearchView } from "./SearchView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import {
@@ -26,12 +27,13 @@ type ViewMode =
   | "notes"
   | "graph"
   | "sources"
+  | "search"
   | "pipeline"
   | "health"
   | "config";
 
 export function DriveExplorer({ children }: EditorProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("notes");
+  const [viewMode, setViewMode] = useState<ViewMode>("search");
   const { notes } = useKnowledgeNotes();
   const { graphDoc, graphState, hasGraphDoc } = useKnowledgeGraph(notes);
   const fileNodes = useFileNodesInSelectedDrive();
@@ -161,6 +163,22 @@ export function DriveExplorer({ children }: EditorProps) {
     badge?: number;
     icon: React.ReactNode;
   }[] = [
+    {
+      key: "search",
+      label: "Search",
+      icon: (
+        <svg
+          className="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <circle cx="11" cy="11" r="8" />
+          <path d="m21 21-4.35-4.35" />
+        </svg>
+      ),
+    },
     {
       key: "notes",
       label: "Notes",
@@ -354,6 +372,8 @@ export function DriveExplorer({ children }: EditorProps) {
               mocs={mocs}
               tensions={tensions}
             />
+          ) : viewMode === "search" ? (
+            <SearchView />
           ) : viewMode === "sources" ? (
             <SourceList />
           ) : viewMode === "health" ? (
