@@ -42,12 +42,24 @@ const SUBGRAPH_PATH = "/graphql/knowledgeGraph";
  * set VITE_SUBGRAPH_URL=https://switchboard-dev.powerhouse.xyz/graphql/knowledgeGraph
  * in your .env file.
  */
+// Known Connect → Switchboard domain mappings for deployed environments
+const DOMAIN_MAP: Record<string, string> = {
+  "connect-dev.powerhouse.xyz":
+    "https://switchboard-dev.powerhouse.xyz/graphql/knowledgeGraph",
+};
+
 function resolveEndpoint(): string {
   // Explicit override via env var
   const envUrl =
     typeof import.meta !== "undefined" &&
     (import.meta as { env?: Record<string, string> }).env?.VITE_SUBGRAPH_URL;
   if (envUrl) return envUrl;
+
+  // Check known Connect → Switchboard domain mappings
+  const hostname = globalThis.window?.location?.hostname;
+  if (hostname && DOMAIN_MAP[hostname]) {
+    return DOMAIN_MAP[hostname];
+  }
 
   // Vite dev server proxying to local reactor
   const port = globalThis.window?.location?.port;
