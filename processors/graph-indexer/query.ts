@@ -1,4 +1,5 @@
 import type { Kysely } from "kysely";
+import { sql } from "kysely";
 import type { DB, GraphNode, GraphEdge } from "./schema.js";
 
 export interface GraphNodeResult {
@@ -8,6 +9,10 @@ export interface GraphNodeResult {
   description: string | null;
   noteType: string | null;
   status: string | null;
+  content: string | null;
+  author: string | null;
+  sourceOrigin: string | null;
+  createdAt: string | null;
   updatedAt: string;
 }
 
@@ -32,6 +37,17 @@ export interface ConnectionResult {
   viaLinkType: string | null;
 }
 
+export interface TopicStatsResult {
+  name: string;
+  noteCount: number;
+}
+
+export interface RelatedByTopicResult {
+  node: GraphNodeResult;
+  sharedTopics: string[];
+  sharedTopicCount: number;
+}
+
 function rowToNode(row: GraphNode): GraphNodeResult {
   return {
     id: row.id,
@@ -40,6 +56,10 @@ function rowToNode(row: GraphNode): GraphNodeResult {
     description: row.description,
     noteType: row.note_type,
     status: row.status,
+    content: row.content,
+    author: row.author,
+    sourceOrigin: row.source_origin,
+    createdAt: row.created_at,
     updatedAt: row.updated_at,
   };
 }
@@ -102,18 +122,30 @@ export function createGraphQuery(db: Kysely<DB>) {
     },
 
     async stats(): Promise<GraphStatsResult> {
-      const nodes = await db.selectFrom("graph_nodes").selectAll().execute();
-      const edges = await db.selectFrom("graph_edges").selectAll().execute();
+      const nodeCountResult = await db
+        .selectFrom("graph_nodes")
+        .select(sql<number>`count(*)`.as("cnt"))
+        .executeTakeFirstOrThrow();
+      const edgeCountResult = await db
+        .selectFrom("graph_edges")
+        .select(sql<number>`count(*)`.as("cnt"))
+        .executeTakeFirstOrThrow();
 
-      const targetIds = new Set(edges.map((e) => e.target_document_id));
-      const orphanCount = nodes.filter(
-        (n) => !targetIds.has(n.document_id),
-      ).length;
+      // Orphans: nodes not targeted by any edge
+      const orphanResult = await db
+        .selectFrom("graph_nodes")
+        .select(sql<number>`count(*)`.as("cnt"))
+        .where(
+          "document_id",
+          "not in",
+          db.selectFrom("graph_edges").select("target_document_id"),
+        )
+        .executeTakeFirstOrThrow();
 
       return {
-        nodeCount: nodes.length,
-        edgeCount: edges.length,
-        orphanCount,
+        nodeCount: Number(nodeCountResult.cnt),
+        edgeCount: Number(edgeCountResult.cnt),
+        orphanCount: Number(orphanResult.cnt),
       };
     },
 
@@ -174,10 +206,18 @@ export function createGraphQuery(db: Kysely<DB>) {
     },
 
     async density(): Promise<number> {
-      const nodes = await db.selectFrom("graph_nodes").selectAll().execute();
-      const edges = await db.selectFrom("graph_edges").selectAll().execute();
-      if (nodes.length <= 1) return 0;
-      return edges.length / (nodes.length * (nodes.length - 1));
+      const nodeCountResult = await db
+        .selectFrom("graph_nodes")
+        .select(sql<number>`count(*)`.as("cnt"))
+        .executeTakeFirstOrThrow();
+      const edgeCountResult = await db
+        .selectFrom("graph_edges")
+        .select(sql<number>`count(*)`.as("cnt"))
+        .executeTakeFirstOrThrow();
+      const nodeCount = Number(nodeCountResult.cnt);
+      const edgeCount = Number(edgeCountResult.cnt);
+      if (nodeCount <= 1) return 0;
+      return edgeCount / (nodeCount * (nodeCount - 1));
     },
 
     async searchNodes(query: string, limit = 50): Promise<GraphNodeResult[]> {
@@ -219,7 +259,7 @@ export function createGraphQuery(db: Kysely<DB>) {
         nodeRows.map((n) => [n.document_id, rowToNode(n)]),
       );
 
-      // Build incoming map: target → [source1, source2, ...]
+      // Build incoming map: target -> [source1, source2, ...]
       const incoming = new Map<string, string[]>();
       const edgeSet = new Set<string>();
       for (const e of edges) {
@@ -248,7 +288,7 @@ export function createGraphQuery(db: Kysely<DB>) {
           ) {
             const aId = sources[i];
             const bId = sources[j];
-            // Check if A→B or B→A exists
+            // Check if A->B or B->A exists
             if (
               !edgeSet.has(`${aId}->${bId}`) &&
               !edgeSet.has(`${bId}->${aId}`)
@@ -325,6 +365,150 @@ export function createGraphQuery(db: Kysely<DB>) {
       }
 
       return bridgeNodes;
+    },
+
+    // --- Phase 1: topics, content, provenance queries ---
+
+    async topicStats(): Promise<TopicStatsResult[]> {
+      const rows = await db
+        .selectFrom("graph_topics")
+        .select(["name"])
+        .select(sql<number>`count(*)`.as("note_count"))
+        .groupBy("name")
+        .orderBy(sql`count(*)`, "desc")
+        .execute();
+      return rows.map((r) => ({
+        name: r.name,
+        noteCount: Number(r.note_count),
+      }));
+    },
+
+    async topicsForNode(documentId: string): Promise<string[]> {
+      const rows = await db
+        .selectFrom("graph_topics")
+        .where("document_id", "=", documentId)
+        .select("name")
+        .execute();
+      return rows.map((r) => r.name);
+    },
+
+    async nodesByTopic(topic: string): Promise<GraphNodeResult[]> {
+      const rows = await db
+        .selectFrom("graph_nodes")
+        .innerJoin(
+          "graph_topics",
+          "graph_nodes.document_id",
+          "graph_topics.document_id",
+        )
+        .where("graph_topics.name", "=", topic)
+        .selectAll("graph_nodes")
+        .execute();
+      return rows.map(rowToNode);
+    },
+
+    async relatedByTopic(
+      documentId: string,
+      limit = 10,
+    ): Promise<RelatedByTopicResult[]> {
+      // Get topics of the source document
+      const sourceTopics = await db
+        .selectFrom("graph_topics")
+        .where("document_id", "=", documentId)
+        .select("name")
+        .execute();
+
+      if (sourceTopics.length === 0) return [];
+
+      const topicNames = sourceTopics.map((t) => t.name);
+
+      // Find other documents sharing those topics
+      const rows = await db
+        .selectFrom("graph_topics")
+        .where("document_id", "!=", documentId)
+        .where("name", "in", topicNames)
+        .select(["document_id", "name"])
+        .execute();
+
+      // Group by document_id
+      const docTopics = new Map<string, string[]>();
+      for (const row of rows) {
+        const existing = docTopics.get(row.document_id) ?? [];
+        existing.push(row.name);
+        docTopics.set(row.document_id, existing);
+      }
+
+      // Sort by shared topic count descending
+      const sorted = [...docTopics.entries()]
+        .sort((a, b) => b[1].length - a[1].length)
+        .slice(0, limit);
+
+      const results: RelatedByTopicResult[] = [];
+      for (const [docId, shared] of sorted) {
+        const node = await db
+          .selectFrom("graph_nodes")
+          .where("document_id", "=", docId)
+          .selectAll()
+          .executeTakeFirst();
+        if (node) {
+          results.push({
+            node: rowToNode(node),
+            sharedTopics: shared,
+            sharedTopicCount: shared.length,
+          });
+        }
+      }
+
+      return results;
+    },
+
+    async fullSearch(query: string, limit = 50): Promise<GraphNodeResult[]> {
+      const q = `%${query.toLowerCase()}%`;
+      const rows = await db
+        .selectFrom("graph_nodes")
+        .where((eb) =>
+          eb.or([
+            eb(eb.fn("lower", ["title"]), "like", q),
+            eb(eb.fn("lower", ["description"]), "like", q),
+            eb(eb.fn("lower", ["content"]), "like", q),
+          ]),
+        )
+        .selectAll()
+        .limit(limit)
+        .execute();
+      return rows.map(rowToNode);
+    },
+
+    async nodesByAuthor(author: string): Promise<GraphNodeResult[]> {
+      const rows = await db
+        .selectFrom("graph_nodes")
+        .where("author", "=", author)
+        .selectAll()
+        .execute();
+      return rows.map(rowToNode);
+    },
+
+    async nodesByOrigin(origin: string): Promise<GraphNodeResult[]> {
+      const rows = await db
+        .selectFrom("graph_nodes")
+        .where("source_origin", "=", origin)
+        .selectAll()
+        .execute();
+      return rows.map(rowToNode);
+    },
+
+    async recentNodes(limit = 20, since?: string): Promise<GraphNodeResult[]> {
+      let query = db
+        .selectFrom("graph_nodes")
+        .selectAll()
+        .orderBy("created_at", "desc")
+        .limit(limit);
+
+      if (since) {
+        query = query.where("created_at", ">", since);
+      }
+
+      const rows = await query.execute();
+      return rows.map(rowToNode);
     },
   };
 }

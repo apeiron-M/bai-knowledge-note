@@ -2,6 +2,8 @@ import { RelationalDbProcessor } from "@powerhousedao/shared/processors";
 import type { OperationWithContext } from "@powerhousedao/shared/document-model";
 import { up } from "./migrations.js";
 import type { DB } from "./schema.js";
+import { generateEmbedding } from "./embedder.js";
+import { upsertEmbedding, deleteEmbedding } from "./embedding-store.js";
 
 export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
   static override getNamespace(driveId: string): string {
@@ -50,10 +52,21 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         const stateJson = entry.context.resultingState;
         if (!stateJson) continue;
 
-        const parsed = JSON.parse(stateJson);
+        const parsed = JSON.parse(stateJson) as {
+          global?: Record<string, unknown>;
+        };
         // resultingState may be wrapped in { global: ... } or be the global state directly
         const global = (parsed.global ?? parsed) as Record<string, unknown>;
         const now = new Date().toISOString();
+
+        // Extract provenance
+        const provenance = global.provenance as
+          | {
+              author?: string;
+              sourceOrigin?: string;
+              createdAt?: string;
+            }
+          | undefined;
 
         // Upsert node
         await this.relationalDb
@@ -65,6 +78,10 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             description: (global.description as string) ?? null,
             note_type: (global.noteType as string) ?? null,
             status: (global.status as string) ?? "DRAFT",
+            content: (global.content as string) ?? null,
+            author: provenance?.author ?? null,
+            source_origin: provenance?.sourceOrigin ?? null,
+            created_at: provenance?.createdAt ?? null,
             updated_at: now,
           })
           .onConflict((oc) =>
@@ -73,10 +90,42 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
               description: (global.description as string) ?? null,
               note_type: (global.noteType as string) ?? null,
               status: (global.status as string) ?? "DRAFT",
+              content: (global.content as string) ?? null,
+              author: provenance?.author ?? null,
+              source_origin: provenance?.sourceOrigin ?? null,
+              created_at: provenance?.createdAt ?? null,
               updated_at: now,
             }),
           )
           .execute();
+
+        // Reconcile topics: delete old, insert new
+        await this.relationalDb
+          .deleteFrom("graph_topics")
+          .where("document_id", "=", documentId)
+          .execute();
+
+        const topics =
+          (global.topics as Array<string | Record<string, unknown>>) ?? [];
+        if (topics.length > 0) {
+          await this.relationalDb
+            .insertInto("graph_topics")
+            .values(
+              topics.map((topic, idx) => {
+                const name =
+                  typeof topic === "string"
+                    ? topic
+                    : ((topic.name as string) ?? "");
+                return {
+                  id: `${documentId}-topic-${idx}`,
+                  document_id: documentId,
+                  name,
+                  updated_at: now,
+                };
+              }),
+            )
+            .execute();
+        }
 
         // Reconcile edges: delete old, insert new
         await this.relationalDb
@@ -106,6 +155,21 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         console.log(
           `[GraphIndexer] Reconciled ${documentId}: ${links.length} edges`,
         );
+
+        // Fire-and-forget embedding generation (don't block operation processing)
+        const text = [global.title, global.description, global.content]
+          .filter(Boolean)
+          .join(" ");
+        if (text.length > 0) {
+          generateEmbedding(text)
+            .then((emb) => upsertEmbedding(documentId, emb))
+            .catch((err) =>
+              console.warn(
+                `[GraphIndexer] Embedding failed for ${documentId}:`,
+                err,
+              ),
+            );
+        }
       } catch (err: unknown) {
         console.error(
           `[GraphIndexer] Error reconciling document ${documentId}:`,
@@ -126,6 +190,10 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
   private async deleteNode(documentId: string): Promise<void> {
     try {
       await this.relationalDb
+        .deleteFrom("graph_topics")
+        .where("document_id", "=", documentId)
+        .execute();
+      await this.relationalDb
         .deleteFrom("graph_edges")
         .where((eb) =>
           eb.or([
@@ -138,6 +206,12 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         .deleteFrom("graph_nodes")
         .where("document_id", "=", documentId)
         .execute();
+      deleteEmbedding(documentId).catch((err) =>
+        console.warn(
+          `[GraphIndexer] Embedding delete failed for ${documentId}:`,
+          err,
+        ),
+      );
       console.log(`[GraphIndexer] Deleted node ${documentId}`);
     } catch (err: unknown) {
       console.error(`[GraphIndexer] Error deleting node ${documentId}:`, err);
