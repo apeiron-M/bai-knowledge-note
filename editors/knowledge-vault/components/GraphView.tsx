@@ -706,9 +706,14 @@ export function GraphView({
 
     // After layout settles, save positions and center view.
     const centerGraph = () => {
-      cy.fit(cy.elements(), 60);
-      if (cy.zoom() > 0.8) cy.zoom(0.8);
-      cy.center();
+      try {
+        if (!cyRef.current || cy.destroyed()) return;
+        cy.fit(cy.elements(), 60);
+        if (cy.zoom() > 0.8) cy.zoom(0.8);
+        cy.center();
+      } catch {
+        // renderer not ready — ignore
+      }
     };
 
     cy.one("layoutstop", () => {
