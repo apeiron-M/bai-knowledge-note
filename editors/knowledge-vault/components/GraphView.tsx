@@ -36,6 +36,7 @@ type MocInfo = {
   title: string;
   tier: string | null;
   coreIdeas: { noteRef: string; contextPhrase: string }[];
+  childRefs: string[];
 };
 
 type TensionInfo = {
@@ -278,8 +279,13 @@ function buildElements(
     elements.filter((e) => !e.data.source).map((e) => e.data.id),
   );
 
-  // Add MOC nodes as compound parents + edges for non-parented refs
+  // Add MOC nodes + edges
   if (mocs?.length) {
+    // Pre-register all MOC IDs so cross-MOC edges can resolve
+    for (const moc of mocs) {
+      existingNodeIds.add(moc.id);
+    }
+
     for (const moc of mocs) {
       elements.push({
         data: {
@@ -289,12 +295,14 @@ function buildElements(
           noteType: `MOC (${moc.tier ?? "TOPIC"})`,
           description: null,
           topics: [],
-          linkCount: moc.coreIdeas.length,
+          linkCount: moc.coreIdeas.length + moc.childRefs.length,
           color: MOC_NODE_COLOR,
           isMoc: true,
+          isHub: moc.tier === "HUB" || moc.childRefs.length > 0,
         },
       });
 
+      // Edges to core idea notes
       for (const idea of moc.coreIdeas) {
         if (existingNodeIds.has(idea.noteRef)) {
           elements.push({
@@ -303,6 +311,21 @@ function buildElements(
               source: moc.id,
               target: idea.noteRef,
               linkType: "CORE_IDEA",
+              color: MOC_EDGE_COLOR,
+            },
+          });
+        }
+      }
+
+      // Edges to child MOCs (hub → child MOC hierarchy)
+      for (const childRef of moc.childRefs) {
+        if (existingNodeIds.has(childRef)) {
+          elements.push({
+            data: {
+              id: `moc-child-${moc.id}-${childRef}`,
+              source: moc.id,
+              target: childRef,
+              linkType: "CHILD_MOC",
               color: MOC_EDGE_COLOR,
             },
           });
@@ -404,6 +427,23 @@ const cyStylesheet: cytoscape.StylesheetStyle[] = [
       "text-max-width": "140px",
     } as cytoscape.Css.Node,
   },
+  // HUB MOC nodes — larger hexagon, distinct from regular MOCs
+  {
+    selector: "node[?isHub]",
+    style: {
+      shape: "hexagon",
+      width: 60,
+      height: 60,
+      "font-size": "13px",
+      "font-weight": "bold",
+      "border-width": 3,
+      "border-color": "#cba6f7",
+      "border-opacity": 0.9,
+      "background-color": "#cba6f7",
+      "background-opacity": 0.15,
+      "text-max-width": "160px",
+    } as cytoscape.Css.Node,
+  },
   // Tension nodes — triangle shape, red
   {
     selector: "node[?isTension]",
@@ -436,6 +476,16 @@ const cyStylesheet: cytoscape.StylesheetStyle[] = [
       "line-dash-pattern": [6, 3],
       opacity: 0.6,
       width: 1,
+    } as cytoscape.Css.Edge,
+  },
+  // Hub → child MOC edges — thicker dashed, more visible
+  {
+    selector: "edge[linkType = 'CHILD_MOC']",
+    style: {
+      "line-style": "dashed",
+      "line-dash-pattern": [8, 4],
+      opacity: 0.7,
+      width: 2,
     } as cytoscape.Css.Edge,
   },
   // Highlighted node (hovered or selected)
@@ -526,6 +576,7 @@ function getLayoutOptions(opts?: {
       const lt = edge.data("linkType") as string | null;
       const cross = edge.data("crossCluster") as boolean;
       if (lt === "CORE_IDEA") return 70;
+      if (lt === "CHILD_MOC") return 100;
       if (cross) return 350;
       if (lt === "BUILDS_ON" || lt === "DERIVED_FROM") return 90;
       return 150;
@@ -534,6 +585,7 @@ function getLayoutOptions(opts?: {
       const lt = edge.data("linkType") as string | null;
       const cross = edge.data("crossCluster") as boolean;
       if (lt === "CORE_IDEA") return 0.45;
+      if (lt === "CHILD_MOC") return 0.3;
       if (cross) return 0.01;
       if (lt === "BUILDS_ON" || lt === "DERIVED_FROM") return 0.3;
       return 0.1;
@@ -718,9 +770,10 @@ export function GraphView({
       const dy = curr.y - prev.y;
       mocDragState.set(moc.id(), { x: curr.x, y: curr.y });
 
-      // Move all CORE_IDEA-connected notes along with the MOC
+      // Move all CORE_IDEA and CHILD_MOC connected nodes along with the MOC
       moc.connectedEdges().forEach((edge) => {
-        if (edge.data("linkType") !== "CORE_IDEA") return;
+        const lt = edge.data("linkType") as string;
+        if (lt !== "CORE_IDEA" && lt !== "CHILD_MOC") return;
         const child = edge.source().id() === moc.id()
           ? edge.target()
           : edge.source();
