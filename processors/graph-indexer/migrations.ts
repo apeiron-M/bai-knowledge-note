@@ -96,6 +96,8 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     .addColumn("scope", "varchar(20)", (col) => col.notNull())
     .addColumn("summary", "text")
     .addColumn("input_json", "text")
+    .addColumn("signer_address", "varchar(255)")
+    .addColumn("signer_app", "varchar(255)")
     .ifNotExists()
     .execute();
 
@@ -119,6 +121,18 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     .column("operation_type")
     .ifNotExists()
     .execute();
+
+  // Add signer columns to graph_operations (idempotent)
+  for (const col of ["signer_address", "signer_app"]) {
+    try {
+      await db.schema
+        .alterTable("graph_operations")
+        .addColumn(col, "varchar(255)")
+        .execute();
+    } catch {
+      // column likely already exists — ignore
+    }
+  }
 }
 
 export async function down(db: IRelationalDb<any>): Promise<void> {

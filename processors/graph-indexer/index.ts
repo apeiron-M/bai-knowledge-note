@@ -102,6 +102,12 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       // Index operation for history tracking
       try {
         const input = operation.action.input as Record<string, unknown>;
+        const signer = operation.action.context?.signer as
+          | {
+              user?: { address?: string };
+              app?: { name?: string };
+            }
+          | undefined;
         await this.relationalDb
           .insertInto("graph_operations")
           .values({
@@ -113,6 +119,8 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             scope: context.scope ?? "global",
             summary: summarizeOperation(operation.action.type, input),
             input_json: JSON.stringify(input),
+            signer_address: signer?.user?.address || null,
+            signer_app: signer?.app?.name || null,
           })
           .onConflict((oc) => oc.column("id").doNothing())
           .execute();

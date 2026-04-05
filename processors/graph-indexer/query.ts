@@ -62,6 +62,8 @@ export interface OperationRecord {
   index: number;
   scope: string;
   summary: string | null;
+  signerAddress: string | null;
+  signerApp: string | null;
 }
 
 function rowToNode(row: GraphNode): GraphNodeResult {
@@ -100,6 +102,8 @@ function rowToOperation(row: {
   scope: string;
   summary: string | null;
   input_json: string | null;
+  signer_address: string | null;
+  signer_app: string | null;
 }): OperationRecord {
   return {
     id: row.id,
@@ -109,6 +113,8 @@ function rowToOperation(row: {
     index: row.index,
     scope: row.scope,
     summary: row.summary,
+    signerAddress: row.signer_address,
+    signerApp: row.signer_app,
   };
 }
 

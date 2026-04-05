@@ -12,6 +12,7 @@ import { NoteList } from "./NoteList.js";
 import { SourceList } from "./SourceList.js";
 import { HealthDashboard } from "./HealthDashboard.js";
 import { SearchView } from "./SearchView.js";
+import { ActivityView } from "./ActivityView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import {
@@ -28,6 +29,7 @@ type ViewMode =
   | "graph"
   | "sources"
   | "search"
+  | "activity"
   | "pipeline"
   | "health"
   | "config";
@@ -231,6 +233,22 @@ export function DriveExplorer({ children }: EditorProps) {
       ),
     },
     {
+      key: "activity",
+      label: "Activity",
+      icon: (
+        <svg
+          className="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <path d="M12 6v6l4 2" />
+        </svg>
+      ),
+    },
+    {
       key: "pipeline",
       label: "Pipeline",
       icon: (
@@ -374,6 +392,8 @@ export function DriveExplorer({ children }: EditorProps) {
             />
           ) : viewMode === "search" ? (
             <SearchView />
+          ) : viewMode === "activity" ? (
+            <ActivityView />
           ) : viewMode === "sources" ? (
             <SourceList />
           ) : viewMode === "health" ? (

@@ -196,6 +196,8 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
       index: Int!
       scope: String!
       summary: String
+      signerAddress: String
+      signerApp: String
     }
 
     type GraphDebugInfo {

@@ -37,6 +37,8 @@ export interface GraphOperation {
   scope: string;
   summary: string | null;
   input_json: string | null;
+  signer_address: string | null;
+  signer_app: string | null;
 }
 
 export interface DB {
