@@ -36,6 +36,7 @@ type MocInfo = {
   title: string;
   tier: string | null;
   coreIdeas: { noteRef: string; contextPhrase: string }[];
+  childRefs: string[];
 };
 
 type TensionInfo = {
@@ -278,8 +279,13 @@ function buildElements(
     elements.filter((e) => !e.data.source).map((e) => e.data.id),
   );
 
-  // Add MOC nodes as compound parents + edges for non-parented refs
+  // Add MOC nodes + edges (coreIdeas → notes, childRefs → child MOCs)
   if (mocs?.length) {
+    // Pre-register MOC IDs so childRef edges between MOCs can resolve
+    for (const moc of mocs) {
+      existingNodeIds.add(moc.id);
+    }
+
     for (const moc of mocs) {
       elements.push({
         data: {
@@ -289,7 +295,7 @@ function buildElements(
           noteType: `MOC (${moc.tier ?? "TOPIC"})`,
           description: null,
           topics: [],
-          linkCount: moc.coreIdeas.length,
+          linkCount: moc.coreIdeas.length + moc.childRefs.length,
           color: MOC_NODE_COLOR,
           isMoc: true,
         },
@@ -302,6 +308,20 @@ function buildElements(
               id: `moc-${moc.id}-${idea.noteRef}`,
               source: moc.id,
               target: idea.noteRef,
+              linkType: "CORE_IDEA",
+              color: MOC_EDGE_COLOR,
+            },
+          });
+        }
+      }
+
+      for (const childRef of moc.childRefs) {
+        if (existingNodeIds.has(childRef)) {
+          elements.push({
+            data: {
+              id: `moc-child-${moc.id}-${childRef}`,
+              source: moc.id,
+              target: childRef,
               linkType: "CORE_IDEA",
               color: MOC_EDGE_COLOR,
             },
@@ -718,14 +738,15 @@ export function GraphView({
       const dy = curr.y - prev.y;
       mocDragState.set(moc.id(), { x: curr.x, y: curr.y });
 
-      // Move all CORE_IDEA-connected notes along with the MOC
+      // Move CORE_IDEA-connected notes along with the MOC,
+      // but skip MOC-to-MOC connections (parent ↔ child MOCs move independently)
       moc.connectedEdges().forEach((edge) => {
         if (edge.data("linkType") !== "CORE_IDEA") return;
-        const child = edge.source().id() === moc.id()
-          ? edge.target()
-          : edge.source();
-        if (child.grabbed()) return; // don't fight if user is dragging it
-        child.shift({ x: dx, y: dy });
+        const other =
+          edge.source().id() === moc.id() ? edge.target() : edge.source();
+        if (other.grabbed()) return;
+        if (other.data("isMoc")) return; // don't drag other MOCs
+        other.shift({ x: dx, y: dy });
       });
     });
 

@@ -200,12 +200,15 @@ export default function Editor() {
                               </svg>
                             </button>
                           ) : (
-                            <p
-                              className="text-[10px] font-mono mt-0.5"
+                            <button
+                              type="button"
+                              onClick={() => setSelectedNode(idea.noteRef)}
+                              className="mt-0.5 text-[10px] font-mono text-left truncate max-w-full transition-colors hover:underline"
                               style={{ color: "var(--bai-text-faint)" }}
+                              title={`Open document: ${idea.noteRef}`}
                             >
-                              {idea.noteRef.slice(0, 12)}
-                            </p>
+                              {idea.noteRef.slice(0, 12)}...
+                            </button>
                           ))}
                       </div>
                       <button
