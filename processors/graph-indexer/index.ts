@@ -96,8 +96,12 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         continue;
       }
 
-      // Only process knowledge-note documents
-      if (context.documentType !== "bai/knowledge-note") continue;
+      // Only process knowledge-note and moc documents
+      if (
+        context.documentType !== "bai/knowledge-note" &&
+        context.documentType !== "bai/moc"
+      )
+        continue;
 
       // Index operation for history tracking
       try {
@@ -143,11 +147,11 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         const parsed = JSON.parse(stateJson) as {
           global?: Record<string, unknown>;
         };
-        // resultingState may be wrapped in { global: ... } or be the global state directly
         const global = (parsed.global ?? parsed) as Record<string, unknown>;
         const now = new Date().toISOString();
+        const isMoc = entry.context.documentType === "bai/moc";
 
-        // Extract provenance
+        // Extract provenance (knowledge notes only)
         const provenance = global.provenance as
           | {
               author?: string;
@@ -155,6 +159,15 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
               createdAt?: string;
             }
           | undefined;
+
+        // Map fields based on document type
+        const noteType = isMoc
+          ? `MOC (${s(global.tier, "TOPIC")})`
+          : ((global.noteType as string) ?? null);
+        const content = isMoc
+          ? ((global.orientation as string) ?? null)
+          : ((global.content as string) ?? null);
+        const status = isMoc ? "MOC" : ((global.status as string) ?? "DRAFT");
 
         // Upsert node
         await this.relationalDb
@@ -164,24 +177,24 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             document_id: documentId,
             title: (global.title as string) ?? null,
             description: (global.description as string) ?? null,
-            note_type: (global.noteType as string) ?? null,
-            status: (global.status as string) ?? "DRAFT",
-            content: (global.content as string) ?? null,
+            note_type: noteType,
+            status,
+            content,
             author: provenance?.author ?? null,
             source_origin: provenance?.sourceOrigin ?? null,
-            created_at: provenance?.createdAt ?? null,
+            created_at: (global.createdAt as string) ?? provenance?.createdAt ?? null,
             updated_at: now,
           })
           .onConflict((oc) =>
             oc.column("document_id").doUpdateSet({
               title: (global.title as string) ?? null,
               description: (global.description as string) ?? null,
-              note_type: (global.noteType as string) ?? null,
-              status: (global.status as string) ?? "DRAFT",
-              content: (global.content as string) ?? null,
+              note_type: noteType,
+              status,
+              content,
               author: provenance?.author ?? null,
               source_origin: provenance?.sourceOrigin ?? null,
-              created_at: provenance?.createdAt ?? null,
+              created_at: (global.createdAt as string) ?? provenance?.createdAt ?? null,
               updated_at: now,
             }),
           )
@@ -221,27 +234,68 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           .where("source_document_id", "=", documentId)
           .execute();
 
-        const links = (global.links as Array<Record<string, unknown>>) ?? [];
-        if (links.length > 0) {
+        // Build edge list from links (notes) or coreIdeas + childRefs (MOCs)
+        const edgeValues: Array<{
+          id: string;
+          source_document_id: string;
+          target_document_id: string;
+          link_type: string | null;
+          target_title: string | null;
+          updated_at: string;
+        }> = [];
+
+        if (isMoc) {
+          const coreIdeas =
+            (global.coreIdeas as Array<Record<string, unknown>>) ?? [];
+          for (const idea of coreIdeas) {
+            if (idea.noteRef) {
+              edgeValues.push({
+                id: `${documentId}-ci-${idea.id ?? idea.noteRef}`,
+                source_document_id: documentId,
+                target_document_id: idea.noteRef as string,
+                link_type: "CORE_IDEA",
+                target_title: null,
+                updated_at: now,
+              });
+            }
+          }
+          const childRefs = (global.childRefs as string[]) ?? [];
+          for (const ref of childRefs) {
+            edgeValues.push({
+              id: `${documentId}-child-${ref}`,
+              source_document_id: documentId,
+              target_document_id: ref,
+              link_type: "CORE_IDEA",
+              target_title: null,
+              updated_at: now,
+            });
+          }
+        } else {
+          const links =
+            (global.links as Array<Record<string, unknown>>) ?? [];
+          for (const link of links) {
+            edgeValues.push({
+              id:
+                (link.id as string) ??
+                `${documentId}-${link.targetDocumentId as string}`,
+              source_document_id: documentId,
+              target_document_id: (link.targetDocumentId as string) ?? "",
+              link_type: (link.linkType as string) ?? null,
+              target_title: (link.targetTitle as string) ?? null,
+              updated_at: now,
+            });
+          }
+        }
+
+        if (edgeValues.length > 0) {
           await this.relationalDb
             .insertInto("graph_edges")
-            .values(
-              links.map((link) => ({
-                id:
-                  (link.id as string) ??
-                  `${documentId}-${link.targetDocumentId as string}`,
-                source_document_id: documentId,
-                target_document_id: (link.targetDocumentId as string) ?? "",
-                link_type: (link.linkType as string) ?? null,
-                target_title: (link.targetTitle as string) ?? null,
-                updated_at: now,
-              })),
-            )
+            .values(edgeValues)
             .execute();
         }
 
         console.log(
-          `[GraphIndexer] Reconciled ${documentId}: ${links.length} edges`,
+          `[GraphIndexer] Reconciled ${documentId}: ${edgeValues.length} edges`,
         );
 
         // Fire-and-forget embedding generation (don't block operation processing)

@@ -22,7 +22,7 @@ export const graphIndexerProcessorFactory =
     const filter: ProcessorFilter = {
       branch: ["main"],
       documentId: ["*"],
-      documentType: ["bai/knowledge-note", "powerhouse/document-drive"],
+      documentType: ["bai/knowledge-note", "bai/moc", "powerhouse/document-drive"],
       scope: ["global"],
     };
 

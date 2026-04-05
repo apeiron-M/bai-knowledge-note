@@ -216,7 +216,7 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
 
     extend type Mutation {
       """
-      Backfill the graph index by reading all bai/knowledge-note documents
+      Backfill the graph index by reading all bai/knowledge-note and bai/moc documents
       in the drive. Use when the processor missed historical operations.
       """
       knowledgeGraphReindex(driveId: ID!): ReindexResult!
@@ -641,7 +641,10 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
       ).global.nodes;
 
       const noteNodes = nodes.filter(
-        (n) => n.kind === "file" && n.documentType === "bai/knowledge-note",
+        (n) =>
+          n.kind === "file" &&
+          (n.documentType === "bai/knowledge-note" ||
+            n.documentType === "bai/moc"),
       );
 
       const db = await this.getWritableDb(driveId);

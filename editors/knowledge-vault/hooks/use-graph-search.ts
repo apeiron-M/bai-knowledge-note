@@ -142,15 +142,9 @@ function loadSearchState(): { query: string; mode: SearchMode } {
     const raw = sessionStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as { query?: string; mode?: string };
-      const mode = parsed.mode as string;
       return {
         query: parsed.query ?? "",
-        mode:
-          mode === "keyword"
-            ? "keyword"
-            : mode === "semantic"
-              ? "semantic"
-              : "hybrid",
+        mode: "hybrid",
       };
     }
   } catch {
