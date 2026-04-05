@@ -63,7 +63,6 @@ export function DriveExplorer({ children }: EditorProps) {
             noteRef: ci.noteRef,
             contextPhrase: ci.contextPhrase,
           })),
-          childRefs: (state.childRefs as string[]) ?? [],
         };
       });
   }, [allDocuments]);
