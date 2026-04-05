@@ -13,6 +13,7 @@ export type SearchResult = {
   status: string | null;
   topics: string[];
   similarity?: number;
+  matchedBy?: string[];
 };
 
 export type TopicInfo = {
@@ -20,7 +21,7 @@ export type TopicInfo = {
   noteCount: number;
 };
 
-export type SearchMode = "semantic" | "keyword";
+export type SearchMode = "hybrid" | "semantic" | "keyword";
 
 /* ------------------------------------------------------------------ */
 /*  GraphQL helpers                                                   */
@@ -114,6 +115,16 @@ const KEYWORD_SEARCH_QUERY = `
   }
 `;
 
+const HYBRID_SEARCH_QUERY = `
+  query HybridSearch($driveId: ID!, $query: String!, $limit: Int) {
+    knowledgeGraphHybridSearch(driveId: $driveId, query: $query, limit: $limit) {
+      node { documentId title description noteType status topics }
+      score
+      matchedBy
+    }
+  }
+`;
+
 const TOPICS_QUERY = `
   query Topics($driveId: ID!) {
     knowledgeGraphTopics(driveId: $driveId) { name noteCount }
@@ -131,9 +142,15 @@ function loadSearchState(): { query: string; mode: SearchMode } {
     const raw = sessionStorage.getItem(STORAGE_KEY);
     if (raw) {
       const parsed = JSON.parse(raw) as { query?: string; mode?: string };
+      const mode = parsed.mode as string;
       return {
         query: parsed.query ?? "",
-        mode: parsed.mode === "keyword" ? "keyword" : "semantic",
+        mode:
+          mode === "keyword"
+            ? "keyword"
+            : mode === "semantic"
+              ? "semantic"
+              : "hybrid",
       };
     }
   } catch {
@@ -207,7 +224,31 @@ export function useGraphSearch() {
       setLoading(true);
       setError(null);
 
-      if (mode === "semantic") {
+      if (mode === "hybrid") {
+        const data = await graphqlFetch<{
+          knowledgeGraphHybridSearch: Array<{
+            node: Omit<SearchResult, "similarity" | "matchedBy">;
+            score: number;
+            matchedBy: string[];
+          }>;
+        }>(endpoint, HYBRID_SEARCH_QUERY, { driveId, query: q, limit: 20 });
+
+        if (data?.knowledgeGraphHybridSearch) {
+          const raw = data.knowledgeGraphHybridSearch;
+          // Normalize RRF scores to 0-1 range (top result = 1.0)
+          const maxScore = raw.length > 0 ? raw[0].score : 1;
+          setResults(
+            raw.map((r) => ({
+              ...r.node,
+              similarity: maxScore > 0 ? r.score / maxScore : 0,
+              matchedBy: r.matchedBy,
+            })),
+          );
+        } else {
+          setResults([]);
+          setError("Hybrid search unavailable. Try keyword mode.");
+        }
+      } else if (mode === "semantic") {
         const data = await graphqlFetch<{
           knowledgeGraphSemanticSearch: Array<{
             node: Omit<SearchResult, "similarity">;

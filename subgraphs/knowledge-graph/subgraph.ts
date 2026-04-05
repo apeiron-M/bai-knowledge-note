@@ -138,6 +138,32 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
         documentId: String!
         limit: Int
       ): [SemanticResult!]!
+      knowledgeGraphHybridSearch(
+        driveId: ID!
+        query: String!
+        limit: Int
+      ): [HybridResult!]!
+
+      knowledgeGraphHistory(
+        driveId: ID!
+        documentId: String!
+        limit: Int
+      ): [OperationRecord!]!
+      knowledgeGraphActivity(
+        driveId: ID!
+        limit: Int
+        since: String
+      ): [OperationRecord!]!
+      knowledgeGraphActivityByType(
+        driveId: ID!
+        operationType: String!
+        limit: Int
+      ): [OperationRecord!]!
+      knowledgeGraphStale(
+        driveId: ID!
+        since: String!
+        limit: Int
+      ): [KnowledgeGraphNode!]!
 
       """
       Debug: raw processor DB tables
@@ -154,6 +180,22 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
     type SemanticResult {
       node: KnowledgeGraphNode!
       similarity: Float!
+    }
+
+    type HybridResult {
+      node: KnowledgeGraphNode!
+      score: Float!
+      matchedBy: [String!]!
+    }
+
+    type OperationRecord {
+      id: String!
+      documentId: String!
+      operationType: String!
+      timestamp: String!
+      index: Int!
+      scope: String!
+      summary: String
     }
 
     type GraphDebugInfo {
@@ -421,6 +463,61 @@ export class KnowledgeGraphSubgraph extends BaseSubgraph {
           }
         }
         return semanticResults.slice(0, args.limit ?? 10);
+      },
+
+      knowledgeGraphHybridSearch: async (
+        _: unknown,
+        args: { driveId: string; query: string; limit?: number },
+      ) => {
+        const queryEmbedding = await generateEmbedding(args.query);
+        const semanticResults = await searchSimilar(
+          queryEmbedding,
+          (args.limit ?? 20) * 2,
+        );
+        const graphQuery = this.getQuery(args.driveId);
+        const hybridResults = await graphQuery.hybridSearch(
+          args.query,
+          semanticResults,
+          args.limit ?? 20,
+        );
+        return hybridResults.map((r) => ({
+          node: { ...r.node, _driveId: args.driveId },
+          score: r.score,
+          matchedBy: r.matchedBy,
+        }));
+      },
+
+      knowledgeGraphHistory: async (
+        _: unknown,
+        args: { driveId: string; documentId: string; limit?: number },
+      ) => {
+        const query = this.getQuery(args.driveId);
+        return query.history(args.documentId, args.limit ?? 50);
+      },
+
+      knowledgeGraphActivity: async (
+        _: unknown,
+        args: { driveId: string; limit?: number; since?: string },
+      ) => {
+        const query = this.getQuery(args.driveId);
+        return query.activity(args.limit ?? 50, args.since ?? undefined);
+      },
+
+      knowledgeGraphActivityByType: async (
+        _: unknown,
+        args: { driveId: string; operationType: string; limit?: number },
+      ) => {
+        const query = this.getQuery(args.driveId);
+        return query.activityByType(args.operationType, args.limit ?? 50);
+      },
+
+      knowledgeGraphStale: async (
+        _: unknown,
+        args: { driveId: string; since: string; limit?: number },
+      ) => {
+        const query = this.getQuery(args.driveId);
+        const nodes = await query.staleNodes(args.since, args.limit ?? 50);
+        return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
       knowledgeGraphDebug: async (_: unknown, args: { driveId: string }) => {

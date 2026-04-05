@@ -83,9 +83,46 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     .column("name")
     .ifNotExists()
     .execute();
+
+  // --- Operation history ---
+
+  await db.schema
+    .createTable("graph_operations")
+    .addColumn("id", "varchar(255)", (col) => col.primaryKey())
+    .addColumn("document_id", "varchar(255)", (col) => col.notNull())
+    .addColumn("operation_type", "varchar(100)", (col) => col.notNull())
+    .addColumn("timestamp", "varchar(50)", (col) => col.notNull())
+    .addColumn("index", "integer", (col) => col.notNull())
+    .addColumn("scope", "varchar(20)", (col) => col.notNull())
+    .addColumn("summary", "text")
+    .addColumn("input_json", "text")
+    .ifNotExists()
+    .execute();
+
+  await db.schema
+    .createIndex("idx_graph_ops_doc")
+    .on("graph_operations")
+    .column("document_id")
+    .ifNotExists()
+    .execute();
+
+  await db.schema
+    .createIndex("idx_graph_ops_timestamp")
+    .on("graph_operations")
+    .column("timestamp")
+    .ifNotExists()
+    .execute();
+
+  await db.schema
+    .createIndex("idx_graph_ops_type")
+    .on("graph_operations")
+    .column("operation_type")
+    .ifNotExists()
+    .execute();
 }
 
 export async function down(db: IRelationalDb<any>): Promise<void> {
+  await db.schema.dropTable("graph_operations").ifExists().execute();
   await db.schema.dropTable("graph_topics").ifExists().execute();
   await db.schema.dropTable("graph_edges").ifExists().execute();
   await db.schema.dropTable("graph_nodes").ifExists().execute();

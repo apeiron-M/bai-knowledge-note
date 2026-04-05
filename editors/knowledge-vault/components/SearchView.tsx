@@ -122,12 +122,15 @@ export function SearchView() {
               <span>
                 {results.length} result{results.length !== 1 ? "s" : ""}
               </span>
-              {searchMode === "semantic" && results.length > 0 && (
-                <span style={{ opacity: 0.6 }}>
-                  — match % shows how closely each note relates to your query by
-                  meaning
-                </span>
-              )}
+              {(searchMode === "semantic" || searchMode === "hybrid") &&
+                results.length > 0 && (
+                  <span style={{ opacity: 0.6 }}>
+                    — score shows relevance
+                    {searchMode === "hybrid"
+                      ? " combining keyword + semantic matching"
+                      : " by meaning"}
+                  </span>
+                )}
             </>
           )}
           {error && <span style={{ color: "#ef4444" }}>{error}</span>}
@@ -162,30 +165,21 @@ function ModeToggle({
       className="flex shrink-0 overflow-hidden rounded-lg border text-xs"
       style={{ borderColor: "var(--bai-border)" }}
     >
-      <button
-        type="button"
-        onClick={() => onChange("semantic")}
-        className="px-3 py-2 transition-colors"
-        style={{
-          backgroundColor:
-            mode === "semantic" ? "var(--bai-accent)" : "var(--bai-surface)",
-          color: mode === "semantic" ? "#fff" : "var(--bai-text-muted)",
-        }}
-      >
-        Semantic
-      </button>
-      <button
-        type="button"
-        onClick={() => onChange("keyword")}
-        className="px-3 py-2 transition-colors"
-        style={{
-          backgroundColor:
-            mode === "keyword" ? "var(--bai-accent)" : "var(--bai-surface)",
-          color: mode === "keyword" ? "#fff" : "var(--bai-text-muted)",
-        }}
-      >
-        Keyword
-      </button>
+      {(["hybrid", "semantic", "keyword"] as const).map((m) => (
+        <button
+          key={m}
+          type="button"
+          onClick={() => onChange(m)}
+          className="px-3 py-2 transition-colors capitalize"
+          style={{
+            backgroundColor:
+              mode === m ? "var(--bai-accent)" : "var(--bai-surface)",
+            color: mode === m ? "#fff" : "var(--bai-text-muted)",
+          }}
+        >
+          {m}
+        </button>
+      ))}
     </div>
   );
 }
@@ -309,7 +303,7 @@ function ResultList({
         <ResultCard
           key={result.documentId}
           result={result}
-          showSimilarity={searchMode === "semantic"}
+          showSimilarity={searchMode !== "keyword"}
         />
       ))}
     </div>
@@ -340,7 +334,7 @@ function ResultCard({
       {showSimilarity && result.similarity != null && (
         <div
           className="shrink-0 rounded-md px-2 py-1 text-center font-mono text-xs font-bold"
-          title="Semantic similarity — how closely this note's meaning matches your query (higher is better)"
+          title="Relevance score — how closely this note matches your query (higher is better)"
           style={{
             color: similarityColor(result.similarity),
             backgroundColor: `${similarityColor(result.similarity)}15`,
@@ -394,6 +388,28 @@ function ResultCard({
               #{topic}
             </span>
           ))}
+          {result.matchedBy && result.matchedBy.length > 0 && (
+            <span className="ml-auto flex gap-1">
+              {result.matchedBy.map((m) => (
+                <span
+                  key={m}
+                  className="rounded px-1.5 py-0.5 text-[9px] font-medium"
+                  style={{
+                    background:
+                      m === "semantic"
+                        ? "rgba(139, 92, 246, 0.15)"
+                        : "rgba(59, 130, 246, 0.15)",
+                    color:
+                      m === "semantic"
+                        ? "rgba(167, 139, 250, 1)"
+                        : "rgba(147, 197, 253, 1)",
+                  }}
+                >
+                  {m}
+                </span>
+              ))}
+            </span>
+          )}
         </div>
       </div>
 

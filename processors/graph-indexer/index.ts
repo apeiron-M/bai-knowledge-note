@@ -5,6 +5,65 @@ import type { DB } from "./schema.js";
 import { generateEmbedding } from "./embedder.js";
 import { upsertEmbedding, deleteEmbedding } from "./embedding-store.js";
 
+function summarizeOperation(
+  type: string,
+  input: Record<string, unknown>,
+): string {
+  switch (type) {
+    case "SET_TITLE":
+      return `Title changed to "${truncate(input.title)}"`;
+    case "SET_DESCRIPTION":
+      return `Description updated`;
+    case "SET_CONTENT": {
+      const len = typeof input.content === "string" ? input.content.length : 0;
+      return `Content updated (${len} chars)`;
+    }
+    case "SET_NOTE_TYPE":
+      return `Type set to ${String(input.noteType)}`;
+    case "SET_STATUS":
+      return `Status changed to ${String(input.status)}`;
+    case "ADD_LINK":
+      return `Linked to "${truncate(input.targetTitle)}" (${s(input.linkType, "RELATES_TO")})`;
+    case "REMOVE_LINK":
+      return `Removed link ${s(input.id)}`;
+    case "UPDATE_LINK_TYPE":
+      return `Link type changed to ${s(input.linkType)}`;
+    case "ADD_TOPIC":
+      return `Added topic #${s(input.name)}`;
+    case "REMOVE_TOPIC":
+      return `Removed topic`;
+    case "SET_PROVENANCE":
+      return `Provenance set: ${s(input.author, "unknown")}, ${s(input.sourceOrigin)}`;
+    case "SUBMIT_FOR_REVIEW":
+      return `Submitted for review`;
+    case "APPROVE_NOTE":
+      return `Approved by ${s(input.actor, "unknown")}`;
+    case "REJECT_NOTE":
+      return `Rejected: ${truncate(input.comment)}`;
+    case "ARCHIVE_NOTE":
+      return `Archived`;
+    case "RESTORE_NOTE":
+      return `Restored from archive`;
+    case "SET_METADATA_FIELD":
+      return `Metadata: ${String(input.field)} = ${truncate(input.value)}`;
+    default:
+      return type;
+  }
+}
+
+/** Safely stringify an unknown value with optional fallback */
+function s(val: unknown, fallback = ""): string {
+  if (val == null) return fallback;
+  if (typeof val === "string") return val;
+  if (typeof val === "number" || typeof val === "boolean") return String(val);
+  return fallback;
+}
+
+function truncate(val: unknown, max = 60): string {
+  const str = s(val);
+  return str.length > max ? str.slice(0, max) + "..." : str;
+}
+
 export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
   static override getNamespace(driveId: string): string {
     return super.getNamespace(driveId);
@@ -39,6 +98,27 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
 
       // Only process knowledge-note documents
       if (context.documentType !== "bai/knowledge-note") continue;
+
+      // Index operation for history tracking
+      try {
+        const input = operation.action.input as Record<string, unknown>;
+        await this.relationalDb
+          .insertInto("graph_operations")
+          .values({
+            id: `${documentId}-${operation.index}`,
+            document_id: documentId,
+            operation_type: operation.action.type,
+            timestamp: operation.timestampUtcMs ?? new Date().toISOString(),
+            index: operation.index,
+            scope: context.scope ?? "global",
+            summary: summarizeOperation(operation.action.type, input),
+            input_json: JSON.stringify(input),
+          })
+          .onConflict((oc) => oc.column("id").doNothing())
+          .execute();
+      } catch {
+        // non-critical — don't block state reconciliation
+      }
 
       // Collect last state per document
       if (context.resultingState) {

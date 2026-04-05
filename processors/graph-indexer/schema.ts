@@ -28,8 +28,20 @@ export interface GraphEdge {
   updated_at: string;
 }
 
+export interface GraphOperation {
+  id: string;
+  document_id: string;
+  operation_type: string;
+  timestamp: string;
+  index: number;
+  scope: string;
+  summary: string | null;
+  input_json: string | null;
+}
+
 export interface DB {
   graph_nodes: GraphNode;
   graph_edges: GraphEdge;
   graph_topics: GraphTopic;
+  graph_operations: GraphOperation;
 }

@@ -48,6 +48,22 @@ export interface RelatedByTopicResult {
   sharedTopicCount: number;
 }
 
+export interface HybridSearchResult {
+  node: GraphNodeResult;
+  score: number;
+  matchedBy: string[];
+}
+
+export interface OperationRecord {
+  id: string;
+  documentId: string;
+  operationType: string;
+  timestamp: string;
+  index: number;
+  scope: string;
+  summary: string | null;
+}
+
 function rowToNode(row: GraphNode): GraphNodeResult {
   return {
     id: row.id,
@@ -72,6 +88,27 @@ function rowToEdge(row: GraphEdge): GraphEdgeResult {
     linkType: row.link_type,
     targetTitle: row.target_title,
     updatedAt: row.updated_at,
+  };
+}
+
+function rowToOperation(row: {
+  id: string;
+  document_id: string;
+  operation_type: string;
+  timestamp: string;
+  index: number;
+  scope: string;
+  summary: string | null;
+  input_json: string | null;
+}): OperationRecord {
+  return {
+    id: row.id,
+    documentId: row.document_id,
+    operationType: row.operation_type,
+    timestamp: row.timestamp,
+    index: row.index,
+    scope: row.scope,
+    summary: row.summary,
   };
 }
 
@@ -509,6 +546,122 @@ export function createGraphQuery(db: Kysely<DB>) {
 
       const rows = await query.execute();
       return rows.map(rowToNode);
+    },
+
+    /**
+     * Hybrid search: run keyword + semantic in parallel, merge via
+     * Reciprocal Rank Fusion (RRF). semanticResults must be pre-fetched
+     * from the embedding store by the caller.
+     */
+    async hybridSearch(
+      keywordQuery: string,
+      semanticResults: Array<{ documentId: string; similarity: number }>,
+      limit = 20,
+    ): Promise<HybridSearchResult[]> {
+      const K = 60;
+      const scores = new Map<
+        string,
+        { score: number; matchedBy: string[]; node?: GraphNodeResult }
+      >();
+
+      // Keyword leg
+      const keywordResults = await this.fullSearch(keywordQuery, limit * 2);
+      keywordResults.forEach((node, rank) => {
+        const existing = scores.get(node.documentId) ?? {
+          score: 0,
+          matchedBy: [],
+        };
+        existing.score += 1 / (K + rank);
+        existing.matchedBy.push("keyword");
+        existing.node = node;
+        scores.set(node.documentId, existing);
+      });
+
+      // Semantic leg
+      for (let rank = 0; rank < semanticResults.length; rank++) {
+        const sr = semanticResults[rank];
+        const existing = scores.get(sr.documentId) ?? {
+          score: 0,
+          matchedBy: [],
+        };
+        existing.score += 1 / (K + rank);
+        if (!existing.matchedBy.includes("semantic")) {
+          existing.matchedBy.push("semantic");
+        }
+        // Fetch node data if we don't have it from keyword results
+        if (!existing.node) {
+          existing.node = await this.nodeByDocumentId(sr.documentId);
+        }
+        scores.set(sr.documentId, existing);
+      }
+
+      return [...scores.values()]
+        .filter((e): e is typeof e & { node: GraphNodeResult } => !!e.node)
+        .sort((a, b) => b.score - a.score)
+        .slice(0, limit)
+        .map(({ score, matchedBy, node }) => ({ node, score, matchedBy }));
+    },
+
+    // ---- Operation history queries ----
+
+    async history(documentId: string, limit = 50): Promise<OperationRecord[]> {
+      const rows = await db
+        .selectFrom("graph_operations")
+        .where("document_id", "=", documentId)
+        .orderBy("index", "desc")
+        .selectAll()
+        .limit(limit)
+        .execute();
+      return rows.map(rowToOperation);
+    },
+
+    async activity(limit = 50, since?: string): Promise<OperationRecord[]> {
+      let query = db
+        .selectFrom("graph_operations")
+        .orderBy("timestamp", "desc")
+        .selectAll()
+        .limit(limit);
+
+      if (since) {
+        query = query.where("timestamp", ">", since);
+      }
+
+      const rows = await query.execute();
+      return rows.map(rowToOperation);
+    },
+
+    async activityByType(
+      operationType: string,
+      limit = 50,
+    ): Promise<OperationRecord[]> {
+      const rows = await db
+        .selectFrom("graph_operations")
+        .where("operation_type", "=", operationType)
+        .orderBy("timestamp", "desc")
+        .selectAll()
+        .limit(limit)
+        .execute();
+      return rows.map(rowToOperation);
+    },
+
+    async staleNodes(since: string, limit = 50): Promise<GraphNodeResult[]> {
+      // Nodes with no operations after `since` but that have neighbors
+      // who DO have operations after `since`
+      const staleRows = await db
+        .selectFrom("graph_nodes")
+        .where(
+          "document_id",
+          "not in",
+          db
+            .selectFrom("graph_operations")
+            .where("timestamp", ">", since)
+            .select("document_id"),
+        )
+        .where("updated_at", "<", since)
+        .selectAll()
+        .limit(limit)
+        .execute();
+      return staleRows.map(rowToNode);
     },
   };
 }
