@@ -1,4 +1,4 @@
-import type { SourceSourceManagementOperations } from "@powerhousedao/knowledge-note/document-models/source/v1";
+import type { SourceSourceManagementOperations } from "document-models/source/v1";
 
 export const sourceSourceManagementOperations: SourceSourceManagementOperations =
   {

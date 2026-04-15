@@ -2,14 +2,14 @@
  * Factory methods for creating KnowledgeGraphDocument instances
  */
 import type { PHAuthState, PHDocumentState, PHBaseState } from "document-model";
-import { createBaseState, defaultBaseState } from "document-model/core";
+import { createBaseState, defaultBaseState } from "document-model";
 import type {
   KnowledgeGraphDocument,
-  KnowledgeGraphLocalState,
   KnowledgeGraphGlobalState,
+  KnowledgeGraphLocalState,
   KnowledgeGraphPHState,
 } from "./types.js";
-import { createDocument } from "./utils.js";
+import { utils } from "./utils.js";
 
 export function defaultGlobalState(): KnowledgeGraphGlobalState {
   return {
@@ -74,7 +74,7 @@ export function createKnowledgeGraphDocument(
     local?: Partial<KnowledgeGraphLocalState>;
   }>,
 ): KnowledgeGraphDocument {
-  const document = createDocument(
+  const document = utils.createDocument(
     state
       ? createState(
           createBaseState(state.auth, state.document),

@@ -1,0 +1,100 @@
+{
+  "id": "33462e12-de71-40d4-ad2d-5f33c8365809",
+  "name": "document-model-three-components",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-33462e12-3dc959e4",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "3dc959e4-d631-41c5-8f08-c53e7e572e88"
+        },
+        {
+          "id": "l-33462e12-13d21199",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "13d21199-bc9c-42dd-b47e-daddc718d596"
+        },
+        {
+          "id": "l-33462e12-cd1ba0c8-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "document-model-structure-has-metadata-specifications-and-modules",
+          "targetDocumentId": "cd1ba0c8-cc58-45dd-a57f-31ba97ebbe96"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "A document model consists of a state schema, document operations, and event history",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-33462e12-0",
+          "name": "document-model",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-33462e12-1",
+          "name": "architecture",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-33462e12-2",
+          "name": "schema",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Each document model has three key components:\n\n1. **State Schema** - Defines the structure of the document using GraphQL SDL (types, fields, scalars). This is the blueprint for data storage and validation.\n2. **Document Operations** - Defines how the document can be modified. Operations are specified as GraphQL `input` types and represent valid state transitions (e.g., `AddTodoItemInput`, `UpdateTodoItemInput`).\n3. **Event History** - An append-only log storing every operation applied to the document as a timestamped event.\n\nThe state schema acts as a template for document instances, operations act as commands, and the event history provides the complete audit trail.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "CONCEPT",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The three structural components define what data exists, how it can change, and the record of all changes.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:49:56.725Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:30.606Z"
+}

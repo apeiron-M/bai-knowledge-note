@@ -1,0 +1,93 @@
+{
+  "id": "cb2b72bb-4884-4b60-8977-2630321a322a",
+  "name": "operation-errors-are-recorded-on-operations-not-thrown-to-callers",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-cb2b72bb-9807054d",
+          "linkType": "RELATES_TO",
+          "targetTitle": "dispatch-accepts-onerrors-callback",
+          "targetDocumentId": "9807054d-4250-4cf7-8518-fb781f232c38"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "operation errors are recorded on operations not thrown to callers",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-cb2b72bb-0",
+          "name": "reducer patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-cb2b72bb-1",
+          "name": "error handling",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-cb2b72bb-2",
+          "name": "event sourcing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-cb2b72bb-3",
+          "name": "testing",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# operation errors are recorded on operations not thrown to callers\n\nPowerhouse handles reducer errors differently from typical throw/catch patterns. When a reducer throws an error:\n\n1. The operation is **still recorded** in `document.operations.global` (or `.local`)\n2. The error message is stored in `operation.error` as a string\n3. The **state is NOT mutated** — it remains as it was before the operation\n\nThis means error testing looks different:\n\n```typescript\n// ✅ Correct — check the operation's error property\nconst updated = reducer(document, setName({ name: \"invalid\" }));\nexpect(updated.operations.global[0].error).toBe(\"Name is not allowed\");\nexpect(updated.state.global.name).toBe(initialState);\n\n// ❌ Wrong — errors are not propagated to the caller\nexpect(() => reducer(document, setName({ name: \"invalid\" }))).toThrow();\n```\n\nSince [[operation error index must match the number of prior dispatches]], the index into `operations.global` depends on how many operations were dispatched before this one.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:00:45.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "When a reducer throws, the operation is still added with an .error property; state remains unmutated; tests must check operation.error",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T14:00:46.057Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:48.538Z"
+}

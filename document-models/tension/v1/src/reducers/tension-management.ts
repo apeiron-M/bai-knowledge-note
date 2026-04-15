@@ -1,5 +1,5 @@
-import type { TensionTensionManagementOperations } from "@powerhousedao/knowledge-note/document-models/tension/v1";
 import { TensionAlreadyResolvedError } from "../../gen/tension-management/error.js";
+import type { TensionTensionManagementOperations } from "document-models/tension/v1";
 
 export const tensionTensionManagementOperations: TensionTensionManagementOperations =
   {

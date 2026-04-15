@@ -1,6 +1,9 @@
 import { baseActions } from "document-model";
-import { reportManagementActions } from "./gen/creators.js";
+import { healthReportReportManagementActions } from "./gen/creators.js";
 
 /** Actions for the HealthReport document model */
 
-export const actions = { ...baseActions, ...reportManagementActions };
+export const actions = {
+  ...baseActions,
+  ...healthReportReportManagementActions,
+};

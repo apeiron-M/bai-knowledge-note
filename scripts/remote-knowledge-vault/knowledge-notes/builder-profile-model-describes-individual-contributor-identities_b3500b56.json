@@ -1,0 +1,83 @@
+{
+  "id": "b3500b56-9602-412e-b7d9-46af624a8718",
+  "name": "builder-profile-model-describes-individual-contributor-identities",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-b3500b56-3c6d01f2",
+          "linkType": "RELATES_TO",
+          "targetTitle": "builders-model-aggregates-builder-collections",
+          "targetDocumentId": "3c6d01f2-a634-4a7d-a6d6-f00df7736dd1"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "builder-profile model describes individual contributor identities",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-b3500b56-0",
+          "name": "builder-profile",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-b3500b56-1",
+          "name": "organization-identity",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# builder-profile model describes individual contributor identities\n\n`powerhouse/builder-profile` (12 ops) defines individual contributor identities in the Powerhouse ecosystem. This is the model that `ServiceOffering.operatorId` references via PHID — the operator who creates and manages a service offering.\n\n## Cross-Model References\n\n- ServiceOffering.`operatorId: PHID` → BuilderProfile (the offering's operator)\n- Referenced by [[builders model aggregates builder collections]] as individual entries\n- Part of the Organization & Identity zone alongside [[network-profile model represents network-level organizational entities]] and [[operational-hub-profile model defines operational hub configurations]]\n\nSince [[service-offering model defines tiered pricing with option groups and service groups]], the operatorId PHID creates a cross-zone dependency from Service & Pricing to Organization & Identity.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:41:04.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "12 operations — manages builder (contributor) profiles including skills, contact info, and organizational affiliations; referenced by ServiceOffering.operatorId",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:41:04.950Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:34.756Z"
+}

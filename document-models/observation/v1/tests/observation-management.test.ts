@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -12,7 +12,7 @@ import {
   PromoteObservationInputSchema,
   ImplementObservationInputSchema,
   ArchiveObservationInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/observation/v1";
+} from "document-models/observation/v1";
 
 describe("ObservationManagementOperations", () => {
   it("should handle createObservation operation", () => {

@@ -1,9 +1,8 @@
-// TODO: remove eslint-disable rules once refactor is done
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model/core";
-import type { MocPHState } from "@powerhousedao/knowledge-note/document-models/moc/v1";
+import type { Reducer, StateReducer } from "document-model";
+import { isDocumentAction, createReducer } from "document-model";
+import type { MocPHState } from "document-models/moc/v1";
 
 import { mocMocManagementOperations } from "../src/reducers/moc-management.js";
 
@@ -189,4 +188,4 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
   }
 };
 
-export const reducer = createReducer<MocPHState>(stateReducer);
+export const reducer: Reducer<MocPHState> = createReducer(stateReducer);

@@ -1,9 +1,8 @@
-// TODO: remove eslint-disable rules once refactor is done
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model/core";
-import type { DerivationPHState } from "@powerhousedao/knowledge-note/document-models/derivation/v1";
+import type { Reducer, StateReducer } from "document-model";
+import { isDocumentAction, createReducer } from "document-model";
+import type { DerivationPHState } from "document-models/derivation/v1";
 
 import { derivationDerivationManagementOperations } from "../src/reducers/derivation-management.js";
 
@@ -76,4 +75,4 @@ const stateReducer: StateReducer<DerivationPHState> = (
   }
 };
 
-export const reducer = createReducer<DerivationPHState>(stateReducer);
+export const reducer: Reducer<DerivationPHState> = createReducer(stateReducer);

@@ -1,0 +1,74 @@
+{
+  "id": "d8f9ff5a-cd6f-4fe3-8e4f-06717ede367a",
+  "name": "document-toolbar",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "TOPIC",
+      "title": "Document Toolbar Styling",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "ci-three-layers",
+          "addedAt": "2026-03-30T17:37:53.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "7481f0df-6748-4f14-9814-9c59b00afa1b",
+          "sortOrder": 0,
+          "contextPhrase": "The architectural overview — identifies the three independent layers (className, child selectors, scoped CSS) that every toolbar customization must navigate"
+        },
+        {
+          "id": "ci-props-api",
+          "addedAt": "2026-03-30T17:37:53.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "2eee0760-ee17-4b4d-bbe5-1bd75418c3a0",
+          "sortOrder": 1,
+          "contextPhrase": "Defines what the component API gives you (className, enabledControls, callbacks) and what it doesn't (no child styling props) — the constraint that drives the workarounds"
+        },
+        {
+          "id": "ci-twmerge",
+          "addedAt": "2026-03-30T17:37:53.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "8f715521-a98a-4da8-b947-e7ef356bd20f",
+          "sortOrder": 2,
+          "contextPhrase": "The container-level technique — className passes through twMerge, so the ! prefix is needed to guarantee overrides win against built-in defaults"
+        },
+        {
+          "id": "ci-child-selectors",
+          "addedAt": "2026-03-30T17:37:53.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "ca4cef64-f759-4c33-af1c-de5af03e0880",
+          "sortOrder": 3,
+          "contextPhrase": "The button-level workaround — since internal buttons expose no props, Tailwind arbitrary child selectors like [&_button] through the parent className are the only viable approach"
+        },
+        {
+          "id": "ci-revision-history",
+          "addedAt": "2026-03-30T17:37:53.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "f54d8cdc-1825-4987-bd58-481c83c94ef8",
+          "sortOrder": 4,
+          "contextPhrase": "The escape hatch — revision history renders outside the editor tree in #document-editor-context, requiring scoped CSS with data-document-type attribute selectors"
+        }
+      ],
+      "createdAt": "2026-03-30T17:37:33.000Z",
+      "noteCount": 5,
+      "parentRef": null,
+      "updatedAt": "2026-04-03T14:30:00.000Z",
+      "agentNotes": [],
+      "description": "How to customize the DocumentToolbar component — container classes, button child selectors, and revision history scoping",
+      "orientation": "The DocumentToolbar exposes three independent styling layers. The container accepts className with twMerge for conflict resolution. Internal buttons have no dedicated props and require Tailwind arbitrary child selectors. Revision history renders outside the editor tree, requiring scoped CSS. This topic is part of the Editors and UX domain.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-03-30T17:37:00.636Z",
+  "lastModifiedAtUtcIso": "2026-04-03T14:27:58.576Z"
+}

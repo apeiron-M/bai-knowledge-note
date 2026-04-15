@@ -1,0 +1,99 @@
+{
+  "id": "9494e068-19d8-4e83-b645-48f886c383d9",
+  "name": "reactor-read-models-pre-ready-phase",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-9494e068-2f3d3479",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "2f3d3479-f14c-4641-853e-07e631d8b0e9"
+        },
+        {
+          "id": "l-9494e068-9d46fd36",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "9d46fd36-1f6f-451e-91b3-680d49707b60"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Custom read models registered via withReadModel run in pre-ready phase before JOB_READ_READY fires while processors run post-ready",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-9494e068-0",
+          "name": "read-models",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-9494e068-1",
+          "name": "processors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-9494e068-2",
+          "name": "reactor",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-9494e068-3",
+          "name": "architecture",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The reactor distinguishes between read models and processors by execution phase. Read models registered via `ReactorBuilder.withReadModel()` implement `IReadModel` with `indexOperations(operations: OperationWithContext[])` and run in the pre-ready phase -- they complete before `JOB_READ_READY` fires. This ensures derived views are consistent before reads. Processors registered via `ProcessorManager` run in the post-ready phase, after the job is marked complete. The reactor's internal components include `readModelCoordinator` (dispatches operations to all read models), `processorManager` (routes operations to user-defined processors), `documentView` (maintains document snapshots for reads), and `documentIndexer` (tracks parent/child relationships).",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Read models implement IReadModel.indexOperations() and complete before job is marked ready; processors run after via ProcessorManager.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:55:10.613Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:21.144Z"
+}

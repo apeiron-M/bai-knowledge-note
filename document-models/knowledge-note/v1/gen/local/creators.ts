@@ -1,4 +1,4 @@
-import { createAction } from "document-model/core";
+import { createAction } from "document-model";
 import { SetLastViewedInputSchema } from "../schema/zod.js";
 import type { SetLastViewedInput } from "../types.js";
 import type { SetLastViewedAction } from "./actions.js";

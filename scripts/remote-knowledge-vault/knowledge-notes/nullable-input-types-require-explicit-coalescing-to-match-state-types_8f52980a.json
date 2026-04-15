@@ -1,0 +1,93 @@
+{
+  "id": "8f52980a-e141-4e14-a71a-46b358910982",
+  "name": "nullable-input-types-require-explicit-coalescing-to-match-state-types",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-8f52980a-a105b1e2-ob",
+          "linkType": "RELATES_TO",
+          "targetTitle": "schema-design",
+          "targetDocumentId": "a105b1e2-814e-4a96-a995-cea56c2fc1e2"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "nullable input types require explicit coalescing to match state types",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-8f52980a-0",
+          "name": "reducer patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-8f52980a-1",
+          "name": "gotchas",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-8f52980a-2",
+          "name": "TypeScript",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-8f52980a-3",
+          "name": "null coalescing",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# nullable input types require explicit coalescing to match state types\n\nOptional input types and optional state types have different nullability:\n\n- **Input**: `InputMaybe<T>` = `null | undefined | T`\n- **State**: `Maybe<T>` = `T | null`\n\nTypeScript won't accept `undefined` where `null` is expected, so you must coalesce:\n\n```typescript\n// ❌ Type error — undefined not assignable to T | null\namount: action.input.amount,\nnotes: action.input.notes,\n\n// ✅ Correct — coalesce to match Maybe<T>\namount: action.input.amount || null,\nnotes: action.input.notes || [],\n```\n\nSince [[truthy checks are safer than undefined checks for optional state assignment]], prefer `if (action.input.field)` over `if (action.input.field !== undefined)` for conditional updates.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[gotchas]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "OBSERVATION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:58:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "InputMaybe<T> allows null | undefined | T but state uses Maybe<T> = T | null, so coalesce with || null or || [] to satisfy TypeScript",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:58:00.933Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:17.520Z"
+}

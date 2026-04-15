@@ -1,0 +1,94 @@
+{
+  "id": "e1bbc0c4-2283-4a13-b7ca-ea64f16e4f2a",
+  "name": "v6-processor-flat-operations-replace-strands",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-e1bbc0c4-9494e068",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "9494e068-19d8-4e83-b645-48f886c383d9"
+        },
+        {
+          "id": "l-d-e1bbc0c4-003761b5",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "003761b5-81af-4be7-8356-97c73820f2b2"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "V6 processors receive a flat OperationWithContext list via onOperations instead of grouped strands via onStrands",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-e1bbc0c4-0",
+          "name": "processors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-e1bbc0c4-1",
+          "name": "migration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-e1bbc0c4-2",
+          "name": "v6-reactor",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The v6 Reactor replaced `onStrands(strands: InternalTransmitterUpdate[])` with `onOperations(operations: OperationWithContext[])`. Each OperationWithContext destructures as `{ operation, context }` where context has `documentId`, `documentType`, `scope`, `branch`, `ordinal` (global monotonic counter for cross-document ordering), and optional `resultingState` (JSON string). Operation access changed: `operation.type` -> `operation.action.type`, `operation.input` -> `operation.action.input`, `operation.timestamp` -> `operation.action.timestampUtcMs`. The v6 processor manager guarantees exactly-once delivery -- no replay -- eliminating the need for `clearSource` / `index === 0` guards. Factory signature changed from `(driveId: string)` to `(driveHeader: PHDocumentHeader, processorApp?: ProcessorApp)` with outer parameter changing from direct dependencies to `IProcessorHostModule`.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The IProcessor interface simplified from strand-based to flat operation-based with per-operation context including global ordinal.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:54:30.523Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:08:00.734Z"
+}

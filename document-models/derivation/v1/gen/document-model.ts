@@ -5,9 +5,9 @@ export const documentModel: DocumentModelGlobalState = {
   name: "Derivation",
   author: {
     name: "BAI",
-    website: "https://bai.dev",
+    website: "https://bai.powerhouse.io/",
   },
-  extension: "der.phd",
+  extension: "",
   description:
     "Derivation record \u2014 audit trail of vault configuration decisions backed by research claims, dimension rationale, and coherence checks.",
   specifications: [
@@ -30,61 +30,61 @@ export const documentModel: DocumentModelGlobalState = {
         {
           id: "derivation-management",
           name: "derivation-management",
-          description: "Derivation audit trail",
           operations: [
             {
               id: "initialize-derivation",
               name: "INITIALIZE_DERIVATION",
-              description: "Initialize derivation record",
+              scope: "global",
+              errors: [],
               schema:
                 "input InitializeDerivationInput {\n    engineVersion: String!\n    derivedAt: DateTime!\n}",
-              template: "Initialize derivation record",
               reducer:
                 "state.engineVersion = action.input.engineVersion;\nstate.derivedAt = action.input.derivedAt;",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Initialize derivation record",
+              description: "Initialize derivation record",
             },
             {
               id: "add-signal",
               name: "ADD_SIGNAL",
-              description: "Record a user signal that influenced derivation",
+              scope: "global",
+              errors: [],
               schema:
                 "input AddSignalInput {\n    id: OID!\n    utterance: String!\n    influencedDimensions: [String!]!\n    interpretation: String!\n}",
-              template: "Record a user signal that influenced derivation",
               reducer:
                 "state.signals.push({\n    id: action.input.id,\n    utterance: action.input.utterance,\n    influencedDimensions: action.input.influencedDimensions,\n    interpretation: action.input.interpretation,\n});",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Record a user signal that influenced derivation",
+              description: "Record a user signal that influenced derivation",
             },
             {
               id: "add-reseed-entry",
               name: "ADD_RESEED_ENTRY",
-              description: "Record a re-derivation event",
+              scope: "global",
+              errors: [],
               schema:
                 "input AddReseedEntryInput {\n    id: OID!\n    reseededAt: DateTime!\n    reason: String!\n    changes: [String!]!\n}",
-              template: "Record a re-derivation event",
               reducer:
                 "state.reseedHistory.push({\n    id: action.input.id,\n    reseededAt: action.input.reseededAt,\n    reason: action.input.reason,\n    changes: action.input.changes,\n});",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Record a re-derivation event",
+              description: "Record a re-derivation event",
             },
             {
               id: "update-dimension-rationale",
               name: "UPDATE_DIMENSION_RATIONALE",
-              description: "Update rationale for a dimension position",
+              scope: "global",
+              errors: [],
               schema:
                 "input UpdateDimensionRationaleInput {\n    dimension: String!\n    position: Int!\n    confidence: Float!\n    rationale: String!\n    supportingClaims: [String!]!\n    failureModes: [String!]!\n}",
-              template: "Update rationale for a dimension position",
               reducer:
                 "const existing = state.dimensionRationale.findIndex(d => d.dimension === action.input.dimension);\nconst entry = {\n    dimension: action.input.dimension,\n    position: action.input.position,\n    confidence: action.input.confidence,\n    rationale: action.input.rationale,\n    supportingClaims: action.input.supportingClaims,\n    failureModes: action.input.failureModes,\n};\nif (existing >= 0) {\n    state.dimensionRationale[existing] = entry;\n} else {\n    state.dimensionRationale.push(entry);\n}",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Update rationale for a dimension position",
+              description: "Update rationale for a dimension position",
             },
           ],
+          description: "Derivation audit trail",
         },
       ],
       version: 1,

@@ -1,0 +1,99 @@
+{
+  "id": "a1ee5a1f-3558-49e6-ab90-d65ecfedda6d",
+  "name": "authorization-uses-layered-model",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-a1ee5a1f-246d61e9",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "246d61e9-9c4f-4965-a04e-72e851274150"
+        },
+        {
+          "id": "l-a1ee5a1f-ea634214",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "ea634214-2241-4e66-93df-38ca5bd7b665"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Reactor authorization uses a layered model: supreme admin bypass, document protection toggle, and per-document READ/WRITE/ADMIN grants with inheritance",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-a1ee5a1f-0",
+          "name": "authorization",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-a1ee5a1f-1",
+          "name": "permissions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-a1ee5a1f-2",
+          "name": "security",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-a1ee5a1f-3",
+          "name": "reactor",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Authorization flow: (1) If AUTH_ENABLED=false, all access granted; (2) Validate bearer token, extract ETH address; (3) If address in ADMINS, full access; (4) If document unprotected, anyone reads, authenticated users write; (5) If protected, check explicit grants. Grants support direct user grants, group grants, and inherited grants (drive -> folder -> document). Permission levels: READ (view), WRITE (edit, includes READ), ADMIN (manage permissions, includes WRITE). Configured via env vars (AUTH_ENABLED, ADMINS, DEFAULT_PROTECTION, DOCUMENT_PERMISSIONS_ENABLED) or `powerhouse.config.json`. Env vars override config file values.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "ADMINS env var bypasses all checks; documents can be protected or unprotected; grants inherit down the tree.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:52:46.748Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:26.931Z"
+}

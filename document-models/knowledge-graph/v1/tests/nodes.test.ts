@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -10,7 +10,7 @@ import {
   AddNodeInputSchema,
   RemoveNodeInputSchema,
   UpdateNodeInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
+} from "document-models/knowledge-graph/v1";
 
 describe("NodesOperations", () => {
   it("should handle addNode operation", () => {

@@ -1,0 +1,94 @@
+{
+  "id": "2eee0760-ee17-4b4d-bbe5-1bd75418c3a0",
+  "name": "DocumentToolbar exposes className, enabledControls, and callback props but no direct child styling",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l5-2",
+          "linkType": "RELATES_TO",
+          "targetTitle": "twMerge className",
+          "targetDocumentId": "8f715521-a98a-4da8-b947-e7ef356bd20f"
+        },
+        {
+          "id": "l5-3",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Child selector pattern",
+          "targetDocumentId": "ca4cef64-f759-4c33-af1c-de5af03e0880"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "DocumentToolbar exposes className, enabledControls, and callback props but no direct child styling",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t5-toolbar",
+          "name": "document-toolbar",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t5-api",
+          "name": "component-api",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t5-design",
+          "name": "design-system",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `DocumentToolbar` component accepts these props:\n\n```typescript\ntype DocumentToolbarProps = {\n  className?: string;                          // CSS classes (merged via twMerge)\n  enabledControls?: DocumentToolbarControl[];   // Which buttons to show\n  // Default: [\"undo\", \"redo\", \"export\", \"history\"]\n  // Available: \"undo\" | \"redo\" | \"export\" | \"history\" | \"timeline\"\n  disableRevisionHistory?: boolean;            // Disable history button\n  onExport?: (document: PHDocument) => void;   // Custom export handler\n  onClose?: () => void;                        // Custom close handler\n  onSwitchboardLinkClick?: () => void;         // Custom switchboard handler\n  initialTimelineVisible?: boolean;            // Show timeline on mount\n  defaultTimelineVisible?: boolean;            // Show timeline toggle button\n  document?: PHDocument;                       // Override selected document\n};\n```\n\nNotably absent: any props for styling individual buttons, icons, or the document title. The `className` prop is the only styling entry point, and it applies to the container. Styling children requires the arbitrary child selector pattern (`[&_button]`, `[&_svg]`, etc.) passed through this single prop.\n\nThe `enabledControls` array lets you hide/show buttons but not restyle them individually.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-03-30T14:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The DocumentToolbar TypeScript API provides control over which buttons appear and their behavior, but styling internals requires the className child selector workaround rather than dedicated props.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-03-30T17:18:25.934Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:25.288Z"
+}

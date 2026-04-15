@@ -1,9 +1,8 @@
-// TODO: remove eslint-disable rules once refactor is done
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model/core";
-import type { VaultConfigPHState } from "@powerhousedao/knowledge-note/document-models/vault-config/v1";
+import type { Reducer, StateReducer } from "document-model";
+import { isDocumentAction, createReducer } from "document-model";
+import type { VaultConfigPHState } from "document-models/vault-config/v1";
 
 import { vaultConfigConfigManagementOperations } from "../src/reducers/config-management.js";
 
@@ -128,4 +127,4 @@ const stateReducer: StateReducer<VaultConfigPHState> = (
   }
 };
 
-export const reducer = createReducer<VaultConfigPHState>(stateReducer);
+export const reducer: Reducer<VaultConfigPHState> = createReducer(stateReducer);

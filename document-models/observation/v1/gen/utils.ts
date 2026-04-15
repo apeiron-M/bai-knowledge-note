@@ -5,17 +5,20 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type { ObservationGlobalState, ObservationLocalState } from "./types.js";
-import type { ObservationPHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { observationDocumentType } from "./document-type.js";
 import {
-  isObservationDocument,
   assertIsObservationDocument,
-  isObservationState,
   assertIsObservationState,
+  isObservationDocument,
+  isObservationState,
 } from "./document-schema.js";
+import type {
+  ObservationGlobalState,
+  ObservationLocalState,
+  ObservationPHState,
+} from "./types.js";
 
 export const initialGlobalState: ObservationGlobalState = {
   title: null,
@@ -31,7 +34,7 @@ export const initialGlobalState: ObservationGlobalState = {
 export const initialLocalState: ObservationLocalState = {};
 
 export const utils: DocumentModelUtils<ObservationPHState> = {
-  fileExtension: "obs.phd",
+  fileExtension: "",
   createState(state) {
     return {
       ...defaultBaseState(),
@@ -68,12 +71,3 @@ export const utils: DocumentModelUtils<ObservationPHState> = {
     return assertIsObservationDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

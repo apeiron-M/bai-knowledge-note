@@ -1,0 +1,94 @@
+{
+  "id": "d5217200-a90a-45f0-a5e4-0d4121cd7e78",
+  "name": "always-check-document-model-schema-before-calling-addactions",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-d5217200-32710e46-ob",
+          "linkType": "RELATES_TO",
+          "targetTitle": "mcp-workflows",
+          "targetDocumentId": "32710e46-8de4-44a7-9761-2817186a1acf"
+        },
+        {
+          "id": "l-d5217200-eefe7753-ob",
+          "linkType": "RELATES_TO",
+          "targetTitle": "batch-multiple-actions-in-a-single-addactions-call-to-minimize-round-trips",
+          "targetDocumentId": "eefe7753-8f5f-476e-904d-3d6b4136dceb"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "always check document model schema before calling addActions",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-d5217200-0",
+          "name": "MCP workflows",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-d5217200-1",
+          "name": "schema validation",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-d5217200-2",
+          "name": "best practices",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# always check document model schema before calling addActions\n\nBefore dispatching any actions via `addActions`, always call `getDocumentModelSchema` to understand the input requirements:\n\n```\nmcp__reactor-mcp__getDocumentModelSchema({ type: \"powerhouse/document-model\" })\n```\n\nThis reveals required fields (like `id` or `scope`), valid enum values, and input shapes. Without this step, actions frequently fail due to missing or malformed parameters.\n\nThis applies to all document types — document models, editors, apps, and drives. Since [[document model changes require both MCP update and src file update]], understanding the schema prevents wasted round trips on both sides.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:01:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Using getDocumentModelSchema first prevents failed calls by ensuring required parameters and input shapes are known",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T14:01:01.414Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:52.835Z"
+}

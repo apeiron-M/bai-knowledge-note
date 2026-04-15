@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { KnowledgeNote } from "../module.js";
 import type { KnowledgeNoteAction, KnowledgeNotePHState } from "./types.js";
 

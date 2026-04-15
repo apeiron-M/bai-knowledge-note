@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -10,12 +10,6 @@ import {
   addCoreIdea,
   updateCoreIdea,
   removeCoreIdea,
-  CreateMocInputSchema,
-  UpdateOrientationInputSchema,
-  UpdateDescriptionInputSchema,
-  AddCoreIdeaInputSchema,
-  UpdateCoreIdeaInputSchema,
-  RemoveCoreIdeaInputSchema,
   reorderCoreIdeas,
   addTension,
   removeTension,
@@ -23,6 +17,12 @@ import {
   removeOpenQuestion,
   addChildMoc,
   removeChildMoc,
+  CreateMocInputSchema,
+  UpdateOrientationInputSchema,
+  UpdateDescriptionInputSchema,
+  AddCoreIdeaInputSchema,
+  UpdateCoreIdeaInputSchema,
+  RemoveCoreIdeaInputSchema,
   ReorderCoreIdeasInputSchema,
   AddTensionInputSchema,
   RemoveTensionInputSchema,
@@ -30,7 +30,7 @@ import {
   RemoveOpenQuestionInputSchema,
   AddChildMocInputSchema,
   RemoveChildMocInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/moc/v1";
+} from "document-models/moc/v1";
 
 describe("MocManagementOperations", () => {
   it("should handle createMoc operation", () => {

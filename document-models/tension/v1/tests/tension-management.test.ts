@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -12,7 +12,7 @@ import {
   ResolveTensionInputSchema,
   DissolveTensionInputSchema,
   AddInvolvedRefInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/tension/v1";
+} from "document-models/tension/v1";
 
 describe("TensionManagementOperations", () => {
   it("should handle createTension operation", () => {

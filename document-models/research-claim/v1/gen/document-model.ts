@@ -5,9 +5,9 @@ export const documentModel: DocumentModelGlobalState = {
   name: "ResearchClaim",
   author: {
     name: "BAI",
-    website: "https://bai.dev",
+    website: "https://bai.powerhouse.io/",
   },
-  extension: "rc.phd",
+  extension: "",
   description:
     "Bundled research claim \u2014 one of 249 interconnected claims about tools for thought, knowledge management, and agent-native cognitive architecture. Read-heavy, populated by maintainers.",
   specifications: [
@@ -30,59 +30,59 @@ export const documentModel: DocumentModelGlobalState = {
         {
           id: "claim-management",
           name: "claim-management",
-          description: "Research claim content management",
           operations: [
             {
               id: "create-claim",
               name: "CREATE_CLAIM",
-              description: "Create a research claim",
+              scope: "global",
+              errors: [],
               schema:
                 "input CreateClaimInput {\n    title: String!\n    description: String!\n    content: String!\n    kind: String!\n    methodology: [String!]!\n    sources: [String!]!\n    topics: [String!]!\n}",
-              template: "Create a research claim",
               reducer:
                 "state.title = action.input.title;\nstate.description = action.input.description;\nstate.content = action.input.content;\nstate.kind = action.input.kind;\nstate.methodology = action.input.methodology;\nstate.sources = action.input.sources;\nstate.topics = action.input.topics;",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Create a research claim",
+              description: "Create a research claim",
             },
             {
               id: "add-research-connection",
               name: "ADD_RESEARCH_CONNECTION",
-              description: "Add a connection to another research claim",
+              scope: "global",
+              errors: [],
               schema:
                 "input AddResearchConnectionInput {\n    id: OID!\n    targetRef: String!\n    contextPhrase: String!\n}",
-              template: "Add a connection to another research claim",
               reducer:
                 "state.connections.push({\n    id: action.input.id,\n    targetRef: action.input.targetRef,\n    contextPhrase: action.input.contextPhrase,\n});",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Add a connection to another research claim",
+              description: "Add a connection to another research claim",
             },
             {
               id: "remove-research-connection",
               name: "REMOVE_RESEARCH_CONNECTION",
-              description: "Remove a connection",
+              scope: "global",
+              errors: [],
               schema: "input RemoveResearchConnectionInput {\n    id: OID!\n}",
-              template: "Remove a connection",
               reducer:
                 "state.connections = state.connections.filter(c => c.id !== action.input.id);",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Remove a connection",
+              description: "Remove a connection",
             },
             {
               id: "update-claim-content",
               name: "UPDATE_CLAIM_CONTENT",
-              description: "Update claim content",
+              scope: "global",
+              errors: [],
               schema:
                 "input UpdateClaimContentInput {\n    content: String!\n}",
-              template: "Update claim content",
               reducer: "state.content = action.input.content;",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Update claim content",
+              description: "Update claim content",
             },
           ],
+          description: "Research claim content management",
         },
       ],
       version: 1,

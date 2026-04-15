@@ -1,0 +1,89 @@
+{
+  "id": "d9322883-48a1-4113-8dac-b4762a48b490",
+  "name": "masterchef-accumulator-pattern-enables-per-token-revenue-tracking",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-d9322883-e88e827b",
+          "linkType": "RELATES_TO",
+          "targetTitle": "powa-revenue-distribution-model-captures-epoch-based-token-revenue-sharing",
+          "targetDocumentId": "e88e827b-b435-417f-8874-934b8a5407bc"
+        },
+        {
+          "id": "l-d9322883-358c4ee0-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "epochs-distribute-revenue-proportionally-by-weighted-token-supply",
+          "targetDocumentId": "358c4ee0-ea7f-4527-81a6-d3f2c297a280"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "masterchef accumulator pattern enables per-token revenue tracking",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-d9322883-0",
+          "name": "powa-revenue-distribution",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-d9322883-1",
+          "name": "on-chain-patterns",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# masterchef accumulator pattern enables per-token revenue tracking\n\nThe POWA contracts use a well-established DeFi pattern (originating from SushiSwap's MasterChef) where a global `accRevenuePerShare` accumulator tracks total revenue accrued per unit of token supply. Each account stores a `rewardDebt` checkpoint — the accumulator value at last interaction — and `pending` unclaimed revenue.\n\nWhen revenue is deposited:\n```\naccRevenuePerShare += (revenueAmount * PRECISION) / totalSupply\n```\n\nWhen an account is updated:\n```\naccumulated = balance * accRevenuePerShare / PRECISION\nearned = accumulated - rewardDebt\npending += earned\nrewardDebt = accumulated\n```\n\nThis is an **on-chain implementation detail** that the off-chain document model should NOT replicate. The document model instead captures the business-level view: epoch config, total revenue, per-epoch allocation percentages, and claim events. The accumulator math runs on-chain; the document model stores inputs and outputs.\n\nKey insight for modeling: the document model needs \"Revenue Configuration\" (inputs) and \"Distribution Records\" (outputs) but NOT the accumulator state itself.\n\n---\n\nRelevant Notes:\n- [[powa-revenue-distribution model captures epoch-based token revenue sharing]]\n- [[powa document model bridges on-chain contracts with off-chain governance]]\n\nTopics:\n- [[schema design]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:57:03.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Revenue-per-share accumulator pattern from DeFi (MasterChef) used by POWA contracts to distribute revenue proportionally to token holders",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:57:04.819Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:54.986Z"
+}

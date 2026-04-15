@@ -1,0 +1,130 @@
+{
+  "id": "09b5f57f-3a8c-4144-9068-457d739f01c0",
+  "name": "document-models-use-event-sourcing",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-09b5f57f-5ea190ec",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "5ea190ec-35ad-477f-abe5-2951a472bc43"
+        },
+        {
+          "id": "l-09b5f57f-ab52c16c",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "ab52c16c-ee89-4bb1-88f2-7406d21dc510"
+        },
+        {
+          "id": "l-09b5f57f-c9521c64",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "c9521c64-b39e-4e8b-a949-a41de8587ac1"
+        },
+        {
+          "id": "l-fix-09b5f57f-0096f88f",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "0096f88f-0094-434b-8ce7-be67e5bb2ea0"
+        },
+        {
+          "id": "l-fix-09b5f57f-373c402b",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "373c402b-b43b-4c86-b1d6-e323e277c4af"
+        },
+        {
+          "id": "l-fix-09b5f57f-88fbf4b2",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "88fbf4b2-b572-4282-835f-3368607b1bd9"
+        },
+        {
+          "id": "l-fix-09b5f57f-30162bc7",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "30162bc7-7587-479c-b658-080f8180bd22"
+        },
+        {
+          "id": "l-09b5f57f-14a5499a-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "actions-become-operations-after-dispatch-adding-metadata",
+          "targetDocumentId": "14a5499a-1a5b-4807-9ef5-6422c686129c"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Powerhouse document models use event sourcing with an append-only operation log",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-09b5f57f-0",
+          "name": "document-model",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-09b5f57f-1",
+          "name": "event-sourcing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-09b5f57f-2",
+          "name": "architecture",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Document models in Powerhouse are event-sourced. Instead of directly mutating state, every change is represented by a named operation that gets appended to an immutable log. The current document state is computed by replaying (\"folding\") all operations sequentially through reducers. This architecture provides:\n\n- Transparent audit trail of all changes\n- Time-travel debugging by reconstructing past states\n- Replay capability to restore or verify state\n- Scalability and auditability since past data is never altered\n\nThis is combined with CQRS (Command Query Responsibility Segregation), where operations are \"commands\" representing intent, and the resulting state is the \"read model.\"",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Every state change is recorded as an operation event in an append-only log, enabling audit trails, time-travel debugging, and state replay.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:49:48.430Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:02.371Z"
+}

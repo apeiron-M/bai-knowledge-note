@@ -5,10 +5,7 @@ import {
   useDocumentsInSelectedFolder,
   useSelectedDocument,
 } from "@powerhousedao/reactor-browser";
-import type {
-  MocAction,
-  MocDocument,
-} from "@powerhousedao/knowledge-note/document-models/moc/v1";
+import type { MocAction, MocDocument } from "document-models/moc/v1";
 import { assertIsMocDocument, isMocDocument } from "./gen/document-schema.js";
 
 /** Hook to get a Moc document by its id */

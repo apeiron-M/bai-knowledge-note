@@ -1,0 +1,105 @@
+{
+  "id": "569b449f-ed8a-47ef-beb3-3540944b5083",
+  "name": "oid-scalar-for-unique-identifiers",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-569b449f-bf309693",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "bf309693-7452-4a63-b582-686c84328740"
+        },
+        {
+          "id": "l-569b449f-13d21199",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "13d21199-bc9c-42dd-b47e-daddc718d596"
+        },
+        {
+          "id": "l-d-569b449f-d5303bf6",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "d5303bf6-f4c1-4af6-af5d-db01767119ec"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Powerhouse provides the OID custom scalar type for unique identifiers generated via generateId()",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-569b449f-0",
+          "name": "oid",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-569b449f-1",
+          "name": "scalars",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-569b449f-2",
+          "name": "id-generation",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-569b449f-3",
+          "name": "document-model",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Powerhouse provides the `OID` (Object ID) custom scalar type for unique identifiers in document models. Key patterns:\n\n- Objects in arrays must have an `id: OID!` field\n- IDs are generated in the **reducer** using `generateId()` from `document-model/core`, never passed from the UI\n- The `AddTodoItemInput` only requires `text`, not `id` - the reducer generates the ID\n- Update and delete operations require `id: OID!` to identify the target\n\n```typescript\nimport { generateId } from \"document-model/core\";\n\naddTodoItemOperation(state, action) {\n  const id = generateId();\n  state.items.push({ ...action.input, id, checked: false });\n}\n```\n\nThis pattern ensures unique, consistent IDs across all operations and keeps the operation input minimal.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "OID is a custom GraphQL scalar for object IDs. Use generateId() from document-model/core in reducers, never in inputs.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:50:44.011Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:47.791Z"
+}

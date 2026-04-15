@@ -1,4 +1,4 @@
-import type { KnowledgeGraphSyncOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
+import type { KnowledgeGraphSyncOperations } from "document-models/knowledge-graph/v1";
 
 export const knowledgeGraphSyncOperations: KnowledgeGraphSyncOperations = {
   syncGraphOperation(state, action) {

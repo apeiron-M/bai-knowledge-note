@@ -1,0 +1,135 @@
+{
+  "id": "a7ca6753-8d7b-4a13-9a8a-1e5a1ab9fce6",
+  "name": "reducers-are-pure-functions-with-immer",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-a7ca6753-09b5f57f",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "09b5f57f-3a8c-4144-9068-457d739f01c0"
+        },
+        {
+          "id": "l-a7ca6753-ddf4b651",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "ddf4b651-06ae-43e6-9ecc-e9259ef0f551"
+        },
+        {
+          "id": "l-fix-last-orphan",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Tests use Vitest with generateMock",
+          "targetDocumentId": "6b339e15-feac-438a-870e-cd3c5a5646b2"
+        },
+        {
+          "id": "l-a7ca6753-28b18015-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "state-type-names-use-xstate-not-xglobalstate",
+          "targetDocumentId": "28b18015-9329-44c4-b0e4-ac6d165f6a56"
+        },
+        {
+          "id": "l-a7ca6753-262bfb1a-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "truthy-checks-are-safer-than-undefined-checks-for-optional-state-assignment",
+          "targetDocumentId": "262bfb1a-ee4a-4e0b-acab-0eef9978369f"
+        },
+        {
+          "id": "l-a7ca6753-ad86bd5a-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "never-use-tothrow-when-testing-reducer-errors",
+          "targetDocumentId": "ad86bd5a-0f8d-4253-a429-bf02bcf19925"
+        },
+        {
+          "id": "l-a7ca6753-206a62c7-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "error-names-must-end-with-error-and-use-pascalcase",
+          "targetDocumentId": "206a62c7-3bc5-4495-bfff-07ba8ed9b55c"
+        },
+        {
+          "id": "l-a7ca6753-771804dd-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "never-import-error-classes-manually-in-reducer-code",
+          "targetDocumentId": "771804dd-9987-45de-baeb-416a3cea6951"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Reducers must be pure functions, but Powerhouse uses Immer.js to allow mutation-style syntax",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-a7ca6753-0",
+          "name": "reducers",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-a7ca6753-1",
+          "name": "immer",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-a7ca6753-2",
+          "name": "immutability",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-a7ca6753-3",
+          "name": "pure-functions",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Reducers are the core logic units implementing state transitions. They follow the pattern `(currentState, action) => newState` and must obey strict rules:\n\n- **Deterministic**: Same state + action always produces the same result\n- **No side effects**: No API calls, no `Math.random()`, no `Date.now()`, no DOM manipulation\n- **Immutable**: Never mutate the input state directly\n\nHowever, Powerhouse uses **Immer.js** under the hood. This means you can write code that *looks* like direct mutation (e.g., `state.items.push(...)`) but Immer ensures it produces an immutable update. This gives readable code while maintaining the immutability guarantees required for event sourcing.\n\nPurity ensures replaying the same sequence of events always yields the same final state. Immutability ensures each event defines a discrete state transition for the audit trail.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Reducers follow (state, action) => newState pattern. Immer.js lets you write mutable-looking code that produces immutable updates.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:50:06.523Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:29.761Z"
+}

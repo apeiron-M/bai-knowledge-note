@@ -1,0 +1,99 @@
+{
+  "id": "60fbd7bf-b696-4868-88f8-7ef68bc4fe7e",
+  "name": "inspector-modal-for-debugging-sync",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-60fbd7bf-e59d07aa",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "e59d07aa-72a2-4970-8228-941ba28dd540"
+        },
+        {
+          "id": "l-60fbd7bf-39740959",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "39740959-2cec-4cdf-bfda-c7dbe7aafe7b"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "The Inspector Modal exposes the local PGlite database and sync remote channel states (inbox, outbox, dead letter) for debugging",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-60fbd7bf-0",
+          "name": "debugging",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-60fbd7bf-1",
+          "name": "inspector",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-60fbd7bf-2",
+          "name": "sync",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-60fbd7bf-3",
+          "name": "connect",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The Inspector Modal is a Connect development tool with two tabs: Database (explore local PGlite tables with schema tree, pagination, sorting, and export/import) and Remotes (view sync remotes and their channel states). Each remote has Inbox (received operations), Outbox (pending send), and Dead Letter (failed sync with error info). Operations have statuses: Pending, Applied, or Error. Enable via URL parameter `?FEATURE_INSPECTOR_ENABLED=true` or environment variable `PH_CONNECT_INSPECTOR_ENABLED=true`. The Inspector button appears in the Connect sidebar footer.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "REFERENCE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Enable via FEATURE_INSPECTOR_ENABLED=true; shows DB tables, remote sync status, and allows DB export/import.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:52:25.064Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:53.511Z"
+}

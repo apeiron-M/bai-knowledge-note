@@ -5,11 +5,11 @@ export const documentModel: DocumentModelGlobalState = {
   name: "KnowledgeNote",
   author: {
     name: "BAI",
-    website: "https://bai.dev",
+    website: "https://bai.powerhouse.io/",
   },
   extension: "",
   description:
-    "Atomic knowledge note \u2014 the building block of team-wide institutional memory. Notes have typed content, structured links, lifecycle states, and provenance tracking.",
+    "Atomic knowledge note \u2014 the building block of team-wide institutional memory. Notes have typed content, structured links, lifecycle states, and provenance tracking",
   specifications: [
     {
       state: {
@@ -32,407 +32,407 @@ export const documentModel: DocumentModelGlobalState = {
         {
           id: "content-module",
           name: "content",
-          description: "Core note editing",
           operations: [
             {
               id: "set-title",
               name: "SET_TITLE",
-              description: "Set the note title",
+              scope: "global",
+              errors: [],
               schema:
                 "input SetTitleInput {\n    title: String!\n    updatedAt: DateTime!\n}",
-              template: "Set the note title",
               reducer:
                 "state.title = action.input.title;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Set the note title",
+              description: "Set the note title",
             },
             {
               id: "set-description",
               name: "SET_DESCRIPTION",
-              description: "Set the note description (max 200 chars)",
-              schema:
-                "input SetDescriptionInput {\n    description: String!\n    updatedAt: DateTime!\n}",
-              template: "Set the note description (max 200 chars)",
-              reducer:
-                'if (action.input.description.length > 200) {\n    throw new DescriptionTooLongError("Description exceeds 200 characters");\n}\nstate.description = action.input.description;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}',
+              scope: "global",
               errors: [
                 {
                   id: "err-description-too-long",
-                  name: "DescriptionTooLongError",
                   code: "DESCRIPTION_TOO_LONG",
-                  description: "Description exceeds 200 characters",
+                  name: "DescriptionTooLongError",
                   template: "",
+                  description: "Description exceeds 200 characters",
                 },
               ],
+              schema:
+                "input SetDescriptionInput {\n    description: String!\n    updatedAt: DateTime!\n}",
+              reducer:
+                'if (action.input.description.length > 200) {\n    throw new DescriptionTooLongError("Description exceeds 200 characters");\n}\nstate.description = action.input.description;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}',
               examples: [],
-              scope: "global",
+              template: "Set the note description (max 200 chars)",
+              description: "Set the note description (max 200 chars)",
             },
             {
               id: "set-note-type",
               name: "SET_NOTE_TYPE",
-              description: "Set or change the note type",
+              scope: "global",
+              errors: [],
               schema:
                 "input SetNoteTypeInput {\n    noteType: String!\n    updatedAt: DateTime!\n}",
-              template: "Set or change the note type",
               reducer:
                 "state.noteType = action.input.noteType;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Set or change the note type",
+              description: "Set or change the note type",
             },
             {
               id: "set-content",
               name: "SET_CONTENT",
-              description: "Replace the markdown content body",
+              scope: "global",
+              errors: [],
               schema:
                 "input SetContentInput {\n    content: String!\n    updatedAt: DateTime!\n}",
-              template: "Replace the markdown content body",
               reducer:
                 "state.content = action.input.content;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Replace the markdown content body",
+              description: "Replace the markdown content body",
             },
             {
               id: "patch-content",
               name: "PATCH_CONTENT",
-              description: "Surgical edit to content",
-              schema:
-                "input PatchContentInput {\n    offset: Int!\n    removeCount: Int!\n    insert: String!\n    updatedAt: DateTime!\n}",
-              template: "Surgical edit to content",
-              reducer:
-                'const content = state.content || "";\nconst { offset, removeCount, insert } = action.input;\nif (offset < 0 || offset + removeCount > content.length) {\n    throw new PatchOutOfBoundsError("Offset + removeCount exceeds content length");\n}\nstate.content = content.slice(0, offset) + insert + content.slice(offset + removeCount);\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}',
+              scope: "global",
               errors: [
                 {
                   id: "err-patch-out-of-bounds",
-                  name: "PatchOutOfBoundsError",
                   code: "PATCH_OUT_OF_BOUNDS",
-                  description: "Offset + removeCount exceeds content length",
+                  name: "PatchOutOfBoundsError",
                   template: "",
+                  description: "Offset + removeCount exceeds content length",
                 },
               ],
+              schema:
+                "input PatchContentInput {\n    offset: Int!\n    removeCount: Int!\n    insert: String!\n    updatedAt: DateTime!\n}",
+              reducer:
+                'const content = state.content || "";\nconst { offset, removeCount, insert } = action.input;\nif (offset < 0 || offset + removeCount > content.length) {\n    throw new PatchOutOfBoundsError("Offset + removeCount exceeds content length");\n}\nstate.content = content.slice(0, offset) + insert + content.slice(offset + removeCount);\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}',
               examples: [],
-              scope: "global",
+              template: "Surgical edit to content",
+              description: "Surgical edit to content",
             },
             {
               id: "set-metadata-field",
               name: "SET_METADATA_FIELD",
-              description: "Set any string metadata field by name",
-              schema:
-                "input SetMetadataFieldInput {\n    field: String!\n    value: String\n    updatedAt: DateTime!\n}",
-              template: "Set any string metadata field by name",
-              reducer:
-                'const STRING_METADATA_FIELDS = [\n    "scope", "confidence", "severity", "editor", "modelId", "version",\n    "filePath", "computes", "context", "decisionStatus", "model",\n    "sourceType", "targetType", "relationType", "cardinality",\n    "errorMessage", "rootCause", "correctPattern"\n];\nconst { field, value } = action.input;\nif (!STRING_METADATA_FIELDS.includes(field)) {\n    throw new InvalidMetadataFieldError(`"${field}" is not a recognized string metadata field`);\n}\n(state as any)[field] = value || null;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}',
+              scope: "global",
               errors: [
                 {
                   id: "err-invalid-metadata-field",
-                  name: "InvalidMetadataFieldError",
                   code: "INVALID_METADATA_FIELD",
+                  name: "InvalidMetadataFieldError",
+                  template: "",
                   description:
                     "Field name is not a recognized string metadata field",
-                  template: "",
                 },
               ],
+              schema:
+                "input SetMetadataFieldInput {\n    field: String!\n    value: String\n    updatedAt: DateTime!\n}",
+              reducer:
+                'const STRING_METADATA_FIELDS = [\n    "scope", "confidence", "severity", "editor", "modelId", "version",\n    "filePath", "computes", "context", "decisionStatus", "model",\n    "sourceType", "targetType", "relationType", "cardinality",\n    "errorMessage", "rootCause", "correctPattern"\n];\nconst { field, value } = action.input;\nif (!STRING_METADATA_FIELDS.includes(field)) {\n    throw new InvalidMetadataFieldError(`"${field}" is not a recognized string metadata field`);\n}\n(state as any)[field] = value || null;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}',
               examples: [],
-              scope: "global",
+              template: "Set any string metadata field by name",
+              description: "Set any string metadata field by name",
             },
             {
               id: "set-metadata-list-field",
               name: "SET_METADATA_LIST_FIELD",
-              description: "Set any string-array metadata field by name",
-              schema:
-                "input SetMetadataListFieldInput {\n    field: String!\n    values: [String!]!\n    updatedAt: DateTime!\n}",
-              template: "Set any string-array metadata field by name",
-              reducer:
-                'const LIST_METADATA_FIELDS = [\n    "models", "hooksUsed", "dispatchTargets", "modules", "inputs",\n    "outputs", "consumedBy", "alternatives", "consequences"\n];\nconst { field, values } = action.input;\nif (!LIST_METADATA_FIELDS.includes(field)) {\n    throw new InvalidMetadataListFieldError(`"${field}" is not a recognized list metadata field`);\n}\n(state as any)[field] = values;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}',
+              scope: "global",
               errors: [
                 {
                   id: "err-invalid-metadata-list-field",
-                  name: "InvalidMetadataListFieldError",
                   code: "INVALID_METADATA_LIST_FIELD",
+                  name: "InvalidMetadataListFieldError",
+                  template: "",
                   description:
                     "Field name is not a recognized list metadata field",
-                  template: "",
                 },
               ],
+              schema:
+                "input SetMetadataListFieldInput {\n    field: String!\n    values: [String!]!\n    updatedAt: DateTime!\n}",
+              reducer:
+                'const LIST_METADATA_FIELDS = [\n    "models", "hooksUsed", "dispatchTargets", "modules", "inputs",\n    "outputs", "consumedBy", "alternatives", "consequences"\n];\nconst { field, values } = action.input;\nif (!LIST_METADATA_FIELDS.includes(field)) {\n    throw new InvalidMetadataListFieldError(`"${field}" is not a recognized list metadata field`);\n}\n(state as any)[field] = values;\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.updatedAt;\n}',
               examples: [],
-              scope: "global",
+              template: "Set any string-array metadata field by name",
+              description: "Set any string-array metadata field by name",
             },
           ],
+          description: "Core note editing",
         },
         {
           id: "provenance-module",
           name: "provenance",
-          description: "Source tracking",
           operations: [
             {
               id: "set-provenance",
               name: "SET_PROVENANCE",
-              description:
-                "Record author, source origin, session ID, and creation timestamp",
+              scope: "global",
+              errors: [],
               schema:
                 "input SetProvenanceInput {\n    author: String!\n    sourceOrigin: SourceOrigin!\n    sessionId: String\n    createdAt: DateTime!\n}",
-              template:
-                "Record author, source origin, session ID, and creation timestamp",
               reducer:
                 "state.provenance = {\n    author: action.input.author,\n    sourceOrigin: action.input.sourceOrigin,\n    sessionId: action.input.sessionId || null,\n    createdAt: action.input.createdAt,\n    updatedAt: action.input.createdAt,\n};",
-              errors: [],
               examples: [],
-              scope: "global",
+              template:
+                "Record author, source origin, session ID, and creation timestamp",
+              description:
+                "Record author, source origin, session ID, and creation timestamp",
             },
           ],
+          description: "Source tracking",
         },
         {
           id: "linking-module",
           name: "linking",
-          description: "Knowledge graph edges",
           operations: [
             {
               id: "add-link",
               name: "ADD_LINK",
-              description: "Create a typed link to another note",
-              schema:
-                "input AddLinkInput {\n    id: OID!\n    targetDocumentId: String!\n    targetTitle: String\n    linkType: LinkType!\n}",
-              template: "Create a typed link to another note",
-              reducer:
-                'const existing = state.links.find(l => l.id === action.input.id);\nif (existing) {\n    throw new DuplicateLinkIdError("A link with this OID already exists");\n}\nstate.links.push({\n    id: action.input.id,\n    targetDocumentId: action.input.targetDocumentId,\n    targetTitle: action.input.targetTitle || null,\n    linkType: action.input.linkType,\n});',
+              scope: "global",
               errors: [
                 {
                   id: "err-duplicate-link-id",
-                  name: "DuplicateLinkIdError",
                   code: "DUPLICATE_LINK_ID",
-                  description: "A link with this OID already exists",
+                  name: "DuplicateLinkIdError",
                   template: "",
+                  description: "A link with this OID already exists",
                 },
               ],
+              schema:
+                "input AddLinkInput {\n    id: OID!\n    targetDocumentId: String!\n    targetTitle: String\n    linkType: LinkType!\n}",
+              reducer:
+                'const existing = state.links.find(l => l.id === action.input.id);\nif (existing) {\n    throw new DuplicateLinkIdError("A link with this OID already exists");\n}\nstate.links.push({\n    id: action.input.id,\n    targetDocumentId: action.input.targetDocumentId,\n    targetTitle: action.input.targetTitle || null,\n    linkType: action.input.linkType,\n});',
               examples: [],
-              scope: "global",
+              template: "Create a typed link to another note",
+              description: "Create a typed link to another note",
             },
             {
               id: "remove-link",
               name: "REMOVE_LINK",
-              description: "Remove a link by ID",
-              schema: "input RemoveLinkInput {\n    id: OID!\n}",
-              template: "Remove a link by ID",
-              reducer:
-                'const index = state.links.findIndex(l => l.id === action.input.id);\nif (index === -1) {\n    throw new LinkNotFoundError("No link with this OID");\n}\nstate.links.splice(index, 1);',
+              scope: "global",
               errors: [
                 {
                   id: "err-link-not-found-remove",
-                  name: "LinkNotFoundError",
                   code: "LINK_NOT_FOUND",
-                  description: "No link with this OID",
+                  name: "LinkNotFoundError",
                   template: "",
+                  description: "No link with this OID",
                 },
               ],
+              schema: "input RemoveLinkInput {\n    id: OID!\n}",
+              reducer:
+                'const index = state.links.findIndex(l => l.id === action.input.id);\nif (index === -1) {\n    throw new LinkNotFoundError("No link with this OID");\n}\nstate.links.splice(index, 1);',
               examples: [],
-              scope: "global",
+              template: "Remove a link by ID",
+              description: "Remove a link by ID",
             },
             {
               id: "update-link-type",
               name: "UPDATE_LINK_TYPE",
-              description: "Change a link's type",
-              schema:
-                "input UpdateLinkTypeInput {\n    id: OID!\n    linkType: LinkType!\n}",
-              template: "Change a link's type",
-              reducer:
-                'const link = state.links.find(l => l.id === action.input.id);\nif (!link) {\n    throw new LinkNotFoundError("No link with this OID");\n}\nlink.linkType = action.input.linkType;',
+              scope: "global",
               errors: [
                 {
                   id: "err-link-not-found-update",
-                  name: "LinkNotFoundError",
                   code: "LINK_NOT_FOUND",
-                  description: "No link with this OID",
+                  name: "LinkNotFoundError",
                   template: "",
+                  description: "No link with this OID",
                 },
               ],
+              schema:
+                "input UpdateLinkTypeInput {\n    id: OID!\n    linkType: LinkType!\n}",
+              reducer:
+                'const link = state.links.find(l => l.id === action.input.id);\nif (!link) {\n    throw new LinkNotFoundError("No link with this OID");\n}\nlink.linkType = action.input.linkType;',
               examples: [],
-              scope: "global",
+              template: "Change a link's type",
+              description: "Change a link's type",
             },
             {
               id: "add-topic",
               name: "ADD_TOPIC",
-              description: "Tag the note with a topic",
-              schema:
-                "input AddTopicInput {\n    id: OID!\n    name: String!\n    topicDocumentId: String\n}",
-              template: "Tag the note with a topic",
-              reducer:
-                'const duplicate = state.topics.find(t => t.name === action.input.name);\nif (duplicate) {\n    throw new DuplicateTopicError("A topic with this name already exists on this note");\n}\nstate.topics.push({\n    id: action.input.id,\n    name: action.input.name,\n    topicDocumentId: action.input.topicDocumentId || null,\n});',
+              scope: "global",
               errors: [
                 {
                   id: "err-duplicate-topic",
-                  name: "DuplicateTopicError",
                   code: "DUPLICATE_TOPIC",
+                  name: "DuplicateTopicError",
+                  template: "",
                   description:
                     "A topic with this name already exists on this note",
-                  template: "",
                 },
               ],
+              schema:
+                "input AddTopicInput {\n    id: OID!\n    name: String!\n    topicDocumentId: String\n}",
+              reducer:
+                'const duplicate = state.topics.find(t => t.name === action.input.name);\nif (duplicate) {\n    throw new DuplicateTopicError("A topic with this name already exists on this note");\n}\nstate.topics.push({\n    id: action.input.id,\n    name: action.input.name,\n    topicDocumentId: action.input.topicDocumentId || null,\n});',
               examples: [],
-              scope: "global",
+              template: "Tag the note with a topic",
+              description: "Tag the note with a topic",
             },
             {
               id: "remove-topic",
               name: "REMOVE_TOPIC",
-              description: "Remove a topic tag by ID",
-              schema: "input RemoveTopicInput {\n    id: OID!\n}",
-              template: "Remove a topic tag by ID",
-              reducer:
-                'const index = state.topics.findIndex(t => t.id === action.input.id);\nif (index === -1) {\n    throw new TopicNotFoundError("No topic with this OID");\n}\nstate.topics.splice(index, 1);',
+              scope: "global",
               errors: [
                 {
                   id: "err-topic-not-found",
-                  name: "TopicNotFoundError",
                   code: "TOPIC_NOT_FOUND",
-                  description: "No topic with this OID",
+                  name: "TopicNotFoundError",
                   template: "",
+                  description: "No topic with this OID",
                 },
               ],
+              schema: "input RemoveTopicInput {\n    id: OID!\n}",
+              reducer:
+                'const index = state.topics.findIndex(t => t.id === action.input.id);\nif (index === -1) {\n    throw new TopicNotFoundError("No topic with this OID");\n}\nstate.topics.splice(index, 1);',
               examples: [],
-              scope: "global",
+              template: "Remove a topic tag by ID",
+              description: "Remove a topic tag by ID",
             },
           ],
+          description: "Knowledge graph edges",
         },
         {
           id: "lifecycle-module",
           name: "lifecycle",
-          description: "Status transitions with audit trail",
           operations: [
             {
               id: "submit-for-review",
               name: "SUBMIT_FOR_REVIEW",
-              description: "Transition DRAFT \u2192 IN_REVIEW",
-              schema:
-                "input SubmitForReviewInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
-              template: "Transition DRAFT \u2192 IN_REVIEW",
-              reducer:
-                'if (state.status !== "DRAFT") {\n    throw new InvalidStatusTransitionError("Can only submit for review from DRAFT status");\n}\nstate.status = "IN_REVIEW";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "DRAFT",\n    toStatus: "IN_REVIEW",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment || null,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
+              scope: "global",
               errors: [
                 {
                   id: "err-invalid-transition-submit",
-                  name: "InvalidStatusTransitionError",
                   code: "INVALID_STATUS_TRANSITION",
-                  description: "Current status doesn't allow this transition",
+                  name: "InvalidStatusTransitionError",
                   template: "",
+                  description: "Current status doesn't allow this transition",
                 },
               ],
+              schema:
+                "input SubmitForReviewInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
+              reducer:
+                'if (state.status !== "DRAFT") {\n    throw new InvalidStatusTransitionError("Can only submit for review from DRAFT status");\n}\nstate.status = "IN_REVIEW";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "DRAFT",\n    toStatus: "IN_REVIEW",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment || null,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
               examples: [],
-              scope: "global",
+              template: "Transition DRAFT \u2192 IN_REVIEW",
+              description: "Transition DRAFT \u2192 IN_REVIEW",
             },
             {
               id: "approve-note",
               name: "APPROVE_NOTE",
-              description:
-                "Transition IN_REVIEW \u2192 CANONICAL (actor \u2260 author)",
-              schema:
-                "input ApproveNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
-              template:
-                "Transition IN_REVIEW \u2192 CANONICAL (actor \u2260 author)",
-              reducer:
-                'if (state.status !== "IN_REVIEW") {\n    throw new InvalidStatusTransitionError("Can only approve from IN_REVIEW status");\n}\nif (state.provenance && state.provenance.author === action.input.actor) {\n    throw new SelfApprovalError("Actor cannot approve their own note");\n}\nstate.status = "CANONICAL";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "IN_REVIEW",\n    toStatus: "CANONICAL",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment || null,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
+              scope: "global",
               errors: [
                 {
                   id: "err-invalid-transition-approve",
-                  name: "InvalidStatusTransitionError",
                   code: "INVALID_STATUS_TRANSITION",
-                  description: "Current status doesn't allow this transition",
+                  name: "InvalidStatusTransitionError",
                   template: "",
+                  description: "Current status doesn't allow this transition",
                 },
                 {
                   id: "err-self-approval",
-                  name: "SelfApprovalError",
                   code: "SELF_APPROVAL",
-                  description: "Actor cannot approve their own note",
+                  name: "SelfApprovalError",
                   template: "",
+                  description: "Actor cannot approve their own note",
                 },
               ],
+              schema:
+                "input ApproveNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
+              reducer:
+                'if (state.status !== "IN_REVIEW") {\n    throw new InvalidStatusTransitionError("Can only approve from IN_REVIEW status");\n}\nif (state.provenance && state.provenance.author === action.input.actor) {\n    throw new SelfApprovalError("Actor cannot approve their own note");\n}\nstate.status = "CANONICAL";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "IN_REVIEW",\n    toStatus: "CANONICAL",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment || null,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
               examples: [],
-              scope: "global",
+              template:
+                "Transition IN_REVIEW \u2192 CANONICAL (actor \u2260 author)",
+              description:
+                "Transition IN_REVIEW \u2192 CANONICAL (actor \u2260 author)",
             },
             {
               id: "reject-note",
               name: "REJECT_NOTE",
-              description: "Transition IN_REVIEW \u2192 DRAFT with feedback",
-              schema:
-                "input RejectNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String!\n}",
-              template: "Transition IN_REVIEW \u2192 DRAFT with feedback",
-              reducer:
-                'if (state.status !== "IN_REVIEW") {\n    throw new InvalidStatusTransitionError("Can only reject from IN_REVIEW status");\n}\nstate.status = "DRAFT";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "IN_REVIEW",\n    toStatus: "DRAFT",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
+              scope: "global",
               errors: [
                 {
                   id: "err-invalid-transition-reject",
-                  name: "InvalidStatusTransitionError",
                   code: "INVALID_STATUS_TRANSITION",
-                  description: "Current status doesn't allow this transition",
+                  name: "InvalidStatusTransitionError",
                   template: "",
+                  description: "Current status doesn't allow this transition",
                 },
               ],
+              schema:
+                "input RejectNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String!\n}",
+              reducer:
+                'if (state.status !== "IN_REVIEW") {\n    throw new InvalidStatusTransitionError("Can only reject from IN_REVIEW status");\n}\nstate.status = "DRAFT";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "IN_REVIEW",\n    toStatus: "DRAFT",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
               examples: [],
-              scope: "global",
+              template: "Transition IN_REVIEW \u2192 DRAFT with feedback",
+              description: "Transition IN_REVIEW \u2192 DRAFT with feedback",
             },
             {
               id: "archive-note",
               name: "ARCHIVE_NOTE",
-              description: "Transition CANONICAL \u2192 ARCHIVED",
-              schema:
-                "input ArchiveNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String!\n}",
-              template: "Transition CANONICAL \u2192 ARCHIVED",
-              reducer:
-                'if (state.status !== "CANONICAL") {\n    throw new InvalidStatusTransitionError("Can only archive from CANONICAL status");\n}\nstate.status = "ARCHIVED";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "CANONICAL",\n    toStatus: "ARCHIVED",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
+              scope: "global",
               errors: [
                 {
                   id: "err-invalid-transition-archive",
-                  name: "InvalidStatusTransitionError",
                   code: "INVALID_STATUS_TRANSITION",
-                  description: "Current status doesn't allow this transition",
+                  name: "InvalidStatusTransitionError",
                   template: "",
+                  description: "Current status doesn't allow this transition",
                 },
               ],
+              schema:
+                "input ArchiveNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String!\n}",
+              reducer:
+                'if (state.status !== "CANONICAL") {\n    throw new InvalidStatusTransitionError("Can only archive from CANONICAL status");\n}\nstate.status = "ARCHIVED";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "CANONICAL",\n    toStatus: "ARCHIVED",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
               examples: [],
-              scope: "global",
+              template: "Transition CANONICAL \u2192 ARCHIVED",
+              description: "Transition CANONICAL \u2192 ARCHIVED",
             },
             {
               id: "restore-note",
               name: "RESTORE_NOTE",
-              description: "Transition ARCHIVED \u2192 DRAFT",
-              schema:
-                "input RestoreNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
-              template: "Transition ARCHIVED \u2192 DRAFT",
-              reducer:
-                'if (state.status !== "ARCHIVED") {\n    throw new InvalidStatusTransitionError("Can only restore from ARCHIVED status");\n}\nstate.status = "DRAFT";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "ARCHIVED",\n    toStatus: "DRAFT",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment || null,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
+              scope: "global",
               errors: [
                 {
                   id: "err-invalid-transition-restore",
-                  name: "InvalidStatusTransitionError",
                   code: "INVALID_STATUS_TRANSITION",
-                  description: "Current status doesn't allow this transition",
+                  name: "InvalidStatusTransitionError",
                   template: "",
+                  description: "Current status doesn't allow this transition",
                 },
               ],
+              schema:
+                "input RestoreNoteInput {\n    id: OID!\n    actor: String!\n    timestamp: DateTime!\n    comment: String\n}",
+              reducer:
+                'if (state.status !== "ARCHIVED") {\n    throw new InvalidStatusTransitionError("Can only restore from ARCHIVED status");\n}\nstate.status = "DRAFT";\nstate.lifecycleEvents.push({\n    id: action.input.id,\n    fromStatus: "ARCHIVED",\n    toStatus: "DRAFT",\n    actor: action.input.actor,\n    timestamp: action.input.timestamp,\n    comment: action.input.comment || null,\n});\nif (state.provenance) {\n    state.provenance.updatedAt = action.input.timestamp;\n}',
               examples: [],
-              scope: "global",
+              template: "Transition ARCHIVED \u2192 DRAFT",
+              description: "Transition ARCHIVED \u2192 DRAFT",
             },
           ],
+          description: "Status transitions with audit trail",
         },
         {
           id: "local-module",
           name: "local",
-          description: "Per-user local state",
           operations: [
             {
               id: "set-last-viewed",
               name: "SET_LAST_VIEWED",
-              description: "Update the local lastViewedAt timestamp",
+              scope: "local",
+              errors: [],
               schema:
                 "input SetLastViewedInput {\n    lastViewedAt: DateTime!\n}",
-              template: "Update the local lastViewedAt timestamp",
               reducer: "state.lastViewedAt = action.input.lastViewedAt;",
-              errors: [],
               examples: [],
-              scope: "local",
+              template: "Update the local lastViewedAt timestamp",
+              description: "Update the local lastViewedAt timestamp",
             },
           ],
+          description: "Per-user local state",
         },
       ],
       version: 1,

@@ -1,0 +1,188 @@
+{
+  "id": "1068b3e6-480c-4c9d-bb0f-5455f42add2f",
+  "name": "moc-editors-and-ux",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "DOMAIN",
+      "title": "Editors and UX",
+      "tensions": [],
+      "childRefs": [
+        "d8f9ff5a-cd6f-4fe3-8e4f-06717ede367a"
+      ],
+      "coreIdeas": [
+        {
+          "id": "ci-eux-1",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "71d23d07-bc96-4873-98bc-5bfa192bfcaf",
+          "sortOrder": 1,
+          "contextPhrase": "React hooks are the primary interface between editor components and document state — they subscribe to state changes, trigger re-renders on updates, and provide the dispatch function for sending operations, making the document model feel native to React developers."
+        },
+        {
+          "id": "ci-eux-2",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "d277c375-8f69-47a3-844a-eecaadb44bee",
+          "sortOrder": 2,
+          "contextPhrase": "The generated editor hooks abstract away the complexity of document selection, state subscription, and operation dispatch, providing a clean API that makes building editors as straightforward as building any React application."
+        },
+        {
+          "id": "ci-eux-3",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "14db0fdc-3f56-4d96-b974-b28300245c01",
+          "sortOrder": 3,
+          "contextPhrase": "Component-based architecture keeps editors maintainable by decomposing complex document views into focused, reusable components that each handle a specific slice of the document state."
+        },
+        {
+          "id": "ci-eux-4",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "9807054d-4250-4cf7-8518-fb781f232c38",
+          "sortOrder": 4,
+          "contextPhrase": "The onErrors callback in dispatch enables editors to handle operation failures gracefully — showing validation messages, reverting optimistic updates, or logging issues — rather than silently dropping failed mutations."
+        },
+        {
+          "id": "ci-eux-5",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "88fbf4b2-b572-4282-835f-3368607b1bd9",
+          "sortOrder": 5,
+          "contextPhrase": "Drive apps extend the editor concept to entire drives, letting developers build custom file-browser-like experiences that treat a collection of documents as a cohesive application rather than individual files."
+        },
+        {
+          "id": "ci-eux-6",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "e57dac89-0fbf-4b09-bccf-c7c57294a728",
+          "sortOrder": 6,
+          "contextPhrase": "Connect is the host application that loads and renders editors within a shared shell, handling drive navigation, document routing, and the plugin lifecycle that makes multiple document types coexist in one UI."
+        },
+        {
+          "id": "ci-eux-7",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "628710fd-625e-4cf2-912f-ecf8c66d74df",
+          "sortOrder": 7,
+          "contextPhrase": "CSS scoping via data attributes prevents style collisions when multiple editors are loaded in the same Connect page, ensuring that one editors styles never accidentally bleed into another."
+        },
+        {
+          "id": "ci-eux-8",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "5c8a3d69-9631-4d7b-a51d-bc8ef2270656",
+          "sortOrder": 8,
+          "contextPhrase": "The requirement that style imports go through styles.css establishes a single entry point for editor styling, making the build pipeline predictable and ensuring styles are bundled correctly for the Connect host."
+        },
+        {
+          "id": "ci-eux-9",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "ab52c16c-ee89-4bb1-88f2-7406d21dc510",
+          "sortOrder": 9,
+          "contextPhrase": "Because every document change is an immutable operation in an event-sourced log, editors can expose a complete change history that supports undo, audit trails, and collaborative awareness of who changed what and when."
+        },
+        {
+          "id": "ci-eux-10",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "e59d07aa-72a2-4970-8228-941ba28dd540",
+          "sortOrder": 10,
+          "contextPhrase": "The revision history timeline gives users a visual, navigable representation of how their document evolved over time, turning the abstract event log into a tangible tool for understanding and reviewing changes."
+        },
+        {
+          "id": "ci-eux-11",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "60fbd7bf-b696-4868-88f8-7ef68bc4fe7e",
+          "sortOrder": 11,
+          "contextPhrase": "The inspector modal provides a debugging escape hatch for diagnosing sync issues, showing raw operation state, connection status, and consistency information that is essential for troubleshooting collaborative editing problems."
+        },
+        {
+          "id": "ci-new-1068b3-71a963",
+          "addedAt": "2026-04-03T14:24:54.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "71a9638f-62ff-4a3c-aa11-fd470445e91a",
+          "sortOrder": 100,
+          "contextPhrase": "Specifies the current hook pattern from reactor-browser with useSelectedXDocument return signature"
+        },
+        {
+          "id": "ci-new-1068b3-020a5e",
+          "addedAt": "2026-04-03T14:24:55.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "020a5eed-83fc-4dea-92ed-110db1c80806",
+          "sortOrder": 101,
+          "contextPhrase": "Auto-generated per model in gen/ — never implement manually, always import from generated code"
+        },
+        {
+          "id": "ci-new-1068b3-521edf",
+          "addedAt": "2026-04-03T14:24:55.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "521edf0c-72e9-4d40-ae3b-c6b11b720f91",
+          "sortOrder": 102,
+          "contextPhrase": "Connect's host-level toast infrastructure — direct library imports break across host apps"
+        },
+        {
+          "id": "ci-new-1068b3-522873",
+          "addedAt": "2026-04-03T14:24:56.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "522873a2-be68-432b-a182-bf6d4d6eed2e",
+          "sortOrder": 103,
+          "contextPhrase": "Drive-level hook for app editors that need to access drive state and filter document nodes"
+        },
+        {
+          "id": "ci-new-1068b3-bddf35",
+          "addedAt": "2026-04-03T14:24:56.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "bddf3583-76e9-40cc-8b77-00b869a9b9bd",
+          "sortOrder": 104,
+          "contextPhrase": "The trigger mechanism that initiates code generation when creating drive apps"
+        },
+        {
+          "id": "ci-new-1068b3-c4c01c",
+          "addedAt": "2026-04-03T14:24:57.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "c4c01c81-e6c3-4a58-9b74-ff413ed32a1e",
+          "sortOrder": 105,
+          "contextPhrase": "Maps each of the 4 implemented editors to their models, hooks, and module structure"
+        },
+        {
+          "id": "ci-new-1068b3-5d0264",
+          "addedAt": "2026-04-03T14:24:58.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "5d026408-86cd-4cff-a1c0-6818cbbe1f99",
+          "sortOrder": 106,
+          "contextPhrase": "Tailwind-first styling convention with scoped fallbacks — extends the existing CSS guidance"
+        },
+        {
+          "id": "ci-fix-1068b3-78e48a",
+          "addedAt": "2026-04-03T14:42:38.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "78e48a34-bddb-4a09-8572-4b40732ecc49",
+          "sortOrder": 200,
+          "contextPhrase": "Modular editor components with separate files — keeps business logic isolated from rendering"
+        }
+      ],
+      "createdAt": "2026-04-02T13:00:00.000Z",
+      "noteCount": 19,
+      "parentRef": null,
+      "updatedAt": "2026-04-02T13:00:00.000Z",
+      "agentNotes": [],
+      "description": "How editors connect React components to document state via hooks, dispatch operations, manage styling scope, and surface operational history to users.",
+      "orientation": "Editors are where users actually interact with Powerhouse documents. They are React components that consume document state through generated hooks, dispatch operations through type-safe creators, and render domain-specific UIs for viewing and modifying content. But building effective editors requires understanding several interacting concerns: how the hook layer connects React to the document model runtime, how component architecture keeps editors modular and testable, how CSS scoping prevents style collisions when multiple editors coexist in Connect, and how the event-sourced operation history can be surfaced as a navigable revision timeline. This MOC threads together the full editor development story from state binding through styling to debugging tools.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-02T21:10:30.426Z",
+  "lastModifiedAtUtcIso": "2026-04-03T14:42:42.752Z"
+}

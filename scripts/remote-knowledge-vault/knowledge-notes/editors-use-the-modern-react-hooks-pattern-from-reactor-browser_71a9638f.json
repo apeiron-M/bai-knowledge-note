@@ -1,0 +1,105 @@
+{
+  "id": "71a9638f-62ff-4a3c-aa11-fd470445e91a",
+  "name": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-71a9638f-71d23d07",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "editors-use-react-hooks-for-document-state",
+          "targetDocumentId": "71d23d07-bc96-4873-98bc-5bfa192bfcaf"
+        },
+        {
+          "id": "l-71a9638f-521edf0c-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors",
+          "targetDocumentId": "521edf0c-72e9-4d40-ae3b-c6b11b720f91"
+        },
+        {
+          "id": "l-71a9638f-5d026408-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags",
+          "targetDocumentId": "5d026408-86cd-4cff-a1c0-6818cbbe1f99"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "editors use the modern React hooks pattern from reactor-browser",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-71a9638f-0",
+          "name": "editor patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-71a9638f-1",
+          "name": "model-editor wiring",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-71a9638f-2",
+          "name": "React hooks",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-71a9638f-3",
+          "name": "code generation",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# editors use the modern React hooks pattern from reactor-browser\n\nDocument editors follow a consistent pattern using auto-generated hooks from `@powerhousedao/reactor-browser`:\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport { useSelectedTodoDocument } from \"../hooks/useTodoDocument.js\";\nimport { addTodo } from \"../../document-models/todo/gen/creators.js\";\n\nexport default function Editor() {\n  const [document, dispatch] = useSelectedTodoDocument();\n\n  function handleAddTodo(values: { title: string }) {\n    if (values.title) {\n      dispatch(addTodo({ id: generateId(), title: values.title }));\n    }\n  }\n}\n```\n\nKey points:\n- `useSelectedXDocument` is auto-generated per document model — since [[useSelectedDocument hook is auto-generated per document model]], never implement it manually\n- Since [[editors import action creators from gen/creators not from model source]], the import path is `../../document-models/<model>/gen/creators.js`\n- Since [[generateId from document-model/core provides deterministic IDs for dispatch]], IDs are created before dispatch, not inside reducers\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[model-editor wiring]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:02:07.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The useSelectedXDocument hook is auto-generated and returns [document, dispatch]; action creators come from gen/creators.js",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T14:02:07.570Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:04.308Z"
+}

@@ -5,10 +5,7 @@ import {
   useDocumentsInSelectedFolder,
   useSelectedDocument,
 } from "@powerhousedao/reactor-browser";
-import type {
-  SourceAction,
-  SourceDocument,
-} from "@powerhousedao/knowledge-note/document-models/source/v1";
+import type { SourceAction, SourceDocument } from "document-models/source/v1";
 import {
   assertIsSourceDocument,
   isSourceDocument,

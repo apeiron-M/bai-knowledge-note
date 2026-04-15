@@ -1,0 +1,98 @@
+{
+  "id": "c6738bbb-d40e-4e69-bc8b-ba631de804f4",
+  "name": "HealthReport",
+  "documentType": "bai/health-report",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "mode": "full",
+      "checks": [
+        {
+          "id": "chk-schema",
+          "status": "PASS",
+          "message": "189/189 notes have title, description, noteType, content, provenance, and topics",
+          "category": "SCHEMA_COMPLIANCE",
+          "affectedItems": []
+        },
+        {
+          "id": "chk-orphan",
+          "status": "PASS",
+          "message": "0 orphan notes — all 189 notes have both inbound and outbound connections",
+          "category": "ORPHAN_DETECTION",
+          "affectedItems": []
+        },
+        {
+          "id": "chk-links",
+          "status": "WARN",
+          "message": "1 dangling link; 21 notes with 0 outbound links; avg 2.1 links/note",
+          "category": "LINK_HEALTH",
+          "affectedItems": [
+            "specification-documents-are-blueprints has dangling BUILDS_ON to 17e33357"
+          ]
+        },
+        {
+          "id": "chk-desc",
+          "status": "PASS",
+          "message": "All descriptions between 30-200 chars with genuine information beyond title",
+          "category": "DESCRIPTION_QUALITY",
+          "affectedItems": []
+        },
+        {
+          "id": "chk-moc",
+          "status": "WARN",
+          "message": "83% MOC coverage (157/189); 32 notes not in any MOC; 14 MOCs all in 5-19 range",
+          "category": "MOC_COHERENCE",
+          "affectedItems": [
+            "16 domain model catalog notes need a new MOC",
+            "4 OH notes need MOC placement",
+            "12 other notes need MOC assignment"
+          ]
+        },
+        {
+          "id": "chk-throughput",
+          "status": "PASS",
+          "message": "7 sources processed into 189 notes — healthy extraction ratio",
+          "category": "PROCESSING_THROUGHPUT",
+          "affectedItems": []
+        },
+        {
+          "id": "chk-stale",
+          "status": "PASS",
+          "message": "All notes created within last 24 hours or well-connected",
+          "category": "STALE_NOTES",
+          "affectedItems": []
+        }
+      ],
+      "generatedAt": "2026-04-03T14:31:59.000Z",
+      "generatedBy": null,
+      "graphMetrics": {
+        "density": 0.0112,
+        "mocCount": 14,
+        "noteCount": 189,
+        "mocCoverage": 0.83,
+        "orphanCount": 0,
+        "connectionCount": 398,
+        "danglingLinkCount": 1,
+        "averageLinksPerNote": 2.1
+      },
+      "overallStatus": "WARN",
+      "recommendations": [
+        "Create a Domain Model Catalog MOC for the 16 uncovered model notes (account-transactions, facet, invoice, etc.)",
+        "Fix 1 dangling link on specification-documents-are-blueprints (target 17e33357 does not exist)",
+        "Add outbound links to 21 notes with 0 outbound connections",
+        "Add 4 OH notes and 4 existing platform notes to appropriate MOCs to reach 90%+ coverage",
+        "Consider creating a Testing and QA MOC for testing-uses-vitest-and-generatemock"
+      ]
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-03-30T16:05:06.068Z",
+  "lastModifiedAtUtcIso": "2026-04-03T14:32:03.460Z"
+}

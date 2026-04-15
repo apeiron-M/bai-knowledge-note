@@ -1,4 +1,4 @@
-import type { KnowledgeNoteProvenanceOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
+import type { KnowledgeNoteProvenanceOperations } from "document-models/knowledge-note/v1";
 
 export const knowledgeNoteProvenanceOperations: KnowledgeNoteProvenanceOperations =
   {

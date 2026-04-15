@@ -1,10 +1,10 @@
-import type { KnowledgeNoteLinkingOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
 import {
   DuplicateLinkIdError,
   LinkNotFoundError,
   DuplicateTopicError,
   TopicNotFoundError,
 } from "../../gen/linking/error.js";
+import type { KnowledgeNoteLinkingOperations } from "document-models/knowledge-note/v1";
 
 export const knowledgeNoteLinkingOperations: KnowledgeNoteLinkingOperations = {
   addLinkOperation(state, action) {

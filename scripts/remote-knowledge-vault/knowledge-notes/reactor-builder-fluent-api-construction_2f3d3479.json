@@ -1,0 +1,94 @@
+{
+  "id": "2f3d3479-f14c-4641-853e-07e631d8b0e9",
+  "name": "reactor-builder-fluent-api-construction",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-2f3d3479-e31dde6a",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "e31dde6a-da26-45a7-82dd-b3562e211ca3"
+        },
+        {
+          "id": "l-d-2f3d3479-441bdfa9",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "441bdfa9-4495-4ff3-9096-dcece8342063"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "ReactorBuilder uses a fluent API to wire storage, executors, read models, sync, and document models into a reactor instance",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-2f3d3479-0",
+          "name": "reactor-builder",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-2f3d3479-1",
+          "name": "architecture",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-2f3d3479-2",
+          "name": "configuration",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `ReactorBuilder` from `@powerhousedao/reactor` provides a fluent API for constructing reactors: `withDocumentModels()`, `withExecutorConfig({ maxConcurrency, jobTimeoutMs })`, `withWriteCacheConfig({ maxDocuments, ringBufferSize })`, `withMigrationStrategy('auto')`, `withKysely()` (defaults to in-memory PGlite), `withQueue()` (defaults to InMemoryQueue), `withEventBus()`, `withReadModel()`, `withSync()`, and more. Calling `build()` returns `IReactor`; calling `buildModule()` returns a `ReactorModule` exposing all internal components including operationStore, keyframeStore, writeCache, documentView, documentIndexer, readModelCoordinator, processorManager, and the underlying Kysely database.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The builder pattern configures maxConcurrency, write cache, migration strategy, Kysely DB, queues, event bus, and sync for reactor construction.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:54:08.479Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:26.022Z"
+}

@@ -1,0 +1,106 @@
+{
+  "id": "838e4030-d03b-4113-9c74-a89ee5be93a0",
+  "name": "reactor-mcp-bridges-ai-agents",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-838e4030-441bdfa9",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "441bdfa9-4495-4ff3-9096-dcece8342063"
+        },
+        {
+          "id": "l-838e4030-6cf57271",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "6cf57271-750e-4e19-a814-0c9652867ddc"
+        },
+        {
+          "id": "l-838e4030-32710e46-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "mcp-workflows",
+          "targetDocumentId": "32710e46-8de4-44a7-9761-2817186a1acf"
+        },
+        {
+          "id": "l-838e4030-eefe7753-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "batch-multiple-actions-in-a-single-addactions-call-to-minimize-round-trips",
+          "targetDocumentId": "eefe7753-8f5f-476e-904d-3d6b4136dceb"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Reactor MCP bridges AI agents with Powerhouse document operations via Model Context Protocol",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-838e4030-0",
+          "name": "mcp",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-838e4030-1",
+          "name": "ai-integration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-838e4030-2",
+          "name": "reactor",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "**Reactor-mcp** is a Model Context Protocol (MCP) server that bridges AI agents (like Claude) with Powerhouse document operations. It enables:\n\n- Automatic document model creation from natural language descriptions\n- Smart editor generation based on underlying document models\n- Automatic code generation when documents reach valid state\n- Working with both existing and newly created document models\n\nMCP operations include:\n- **Document**: `createDocument`, `getDocument`, `deleteDocument`, `addActions`\n- **Drive**: `getDrives`, `addDrive`, `getDrive`, `addRemoteDrive`\n- **Document Model**: `getDocumentModels`, `getDocumentModelSchema`\n\nWorkflow: Run `ph vetra --interactive --watch` in one terminal, then start Claude in another. Claude connects to the MCP server and can create document models, implement reducers, build editors, and fix errors through natural language interaction.\n\nBest practices with MCP: work in layers (model first, test, then editor), always review proposals before confirming, provide detailed requirements, and reference operation names when describing editor functionality.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The MCP server at localhost:4001/mcp lets Claude create documents, manage drives, and generate code from natural language.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:51:08.133Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:13.211Z"
+}

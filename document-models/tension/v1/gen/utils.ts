@@ -5,17 +5,20 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type { TensionGlobalState, TensionLocalState } from "./types.js";
-import type { TensionPHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { tensionDocumentType } from "./document-type.js";
 import {
-  isTensionDocument,
   assertIsTensionDocument,
-  isTensionState,
   assertIsTensionState,
+  isTensionDocument,
+  isTensionState,
 } from "./document-schema.js";
+import type {
+  TensionGlobalState,
+  TensionLocalState,
+  TensionPHState,
+} from "./types.js";
 
 export const initialGlobalState: TensionGlobalState = {
   title: null,
@@ -31,7 +34,7 @@ export const initialGlobalState: TensionGlobalState = {
 export const initialLocalState: TensionLocalState = {};
 
 export const utils: DocumentModelUtils<TensionPHState> = {
-  fileExtension: "ten.phd",
+  fileExtension: "",
   createState(state) {
     return {
       ...defaultBaseState(),
@@ -68,12 +71,3 @@ export const utils: DocumentModelUtils<TensionPHState> = {
     return assertIsTensionDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

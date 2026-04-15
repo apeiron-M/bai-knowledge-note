@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -12,7 +12,7 @@ import {
   AddSignalInputSchema,
   AddReseedEntryInputSchema,
   UpdateDimensionRationaleInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/derivation/v1";
+} from "document-models/derivation/v1";
 
 describe("DerivationManagementOperations", () => {
   it("should handle initializeDerivation operation", () => {

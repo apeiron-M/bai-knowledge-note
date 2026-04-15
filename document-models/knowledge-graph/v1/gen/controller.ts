@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { KnowledgeGraph } from "../module.js";
 import type { KnowledgeGraphAction, KnowledgeGraphPHState } from "./types.js";
 

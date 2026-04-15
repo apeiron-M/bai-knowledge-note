@@ -5,17 +5,20 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type { DerivationGlobalState, DerivationLocalState } from "./types.js";
-import type { DerivationPHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { derivationDocumentType } from "./document-type.js";
 import {
-  isDerivationDocument,
   assertIsDerivationDocument,
-  isDerivationState,
   assertIsDerivationState,
+  isDerivationDocument,
+  isDerivationState,
 } from "./document-schema.js";
+import type {
+  DerivationGlobalState,
+  DerivationLocalState,
+  DerivationPHState,
+} from "./types.js";
 
 export const initialGlobalState: DerivationGlobalState = {
   engineVersion: null,
@@ -30,7 +33,7 @@ export const initialGlobalState: DerivationGlobalState = {
 export const initialLocalState: DerivationLocalState = {};
 
 export const utils: DocumentModelUtils<DerivationPHState> = {
-  fileExtension: "der.phd",
+  fileExtension: "",
   createState(state) {
     return {
       ...defaultBaseState(),
@@ -67,12 +70,3 @@ export const utils: DocumentModelUtils<DerivationPHState> = {
     return assertIsDerivationDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

@@ -1,9 +1,8 @@
-// TODO: remove eslint-disable rules once refactor is done
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model/core";
-import type { KnowledgeNotePHState } from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
+import type { Reducer, StateReducer } from "document-model";
+import { isDocumentAction, createReducer } from "document-model";
+import type { KnowledgeNotePHState } from "document-models/knowledge-note/v1";
 
 import { knowledgeNoteContentOperations } from "../src/reducers/content.js";
 import { knowledgeNoteProvenanceOperations } from "../src/reducers/provenance.js";
@@ -275,4 +274,5 @@ const stateReducer: StateReducer<KnowledgeNotePHState> = (
   }
 };
 
-export const reducer = createReducer<KnowledgeNotePHState>(stateReducer);
+export const reducer: Reducer<KnowledgeNotePHState> =
+  createReducer(stateReducer);

@@ -2,14 +2,14 @@
  * Factory methods for creating HealthReportDocument instances
  */
 import type { PHAuthState, PHDocumentState, PHBaseState } from "document-model";
-import { createBaseState, defaultBaseState } from "document-model/core";
+import { createBaseState, defaultBaseState } from "document-model";
 import type {
   HealthReportDocument,
-  HealthReportLocalState,
   HealthReportGlobalState,
+  HealthReportLocalState,
   HealthReportPHState,
 } from "./types.js";
-import { createDocument } from "./utils.js";
+import { utils } from "./utils.js";
 
 export function defaultGlobalState(): HealthReportGlobalState {
   return {
@@ -78,7 +78,7 @@ export function createHealthReportDocument(
     local?: Partial<HealthReportLocalState>;
   }>,
 ): HealthReportDocument {
-  const document = createDocument(
+  const document = utils.createDocument(
     state
       ? createState(
           createBaseState(state.auth, state.document),

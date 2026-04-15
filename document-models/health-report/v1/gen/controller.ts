@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { HealthReport } from "../module.js";
 import type { HealthReportAction, HealthReportPHState } from "./types.js";
 

@@ -17,7 +17,7 @@ import {
   assertIsHealthReportDocument,
   isHealthReportState,
   assertIsHealthReportState,
-} from "@powerhousedao/knowledge-note/document-models/health-report/v1";
+} from "document-models/health-report/v1";
 import { ZodError } from "zod";
 
 describe("HealthReport Document Model", () => {

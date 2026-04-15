@@ -1,7 +1,7 @@
 {
   "name": "@powerhousedao/knowledge-note",
   "description": "Knowledge Note document model package for Powerhouse",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "license": "AGPL-3.0-only",
   "type": "module",
   "files": [
@@ -12,93 +12,61 @@
   },
   "exports": {
     ".": {
+      "source": "./index.ts",
       "types": "./dist/index.d.ts",
-      "import": "./dist/index.js"
+      "browser": "./dist/browser/index.js",
+      "node": "./dist/node/index.mjs"
     },
     "./document-models": {
+      "source": "./document-models/index.ts",
       "types": "./dist/document-models/index.d.ts",
-      "import": "./dist/document-models/index.js"
-    },
-    "./editors": {
-      "types": "./dist/editors/index.d.ts",
-      "import": "./dist/editors/index.js"
-    },
-    "./document-models/derivation": {
-      "types": "./dist/document-models/derivation/index.d.ts",
-      "import": "./dist/document-models/derivation/index.js"
-    },
-    "./document-models/health-report": {
-      "types": "./dist/document-models/health-report/index.d.ts",
-      "import": "./dist/document-models/health-report/index.js"
-    },
-    "./document-models/knowledge-graph": {
-      "types": "./dist/document-models/knowledge-graph/index.d.ts",
-      "import": "./dist/document-models/knowledge-graph/index.js"
-    },
-    "./document-models/knowledge-note": {
-      "types": "./dist/document-models/knowledge-note/index.d.ts",
-      "import": "./dist/document-models/knowledge-note/index.js"
-    },
-    "./document-models/moc": {
-      "types": "./dist/document-models/moc/index.d.ts",
-      "import": "./dist/document-models/moc/index.js"
-    },
-    "./document-models/observation": {
-      "types": "./dist/document-models/observation/index.d.ts",
-      "import": "./dist/document-models/observation/index.js"
-    },
-    "./document-models/pipeline-queue": {
-      "types": "./dist/document-models/pipeline-queue/index.d.ts",
-      "import": "./dist/document-models/pipeline-queue/index.js"
-    },
-    "./document-models/research-claim": {
-      "types": "./dist/document-models/research-claim/index.d.ts",
-      "import": "./dist/document-models/research-claim/index.js"
-    },
-    "./document-models/source": {
-      "types": "./dist/document-models/source/index.d.ts",
-      "import": "./dist/document-models/source/index.js"
-    },
-    "./document-models/tension": {
-      "types": "./dist/document-models/tension/index.d.ts",
-      "import": "./dist/document-models/tension/index.js"
-    },
-    "./document-models/vault-config": {
-      "types": "./dist/document-models/vault-config/index.d.ts",
-      "import": "./dist/document-models/vault-config/index.js"
+      "browser": "./dist/browser/document-models/index.js",
+      "node": "./dist/node/document-models/index.mjs"
     },
     "./document-models/*": {
+      "source": "./document-models/*/index.ts",
       "types": "./dist/document-models/*/index.d.ts",
-      "import": "./dist/document-models/*/index.js"
+      "browser": "./dist/browser/document-models/*/index.js",
+      "node": "./dist/node/document-models/*/index.mjs"
+    },
+    "./editors": {
+      "source": "./editors/index.ts",
+      "types": "./dist/editors/index.d.ts",
+      "browser": "./dist/browser/editors/index.js",
+      "node": "./dist/node/editors/index.mjs"
     },
     "./editors/*": {
+      "source": "./editors/*/index.ts",
       "types": "./dist/editors/*/index.d.ts",
-      "import": "./dist/editors/*/index.js"
+      "browser": "./dist/browser/editors/*/index.js",
+      "node": "./dist/node/editors/*/index.mjs"
     },
     "./subgraphs": {
+      "source": "./subgraphs/index.ts",
       "types": "./dist/subgraphs/index.d.ts",
-      "import": "./dist/subgraphs/index.js"
+      "browser": "./dist/browser/subgraphs/index.js",
+      "node": "./dist/node/subgraphs/index.mjs"
     },
     "./processors": {
+      "source": "./processors/index.ts",
       "types": "./dist/processors/index.d.ts",
-      "import": "./dist/processors/index.js"
+      "browser": "./dist/browser/processors/index.js",
+      "node": "./dist/node/processors/index.mjs"
     },
     "./manifest": "./dist/powerhouse.manifest.json",
     "./style.css": "./dist/style.css"
   },
   "scripts": {
-    "build": "npm run tsc && npm run tailwind",
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "eslint --config eslint.config.js --cache --cache-strategy content",
     "lint:fix": "npm run lint -- --fix",
     "tsc": "tsc",
     "tsc:watch": "tsc --watch",
-    "tailwind": "npx @tailwindcss/cli -i ./style.css -o ./dist/style.css",
-    "prepublishOnly": "npm run build",
     "check-circular-imports": "npx dpdm -T ./index.ts",
     "generate": "ph-cli generate",
     "connect": "ph-cli connect",
+    "build": "ph-cli build",
     "reactor": "ph-cli reactor",
     "service": "ph-cli service",
     "vetra": "ph-cli vetra",
@@ -106,61 +74,43 @@
     "service-unstartup": "bash ./node_modules/@powerhousedao/ph-cli/dist/scripts/service-unstartup.sh"
   },
   "dependencies": {
-    "@electric-sql/pglite": "0.3.15",
     "@huggingface/transformers": "^4.0.1",
-    "@powerhousedao/builder-tools": "6.0.0-dev.105",
-    "@powerhousedao/common": "6.0.0-dev.105",
-    "@powerhousedao/design-system": "6.0.0-dev.105",
+    "document-model": "6.0.0-dev.171",
+    "@powerhousedao/design-system": "6.0.0-dev.171",
+    "@powerhousedao/reactor-api": "6.0.0-dev.171",
+    "@powerhousedao/reactor-browser": "6.0.0-dev.171",
+    "@powerhousedao/connect": "6.0.0-dev.171",
+    "@powerhousedao/analytics-engine-core": "6.0.0-dev.171",
     "@powerhousedao/document-engineering": "1.40.1",
-    "@powerhousedao/vetra": "6.0.0-dev.105",
     "cytoscape": "^3.33.1",
     "cytoscape-fcose": "^2.2.0",
-    "document-model": "6.0.0-dev.105",
-    "graphql": "16.12.0",
+    "graphql": "^16.10.0",
     "graphql-tag": "^2.12.6",
-    "zod": "^4.3.5"
+    "zod": "^4.3.5",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
   },
   "devDependencies": {
+    "@powerhousedao/ph-cli": "6.0.0-dev.171",
+    "@powerhousedao/reactor": "6.0.0-dev.171",
+    "@electric-sql/pglite": "0.3.15",
+    "@electric-sql/pglite-tools": "0.2.20",
     "@eslint/js": "^9.38.0",
-    "@powerhousedao/analytics-engine-core": "6.0.0-dev.105",
-    "@powerhousedao/config": "6.0.0-dev.105",
-    "@powerhousedao/connect": "6.0.0-dev.105",
-    "@powerhousedao/ph-cli": "6.0.0-dev.105",
-    "@powerhousedao/reactor-api": "6.0.0-dev.105",
-    "@powerhousedao/reactor-browser": "6.0.0-dev.105",
-    "@powerhousedao/reactor-local": "6.0.0-dev.105",
-    "@powerhousedao/switchboard": "6.0.0-dev.105",
-    "@tailwindcss/cli": "^4.1.4",
-    "@testing-library/react": "^16.3.0",
-    "@types/cytoscape": "^3.21.9",
+    "@tailwindcss/cli": "^4.1.18",
     "@types/node": "^24.9.2",
     "@types/react": "^19.2.3",
-    "@vitejs/plugin-react": "^5.1.0",
-    "document-drive": "6.0.0-dev.105",
     "eslint": "^9.38.0",
-    "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
     "eslint-plugin-react": "^7.37.5",
     "eslint-plugin-react-hooks": "^7.0.1",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.4",
     "globals": "^16.4.0",
-    "package-manager-detector": "^0.2.8",
-    "pm2": "^5.4.3",
-    "react": "^19.2.3",
-    "react-dom": "^19.2.3",
     "tailwindcss": "^4.1.16",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.46.2",
-    "vite": "^6.2.3",
-    "vite-plugin-node-polyfills": "^0.24.0",
-    "vitest": "^3.0.9"
-  },
-  "overrides": {
-    "graphql": "$graphql"
-  },
-  "peerDependencies": {
-    "react": "^19.2.0",
-    "react-dom": "^19.2.0"
-  },
-  "readme": "ERROR: No README data found!",
-  "_id": "knowledge-note@1.0.0"
+    "vite": "8.0.2",
+    "vitest": "4.1.1",
+    "@vitejs/plugin-react": "6.0.1",
+    "vite-tsconfig-paths": "6.1.1"
+  }
 }

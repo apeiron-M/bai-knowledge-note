@@ -1,0 +1,100 @@
+{
+  "id": "e92f8d11-1cc8-4190-b82d-ac0c0f95fdcd",
+  "name": "reactor-subscriptions-document-changes",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-e92f8d11-441bdfa9",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "441bdfa9-4495-4ff3-9096-dcece8342063"
+        },
+        {
+          "id": "l-e92f8d11-594a7a08",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "594a7a08-1a18-433b-813a-3cc8f582eab5"
+        },
+        {
+          "id": "l-d-e92f8d11-39740959",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "39740959-2cec-4cdf-bfda-c7dbe7aafe7b"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "IReactorClient.subscribe enables real-time document change listening with filter-based event matching returning unsubscribe functions",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-e92f8d11-0",
+          "name": "subscriptions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-e92f8d11-1",
+          "name": "reactor-client",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-e92f8d11-2",
+          "name": "real-time",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `IReactorClient.subscribe(search, callback, view?)` method enables real-time document change listening. It accepts a `SearchFilter` (type, parentId, ids, slugs), a callback receiving `DocumentChangeEvent`, and optional `ViewFilter`. DocumentChangeEvent includes `type` (Created/Deleted/Updated/ParentAdded/ParentRemoved/ChildAdded/ChildRemoved), `documents` array, and optional `context` with parentId/childId. Returns an unsubscribe function. For the internal event bus (via ReactorModule), subscribe to `ReactorEventTypes.JOB_READ_READY` for completed jobs or `SyncEventTypes.SYNC_FAILED` for sync failures. In GraphQL, real-time updates use the `documentChanges` subscription.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "REFERENCE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Subscribe to Created/Deleted/Updated/ParentAdded/ChildAdded events filtered by type/parentId/ids/slugs with callback pattern.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:55:03.219Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:08:08.507Z"
+}

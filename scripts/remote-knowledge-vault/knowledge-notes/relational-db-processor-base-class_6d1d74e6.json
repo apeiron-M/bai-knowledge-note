@@ -1,0 +1,94 @@
+{
+  "id": "6d1d74e6-3e1e-4ebf-a049-358a313b7711",
+  "name": "relational-db-processor-base-class",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-6d1d74e6-003761b5",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "003761b5-81af-4be7-8356-97c73820f2b2"
+        },
+        {
+          "id": "l-fix-6d1d74e6-235f9e98",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "235f9e98-f321-4c32-ad35-4995540e3eb0"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "RelationalDbProcessor provides a type-safe base class with per-drive namespace isolation and lifecycle migration hooks",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-6d1d74e6-0",
+          "name": "relational-db",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-6d1d74e6-1",
+          "name": "processors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-6d1d74e6-2",
+          "name": "pattern",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The v6 Reactor provides `RelationalDbProcessor<DB>` as a base class for processors that need database access. Key features: `getNamespace(driveId)` static method creates per-drive database isolation preventing data collisions; `initAndUpgrade()` lifecycle hook runs migrations on startup; `this.relationalDb` provides a typed Kysely instance; `query(driveId, relationalDb)` static method enables querying from subgraphs. The factory creates namespaced stores via `module.relationalDb.createNamespace<T>(namespace)`. Scaffolding is generated with `ph generate --processor <name> --processor-type relationalDb --document-types <type>`.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Extend RelationalDbProcessor<DB> for built-in this.relationalDb access, getNamespace(driveId) isolation, and initAndUpgrade().",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:54:36.380Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:00.661Z"
+}

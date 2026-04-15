@@ -7,7 +7,7 @@ import {
   useSelectedDriveId,
   addDocument,
 } from "@powerhousedao/reactor-browser";
-import type { Node } from "document-drive";
+import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 

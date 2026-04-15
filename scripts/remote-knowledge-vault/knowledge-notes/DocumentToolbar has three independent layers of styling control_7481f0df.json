@@ -1,0 +1,101 @@
+{
+  "id": "7481f0df-6748-4f14-9814-9c59b00afa1b",
+  "name": "DocumentToolbar has three independent layers of styling control",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l1-2",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "twMerge className overrides",
+          "targetDocumentId": "8f715521-a98a-4da8-b947-e7ef356bd20f"
+        },
+        {
+          "id": "l1-3",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Child selector pattern",
+          "targetDocumentId": "ca4cef64-f759-4c33-af1c-de5af03e0880"
+        },
+        {
+          "id": "l1-4",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Revision History scoped CSS",
+          "targetDocumentId": "f54d8cdc-1825-4987-bd58-481c83c94ef8"
+        },
+        {
+          "id": "lm1-comp",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "composable knowledge architecture builds systems from independent toggleable modules",
+          "targetDocumentId": "57968ba8-541f-403b-8ea6-a007c1590ab6"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "DocumentToolbar has three independent layers of styling control",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t1-toolbar",
+          "name": "document-toolbar",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t1-styling",
+          "name": "editor-styling",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `DocumentToolbar` component provides a layered styling architecture with clear separation of concerns:\n\n## Layer 1: Container\nThe toolbar's outer container (background, border, rounding) is controlled via the `className` prop, which uses `twMerge` to merge custom classes with defaults. Default classes: `flex h-12 w-full items-center justify-between rounded-xl border border-gray-200 bg-slate-50 px-4`.\n\n## Layer 2: Buttons\nInternal buttons (undo, redo, export, history, close) use hardcoded Tailwind classes and don't expose their own style props. Customization requires Tailwind arbitrary child selectors passed through the parent `className` prop.\n\n## Layer 3: Revision History Panel\nThe revision history panel is rendered by Connect outside the editor component tree. It lives inside `#document-editor-context` in the DOM and can only be styled via scoped CSS in `style.css`.\n\nThis three-layer architecture means theming a toolbar requires understanding which technique applies at each level — direct className for the container, child selectors for buttons, and external CSS for the history panel.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-03-30T14:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "DocumentToolbar styling has three layers: container via className with twMerge, buttons via CSS child selectors, and Revision History via scoped CSS.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-03-30T17:18:12.872Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:05.713Z"
+}

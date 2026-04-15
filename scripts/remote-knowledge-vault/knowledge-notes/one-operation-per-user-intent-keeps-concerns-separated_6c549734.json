@@ -1,0 +1,93 @@
+{
+  "id": "6c549734-d2a6-43fc-a136-2f13f204d459",
+  "name": "one-operation-per-user-intent-keeps-concerns-separated",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-6c549734-e648484c-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "operation-design-uses-descriptive-names-and-includes-examples-and-errors",
+          "targetDocumentId": "e648484c-a1cd-465c-b12a-c6a1932f1952"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "one operation per user intent keeps concerns separated",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-6c549734-0",
+          "name": "reducer patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-6c549734-1",
+          "name": "schema design",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-6c549734-2",
+          "name": "operation design",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-6c549734-3",
+          "name": "separation of concerns",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# one operation per user intent keeps concerns separated\n\nEach operation should correspond to a single user action. This keeps operations atomic, testable, and replayable:\n\n```\n✅ ADD_LINE_ITEM — adds one line item\n✅ UPDATE_RECIPIENT — changes the recipient\n✅ SET_DUE_DATE — sets the due date\n\n❌ UPDATE_INVOICE — changes recipient, adds items, and sets date in one operation\n```\n\nDescriptive operation names (e.g., `ADD_LINE_ITEM`, `UPDATE_RECIPIENT`) communicate intent better than generic names (e.g., `UPDATE_DATA`).\n\nSince [[operation design uses descriptive names and includes examples and errors]], each operation should also define error types and include examples in the document model.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[schema design]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:00:02.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Operations should map to distinct user actions like ADD_LINE_ITEM rather than batching multiple intents into one operation",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T14:00:03.250Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:59.234Z"
+}

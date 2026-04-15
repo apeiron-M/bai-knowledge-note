@@ -1,4 +1,4 @@
-import type { HealthReportReportManagementOperations } from "@powerhousedao/knowledge-note/document-models/health-report/v1";
+import type { HealthReportReportManagementOperations } from "document-models/health-report/v1";
 
 export const healthReportReportManagementOperations: HealthReportReportManagementOperations =
   {

@@ -1,0 +1,89 @@
+{
+  "id": "8e3e55c5-2c32-4f8d-9bf3-8ba4f5e483b3",
+  "name": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-8e3e55c5-865eafcb",
+          "linkType": "RELATES_TO",
+          "targetTitle": "resource-instance-model-tracks-provisioned-resource-lifecycle",
+          "targetDocumentId": "865eafcb-c0be-47d6-818b-8887e4478f6d"
+        },
+        {
+          "id": "l-8e3e55c5-c8b94efc",
+          "linkType": "RELATES_TO",
+          "targetTitle": "billing-statement-model-captures-periodic-billing-summaries",
+          "targetDocumentId": "c8b94efc-6e56-49e7-9f2a-4059fe25f2e2"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "subscription-instance model tracks active customer subscriptions with lifecycle state",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-8e3e55c5-0",
+          "name": "subscription-instance",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-8e3e55c5-1",
+          "name": "service-pricing",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# subscription-instance model tracks active customer subscriptions with lifecycle state\n\n`powerhouse/subscription-instance` represents an active customer subscription. It is initialized from a ServiceOffering's final configuration.\n\n## State Shape\n\n```graphql\ntype SubscriptionInstanceState {\n    customerId: PHID               # → customer identity (external)\n    customerName: String\n    customerEmail: EmailAddress\n    customerType: CustomerType     # INDIVIDUAL | TEAM\n    operatorId: PHID               # → BuilderProfile (external)\n    serviceOfferingId: PHID        # → ServiceOffering\n    tierName: String\n    selectedBillingCycle: BillingCycle\n    resource: ResourceDocument     # { id: PHID!, label, thumbnailUrl }\n    status: SubscriptionStatus!    # PENDING | ACTIVE | PAUSED | EXPIRING | CANCELLED\n    services: [Service!]!\n    serviceGroups: [ServiceGroup!]!\n    # ... lifecycle timestamps, billing projections, budget, autoRenew\n}\n```\n\n## Modules (5)\n\n| Module | Operations | Purpose |\n|--------|-----------|---------|\n| subscription | 16 | Initialize, status transitions, customer info, tier info, billing projections, renewal |\n| service | 9 | Add/remove services, setup/recurring costs, facet selections |\n| service-group | 5 | Add/remove groups, add/remove services to groups, group costs |\n| metrics | 5 | Add/update/remove service metrics, increment/decrement usage |\n| customer | 2 | Set customer type, update team member count |\n\n## Key References\n\n- `serviceOfferingId: PHID` → ServiceOffering (source offering)\n- `operatorId: PHID` → BuilderProfile (external)\n- `customerId: PHID` → customer identity (external)\n- `resource.id: PHID` → ResourceInstance (via ResourceDocument)\n- Services/groups mirror ServiceOffering structure but with billing actuals\n\n## Data Flow\n\nServiceOffering → (mapOfferingToSubscription) → SubscriptionInstance initialization. Since [[mapOfferingToSubscription transforms service offering state into subscription initialization]], this is the primary cross-model data flow.\n\n---\n\nTopics:\n- [[schema design]]\n- [[object relations]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:43:08.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "39 operations across 5 modules — manages customer subscriptions, billing, service groups, metrics, and lifecycle transitions (PENDING → ACTIVE → PAUSED → CANCELLED)",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:43:09.250Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:16.035Z"
+}

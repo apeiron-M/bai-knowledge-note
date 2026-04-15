@@ -1,0 +1,99 @@
+{
+  "id": "5c8a3d69-9631-4d7b-a51d-bc8ef2270656",
+  "name": "style-imports-must-be-in-styles-css",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-fix-5c8a3d69-628710fd",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "628710fd-625e-4cf2-912f-ecf8c66d74df"
+        },
+        {
+          "id": "l-d-5c8a3d69-14db0fdc",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "14db0fdc-3f56-4d96-b974-b28300245c01"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "CSS imports in .tsx files work in dev but are silently dropped in production builds -- all imports must go through styles.css",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-5c8a3d69-0",
+          "name": "css",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-5c8a3d69-1",
+          "name": "build-system",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-5c8a3d69-2",
+          "name": "tailwind",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-5c8a3d69-3",
+          "name": "production",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "In any Powerhouse package, styles are generated through the `styles.css` file via `tailwindcss/cli`. Importing CSS directly in `.tsx` files works in development mode but will NOT be picked up in static production builds. All style imports must be centralized into `styles.css` using file import syntax (`@import \"...\"` not `@import url(\"...\")`, since `@import url()` is ignored by tailwindcss/cli). When installing a package with `ph install`, package styles are automatically added to styles.css.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "DECISION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Production builds use tailwindcss/cli which only resolves @import from styles.css, not from .tsx files.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:52:09.421Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:50.640Z"
+}

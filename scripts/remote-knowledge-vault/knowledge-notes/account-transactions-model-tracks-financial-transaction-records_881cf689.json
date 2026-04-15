@@ -1,0 +1,83 @@
+{
+  "id": "881cf689-b096-4ee7-b34f-8597db6fe593",
+  "name": "account-transactions-model-tracks-financial-transaction-records",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-881cf689-3002163a",
+          "linkType": "RELATES_TO",
+          "targetTitle": "accounts-model-defines-the-chart-of-accounts-structure",
+          "targetDocumentId": "3002163a-159c-4754-afc9-70d44c06ee0f"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "account-transactions model tracks financial transaction records",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-881cf689-0",
+          "name": "account-transactions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-881cf689-1",
+          "name": "finance-billing",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# account-transactions model tracks financial transaction records\n\n`powerhouse/account-transactions` (10 ops) records individual financial transactions. Part of the Finance & Billing domain alongside [[accounts model defines the chart of accounts structure]], [[billing-statement model captures periodic billing summaries]], and [[payment-terms model defines payment conditions and schedules]].\n\n## Position in Ecosystem\n\nSits in the Finance & Billing zone. Likely referenced by billing statements and invoices when itemizing charges.\n\n## Cross-Model References\n\n- Transactions reference accounts from the Accounts model\n- BillingStatement and Invoice models may aggregate transactions\n\nSince [[five models form a hierarchy from facet through template to offering to subscription to instance]], account-transactions operates downstream — recording the financial outcomes of subscription activity.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:40:33.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "10 operations — records individual financial transactions (debits, credits) against accounts for audit trails and reconciliation",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:40:33.591Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:14.636Z"
+}

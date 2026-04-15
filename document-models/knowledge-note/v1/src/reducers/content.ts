@@ -1,10 +1,10 @@
-import type { KnowledgeNoteContentOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
 import {
   DescriptionTooLongError,
   PatchOutOfBoundsError,
   InvalidMetadataFieldError,
   InvalidMetadataListFieldError,
 } from "../../gen/content/error.js";
+import type { KnowledgeNoteContentOperations } from "document-models/knowledge-note/v1";
 
 export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
   setTitleOperation(state, action) {
@@ -75,7 +75,7 @@ export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
         `"${field}" is not a recognized string metadata field`,
       );
     }
-    (state as Record<string, unknown>)[field] = value || null;
+    (state as any)[field] = value || null;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }
@@ -98,7 +98,7 @@ export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
         `"${field}" is not a recognized list metadata field`,
       );
     }
-    (state as Record<string, unknown>)[field] = values;
+    (state as any)[field] = values;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }

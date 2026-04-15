@@ -1,9 +1,8 @@
-// TODO: remove eslint-disable rules once refactor is done
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model/core";
-import type { PipelineQueuePHState } from "@powerhousedao/knowledge-note/document-models/pipeline-queue/v1";
+import type { Reducer, StateReducer } from "document-model";
+import { isDocumentAction, createReducer } from "document-model";
+import type { PipelineQueuePHState } from "document-models/pipeline-queue/v1";
 
 import { pipelineQueueQueueManagementOperations } from "../src/reducers/queue-management.js";
 
@@ -115,4 +114,5 @@ const stateReducer: StateReducer<PipelineQueuePHState> = (
   }
 };
 
-export const reducer = createReducer<PipelineQueuePHState>(stateReducer);
+export const reducer: Reducer<PipelineQueuePHState> =
+  createReducer(stateReducer);

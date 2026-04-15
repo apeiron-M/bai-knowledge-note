@@ -8,7 +8,7 @@ import {
 import type {
   DerivationAction,
   DerivationDocument,
-} from "@powerhousedao/knowledge-note/document-models/derivation/v1";
+} from "document-models/derivation/v1";
 import {
   assertIsDerivationDocument,
   isDerivationDocument,

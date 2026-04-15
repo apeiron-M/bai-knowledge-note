@@ -1,12 +1,12 @@
-import { useSetPHDriveEditorConfig } from "@powerhousedao/reactor-browser";
+import { useSetPHAppConfig } from "@powerhousedao/reactor-browser";
 import type { EditorProps } from "document-model";
 import { DriveExplorer } from "./components/DriveExplorer.js";
-import { editorConfig } from "./config.js";
+import { appConfig } from "./config.js";
 import { useDriveInit } from "./hooks/use-drive-init.js";
 import { ThemeProvider } from "../shared/theme-context.js";
 
 export default function Editor(props: EditorProps) {
-  useSetPHDriveEditorConfig(editorConfig);
+  useSetPHAppConfig(appConfig);
   useDriveInit();
   return (
     <ThemeProvider>

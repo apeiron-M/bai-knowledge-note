@@ -1,9 +1,8 @@
-// TODO: remove eslint-disable rules once refactor is done
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model/core";
-import type { HealthReportPHState } from "@powerhousedao/knowledge-note/document-models/health-report/v1";
+import type { Reducer, StateReducer } from "document-model";
+import { isDocumentAction, createReducer } from "document-model";
+import type { HealthReportPHState } from "document-models/health-report/v1";
 
 import { healthReportReportManagementOperations } from "../src/reducers/report-management.js";
 
@@ -50,4 +49,5 @@ const stateReducer: StateReducer<HealthReportPHState> = (
   }
 };
 
-export const reducer = createReducer<HealthReportPHState>(stateReducer);
+export const reducer: Reducer<HealthReportPHState> =
+  createReducer(stateReducer);

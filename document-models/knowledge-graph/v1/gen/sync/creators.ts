@@ -1,4 +1,4 @@
-import { createAction } from "document-model/core";
+import { createAction } from "document-model";
 import { SyncGraphInputSchema } from "../schema/zod.js";
 import type { SyncGraphInput } from "../types.js";
 import type { SyncGraphAction } from "./actions.js";

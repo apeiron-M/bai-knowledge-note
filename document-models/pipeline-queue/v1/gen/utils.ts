@@ -5,20 +5,20 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type {
-  PipelineQueueGlobalState,
-  PipelineQueueLocalState,
-} from "./types.js";
-import type { PipelineQueuePHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { pipelineQueueDocumentType } from "./document-type.js";
 import {
-  isPipelineQueueDocument,
   assertIsPipelineQueueDocument,
-  isPipelineQueueState,
   assertIsPipelineQueueState,
+  isPipelineQueueDocument,
+  isPipelineQueueState,
 } from "./document-schema.js";
+import type {
+  PipelineQueueGlobalState,
+  PipelineQueueLocalState,
+  PipelineQueuePHState,
+} from "./types.js";
 
 export const initialGlobalState: PipelineQueueGlobalState = {
   schemaVersion: 3,
@@ -37,7 +37,7 @@ export const initialGlobalState: PipelineQueueGlobalState = {
 export const initialLocalState: PipelineQueueLocalState = {};
 
 export const utils: DocumentModelUtils<PipelineQueuePHState> = {
-  fileExtension: "pq.phd",
+  fileExtension: "",
   createState(state) {
     return {
       ...defaultBaseState(),
@@ -74,12 +74,3 @@ export const utils: DocumentModelUtils<PipelineQueuePHState> = {
     return assertIsPipelineQueueDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

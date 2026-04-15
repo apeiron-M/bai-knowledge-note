@@ -1,0 +1,99 @@
+{
+  "id": "52ca766a-743d-49ea-8c42-ef4fb50ed9db",
+  "name": "event-sourcing-guarantees-audit-trails-but-complicates-querying",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-52ca766a-09b5f57f",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "document-models-use-event-sourcing",
+          "targetDocumentId": "09b5f57f-3a8c-4144-9068-457d739f01c0"
+        },
+        {
+          "id": "l-52ca766a-14a5499a-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "actions-become-operations-after-dispatch-adding-metadata",
+          "targetDocumentId": "14a5499a-1a5b-4807-9ef5-6422c686129c"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "event sourcing guarantees audit trails but complicates querying",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-52ca766a-0",
+          "name": "event sourcing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-52ca766a-1",
+          "name": "architecture",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-52ca766a-2",
+          "name": "audit trails",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-52ca766a-3",
+          "name": "trade-offs",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# event sourcing guarantees audit trails but complicates querying\n\nEvent sourcing stores every state change as an immutable event, which means the complete history of any entity is always available for audit, replay, or debugging. This is the core trade-off: write-path simplicity (just append) exchanges for read-path complexity (must project or materialize views to answer queries efficiently).\n\nSince [[actions become operations after dispatch adding metadata]], the Powerhouse ecosystem follows this pattern — every document change is an operation with index, timestamp, and hash, enabling deterministic replay across nodes.\n\n---\n\nRelevant Notes:\n- [[pure functions enable deterministic replay across distributed nodes]] -- explains why purity matters in an event-sourced system\n\nTopics:\n- [[index]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "CONCEPT",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:04:03.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Append-only event logs provide complete history and replayability at the cost of read-path complexity requiring projections",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T14:04:03.877Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:47.112Z"
+}

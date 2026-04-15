@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { PipelineQueue } from "../module.js";
 import type { PipelineQueueAction, PipelineQueuePHState } from "./types.js";
 

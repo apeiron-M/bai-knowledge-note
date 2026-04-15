@@ -1,0 +1,99 @@
+{
+  "id": "14a5499a-1a5b-4807-9ef5-6422c686129c",
+  "name": "actions-become-operations-after-dispatch-adding-metadata",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-14a5499a-ab52c16c",
+          "linkType": "RELATES_TO",
+          "targetTitle": "operations-history-is-event-sourced",
+          "targetDocumentId": "ab52c16c-ee89-4bb1-88f2-7406d21dc510"
+        },
+        {
+          "id": "l-14a5499a-1c649c30-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "document-models-have-37-available-operations-across-7-categories",
+          "targetDocumentId": "1c649c30-2012-41ec-96be-80d29a4faaf4"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "actions become operations after dispatch adding metadata",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-14a5499a-0",
+          "name": "architecture decisions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-14a5499a-1",
+          "name": "reducer patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-14a5499a-2",
+          "name": "event sourcing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-14a5499a-3",
+          "name": "document model",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# actions become operations after dispatch adding metadata\n\nThe distinction between actions and operations is fundamental to the Powerhouse document model:\n\n- **Action** — A proposed change. A JSON object with `type` (action name) and `input` (payload). This is what you dispatch.\n- **Operation** — A completed change. Contains the original action plus system metadata: `index`, `timestamp`, `hash`, and optional `error`.\n\nActions become operations after dispatch through `addActions`. The system appends metadata that enables event sourcing — the index provides ordering, the hash enables integrity verification, and the timestamp records when it happened.\n\nSince [[operation errors are recorded on operations not thrown to callers]], even failed actions produce operations (with the error captured in the `error` field).\n\n---\n\nTopics:\n- [[architecture decisions]]\n- [[reducer patterns]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "CONCEPT",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:08:09.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "An action is a proposed change (JSON with type and input); an operation adds index, timestamp, hash, and optional error",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T14:04:08.924Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:09.012Z"
+}

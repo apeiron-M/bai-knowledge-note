@@ -5,20 +5,20 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type {
-  KnowledgeNoteGlobalState,
-  KnowledgeNoteLocalState,
-} from "./types.js";
-import type { KnowledgeNotePHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { knowledgeNoteDocumentType } from "./document-type.js";
 import {
-  isKnowledgeNoteDocument,
   assertIsKnowledgeNoteDocument,
-  isKnowledgeNoteState,
   assertIsKnowledgeNoteState,
+  isKnowledgeNoteDocument,
+  isKnowledgeNoteState,
 } from "./document-schema.js";
+import type {
+  KnowledgeNoteGlobalState,
+  KnowledgeNoteLocalState,
+  KnowledgeNotePHState,
+} from "./types.js";
 
 export const initialGlobalState: KnowledgeNoteGlobalState = {
   title: null,
@@ -101,12 +101,3 @@ export const utils: DocumentModelUtils<KnowledgeNotePHState> = {
     return assertIsKnowledgeNoteDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

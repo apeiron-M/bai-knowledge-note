@@ -2,14 +2,14 @@
  * Factory methods for creating MocDocument instances
  */
 import type { PHAuthState, PHDocumentState, PHBaseState } from "document-model";
-import { createBaseState, defaultBaseState } from "document-model/core";
+import { createBaseState, defaultBaseState } from "document-model";
 import type {
   MocDocument,
-  MocLocalState,
   MocGlobalState,
+  MocLocalState,
   MocPHState,
 } from "./types.js";
-import { createDocument } from "./utils.js";
+import { utils } from "./utils.js";
 
 export function defaultGlobalState(): MocGlobalState {
   return {
@@ -84,7 +84,7 @@ export function createMocDocument(
     local?: Partial<MocLocalState>;
   }>,
 ): MocDocument {
-  const document = createDocument(
+  const document = utils.createDocument(
     state
       ? createState(
           createBaseState(state.auth, state.document),

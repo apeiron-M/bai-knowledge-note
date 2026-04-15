@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { Tension } from "../module.js";
 import type { TensionAction, TensionPHState } from "./types.js";
 

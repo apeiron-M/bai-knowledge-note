@@ -5,9 +5,9 @@ export const documentModel: DocumentModelGlobalState = {
   name: "Observation",
   author: {
     name: "BAI",
-    website: "https://bai.dev",
+    website: "https://bai.powerhouse.io/",
   },
-  extension: "obs.phd",
+  extension: "",
   description:
     "Operational learning signal \u2014 captures friction, surprises, methodology insights, and quality observations from knowledge processing.",
   specifications: [
@@ -30,59 +30,59 @@ export const documentModel: DocumentModelGlobalState = {
         {
           id: "observation-management",
           name: "observation-management",
-          description: "Observation lifecycle",
           operations: [
             {
               id: "create-observation",
               name: "CREATE_OBSERVATION",
-              description: "Capture a new friction signal",
+              scope: "global",
+              errors: [],
               schema:
                 "input CreateObservationInput {\n    title: String!\n    description: String!\n    content: String\n    category: ObservationCategory!\n    observedAt: DateTime!\n    observedBy: String\n}",
-              template: "Capture a new friction signal",
               reducer:
                 'state.title = action.input.title;\nstate.description = action.input.description;\nstate.content = action.input.content || null;\nstate.category = action.input.category;\nstate.status = "PENDING";\nstate.observedAt = action.input.observedAt;\nstate.observedBy = action.input.observedBy || null;',
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Capture a new friction signal",
+              description: "Capture a new friction signal",
             },
             {
               id: "promote-observation",
               name: "PROMOTE_OBSERVATION",
-              description: "Promote to a permanent note",
+              scope: "global",
+              errors: [],
               schema:
                 "input PromoteObservationInput {\n    promotedTo: String!\n    promotedAt: DateTime!\n}",
-              template: "Promote to a permanent note",
               reducer:
                 'state.status = "PROMOTED";\nstate.promotedTo = action.input.promotedTo;\nstate.promotedAt = action.input.promotedAt;',
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Promote to a permanent note",
+              description: "Promote to a permanent note",
             },
             {
               id: "implement-observation",
               name: "IMPLEMENT_OBSERVATION",
-              description: "Mark as implemented in system",
+              scope: "global",
+              errors: [],
               schema:
                 "input ImplementObservationInput {\n    updatedAt: DateTime!\n}",
-              template: "Mark as implemented in system",
               reducer: 'state.status = "IMPLEMENTED";',
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Mark as implemented in system",
+              description: "Mark as implemented in system",
             },
             {
               id: "archive-observation",
               name: "ARCHIVE_OBSERVATION",
-              description: "Archive observation",
+              scope: "global",
+              errors: [],
               schema:
                 "input ArchiveObservationInput {\n    updatedAt: DateTime!\n}",
-              template: "Archive observation",
               reducer: 'state.status = "ARCHIVED";',
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Archive observation",
+              description: "Archive observation",
             },
           ],
+          description: "Observation lifecycle",
         },
       ],
       version: 1,

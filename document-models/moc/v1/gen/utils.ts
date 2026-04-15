@@ -5,17 +5,16 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type { MocGlobalState, MocLocalState } from "./types.js";
-import type { MocPHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { mocDocumentType } from "./document-type.js";
 import {
-  isMocDocument,
   assertIsMocDocument,
-  isMocState,
   assertIsMocState,
+  isMocDocument,
+  isMocState,
 } from "./document-schema.js";
+import type { MocGlobalState, MocLocalState, MocPHState } from "./types.js";
 
 export const initialGlobalState: MocGlobalState = {
   title: null,
@@ -35,7 +34,7 @@ export const initialGlobalState: MocGlobalState = {
 export const initialLocalState: MocLocalState = {};
 
 export const utils: DocumentModelUtils<MocPHState> = {
-  fileExtension: "moc.phd",
+  fileExtension: "",
   createState(state) {
     return {
       ...defaultBaseState(),
@@ -72,12 +71,3 @@ export const utils: DocumentModelUtils<MocPHState> = {
     return assertIsMocDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

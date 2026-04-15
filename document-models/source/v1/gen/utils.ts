@@ -5,17 +5,20 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type { SourceGlobalState, SourceLocalState } from "./types.js";
-import type { SourcePHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { sourceDocumentType } from "./document-type.js";
 import {
-  isSourceDocument,
   assertIsSourceDocument,
-  isSourceState,
   assertIsSourceState,
+  isSourceDocument,
+  isSourceState,
 } from "./document-schema.js";
+import type {
+  SourceGlobalState,
+  SourceLocalState,
+  SourcePHState,
+} from "./types.js";
 
 export const initialGlobalState: SourceGlobalState = {
   title: null,
@@ -32,7 +35,7 @@ export const initialGlobalState: SourceGlobalState = {
 export const initialLocalState: SourceLocalState = {};
 
 export const utils: DocumentModelUtils<SourcePHState> = {
-  fileExtension: "src.phd",
+  fileExtension: "",
   createState(state) {
     return {
       ...defaultBaseState(),
@@ -69,12 +72,3 @@ export const utils: DocumentModelUtils<SourcePHState> = {
     return assertIsSourceDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

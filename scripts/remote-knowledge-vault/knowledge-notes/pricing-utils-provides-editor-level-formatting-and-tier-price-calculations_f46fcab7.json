@@ -1,0 +1,83 @@
+{
+  "id": "f46fcab7-1c7e-48bd-bda5-fe39f2c9c60c",
+  "name": "pricing-utils-provides-editor-level-formatting-and-tier-price-calculations",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-f46fcab7-215288d3",
+          "linkType": "RELATES_TO",
+          "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro",
+          "targetDocumentId": "215288d3-e9a8-4d59-87f6-cd34345e7202"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "pricing-utils provides editor-level formatting and tier price calculations",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-f46fcab7-0",
+          "name": "service-offering",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-f46fcab7-1",
+          "name": "editor-utilities",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# pricing-utils provides editor-level formatting and tier price calculations\n\nLocated at `editors/service-offering-editor/components/pricing-utils.ts`, this module provides UI-level pricing utilities.\n\n## Key Exports\n\n| Function | Purpose | Used By |\n|----------|---------|--------|\n| `formatPrice(amount, currency)` | Currency formatting with symbol | ServiceCatalog, TheMatrix, TierDefinition, TierPricingOptionsPanel |\n| `calculateTierRecurringPrice(groups, cycle, tierId)` | Sum regular group monthly prices for a tier | TierDefinition |\n| `calculateEffectiveSetupPrice(setupCost)` | Apply setup discount, return base/effective/savings | ServiceCatalog, ServiceGroupSetupCostPanel |\n| `detectMajorityCycle(groups, currentCycle, overrides)` | Find majority billing cycle among groups | TheMatrix |\n| `BILLING_CYCLE_LABELS` / `BILLING_CYCLE_SHORT_LABELS` | Human-readable cycle names | Various dropdowns |\n\nRe-exports `BILLING_CYCLE_MONTHS` from the document model.\n\n---\n\nTopics:\n- [[helper functions]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:56:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Located in service-offering-editor/components — re-exports BILLING_CYCLE_MONTHS and adds formatPrice, calculateTierRecurringPrice, calculateEffectiveSetupPrice, detectMajorityCycle",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:56:01.226Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:08:12.005Z"
+}

@@ -1,0 +1,107 @@
+{
+  "id": "4968dad5-716b-490a-b735-8c3bac41b120",
+  "name": "five-models-form-a-hierarchy-from-facet-through-template-to-offering-to-subscrip",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-4968dad5-ae29a3f1",
+          "linkType": "RELATES_TO",
+          "targetTitle": "facet-model-provides-configurable-classification-dimensions",
+          "targetDocumentId": "ae29a3f1-63cf-4917-94d9-a758154d60ee"
+        },
+        {
+          "id": "l-4968dad5-fe420cbb",
+          "linkType": "RELATES_TO",
+          "targetTitle": "resource-template-model-defines-reusable-service-catalog-blueprints",
+          "targetDocumentId": "fe420cbb-e438-452a-9d4b-a43eaa63ead6"
+        },
+        {
+          "id": "l-4968dad5-215288d3",
+          "linkType": "RELATES_TO",
+          "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro",
+          "targetDocumentId": "215288d3-e9a8-4d59-87f6-cd34345e7202"
+        },
+        {
+          "id": "l-4968dad5-8e3e55c5",
+          "linkType": "RELATES_TO",
+          "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-",
+          "targetDocumentId": "8e3e55c5-2c32-4f8d-9bf3-8ba4f5e483b3"
+        },
+        {
+          "id": "l-4968dad5-865eafcb",
+          "linkType": "RELATES_TO",
+          "targetTitle": "resource-instance-model-tracks-provisioned-resource-lifecycle",
+          "targetDocumentId": "865eafcb-c0be-47d6-818b-8887e4478f6d"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "five models form a hierarchy from facet through template to offering to subscription to instance",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-4968dad5-0",
+          "name": "facet",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-4968dad5-1",
+          "name": "service-pricing",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# five models form a hierarchy from facet through template to offering to subscription to instance\n\nThe five document models in this project form a directed graph:\n\n```\nFacet ──referenced-by──→ ResourceTemplate ──referenced-by──→ ServiceOffering\n                                                                    │\n                                                          (mapOfferingToSubscription)\n                                                                    ↓\n                                                         SubscriptionInstance\n                                                                    │\n                                                           resource.id PHID\n                                                                    ↓\n                                                          ResourceInstance\n```\n\n## Cross-Model PHID References\n\n| From | Field | To | Relationship |\n|------|-------|----|-------------|\n| ServiceOffering | `resourceTemplateId` | ResourceTemplate | \"built from this template\" |\n| ServiceOffering | `operatorId` | BuilderProfile (external) | \"offered by\" |\n| ServiceOffering | `facetBindings.facetType` | Facet | \"uses this classification\" |\n| SubscriptionInstance | `serviceOfferingId` | ServiceOffering | \"subscribed to\" |\n| SubscriptionInstance | `operatorId` | BuilderProfile (external) | \"operated by\" |\n| SubscriptionInstance | `customerId` | External | \"purchased by\" |\n| SubscriptionInstance | `resource.id` | ResourceInstance | \"has this resource\" |\n| ResourceInstance | `resourceTemplateId` | ResourceTemplate | \"based on template\" |\n| ResourceInstance | `customerId` | External | \"owned by\" |\n| ResourceTemplate | `operatorId` | BuilderProfile (external) | \"created by\" |\n| ResourceTemplate | `facetBindings.facetType` | Facet | \"uses this classification\" |\n\n## Data Flow Direction\n\n1. **Facet** defines classification options\n2. **ResourceTemplate** references Facets and defines base service catalog\n3. **ServiceOffering** references a template and adds pricing (tiers, discounts, billing cycles)\n4. **SubscriptionInstance** is initialized from an offering's final configuration via mapOfferingToSubscription\n5. **ResourceInstance** is provisioned per subscription and tracks lifecycle\n\n## Broader Ecosystem Context\n\nThese 5 local models are part of a 21-model ecosystem (see [[ecosystem map]]). Key cross-zone dependencies:\n\n- `operatorId` fields reference [[builder-profile model describes individual contributor identities]] (Organization & Identity zone)\n- SubscriptionInstance feeds into [[billing-statement model captures periodic billing summaries]] and [[invoice model generates formal payment requests]] (Finance & Reporting zones)\n- [[service-subscription model tracks service-level subscription agreements]] sits between ServiceOffering and SubscriptionInstance as the agreement layer\n\n---\n\nTopics:\n- [[object relations]]\n- [[architecture decisions]]\n- [[ecosystem map]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "RELATION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:41:30.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Facet → ResourceTemplate → ServiceOffering → SubscriptionInstance → ResourceInstance forms the primary data flow; PHID references link across model boundaries",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:41:31.151Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:43.586Z"
+}

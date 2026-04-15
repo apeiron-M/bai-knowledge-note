@@ -1,0 +1,93 @@
+{
+  "id": "f8450f62-bc96-424c-994b-65b4de6c2dc0",
+  "name": "vetra-remote-drive-collaborative-dev",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-f8450f62-6cf57271",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "6cf57271-750e-4e19-a814-0c9652867ddc"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Vetra remote drives enable collaborative development by syncing document models across team members via ph init/checkout/vetra commands",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-f8450f62-0",
+          "name": "vetra",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-f8450f62-1",
+          "name": "remote-drive",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-f8450f62-2",
+          "name": "collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-f8450f62-3",
+          "name": "workflow",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Vetra remote drives enable team collaboration: `ph init --remote-drive <url>` creates a new project connected to a remote Vetra drive, adding `vetra.driveId` and `vetra.driveUrl` to `powerhouse.config.json`. `ph checkout --remote-drive <url>` clones an existing project by querying the remote drive for its configured GitHub URL. `ph vetra` starts Switchboard connected to the remote drive with auto-sync and Connect Studio. The `--watch` flag creates a second 'Vetra Preview' drive for testing local changes while the main drive stays stable. The preview drive dynamically loads local document models and editors. Key distinction: without remote drive, `ph vetra` creates a local drive only; with remote drive, it syncs across team members.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "WORKFLOW",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "ph init --remote-drive creates projects connected to shared drives; ph checkout clones existing projects; ph vetra starts dev environment.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:54:56.017Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:08:14.702Z"
+}

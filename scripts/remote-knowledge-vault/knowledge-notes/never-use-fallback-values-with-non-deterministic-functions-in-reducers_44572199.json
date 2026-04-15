@@ -1,0 +1,99 @@
+{
+  "id": "44572199-1629-490c-a737-b37340fdf80a",
+  "name": "never-use-fallback-values-with-non-deterministic-functions-in-reducers",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-44572199-a7ca6753",
+          "linkType": "RELATES_TO",
+          "targetTitle": "reducers-are-pure-functions-with-immer",
+          "targetDocumentId": "a7ca6753-8d7b-4a13-9a8a-1e5a1ab9fce6"
+        },
+        {
+          "id": "l-44572199-f08acc1d-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "never-use-crypto-randomuuid-or-math-random-in-reducers",
+          "targetDocumentId": "f08acc1d-cfc1-4d00-b1ce-754ac3391275"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "never use fallback values with non-deterministic functions in reducers",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-44572199-0",
+          "name": "reducer patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-44572199-1",
+          "name": "determinism",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-44572199-2",
+          "name": "reducer purity",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-44572199-3",
+          "name": "anti-patterns",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# never use fallback values with non-deterministic functions in reducers\n\nEven as a fallback, non-deterministic functions are forbidden:\n\n```typescript\n// ❌ FORBIDDEN — fallback is non-deterministic\nid: action.input.id || crypto.randomUUID();\ntimestamp: action.input.timestamp || new Date();\n\n// ✅ REQUIRED — values must always come from input\nid: action.input.id;\ntimestamp: action.input.timestamp;\n```\n\nThe intent behind the fallback (\"provide a default if input is missing\") is reasonable, but the implementation violates [[reducer purity requires all dynamic values from action input]]. If the input field is required in the schema, the fallback is unreachable anyway. If it is optional, you need a deterministic default (like `null`), not a generated value.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:59:25.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Patterns like id = action.input.id || crypto.randomUUID() are forbidden because the fallback still introduces non-determinism",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:59:25.803Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:39.205Z"
+}

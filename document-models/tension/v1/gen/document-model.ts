@@ -5,9 +5,9 @@ export const documentModel: DocumentModelGlobalState = {
   name: "Tension",
   author: {
     name: "BAI",
-    website: "https://bai.dev",
+    website: "https://bai.powerhouse.io/",
   },
-  extension: "ten.phd",
+  extension: "",
   description:
     "Unresolved contradiction \u2014 tracks conflicts between knowledge claims with involved references and resolution status.",
   specifications: [
@@ -30,76 +30,76 @@ export const documentModel: DocumentModelGlobalState = {
         {
           id: "tension-management",
           name: "tension-management",
-          description: "Tension lifecycle",
           operations: [
             {
               id: "create-tension",
               name: "CREATE_TENSION",
-              description: "Identify a new contradiction",
+              scope: "global",
+              errors: [],
               schema:
                 "input CreateTensionInput {\n    title: String!\n    description: String!\n    content: String\n    involvedRefs: [String!]!\n    observedAt: DateTime!\n    observedBy: String\n}",
-              template: "Identify a new contradiction",
               reducer:
                 'state.title = action.input.title;\nstate.description = action.input.description;\nstate.content = action.input.content || null;\nstate.involvedRefs = action.input.involvedRefs;\nstate.status = "OPEN";\nstate.observedAt = action.input.observedAt;\nstate.observedBy = action.input.observedBy || null;',
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Identify a new contradiction",
+              description: "Identify a new contradiction",
             },
             {
               id: "resolve-tension",
               name: "RESOLVE_TENSION",
-              description: "Mark as resolved with explanation",
-              schema:
-                "input ResolveTensionInput {\n    resolution: String!\n    resolvedAt: DateTime!\n}",
-              template: "Mark as resolved with explanation",
-              reducer:
-                'if (state.status !== "OPEN") throw new TensionAlreadyResolvedError("Tension is not open");\nstate.status = "RESOLVED";\nstate.resolution = action.input.resolution;\nstate.resolvedAt = action.input.resolvedAt;',
+              scope: "global",
               errors: [
                 {
                   id: "err-tension-already-resolved",
-                  name: "TensionAlreadyResolvedError",
                   code: "TENSION_ALREADY_RESOLVED",
-                  description: "Tension is not in OPEN status",
+                  name: "TensionAlreadyResolvedError",
                   template: "",
+                  description: "Tension is not in OPEN status",
                 },
               ],
+              schema:
+                "input ResolveTensionInput {\n    resolution: String!\n    resolvedAt: DateTime!\n}",
+              reducer:
+                'if (state.status !== "OPEN") throw new TensionAlreadyResolvedError("Tension is not open");\nstate.status = "RESOLVED";\nstate.resolution = action.input.resolution;\nstate.resolvedAt = action.input.resolvedAt;',
               examples: [],
-              scope: "global",
+              template: "Mark as resolved with explanation",
+              description: "Mark as resolved with explanation",
             },
             {
               id: "dissolve-tension",
               name: "DISSOLVE_TENSION",
-              description: "Mark as dissolved (apparent, not real)",
-              schema:
-                "input DissolveTensionInput {\n    resolution: String!\n    resolvedAt: DateTime!\n}",
-              template: "Mark as dissolved (apparent, not real)",
-              reducer:
-                'if (state.status !== "OPEN") throw new TensionAlreadyResolvedError("Tension is not open");\nstate.status = "DISSOLVED";\nstate.resolution = action.input.resolution;\nstate.resolvedAt = action.input.resolvedAt;',
+              scope: "global",
               errors: [
                 {
                   id: "err-tension-already-dissolved",
-                  name: "TensionAlreadyResolvedError",
                   code: "TENSION_ALREADY_RESOLVED",
-                  description: "Tension is not in OPEN status",
+                  name: "TensionAlreadyResolvedError",
                   template: "",
+                  description: "Tension is not in OPEN status",
                 },
               ],
+              schema:
+                "input DissolveTensionInput {\n    resolution: String!\n    resolvedAt: DateTime!\n}",
+              reducer:
+                'if (state.status !== "OPEN") throw new TensionAlreadyResolvedError("Tension is not open");\nstate.status = "DISSOLVED";\nstate.resolution = action.input.resolution;\nstate.resolvedAt = action.input.resolvedAt;',
               examples: [],
-              scope: "global",
+              template: "Mark as dissolved (apparent, not real)",
+              description: "Mark as dissolved (apparent, not real)",
             },
             {
               id: "add-involved-ref",
               name: "ADD_INVOLVED_REF",
-              description: "Add a note to the tension",
+              scope: "global",
+              errors: [],
               schema: "input AddInvolvedRefInput {\n    ref: String!\n}",
-              template: "Add a note to the tension",
               reducer:
                 "if (!state.involvedRefs.includes(action.input.ref)) {\n    state.involvedRefs.push(action.input.ref);\n}",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Add a note to the tension",
+              description: "Add a note to the tension",
             },
           ],
+          description: "Tension lifecycle",
         },
       ],
       version: 1,

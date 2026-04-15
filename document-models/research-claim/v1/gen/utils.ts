@@ -5,20 +5,20 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type {
-  ResearchClaimGlobalState,
-  ResearchClaimLocalState,
-} from "./types.js";
-import type { ResearchClaimPHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { researchClaimDocumentType } from "./document-type.js";
 import {
-  isResearchClaimDocument,
   assertIsResearchClaimDocument,
-  isResearchClaimState,
   assertIsResearchClaimState,
+  isResearchClaimDocument,
+  isResearchClaimState,
 } from "./document-schema.js";
+import type {
+  ResearchClaimGlobalState,
+  ResearchClaimLocalState,
+  ResearchClaimPHState,
+} from "./types.js";
 
 export const initialGlobalState: ResearchClaimGlobalState = {
   title: null,
@@ -33,7 +33,7 @@ export const initialGlobalState: ResearchClaimGlobalState = {
 export const initialLocalState: ResearchClaimLocalState = {};
 
 export const utils: DocumentModelUtils<ResearchClaimPHState> = {
-  fileExtension: "rc.phd",
+  fileExtension: "",
   createState(state) {
     return {
       ...defaultBaseState(),
@@ -70,12 +70,3 @@ export const utils: DocumentModelUtils<ResearchClaimPHState> = {
     return assertIsResearchClaimDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

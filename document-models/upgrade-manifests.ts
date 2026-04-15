@@ -6,6 +6,7 @@ import { knowledgeNoteUpgradeManifest } from "./knowledge-note/upgrades/upgrade-
 import { mocUpgradeManifest } from "./moc/upgrades/upgrade-manifest.js";
 import { observationUpgradeManifest } from "./observation/upgrades/upgrade-manifest.js";
 import { pipelineQueueUpgradeManifest } from "./pipeline-queue/upgrades/upgrade-manifest.js";
+import { researchClaimUpgradeManifest } from "./research-claim/upgrades/upgrade-manifest.js";
 import { sourceUpgradeManifest } from "./source/upgrades/upgrade-manifest.js";
 import { tensionUpgradeManifest } from "./tension/upgrades/upgrade-manifest.js";
 import { vaultConfigUpgradeManifest } from "./vault-config/upgrades/upgrade-manifest.js";
@@ -18,6 +19,7 @@ export const upgradeManifests: UpgradeManifest<readonly number[]>[] = [
   mocUpgradeManifest,
   observationUpgradeManifest,
   pipelineQueueUpgradeManifest,
+  researchClaimUpgradeManifest,
   sourceUpgradeManifest,
   tensionUpgradeManifest,
   vaultConfigUpgradeManifest,

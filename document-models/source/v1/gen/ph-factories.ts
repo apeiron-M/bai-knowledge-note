@@ -2,14 +2,14 @@
  * Factory methods for creating SourceDocument instances
  */
 import type { PHAuthState, PHDocumentState, PHBaseState } from "document-model";
-import { createBaseState, defaultBaseState } from "document-model/core";
+import { createBaseState, defaultBaseState } from "document-model";
 import type {
   SourceDocument,
-  SourceLocalState,
   SourceGlobalState,
+  SourceLocalState,
   SourcePHState,
 } from "./types.js";
-import { createDocument } from "./utils.js";
+import { utils } from "./utils.js";
 
 export function defaultGlobalState(): SourceGlobalState {
   return {
@@ -81,7 +81,7 @@ export function createSourceDocument(
     local?: Partial<SourceLocalState>;
   }>,
 ): SourceDocument {
-  const document = createDocument(
+  const document = utils.createDocument(
     state
       ? createState(
           createBaseState(state.auth, state.document),

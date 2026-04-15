@@ -1,0 +1,114 @@
+{
+  "id": "4c0d8cba-122a-48b6-8846-a418f4bfb54e",
+  "name": "moc-authorization-and-identity",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "DOMAIN",
+      "title": "Authorization and Identity",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "ci-auth-1",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "ea634214-2241-4e66-93df-38ca5bd7b665",
+          "sortOrder": 1,
+          "contextPhrase": "Renown bridges Ethereum wallets to W3C DIDs, letting users authenticate to Powerhouse with the same wallet they use for on-chain governance — no separate credentials needed, no central identity provider required."
+        },
+        {
+          "id": "ci-auth-2",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "2ed7dc19-8e87-4e3a-83fc-b6ac5e343f10",
+          "sortOrder": 2,
+          "contextPhrase": "The Renown SDK provides the programmatic interface for decentralized identity and authentication flows, abstracting the complexity of DID resolution, credential issuance, and verification into a developer-friendly API."
+        },
+        {
+          "id": "ci-auth-3",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "f61a6d62-ef04-4c99-9075-7c77e48561fc",
+          "sortOrder": 3,
+          "contextPhrase": "CLI identity uses did:key with Ethereum key delegation, enabling headless automation and CI/CD pipelines to authenticate to reactors without browser-based wallet flows while maintaining the same DID-based trust model."
+        },
+        {
+          "id": "ci-auth-4",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "ccab830c-9c8c-43c6-aa6e-28c3c4b9119e",
+          "sortOrder": 4,
+          "contextPhrase": "Two distinct signing mechanisms serve different trust requirements: header signing proves transport integrity and sender identity, while action-level signing provides per-operation non-repudiation for high-stakes document changes."
+        },
+        {
+          "id": "ci-auth-5",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "51b7b49f-9a8b-45f9-85c6-9d7b1b8ae4a0",
+          "sortOrder": 5,
+          "contextPhrase": "The ReactorClient automatically signs all outgoing actions, removing the burden of manual cryptographic operations from application code and ensuring that no unsigned operations accidentally reach the server."
+        },
+        {
+          "id": "ci-auth-6",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "a1ee5a1f-3558-49e6-ab90-d65ecfedda6d",
+          "sortOrder": 6,
+          "contextPhrase": "The layered authorization model stacks permissions from drive-level defaults through document-level overrides, allowing broad policies to be set at the organizational level while individual documents can tighten or relax access as needed."
+        },
+        {
+          "id": "ci-auth-7",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "246d61e9-9c4f-4965-a04e-72e851274150",
+          "sortOrder": 7,
+          "contextPhrase": "Group-based and operation-level permissions enable precise access control — a contributor group might be able to addLineItem but not approveDocument, reflecting real organizational workflows where different roles have different capabilities."
+        },
+        {
+          "id": "ci-new-4c0d8c-b3500b",
+          "addedAt": "2026-04-03T14:25:15.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "b3500b56-9602-412e-b7d9-46af624a8718",
+          "sortOrder": 100,
+          "contextPhrase": "Domain model for individual contributor identities — the identity primitive in the model ecosystem"
+        },
+        {
+          "id": "ci-new-4c0d8c-8f1796",
+          "addedAt": "2026-04-03T14:25:15.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "8f179657-cacd-4108-a14b-496c05c65436",
+          "sortOrder": 101,
+          "contextPhrase": "Network-level organizational entities — complements builder-profile at the org/network layer"
+        },
+        {
+          "id": "ci-new-4c0d8c-d1e78d",
+          "addedAt": "2026-04-03T14:25:16.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "d1e78d17-42c9-4340-9800-1fd93a8b135c",
+          "sortOrder": 102,
+          "contextPhrase": "Operational hub configuration model — the legal/operational wrapper identity"
+        }
+      ],
+      "createdAt": "2026-04-02T13:00:00.000Z",
+      "noteCount": 10,
+      "parentRef": null,
+      "updatedAt": "2026-04-02T13:00:00.000Z",
+      "agentNotes": [],
+      "description": "Decentralized identity via Renown, DID-based authentication, cryptographic action signing, and the layered permission model that secures Powerhouse documents.",
+      "orientation": "Security in Powerhouse is built on decentralized identity rather than centralized user databases. The Renown system creates DIDs from Ethereum wallets, giving users self-sovereign identities that work across any reactor without a central authority. Every operation can be cryptographically signed — either at the header level for transport integrity or at the individual action level for non-repudiation — and the ReactorClient handles this signing transparently. On top of identity, a layered authorization model controls who can do what: from broad drive-level permissions down to fine-grained operation-level access, with group support for organizational structures. This MOC maps the complete security story from wallet connection through identity creation to permission enforcement.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-02T21:10:32.155Z",
+  "lastModifiedAtUtcIso": "2026-04-03T14:25:16.477Z"
+}

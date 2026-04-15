@@ -1,0 +1,99 @@
+{
+  "id": "bf238e53-1104-41fa-a201-b8b063cc7e22",
+  "name": "processors-receive-operations-with-context",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-bf238e53-594a7a08",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "594a7a08-1a18-433b-813a-3cc8f582eab5"
+        },
+        {
+          "id": "l-bf238e53-e1bbc0c4",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "e1bbc0c4-2283-4a13-b7ca-ea64f16e4f2a"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Processors implement IProcessor with onOperations receiving OperationWithContext items filtered by document type, scope, branch, and document ID",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-bf238e53-0",
+          "name": "processors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-bf238e53-1",
+          "name": "operations",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-bf238e53-2",
+          "name": "factory-pattern",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-bf238e53-3",
+          "name": "CQRS",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "A processor implements `IProcessor` with `onOperations(operations: OperationWithContext[])` and `onDisconnect()`. Each `OperationWithContext` pairs an `Operation` (action type, input, index, hash, timestamp) with `OperationContext` (documentId, documentType, scope, branch, ordinal for cross-document ordering, resultingState as JSON). `ProcessorFilter` has optional arrays: `documentType`, `scope`, `branch`, `documentId` (use `[\"*\"]` for all). The factory pattern: outer function receives `IProcessorHostModule` (shared resources), inner function receives `driveHeader` per drive, returns `ProcessorRecord[]`. By default processors replay all history; set `startFrom: \"current\"` to skip historical operations.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "ProcessorFilter determines which ops a processor receives; factory creates instances per drive with configurable filters.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:53:08.878Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:38.994Z"
+}

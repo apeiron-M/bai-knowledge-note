@@ -1,0 +1,93 @@
+{
+  "id": "262bfb1a-ee4a-4e0b-acab-0eef9978369f",
+  "name": "truthy-checks-are-safer-than-undefined-checks-for-optional-state-assignment",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-262bfb1a-8f52980a-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "nullable-input-types-require-explicit-coalescing-to-match-state-types",
+          "targetDocumentId": "8f52980a-e141-4e14-a71a-46b358910982"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "truthy checks are safer than undefined checks for optional state assignment",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-262bfb1a-0",
+          "name": "reducer patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-262bfb1a-1",
+          "name": "TypeScript",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-262bfb1a-2",
+          "name": "state assignment",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-262bfb1a-3",
+          "name": "null handling",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# truthy checks are safer than undefined checks for optional state assignment\n\nWhen conditionally assigning optional input values to state:\n\n```typescript\n// ❌ Type error — 'string | null' is not assignable to 'string'\nif (action.input.field !== undefined) entry.field = action.input.field;\n\n// ✅ Truthy check handles both null and undefined\nif (action.input.field) state.field = action.input.field;\n\n// ✅ For booleans, use explicit null/undefined checks\nif (action.input.field !== undefined && action.input.field !== null)\n  state.field = action.input.field;\n```\n\nThe truthy check works because both `null` and `undefined` are falsy. For boolean fields, you cannot use truthy checks since `false` is also falsy — use explicit null/undefined guards instead.\n\nSince [[nullable input types require explicit coalescing to match state types]], this pattern complements the `|| null` coalescing approach for different assignment scenarios.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:57:43.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Using if (action.input.field) avoids type errors from !== undefined when the field type is string | null; booleans need explicit checks",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:57:55.721Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:19.455Z"
+}

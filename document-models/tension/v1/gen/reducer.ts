@@ -1,9 +1,8 @@
-// TODO: remove eslint-disable rules once refactor is done
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model/core";
-import type { TensionPHState } from "@powerhousedao/knowledge-note/document-models/tension/v1";
+import type { Reducer, StateReducer } from "document-model";
+import { isDocumentAction, createReducer } from "document-model";
+import type { TensionPHState } from "document-models/tension/v1";
 
 import { tensionTensionManagementOperations } from "../src/reducers/tension-management.js";
 
@@ -76,4 +75,4 @@ const stateReducer: StateReducer<TensionPHState> = (
   }
 };
 
-export const reducer = createReducer<TensionPHState>(stateReducer);
+export const reducer: Reducer<TensionPHState> = createReducer(stateReducer);

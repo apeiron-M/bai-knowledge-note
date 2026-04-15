@@ -323,10 +323,6 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
 
   async onDisconnect(): Promise<void> {
     // Intentionally no-op: preserve indexed data across restarts.
-    // The reactor does not replay historical operations on reconnect,
-    // so wiping tables here would leave the index permanently empty
-    // until new operations arrive. Use knowledgeGraphReindex mutation
-    // to rebuild if needed.
   }
 
   private async deleteNode(documentId: string): Promise<void> {

@@ -5,9 +5,9 @@ export const documentModel: DocumentModelGlobalState = {
   name: "HealthReport",
   author: {
     name: "BAI",
-    website: "https://bai.dev",
+    website: "https://bai.powerhouse.io/",
   },
-  extension: "hr.phd",
+  extension: "",
   description:
     "Vault diagnostics \u2014 point-in-time health report with graph metrics, check results, and recommendations.",
   specifications: [
@@ -30,35 +30,35 @@ export const documentModel: DocumentModelGlobalState = {
         {
           id: "report-management",
           name: "report-management",
-          description: "Health report generation",
           operations: [
             {
               id: "generate-report",
               name: "GENERATE_REPORT",
-              description: "Generate a health report",
+              scope: "global",
+              errors: [],
               schema:
                 "input GraphMetricsInput {\n    noteCount: Int!\n    mocCount: Int!\n    connectionCount: Int!\n    density: Float!\n    orphanCount: Int!\n    danglingLinkCount: Int!\n    mocCoverage: Float!\n    averageLinksPerNote: Float!\n}\n\ninput GenerateReportInput {\n    generatedAt: DateTime!\n    generatedBy: String\n    mode: String!\n    overallStatus: HealthStatus!\n    graphMetrics: GraphMetricsInput!\n    recommendations: [String!]!\n}",
-              template: "Generate a health report",
               reducer:
                 "state.generatedAt = action.input.generatedAt;\nstate.generatedBy = action.input.generatedBy || null;\nstate.mode = action.input.mode;\nstate.overallStatus = action.input.overallStatus;\nstate.graphMetrics = action.input.graphMetrics;\nstate.recommendations = action.input.recommendations;\nstate.checks = [];",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Generate a health report",
+              description: "Generate a health report",
             },
             {
               id: "add-check",
               name: "ADD_CHECK",
-              description: "Add a health check result",
+              scope: "global",
+              errors: [],
               schema:
                 "input AddCheckInput {\n    id: OID!\n    category: HealthCategory!\n    status: HealthStatus!\n    message: String!\n    affectedItems: [String!]!\n}",
-              template: "Add a health check result",
               reducer:
                 "state.checks.push({\n    id: action.input.id,\n    category: action.input.category,\n    status: action.input.status,\n    message: action.input.message,\n    affectedItems: action.input.affectedItems,\n});",
-              errors: [],
               examples: [],
-              scope: "global",
+              template: "Add a health check result",
+              description: "Add a health check result",
             },
           ],
+          description: "Health report generation",
         },
       ],
       version: 1,

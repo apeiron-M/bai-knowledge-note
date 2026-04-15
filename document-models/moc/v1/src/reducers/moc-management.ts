@@ -1,10 +1,10 @@
-import type { MocMocManagementOperations } from "@powerhousedao/knowledge-note/document-models/moc/v1";
 import {
   DuplicateCoreIdeaError,
   CoreIdeaNotFoundError,
   TensionNotFoundError,
   DuplicateChildMocError,
 } from "../../gen/moc-management/error.js";
+import type { MocMocManagementOperations } from "document-models/moc/v1";
 
 export const mocMocManagementOperations: MocMocManagementOperations = {
   createMocOperation(state, action) {
@@ -66,7 +66,7 @@ export const mocMocManagementOperations: MocMocManagementOperations = {
         if (idea) idea.sortOrder = i;
         return idea;
       })
-      .filter((x): x is NonNullable<typeof x> => x != null);
+      .filter((idea): idea is NonNullable<typeof idea> => Boolean(idea));
     state.coreIdeas = reordered;
   },
   addTensionOperation(state, action) {

@@ -1,0 +1,105 @@
+{
+  "id": "f61a6d62-ef04-4c99-9075-7c77e48561fc",
+  "name": "cli-identity-did-key-ethereum-delegation",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-f61a6d62-ea634214",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "ea634214-2241-4e66-93df-38ca5bd7b665"
+        },
+        {
+          "id": "l-f61a6d62-e5a5f613",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "e5a5f613-4884-4980-9412-95c85fab9b2b"
+        },
+        {
+          "id": "l-d-f61a6d62-2ed7dc19",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "2ed7dc19-8e87-4e3a-83fc-b6ac5e343f10"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "The ph login command generates a did:key keypair and delegates it to act on behalf of an Ethereum address via Renown",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-f61a6d62-0",
+          "name": "cli",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-f61a6d62-1",
+          "name": "identity",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-f61a6d62-2",
+          "name": "renown",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-f61a6d62-3",
+          "name": "authentication",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Running `ph login` generates a cryptographic keypair (ECDSA P-256) stored in `.keypair.json`, creates a DID in `did:key:...` format, opens the browser to Renown portal for the user to authorize the CLI DID to act on behalf of their Ethereum address, and stores credentials in `.auth.json`. Identity files are per-project (not global), enabling different identities per project. The Switchboard uses identity via `ph switchboard --use-identity` to authenticate with remote drives (generate bearer tokens), sign operations, and present its DID to remote services. CI/CD environments can provide the keypair via `PH_RENOWN_PRIVATE_KEY` environment variable. The CLI DID cannot sign Ethereum transactions or access the wallet -- it can only authenticate with Renown-trusting services.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PROCEDURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "CLI creates ECDSA P-256 keypair stored in .keypair.json, opens browser for wallet authorization, stores credentials per-project.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:54:54.325Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:08:13.354Z"
+}

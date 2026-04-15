@@ -1,0 +1,154 @@
+{
+  "id": "0e016eaa-7f5b-4cd4-8ee4-6659cb951d35",
+  "name": "moc-reactor-and-drives",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "DOMAIN",
+      "title": "Reactor and Drives",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "ci-rad-1",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "441bdfa9-4495-4ff3-9096-dcece8342063",
+          "sortOrder": 1,
+          "contextPhrase": "The reactor is the central backend service that hosts drives and manages document persistence, synchronization, and access control — without it, documents have no durable home and no way to reach multiple clients."
+        },
+        {
+          "id": "ci-rad-2",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "9455b19b-56f3-4590-91a3-b9208979cfad",
+          "sortOrder": 2,
+          "contextPhrase": "Drives are themselves documents within reactors, creating a recursive self-describing architecture where the container format and the content format share the same event-sourced foundation."
+        },
+        {
+          "id": "ci-rad-3",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "e31dde6a-da26-45a7-82dd-b3562e211ca3",
+          "sortOrder": 3,
+          "contextPhrase": "The distinction between the Reactor interface and ReactorClient is crucial — one defines the contract for server-side document management while the other provides the network-aware client that handles connection, retry, and protocol details."
+        },
+        {
+          "id": "ci-rad-4",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "2f3d3479-f14c-4641-853e-07e631d8b0e9",
+          "sortOrder": 4,
+          "contextPhrase": "The fluent ReactorBuilder API lets developers compose a reactor from pluggable components — storage adapters, processors, authentication layers — in a readable chain that makes configuration explicit and testable."
+        },
+        {
+          "id": "ci-rad-5",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "e92f8d11-1cc8-4190-b82d-ac0c0f95fdcd",
+          "sortOrder": 5,
+          "contextPhrase": "Reactor subscriptions deliver real-time document change notifications, enabling live collaborative editing and reactive UIs that update instantly when any participant modifies shared state."
+        },
+        {
+          "id": "ci-rad-6",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "9d46fd36-1f6f-451e-91b3-680d49707b60",
+          "sortOrder": 6,
+          "contextPhrase": "Consistency tokens provide read-after-write guarantees by letting clients prove they have seen a specific version, preventing stale reads in eventually-consistent distributed deployments."
+        },
+        {
+          "id": "ci-rad-7",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "d88762b2-e79d-454e-b88d-50388975ffec",
+          "sortOrder": 7,
+          "contextPhrase": "Abort signal support in reactor operations enables graceful cancellation of long-running tasks, preventing resource leaks and improving responsiveness when users navigate away or close connections."
+        },
+        {
+          "id": "ci-rad-8",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "2c9e79f2-13dc-4b00-9f56-30d45850b215",
+          "sortOrder": 8,
+          "contextPhrase": "Browser hooks like useReactorDocument bridge the gap between server-side reactor state and React component trees, providing the same reactive programming model frontend developers expect while hiding synchronization complexity."
+        },
+        {
+          "id": "ci-rad-9",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "9494e068-19d8-4e83-b645-48f886c383d9",
+          "sortOrder": 9,
+          "contextPhrase": "Read models in the pre-ready phase allow processors to build derived views before the reactor starts serving requests, ensuring that query endpoints are populated and consistent from the first client connection."
+        },
+        {
+          "id": "ci-rad-10",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "838e4030-d03b-4113-9c74-a89ee5be93a0",
+          "sortOrder": 10,
+          "contextPhrase": "The Reactor MCP integration exposes document operations to AI agents through the Model Context Protocol, enabling LLMs to create, query, and mutate documents using the same permission model as human users."
+        },
+        {
+          "id": "ci-new-0e016e-32710e",
+          "addedAt": "2026-04-03T14:25:01.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "32710e46-8de4-44a7-9761-2817186a1acf",
+          "sortOrder": 100,
+          "contextPhrase": "Comprehensive MCP workflow guide — sequencing, batching, two-step modification patterns"
+        },
+        {
+          "id": "ci-new-0e016e-eefe77",
+          "addedAt": "2026-04-03T14:25:02.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "eefe7753-8f5f-476e-904d-3d6b4136dceb",
+          "sortOrder": 101,
+          "contextPhrase": "Performance pattern: batch independent actions in a single addActions call to reduce round trips"
+        },
+        {
+          "id": "ci-new-0e016e-d52172",
+          "addedAt": "2026-04-03T14:25:02.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "d5217200-a90a-45f0-a5e4-0d4121cd7e78",
+          "sortOrder": 102,
+          "contextPhrase": "Safety rule: always introspect the schema before dispatching addActions to catch type mismatches early"
+        },
+        {
+          "id": "ci-new-0e016e-5d42f4",
+          "addedAt": "2026-04-03T14:25:03.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "5d42f4f7-d32c-4739-8112-c9b92b8c6529",
+          "sortOrder": 103,
+          "contextPhrase": "Critical gotcha: use DELETE_NODE not DELETE_FILE for drive operations — wrong op silently fails"
+        },
+        {
+          "id": "ci-new-0e016e-9001f8",
+          "addedAt": "2026-04-03T14:25:03.000Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "9001f889-4477-4661-a4c7-e7cde1d81331",
+          "sortOrder": 104,
+          "contextPhrase": "Framework rule: IDs come from createDocument, never set manually — prevents sync collisions"
+        }
+      ],
+      "createdAt": "2026-04-02T13:00:00.000Z",
+      "noteCount": 15,
+      "parentRef": null,
+      "updatedAt": "2026-04-02T13:00:00.000Z",
+      "agentNotes": [],
+      "description": "How reactors serve as the backend runtime for drives, managing document lifecycle, synchronization, subscriptions, and client connectivity.",
+      "orientation": "Reactors are the server-side execution environment where Powerhouse documents live, sync, and evolve. A reactor hosts one or more drives — themselves documents — that organize content into collaborative workspaces. Understanding the reactor architecture means grasping how the ReactorClient abstraction hides network complexity, how the fluent ReactorBuilder API composes middleware and processors, how subscriptions push real-time document changes to connected clients, and how consistency tokens ensure read-after-write guarantees in distributed scenarios. This MOC maps the complete server-side story from construction through operation, including browser-side hooks that bridge the gap to React UIs and the MCP integration that opens the reactor to AI agents.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-02T21:10:28.456Z",
+  "lastModifiedAtUtcIso": "2026-04-03T14:25:04.027Z"
+}

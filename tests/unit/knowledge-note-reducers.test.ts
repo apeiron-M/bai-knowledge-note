@@ -3,7 +3,7 @@ import {
   reducer,
   utils,
   actions,
-} from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
+} from "document-models/knowledge-note/v1";
 
 // ─── Content Module ──────────────────────────────────────────────────────────
 

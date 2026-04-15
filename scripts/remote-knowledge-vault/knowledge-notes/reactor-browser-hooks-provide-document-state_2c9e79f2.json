@@ -1,0 +1,88 @@
+{
+  "id": "2c9e79f2-13dc-4b00-9f56-30d45850b215",
+  "name": "reactor-browser-hooks-provide-document-state",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-2c9e79f2-441bdfa9",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "441bdfa9-4495-4ff3-9096-dcece8342063"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Powerhouse React hooks from @powerhousedao/reactor-browser derive all data from the Reactor and return document-dispatch tuples for mutation",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-2c9e79f2-0",
+          "name": "react-hooks",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-2c9e79f2-1",
+          "name": "reactor-browser",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-2c9e79f2-2",
+          "name": "api-reference",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `@powerhousedao/reactor-browser` package provides dozens of React hooks organized into categories: selected document, document by ID, document cache, drives, nodes/folders, items in drive/folder, node actions, modals, revision history, timeline, and config. The core pattern is a `[document, dispatch]` tuple where dispatch has the signature `(actionOrActions: Action | Action[] | undefined, onErrors?: (errors: Error[]) => void) => void`. All hook data ultimately derives from the Reactor, which manages asynchronous eventually-consistent state of drives and documents. Suspense-aware variants like `useDocument` suspend rendering while loading, while `useGetDocumentAsync` returns status/data/error without suspending.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "REFERENCE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Hooks like useSelectedDocument return [document, dispatch] tuples where dispatch accepts actions or action arrays with optional error callbacks.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:53:56.264Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:23.816Z"
+}

@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -8,7 +8,7 @@ import {
   addCheck,
   GenerateReportInputSchema,
   AddCheckInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/health-report/v1";
+} from "document-models/health-report/v1";
 
 describe("ReportManagementOperations", () => {
   it("should handle generateReport operation", () => {

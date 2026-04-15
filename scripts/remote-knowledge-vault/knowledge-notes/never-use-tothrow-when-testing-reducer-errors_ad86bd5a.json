@@ -1,0 +1,94 @@
+{
+  "id": "ad86bd5a-0f8d-4253-a429-bf02bcf19925",
+  "name": "never-use-tothrow-when-testing-reducer-errors",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-ad86bd5a-206a62c7-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "error-names-must-end-with-error-and-use-pascalcase",
+          "targetDocumentId": "206a62c7-3bc5-4495-bfff-07ba8ed9b55c"
+        },
+        {
+          "id": "l-ad86bd5a-137ec0b9-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "operation-error-index-must-match-the-number-of-prior-dispatches",
+          "targetDocumentId": "137ec0b9-67ce-4544-b779-e6b3e6151f4c"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "never use toThrow when testing reducer errors",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-ad86bd5a-0",
+          "name": "reducer patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-ad86bd5a-1",
+          "name": "testing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-ad86bd5a-2",
+          "name": "error handling",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# never use toThrow when testing reducer errors\n\nThe most common testing mistake with Powerhouse reducers:\n\n```typescript\n// ❌ WRONG — this will always pass (no error is thrown to the caller)\nexpect(() => reducer(document, setName({ name: \"invalid\" }))).toThrow();\n\n// ✅ CORRECT — check the operation's error property\nconst updated = reducer(document, setName({ name: \"invalid\" }));\nexpect(updated.operations.global[0].error).toBe(\"Name is not allowed\");\nexpect(updated.state.global.name).toBe(initialState); // state unchanged\n```\n\nSince [[operation errors are recorded on operations not thrown to callers]], the error is captured silently on the operation object. The reducer call itself never throws — it always returns a document. The error lives in `operations.global[N].error`.\n\nSince [[operation error index must match the number of prior dispatches]], make sure you check the right index.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:59:47.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Reducer errors are captured on the operation object rather than propagated; expect(() => ...).toThrow() will never catch them",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:59:47.480Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:32.583Z"
+}

@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { Source } from "../module.js";
 import type { SourceAction, SourcePHState } from "./types.js";
 

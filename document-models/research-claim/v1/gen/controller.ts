@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { ResearchClaim } from "../module.js";
 import type { ResearchClaimAction, ResearchClaimPHState } from "./types.js";
 

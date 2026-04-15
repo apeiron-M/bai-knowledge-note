@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -20,7 +20,7 @@ import {
   AddExtractionCategoryInputSchema,
   ToggleExtractionCategoryInputSchema,
   ToggleFeatureInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/vault-config/v1";
+} from "document-models/vault-config/v1";
 
 describe("ConfigManagementOperations", () => {
   it("should handle initializeConfig operation", () => {

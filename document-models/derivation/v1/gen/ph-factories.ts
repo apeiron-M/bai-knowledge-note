@@ -2,14 +2,14 @@
  * Factory methods for creating DerivationDocument instances
  */
 import type { PHAuthState, PHDocumentState, PHBaseState } from "document-model";
-import { createBaseState, defaultBaseState } from "document-model/core";
+import { createBaseState, defaultBaseState } from "document-model";
 import type {
   DerivationDocument,
-  DerivationLocalState,
   DerivationGlobalState,
+  DerivationLocalState,
   DerivationPHState,
 } from "./types.js";
-import { createDocument } from "./utils.js";
+import { utils } from "./utils.js";
 
 export function defaultGlobalState(): DerivationGlobalState {
   return {
@@ -79,7 +79,7 @@ export function createDerivationDocument(
     local?: Partial<DerivationLocalState>;
   }>,
 ): DerivationDocument {
-  const document = createDocument(
+  const document = utils.createDocument(
     state
       ? createState(
           createBaseState(state.auth, state.document),

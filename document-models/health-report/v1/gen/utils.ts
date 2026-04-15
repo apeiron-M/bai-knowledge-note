@@ -5,20 +5,20 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type {
-  HealthReportGlobalState,
-  HealthReportLocalState,
-} from "./types.js";
-import type { HealthReportPHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { healthReportDocumentType } from "./document-type.js";
 import {
-  isHealthReportDocument,
   assertIsHealthReportDocument,
-  isHealthReportState,
   assertIsHealthReportState,
+  isHealthReportDocument,
+  isHealthReportState,
 } from "./document-schema.js";
+import type {
+  HealthReportGlobalState,
+  HealthReportLocalState,
+  HealthReportPHState,
+} from "./types.js";
 
 export const initialGlobalState: HealthReportGlobalState = {
   generatedAt: null,
@@ -32,7 +32,7 @@ export const initialGlobalState: HealthReportGlobalState = {
 export const initialLocalState: HealthReportLocalState = {};
 
 export const utils: DocumentModelUtils<HealthReportPHState> = {
-  fileExtension: "hr.phd",
+  fileExtension: "",
   createState(state) {
     return {
       ...defaultBaseState(),
@@ -69,12 +69,3 @@ export const utils: DocumentModelUtils<HealthReportPHState> = {
     return assertIsHealthReportDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

@@ -1,9 +1,8 @@
-// TODO: remove eslint-disable rules once refactor is done
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model/core";
-import type { SourcePHState } from "@powerhousedao/knowledge-note/document-models/source/v1";
+import type { Reducer, StateReducer } from "document-model";
+import { isDocumentAction, createReducer } from "document-model";
+import type { SourcePHState } from "document-models/source/v1";
 
 import { sourceSourceManagementOperations } from "../src/reducers/source-management.js";
 
@@ -72,4 +71,4 @@ const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {
   }
 };
 
-export const reducer = createReducer<SourcePHState>(stateReducer);
+export const reducer: Reducer<SourcePHState> = createReducer(stateReducer);

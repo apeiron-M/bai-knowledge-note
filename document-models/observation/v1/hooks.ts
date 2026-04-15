@@ -8,7 +8,7 @@ import {
 import type {
   ObservationAction,
   ObservationDocument,
-} from "@powerhousedao/knowledge-note/document-models/observation/v1";
+} from "document-models/observation/v1";
 import {
   assertIsObservationDocument,
   isObservationDocument,

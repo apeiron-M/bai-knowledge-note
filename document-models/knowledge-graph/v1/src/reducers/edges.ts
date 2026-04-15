@@ -1,8 +1,8 @@
-import type { KnowledgeGraphEdgesOperations } from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
 import {
   DuplicateEdgeError,
   EdgeNotFoundError,
 } from "../../gen/edges/error.js";
+import type { KnowledgeGraphEdgesOperations } from "document-models/knowledge-graph/v1";
 
 export const knowledgeGraphEdgesOperations: KnowledgeGraphEdgesOperations = {
   addEdgeOperation(state, action) {

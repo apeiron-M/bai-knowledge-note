@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -18,7 +18,7 @@ import {
   PatchContentInputSchema,
   SetMetadataFieldInputSchema,
   SetMetadataListFieldInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/knowledge-note/v1";
+} from "document-models/knowledge-note/v1";
 
 describe("ContentOperations", () => {
   it("should handle setTitle operation", () => {

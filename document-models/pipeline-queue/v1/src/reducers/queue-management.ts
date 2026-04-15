@@ -1,8 +1,8 @@
-import type { PipelineQueueQueueManagementOperations } from "@powerhousedao/knowledge-note/document-models/pipeline-queue/v1";
 import {
   TaskNotFoundError,
   InvalidTaskStatusError,
 } from "../../gen/queue-management/error.js";
+import type { PipelineQueueQueueManagementOperations } from "document-models/pipeline-queue/v1";
 
 export const pipelineQueueQueueManagementOperations: PipelineQueueQueueManagementOperations =
   {

@@ -1,0 +1,99 @@
+{
+  "id": "628710fd-625e-4cf2-912f-ecf8c66d74df",
+  "name": "css-scoped-via-data-attributes",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-628710fd-5c8a3d69",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "5c8a3d69-9631-4d7b-a51d-bc8ef2270656"
+        },
+        {
+          "id": "l-d-628710fd-46dccbff",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "46dccbff-2afd-450b-bb9e-83d7ef884e3e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Connect wraps editors in containers with data-editor and data-document-type attributes enabling scoped CSS without affecting other editors",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-628710fd-0",
+          "name": "css",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-628710fd-1",
+          "name": "editors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-628710fd-2",
+          "name": "connect",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-628710fd-3",
+          "name": "styling",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Connect renders editors inside `#document-editor-container` (outer, `flex-1`) and `#document-editor-context` (inner, `relative h-full`). Both carry `data-document-type` attributes; the inner also has `data-editor`. To scope styles to one editor: `#document-editor-context[data-editor=\"my-editor-id\"] { ... }`. The `data-editor` value comes from the `id` field in the editor module config. Targeting container IDs without data-attribute scoping affects ALL editors. Style imports must go in `styles.css` (not `.tsx` files) for production builds, because `tailwindcss/cli` only processes file imports.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "CSS selectors like #document-editor-context[data-editor='my-editor'] scope styles to a specific editor.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:52:03.976Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:06:54.228Z"
+}

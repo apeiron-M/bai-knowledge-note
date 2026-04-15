@@ -1,0 +1,93 @@
+{
+  "id": "771804dd-9987-45de-baeb-416a3cea6951",
+  "name": "never-import-error-classes-manually-in-reducer-code",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-771804dd-5a100816-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "error-classes-in-reducers-are-auto-imported-by-name-reference",
+          "targetDocumentId": "5a100816-2f85-4951-9b41-2ca7853fed40"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "never import error classes manually in reducer code",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-771804dd-0",
+          "name": "reducer patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-771804dd-1",
+          "name": "gotchas",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-771804dd-2",
+          "name": "error handling",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-771804dd-3",
+          "name": "imports",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# never import error classes manually in reducer code\n\n```typescript\n// ❌ Don't manually import error classes\nimport { MissingIdError } from \"../../gen/module-name/error.js\";\nthrow new MissingIdError(\"message\");\n\n// ❌ Don't use nested access patterns\nthrow new errors.ModuleName.MissingIdError(\"message\");\n\n// ✅ Just reference the error by name — auto-imported\nthrow new MissingIdError(\"message\");\n```\n\nSince [[error classes in reducers are auto-imported by name reference]], the code generator scans for error class names and inserts the correct imports. Manual imports conflict with auto-generated ones, creating duplicate import errors or path mismatches.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[gotchas]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:59:03.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Importing from gen/module-name/error.js creates duplicate imports; the code generator handles imports when you reference errors by name",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T13:59:04.291Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:07.135Z"
+}

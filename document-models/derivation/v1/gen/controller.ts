@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { Derivation } from "../module.js";
 import type { DerivationAction, DerivationPHState } from "./types.js";
 

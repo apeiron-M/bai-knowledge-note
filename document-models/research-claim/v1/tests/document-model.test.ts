@@ -17,7 +17,7 @@ import {
   assertIsResearchClaimDocument,
   isResearchClaimState,
   assertIsResearchClaimState,
-} from "@powerhousedao/knowledge-note/document-models/research-claim/v1";
+} from "document-models/research-claim/v1";
 import { ZodError } from "zod";
 
 describe("ResearchClaim Document Model", () => {

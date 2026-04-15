@@ -1,8 +1,8 @@
 import type {
   ProcessorRecord,
   IProcessorHostModule,
-} from "@powerhousedao/reactor-browser";
-import { type ProcessorFilter } from "@powerhousedao/shared/processors";
+} from "@powerhousedao/shared/processors";
+import type { ProcessorFilter } from "@powerhousedao/shared/processors";
 import type { PHDocumentHeader } from "document-model";
 import { GraphIndexerProcessor } from "./index.js";
 

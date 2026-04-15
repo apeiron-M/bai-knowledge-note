@@ -8,7 +8,7 @@ import {
 import type {
   VaultConfigAction,
   VaultConfigDocument,
-} from "@powerhousedao/knowledge-note/document-models/vault-config/v1";
+} from "document-models/vault-config/v1";
 import {
   assertIsVaultConfigDocument,
   isVaultConfigDocument,

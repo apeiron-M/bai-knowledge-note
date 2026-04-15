@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -12,7 +12,7 @@ import {
   SetSourceStatusInputSchema,
   AddExtractedClaimInputSchema,
   RecordExtractionStatsInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/source/v1";
+} from "document-models/source/v1";
 
 describe("SourceManagementOperations", () => {
   it("should handle ingestSource operation", () => {

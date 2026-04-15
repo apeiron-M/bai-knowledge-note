@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -18,7 +18,7 @@ import {
   FailTaskInputSchema,
   BlockTaskInputSchema,
   UnblockTaskInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/pipeline-queue/v1";
+} from "document-models/pipeline-queue/v1";
 
 describe("QueueManagementOperations", () => {
   it("should handle addTask operation", () => {

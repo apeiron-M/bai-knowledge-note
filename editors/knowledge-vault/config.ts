@@ -1,7 +1,7 @@
-import type { PHDriveEditorConfig } from "@powerhousedao/reactor-browser";
+import type { PHAppConfig } from "@powerhousedao/reactor-browser";
 
-/** Editor config for the KnowledgeVault drive app */
-export const editorConfig: PHDriveEditorConfig = {
+/** App config for the KnowledgeVault drive (allowed types, drag-and-drop, etc.) */
+export const appConfig: PHAppConfig = {
   isDragAndDropEnabled: true,
   allowedDocumentTypes: [
     "bai/knowledge-note",

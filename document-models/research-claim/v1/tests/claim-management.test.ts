@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -12,7 +12,7 @@ import {
   AddResearchConnectionInputSchema,
   RemoveResearchConnectionInputSchema,
   UpdateClaimContentInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/research-claim/v1";
+} from "document-models/research-claim/v1";
 
 describe("ClaimManagementOperations", () => {
   it("should handle createClaim operation", () => {

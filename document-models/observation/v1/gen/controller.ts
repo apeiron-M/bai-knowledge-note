@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { Observation } from "../module.js";
 import type { ObservationAction, ObservationPHState } from "./types.js";
 

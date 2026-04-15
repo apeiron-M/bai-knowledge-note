@@ -1,10 +1,10 @@
 export * from "./content/creators.js";
-export * as contentActions from "./content/creators.js";
+export * as knowledgeNoteContentActions from "./content/creators.js";
 export * from "./provenance/creators.js";
-export * as provenanceActions from "./provenance/creators.js";
+export * as knowledgeNoteProvenanceActions from "./provenance/creators.js";
 export * from "./linking/creators.js";
-export * as linkingActions from "./linking/creators.js";
+export * as knowledgeNoteLinkingActions from "./linking/creators.js";
 export * from "./lifecycle/creators.js";
-export * as lifecycleActions from "./lifecycle/creators.js";
+export * as knowledgeNoteLifecycleActions from "./lifecycle/creators.js";
 export * from "./local/creators.js";
-export * as localActions from "./local/creators.js";
+export * as knowledgeNoteLocalActions from "./local/creators.js";

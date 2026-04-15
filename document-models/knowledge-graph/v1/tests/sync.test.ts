@@ -1,4 +1,4 @@
-import { generateMock } from "@powerhousedao/common/utils";
+import { generateMock } from "document-model";
 import { describe, expect, it } from "vitest";
 import {
   reducer,
@@ -6,7 +6,7 @@ import {
   isKnowledgeGraphDocument,
   syncGraph,
   SyncGraphInputSchema,
-} from "@powerhousedao/knowledge-note/document-models/knowledge-graph/v1";
+} from "document-models/knowledge-graph/v1";
 
 describe("SyncOperations", () => {
   it("should handle syncGraph operation", () => {

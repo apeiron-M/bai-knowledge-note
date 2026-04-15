@@ -1,0 +1,88 @@
+{
+  "id": "eefe7753-8f5f-476e-904d-3d6b4136dceb",
+  "name": "batch-multiple-actions-in-a-single-addactions-call-to-minimize-round-trips",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-eefe7753-d5217200-o",
+          "linkType": "RELATES_TO",
+          "targetTitle": "always-check-document-model-schema-before-calling-addactions",
+          "targetDocumentId": "d5217200-a90a-45f0-a5e4-0d4121cd7e78"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "batch multiple actions in a single addActions call to minimize round trips",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-eefe7753-0",
+          "name": "MCP workflows",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-eefe7753-1",
+          "name": "performance",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-eefe7753-2",
+          "name": "batch operations",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# batch multiple actions in a single addActions call to minimize round trips\n\nThe `addActions` MCP tool accepts an array of actions. Instead of making separate calls for each operation, batch them:\n\n```typescript\n// ✅ One call with multiple actions\naddActions({\n  documentId: \"...\",\n  actions: [\n    { type: \"SET_MODEL_NAME\", scope: \"global\", input: { name: \"Invoice\" } },\n    { type: \"SET_MODEL_DESCRIPTION\", scope: \"global\", input: { description: \"...\" } },\n    { type: \"ADD_MODULE\", scope: \"global\", input: { id: \"...\", name: \"header\" } },\n  ]\n});\n\n// ❌ Three separate calls — slower and more failure-prone\n```\n\nBatching reduces network overhead and ensures related changes are applied atomically. If one action in a batch fails, the error is visible without having lost context from intermediate calls.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:00:55.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Each addActions call has overhead; combining related operations into one call is faster and reduces partial failure risk",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-03T14:00:56.299Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:08:09.910Z"
+}

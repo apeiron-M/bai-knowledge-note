@@ -1,4 +1,4 @@
-import { PHDocumentController } from "document-model/core";
+import { PHDocumentController } from "document-model";
 import { VaultConfig } from "../module.js";
 import type { VaultConfigAction, VaultConfigPHState } from "./types.js";
 

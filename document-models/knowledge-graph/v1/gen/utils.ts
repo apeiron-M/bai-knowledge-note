@@ -5,20 +5,20 @@ import {
   baseLoadFromInput,
   defaultBaseState,
   generateId,
-} from "document-model/core";
-import type {
-  KnowledgeGraphGlobalState,
-  KnowledgeGraphLocalState,
-} from "./types.js";
-import type { KnowledgeGraphPHState } from "./types.js";
+} from "document-model";
 import { reducer } from "./reducer.js";
 import { knowledgeGraphDocumentType } from "./document-type.js";
 import {
-  isKnowledgeGraphDocument,
   assertIsKnowledgeGraphDocument,
-  isKnowledgeGraphState,
   assertIsKnowledgeGraphState,
+  isKnowledgeGraphDocument,
+  isKnowledgeGraphState,
 } from "./document-schema.js";
+import type {
+  KnowledgeGraphGlobalState,
+  KnowledgeGraphLocalState,
+  KnowledgeGraphPHState,
+} from "./types.js";
 
 export const initialGlobalState: KnowledgeGraphGlobalState = {
   nodes: [],
@@ -28,7 +28,7 @@ export const initialGlobalState: KnowledgeGraphGlobalState = {
 export const initialLocalState: KnowledgeGraphLocalState = {};
 
 export const utils: DocumentModelUtils<KnowledgeGraphPHState> = {
-  fileExtension: "kg.phd",
+  fileExtension: "",
   createState(state) {
     return {
       ...defaultBaseState(),
@@ -65,12 +65,3 @@ export const utils: DocumentModelUtils<KnowledgeGraphPHState> = {
     return assertIsKnowledgeGraphDocument(document);
   },
 };
-
-export const createDocument = utils.createDocument;
-export const createState = utils.createState;
-export const saveToFileHandle = utils.saveToFileHandle;
-export const loadFromInput = utils.loadFromInput;
-export const isStateOfType = utils.isStateOfType;
-export const assertIsStateOfType = utils.assertIsStateOfType;
-export const isDocumentOfType = utils.isDocumentOfType;
-export const assertIsDocumentOfType = utils.assertIsDocumentOfType;

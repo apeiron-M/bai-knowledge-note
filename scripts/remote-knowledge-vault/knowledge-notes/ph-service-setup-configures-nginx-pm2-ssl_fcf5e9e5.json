@@ -1,0 +1,110 @@
+{
+  "id": "fcf5e9e5-9e93-43ad-a4e1-c7cd35124a98",
+  "name": "ph-service-setup-configures-nginx-pm2-ssl",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-fcf5e9e5-346189ee",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "346189ee-4888-4031-aec8-27d0e65e6030"
+        },
+        {
+          "id": "l-fcf5e9e5-a4517948",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "a4517948-7e2e-42bf-8570-9a238c42b107"
+        },
+        {
+          "id": "l-d-fcf5e9e5-119bff8a",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "119bff8a-0626-4d08-a04d-aff9f5ef7613"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "The ph service setup command configures Nginx as reverse proxy, PM2 for process management, and SSL certificates for production deployment",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-fcf5e9e5-0",
+          "name": "deployment",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-fcf5e9e5-1",
+          "name": "nginx",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-fcf5e9e5-2",
+          "name": "pm2",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-fcf5e9e5-3",
+          "name": "ssl",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-fcf5e9e5-4",
+          "name": "production",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "For VM/server deployment: `curl -fsSL https://apps.powerhouse.io/install | bash` installs Node 24, pnpm, and ph-cmd. Then `ph init <project>` and `ph service setup` runs an interactive wizard configuring: (1) Package installation (ph install custom packages); (2) Database (local PostgreSQL with auto-generated password, or remote connection URL); (3) SSL (Let's Encrypt for production with domain prompts, or self-signed for dev); (4) Domain setup (connect and switchboard subdomains). The script installs and configures Nginx with WebSocket support, security headers, and static file serving. PM2 handles auto-restart on crash and boot startup. Manage with `ph service start|stop|restart|status`.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PROCEDURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Interactive setup handles package install, DB config (local/remote PG), SSL (Let's Encrypt or self-signed), and domain routing.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:53:32.015Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:08:16.103Z"
+}

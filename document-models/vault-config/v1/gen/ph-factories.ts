@@ -2,14 +2,14 @@
  * Factory methods for creating VaultConfigDocument instances
  */
 import type { PHAuthState, PHDocumentState, PHBaseState } from "document-model";
-import { createBaseState, defaultBaseState } from "document-model/core";
+import { createBaseState, defaultBaseState } from "document-model";
 import type {
   VaultConfigDocument,
-  VaultConfigLocalState,
   VaultConfigGlobalState,
+  VaultConfigLocalState,
   VaultConfigPHState,
 } from "./types.js";
-import { createDocument } from "./utils.js";
+import { utils } from "./utils.js";
 
 export function defaultGlobalState(): VaultConfigGlobalState {
   return {
@@ -82,7 +82,7 @@ export function createVaultConfigDocument(
     local?: Partial<VaultConfigLocalState>;
   }>,
 ): VaultConfigDocument {
-  const document = createDocument(
+  const document = utils.createDocument(
     state
       ? createState(
           createBaseState(state.auth, state.document),

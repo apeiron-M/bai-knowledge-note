@@ -1,0 +1,118 @@
+{
+  "id": "d277c375-8f69-47a3-844a-eecaadb44bee",
+  "name": "editor-hooks-connect-react-to-documents",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "l-d277c375-71d23d07",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "71d23d07-bc96-4873-98bc-5bfa192bfcaf"
+        },
+        {
+          "id": "l-d277c375-2c9e79f2",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "2c9e79f2-13dc-4b00-9f56-30d45850b215"
+        },
+        {
+          "id": "l-fix-d277c375-9807054d",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "9807054d-4250-4cf7-8518-fb781f232c38"
+        },
+        {
+          "id": "l-fix-d277c375-63a3392b",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "63a3392b-49c1-4e7d-92be-c1fad38c2bbd"
+        },
+        {
+          "id": "l-d-d277c375-33462e12",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "33462e12-de71-40d4-ad2d-5f33c8365809"
+        },
+        {
+          "id": "l-d277c375-020a5eed-f",
+          "linkType": "RELATES_TO",
+          "targetTitle": "useselecteddocument-hook-is-auto-generated-per-document-model",
+          "targetDocumentId": "020a5eed-83fc-4dea-92ed-110db1c80806"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Generated hooks like useSelectedDocument connect React editors to document state and dispatch",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-d277c375-0",
+          "name": "editors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-d277c375-1",
+          "name": "react-hooks",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-d277c375-2",
+          "name": "state-management",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "When Powerhouse generates code for a document model, it creates React hooks for editor integration. For a `TodoList` model, the generated hook is `useSelectedTodoListDocument`.\n\nUsage pattern:\n```tsx\nconst [selectedTodoList, dispatch] = useSelectedTodoListDocument();\n```\n\nThis provides:\n1. **Document state** (`selectedTodoList`) - The current document including `state.global`, `name`, `operations`, etc.\n2. **Dispatch function** - Send actions to the reducer to modify the document\n\nThe dispatch function works with generated action creators:\n```tsx\nimport { addTodoItem, updateTodoItem, deleteTodoItem } from \"...\";\n\ndispatch(addTodoItem({ text: \"Buy groceries\" }));\ndispatch(updateTodoItem({ id: itemId, checked: true }));\ndispatch(deleteTodoItem({ id: itemId }));\n```\n\nThis follows React's `useReducer` pattern. Any component can use the same hook - you don't need to be in the parent component to dispatch updates. The hook automatically connects to the currently selected document.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The hook returns [documentState, dispatch] following React's useReducer pattern, enabling read and write from components.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-02T20:50:48.992Z",
+  "lastModifiedAtUtcIso": "2026-04-03T16:07:52.131Z"
+}

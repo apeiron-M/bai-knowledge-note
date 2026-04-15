@@ -1,9 +1,8 @@
-// TODO: remove eslint-disable rules once refactor is done
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
-import type { StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model/core";
-import type { ObservationPHState } from "@powerhousedao/knowledge-note/document-models/observation/v1";
+import type { Reducer, StateReducer } from "document-model";
+import { isDocumentAction, createReducer } from "document-model";
+import type { ObservationPHState } from "document-models/observation/v1";
 
 import { observationObservationManagementOperations } from "../src/reducers/observation-management.js";
 
@@ -76,4 +75,4 @@ const stateReducer: StateReducer<ObservationPHState> = (
   }
 };
 
-export const reducer = createReducer<ObservationPHState>(stateReducer);
+export const reducer: Reducer<ObservationPHState> = createReducer(stateReducer);
