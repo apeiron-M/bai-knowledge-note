@@ -1,4 +1,4 @@
-import { type ISubgraph } from "@powerhousedao/reactor-api";
+import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getDb, getQuery } from "./helpers/db.js";
 import { ensureGraphDoc } from "./helpers/ensure-graph-doc.js";
 import { reindexDrive } from "./helpers/reindex.js";
