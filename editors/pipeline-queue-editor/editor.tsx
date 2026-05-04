@@ -3,7 +3,7 @@ import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import {
   useSelectedPipelineQueueDocument,
   actions,
-} from "@powerhousedao/knowledge-note/document-models/pipeline-queue";
+} from "../../document-models/pipeline-queue/index.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 
 const STATUS_COLORS: Record<string, string> = {

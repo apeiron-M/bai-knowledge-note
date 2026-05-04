@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import { generateId } from "document-model/core";
-import type { KnowledgeGraphDocument } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
+import type { KnowledgeGraphDocument } from "../../../document-models/knowledge-graph/index.js";
 import { isKnowledgeGraphDocument } from "../../../document-models/knowledge-graph/v1/gen/document-schema.js";
 import { useDocumentsSafe } from "./use-documents-safe.js";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";

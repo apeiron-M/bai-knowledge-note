@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { generateId } from "document-model/core";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { isHealthReportDocument } from "../../../document-models/health-report/v1/gen/document-schema.js";
-import type { HealthReportDocument } from "@powerhousedao/knowledge-note/document-models/health-report";
+import type { HealthReportDocument } from "../../../document-models/health-report/index.js";
 import { useDocumentsSafe } from "./use-documents-safe.js";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 import type { GraphState } from "./use-knowledge-graph.js";

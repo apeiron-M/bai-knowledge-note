@@ -26,8 +26,8 @@ import { useAutoHealth } from "../hooks/use-auto-health.js";
 import type {
   KnowledgeGraphAction,
   KnowledgeGraphDocument,
-} from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
-import { actions as graphActions } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
+} from "../../../document-models/knowledge-graph/index.js";
+import { actions as graphActions } from "../../../document-models/knowledge-graph/index.js";
 import { ThemeToggle } from "../../shared/theme-context.js";
 
 type ViewMode =

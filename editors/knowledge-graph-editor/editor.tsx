@@ -4,8 +4,8 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   useSelectedKnowledgeGraphDocument,
   actions,
-} from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
-import { useKnowledgeNoteDocumentsInSelectedDrive } from "@powerhousedao/knowledge-note/document-models/knowledge-note";
+} from "../../document-models/knowledge-graph/index.js";
+import { useKnowledgeNoteDocumentsInSelectedDrive } from "../../document-models/knowledge-note/index.js";
 import type { KnowledgeNoteState } from "../../document-models/knowledge-note/v1/gen/schema/types.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 

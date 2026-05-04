@@ -3,7 +3,7 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   useSelectedTensionDocument,
   actions,
-} from "@powerhousedao/knowledge-note/document-models/tension";
+} from "../../document-models/tension/index.js";
 import {
   setSelectedNode,
   useDocumentsInSelectedDrive,

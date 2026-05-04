@@ -3,7 +3,7 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   useSelectedKnowledgeNoteDocument,
   actions,
-} from "@powerhousedao/knowledge-note/document-models/knowledge-note";
+} from "../../document-models/knowledge-note/index.js";
 import { StatusBar } from "./components/status-bar.js";
 import { TopicsBar } from "./components/topics-bar.js";
 import { LinksSection } from "./components/links-section.js";

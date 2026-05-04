@@ -3,7 +3,7 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   useSelectedObservationDocument,
   actions,
-} from "@powerhousedao/knowledge-note/document-models/observation";
+} from "../../document-models/observation/index.js";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 

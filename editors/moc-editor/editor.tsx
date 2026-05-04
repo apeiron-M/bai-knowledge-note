@@ -8,7 +8,7 @@ import {
 import {
   useSelectedMocDocument,
   actions,
-} from "@powerhousedao/knowledge-note/document-models/moc";
+} from "../../document-models/moc/index.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 
 const TIERS = ["HUB", "DOMAIN", "TOPIC"] as const;
