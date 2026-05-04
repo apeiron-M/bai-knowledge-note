@@ -62,6 +62,12 @@ function resolveEndpoint(): string {
     return DOMAIN_MAP[hostname];
   }
 
+  // Vetra deployments: connect.<slug>.vetra.io ↔ switchboard.<slug>.vetra.io
+  if (hostname && /^connect\..+\.vetra\.io$/.test(hostname)) {
+    const sbHost = hostname.replace(/^connect\./, "switchboard.");
+    return `https://${sbHost}${SUBGRAPH_PATH}`;
+  }
+
   // Vite dev server proxying to local reactor
   const port = globalThis.window?.location?.port;
   if (port === "3000" || port === "3001") {

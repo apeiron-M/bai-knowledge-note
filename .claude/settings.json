@@ -37,7 +37,10 @@
       "Bash(git -C /home/p/Powerhouse/bai-knowledge-note status editors/knowledge-vault/hooks/use-documents-safe.ts)",
       "Bash(git -C /home/p/Powerhouse/bai-knowledge-note status)",
       "Bash(git -C /home/p/Powerhouse/bai-knowledge-note log --oneline -5)",
-      "Bash(git -C /home/p/Powerhouse/bai-knowledge-note status --short)"
+      "Bash(git -C /home/p/Powerhouse/bai-knowledge-note status --short)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(p['name'], p['url']\\) for p in d if 'eager-hen' in p.get\\('url',''\\)]\")",
+      "Bash(python3 -c \"import json,sys; m=json.load\\(sys.stdin\\); print\\('docs:', m.get\\('totalDocuments'\\)\\); print\\('drive:', m.get\\('driveName'\\)\\); print\\('endpoint:', m.get\\('endpoint'\\)\\); print\\('folders:', len\\(m.get\\('folderStructure', []\\)\\)\\); from collections import Counter; c=Counter\\(d['documentType'] for d in m.get\\('documents', []\\)\\); [print\\(' ', t, n\\) for t,n in c.items\\(\\)]\")",
+      "Bash(python3 -c \"import json; m=json.load\\(open\\('scripts/legacy/remote-knowledge-vault/id-mapping.json'\\)\\); print\\('mapped entries:', len\\(m\\)\\); print\\('sample:'\\); [print\\(' ', k[:30], '→', v\\) for k,v in list\\(m.items\\(\\)\\)[:5]]\")"
     ]
   },
   "enabledPlugins": {

@@ -3,12 +3,13 @@
  * Import a vault dump (produced by vault-export.mjs) into any switchboard drive.
  *
  * Usage:
- *   node scripts/vault-import.mjs --profile <name> --drive <id|slug> [--in <dir>] [--dry-run] [--limit N] [--include-singletons]
+ *   node scripts/vault-import.mjs --profile <name> --drive <id|slug> [--in <dir>] [--dry-run] [--limit N] [--include-singletons] [--throttle <ms>] [--skip-types <type1,type2>]
  *
  * Defaults:
  *   --profile local
  *   --drive   local-knowledge-hub
  *   --in      ./scripts/vault-dump
+ *   --throttle 80    (ms between docs — bump to 1000+ for slow remote uploads)
  *
  * Behavior:
  *   Phase 0: Map dump folders → existing drive folders by name (creates missing ones).
@@ -43,6 +44,13 @@ const DRY_RUN = args.includes("--dry-run");
 const INCLUDE_SINGLETONS = args.includes("--include-singletons");
 const limitIdx = args.indexOf("--limit");
 const LIMIT = limitIdx !== -1 ? parseInt(args[limitIdx + 1], 10) : Infinity;
+const THROTTLE_MS = parseInt(getArg("--throttle", "80"), 10) || 80;
+const SKIP_TYPES = new Set(
+  (getArg("--skip-types", "") || "")
+    .split(",")
+    .map((s) => s.trim())
+    .filter(Boolean),
+);
 
 function readJson(p) { return JSON.parse(fs.readFileSync(p, "utf-8")); }
 function writeJson(p, d) { fs.writeFileSync(p, JSON.stringify(d, null, 2)); }
@@ -55,6 +63,8 @@ async function main() {
   console.log(`Dump:       ${IN_DIR}`);
   console.log(`Dry run:    ${DRY_RUN}`);
   console.log(`Limit:      ${LIMIT === Infinity ? "none" : LIMIT}`);
+  console.log(`Throttle:   ${THROTTLE_MS}ms between docs`);
+  console.log(`Skip types: ${SKIP_TYPES.size ? [...SKIP_TYPES].join(", ") : "(none)"}`);
   console.log(`Singletons: ${INCLUDE_SINGLETONS ? "INCLUDED" : "skipped"}\n`);
 
   // Refresh schema cache for this profile so action validation is current.
@@ -112,9 +122,23 @@ async function main() {
   // ─── Phase 1: Create documents + apply state actions ───
   console.log("=== Phase 1: Create documents ===");
   const oldIdToNew = new Map();
+  // Incremental mode: load existing id-mapping.json so re-runs skip already
+  // imported docs but still queue their links/MOC refs for Phase 2/3.
+  const mappingPath = path.join(IN_DIR, "id-mapping.json");
+  if (fs.existsSync(mappingPath)) {
+    try {
+      const existing = readJson(mappingPath);
+      for (const [oldId, newId] of Object.entries(existing)) {
+        oldIdToNew.set(oldId, newId);
+      }
+      console.log(`  Loaded ${oldIdToNew.size} entries from existing id-mapping.json (incremental)\n`);
+    } catch (err) {
+      console.warn(`  Could not load existing id-mapping.json: ${err.message}\n`);
+    }
+  }
   const linkQueue = [];
   const mocRefQueue = [];
-  const counts = { ok: 0, fail: 0, skip: 0 };
+  const counts = { ok: 0, fail: 0, skip: 0, already: 0 };
   const errors = [];
 
   const orderedTypes = [
@@ -137,6 +161,10 @@ async function main() {
     const tag = `[${i + 1}/${queue.length}]`;
 
     if (!INCLUDE_SINGLETONS && SINGLETON_TYPES.has(entry.documentType)) {
+      counts.skip++;
+      continue;
+    }
+    if (SKIP_TYPES.has(entry.documentType)) {
       counts.skip++;
       continue;
     }
@@ -192,6 +220,13 @@ async function main() {
       continue;
     }
 
+    // Incremental: if this old ID is already mapped, queue links/refs above
+    // but skip create+apply.
+    if (oldIdToNew.has(doc.id)) {
+      counts.already++;
+      continue;
+    }
+
     if (DRY_RUN) {
       oldIdToNew.set(doc.id, `dry-${i}`);
       console.log(`${tag} ${entry.documentType} — ${entry.name} (${actions.length} actions)`);
@@ -211,7 +246,10 @@ async function main() {
       if (actions.length) cliApplyActions(PROFILE, newId, actions);
       console.log(`${tag} ${entry.documentType} — ${entry.name} → ${newId}`);
       counts.ok++;
-      await delay(80);
+      // Persist the mapping after each successful create so a crash leaves
+      // a recoverable state for the next incremental run.
+      writeJson(mappingPath, Object.fromEntries(oldIdToNew));
+      await delay(THROTTLE_MS);
     } catch (err) {
       console.error(`${tag} ERROR: ${entry.name} — ${err.message.slice(0, 200)}`);
       counts.fail++;
@@ -219,8 +257,8 @@ async function main() {
     }
   }
 
-  writeJson(path.join(IN_DIR, "id-mapping.json"), Object.fromEntries(oldIdToNew));
-  console.log(`\nCreated: ${counts.ok}, failed: ${counts.fail}, skipped: ${counts.skip}\n`);
+  writeJson(mappingPath, Object.fromEntries(oldIdToNew));
+  console.log(`\nCreated: ${counts.ok}, already: ${counts.already}, failed: ${counts.fail}, skipped: ${counts.skip}\n`);
 
   if (DRY_RUN) {
     console.log("Dry run complete. No documents created.\n");
@@ -298,10 +336,10 @@ async function main() {
   console.log(`  Resolved ${refsOk} MOC refs, ${refsMissing} unresolved\n`);
 
   console.log("=== Import Summary ===");
-  console.log(`  Documents:    ok=${counts.ok}, fail=${counts.fail}, skip=${counts.skip}`);
+  console.log(`  Documents:    ok=${counts.ok}, already=${counts.already}, fail=${counts.fail}, skip=${counts.skip}`);
   console.log(`  Links:        ok=${linksOk}, missing=${linksMissing}`);
   console.log(`  MOC refs:     ok=${refsOk}, missing=${refsMissing}`);
-  console.log(`  ID mapping:   ${path.join(IN_DIR, "id-mapping.json")}`);
+  console.log(`  ID mapping:   ${mappingPath}`);
 }
 
 function topoSortFolders(folders) {
