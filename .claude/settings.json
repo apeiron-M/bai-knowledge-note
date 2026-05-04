@@ -40,7 +40,12 @@
       "Bash(git -C /home/p/Powerhouse/bai-knowledge-note status --short)",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(p['name'], p['url']\\) for p in d if 'eager-hen' in p.get\\('url',''\\)]\")",
       "Bash(python3 -c \"import json,sys; m=json.load\\(sys.stdin\\); print\\('docs:', m.get\\('totalDocuments'\\)\\); print\\('drive:', m.get\\('driveName'\\)\\); print\\('endpoint:', m.get\\('endpoint'\\)\\); print\\('folders:', len\\(m.get\\('folderStructure', []\\)\\)\\); from collections import Counter; c=Counter\\(d['documentType'] for d in m.get\\('documents', []\\)\\); [print\\(' ', t, n\\) for t,n in c.items\\(\\)]\")",
-      "Bash(python3 -c \"import json; m=json.load\\(open\\('scripts/legacy/remote-knowledge-vault/id-mapping.json'\\)\\); print\\('mapped entries:', len\\(m\\)\\); print\\('sample:'\\); [print\\(' ', k[:30], '→', v\\) for k,v in list\\(m.items\\(\\)\\)[:5]]\")"
+      "Bash(python3 -c \"import json; m=json.load\\(open\\('scripts/legacy/remote-knowledge-vault/id-mapping.json'\\)\\); print\\('mapped entries:', len\\(m\\)\\); print\\('sample:'\\); [print\\(' ', k[:30], '→', v\\) for k,v in list\\(m.items\\(\\)\\)[:5]]\")",
+      "Bash(python3 -c \"import json,sys; m=json.load\\(sys.stdin\\); [print\\(k, ':', v\\) for k,v in m.items\\(\\) if k in \\('subgraphs','processors'\\)]\")",
+      "Bash(python3 -c \"import json,sys; m=json.load\\(sys.stdin\\); print\\('subgraphs:', json.dumps\\(m.get\\('subgraphs'\\), indent=2\\)\\); print\\('processors:', json.dumps\\(m.get\\('processors'\\), indent=2\\)\\)\")",
+      "Bash(awk '/ManifestSchema/,/^}/' node_modules/@powerhousedao/powerhouse-vetra-packages/dist/node/actions-CAH-hbfc-4Ddl_k7B.d.mts)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('versions:', list\\(d.get\\('versions',{}\\).keys\\(\\)\\)[-5:]\\)\")",
+      "Bash(awk '/class HttpPackageLoader|var HttpPackageLoader/,/^};?$/' node_modules/@powerhousedao/reactor-api/dist/index.mjs)"
     ]
   },
   "enabledPlugins": {
