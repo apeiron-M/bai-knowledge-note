@@ -1,0 +1,100 @@
+{
+  "id": "5d4d9652-76f0-4a3a-b753-23cd49ece3dc",
+  "name": "bee-reactor-adapter-overview",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-63398cd6",
+          "linkType": "RELATES_TO",
+          "targetTitle": "bee-reactor-adaptor is a pnpm monorepo of two packages: @liberuum-org/bee-reactor-adapter and @liberuum-org/connect",
+          "targetDocumentId": "12619fcb-3b7d-4539-b299-5c6b7b983e5d"
+        },
+        {
+          "id": "lnk-3cbcd701",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Adapter package organizes Swarm integration into src/channel/, src/swarm-client.ts, src/swarm-crypto.ts, and src/plugin/",
+          "targetDocumentId": "d7ee6e26-a7ea-42a9-a9ff-7c6bf71c5f71"
+        },
+        {
+          "id": "lnk-3f03d597",
+          "linkType": "RELATES_TO",
+          "targetTitle": "bee-reactor-adaptor is a pnpm monorepo of two packages: @liberuum-org/bee-reactor-adapter and @liberuum-org/connect",
+          "targetDocumentId": "12619fcb-3b7d-4539-b299-5c6b7b983e5d"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Bee Reactor Adapter enables serverless Powerhouse Connect on Swarm",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "adapter-overview",
+          "name": "adapter-overview",
+          "topicDocumentId": null
+        },
+        {
+          "id": "decentralized-storage",
+          "name": "decentralized-storage",
+          "topicDocumentId": null
+        },
+        {
+          "id": "swarm-integration",
+          "name": "swarm-integration",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The Bee Reactor Adapter delivers decentralized storage and encrypted chat for [Powerhouse Connect](https://powerhouse.io) on the [Swarm](https://ethswarm.org) network, eliminating the need for centralized servers.\n\nCore capabilities:\n- Encrypt documents with the user's Ethereum wallet\n- Store encrypted data on Swarm\n- Recover on any device using just a wallet signature\n- Share drives with other users\n- Chat directly peer-to-peer via PSS + GSOC\n\nThe adapter integrates as a native reactor `IChannel` via `createSwarmSyncBuilder()`. The Connect fork wires it into `ReactorBuilder.withSync()` at build time, so Swarm remotes persist in `sync_remotes` and survive page reloads natively alongside GQL channels. The landing page forces wallet login, the plugin syncs all drives and docs to Swarm automatically, and exposes a chat panel from the sidebar.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:52:46.944Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:56:42.147Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The Bee Reactor Adapter provides decentralized storage and encrypted peer-to-peer chat for Powerhouse Connect using the Swarm network, with no centralized servers required.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:52:57.343Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:24:07.574Z"
+}

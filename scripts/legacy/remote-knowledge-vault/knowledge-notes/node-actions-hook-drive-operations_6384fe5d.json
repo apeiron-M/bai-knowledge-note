@@ -1,0 +1,106 @@
+{
+  "id": "6384fe5d-4350-443d-8c7a-c2f4e1e656f0",
+  "name": "node-actions-hook-drive-operations",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "fa8dadf2-95be-4c37-8520-5020805305b6",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "ba74a5f3-4b4f-48d8-b98d-07189d8897e9"
+        },
+        {
+          "id": "2751ab40-01e2-4734-85bf-894cde6e8307",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "2cbac7ae-2546-48eb-adc4-18ffe3d2e98e"
+        },
+        {
+          "id": "e3c6ad8a-08cc-4185-a8c3-456fafeb87cc",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "3760b3d8-a183-4b9d-b8dc-db6122756216"
+        },
+        {
+          "id": "6a687cb9-cddf-463b-bd8f-19ab13612b5a",
+          "linkType": "RELATES_TO",
+          "targetTitle": "delete-nodes-with-deletenode-not-deletefile",
+          "targetDocumentId": "c6a52fff-7432-48c3-899c-79f877763aeb"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "useNodeActions returns functions for file/folder CRUD operations including add, rename, copy, move, and duplicate within drives",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "34e61cf4-dffb-4d16-98fb-457fbd46c8e1",
+          "name": "react-hooks",
+          "topicDocumentId": null
+        },
+        {
+          "id": "4643542e-5812-48cb-a710-844e1cc47457",
+          "name": "node-actions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "fcb9ca35-d85b-4f78-a5c4-cf0568c89661",
+          "name": "drive-operations",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `useNodeActions()` hook from `@powerhousedao/reactor-browser` returns an object with drive file/folder operations: `onAddFile(file: File, parent: Node | undefined)` adds a file under a parent folder; `onAddFolder(name, parent)` creates a folder; `onRenameNode(newName, node)` renames; `onCopyNode(src, target)` copies to a target folder; `onMoveNode(src, target)` moves; `onDuplicateNode(src)` duplicates in the current folder; `onAddAndSelectNewFolder(name)` creates and selects a new folder. All return Promises. The drive structure uses `Node` (FileNode | FolderNode) hierarchy, queryable via `useNodesInSelectedDrive`, `useFileNodesInSelectedDrive`, `useFolderNodesInSelectedDrive`, and their folder-scoped variants.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "REFERENCE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The hook provides onAddFile, onAddFolder, onRenameNode, onCopyNode, onMoveNode, onDuplicateNode, and onAddAndSelectNewFolder.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:24.286Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:07:41.129Z"
+}

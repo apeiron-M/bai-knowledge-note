@@ -1,0 +1,88 @@
+{
+  "id": "d2a1eaad-16c5-43b6-9dea-cc6bfbd1f42f",
+  "name": "Postage stamp batches use 65,536 buckets distributed by the first 16 bits of chunk address",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-37964090",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Swarm stores all data as 4KB content-addressed chunks in a Merkle hash tree",
+          "targetDocumentId": "7d90bdc8-b137-4a02-9e88-d7884fb72ef9"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Postage stamp batches use 65,536 buckets distributed by the first 16 bits of chunk address",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "f0abd27e-ff8c-45b1-be1d-cc8fdbb9b3e4",
+          "name": "postage-stamps",
+          "topicDocumentId": null
+        },
+        {
+          "id": "850e79a6-2b7c-4a79-9194-d5a0b7d8095e",
+          "name": "swarm",
+          "topicDocumentId": null
+        },
+        {
+          "id": "dc9e6da7-ed7e-4c83-98a9-385b7e5b3b87",
+          "name": "storage",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\n\nEvery postage stamp batch has a fixed structure of **65,536 buckets (2^16)** into which chunks are distributed by the first 16 bits of their address, producing non-uniform effective capacity.\n\n## Evidence\n\n- Bucket depth is fixed at 16 regardless of batch depth\n- Each bucket holds `2^(depth - 16)` slots\n- Chunks assigned to buckets by the first 16 bits of their chunk address\n- **Immutable batches** fail once ANY single bucket fills up — random distribution yields only ~62-87% effective utilization depending on batch depth\n- **Mutable batches** never exhaust — when a bucket overflows, the oldest chunk in that bucket is replaced (ideal for feeds)\n\n## Effective utilization table (99.9% confidence)\n\n| Depth | Effective capacity | Utilization |\n|------:|-------------------:|------------:|\n| 20    | ~680 MB            | ~62.89%     |\n| 22    | ~7.7 GB            | ~65.05%     |\n| 24    | ~43 GB             | ~68.48%     |\n| 28    | ~909 GB            | ~87%+       |\n\n## Why it matters\n\nPricing by nominal `2^depth * amount` dramatically overestimates usable capacity on shallow batches. Users should size up or use `GET /stamps/{id}/buckets` to monitor hot-bucket exhaustion.\n",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Each batch has 2^16 buckets, each holding 2^(depth-16) slots. Immutable batches fail when any bucket fills, giving ~62-87% effective utilization.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:16:58.755Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:24:59.529Z"
+}

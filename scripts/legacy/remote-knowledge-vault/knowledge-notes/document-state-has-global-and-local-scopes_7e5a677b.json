@@ -1,0 +1,100 @@
+{
+  "id": "7e5a677b-e1da-470f-9d79-7d0177bbcbbd",
+  "name": "document-state-has-global-and-local-scopes",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "4a93eadc-618a-406a-83af-ee4d60e95324",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "0901e6f4-6221-4de3-bffe-d23ef7428143"
+        },
+        {
+          "id": "5d8d57d7-15ba-4c68-8c3f-37e6437c01e8",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "a0ee24b1-c330-4508-9e87-be8e55d6984e"
+        },
+        {
+          "id": "376b84c5-867f-44ee-a265-c402511d9a7d",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "2f2a9ae4-7318-4559-ae83-b267c6a5726a"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Document state is organized into global and local scopes for sync control",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "9df6da94-9f80-4097-935d-3f24c222ce96",
+          "name": "document-model",
+          "topicDocumentId": null
+        },
+        {
+          "id": "f43d9574-3411-409e-911c-f5386ba5247c",
+          "name": "state-management",
+          "topicDocumentId": null
+        },
+        {
+          "id": "863a17c2-fa60-4a1f-b74f-df559ae05d4f",
+          "name": "synchronization",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Document state in Powerhouse is organized into scopes:\n\n- **Global scope** (`state.global`): Synchronized data that lives on a Reactor or remote server. This is where your document's main content belongs. Most use cases work exclusively with `state.global`.\n- **Local scope** (`state.local`): For edge cases where data should only exist on the local device and not sync.\n\nA future **authorization scope** is planned for permission-controlled data.\n\nWhen accessing document state in editors, you use `selectedDocument.state.global.items` (for example). Operations are also scoped - `document.operations.global` contains the operation history for the global scope.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Global scope (state.global) syncs to Reactors; local scope (state.local) stays on the local device only.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:50:35.800Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:06:21.347Z"
+}

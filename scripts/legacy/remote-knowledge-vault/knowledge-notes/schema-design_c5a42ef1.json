@@ -1,0 +1,129 @@
+{
+  "id": "c5a42ef1-bc63-48f7-9cf6-f868f0ab73c4",
+  "name": "schema-design",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "f1ea4b0b-1939-41b0-9321-b09a8c0548f9",
+          "linkType": "RELATES_TO",
+          "targetTitle": "most-state-schema-fields-should-be-optional-to-support-empty-documents",
+          "targetDocumentId": "30540fa8-2034-4667-b786-807e04548c57"
+        },
+        {
+          "id": "42262383-454b-4b92-9881-5431421c6ad5",
+          "linkType": "RELATES_TO",
+          "targetTitle": "arrays-in-state-schemas-must-use-mandatory-notation",
+          "targetDocumentId": "3aed7c99-b1fa-4a37-9a69-1cecfffb5f1a"
+        },
+        {
+          "id": "43d7d5bc-b646-4e22-98f6-533da7a56d20",
+          "linkType": "RELATES_TO",
+          "targetTitle": "input-types-should-reflect-user-intent-with-simple-specific-fields",
+          "targetDocumentId": "28ae5e3e-7f56-4034-8850-17d91260f50e"
+        },
+        {
+          "id": "6665ea6d-93d4-45e8-a0f7-0ced83b16fa6",
+          "linkType": "RELATES_TO",
+          "targetTitle": "state-type-names-use-xstate-not-xglobalstate",
+          "targetDocumentId": "1d3eef56-46ba-449a-b67e-8a2c2410e05c"
+        },
+        {
+          "id": "d6a83b25-67a9-4415-a426-a2ed7ee8ae1a",
+          "linkType": "RELATES_TO",
+          "targetTitle": "nullable-input-types-require-explicit-coalescing-to-match-state-types",
+          "targetDocumentId": "04e368d2-a1b2-475f-bfe3-4815a4a40cba"
+        },
+        {
+          "id": "33040863-9dc9-4e2a-aab8-271d8d1f6795",
+          "linkType": "RELATES_TO",
+          "targetTitle": "one-operation-per-user-intent-keeps-concerns-separated",
+          "targetDocumentId": "2759a1ce-702e-4a9d-97fa-7e0c574569b0"
+        },
+        {
+          "id": "48df80a6-6aaa-4ba3-a8db-8d01cab28b4b",
+          "linkType": "RELATES_TO",
+          "targetTitle": "operation-design-uses-descriptive-names-and-includes-examples-and-errors",
+          "targetDocumentId": "92ed137c-4d58-431b-b6d8-856e013c27e6"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "schema design",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "4d601a90-284a-4170-b26b-eb9fe2e1903f",
+          "name": "schema design",
+          "topicDocumentId": null
+        },
+        {
+          "id": "98263127-bd9a-490c-91b5-7a8467c23387",
+          "name": "GraphQL",
+          "topicDocumentId": null
+        },
+        {
+          "id": "032ff920-c3c7-4df5-a910-f186ecd6d59b",
+          "name": "document model",
+          "topicDocumentId": null
+        },
+        {
+          "id": "8d4da641-bf76-4eee-a3d8-84d7bcc73cf1",
+          "name": "MOC",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# schema design\n\nPatterns and conventions for designing document model state schemas in the Powerhouse ecosystem.\n\n## Type Naming\n- [[state type names use XState not XGlobalState]] — the code generator expects `<Name>State`, not `<Name>GlobalState`\n\n## Arrays and Objects\n- [[arrays in state schemas must use mandatory notation]] — `[ObjectType!]!` with `OID!` fields for array items\n\n## Required vs Optional Fields\n- [[most state schema fields should be optional to support empty documents]] — documents start empty; use `!` sparingly\n\n## Input Design\n- [[input types should reflect user intent with simple specific fields]] — flat, descriptive inputs over nested structures\n- [[operation design uses descriptive names and includes examples and errors]] — naming and documentation standards\n\n## Scope\n- [[global scope shares state among all users while local scope is private]] — when to use each scope\n\n## Operation Design\n- [[one operation per user intent keeps concerns separated]] — one user action = one operation\n\n## Document Model Structure\n- [[document model structure has metadata specifications and modules]] — the three layers of a model\n- [[document models have 37 available operations across 7 categories]] — full operation taxonomy\n\n---\n\nTopics:\n- [[index]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "REFERENCE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:04:53.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T14:04:53.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Conventions for GraphQL state schemas -- type naming, scalars, arrays, required vs optional fields",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:52:20.997Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:09:11.423Z"
+}

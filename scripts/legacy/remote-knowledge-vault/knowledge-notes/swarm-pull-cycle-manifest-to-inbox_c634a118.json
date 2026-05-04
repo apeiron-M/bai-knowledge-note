@@ -1,0 +1,111 @@
+{
+  "id": "c634a118-b62c-4774-9b6f-90c038f755ed",
+  "name": "swarm-pull-cycle-manifest-to-inbox",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-c4e01bf4",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "SwarmChannel implements IChannel so the reactor SyncManager is transport-agnostic",
+          "targetDocumentId": "021d8e43-ec03-4502-b088-2f76cbff192f"
+        },
+        {
+          "id": "lnk-9d7accb6",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Swarm exposes two primitives: immutable content-addressed /bytes and mutable owner-signed feeds",
+          "targetDocumentId": "c65d65ee-5e30-4f78-867e-1d6edbeddf0f"
+        },
+        {
+          "id": "lnk-2bcf4d05",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "SwarmChannel push batches ordinals into SyncOperations; pull walks user → drive → doc manifests to rebuild inboxes",
+          "targetDocumentId": "84ba5378-49ec-49e8-918e-18e9c3ec1d1a"
+        },
+        {
+          "id": "lnk-7b681daa",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The reactor persists sync state in four PGlite tables: remotes, cursors, dead letters, and operation index.",
+          "targetDocumentId": "c767e2c9-5871-4d40-b20b-c81848a96e72"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "The Swarm pull cycle polls user and document manifests then decrypts batches into the inbox.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-c634a118-1",
+          "name": "pull-cycle",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-c634a118-2",
+          "name": "swarm-channel",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-c634a118-3",
+          "name": "manifest",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-c634a118-4",
+          "name": "feeds",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\nPull is manifest-driven: poll user feed → read user manifest → per-document manifests → batch references → /bytes downloads → decrypt → inbox.\n\n## Step-by-step\n1. SwarmChannel polls the user's feed at the configured interval (`pollIntervalMs`).\n2. Reads the user manifest → discovers drives and documents.\n3. For each document, reads its manifest → discovers operation batches.\n4. Downloads each batch from `/bytes`, decrypts with AES-256-GCM, deserializes.\n5. Converts to `SyncOperation` objects and adds to `SwarmChannel.inbox`.\n6. SyncManager applies them to the local reactor via `reactor.load()`.\n7. Cursor advances in `sync_cursors`; subsequent polls only fetch new operations.\n\n## Implications\n- First load on a new device walks the full manifest tree but only applies each batch once.\n- Steady-state pulls are cheap — only new manifest entries trigger downloads.\n- The manifest tree is the discovery index; without it, the pull cannot proceed.\n\n## Source\nSwarm Channel Architecture, \"Pull Cycle (Swarm → local)\".",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "procedure",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "SwarmChannel polls the user feed, walks manifests to discover documents and batches, downloads + decrypts via /bytes, and hands SyncOperations to SyncManager.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:16:59.029Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:22:33.618Z"
+}

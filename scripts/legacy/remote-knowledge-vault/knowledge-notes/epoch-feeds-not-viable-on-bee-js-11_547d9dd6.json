@@ -1,0 +1,81 @@
+{
+  "id": "547d9dd6-819a-4e94-8aa0-143cd0847f47",
+  "name": "epoch-feeds-not-viable-on-bee-js-11",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Epoch feeds are not viable on bee-js 11 — SDK support is vestigial",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "9d67b4c2-a162-4c57-83ed-e9cacc5e0be2",
+          "name": "epoch-feeds",
+          "topicDocumentId": null
+        },
+        {
+          "id": "5a84f717-72fc-4226-b63a-32c9426db23e",
+          "name": "bee-js-sdk",
+          "topicDocumentId": null
+        },
+        {
+          "id": "7ba368d2-196a-4cb1-8d71-bdfa326ba150",
+          "name": "swarm-feeds",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Epoch feeds: SDK gap blocks adoption\n\nSwarm epoch feeds (paper §4.3.4) index SOC feeds by `(time, level)` instead of sequence number, giving a cold reader O(log age) lookup of the latest-as-of-time update — directly useful for the cross-Bee `publishPublicProfile` staleness we see on 2.7.x (receivers serve pre-update versions for minutes).\n\nBut they are not implementable today:\n\n- **bee-js 11.1.1**: the `Epoch { time, level }` type exists, but `findNextIndex`, `updateFeedWithReference`, and `downloadFeedUpdate` all take a sequence-`FeedIndex`. Epoch support is vestigial.\n- **Bee 2.7.x HTTP**: `/feeds/{owner}/{topic}` is sequence-only.\n- **Custom path**: would require bypassing feed helpers and manipulating SOCs directly — epoch lookup algorithm, custom chunk address derivation per level, grid traversal reader. Feasible but significant scope.\n\n**Decision:** DEFER. Reconsider when bee-js or Bee exposes epoch lookup natively. Not worth custom chunk-layer work right now.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "observation",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:41.542Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:41:41.542Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "bee-js 11.1.1 defines the Epoch type but every feed function takes a sequence-FeedIndex, and Bee 2.7.x /feeds HTTP is sequence-only. Defer until native.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:36:56.998Z",
+  "lastModifiedAtUtcIso": "2026-04-21T14:42:41.178Z"
+}

@@ -1,0 +1,81 @@
+{
+  "id": "1feb1f6c-4579-42a0-af22-196093182b92",
+  "name": "collab-manifest-initiator-owned-feed",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "The collaboration manifest is an initiator-owned ACT-protected Swarm feed listing all participants",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-1feb1f6c-1",
+          "name": "live-collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-1feb1f6c-2",
+          "name": "collab-manifest",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-1feb1f6c-3",
+          "name": "act-encryption",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Collaboration manifest structure\n\nA new Swarm feed is created per collaboration target, owned by the initiator:\n\n```\nTopic:  ph:v2:collab:<driveId>         (drive-level)\n        ph:v2:collab:<driveId>:<docId> (doc-level)\nOwner:  the collaboration initiator\n```\n\nThe payload is written ACT-protected, with grantees set to all participants' Bee node public keys:\n\n```json\n{\n  \"kind\": \"drive\" | \"document\",\n  \"driveId\": \"…\",\n  \"documentId\": \"…\",\n  \"participants\": [\n    { \"address\": \"0xA…\", \"beeNodePublicKey\": \"02…\", \"joinedAt\": \"…\" },\n    { \"address\": \"0xB…\", \"beeNodePublicKey\": \"02…\", \"joinedAt\": \"…\" }\n  ],\n  \"createdAt\": \"…\",\n  \"version\": 1\n}\n```\n\nA participant joining or leaving is expressed as a new manifest revision by the initiator. Today only the initiator can rewrite their manifest feed — future work may allow any participant to amend via a Merkle-log or signed-append convention.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T19:44:35.450Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The collab manifest is an initiator-owned ACT-protected Swarm feed listing participants, their Bee node pubkeys, join times, kind, and drive/doc ids.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:18:27.897Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:44:35.455Z"
+}

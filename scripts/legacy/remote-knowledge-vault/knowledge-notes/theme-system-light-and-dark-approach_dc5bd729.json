@@ -1,0 +1,84 @@
+{
+  "id": "dc5bd729-5073-4cc8-8a3a-ed9ed46e6b19",
+  "name": "theme-system-light-and-dark-approach",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "d9156891-3687-4564-9f31-7e65e78fc99d",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Light Theme Base Palette",
+          "targetDocumentId": "e38bf3c4-6780-457d-8bef-a4a162fd5621"
+        },
+        {
+          "id": "1ab5afa2-5c8b-4399-ba2d-1f3c6d38a9fb",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Dark Theme Base Palette",
+          "targetDocumentId": "833b94ad-c271-4226-97fb-8781af8b65fe"
+        },
+        {
+          "id": "7e92824d-3a33-485e-8043-6958a8207d96",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Design Tokens and Theming",
+          "targetDocumentId": "d7a9eba1-70ee-4482-81d7-4bd320d18932"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Theme System Light and Dark Approach",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [],
+      "content": "The Powerhouse design system implements theming through CSS custom properties with two modes. The :root selector defines light theme values as the default. The .dark class or [data-theme=\"dark\"] attribute selector overrides those values for dark mode. For Achra and Vetra, the primary brand colors persist unchanged across themes: Achra stays #7A3AFF and Vetra stays #04C161 in both light and dark. The Powerhouse parent brand behaves differently -- its primary inverts from #32373B (dark neutral) in light mode to #F3F5F7 (light neutral) in dark mode, with --primary-foreground similarly inverting from #FFFFFF to #0E0E0D. All three brands share the same dark theme values for secondary (#4F596F), muted-foreground (#6C7275), and other non-primary surface tokens, though Powerhouse uses darker background values (#0E0E0D vs #1B1E24). Source: colors.css files at https://github.com/powerhouse-inc/design-systems.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "CONCEPT",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "Wouter Kampmann",
+        "createdAt": "2026-04-05T00:03:26.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-05T00:03:26.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Light theme uses :root selector, dark theme uses .dark class or [data-theme=\"dark\"] attribute. Primary colors persist or invert by brand.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:53:41.710Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:11:12.531Z"
+}

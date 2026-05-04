@@ -1,8 +1,6 @@
 import { useMemo } from "react";
-import {
-  useFileNodesInSelectedDrive,
-  useDocumentsInSelectedDrive,
-} from "@powerhousedao/reactor-browser";
+import { useFileNodesInSelectedDrive } from "@powerhousedao/reactor-browser";
+import { useDocumentsSafe } from "./use-documents-safe.js";
 import type { KnowledgeNoteState } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
 
 export type KnowledgeNoteInfo = {
@@ -28,7 +26,7 @@ export type KnowledgeNoteInfo = {
 
 export function useKnowledgeNotes() {
   const fileNodes = useFileNodesInSelectedDrive();
-  const documents = useDocumentsInSelectedDrive();
+  const documents = useDocumentsSafe();
 
   const knowledgeFileNodes = useMemo(
     () =>
@@ -47,36 +45,48 @@ export function useKnowledgeNotes() {
   }, [documents]);
 
   const notes: KnowledgeNoteInfo[] = useMemo(() => {
-    return knowledgeFileNodes.flatMap((node) => {
+    // Return one entry per drive file node so the lists/graph render even
+    // before each per-doc payload has replicated into IndexedDB. Title /
+    // topics / links / provenance fill in progressively as docs arrive.
+    return knowledgeFileNodes.map((node) => {
       const doc = docMap.get(node.id);
-      if (!doc) return [];
-      const docState = doc.state as { global: KnowledgeNoteState } | undefined;
-      if (!docState) return [];
-      const state = docState.global;
-      return [
-        {
+      const state = (doc?.state as { global?: KnowledgeNoteState } | undefined)
+        ?.global;
+      if (!state) {
+        return {
           id: node.id,
           name: node.name,
-          title: state.title ?? null,
-          noteType: state.noteType ?? null,
-          status: (state.status as string) ?? "DRAFT",
-          description: state.description ?? null,
-          topics: (state.topics ?? []).map((t) => ({ id: t.id, name: t.name })),
-          links: (state.links ?? []).map((l) => ({
-            id: l.id,
-            targetDocumentId: l.targetDocumentId ?? null,
-            targetTitle: l.targetTitle ?? null,
-            linkType: (l.linkType as string) ?? null,
-          })),
-          provenance: state.provenance
-            ? {
-                author: state.provenance.author ?? null,
-                createdAt: (state.provenance.createdAt as string) ?? null,
-                updatedAt: (state.provenance.updatedAt as string) ?? null,
-              }
-            : null,
-        },
-      ];
+          title: null,
+          noteType: null,
+          status: "DRAFT",
+          description: null,
+          topics: [],
+          links: [],
+          provenance: null,
+        };
+      }
+      return {
+        id: node.id,
+        name: node.name,
+        title: state.title ?? null,
+        noteType: state.noteType ?? null,
+        status: (state.status as string) ?? "DRAFT",
+        description: state.description ?? null,
+        topics: (state.topics ?? []).map((t) => ({ id: t.id, name: t.name })),
+        links: (state.links ?? []).map((l) => ({
+          id: l.id,
+          targetDocumentId: l.targetDocumentId ?? null,
+          targetTitle: l.targetTitle ?? null,
+          linkType: (l.linkType as string) ?? null,
+        })),
+        provenance: state.provenance
+          ? {
+              author: state.provenance.author ?? null,
+              createdAt: (state.provenance.createdAt as string) ?? null,
+              updatedAt: (state.provenance.updatedAt as string) ?? null,
+            }
+          : null,
+      };
     });
   }, [knowledgeFileNodes, docMap]);
 

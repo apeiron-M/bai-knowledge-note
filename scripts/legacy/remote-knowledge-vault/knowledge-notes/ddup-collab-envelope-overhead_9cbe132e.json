@@ -1,0 +1,111 @@
+{
+  "id": "9cbe132e-6f0e-4cd7-b70c-9fbd2acb52d5",
+  "name": "ddup-collab-envelope-overhead",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-61f27570",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The Swarm plugin mirrors the Switchboard duplication pattern, swapping the remote layer",
+          "targetDocumentId": "f9ea18d5-04f3-4650-9453-8d570930fad0"
+        },
+        {
+          "id": "lnk-ca0d8009",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Connect-on-Swarm data spans four distinct storage layers with different durability",
+          "targetDocumentId": "8064e63a-9af1-4870-82f0-6e2257844718"
+        },
+        {
+          "id": "lnk-b1667d9c",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Connect-on-Swarm data spans four distinct storage layers with different durability",
+          "targetDocumentId": "8064e63a-9af1-4870-82f0-6e2257844718"
+        },
+        {
+          "id": "lnk-214faa02",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Live collaboration uses per-user op feeds plus GSOC pings to trigger debounced pulls.",
+          "targetDocumentId": "de1cb00d-9dcb-4c36-b77d-ae3b697c8f75"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Collaboration adds SyncEnvelope wrappers and per-user feeds but does not re-duplicate raw ops",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "0f1debfc-b251-41c6-8ab4-e289b8fa1e32",
+          "name": "collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "50778ccb-7e38-48d5-b6e3-93cd6f918d90",
+          "name": "sync-envelope",
+          "topicDocumentId": null
+        },
+        {
+          "id": "2753cee2-a781-4223-8ad1-191dc84d643d",
+          "name": "data-duplication",
+          "topicDocumentId": null
+        },
+        {
+          "id": "06e33d74-c90c-46ac-8571-a0c9346f8bc3",
+          "name": "per-user-feeds",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Collaboration adds per-user op feeds on top of the single-user sync — and the additional storage cost is small and structural rather than full re-duplication:\n\n**Already present (single-user baseline)**\n- PGlite: all operations (local + remote)\n- Swarm /bytes: operation batches (per user)\n- Single-user feeds: doc/drive/user manifests (personal backup)\n\n**New in collaboration**\n- Collab index feed: 1 per shared document (~1 KB)\n- Per-user op feeds: 1 per user per document\n  - Content: `SyncEnvelope` wrapping the SAME operations that are already in the single-user /bytes batches\n\n**What's actually added**:\n- Feed pointer updates: ~64 bytes per update per user\n- SyncEnvelope wrappers around operations (OperationContext metadata)\n\n**Overhead quantified**: ~20% per op for the context metadata. The core action data itself is not duplicated — only the wrapping envelope.\n\n**Why it matters**: this means collaboration scales linearly in users rather than in users x ops. Adding N collaborators to a document doesn't N-duplicate the ops; it adds N small-wrapped pointers over the same underlying content-addressed operation chunks.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "observation",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:42:40.589Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:47:05.337Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Per-user op feeds wrap the same operations in SyncEnvelope context metadata (~20% per-op overhead) plus small feed pointers — the core action data isn't duplicated.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:43:24.764Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:30:25.280Z"
+}

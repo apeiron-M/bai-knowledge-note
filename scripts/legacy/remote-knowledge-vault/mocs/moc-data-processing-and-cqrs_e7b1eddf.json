@@ -1,0 +1,106 @@
+{
+  "id": "e7b1eddf-da53-4500-baf5-1b30d83ffef0",
+  "name": "moc-data-processing-and-cqrs",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "DOMAIN",
+      "title": "Data Processing and CQRS",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "e3eb4335-8016-4f1e-8f37-82c122cdba73",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "6952a9b2-c4d2-4fa4-9b52-0940fb5ef98f",
+          "sortOrder": 1,
+          "contextPhrase": "Subgraphs extend document models by adding custom GraphQL resolvers that can join, aggregate, and reshape document data — providing the query flexibility that raw event-sourced state cannot offer without sacrificing the clean write-side model."
+        },
+        {
+          "id": "bf028fa5-2842-4b82-8118-285a9e8d12a6",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "24ff2210-ff45-4a12-9547-139170126471",
+          "sortOrder": 2,
+          "contextPhrase": "Processors receive operations enriched with context metadata, enabling them to make decisions based not just on what changed but who changed it, when, and in what sequence — essential for building audit-aware read models."
+        },
+        {
+          "id": "090d6425-89ad-45fa-a781-eb5df44d9a30",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "8f9ffc85-4ce5-40cb-b665-7d06cca7efbb",
+          "sortOrder": 3,
+          "contextPhrase": "The relational database processor pattern projects event-sourced operations into SQL tables, enabling the full power of relational queries, joins, and aggregations over data that was originally captured as a stream of document mutations."
+        },
+        {
+          "id": "4670533b-bf4c-4eee-81c4-3f10352206d4",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "3573c7ce-34a8-4184-b170-9bbeb2f6cdaa",
+          "sortOrder": 4,
+          "contextPhrase": "The RelationalDBProcessor base class standardizes how processors set up schemas, handle migrations, and process operations, reducing boilerplate and ensuring consistent patterns across all relational projections in the system."
+        },
+        {
+          "id": "1de6e0fe-1874-40a2-bbad-53e7f2b9f903",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "d6fe2534-6130-416e-83eb-31cc1d44b566",
+          "sortOrder": 5,
+          "contextPhrase": "PgLite-backed live queries push real-time updates to connected clients whenever the underlying relational projection changes, combining the query power of SQL with the reactivity of subscriptions."
+        },
+        {
+          "id": "aa36ae91-764e-4c34-ade4-fe38b15a920f",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "39318ad5-4c71-4c8c-9910-d77bd3b04567",
+          "sortOrder": 6,
+          "contextPhrase": "The analytics engine provides interval-based time-series aggregation, bucketing document operations into configurable time windows to support dashboards, trend analysis, and reporting without requiring external analytics infrastructure."
+        },
+        {
+          "id": "1006fbf0-fb2e-4e91-9981-401beb8d0a76",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "8c9f9fee-b606-4a2d-8c6e-786acf222f20",
+          "sortOrder": 7,
+          "contextPhrase": "Path-based level-of-detail dimension querying lets analytics consumers drill down from high-level aggregates to granular detail along hierarchical dimensions, enabling the same dataset to power both executive summaries and detailed investigations."
+        },
+        {
+          "id": "5b643ff7-3edd-4cff-9cb4-d00486b9f8df",
+          "addedAt": "2026-04-03T14:25:06.000Z",
+          "addedBy": null,
+          "noteRef": "d81e9f3e-fb12-4fa7-be4a-5f6f6859dcf1",
+          "sortOrder": 100,
+          "contextPhrase": "Powerhouse error model: errors attach to operations, not thrown to callers — enables replay"
+        },
+        {
+          "id": "f60ffef1-f125-48d0-979a-a87189280396",
+          "addedAt": "2026-04-03T14:25:07.000Z",
+          "addedBy": null,
+          "noteRef": "f55f3e88-5659-4646-900a-70c47b5d2578",
+          "sortOrder": 101,
+          "contextPhrase": "Debugging insight: error index counts prior dispatches — off-by-one causes silent misattribution"
+        }
+      ],
+      "createdAt": "2026-04-02T13:00:00.000Z",
+      "noteCount": 9,
+      "parentRef": null,
+      "updatedAt": "2026-04-02T13:00:00.000Z",
+      "agentNotes": [],
+      "description": "Processors, subgraphs, relational database projections, live queries, and the analytics engine that transform event-sourced documents into queryable read models.",
+      "orientation": "The write side of Powerhouse captures intent through operations on event-sourced documents, but real-world applications need to query, aggregate, and analyze that data in ways the document model alone cannot efficiently support. This is where the CQRS read side comes in. Subgraphs extend document models with custom GraphQL resolvers. Processors receive operation streams and project them into relational databases for SQL-friendly querying. The RelationalDBProcessor base class standardizes this pattern with PgLite for live queries that push updates to connected clients. And the analytics engine adds time-series aggregation with interval-based bucketing and level-of-detail dimension querying. Together, these components transform a stream of document operations into the rich, queryable data surfaces that dashboards, reports, and integrations demand.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-14T21:54:07.660Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:11:39.489Z"
+}

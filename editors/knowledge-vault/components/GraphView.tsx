@@ -533,37 +533,37 @@ function getLayoutOptions(opts?: {
   }
 
   // Some or all nodes need computation.
-  // Per-edge idealEdgeLength pulls MOC clusters tight and keeps
-  // derivation chains compact while general notes spread out.
+  // Conservative params: at >300 nodes, randomized init + high repulsion
+  // overflows fcose's calcGrid array. Lower numIter and repulsion keep
+  // the bounding rect from blowing up before convergence.
+  const nodeCount = currentNodeCount();
+  const isLarge = nodeCount > 300;
+  const randomize = !hasPositions;
+  // fcose constraint: `randomize: false` requires `quality: "default" | "proof"`.
+  // Only switch to "draft" when we're randomizing (i.e. on the first layout
+  // for a fresh drive); otherwise fcose throws/warns and falls through to cose.
+  const quality = randomize && isLarge ? "draft" : "default";
   return {
     name: "fcose",
     animate: false,
-    quality: "default",
-    randomize: !hasPositions,
-    nodeRepulsion: (node: cytoscape.NodeSingular) =>
-      node.data("isMoc") ? 30000 : 8000,
-    idealEdgeLength: (edge: cytoscape.EdgeSingular) => {
-      const lt = edge.data("linkType") as string | null;
-      const cross = edge.data("crossCluster") as boolean;
-      if (lt === "CORE_IDEA") return 70;
-      if (cross) return 350;
-      if (lt === "BUILDS_ON" || lt === "DERIVED_FROM") return 90;
-      return 150;
-    },
-    edgeElasticity: (edge: cytoscape.EdgeSingular) => {
-      const lt = edge.data("linkType") as string | null;
-      const cross = edge.data("crossCluster") as boolean;
-      if (lt === "CORE_IDEA") return 0.45;
-      if (cross) return 0.01;
-      if (lt === "BUILDS_ON" || lt === "DERIVED_FROM") return 0.3;
-      return 0.1;
-    },
+    quality,
+    randomize,
+    // Spread nodes apart: bumped from 6000 → 9000 to give notes around
+    // each MOC enough breathing room without overlapping.
+    nodeRepulsion: isLarge ? 9000 : 12000,
+    // Longer edges: notes orbit their MOC at greater radius.
+    idealEdgeLength: isLarge ? 220 : 180,
+    edgeElasticity: 0.08,
     nestingFactor: 0.1,
-    gravity: 0.08,
-    numIter: 500,
+    // Almost no center-pull so isolated chains float free.
+    gravity: 0.025,
+    // More iterations to actually settle into the dispersed equilibrium.
+    numIter: isLarge ? 700 : 1200,
     tile: true,
+    tilingPaddingVertical: 60,
+    tilingPaddingHorizontal: 60,
     fit: false,
-    padding: 60,
+    padding: 80,
     // Pin existing nodes, only layout new ones
     ...(hasPositions
       ? {
@@ -573,6 +573,75 @@ function getLayoutOptions(opts?: {
         }
       : {}),
   } as cytoscape.LayoutOptions;
+}
+
+// Snapshot of the most recent element count, set in the init effect.
+// Used by getLayoutOptions to scale fcose params without breaking signature.
+let lastNodeCount = 0;
+function currentNodeCount() {
+  return lastNodeCount;
+}
+
+/**
+ * Run a layout, falling back to cose (force-directed but more stable) if
+ * fcose throws `RangeError: Invalid array length` in `calcGrid`. Final
+ * fallback is grid so the graph always renders. Returns the name of the
+ * layout that ran so callers can skip persisting grid positions.
+ */
+function runLayoutWithFallback(
+  cy: cytoscape.Core,
+  options: cytoscape.LayoutOptions,
+): "fcose" | "cose" | "grid" | "none" {
+  try {
+    cy.layout(options).run();
+    return (options as { name: string }).name === "preset" ? "fcose" : "fcose";
+  } catch (err) {
+    console.warn("[GraphView] fcose failed, retrying with cose:", err);
+  }
+  try {
+    cy.layout({
+      name: "cose",
+      animate: false,
+      randomize: true,
+      // Match the dispersion goals from fcose: stronger repulsion, longer
+      // edges, weaker gravity so clusters don't collapse together.
+      nodeRepulsion: () => 8000,
+      idealEdgeLength: () => 150,
+      edgeElasticity: () => 16,
+      nestingFactor: 1.2,
+      gravity: 0.4,
+      numIter: 1500,
+      fit: false,
+      padding: 60,
+    } as cytoscape.LayoutOptions).run();
+    return "cose";
+  } catch (err) {
+    console.warn("[GraphView] cose failed, falling back to grid:", err);
+  }
+  try {
+    cy.layout({
+      name: "grid",
+      fit: false,
+      padding: 60,
+    } as cytoscape.LayoutOptions).run();
+    return "grid";
+  } catch (err) {
+    console.error("[GraphView] grid layout also failed:", err);
+    return "none";
+  }
+}
+
+/**
+ * Heuristic: detect grid-aligned saved positions so we can ignore them on
+ * load. Force-directed layouts give every node a unique y; a grid layout
+ * collapses them onto ~sqrt(N) rows. Ratio of unique-y to node count
+ * below 0.15 is well clear of any real force-directed render.
+ */
+function looksLikeGrid(positions: StoredPositions): boolean {
+  const values = Object.values(positions);
+  if (values.length < 30) return false;
+  const ys = new Set(values.map((p) => Math.round(p.y / 5) * 5));
+  return ys.size / values.length < 0.15;
 }
 
 /* ------------------------------------------------------------------ */
@@ -675,8 +744,16 @@ export function GraphView({
   useEffect(() => {
     if (!containerRef.current) return;
 
-    // Detect which nodes are new vs have saved positions
-    const savedPositions = loadPositions();
+    // Detect which nodes are new vs have saved positions.
+    // Discard stored positions that look like a grid render — they come
+    // from a previous failed fcose run that fell through to the grid
+    // fallback, and we don't want to lock the user into that view.
+    let savedPositions = loadPositions();
+    if (savedPositions && looksLikeGrid(savedPositions)) {
+      console.warn("[GraphView] discarding grid-shaped saved positions");
+      clearStoredPositions();
+      savedPositions = null;
+    }
     const savedNodeIds = savedPositions
       ? new Set(Object.keys(savedPositions))
       : new Set<string>();
@@ -691,18 +768,26 @@ export function GraphView({
       container: containerRef.current,
       elements,
       style: cyStylesheet,
-      layout: getLayoutOptions({
-        savedPositions,
-        newNodeIds: newNodeIds.size > 0 ? newNodeIds : undefined,
-      }),
+      // Layout is run manually below so we can catch fcose grid overflows
+      // (RangeError at calcGrid) and fall back to a grid layout.
+      layout: { name: "preset" },
       zoom: 1,
       minZoom: 0.1,
       maxZoom: 5,
-      wheelSensitivity: 3,
       boxSelectionEnabled: false,
     });
 
     cyRef.current = cy;
+
+    lastNodeCount = currentNodeIds.size;
+    const ranLayout = runLayoutWithFallback(
+      cy,
+      getLayoutOptions({
+        savedPositions,
+        newNodeIds: newNodeIds.size > 0 ? newNodeIds : undefined,
+      }),
+    );
+    const shouldPersist = ranLayout === "fcose" || ranLayout === "cose";
 
     // After layout settles, save positions and center view.
     const centerGraph = () => {
@@ -717,7 +802,7 @@ export function GraphView({
     };
 
     cy.one("layoutstop", () => {
-      savePositions(cy);
+      if (shouldPersist) savePositions(cy);
       centerGraph();
     });
 
@@ -877,8 +962,8 @@ export function GraphView({
     const cy = cyRef.current;
     if (!cy) return;
     clearStoredPositions();
-    const layout = cy.layout(getLayoutOptions());
-    layout.run();
+    lastNodeCount = cy.nodes().length;
+    runLayoutWithFallback(cy, getLayoutOptions());
     cy.one("layoutstop", () => {
       savePositions(cy);
     });

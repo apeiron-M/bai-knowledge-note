@@ -1,0 +1,99 @@
+{
+  "id": "c479b7d7-6bd8-4d4b-bfeb-5c26b1ce5412",
+  "name": "document-permissions-support-groups-and-ops",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "dabb9f0b-94af-41f3-a7c5-3fb552a0b2c0",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "391165e6-41a5-47c8-89ac-ba360061b2da"
+        },
+        {
+          "id": "18f0cd71-7bdd-48f8-9906-42d2120b8f8f",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "3dffcf1c-0d80-44dd-a06f-cfcee8313c2e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Document permissions support group-based access control and operation-level restrictions, stored across six database tables",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "27b13447-1d33-4c1a-8397-74b404ab99cb",
+          "name": "permissions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "4d1eb49c-e79a-4c85-9830-9cd7f854e121",
+          "name": "groups",
+          "topicDocumentId": null
+        },
+        {
+          "id": "586a4885-a27c-4d9f-9be1-e3c358df1654",
+          "name": "access-control",
+          "topicDocumentId": null
+        },
+        {
+          "id": "47b4bb55-3611-4f28-9a9c-e3c05d6b086e",
+          "name": "database",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Permission resolution order: (1) Auth/admin check; (2) Direct user permission on document; (3) Group permission; (4) Parent inheritance recursively. Six tables: `DocumentPermission` (user-document), `Group`, `UserGroup` (memberships), `DocumentGroupPermission` (group-document), `OperationUserPermission` (user-operation), `OperationGroupPermission` (group-operation). Operation-level permissions restrict specific actions (e.g., only certain users can execute DELETE_NODE). Tables are auto-created by migrations when `DOCUMENT_PERMISSIONS_ENABLED=true`. GraphQL queries like `documentAccess`, `userDocumentPermissions`, `canExecuteOperation` expose the permission state.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Groups organize users; permissions cascade from drive to folder to document; specific operations can be restricted.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:50:18.375Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:05:52.556Z"
+}

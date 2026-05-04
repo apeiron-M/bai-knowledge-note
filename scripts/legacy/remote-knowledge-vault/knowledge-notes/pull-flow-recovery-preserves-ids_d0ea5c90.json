@@ -1,0 +1,88 @@
+{
+  "id": "d0ea5c90-9a59-4781-992d-f75a8facc0a1",
+  "name": "pull-flow-recovery-preserves-ids",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-bdb932e5",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "A user manifest indexes drives and a drive manifest lists documents plus folder structure",
+          "targetDocumentId": "d421cabb-492e-4dcb-bfa9-6e6c6e04b56e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Recovery from Swarm walks the user manifest to discover drives, then replays operation batches with preserved original IDs.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t1",
+          "name": "pull-flow",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t2",
+          "name": "recovery",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t3",
+          "name": "swarm-sync",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Pull sequence (Recovery from Swarm)\n\nOn a fresh PGlite (new device or cleared storage):\n\n1. Registration retry loop calls `readUserManifest(ownerAddress)` to discover drive IDs.\n2. For each drive: `addSwarmRemoteForDrive(driveId)` calls `syncManager.add(\"swarm:<driveId>\", collectionId, { type: \"swarm\" })`. This creates a `SwarmChannel`, registers it in `sync_remotes`, and starts a 5s inbox poll timer.\n3. `SwarmChannel.pollInbox()`:\n   - Read user manifest to get drive IDs.\n   - Read drive manifest to get doc IDs plus folder structure.\n   - For each doc: read document manifest, get operation batch refs, download each from `/bytes`, decrypt AES-256-GCM to `OperationWithContext[]`.\n   - Group by scope (document scope before global), create `SyncOperation`, `inbox.add(syncOp)`.\n4. `SyncManager.handleInboxAdded()` calls `reactor.load(documentId, branch, operations)` per sync op.\n\n### ID preservation\n\nOperations carry `CREATE_DOCUMENT` with the **original ID**, so the reactor recreates the document with that exact UUID. No ID mismatch, no mapping table needed. Drive, docs, folders, and the full operation history materialize back into PGlite, and Connect renders the recovered drive.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "workflow",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Fresh PGlite polls the user manifest, discovers drives and docs, downloads and decrypts operation batches, and replays them via reactor.load() with original IDs.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:45:00.060Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:28:33.001Z"
+}

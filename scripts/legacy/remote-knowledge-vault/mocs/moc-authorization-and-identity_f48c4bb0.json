@@ -1,0 +1,114 @@
+{
+  "id": "f48c4bb0-14cc-4fc3-932d-73fd80e36c15",
+  "name": "moc-authorization-and-identity",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "DOMAIN",
+      "title": "Authorization and Identity",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "814be301-7fda-4360-9814-bf003697b099",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "4857214e-b468-4b54-9fbc-1ffb4ac99d98",
+          "sortOrder": 1,
+          "contextPhrase": "Renown bridges Ethereum wallets to W3C DIDs, letting users authenticate to Powerhouse with the same wallet they use for on-chain governance — no separate credentials needed, no central identity provider required."
+        },
+        {
+          "id": "e1513407-d0d0-45b7-8340-9507c64c0daa",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "e22faa8a-9260-468f-96b1-6de4cb8ee27d",
+          "sortOrder": 2,
+          "contextPhrase": "The Renown SDK provides the programmatic interface for decentralized identity and authentication flows, abstracting the complexity of DID resolution, credential issuance, and verification into a developer-friendly API."
+        },
+        {
+          "id": "9d0af22c-ac56-42b9-a40a-5b3a4d7b08de",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "bdcd0b55-d998-4365-9986-94790824d267",
+          "sortOrder": 3,
+          "contextPhrase": "CLI identity uses did:key with Ethereum key delegation, enabling headless automation and CI/CD pipelines to authenticate to reactors without browser-based wallet flows while maintaining the same DID-based trust model."
+        },
+        {
+          "id": "935a3d81-c0bb-4ee1-97ce-fe376ad44487",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "3dffcf1c-0d80-44dd-a06f-cfcee8313c2e",
+          "sortOrder": 4,
+          "contextPhrase": "Two distinct signing mechanisms serve different trust requirements: header signing proves transport integrity and sender identity, while action-level signing provides per-operation non-repudiation for high-stakes document changes."
+        },
+        {
+          "id": "d9a62797-cfe6-4476-8571-c80fcd39a69d",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "5851885a-0838-4b5e-acd1-2be06972b3b8",
+          "sortOrder": 5,
+          "contextPhrase": "The ReactorClient automatically signs all outgoing actions, removing the burden of manual cryptographic operations from application code and ensuring that no unsigned operations accidentally reach the server."
+        },
+        {
+          "id": "af2222ef-9f8a-4aeb-bb1b-d107e66cd773",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "391165e6-41a5-47c8-89ac-ba360061b2da",
+          "sortOrder": 6,
+          "contextPhrase": "The layered authorization model stacks permissions from drive-level defaults through document-level overrides, allowing broad policies to be set at the organizational level while individual documents can tighten or relax access as needed."
+        },
+        {
+          "id": "ee632931-dfdb-4bdc-a2ae-40ea12924810",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "c479b7d7-6bd8-4d4b-bfeb-5c26b1ce5412",
+          "sortOrder": 7,
+          "contextPhrase": "Group-based and operation-level permissions enable precise access control — a contributor group might be able to addLineItem but not approveDocument, reflecting real organizational workflows where different roles have different capabilities."
+        },
+        {
+          "id": "0c019fd5-25fb-4bfa-80c5-cd68b28aeef6",
+          "addedAt": "2026-04-03T14:25:15.000Z",
+          "addedBy": null,
+          "noteRef": "7d169f10-cc38-4c06-850d-a05d8b1f448a",
+          "sortOrder": 100,
+          "contextPhrase": "Domain model for individual contributor identities — the identity primitive in the model ecosystem"
+        },
+        {
+          "id": "8626e2ad-c1f9-4bfb-8911-eb5ed129d078",
+          "addedAt": "2026-04-03T14:25:15.000Z",
+          "addedBy": null,
+          "noteRef": "cc3283b0-2a41-4fe4-83df-7828bfefa93a",
+          "sortOrder": 101,
+          "contextPhrase": "Network-level organizational entities — complements builder-profile at the org/network layer"
+        },
+        {
+          "id": "546b9ce7-b3dc-4e1b-a32e-bcc189e3de65",
+          "addedAt": "2026-04-03T14:25:16.000Z",
+          "addedBy": null,
+          "noteRef": "e2824e66-ab36-41a6-8db7-b6b420946236",
+          "sortOrder": 102,
+          "contextPhrase": "Operational hub configuration model — the legal/operational wrapper identity"
+        }
+      ],
+      "createdAt": "2026-04-02T13:00:00.000Z",
+      "noteCount": 10,
+      "parentRef": null,
+      "updatedAt": "2026-04-02T13:00:00.000Z",
+      "agentNotes": [],
+      "description": "Decentralized identity via Renown, DID-based authentication, cryptographic action signing, and the layered permission model that secures Powerhouse documents.",
+      "orientation": "Security in Powerhouse is built on decentralized identity rather than centralized user databases. The Renown system creates DIDs from Ethereum wallets, giving users self-sovereign identities that work across any reactor without a central authority. Every operation can be cryptographically signed — either at the header level for transport integrity or at the individual action level for non-repudiation — and the ReactorClient handles this signing transparently. On top of identity, a layered authorization model controls who can do what: from broad drive-level permissions down to fine-grained operation-level access, with group support for organizational structures. This MOC maps the complete security story from wallet connection through identity creation to permission enforcement.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-14T21:54:09.023Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:11:41.374Z"
+}

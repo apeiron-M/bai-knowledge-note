@@ -1,0 +1,94 @@
+{
+  "id": "3af8abf9-d9a2-450d-bb1c-eb14f337bc02",
+  "name": "create-swarm-sync-builder-hook",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-a4d32a4a",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "CompositeChannelFactory routes IChannel instantiation by config.type, letting Swarm and GQL factories coexist behind one SyncManager interface.",
+          "targetDocumentId": "0bd70b77-ab29-4ffe-a324-2b8e75bd2bf7"
+        },
+        {
+          "id": "lnk-3c8166e2",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "SwarmChannel implements IChannel so the reactor SyncManager is transport-agnostic",
+          "targetDocumentId": "021d8e43-ec03-4502-b088-2f76cbff192f"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "createSwarmSyncBuilder() is the sanctioned ReactorBuilder hook that installs CompositeChannelFactory routing gql and swarm by config.type",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "cad13291-9601-48fc-ae1d-a56cd42fe183",
+          "name": "reactor-builder",
+          "topicDocumentId": null
+        },
+        {
+          "id": "e1eb9811-a29f-4ba9-a971-39ce87d2fdf7",
+          "name": "composite-factory",
+          "topicDocumentId": null
+        },
+        {
+          "id": "fc65e229-d4d8-499c-a7cd-dde8c2db39df",
+          "name": "api-surface",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# createSwarmSyncBuilder Integration Hook\n\nThe adapter exposes `createSwarmSyncBuilder()` from `src/channel/create-composite-factory.ts` as the single sanctioned entry point for integrating Swarm sync into a Reactor host via the official `ReactorBuilder` API.\n\nThis replaces an earlier monkey-patching approach. The builder installs a `CompositeChannelFactory` that routes sync channels by their `config.type` discriminator:\n\n- `\"gql\"` → `GqlRequestChannel` (Switchboard cloud sync)\n- `\"swarm\"` → `SwarmChannel` (Swarm decentralized sync)\n\nThis lets a single Reactor instance run GraphQL-based Switchboard sync and Swarm-based decentralized sync side-by-side, per-drive, without either sync path interfering with the other. Per-drive registration happens through `add-swarm-remote.ts`.\n\nThe builder pattern is the stable public surface for adapter consumers — downstream apps should wire Swarm sync via `createSwarmSyncBuilder()` rather than constructing `SwarmChannel` directly.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "integration",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:57:41.685Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T19:49:01.836Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "createSwarmSyncBuilder() is the sanctioned ReactorBuilder hook that installs CompositeChannelFactory routing gql and swarm by config.type.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:57:05.320Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:49:02.031Z"
+}

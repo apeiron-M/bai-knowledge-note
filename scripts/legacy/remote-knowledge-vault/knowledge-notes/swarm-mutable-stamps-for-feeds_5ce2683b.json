@@ -1,0 +1,99 @@
+{
+  "id": "5ce2683b-6d41-468d-b9a7-d9c9b1ff2e80",
+  "name": "Feed-backing stamps should be mutable to avoid bucket exhaustion from frequent updates",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-87a3cbff",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The adapter writes manifests as 32-byte references inside SOC feeds, not inline payloads",
+          "targetDocumentId": "50f19d02-af0c-4c0a-b65b-607bb5cacb2c"
+        },
+        {
+          "id": "lnk-a55ebf02",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Postage stamp batches use 65,536 buckets distributed by the first 16 bits of chunk address",
+          "targetDocumentId": "d2a1eaad-16c5-43b6-9dea-cc6bfbd1f42f"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Feed-backing stamps should be mutable to avoid bucket exhaustion from frequent updates",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "705df5d6-2054-4b11-ab5d-1f7c179f623d",
+          "name": "postage-stamps",
+          "topicDocumentId": null
+        },
+        {
+          "id": "abb2ab12-50a9-4471-8792-4aff10fe950b",
+          "name": "swarm-feeds",
+          "topicDocumentId": null
+        },
+        {
+          "id": "b125ea3a-28ae-4680-b35e-4d7f616d8eaf",
+          "name": "adapter",
+          "topicDocumentId": null
+        },
+        {
+          "id": "3c3b670d-04c6-4575-90d7-d4c3a3b88b2b",
+          "name": "optimization",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\n\nStamps used to back **feed writes** (manifests) should be created **mutable** — immutable stamps waste one bucket slot per feed update and will exhaust long before the nominal capacity.\n\n## Evidence\n\n- Each feed update is a new SOC → a new chunk that consumes a bucket slot under immutable semantics\n- With immutable batches, the batch fails when any single bucket fills (non-uniform distribution means this happens well before 2^depth chunks)\n- Mutable batches replace the oldest chunk in an overflowing bucket — old feed indices are garbage-collected automatically, keeping capacity stable\n\n## How\n\n```js\nbee.createPostageBatch(amount, depth, { immutableFlag: false })\n```\n\n## Why it matters\n\nOur adapter writes frequent manifest updates (every 3-second debounce flush). Running these on immutable stamps is a time-bomb: the batch eventually fails on hot-bucket exhaustion long before its TTL expires. Mutable stamps are the correct primitive for this workload.\n",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "pattern",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Immutable stamps waste a new bucket slot on every feed update. Creating stamps with immutableFlag: false reuses slots and prevents exhaustion.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:17:00.185Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:29:53.037Z"
+}

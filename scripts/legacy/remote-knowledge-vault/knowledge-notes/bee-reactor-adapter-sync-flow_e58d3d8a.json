@@ -1,0 +1,112 @@
+{
+  "id": "e58d3d8a-705a-4fd4-be51-b836b7a41b8b",
+  "name": "bee-reactor-adapter-sync-flow",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-055f00d6",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The Swarm push cycle serializes, AES-256-GCM encrypts, uploads to /bytes, then writes a feed SOC.",
+          "targetDocumentId": "88ec1460-544f-49c4-949e-b6efd7faa113"
+        },
+        {
+          "id": "lnk-aca91a99",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The Swarm pull cycle polls user and document manifests then decrypts batches into the inbox.",
+          "targetDocumentId": "c634a118-b62c-4774-9b6f-90c038f755ed"
+        },
+        {
+          "id": "tst-swarm-001",
+          "linkType": "RELATES_TO",
+          "targetTitle": "SwarmChannel is pure transport",
+          "targetDocumentId": "aa7812d4-8e4b-4e67-8ffc-94a7d73c4549"
+        },
+        {
+          "id": "lnk-b03fa8cc",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The Swarm push cycle serializes, AES-256-GCM encrypts, uploads to /bytes, then writes a feed SOC.",
+          "targetDocumentId": "88ec1460-544f-49c4-949e-b6efd7faa113"
+        },
+        {
+          "id": "lnk-b5ebe55f",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The Swarm pull cycle polls user and document manifests then decrypts batches into the inbox.",
+          "targetDocumentId": "c634a118-b62c-4774-9b6f-90c038f755ed"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Adapter sync flow: reactor ops encrypted, uploaded to Swarm, replayed on recovery",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "sync-flow",
+          "name": "sync-flow",
+          "topicDocumentId": null
+        },
+        {
+          "id": "swarm-channel",
+          "name": "swarm-channel",
+          "topicDocumentId": null
+        },
+        {
+          "id": "cross-device-recovery",
+          "name": "cross-device-recovery",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "End-to-end sync flow from document edit to cross-device recovery:\n\n```\nUser edits document in Connect\n       ↓\nReactor stores operation in local PGlite\n       ↓\nSyncManager detects new ordinal → populates SwarmChannel outbox\n       ↓\nSwarmChannel encrypts ops → uploads to Swarm /bytes → updates feed pointer\n       ↓\nOn new device: wallet signature → same key → read feeds → download ops → replay → restored\n```\n\nKey properties:\n- Local writes hit PGlite first, so edits never block on network I/O.\n- The outbox is populated reactively by ordinal, not polled.\n- Encryption happens at the SwarmChannel layer before `/bytes` upload.\n- Feed pointers are the only mutable primitive — the op blobs themselves are immutable.\n- Cross-device recovery is deterministic from the wallet signature alone, no backup seed phrase or extra credentials needed.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:52:46.944Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:56:42.147Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "SyncManager detects new ordinals, SwarmChannel encrypts and uploads ops to /bytes and updates feed pointers; a new device replays ops after a wallet signature re-derives the key.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:53:08.089Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:21:55.526Z"
+}

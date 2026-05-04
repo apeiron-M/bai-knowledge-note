@@ -182,7 +182,8 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             content,
             author: provenance?.author ?? null,
             source_origin: provenance?.sourceOrigin ?? null,
-            created_at: (global.createdAt as string) ?? provenance?.createdAt ?? null,
+            created_at:
+              (global.createdAt as string) ?? provenance?.createdAt ?? null,
             updated_at: now,
           })
           .onConflict((oc) =>
@@ -194,7 +195,8 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
               content,
               author: provenance?.author ?? null,
               source_origin: provenance?.sourceOrigin ?? null,
-              created_at: (global.createdAt as string) ?? provenance?.createdAt ?? null,
+              created_at:
+                (global.createdAt as string) ?? provenance?.createdAt ?? null,
               updated_at: now,
             }),
           )
@@ -271,8 +273,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             });
           }
         } else {
-          const links =
-            (global.links as Array<Record<string, unknown>>) ?? [];
+          const links = (global.links as Array<Record<string, unknown>>) ?? [];
           for (const link of links) {
             edgeValues.push({
               id:
@@ -288,9 +289,23 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         }
 
         if (edgeValues.length > 0) {
+          // UPSERT instead of plain INSERT — concurrent reconciles on the same
+          // doc race after the DELETE above; without ON CONFLICT, the second
+          // insert hits `graph_edges_pkey` and the whole reconcile errors out.
           await this.relationalDb
             .insertInto("graph_edges")
             .values(edgeValues)
+            .onConflict((oc) =>
+              oc.column("id").doUpdateSet({
+                source_document_id: (eb) =>
+                  eb.ref("excluded.source_document_id"),
+                target_document_id: (eb) =>
+                  eb.ref("excluded.target_document_id"),
+                link_type: (eb) => eb.ref("excluded.link_type"),
+                target_title: (eb) => eb.ref("excluded.target_title"),
+                updated_at: (eb) => eb.ref("excluded.updated_at"),
+              }),
+            )
             .execute();
         }
 

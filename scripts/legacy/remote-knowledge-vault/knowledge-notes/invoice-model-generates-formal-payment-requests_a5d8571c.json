@@ -1,0 +1,95 @@
+{
+  "id": "a5d8571c-6c18-4e51-a26f-f2a84268b60f",
+  "name": "invoice-model-generates-formal-payment-requests",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "a1f5f8eb-43c1-4e47-be4d-0ed37f781c4a",
+          "linkType": "RELATES_TO",
+          "targetTitle": "scope-of-work-model-structures-deliverables-and-milestones",
+          "targetDocumentId": "ca17926a-5b25-478c-aecb-04d8960da6f4"
+        },
+        {
+          "id": "b423ea11-8f2b-485f-ba96-294132b14561",
+          "linkType": "RELATES_TO",
+          "targetTitle": "payment-terms-model-defines-payment-conditions-and-schedules",
+          "targetDocumentId": "d81b839b-2f08-43b9-9266-e1daf5dad443"
+        },
+        {
+          "id": "309aa3ca-089a-4bc9-9605-f0753b59fa4b",
+          "linkType": "RELATES_TO",
+          "targetTitle": "billing-statement-model-captures-periodic-billing-summaries",
+          "targetDocumentId": "b34cde5a-588d-494f-936d-b1c89b601462"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "invoice model generates formal payment requests",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "50dbcb3a-7664-48d5-8015-a62dd1e35baa",
+          "name": "invoice",
+          "topicDocumentId": null
+        },
+        {
+          "id": "1ae47ad3-529f-402c-8210-9ead5a0adb11",
+          "name": "reporting",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# invoice model generates formal payment requests\n\n`powerhouse/invoice` (31 ops) is the second-largest model by operation count. Generates formal invoices from subscription and billing data.\n\n## Cross-Model References\n\n- SubscriptionInstance → Invoice (subscription charges become invoice line items)\n- References [[payment-terms model defines payment conditions and schedules]] for due dates and terms\n- May reference [[billing-statement model captures periodic billing summaries]] as source data\n- Feeds into [[account-transactions model tracks financial transaction records]] when payments are recorded\n\n## Position in Ecosystem\n\nReporting zone. High operation count (31) suggests complex line item management, tax handling, and status workflow.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:41:37.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T13:41:37.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "31 operations (second largest) — creates formal invoices with line items, tax calculations, and payment status tracking",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:52:33.130Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:09:26.531Z"
+}

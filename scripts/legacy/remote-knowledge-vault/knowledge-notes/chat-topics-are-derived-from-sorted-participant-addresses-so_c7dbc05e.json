@@ -1,0 +1,106 @@
+{
+  "id": "c7dbc05e-f321-47df-83f2-994518d7885c",
+  "name": "chat-topics-are-derived-from-sorted-participant-addresses-so",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-bafa9707",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "PSS provides 1-to-1 asymmetrically encrypted messaging with 2–10 second latency on Swarm.",
+          "targetDocumentId": "ea83f800-77bf-4bc3-bd87-2c625f2af31e"
+        },
+        {
+          "id": "lnk-75c73ce2",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Chat requires both users to run full Bee nodes because light nodes cannot receive PSS or GSOC.",
+          "targetDocumentId": "2f9ad26c-c821-4adc-956d-d6c1bc5779b0"
+        },
+        {
+          "id": "lnk-6c02f88d",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "PSS provides 1-to-1 asymmetrically encrypted messaging with 2–10 second latency on Swarm.",
+          "targetDocumentId": "ea83f800-77bf-4bc3-bd87-2c625f2af31e"
+        },
+        {
+          "id": "lnk-2a4f653b",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Swarm feeds are sequences of SOCs at predictable addresses that act as mutable pointers",
+          "targetDocumentId": "6269bcdb-2e65-459f-96c2-fc9b541d1c60"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Chat topics are derived from sorted participant addresses so both peers compute the same topic.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "topic-5c5ce24c7858",
+          "name": "pss-chat",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-d2d68e6884e3",
+          "name": "topic-convention",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-b1dbf6c65e84",
+          "name": "swarm-feeds",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Pattern\n\nChat, collab, and chat-history topics are all derived by concatenating the two participants' Swarm signer addresses in **sorted** order. Sorting guarantees both parties compute the same topic string regardless of who initiates the conversation.\n\n## Topic conventions\n\n```\nChat topic:    ph:v2:chat:<sorted(alice, bob)>\nGSOC notify:   ph:v2:notify:<targetAddress>\nCollab topic:  ph:v2:collab:<documentId>:<sorted(alice, bob)>\nChat history:  ph:v2:chatlog:<sorted(alice, bob)>    // feed, append-only\n```\n\n## Why sorting\n\nWithout sorting, Alice would compute `chat:alice:bob` while Bob would compute `chat:bob:alice`, and PSS subscriptions would never meet. Sorting collapses the asymmetry.\n\n## Namespace versioning\n\nThe `ph:v2:` prefix (vs v1) signals the current Swarm protocol revision. Bumping the prefix is how the app will roll out breaking changes to topic shape or payload schema in the future without colliding with old clients.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "pattern",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:27:13.426Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:27:13.426Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Topics like ph:v2:chat:<sorted(alice,bob)> sort the two addresses alphabetically, ensuring symmetric derivation regardless of who initiates.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:22:30.486Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:25:11.271Z"
+}

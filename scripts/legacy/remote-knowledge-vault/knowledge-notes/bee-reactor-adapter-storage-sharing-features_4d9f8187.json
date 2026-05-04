@@ -1,0 +1,93 @@
+{
+  "id": "4d9f8187-b1aa-4092-aa9f-968b8c9ebe87",
+  "name": "bee-reactor-adapter-storage-sharing-features",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-555068a7",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Cross-user sharing uses Swarm ACT with an ECDH-derived session key so only the publisher's Bee node can produce new grants.",
+          "targetDocumentId": "c63ea66b-d2d8-471e-8ce4-ad2a70a7934a"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Adapter storage uses AES-256-GCM with hierarchical feeds; sharing delegates to Swarm ACT",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "storage-architecture",
+          "name": "storage-architecture",
+          "topicDocumentId": null
+        },
+        {
+          "id": "encryption",
+          "name": "encryption",
+          "topicDocumentId": null
+        },
+        {
+          "id": "act-sharing",
+          "name": "act-sharing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "feature-categories",
+          "name": "feature-categories",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Storage and recovery feature set:\n- **AES-256-GCM encryption** at the app layer for operations and manifests.\n- **Hierarchical feeds**: user → drive → document, letting the reader walk the tree lazily.\n- **Folder topology preserved** across sync, recovery, and sharing.\n- **Manifest compaction** — old op batches are merged so recovery is fast even after long history.\n\nSharing (ACT-protected):\n- **Encrypted drive bundles** shared between users via Swarm IDs.\n- **ECDH-based access control** through Swarm's native ACT (Access Control Trie). The Bee node handles decryption transparently, so the app layer does not perform any shared-secret math itself. This avoids a whole class of app-layer key-exchange bugs and delegates the crypto boundary to a well-audited primitive.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:52:46.944Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:56:42.147Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Storage encrypts ops and manifests with AES-256-GCM in hierarchical user/drive/document feeds; drive sharing delegates to Swarm's native ACT ECDH instead of app-layer shared secrets.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:53:11.616Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:27:28.439Z"
+}

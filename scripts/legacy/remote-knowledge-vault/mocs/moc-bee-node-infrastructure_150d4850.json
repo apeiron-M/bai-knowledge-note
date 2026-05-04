@@ -1,0 +1,90 @@
+{
+  "id": "150d4850-edd1-41f4-a3b2-4e7579583ebb",
+  "name": "moc-bee-node-infrastructure",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "TOPIC",
+      "title": "Bee Node Infrastructure",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "ci-777689bef8",
+          "addedAt": "2026-04-21T19:32:33.102Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "d4eed853-c36c-4879-bad2-1cac217c2460",
+          "sortOrder": 0,
+          "contextPhrase": "Minimum-requirements baseline: full node, mutable stamp, wallet, open P2P ports."
+        },
+        {
+          "id": "ci-321cf1d195",
+          "addedAt": "2026-04-21T19:32:33.662Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "e96d85a5-e39f-48e4-8223-6fe95cb78f59",
+          "sortOrder": 1,
+          "contextPhrase": "Bee v2.7.1+ plus depth-22+ stamp; dev node lacks SOC/feeds — the version+depth constraint."
+        },
+        {
+          "id": "ci-e61657c614",
+          "addedAt": "2026-04-21T19:32:34.361Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "2f9ad26c-c821-4adc-956d-d6c1bc5779b0",
+          "sortOrder": 2,
+          "contextPhrase": "Chat-specific: both users need full Bee nodes because light nodes cannot receive PSS/GSOC."
+        },
+        {
+          "id": "ci-4512479851",
+          "addedAt": "2026-04-21T19:32:35.055Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "d9bb882c-d265-4a43-9097-0606d55469d7",
+          "sortOrder": 3,
+          "contextPhrase": "GSOC subscriptions require full nodes + mutable stamps — impacts live collab + chat notifications."
+        },
+        {
+          "id": "ci-1ba8c804fa",
+          "addedAt": "2026-04-21T19:32:35.782Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "c54ed148-1d0e-45d0-a301-2f31a229ada3",
+          "sortOrder": 4,
+          "contextPhrase": "Bee v2.7.0 auto-races legacy vs wrapped feed versions — removes a class of adapter bugs."
+        },
+        {
+          "id": "ci-7cfa9943e8",
+          "addedAt": "2026-04-21T19:32:36.535Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "5ce2683b-6d41-468d-b9a7-d9c9b1ff2e80",
+          "sortOrder": 5,
+          "contextPhrase": "Feed-backing stamps must be mutable to avoid bucket exhaustion — concrete stamp pattern."
+        },
+        {
+          "id": "ci-da7a298703",
+          "addedAt": "2026-04-21T19:32:37.140Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "d2a1eaad-16c5-43b6-9dea-cc6bfbd1f42f",
+          "sortOrder": 6,
+          "contextPhrase": "Postage stamp bucket model (65,536 buckets keyed by first 16 bits) — capacity-planning foundation."
+        }
+      ],
+      "createdAt": "2026-04-21T19:32:32.729Z",
+      "noteCount": 7,
+      "parentRef": null,
+      "updatedAt": "2026-04-21T19:32:32.729Z",
+      "agentNotes": [],
+      "description": "Operational requirements and constraints for running Connect on Swarm: full Bee v2.7+ nodes, mutable depth-22+ stamps, wallet, open P2P ports.",
+      "orientation": "Connect-on-Swarm has a hard floor of operational requirements: Bee v2.7.1+ full nodes (light nodes can't receive PSS or GSOC), mutable depth-22+ postage stamps, an Ethereum wallet, and open P2P ports. Within that, feed-backing stamps must be mutable to avoid bucket exhaustion, GSOC subscriptions only work on full nodes, and Bee v2.7.0 auto-races legacy vs. wrapped feed versions so adapter code no longer picks a version. This MOC is the pragmatic deployment reference for anyone onboarding a Bee node for Connect.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-21T19:32:31.781Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:32:37.493Z"
+}

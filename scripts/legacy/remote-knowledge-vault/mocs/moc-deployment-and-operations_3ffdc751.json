@@ -1,0 +1,106 @@
+{
+  "id": "3ffdc751-627e-419d-aa90-da9069ac1e61",
+  "name": "moc-deployment-and-operations",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "DOMAIN",
+      "title": "Deployment and Operations",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "e651f302-48fa-49e0-bcd5-fb5d3adacbe7",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "d9f3123e-640b-40cb-8fb1-1289c815b360",
+          "sortOrder": 1,
+          "contextPhrase": "Docker images for Connect and Switchboard provide reproducible, portable deployment units that encapsulate all dependencies and configuration, enabling consistent behavior from development laptops to production Kubernetes clusters."
+        },
+        {
+          "id": "afee6c85-caab-44dd-a88b-0d40e04b8d02",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "5183ca88-593c-4f42-bfbe-de94292b0bc0",
+          "sortOrder": 2,
+          "contextPhrase": "The ph service setup command automates production server configuration — nginx for reverse proxying and TLS termination, PM2 for process management and zero-downtime restarts, and SSL certificate provisioning — reducing a multi-step manual setup to a single command."
+        },
+        {
+          "id": "a3b39278-6123-4c9a-8fcf-ad91ccddd999",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "0cf1460b-0388-4a89-9a70-0db429035693",
+          "sortOrder": 3,
+          "contextPhrase": "Environment variables overriding config.json follows twelve-factor app principles, letting the same Docker image or build artifact be deployed across staging, production, and review environments by changing only environment configuration."
+        },
+        {
+          "id": "7c5e86ab-ec80-4bbf-be09-46c899421ec9",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "5ac93a5b-7e76-4dcf-8a78-6f19c4151ed8",
+          "sortOrder": 4,
+          "contextPhrase": "The PHDocument v4 header consolidation simplified the wire format by merging previously scattered metadata into a unified header structure, reducing parsing complexity and improving interoperability between different reactor implementations."
+        },
+        {
+          "id": "ced91d86-c224-48b8-baa5-411588f71cef",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "e540aae1-b236-459a-aef1-242d7b8d3cef",
+          "sortOrder": 5,
+          "contextPhrase": "The v6 reactor replaces legacy REST endpoints with subgraph-based GraphQL access, unifying the query interface and enabling clients to leverage the full composability of GraphQL for fetching exactly the data they need in a single request."
+        },
+        {
+          "id": "0155ab0c-8454-4352-b6c3-2095836a712c",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "53f6632c-6e2c-46db-9208-a2f476ec254f",
+          "sortOrder": 6,
+          "contextPhrase": "Flat operations replacing strands in v6 simplifies the operation model by removing an unnecessary grouping layer, making the event log more uniform and reducing the conceptual overhead for developers working with operation history."
+        },
+        {
+          "id": "f1b98cb8-84b9-4a9a-b406-420317ce2572",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "a46b1881-368e-4f0c-84b4-112a556c91ee",
+          "sortOrder": 7,
+          "contextPhrase": "Custom subgraphs in the v6 reactor give ReactorClient consumers access to domain-specific query APIs that go beyond raw document state, enabling rich read-side interfaces without requiring clients to implement their own aggregation logic."
+        },
+        {
+          "id": "a9f3d2a0-3620-4f6c-ab79-1504d91e4f69",
+          "addedAt": "2026-04-03T14:25:17.000Z",
+          "addedBy": null,
+          "noteRef": "bf61adda-70cc-4b0b-849d-8add0e25acb3",
+          "sortOrder": 100,
+          "contextPhrase": "MCP operational workflow patterns — essential for AI agent deployment against reactors"
+        },
+        {
+          "id": "beba1711-3e5d-4dfb-a7ce-8d1ce8f20a0c",
+          "addedAt": "2026-04-03T14:42:38.000Z",
+          "addedBy": null,
+          "noteRef": "60e8385c-c2e6-4fa1-847b-c3c3961014cf",
+          "sortOrder": 200,
+          "contextPhrase": "Standard project structure with four directories for consistent developer onboarding"
+        }
+      ],
+      "createdAt": "2026-04-02T13:00:00.000Z",
+      "noteCount": 9,
+      "parentRef": null,
+      "updatedAt": "2026-04-02T13:00:00.000Z",
+      "agentNotes": [],
+      "description": "Docker images, production service setup with nginx/PM2/SSL, environment configuration, document format migration, and the v6 reactor architecture transition.",
+      "orientation": "Getting Powerhouse from development to production involves a layered deployment strategy. Docker images package Connect and Switchboard for containerized deployment, while the ph service setup command configures bare-metal installations with nginx reverse proxying, PM2 process management, and SSL termination. Environment variables override config.json for twelve-factor app compliance in cloud environments. Beyond initial deployment, the operations story includes document format migration — the PHDocument v4 header consolidation that streamlined the wire format — and the ongoing v6 reactor transition that replaces legacy REST endpoints with subgraph-based access, flattens operations to remove the strand abstraction, and provides custom subgraphs for ReactorClient consumers. This MOC captures both the how of getting Powerhouse running and the evolution of the runtime architecture itself.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-14T21:54:23.557Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:12:04.783Z"
+}

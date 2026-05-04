@@ -1,0 +1,88 @@
+{
+  "id": "2f2a9ae4-7318-4559-ae83-b267c6a5726a",
+  "name": "document-model-versioning-system",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "55f3ff6d-bf25-4e0d-8de1-cefb05f382d2",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "233aa2f8-06b3-4c94-9425-d0bbb6a98f6f"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Document model versioning allows schema evolution while maintaining backward compatibility",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "c9cd6679-ea98-4bc4-9d83-444413634f61",
+          "name": "versioning",
+          "topicDocumentId": null
+        },
+        {
+          "id": "2a25fe8d-771b-416c-8d3c-5b341b840b39",
+          "name": "schema-evolution",
+          "topicDocumentId": null
+        },
+        {
+          "id": "97754887-3cd4-4af1-bd39-4bd7c85d3170",
+          "name": "backward-compatibility",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Because document models are event-sourced, changing a schema would break existing documents. Versioning solves this with four components:\n\n1. **Version Folders** - Separate `v1/`, `v2/` directories with version-specific gen/ and src/ code\n2. **DocumentModelModule** - Each version exports a module with an explicit `version` number\n3. **Upgrade Manifest** - Declares supported versions and upgrade paths for a document type\n4. **Upgrade Reducer** - Pure function that transforms document state from one version to another\n\nKey rules:\n- V1 documents continue to work with v1 reducers\n- New documents are created at the latest version by default\n- Upgrade reducers must handle both `state` and `initialState`\n- Never remove operations from newer versions\n- Don't change existing input schemas; add new operations instead\n- Upgrade reducers must be pure (no side effects)\n- Always provide sensible defaults for new fields\n- Never lose data during upgrades\n\nConnect and Switchboard automatically load all versions and upgrade manifests, handling version detection and migration transparently.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Multiple versions coexist with separate v1/, v2/ folders. Upgrade manifests and reducers handle migration between versions.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:49:49.648Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:05:00.947Z"
+}

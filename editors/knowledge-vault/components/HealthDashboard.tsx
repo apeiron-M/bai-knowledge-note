@@ -1,8 +1,6 @@
 import { useMemo } from "react";
-import {
-  useDocumentsInSelectedDrive,
-  setSelectedNode,
-} from "@powerhousedao/reactor-browser";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { useDocumentsSafe } from "../hooks/use-documents-safe.js";
 import { generateId } from "document-model/core";
 
 const STATUS_BADGE: Record<string, string> = {
@@ -20,7 +18,7 @@ type HealthCheck = {
 };
 
 export function HealthDashboard() {
-  const documents = useDocumentsInSelectedDrive();
+  const documents = useDocumentsSafe();
 
   // Read from bai/health-report document (written by agent via /health skill)
   const agentReport = useMemo(() => {

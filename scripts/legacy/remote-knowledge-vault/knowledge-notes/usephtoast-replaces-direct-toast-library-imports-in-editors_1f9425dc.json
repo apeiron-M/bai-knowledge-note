@@ -1,0 +1,93 @@
+{
+  "id": "1f9425dc-3735-4f53-8ff1-a3c4f6957c19",
+  "name": "usephtoast-replaces-direct-toast-library-imports-in-editors",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "41832e68-7892-4e65-80f9-bd89fb839d2b",
+          "linkType": "RELATES_TO",
+          "targetTitle": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser",
+          "targetDocumentId": "5cc0a94d-0555-4686-b67b-d50e9c596982"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "usePHToast replaces direct toast library imports in editors",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "6192fd09-7d79-41ea-b5c0-06f25db4917f",
+          "name": "editor patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "76c6f5c7-13b1-4444-981a-8a809ed02607",
+          "name": "gotchas",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a7e7ea1b-1dd6-4c0d-9d40-3197f84cb1ce",
+          "name": "React hooks",
+          "topicDocumentId": null
+        },
+        {
+          "id": "c306159b-7a95-43c7-9dff-375e7aabda31",
+          "name": "UI components",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# usePHToast replaces direct toast library imports in editors\n\nNever import `ToastContainer` or any toast library directly in editors or apps. The host app (Connect) already provides the toast infrastructure.\n\n```typescript\nimport { usePHToast } from \"@powerhousedao/reactor-browser\";\n\nexport default function Editor() {\n  const toast = usePHToast();\n\n  const handleSave = () => {\n    toast(\"Document saved!\", { type: \"success\" });\n  };\n}\n```\n\nAvailable toast types: `default`, `success`, `error`, `warning`, `info`, `connect-success`, `connect-warning`, `connect-loading`, `connect-deleted`.\n\nOptions include `autoClose` (ms or false) and `containerId` for targeting specific containers.\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[gotchas]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "OBSERVATION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:02:29.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T14:02:29.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The host app Connect provides toast infrastructure; importing ToastContainer directly causes conflicts; use usePHToast instead",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:06.018Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:07:11.019Z"
+}

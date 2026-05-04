@@ -1,0 +1,94 @@
+{
+  "id": "a00f5b24-aa83-4fae-b12d-6e239dda80e6",
+  "name": "DocumentToolbar exposes className enabledControls and callback props",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "3f7fd03b-0d25-4978-880b-dc528081b29a",
+          "linkType": "RELATES_TO",
+          "targetTitle": "twMerge className",
+          "targetDocumentId": "f6ffce3c-cbfa-4bf2-b651-d511e9fa76ec"
+        },
+        {
+          "id": "c6c991f0-a805-4a30-873a-165e6ae3134e",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Child selector pattern",
+          "targetDocumentId": "3b68683c-0180-4bb4-ab45-43a366eee116"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "DocumentToolbar exposes className, enabledControls, and callback props but no direct child styling",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "ebc8363b-88b3-4f78-8a63-452b6e3965c6",
+          "name": "document-toolbar",
+          "topicDocumentId": null
+        },
+        {
+          "id": "8c8e16b5-5f68-4b4e-b9d2-a0d3336b1cbd",
+          "name": "component-api",
+          "topicDocumentId": null
+        },
+        {
+          "id": "5a743106-c6c4-4eaf-9e67-d80c252da432",
+          "name": "design-system",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `DocumentToolbar` component accepts these props:\n\n```typescript\ntype DocumentToolbarProps = {\n  className?: string;                          // CSS classes (merged via twMerge)\n  enabledControls?: DocumentToolbarControl[];   // Which buttons to show\n  // Default: [\"undo\", \"redo\", \"export\", \"history\"]\n  // Available: \"undo\" | \"redo\" | \"export\" | \"history\" | \"timeline\"\n  disableRevisionHistory?: boolean;            // Disable history button\n  onExport?: (document: PHDocument) => void;   // Custom export handler\n  onClose?: () => void;                        // Custom close handler\n  onSwitchboardLinkClick?: () => void;         // Custom switchboard handler\n  initialTimelineVisible?: boolean;            // Show timeline on mount\n  defaultTimelineVisible?: boolean;            // Show timeline toggle button\n  document?: PHDocument;                       // Override selected document\n};\n```\n\nNotably absent: any props for styling individual buttons, icons, or the document title. The `className` prop is the only styling entry point, and it applies to the container. Styling children requires the arbitrary child selector pattern (`[&_button]`, `[&_svg]`, etc.) passed through this single prop.\n\nThe `enabledControls` array lets you hide/show buttons but not restyle them individually.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-03-30T14:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-03-30T14:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The DocumentToolbar TypeScript API provides control over which buttons appear and their behavior, but styling internals requires the className child selector workaround rather than dedicated props.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:50:32.490Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:06:15.583Z"
+}

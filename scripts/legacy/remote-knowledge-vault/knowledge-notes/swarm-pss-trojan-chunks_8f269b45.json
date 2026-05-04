@@ -1,0 +1,93 @@
+{
+  "id": "8f269b45-da85-484b-8802-1a871daf128b",
+  "name": "PSS delivers anonymous asynchronous messages via Trojan chunks mined into the recipient's neighborhood",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-35aaa5a3",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Swarm uses Kademlia proximity order routing with 4+ redundant copies per neighborhood",
+          "targetDocumentId": "06786082-2124-4846-ad6b-4e6725ac9842"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "PSS delivers anonymous asynchronous messages via Trojan chunks mined into the recipient's neighborhood",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "adf89cb5-61fc-40db-8178-1e69541f82d2",
+          "name": "pss",
+          "topicDocumentId": null
+        },
+        {
+          "id": "690900c4-2902-4c59-b308-7b283a2f4139",
+          "name": "swarm",
+          "topicDocumentId": null
+        },
+        {
+          "id": "7990ff80-72ae-460d-a639-a3dfc83d05cc",
+          "name": "messaging",
+          "topicDocumentId": null
+        },
+        {
+          "id": "989d5332-8baf-4cf0-8a94-2a52237658de",
+          "name": "privacy",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\n\n**PSS (Postal Service on Swarm)** delivers anonymous, asynchronous messages by mining a content-addressed chunk (\"Trojan chunk\") whose address lands in the recipient's neighborhood, then push-syncing it through normal chunk traffic.\n\n## Evidence\n\nProtocol:\n1. Sender mines a nonce so the resulting CAC address has a prefix matching the recipient's neighborhood\n2. Message is asymmetrically encrypted with the recipient's public key\n3. The chunk is push-synced via the standard protocol — indistinguishable from normal encrypted traffic\n4. Recipient's node attempts to decrypt every arriving chunk, checking for a topic match\n\nTrojan chunk layout:\n```\n[8-byte span] [32-byte mined nonce] [4064-byte encrypted payload]\n  Payload: [2-byte msg length] [32-byte obfuscated topic] [message] [random padding]\n```\n\nLatency: seconds (nonce mining scales with network size) + normal forwarding time. If the recipient is offline, the chunk persists until its stamp TTL expires — delivery is asynchronous.\n\nAPI: `POST /pss/send/{topic}/{targets}?recipient={publicKey}`, `WS /pss/subscribe/{topic}`.\n\n## Why it matters\n\nPSS is the transport for real-time notifications and direct messaging in a fully decentralized Connect. Third parties cannot distinguish PSS traffic from any other encrypted chunk, giving plausible deniability.\n",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "concept",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Sender mines a CAC whose address falls in the recipient's neighborhood, encrypts payload with recipient's public key, and push-syncs. Indistinguishable from normal traffic.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:17:05.726Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:24:55.295Z"
+}

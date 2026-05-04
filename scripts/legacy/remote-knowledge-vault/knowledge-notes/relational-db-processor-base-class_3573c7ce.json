@@ -1,0 +1,94 @@
+{
+  "id": "3573c7ce-34a8-4184-b170-9bbeb2f6cdaa",
+  "name": "relational-db-processor-base-class",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "64574621-80d4-4e6a-b98b-b29e68948edd",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "8f9ffc85-4ce5-40cb-b665-7d06cca7efbb"
+        },
+        {
+          "id": "5fb91e7f-4421-4ba2-b4bf-228de71da44b",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "d6fe2534-6130-416e-83eb-31cc1d44b566"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "RelationalDbProcessor provides a type-safe base class with per-drive namespace isolation and lifecycle migration hooks",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "6ec7fc81-bf97-4791-98a4-116413f39f10",
+          "name": "relational-db",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a154a49a-7a1d-4ea1-b0c9-fdfe9e9c08fd",
+          "name": "processors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "0aee4021-f9d9-4c6d-abc2-7314ab9e7530",
+          "name": "pattern",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The v6 Reactor provides `RelationalDbProcessor<DB>` as a base class for processors that need database access. Key features: `getNamespace(driveId)` static method creates per-drive database isolation preventing data collisions; `initAndUpgrade()` lifecycle hook runs migrations on startup; `this.relationalDb` provides a typed Kysely instance; `query(driveId, relationalDb)` static method enables querying from subgraphs. The factory creates namespaced stores via `module.relationalDb.createNamespace<T>(namespace)`. Scaffolding is generated with `ph generate --processor <name> --processor-type relationalDb --document-types <type>`.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Extend RelationalDbProcessor<DB> for built-in this.relationalDb access, getNamespace(driveId) isolation, and initAndUpgrade().",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:32.356Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:07:52.571Z"
+}

@@ -3,8 +3,11 @@ import type { EditorProps } from "document-model";
 import {
   setSelectedNode,
   useFileNodesInSelectedDrive,
-  useDocumentsInSelectedDrive,
 } from "@powerhousedao/reactor-browser";
+import {
+  useDocumentByIdSafe,
+  useDocumentsSafe,
+} from "../hooks/use-documents-safe.js";
 import { VaultSidebar } from "./VaultSidebar.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import { GraphView } from "./GraphView.js";
@@ -20,7 +23,10 @@ import {
   buildSyncPayload,
 } from "../hooks/use-knowledge-graph.js";
 import { useAutoHealth } from "../hooks/use-auto-health.js";
-import { useKnowledgeGraphDocumentById } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
+import type {
+  KnowledgeGraphAction,
+  KnowledgeGraphDocument,
+} from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
 import { actions as graphActions } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
 import { ThemeToggle } from "../../shared/theme-context.js";
 
@@ -39,7 +45,7 @@ export function DriveExplorer({ children }: EditorProps) {
   const { notes } = useKnowledgeNotes();
   const { graphDoc, graphState, hasGraphDoc } = useKnowledgeGraph(notes);
   const fileNodes = useFileNodesInSelectedDrive();
-  const allDocuments = useDocumentsInSelectedDrive();
+  const allDocuments = useDocumentsSafe();
   const showDocumentEditor = !!children;
 
   // Read MOC documents for the graph view
@@ -90,8 +96,10 @@ export function DriveExplorer({ children }: EditorProps) {
 
   // Auto-sync graph — triggers on any note data change (not just count)
   const graphDocId = graphDoc?.header.id ?? null;
-  const [graphDocument, graphDispatch] =
-    useKnowledgeGraphDocumentById(graphDocId);
+  const [graphDocument, graphDispatch] = useDocumentByIdSafe<
+    KnowledgeGraphDocument,
+    KnowledgeGraphAction
+  >(graphDocId);
   const lastSyncFingerprint = useRef("");
 
   // Build a fingerprint from note data that changes when links/titles/statuses change

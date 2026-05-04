@@ -2,11 +2,11 @@ import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import {
   setSelectedNode,
   showCreateDocumentModal,
-  useDocumentsInSelectedDrive,
   useNodesInSelectedDrive,
   useSelectedDriveId,
   addDocument,
 } from "@powerhousedao/reactor-browser";
+import { useDocumentsSafe } from "../hooks/use-documents-safe.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
@@ -45,7 +45,7 @@ export function VaultSidebar({ notes }: VaultSidebarProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
   const resizing = useRef(false);
-  const documents = useDocumentsInSelectedDrive();
+  const documents = useDocumentsSafe();
   const allNodes = useNodesInSelectedDrive();
 
   const handleMouseDown = useCallback(

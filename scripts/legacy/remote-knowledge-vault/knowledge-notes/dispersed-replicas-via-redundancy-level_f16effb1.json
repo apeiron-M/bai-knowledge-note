@@ -1,0 +1,86 @@
+{
+  "id": "f16effb1-11f1-4e73-b2ab-ec24b2b197ff",
+  "name": "dispersed-replicas-via-redundancy-level",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Dispersed replicas are a one-field opt-in via bee-js RedundancyLevel",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "6ff7848d-44bd-423b-ae12-d6fd7f6a8778",
+          "name": "dispersed-replicas",
+          "topicDocumentId": null
+        },
+        {
+          "id": "bf791c0e-ed54-47ca-94bf-f72770792bd3",
+          "name": "redundancy-level",
+          "topicDocumentId": null
+        },
+        {
+          "id": "b2c1708e-5368-43c4-8ba5-9635b015288c",
+          "name": "erasure-coding",
+          "topicDocumentId": null
+        },
+        {
+          "id": "bd93f730-17aa-4bf8-a150-625e6001dfd1",
+          "name": "bee-js-sdk",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Dispersed replicas via `RedundancyLevel` — additive, reversible\n\nbee-js exposes:\n\n```ts\nenum RedundancyLevel { OFF=0, MEDIUM=1, STRONG=2, INSANE=3, PARANOID=4 }\nenum RedundancyStrategy { NONE, DATA, PROX, RACE }\n```\n\nUploading with `{ redundancyLevel: MEDIUM }` makes Bee erasure-code the chunks across the neighbourhood. The default download strategy cascade is `NONE → DATA → PROX → RACE`, so existing readers transparently benefit — no reader-side code changes needed.\n\nThis is **not** the paper's literal balanced-SOC-replica pattern (paper §5.1.3) but achieves the same outcome through Reed-Solomon coding, as a one-field opt-in with zero protocol changes.\n\n**Why it's low-risk:**\n- No schema changes, no wire-protocol changes, no feed-shape changes.\n- ACT layering is unaffected — redundancy operates on chunks, ACT on their contents.\n- Rolling back = revert the 2–3 line flag additions.\n- Zero behavioural change if `RedundancyLevel.OFF` (default).",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "integration",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:45.004Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:41:45.004Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "bee-js exposes RedundancyLevel (OFF..PARANOID); upload with redundancyLevel:MEDIUM and Bee erasure-codes chunks. Readers transparently RACE-fetch via the default cascade.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:36:58.342Z",
+  "lastModifiedAtUtcIso": "2026-04-21T14:42:55.638Z"
+}

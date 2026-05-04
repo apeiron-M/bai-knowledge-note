@@ -1,0 +1,94 @@
+{
+  "id": "c6a52fff-7432-48c3-899c-79f877763aeb",
+  "name": "delete-nodes-with-deletenode-not-deletefile",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "acbd933f-32ed-4386-8909-ddc48bdbe570",
+          "linkType": "RELATES_TO",
+          "targetTitle": "mcp-workflows",
+          "targetDocumentId": "bf61adda-70cc-4b0b-849d-8add0e25acb3"
+        },
+        {
+          "id": "8d1fc832-fb9d-4885-a277-ef0bb928d75d",
+          "linkType": "RELATES_TO",
+          "targetTitle": "document-ids-are-auto-generated-by-createdocument-never-set-manually",
+          "targetDocumentId": "a05db388-6935-4b9d-8f40-0c86b1376a2a"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "delete nodes with DELETE_NODE not DELETE_FILE",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "d64c8a46-bd89-448a-b31c-7213823e7788",
+          "name": "MCP workflows",
+          "topicDocumentId": null
+        },
+        {
+          "id": "bea72bd8-502e-42ea-ba65-25196772be49",
+          "name": "gotchas",
+          "topicDocumentId": null
+        },
+        {
+          "id": "769db1f1-517a-4d2f-8845-726a0b0a96fb",
+          "name": "drive operations",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# delete nodes with DELETE_NODE not DELETE_FILE\n\nWhen removing files or folders from a drive:\n\n```typescript\n// ✅ Correct operation name\n{ type: \"DELETE_NODE\", scope: \"global\", input: { id: nodeId } }\n\n// ❌ This operation does not exist\n{ type: \"DELETE_FILE\", scope: \"global\", input: { id: nodeId } }\n```\n\nThe drive uses a node abstraction — both files and folders are \"nodes.\" The operation to remove either is `DELETE_NODE`. Since [[always check document model schema before calling addActions]], checking the drive schema first would reveal the correct operation name.\n\n---\n\nTopics:\n- [[mcp workflows]]\n- [[gotchas]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "OBSERVATION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:01:23.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T14:01:23.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The drive operation for removing files or folders is DELETE_NODE; DELETE_FILE does not exist and will fail",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:17.290Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:07:29.571Z"
+}

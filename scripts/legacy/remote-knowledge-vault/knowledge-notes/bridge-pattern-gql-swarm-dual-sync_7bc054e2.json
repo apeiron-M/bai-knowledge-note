@@ -1,0 +1,81 @@
+{
+  "id": "7bc054e2-ed15-4707-a3b7-16b18ff03ae2",
+  "name": "bridge-pattern-gql-swarm-dual-sync",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "The bridge pattern lets a single PGlite serve both Switchboard GQL remotes and Swarm feeds transparently via independent cursors.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t1",
+          "name": "bridge-pattern",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t2",
+          "name": "dual-sync",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t3",
+          "name": "architecture-diagram",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## GQL + Swarm Dual Sync\n\nIn one browser, PGlite acts as the hub between two worlds:\n\n- **Switchboard world**: remote drives pulled in via GQL channels.\n- **Swarm world**: drives and documents mirrored out to encrypted feeds.\n\nEach drive is independent:\n\n- Drive A: pulled from Switchboard (GQL) **and** pushed to Swarm Feed A.\n- Drive B: same dual path.\n- Drive C: locally created by the user, only pushed to Swarm Feed C (no Switchboard counterpart).\n\n### Why it works\n\nBoth channels read from the same `operation_index_operations` table, where every op gets a global ordinal. Each remote has an independent cursor in `sync_cursors`, so progress on one channel never interferes with the other.\n\n`SyncManager` orchestrates both transparently — it does not know whether a given remote is GQL or Swarm, it just pumps operations through `channel.outbox` / `channel.inbox` / `channel.deadLetter`.\n\nThis is the foundation that lets Connect work decentralized-first while retaining compatibility with Switchboard-hosted drives.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "pattern",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Operation_index_operations is shared by both channels; each remote tracks its own cursor in sync_cursors so GQL pull and Swarm push run in parallel without interference.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:45:03.132Z",
+  "lastModifiedAtUtcIso": "2026-04-21T14:47:24.061Z"
+}

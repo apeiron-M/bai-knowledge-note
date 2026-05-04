@@ -1,0 +1,99 @@
+{
+  "id": "000f617a-e29f-4fe0-b781-b9062434f9b9",
+  "name": "recovery-flow-from-wallet",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-e45775e3",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Recovery from Swarm walks the user manifest to discover drives, then replays operation batches with preserved original IDs.",
+          "targetDocumentId": "d0ea5c90-9a59-4781-992d-f75a8facc0a1"
+        },
+        {
+          "id": "lnk-57f0a936",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "The AES-256 sync key is deterministically derived from a MetaMask signature so any device rehydrates the same key",
+          "targetDocumentId": "09d7e8db-9bf0-4c32-881a-f05c7fee425e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Recovery rehydrates Connect from wallet-only using user → drive → document manifest traversal",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "da85fc25-7c22-4f2f-88e6-cfee8e08d3c9",
+          "name": "recovery",
+          "topicDocumentId": null
+        },
+        {
+          "id": "ff200206-d64d-45ba-9198-3a4e937d6afe",
+          "name": "wallet-signature",
+          "topicDocumentId": null
+        },
+        {
+          "id": "ae916b2e-7746-4f7f-8686-8dcf2cccd012",
+          "name": "sync-cursors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "078dc1f0-da65-4bd2-93e9-15a38c9d7169",
+          "name": "reactor-load",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "When a user opens Connect on a new device or after clearing browser data, recovery proceeds from wallet-only state:\n\n1. User connects MetaMask.\n2. Plugin requests `personal_sign`, which re-derives the SAME Swarm key as before.\n3. `SwarmChannel.pollInbox()` reads the user manifest from feed `ph:v2:user:<address>`.\n4. For each drive listed, read the drive manifest at `ph:v2:drive:<driveId>`.\n5. For each document not present locally: read its manifest at `ph:v2:doc:<docId>`, download each operation batch from `/bytes` (auto-decrypted), create SyncOperations, and enqueue in the inbox.\n6. SyncManager applies via `reactor.load()` using the ORIGINAL document IDs, so links and cross-doc references survive.\n7. The cursor advances in `sync_cursors`, the drive materializes in PGlite with correct folder structure, and future polls are incremental.\n\nKey properties: cursor-based so nothing re-downloads; no race conditions because SyncManager processes inbox before outbox, preventing re-upload of just-recovered ops; failed operations flow to `sync_dead_letters` for retry.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "workflow",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:21.809Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:28:47.134Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "MetaMask personal_sign rederives the same AES key; pollInbox reads user manifest, then drive manifests, then each doc manifest, downloads batches, and applies with original IDs via reactor.load().",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:21:21.377Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:28:27.521Z"
+}

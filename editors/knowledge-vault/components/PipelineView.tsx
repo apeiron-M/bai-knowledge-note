@@ -1,5 +1,5 @@
 import { useMemo } from "react";
-import { useDocumentsInSelectedDrive } from "@powerhousedao/reactor-browser";
+import { useDocumentsSafe } from "../hooks/use-documents-safe.js";
 
 const PHASE_COLORS: Record<string, string> = {
   create: "bg-amber-400",
@@ -28,7 +28,7 @@ type PipelineTask = {
 };
 
 export function PipelineView() {
-  const documents = useDocumentsInSelectedDrive();
+  const documents = useDocumentsSafe();
 
   const queueDoc = useMemo(() => {
     return (documents ?? []).find(

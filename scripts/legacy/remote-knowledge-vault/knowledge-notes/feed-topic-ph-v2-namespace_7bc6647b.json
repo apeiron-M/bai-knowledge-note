@@ -1,0 +1,81 @@
+{
+  "id": "7bc6647b-6254-4930-aaa6-bf9731d21c51",
+  "name": "feed-topic-ph-v2-namespace",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Swarm feeds use a versioned ph:v2:<kind>:<id> topic namespace spanning doc, drive, user, profile, and share feeds",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "eb4a2d1d-5564-42a3-9f45-192cb7cecc14",
+          "name": "feed-topics",
+          "topicDocumentId": null
+        },
+        {
+          "id": "1c8e0b6d-f003-422e-9550-bad37c0731aa",
+          "name": "manifest-hierarchy",
+          "topicDocumentId": null
+        },
+        {
+          "id": "90fd48bd-974a-425c-99fd-a387b300b6ec",
+          "name": "ph-v2-namespace",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# Feed Topic Naming Convention (ph:v2:*)\n\nThe adapter uses a versioned colon-delimited topic namespace for all Swarm feeds. The `ph:v2:` prefix anchors the schema version and enables forward-compatible migration.\n\n| Feed | Topic pattern | Content |\n|------|--------------|---------|\n| Document manifest | `ph:v2:doc:<documentId>` | Pointer to encrypted operation batches |\n| Drive manifest | `ph:v2:drive:<driveId>` | Documents + folder structure for one drive |\n| User manifest | `ph:v2:user:<eth_address>` | Index of all user's drives |\n| Public profile | `ph:v2:profile:<address>` | Bee node public key for sharing (unencrypted) |\n| Share manifest | `ph:v2:share:<sender>:<recipient>` | Shared drive bundles between users |\n\nTopology is hierarchical: **user manifest → drive manifests → document manifests → encrypted op batches**. On recovery, a client reads the user feed first, then descends to discover all drives and documents.\n\nProfile feeds are the only unencrypted feeds — they publish a Bee node's public key so senders can ACT-encrypt shares to that recipient. Share feeds carry full drive bundles (including folder metadata) from sender to recipient.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:57:41.685Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T15:00:54.965Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "All adapter feeds follow ph:v2:<kind>:<id>: doc, drive, user manifests are encrypted; profile feeds publish an unencrypted public key; share feeds carry encrypted drive bundles between users.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:57:07.293Z",
+  "lastModifiedAtUtcIso": "2026-04-21T15:01:26.164Z"
+}

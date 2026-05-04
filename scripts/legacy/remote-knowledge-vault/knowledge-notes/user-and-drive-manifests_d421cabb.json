@@ -1,0 +1,93 @@
+{
+  "id": "d421cabb-492e-4dcb-bfa9-6e6c6e04b56e",
+  "name": "user-and-drive-manifests",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-ba5fccdb",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Swarm manifests form a three-tier hierarchy of user, drive, and document feeds keyed by deterministic keccak256 topics.",
+          "targetDocumentId": "229d1154-be17-472c-92e3-2d6a0decc3ab"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "A user manifest indexes drives and a drive manifest lists documents plus folder structure",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "7a72a307-8121-4db2-8ca0-a612c9ba653a",
+          "name": "user-manifest",
+          "topicDocumentId": null
+        },
+        {
+          "id": "e05481ea-26c6-42fc-9931-ff0c99aac9e7",
+          "name": "drive-manifest",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a7ba03c7-1b3a-4321-b402-b860e9ee4dd2",
+          "name": "folder-structure",
+          "topicDocumentId": null
+        },
+        {
+          "id": "9a36e6ae-ef0a-44aa-b182-19ea68b75958",
+          "name": "manifests",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Two hierarchical manifests tier the on-Swarm layout below the per-document manifest.\n\n**User manifest** at `ph:v2:user:<eth_address>` indexes the user's drives (not individual docs):\n\n```json\n{\n  \"address\": \"0x1234...\",\n  \"beeNodePublicKey\": \"02abc...\",\n  \"documents\": {},\n  \"drives\": {\n    \"drive-xyz\": { \"name\": \"My Finance Drive\", \"documentIds\": [], \"lastUpdated\": \"...\" }\n  },\n  \"updatedAt\": \"...\"\n}\n```\n\n**Drive manifest** at `ph:v2:drive:<driveId>` lists documents and folders for that drive:\n\n```json\n{\n  \"driveId\": \"drive-xyz\",\n  \"name\": \"My Finance Drive\",\n  \"documents\": {\n    \"abc-123\": { \"documentType\": \"powerhouse/budget-statement\", \"name\": \"Q1 Budget\", \"parentFolder\": \"folder-1\", \"lastUpdated\": \"...\" }\n  },\n  \"folders\": {\n    \"folder-1\": { \"name\": \"Reports\" },\n    \"folder-2\": { \"name\": \"Subfolder\", \"parentFolder\": \"folder-1\" }\n  },\n  \"updatedAt\": \"...\"\n}\n```\n\nFolders are tracked by reading the drive's node tree on each flush; recovery restores them by executing `ADD_FOLDER` and `MOVE_NODE` actions.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:18.286Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:28:32.055Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "User feed ph:v2:user:<address> lists drives; drive feed ph:v2:drive:<driveId> lists documents with parentFolder and a folders map with name and optional parentFolder.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:21:17.872Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:25:14.840Z"
+}

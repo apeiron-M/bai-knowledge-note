@@ -1,0 +1,94 @@
+{
+  "id": "ab6cdbf2-ca28-44c6-b16b-f6911f6f2018",
+  "name": "testing-uses-vitest-and-generatemock",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "7dbcd959-88a1-4db2-b376-f307cfb545a4",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "4ac678fe-71b2-451e-942d-09fb6d7ce8d6"
+        },
+        {
+          "id": "09fd68d9-c491-4db7-8dac-76c74e6bb6fe",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "6e7e50b7-a692-49c3-b7b0-10035733fd3d"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Document model tests use Vitest with generateMock for schema-aware test data generation",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "a29cd43c-aa57-485b-88a0-fec680269abf",
+          "name": "testing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "5f1049d3-6817-4889-9140-7bad4db0cd48",
+          "name": "vitest",
+          "topicDocumentId": null
+        },
+        {
+          "id": "355a301c-d1da-4c65-9e69-92f7d6917699",
+          "name": "mock-generation",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Powerhouse document model testing follows a structured pattern using Vitest:\n\n1. **Create a document**: `utils.createDocument()` or `utils.createDocument({ global: { items: [mockItem] } })` with initial state\n2. **Generate typed mocks**: `generateMock(AddTodoItemInputSchema())` creates objects with random values matching the schema\n3. **Apply operations**: `const updated = reducer(document, addTodoItem(input))`\n4. **Validate**: `expect(isTodoListDocument(updated)).toBe(true)` for schema validation\n5. **Assert state**: Check `updated.state.global.items` for correct data\n6. **Assert operations**: Check `updated.operations.global[0].action.type` for correct operation recording\n\nKey testing utilities come from the generated code:\n- `reducer` - The document reducer function\n- `utils.createDocument()` - Creates empty or pre-populated documents\n- `isTodoListDocument()` - Schema validation predicate\n- `generateMock()` from `@powerhousedao/codegen` - Schema-aware mock generation\n- `*Schema()` functions - Schema definitions for mock generation\n\nBest practice: Follow AAA pattern (Arrange, Act, Assert). Test immutability, edge cases, and cover both state changes and operation recording.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Tests create documents with utils.createDocument(), generate typed mocks from schemas, apply reducers, and verify state changes.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:27.836Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:07:46.828Z"
+}

@@ -1,0 +1,88 @@
+{
+  "id": "27a6fbfd-1207-4091-967c-29161b650939",
+  "name": "adapter-src-infrastructure-layout",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-dbaaf518",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Adapter package organizes Swarm integration into src/channel/, src/swarm-client.ts, src/swarm-crypto.ts, and src/plugin/",
+          "targetDocumentId": "d7ee6e26-a7ea-42a9-a9ff-7c6bf71c5f71"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "adapter/src/ infrastructure modules wrap Bee APIs, wallet-derived crypto, stamps, ACT sharing, and low-level store interfaces for the channel layer.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t1",
+          "name": "file-structure",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t2",
+          "name": "infrastructure",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t3",
+          "name": "codebase-map",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## `adapter/src/` root (infrastructure kept from previous plugin)\n\n```\nadapter/src/\n  swarm-client.ts           - Bee API: /bytes, /bzz, feeds, ACT, PSS, GSOC, node status\n  swarm-crypto.ts           - AES-256-GCM encryption\n  wallet-signer.ts          - Key derivation from wallet signature\n  stamp-manager.ts          - Postage stamp lifecycle + CoinGecko pricing\n  share-manager.ts          - Cross-user ACT sharing + public profile I/O\n  folder-tree.ts            - Recursive tree builder\n  types.ts                  - Manifest, sharing (ACT v2), stamp status\n  swarm-operation-store.ts  - IOperationStore interface\n  swarm-keyframe-store.ts   - IKeyframeStore interface\n  bytes-utils.ts            - hex/bytes conversion\n```\n\n### Role\n\nThese modules are **infrastructure** — they pre-date the channel-based sync architecture but are still used underneath it.\n\n- `swarm-client.ts` is the single Bee wrapper; everything above it goes through this client.\n- `stamp-manager.ts` handles postage stamp purchase, top-up, and USD pricing.\n- `share-manager.ts` abstracts ACT grantee management for the chat and document-share flows.\n- `swarm-operation-store.ts` and `swarm-keyframe-store.ts` expose `IOperationStore` / `IKeyframeStore` interfaces — the contract between the channel layer and persistent Swarm storage.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "swarm-client, swarm-crypto, wallet-signer, stamp-manager, share-manager, folder-tree, types, swarm-operation-store, swarm-keyframe-store, bytes-utils together.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:45:19.269Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:24:00.653Z"
+}

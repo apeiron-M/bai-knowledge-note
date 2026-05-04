@@ -1,0 +1,88 @@
+{
+  "id": "3271d647-d308-4558-935e-4ca0b328fd4a",
+  "name": "vetra-remote-drives-enable-collaboration",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "7a40445f-6fef-47ab-975b-544242305844",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "a0ee24b1-c330-4508-9e87-be8e55d6984e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Vetra remote drives enable team collaboration by syncing specifications across developers",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "fa1f4819-4c48-4cd4-9fc6-efc59c31b984",
+          "name": "vetra-studio",
+          "topicDocumentId": null
+        },
+        {
+          "id": "f25b753a-5c97-4793-afc3-bc501003021f",
+          "name": "collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "63958a09-a88b-4e5f-8f40-0d3c26d1f73d",
+          "name": "remote-drives",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Vetra supports collaborative development through remote drives:\n\n- **Without `--remote-drive`**: Creates a local drive in browser local storage (solo development)\n- **With `--remote-drive <url>`**: Connects to a shared remote drive\n\nKey workflows:\n- **Project Owner**: `ph init --remote-drive <url>` -> Create GitHub repo -> Push -> `ph vetra --watch`\n- **Collaborator**: `ph checkout --remote-drive <url>` -> `ph vetra --watch`\n\nThe **preview drive** (created with `--watch` mode) provides a safe testing environment:\n- The main \"Vetra\" drive syncs with the remote and contains stable configuration\n- The \"Vetra Preview\" drive is local-only for testing document models and editors before syncing\n\nRemote drive configuration is stored in `powerhouse.config.json`:\n```json\n\"vetra\": {\n  \"driveId\": \"bai-specifications\",\n  \"driveUrl\": \"https://switchboard.staging.vetra.io/d/bai-specifications\"\n}\n```",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "WORKFLOW",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Teams share a remote Vetra drive via --remote-drive flag. Preview drives let you test locally before syncing to the team.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:53:14.078Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:10:29.073Z"
+}

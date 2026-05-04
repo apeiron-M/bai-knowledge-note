@@ -1,0 +1,99 @@
+{
+  "id": "6952a9b2-c4d2-4fa4-9b52-0940fb5ef98f",
+  "name": "subgraphs-extend-document-models-via-graphql",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "fb52233a-6eb1-45a7-8e9f-597dd8fab681",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "e540aae1-b236-459a-aef1-242d7b8d3cef"
+        },
+        {
+          "id": "826d7964-2f2d-4e2e-bac6-e99c21b14992",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "09a67de7-3a21-4f59-a7a0-ebd780567657"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Subgraphs are modular GraphQL components that extend document models with custom queries, external integrations, and cross-document logic",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "40c258b2-ec90-4fec-b2fd-c047a1c72ffc",
+          "name": "subgraphs",
+          "topicDocumentId": null
+        },
+        {
+          "id": "2fb0dbae-6160-4a53-9949-64ba5ffa73d9",
+          "name": "graphql",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a110fe99-345e-4d14-9f1c-8d42ad1ec1c0",
+          "name": "supergraph",
+          "topicDocumentId": null
+        },
+        {
+          "id": "5fda63b2-c04a-4cae-b945-9575c6ab5a86",
+          "name": "CQRS",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "A subgraph is an independent GraphQL service with its own schema and resolvers. Subgraphs can retrieve data from the Reactor (via `subgraph.reactorClient`), relational data stores, or analytics stores. They consist of a schema (GraphQL types/queries/mutations), resolvers (data fetching logic), and context fields (auth, external sources). Generated via `ph generate --subgraph <name>`, they auto-register at `/graphql/<name>`. The supergraph gateway at `/graphql` combines all subgraphs (except the drive subgraph at `/d/:driveId`) into a single endpoint, enabling federated queries across document models and custom subgraphs in one request.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Generated with ph generate --subgraph; consist of schema + resolvers; auto-registered in the supergraph gateway.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:53:28.571Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:10:51.600Z"
+}

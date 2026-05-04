@@ -1,7 +1,8 @@
 import { useMemo } from "react";
 import { generateId } from "document-model/core";
-import { useKnowledgeGraphDocumentsInSelectedDrive } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
 import type { KnowledgeGraphDocument } from "@powerhousedao/knowledge-note/document-models/knowledge-graph";
+import { isKnowledgeGraphDocument } from "../../../document-models/knowledge-graph/v1/gen/document-schema.js";
+import { useDocumentsSafe } from "./use-documents-safe.js";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 
 export type GraphState = {
@@ -26,8 +27,12 @@ export type GraphState = {
  * Does NOT auto-create — that's handled solely by useDriveInit to avoid duplicates.
  */
 export function useKnowledgeGraph(notes: KnowledgeNoteInfo[]) {
-  const graphDocs = useKnowledgeGraphDocumentsInSelectedDrive();
-  const graphDoc = graphDocs?.[0];
+  const allDocs = useDocumentsSafe();
+  const graphDocs = useMemo(
+    () => allDocs.filter(isKnowledgeGraphDocument) as KnowledgeGraphDocument[],
+    [allDocs],
+  );
+  const graphDoc = graphDocs[0];
   const graphState: GraphState | null = graphDoc?.state.global ?? null;
 
   return {

@@ -1,0 +1,106 @@
+{
+  "id": "6d4637dd-98d8-4087-8775-0df45cd18e49",
+  "name": "vetra-auto-generates-code-on-spec-change",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "fc15fd57-3fcc-4b13-a2ea-e5e0afbd73c2",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "6e7e50b7-a692-49c3-b7b0-10035733fd3d"
+        },
+        {
+          "id": "faf8f703-3118-492b-8b35-51d6c83c4164",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "4ad4b39b-77af-4fbc-9875-6949d9d6fd04"
+        },
+        {
+          "id": "383615c2-80c6-48a8-9d85-79d7153c83b3",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "2bff5b6a-dcc3-4fec-8afa-fd093743d660"
+        },
+        {
+          "id": "b89d0232-5380-47e1-899b-20829f1e08b1",
+          "linkType": "RELATES_TO",
+          "targetTitle": "versioning-operations-on-document-models-are-not-implemented",
+          "targetDocumentId": "ab26a972-c3eb-4462-a122-cf2f93a94383"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Vetra Studio automatically generates code when specification documents change",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "c026673e-ae91-44c5-852b-3ee49792c139",
+          "name": "vetra-studio",
+          "topicDocumentId": null
+        },
+        {
+          "id": "fd13ae29-535e-478a-8c39-5de2f042175c",
+          "name": "code-generation",
+          "topicDocumentId": null
+        },
+        {
+          "id": "caa769e7-1fb8-46c6-97e0-bd38b6192276",
+          "name": "workflow",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "When using Vetra Studio with `ph vetra --watch`, code generation is fully automatic:\n\n1. You create or modify specification documents in the Vetra Studio Drive browser UI\n2. Vetra monitors changes in real-time\n3. When a document model specification becomes valid, Vetra triggers code generation\n4. Terminal shows: `[Vetra] Document model TodoList is valid, proceeding with code generation`\n5. Validation errors are reported in the terminal to help identify missing specifications\n\nThis contrasts with the legacy Connect workflow where you must:\n1. Export a `.phd` file from Connect\n2. Manually run `ph generate TodoList.phd`\n\nIn **interactive mode** (`ph vetra --interactive`), Vetra prompts for confirmation before processing each change. In **standard mode**, changes are processed automatically with a 1-second debounce, batching multiple changes together.\n\nThe generated output is identical regardless of whether generation is automatic (Vetra) or manual (`ph generate`).",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "WORKFLOW",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "In watch mode, Vetra monitors specs and scaffolds directory/code in real-time, reporting validation errors in the terminal.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:50:14.117Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:05:44.836Z"
+}

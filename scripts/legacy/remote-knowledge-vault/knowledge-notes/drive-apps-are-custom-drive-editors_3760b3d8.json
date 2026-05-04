@@ -1,0 +1,100 @@
+{
+  "id": "3760b3d8-a183-4b9d-b8dc-db6122756216",
+  "name": "drive-apps-are-custom-drive-editors",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "b6556131-b927-4d85-aa0f-02bbb634b779",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "2cbac7ae-2546-48eb-adc4-18ffe3d2e98e"
+        },
+        {
+          "id": "65dc9942-eb70-48cb-845d-abddd14e90c8",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "797e8d01-5401-4e5b-af97-18eccdaee0a8"
+        },
+        {
+          "id": "a2caaa97-9dfb-4d57-8c26-302ffd499db1",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "9e709f0f-8d20-4281-8703-adb3ce6a0a24"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Drive-apps are custom editors for the drive document itself, providing specialized views like Kanban boards or aggregated dashboards over drive contents",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "112b8dc7-a4db-4cc4-ab30-ffad4d901510",
+          "name": "drive-apps",
+          "topicDocumentId": null
+        },
+        {
+          "id": "8b9e5085-c64d-4b7f-9119-74186eeb2e1b",
+          "name": "architecture",
+          "topicDocumentId": null
+        },
+        {
+          "id": "2b62c049-ebfe-4b0c-9d78-3d8799487416",
+          "name": "editors",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Since a drive is itself a document (of type `powerhouse/document-drive`) containing a list of other documents, a Drive-app is simply a custom editor for the drive document. Drive-apps receive `nodes`, `driveId`, and a `DriveEditorContext` providing methods like `getDocumentRevision`, `getDocumentModelModule`, and `getEditor`. They can use `useDriveDocumentStates({ driveId })` to fetch the state of all documents in the drive, enabling aggregated views (tables, progress bars, Kanban boards). Drive-apps are registered in `powerhouse.manifest.json` under the `apps` array and generated via Vetra Studio or `ph generate --drive-editor`.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "A drive is technically a document; Drive-apps are editors for that document, offering custom views of its children.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:56.103Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:08:30.713Z"
+}

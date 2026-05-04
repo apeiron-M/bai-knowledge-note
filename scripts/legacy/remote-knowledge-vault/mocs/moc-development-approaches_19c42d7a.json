@@ -1,0 +1,186 @@
+{
+  "id": "19c42d7a-884c-4792-993c-38aef863b441",
+  "name": "moc-development-approaches",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "DOMAIN",
+      "title": "Development Approaches",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "330ecd8c-c576-458a-964b-bee720a353c2",
+          "addedAt": "2026-03-30T19:20:00.000Z",
+          "addedBy": null,
+          "noteRef": "bec69091-6dfb-4e31-8928-fc18d4065557",
+          "sortOrder": 0,
+          "contextPhrase": "The blockchain inheritance — every state change is preserved as an append-only event, providing the transparent and auditable history that decentralized organizations require for governance and accountability"
+        },
+        {
+          "id": "e1c638c5-1210-4871-b1d6-f716888be1ca",
+          "addedAt": "2026-03-30T19:20:00.000Z",
+          "addedBy": null,
+          "noteRef": "a0ee24b1-c330-4508-9e87-be8e55d6984e",
+          "sortOrder": 1,
+          "contextPhrase": "The sync innovation — DocSync runs P2P without a centralized server and is storage-agnostic, so there is no vendor lock-in; users choose decentralized, centralized, or local storage"
+        },
+        {
+          "id": "fac32ca7-c9d9-446a-aeb7-761dce065f9a",
+          "addedAt": "2026-03-30T19:20:00.000Z",
+          "addedBy": null,
+          "noteRef": "5019c601-9715-4421-8c74-d471ddfb43d2",
+          "sortOrder": 2,
+          "contextPhrase": "The key divergence from blockchain — global consensus limits speed and scalability, so Powerhouse prioritizes local-first workflows where contributors operate efficiently without waiting for network agreement"
+        },
+        {
+          "id": "b5e870da-c926-4c0a-afe6-c27751f7263c",
+          "addedAt": "2026-03-30T19:20:00.000Z",
+          "addedBy": null,
+          "noteRef": "d2bd2650-1828-4518-8274-330fee051b40",
+          "sortOrder": 3,
+          "contextPhrase": "The modeling layer — MDD uses abstract models (similar to GraphQL schemas) as blueprints for workflows and data, enabling early validation and cross-functional alignment before code is written"
+        },
+        {
+          "id": "e2206696-ee7b-4344-88ed-647b106dd415",
+          "addedAt": "2026-03-30T19:20:00.000Z",
+          "addedBy": null,
+          "noteRef": "d8eb4dd8-0cf2-49db-b723-52b4528af15c",
+          "sortOrder": 4,
+          "contextPhrase": "The acceleration layer — RAD eliminates backend complexity through automated code generation from document models, letting developers focus on UI/UX while APIs and data structures stay in sync"
+        },
+        {
+          "id": "4e13a6ca-a316-49ab-8f5c-c05966329b67",
+          "addedAt": "2026-03-30T19:20:00.000Z",
+          "addedBy": null,
+          "noteRef": "09a67de7-3a21-4f59-a7a0-ebd780567657",
+          "sortOrder": 5,
+          "contextPhrase": "The scaling pattern — CQRS isolates write operations (validated and stored as events) from read models (optimized for analytics, search, or operational views), so each scales independently"
+        },
+        {
+          "id": "306aaede-e111-4a93-bdb2-6f78cd53adfb",
+          "addedAt": "2026-03-30T19:20:00.000Z",
+          "addedBy": null,
+          "noteRef": "31231ca7-6f12-48f1-a02b-bc813ed9d8c7",
+          "sortOrder": 6,
+          "contextPhrase": "The responsiveness pattern — EDA lets processes like validation, notifications, and analytics run in parallel without blocking each other, with fault isolation so failures don't cascade"
+        },
+        {
+          "id": "fe29832f-a13f-4390-95bf-58ef0f64adaa",
+          "addedAt": "2026-04-03T14:25:07.000Z",
+          "addedBy": null,
+          "noteRef": "d5f30559-9ee5-4328-b7da-9cb66178db9d",
+          "sortOrder": 100,
+          "contextPhrase": "MCP code submission format: body only, no function wrapper — CLI/MCP injects the harness"
+        },
+        {
+          "id": "476c054a-3794-4b35-a3a5-61c3031a770f",
+          "addedAt": "2026-04-03T14:25:08.000Z",
+          "addedBy": null,
+          "noteRef": "36e8e493-6155-4235-8ffe-1d6c958080f6",
+          "sortOrder": 101,
+          "contextPhrase": "Import placement rule: external deps go in src/ reducer files, not in SET_OPERATION_REDUCER calls"
+        },
+        {
+          "id": "a27afffd-7d85-4263-8b45-9c8d479147f0",
+          "addedAt": "2026-04-03T14:25:08.000Z",
+          "addedBy": null,
+          "noteRef": "2037c7a2-0ea5-4568-9f7e-68f193842d8e",
+          "sortOrder": 102,
+          "contextPhrase": "Error classes resolve by name reference at runtime — explicit imports cause double-registration"
+        },
+        {
+          "id": "2a5d4706-6b7f-4ca8-b582-b62f5935a541",
+          "addedAt": "2026-04-03T14:25:09.000Z",
+          "addedBy": null,
+          "noteRef": "4add01fb-d755-4fcc-841a-7720726fc2f0",
+          "sortOrder": 103,
+          "contextPhrase": "Naming convention: PascalCase + Error suffix required for auto-import resolution to work"
+        },
+        {
+          "id": "02c8ff8a-8ceb-49d4-8e3e-4ee4ffc730a5",
+          "addedAt": "2026-04-03T14:25:09.000Z",
+          "addedBy": null,
+          "noteRef": "19eb702f-bf13-40ca-a77f-394cea07808c",
+          "sortOrder": 104,
+          "contextPhrase": "Testing gotcha: reducer errors are recorded, not thrown — toThrow always passes, hiding real failures"
+        },
+        {
+          "id": "fe97143f-bd51-45c7-8095-aec890598a53",
+          "addedAt": "2026-04-03T14:25:09.000Z",
+          "addedBy": null,
+          "noteRef": "2759a1ce-702e-4a9d-97fa-7e0c574569b0",
+          "sortOrder": 105,
+          "contextPhrase": "Operation design principle: one op per user action keeps concerns separated and replay meaningful"
+        },
+        {
+          "id": "a9cd833b-0f4a-44cc-b0d9-2e8219d84579",
+          "addedAt": "2026-04-03T14:25:10.000Z",
+          "addedBy": null,
+          "noteRef": "92ed137c-4d58-431b-b6d8-856e013c27e6",
+          "sortOrder": 106,
+          "contextPhrase": "Operation naming and documentation standard with examples and error declarations"
+        },
+        {
+          "id": "71abce71-0d4f-4952-8814-2a22ee8b2f43",
+          "addedAt": "2026-04-03T14:25:12.000Z",
+          "addedBy": null,
+          "noteRef": "650d1215-c3d5-4edb-88c0-42255f9d1871",
+          "sortOrder": 100,
+          "contextPhrase": "Determinism rule: crypto.randomUUID and Math.random break replay — all randomness from action input"
+        },
+        {
+          "id": "f6729543-dbcf-4456-bf89-8f4c068ba057",
+          "addedAt": "2026-04-03T14:25:12.000Z",
+          "addedBy": null,
+          "noteRef": "56d7de0a-1651-4091-a4a8-8134d4d0db34",
+          "sortOrder": 101,
+          "contextPhrase": "Subtle variant: fallback with non-deterministic default (e.g. ?? Date.now()) is equally dangerous"
+        },
+        {
+          "id": "09d1d53d-bd3c-48f3-84e8-7ab63ec7c75c",
+          "addedAt": "2026-04-03T14:25:13.000Z",
+          "addedBy": null,
+          "noteRef": "25fb30b0-c7b3-4a95-9366-1f92368c1cbf",
+          "sortOrder": 102,
+          "contextPhrase": "TypeScript pattern: truthy checks handle both undefined and null for optional reducer fields"
+        },
+        {
+          "id": "e3560a31-a2ff-4f8f-9548-c316d6448412",
+          "addedAt": "2026-04-03T14:42:38.000Z",
+          "addedBy": null,
+          "noteRef": "d0aca035-6940-4290-be57-b78a62d3091c",
+          "sortOrder": 200,
+          "contextPhrase": "Error classes auto-resolve by name — explicit imports cause double-registration bugs"
+        },
+        {
+          "id": "6dcfcd84-62dc-4f8f-924d-06678f1b43c6",
+          "addedAt": "2026-04-03T14:42:38.000Z",
+          "addedBy": null,
+          "noteRef": "ab6cdbf2-ca28-44c6-b16b-f6911f6f2018",
+          "sortOrder": 200,
+          "contextPhrase": "Testing uses Vitest with generateMock for type-safe test fixtures"
+        }
+      ],
+      "createdAt": "2026-03-30T19:20:00.000Z",
+      "noteCount": 19,
+      "parentRef": null,
+      "updatedAt": "2026-03-30T19:20:00.000Z",
+      "agentNotes": [],
+      "description": "Blockchain-inspired patterns (event sourcing, DocSync), MDD, RAD, CQRS, and EDA as the technical methodology behind Powerhouse.",
+      "orientation": "Powerhouse's development methodology draws from blockchain principles while diverging where global consensus is impractical. Event sourcing provides immutable audit trails. DocSync enables P2P synchronization without server dependency. Local-first workflows prioritize contributor efficiency over global coordination. On top of this, Model-Driven Development uses abstract models as shared blueprints across teams, RAD accelerates iteration through code generation and pre-built frameworks, CQRS separates reads from writes for independent scaling, and EDA decouples components so validation, notifications, and analytics run in parallel. These approaches combine to make Powerhouse systems responsive, auditable, and scalable without the performance bottlenecks of on-chain consensus.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-14T21:54:15.012Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:11:50.992Z"
+}

@@ -1,0 +1,81 @@
+{
+  "id": "b29be411-6c77-4bad-8e9c-11db61f74e5d",
+  "name": "drive-level-before-document-level-phasing",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Ship drive-level collaboration first, document-level scoping comes in a later milestone",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-b29be411-1",
+          "name": "live-collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-b29be411-2",
+          "name": "phasing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-b29be411-3",
+          "name": "act-encryption",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Decision: drive-level first, document-level later\n\n### Phase 1 — drive-level collaboration (first ship)\n\n- Simpler mental model: \"I'm collaborating on this whole drive with Alice and Bob.\"\n- Covers the drive ops (`ADD_FOLDER`, `MOVE_NODE`, `ADD_FILE`) and every doc inside the drive.\n- A **single ACT grant per participant** covers the drive manifest, all child doc manifests, and all op batches — minimizing ACT chain management.\n\n### Phase 2 — document-level collaboration\n\n- Narrower: \"I'm collaborating on this one doc, but keep the rest of the drive private.\"\n- ACT grantee list is scoped to one doc's manifest and op batches only.\n- The drive manifest itself is **not** shared — participants see a free-standing doc, not its parent drive.\n- Useful when the containing drive has confidential material and only one doc is meant for outside eyes.\n\nDrive-level first is the right build order because the mental model is simpler for users, a single ACT scope is easier to reason about, and it still exercises every layer of the mesh (manifest, peer feeds, GSOC, signatures). Document-level scoping then narrows the ACT chain without changing the plumbing.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "decision",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T19:45:05.488Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Drive-level collab ships first (simpler mental model, single ACT grant covers all children); document-level scoping comes in a later milestone.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:20:01.162Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:45:05.493Z"
+}

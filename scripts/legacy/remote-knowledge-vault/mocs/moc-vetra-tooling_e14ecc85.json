@@ -1,0 +1,130 @@
+{
+  "id": "e14ecc85-3c1c-4b3e-870b-817fb6f91a6f",
+  "name": "moc-vetra-tooling",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "DOMAIN",
+      "title": "Vetra Tooling",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "a5752d6b-7c7e-48cf-aa5b-501c65ca8330",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "5ee08ff2-a149-43b6-984a-7983f51afc6f",
+          "sortOrder": 1,
+          "contextPhrase": "Vetra Studio is the primary builder environment where developers visually define and iterate on document model specifications, lowering the barrier to entry by making schema design interactive rather than requiring hand-written GraphQL SDL."
+        },
+        {
+          "id": "e1bd77d2-7f36-429d-a3e7-79d29d12733e",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "4ad4b39b-77af-4fbc-9875-6949d9d6fd04",
+          "sortOrder": 2,
+          "contextPhrase": "Specification documents serve as the single source of truth for document models — they are the blueprints from which all generated code, types, and validation logic derive, making the specification the authoritative artifact rather than any particular code file."
+        },
+        {
+          "id": "057520a6-aa48-4dc1-939c-ea17295fbc6d",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "6d4637dd-98d8-4087-8775-0df45cd18e49",
+          "sortOrder": 3,
+          "contextPhrase": "Automatic code generation on specification change eliminates the manual synchronization problem — developers edit the spec and immediately get updated TypeScript types, operation creators, and reducer scaffolding without running separate build steps."
+        },
+        {
+          "id": "d5706f4c-fd40-4729-a703-b6d17991bca4",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "87afd972-8659-40d2-bf71-f7251eedd463",
+          "sortOrder": 4,
+          "contextPhrase": "Vetra Studios auto-generation pipeline transforms visual specification edits into ready-to-use code artifacts, closing the loop between design-time modeling and runtime implementation without manual code writing for boilerplate."
+        },
+        {
+          "id": "8f3f7816-f94b-4e11-a917-72a687f12251",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "2bff5b6a-dcc3-4fec-8afa-fd093743d660",
+          "sortOrder": 5,
+          "contextPhrase": "Remote drives in Vetra enable collaborative development by letting multiple team members share specification documents in real-time, bringing the same collaborative editing model used for content documents to the development workflow itself."
+        },
+        {
+          "id": "2e000e47-aaec-4c01-b821-4b7dbe459635",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "95cf85b7-1b51-4aa9-ae7f-04ea090b8d6d",
+          "sortOrder": 6,
+          "contextPhrase": "The package publishing pipeline takes completed document models from development to distribution via npm, and the ph CLI handles installation — creating a standard ecosystem workflow that developers from the Node.js world already understand."
+        },
+        {
+          "id": "0e72c773-0bf5-42a6-be1e-2be3d2e48f24",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "24b363d0-a641-4c61-aa6a-4aa6e3f590d3",
+          "sortOrder": 7,
+          "contextPhrase": "The Vetra package module type system categorizes packages by their role — document models, editors, processors, subgraphs — enabling the tooling to validate dependencies and ensure that related components are bundled and versioned together correctly."
+        },
+        {
+          "id": "0cdcb3e9-820a-44a9-ae9b-c3957ab03b6a",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "56e0278d-728b-4aa0-838a-d4b74eea63b0",
+          "sortOrder": 8,
+          "contextPhrase": "The ph CLI is the primary command-line tool for all Powerhouse project operations — scaffolding, building, testing, and deploying — serving as the single entry point that unifies the developer experience across all platform capabilities."
+        },
+        {
+          "id": "62c3fbd4-34d1-4026-b3d2-4fa3c81b2dd3",
+          "addedAt": "2026-04-03T14:25:04.000Z",
+          "addedBy": null,
+          "noteRef": "bfa7d425-d2e3-4536-b2c3-8ae133d496bf",
+          "sortOrder": 100,
+          "contextPhrase": "Workflow rule: new models must be explicitly added to the vetra drive for code generation to work"
+        },
+        {
+          "id": "dac7615e-d01d-4019-b944-5a2cce941352",
+          "addedAt": "2026-04-03T14:25:04.000Z",
+          "addedBy": null,
+          "noteRef": "5defc331-65a4-494b-8062-f1420d9b2190",
+          "sortOrder": 101,
+          "contextPhrase": "Two-drive architecture: vetra drive for source specs, preview drive for generated instances"
+        },
+        {
+          "id": "efc7ffad-8c17-4415-8079-13e8dacda088",
+          "addedAt": "2026-04-03T14:42:38.000Z",
+          "addedBy": null,
+          "noteRef": "19e797d3-26a5-4928-b989-37ee2b3b8076",
+          "sortOrder": 200,
+          "contextPhrase": "Packages published to npm and installed with ph CLI — the distribution pipeline"
+        },
+        {
+          "id": "c9221ffb-4861-4d0a-ab8f-267c0910b2ff",
+          "addedAt": "2026-04-03T14:42:38.000Z",
+          "addedBy": null,
+          "noteRef": "3271d647-d308-4558-935e-4ca0b328fd4a",
+          "sortOrder": 200,
+          "contextPhrase": "Remote drives enable collaborative development across teams"
+        }
+      ],
+      "createdAt": "2026-04-02T13:00:00.000Z",
+      "noteCount": 12,
+      "parentRef": null,
+      "updatedAt": "2026-04-02T13:00:00.000Z",
+      "agentNotes": [],
+      "description": "The Vetra Studio development environment, specification-driven code generation, remote collaborative drives, package publishing, and the ph CLI.",
+      "orientation": "Vetra Studio is the integrated development environment where Powerhouse document models go from concept to running code. It provides a visual builder for specification documents — the blueprints that define a document models schema, operations, and metadata. When a specification changes, Vetra automatically regenerates TypeScript code, keeping the gen/ folder in sync without manual intervention. Beyond individual development, Vetra supports collaborative workflows through remote drives that let multiple developers share and evolve specifications together. Once a document model is ready, the package system handles publishing to npm and installation via the ph CLI. This MOC traces the complete developer tooling story from initial specification authoring through code generation to package distribution, covering the module type system that organizes packages and the CLI commands that tie everything together.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-14T21:54:13.822Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:11:49.099Z"
+}

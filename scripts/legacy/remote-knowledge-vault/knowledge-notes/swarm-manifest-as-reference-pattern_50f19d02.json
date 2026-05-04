@@ -1,0 +1,105 @@
+{
+  "id": "50f19d02-af0c-4c0a-b65b-607bb5cacb2c",
+  "name": "The adapter writes manifests as 32-byte references inside SOC feeds, not inline payloads",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-f563ae1f",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Mantaray manifests are compacted Merkle tries that let Swarm resolve paths under a single hash",
+          "targetDocumentId": "732b3e79-d034-49f7-87be-c5b9a17cc80b"
+        },
+        {
+          "id": "lnk-c306e90a",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Per-topic write locks are required because SOC feed indices are monotonic and write-once",
+          "targetDocumentId": "df3f744a-240c-4f21-8191-c331db7607b6"
+        },
+        {
+          "id": "lnk-36a5f237",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Swarm manifests form a three-tier hierarchy of user, drive, and document feeds keyed by deterministic keccak256 topics.",
+          "targetDocumentId": "229d1154-be17-472c-92e3-2d6a0decc3ab"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "The adapter writes manifests as 32-byte references inside SOC feeds, not inline payloads",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "c38107eb-6e59-4878-bf96-26229b4ed704",
+          "name": "swarm-feeds",
+          "topicDocumentId": null
+        },
+        {
+          "id": "65d0a050-51c8-4fcf-ab82-4b073de6c020",
+          "name": "manifests",
+          "topicDocumentId": null
+        },
+        {
+          "id": "23848b44-bba9-4b05-955f-b7b641122d37",
+          "name": "adapter",
+          "topicDocumentId": null
+        },
+        {
+          "id": "3abf8032-75c5-4571-ae91-ee76123cc801",
+          "name": "encryption",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\n\nThe Bee Reactor Adapter uses a **manifest-as-reference pattern**: the feed SOC contains only a 32-byte pointer to encrypted manifest bytes uploaded via `/bytes`, not the manifest itself.\n\n## Evidence\n\nWrite path:\n1. Serialize manifest JSON\n2. Encrypt with app-layer AES-256-GCM\n3. Upload to `/bytes` → receive 64-char content hash\n4. Write ONLY the 32-byte hash into the feed via `makeFeedWriter().uploadReference(stamp, reference)` (72-byte SOC)\n\nRead path reverses: read feed → get hash → download from `/bytes` → decrypt → parse.\n\nbee-js offers two feed writer modes:\n- `uploadPayload(stamp, data)` — writes data <= 4096 bytes directly into the SOC\n- `uploadReference(stamp, reference)` — writes just a 32-byte reference\n\n## Why it matters\n\nThis pattern keeps feed SOCs tiny and fixed-size regardless of manifest size, and decouples encryption/versioning of manifest bytes from feed indexing. It's how every drive, doc, and user manifest is persisted.\n",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "pattern",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Instead of writing manifest JSON inline, we upload it to /bytes, encrypt with AES-256-GCM, and write only the 32-byte content hash to the feed via uploadReference.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:16:57.449Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:25:37.557Z"
+}
