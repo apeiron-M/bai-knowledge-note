@@ -221,7 +221,16 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         _: unknown,
         args: { driveId: string; query: string; limit?: number },
       ) => {
-        const queryEmbedding = await generateEmbedding(args.query);
+        let queryEmbedding: number[];
+        try {
+          queryEmbedding = await generateEmbedding(args.query);
+        } catch (err) {
+          console.warn(
+            "[knowledgeGraphSemanticSearch] embedder unavailable, returning []",
+            err instanceof Error ? err.message : err,
+          );
+          return [];
+        }
         const results = await searchSimilar(queryEmbedding, args.limit ?? 10);
         const graphQuery = getQuery(subgraph, args.driveId);
 
@@ -242,7 +251,16 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         _: unknown,
         args: { driveId: string; documentId: string; limit?: number },
       ) => {
-        const embedding = await getEmbedding(args.documentId);
+        let embedding: number[] | null;
+        try {
+          embedding = await getEmbedding(args.documentId);
+        } catch (err) {
+          console.warn(
+            "[knowledgeGraphSimilar] embedder unavailable, returning []",
+            err instanceof Error ? err.message : err,
+          );
+          return [];
+        }
         if (!embedding) return [];
 
         const results = await searchSimilar(embedding, (args.limit ?? 10) + 1);
@@ -266,12 +284,23 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         _: unknown,
         args: { driveId: string; query: string; limit?: number },
       ) => {
-        const queryEmbedding = await generateEmbedding(args.query);
-        const semanticResults = await searchSimilar(
-          queryEmbedding,
-          (args.limit ?? 20) * 2,
-        );
         const graphQuery = getQuery(subgraph, args.driveId);
+        // If the embedder is unavailable (e.g. switchboard image lacks
+        // onnxruntime-node), fall back to keyword-only results wrapped in
+        // the hybrid result shape so the Search tab keeps working.
+        let semanticResults: Awaited<ReturnType<typeof searchSimilar>> = [];
+        try {
+          const queryEmbedding = await generateEmbedding(args.query);
+          semanticResults = await searchSimilar(
+            queryEmbedding,
+            (args.limit ?? 20) * 2,
+          );
+        } catch (err) {
+          console.warn(
+            "[knowledgeGraphHybridSearch] embedder unavailable, keyword-only",
+            err instanceof Error ? err.message : err,
+          );
+        }
         const hybridResults = await graphQuery.hybridSearch(
           args.query,
           semanticResults,
