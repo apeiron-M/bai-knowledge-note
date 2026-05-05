@@ -17,59 +17,39 @@ export async function getExtractor(): Promise<FeatureExtractionPipeline> {
   // Prevent concurrent loads — share the same promise
   if (!loading) {
     loading = (async () => {
-      // Probe huggingface.co reachability so a network failure shows up as
-      // a clear log line instead of the cryptic "Unable to get model file
-      // path or buffer" that transformers throws further down the stack.
-      try {
-        const probe = await fetch(
-          "https://huggingface.co/Supabase/gte-small/resolve/main/config.json",
-          { method: "HEAD" },
-        );
-        console.log(
-          `[Embedder] HF probe: ${probe.status} ${probe.statusText}`,
-        );
-      } catch (err) {
-        console.error(
-          "[Embedder] HF probe failed — container egress likely blocked",
-          err instanceof Error ? `${err.name}: ${err.message}` : err,
-        );
-      }
-
       const transformers = await import("@huggingface/transformers");
-      // Skip the local-file lookup (the web bundle in Node defaults
-      // `allowLocalModels: true`) and the IndexedDB/file cache layer.
+
+      // Serve model files from this package's own dist/ instead of
+      // huggingface.co. The deployed switchboard's network policy
+      // blocks HF, but the same CDN that delivered our JS modules also
+      // serves the bundled `models/` directory. We compute the URL
+      // from import.meta.url with string ops (rather than `new URL()`)
+      // so rolldown's `resolveNewUrlToAsset` doesn't try to bundle
+      // `models/` as a build-time asset import.
+      //
+      // build.ts copies `models/` into both `dist/browser/` and
+      // `dist/node/`. The embedder ends up bundled into a chunk at
+      // `dist/<platform>/<chunk>.mjs`, so `./models/` resolves to
+      // `dist/<platform>/models/`.
+      const moduleUrl = import.meta.url;
+      const moduleDir = moduleUrl.slice(0, moduleUrl.lastIndexOf("/") + 1);
+      const modelHost = `${moduleDir}models/`;
       transformers.env.allowLocalModels = false;
+      transformers.env.allowRemoteModels = true;
+      transformers.env.remoteHost = modelHost;
+      transformers.env.remotePathTemplate = "{model}/";
       transformers.env.useBrowserCache = false;
 
       const ext = await transformers.pipeline(
         "feature-extraction",
         "Supabase/gte-small",
-        {
-          dtype: "q8",
-          progress_callback: (info: {
-            status: string;
-            file?: string;
-            progress?: number;
-          }) => {
-            if (info.status === "initiate" || info.status === "download") {
-              console.log(`[Embedder] ${info.status}: ${info.file ?? ""}`);
-            } else if (
-              info.status === "progress" &&
-              info.progress &&
-              info.progress % 25 < 1
-            ) {
-              console.log(
-                `[Embedder] ${info.file}: ${Math.round(info.progress)}%`,
-              );
-            } else if (info.status === "done" || info.status === "ready") {
-              console.log(`[Embedder] ${info.status}: ${info.file ?? ""}`);
-            }
-          },
-        },
+        { dtype: "q8" },
       );
       extractor = ext as FeatureExtractionPipeline;
       loading = null;
-      console.log("[Embedder] Model loaded: Supabase/gte-small (q8)");
+      console.log(
+        `[Embedder] Model loaded: Supabase/gte-small (q8) from ${modelHost}`,
+      );
       return extractor;
     })();
   }

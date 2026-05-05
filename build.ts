@@ -26,11 +26,25 @@ import {
   nodeBuildConfig,
 } from "@powerhousedao/shared/clis";
 import { execSync } from "node:child_process";
+import { existsSync } from "node:fs";
 import { createRequire } from "node:module";
 import { dirname, join, resolve } from "node:path";
 import { build, type InlineConfig } from "tsdown";
 
 const require = createRequire(import.meta.url);
+
+/**
+ * Ensure the embedding model files are present. They're shipped in dist/
+ * so the deployed switchboard never has to reach huggingface.co at runtime
+ * — the container only needs to reach the same CDN that serves our JS.
+ * Idempotent: the script skips files already on disk.
+ */
+const modelMarkerPath = resolve(
+  "models/Supabase/gte-small/onnx/model_quantized.onnx",
+);
+if (!existsSync(modelMarkerPath)) {
+  execSync("node scripts/fetch-model.mjs", { stdio: "inherit" });
+}
 
 /**
  * Force `@huggingface/transformers` to resolve to its WASM (web) entry
@@ -144,6 +158,15 @@ await build({
   },
   alias: { ...transformersAlias },
 });
+
+// tsdown's `copy` option targets single files; for the model directory we
+// copy recursively after the bundles land. The embedder resolves
+// `${moduleDir}models/` at runtime, so the trees need to sit alongside the
+// emitted JS chunks in both dist/browser/ and dist/node/. Wipe any stale
+// copy first so re-runs don't accumulate nested `models/models/` paths.
+execSync("rm -rf dist/browser/models dist/node/models", { stdio: "inherit" });
+execSync("cp -r models dist/browser/", { stdio: "inherit" });
+execSync("cp -r models dist/node/", { stdio: "inherit" });
 
 // Tailwind step — mirrors what ph-cli's build does after the bundle phase.
 execSync("bun x @tailwindcss/cli -i ./style.css -o ./dist/style.css", {
