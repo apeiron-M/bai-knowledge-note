@@ -17,10 +17,18 @@ export async function getExtractor(): Promise<FeatureExtractionPipeline> {
   // Prevent concurrent loads — share the same promise
   if (!loading) {
     loading = (async () => {
-      const { pipeline } = await import("@huggingface/transformers");
-      const ext = await pipeline("feature-extraction", "Supabase/gte-small", {
-        dtype: "q8",
-      });
+      const transformers = await import("@huggingface/transformers");
+      // The web bundle in Node defaults `allowLocalModels: true` and looks
+      // for model files on disk first, which fails in a container with no
+      // local model cache. Force remote-only so transformers fetches from
+      // huggingface.co directly via fetch().
+      transformers.env.allowLocalModels = false;
+      transformers.env.useBrowserCache = false;
+      const ext = await transformers.pipeline(
+        "feature-extraction",
+        "Supabase/gte-small",
+        { dtype: "q8" },
+      );
       extractor = ext as FeatureExtractionPipeline;
       loading = null;
       console.log("[Embedder] Model loaded: Supabase/gte-small (q8)");
