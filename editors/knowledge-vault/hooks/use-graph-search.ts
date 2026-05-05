@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
+import { resolveKnowledgeGraphEndpoint } from "./subgraph-endpoint.js";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -28,54 +29,6 @@ export type SearchMode = "hybrid" | "semantic" | "keyword";
 /* ------------------------------------------------------------------ */
 
 const DEBOUNCE_MS = 300;
-const SUBGRAPH_PATH = "/graphql/knowledgeGraph";
-
-/**
- * Derive the subgraph endpoint.
- *
- * Priority:
- * 1. VITE_SUBGRAPH_URL env var (explicit override for deployed environments)
- * 2. Vite dev (port 3000/3001) → localhost:4001
- * 3. Same-origin relative path (Connect production — app and reactor share origin)
- *
- * For deployed environments where Connect and Switchboard are on different
- * domains (e.g. connect.example.com vs switchboard-dev.powerhouse.xyz),
- * set VITE_SUBGRAPH_URL=https://switchboard-dev.powerhouse.xyz/graphql/knowledgeGraph
- * in your .env file.
- */
-// Known Connect → Switchboard domain mappings for deployed environments
-const DOMAIN_MAP: Record<string, string> = {
-  "connect-dev.powerhouse.xyz":
-    "https://switchboard-dev.powerhouse.xyz/graphql/knowledgeGraph",
-};
-
-function resolveEndpoint(): string {
-  // Explicit override via env var
-  const envUrl =
-    typeof import.meta !== "undefined" &&
-    (import.meta as { env?: Record<string, string> }).env?.VITE_SUBGRAPH_URL;
-  if (envUrl) return envUrl;
-
-  // Check known Connect → Switchboard domain mappings
-  const hostname = globalThis.window?.location?.hostname;
-  if (hostname && DOMAIN_MAP[hostname]) {
-    return DOMAIN_MAP[hostname];
-  }
-
-  // Vetra deployments: connect.<slug>.vetra.io ↔ switchboard.<slug>.vetra.io
-  if (hostname && /^connect\..+\.vetra\.io$/.test(hostname)) {
-    const sbHost = hostname.replace(/^connect\./, "switchboard.");
-    return `https://${sbHost}${SUBGRAPH_PATH}`;
-  }
-
-  // Vite dev server proxying to local reactor
-  const port = globalThis.window?.location?.port;
-  if (port === "3000" || port === "3001") {
-    return `http://localhost:4001${SUBGRAPH_PATH}`;
-  }
-  // Same-origin (Connect production)
-  return SUBGRAPH_PATH;
-}
 
 async function graphqlFetch<T>(
   endpoint: string,
@@ -179,7 +132,7 @@ export function useGraphSearch() {
     saved.current.mode,
   );
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const endpoint = useMemo(() => resolveEndpoint(), []);
+  const endpoint = useMemo(() => resolveKnowledgeGraphEndpoint(), []);
 
   // Persist query and mode to sessionStorage
   const setQuery = useCallback(

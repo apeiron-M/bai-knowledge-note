@@ -68,19 +68,7 @@ const OP_ICONS: Record<string, string> = {
 /*  GraphQL                                                           */
 /* ------------------------------------------------------------------ */
 
-const SUBGRAPH_PATH = "/graphql/knowledgeGraph";
-
-function getEndpoint(): string {
-  const envUrl =
-    typeof import.meta !== "undefined" &&
-    (import.meta as { env?: Record<string, string> }).env?.VITE_SUBGRAPH_URL;
-  if (envUrl) return envUrl;
-  const port = globalThis.window?.location?.port;
-  if (port === "3000" || port === "3001") {
-    return `http://localhost:4001${SUBGRAPH_PATH}`;
-  }
-  return SUBGRAPH_PATH;
-}
+import { resolveKnowledgeGraphEndpoint } from "../hooks/subgraph-endpoint.js";
 
 const ACTIVITY_QUERY = `
   query Activity($driveId: ID!, $limit: Int) {
@@ -95,7 +83,7 @@ async function fetchActivity(
   limit: number,
 ): Promise<OperationRecord[]> {
   try {
-    const res = await fetch(getEndpoint(), {
+    const res = await fetch(resolveKnowledgeGraphEndpoint(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
@@ -122,7 +110,7 @@ export function ActivityView() {
   const [operations, setOperations] = useState<OperationRecord[]>([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<FilterType>("all");
-  const endpoint = useMemo(() => getEndpoint(), []);
+  const endpoint = useMemo(() => resolveKnowledgeGraphEndpoint(), []);
 
   const loadActivity = useCallback(async () => {
     if (!driveId) return;

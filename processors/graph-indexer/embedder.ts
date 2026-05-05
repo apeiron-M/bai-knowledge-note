@@ -17,20 +17,38 @@ export async function getExtractor(): Promise<FeatureExtractionPipeline> {
   // Prevent concurrent loads — share the same promise
   if (!loading) {
     loading = (async () => {
-      const transformers = await import("@huggingface/transformers");
+      // Hide Node from `@huggingface/transformers` web bundle for the
+      // duration of its module evaluation. Otherwise its IS_NODE_ENV
+      // check (`process?.release?.name === "node"`) flips on, and the
+      // ONNX loader requests a local file path for the model:
+      //   getModelFile(..., apis.IS_NODE_ENV)  // ← passes return_path
+      // which can't resolve against a remote URL — the call throws
+      // "Unable to get model file path or buffer." We need the
+      // browser-style buffer code path even though we're in Node.
+      const originalRelease = process.release;
+      Object.defineProperty(process, "release", {
+        value: { ...originalRelease, name: "browser" },
+        configurable: true,
+        writable: true,
+      });
+      let transformers: typeof import("@huggingface/transformers");
+      try {
+        transformers = await import("@huggingface/transformers");
+      } finally {
+        Object.defineProperty(process, "release", {
+          value: originalRelease,
+          configurable: true,
+          writable: true,
+        });
+      }
 
       // Serve model files from this package's own dist/ instead of
       // huggingface.co. The deployed switchboard's network policy
       // blocks HF, but the same CDN that delivered our JS modules also
-      // serves the bundled `models/` directory. We compute the URL
-      // from import.meta.url with string ops (rather than `new URL()`)
-      // so rolldown's `resolveNewUrlToAsset` doesn't try to bundle
-      // `models/` as a build-time asset import.
-      //
-      // build.ts copies `models/` into both `dist/browser/` and
-      // `dist/node/`. The embedder ends up bundled into a chunk at
-      // `dist/<platform>/<chunk>.mjs`, so `./models/` resolves to
-      // `dist/<platform>/models/`.
+      // serves the bundled `models/` directory. URL is computed via
+      // string ops on import.meta.url so rolldown's
+      // `resolveNewUrlToAsset` doesn't try to inline `models/` as a
+      // build-time asset.
       const moduleUrl = import.meta.url;
       const moduleDir = moduleUrl.slice(0, moduleUrl.lastIndexOf("/") + 1);
       const modelHost = `${moduleDir}models/`;
