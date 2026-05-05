@@ -26,8 +26,29 @@ import {
   nodeBuildConfig,
 } from "@powerhousedao/shared/clis";
 import { execSync } from "node:child_process";
-import { join } from "node:path";
+import { createRequire } from "node:module";
+import { dirname, join, resolve } from "node:path";
 import { build, type InlineConfig } from "tsdown";
+
+const require = createRequire(import.meta.url);
+
+/**
+ * Force `@huggingface/transformers` to resolve to its WASM (web) entry
+ * instead of the default Node entry. The Node entry pulls in
+ * `onnxruntime-node` whose native `.node` binary isn't shipped on the
+ * deployed vetra switchboard image — runtime resolution fails with
+ * `Cannot find module '../bin/napi-v6/linux/x64/onnxruntime_binding.node'`.
+ * The web entry uses `onnxruntime-web` (WASM, no native deps) and runs in
+ * any JS environment, including Node.
+ */
+const transformersWebEntry = resolve(
+  dirname(require.resolve("@huggingface/transformers/package.json")),
+  "dist/transformers.web.js",
+);
+
+const transformersAlias = {
+  "@huggingface/transformers": transformersWebEntry,
+};
 
 const REACT_EXTERNALS = [
   "react",
@@ -110,6 +131,7 @@ await build({
     ...browserBuildConfig.deps,
     neverBundle: browserNeverBundle,
   },
+  alias: { ...transformersAlias },
 });
 
 await build({
@@ -120,6 +142,7 @@ await build({
     ...nodeBuildConfig.deps,
     neverBundle: nodeNeverBundle,
   },
+  alias: { ...transformersAlias },
 });
 
 // Tailwind step — mirrors what ph-cli's build does after the bundle phase.
