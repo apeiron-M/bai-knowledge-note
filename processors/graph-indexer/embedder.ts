@@ -1,7 +1,63 @@
 import type { FeatureExtractionPipeline } from "@huggingface/transformers";
+import fs from "node:fs/promises";
+import os from "node:os";
+import path from "node:path";
+import { pathToFileURL } from "node:url";
 
 let extractor: FeatureExtractionPipeline | null = null;
 let loading: Promise<FeatureExtractionPipeline> | null = null;
+let cachedWasmFileUrls: { mjs: string; wasm: string } | null = null;
+
+/**
+ * Pre-fetch the onnxruntime-web helper module and its WASM binary from
+ * our package CDN, write them to a tmp dir, and return file:// URLs.
+ * Required because ort-web tries to load these via Node fs APIs that
+ * only accept file URLs / absolute paths — passing the original HTTPS
+ * URL throws ERR_INVALID_ARG_VALUE.
+ *
+ * The helper module checks `globalThis.process?.versions?.node` at
+ * runtime to pick a Node-specific code path (which then uses fs in
+ * ways our deployment can't satisfy). We patch that check to `false`
+ * before writing — same workaround transformers' own loadWasmFactory
+ * does for browsers, but applied at the file level so Node can load
+ * the helper directly via file URL.
+ */
+async function materializeWasmFiles(
+  wasmHost: string,
+): Promise<{ mjs: string; wasm: string }> {
+  if (cachedWasmFileUrls) return cachedWasmFileUrls;
+  const tmpDir = await fs.mkdtemp(
+    path.join(os.tmpdir(), "knowledge-note-ort-"),
+  );
+  const [mjsRes, wasmRes] = await Promise.all([
+    fetch(`${wasmHost}ort-wasm-simd-threaded.asyncify.mjs`),
+    fetch(`${wasmHost}ort-wasm-simd-threaded.asyncify.wasm`),
+  ]);
+  if (!mjsRes.ok) {
+    throw new Error(
+      `Failed to fetch ort helper mjs: ${mjsRes.status} ${mjsRes.statusText}`,
+    );
+  }
+  if (!wasmRes.ok) {
+    throw new Error(
+      `Failed to fetch ort wasm binary: ${wasmRes.status} ${wasmRes.statusText}`,
+    );
+  }
+  let helper = await mjsRes.text();
+  helper = helper.replaceAll("globalThis.process?.versions?.node", "false");
+  const wasmBytes = Buffer.from(await wasmRes.arrayBuffer());
+  const mjsPath = path.join(tmpDir, "ort-wasm-simd-threaded.asyncify.mjs");
+  const wasmPath = path.join(tmpDir, "ort-wasm-simd-threaded.asyncify.wasm");
+  await Promise.all([
+    fs.writeFile(mjsPath, helper, "utf8"),
+    fs.writeFile(wasmPath, wasmBytes),
+  ]);
+  cachedWasmFileUrls = {
+    mjs: pathToFileURL(mjsPath).href,
+    wasm: pathToFileURL(wasmPath).href,
+  };
+  return cachedWasmFileUrls;
+}
 
 /**
  * Lazy-load `@huggingface/transformers` at first use. The package bundles
@@ -60,18 +116,20 @@ export async function getExtractor(): Promise<FeatureExtractionPipeline> {
       transformers.env.useBrowserCache = false;
 
       // Override onnxruntime-web's default wasmPaths (which point at
-      // cdn.jsdelivr.net) — the deployed Node container can't do
-      // `import("https://cdn.jsdelivr.net/...")`. build.ts copies these
-      // helper files into dist/<platform>/wasm/.
+      // cdn.jsdelivr.net). build.ts ships the helper files at
+      // dist/<platform>/wasm/, but ort-web tries to read them via
+      // Node fs APIs that reject HTTPS URLs — so we materialize them
+      // in a tmp directory first and pass file:// URLs.
+      const wasmFileUrls = await materializeWasmFiles(wasmHost);
       const onnx = (
         transformers.env.backends as { onnx?: { wasm?: Record<string, unknown> } }
       ).onnx;
       if (onnx?.wasm) {
-        onnx.wasm.wasmPaths = {
-          mjs: `${wasmHost}ort-wasm-simd-threaded.asyncify.mjs`,
-          wasm: `${wasmHost}ort-wasm-simd-threaded.asyncify.wasm`,
-        };
+        onnx.wasm.wasmPaths = wasmFileUrls;
       }
+      // Skip transformers' own pre-fetch+blob-URL dance over our
+      // wasmPaths — we already have them as file URLs.
+      transformers.env.useWasmCache = false;
 
       const ext = await transformers.pipeline(
         "feature-extraction",
