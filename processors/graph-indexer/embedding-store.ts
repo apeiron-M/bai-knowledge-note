@@ -1,22 +1,10 @@
-import type { PGlite } from "@electric-sql/pglite";
+import { PGlite } from "@electric-sql/pglite";
+import { vector } from "@electric-sql/pglite/vector";
 
 let db: PGlite | null = null;
 
-/**
- * Lazy-load PGlite at first use so that simply importing this module doesn't
- * require `@electric-sql/pglite` to be present in the runtime environment.
- *
- * The shared Powerhouse build config declares `@electric-sql/pglite` as
- * `neverBundle`, so the bare specifier survives into our dist. Deployed
- * switchboards load our package via HTTP CDN (no `npm install`), and their
- * base image doesn't ship pglite — without lazy loading, every consumer of
- * this module would crash at import time.
- */
 export async function getEmbeddingDb(): Promise<PGlite> {
   if (db) return db;
-
-  const { PGlite } = await import("@electric-sql/pglite");
-  const { vector } = await import("@electric-sql/pglite/vector");
 
   const dataDir =
     typeof window !== "undefined"

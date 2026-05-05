@@ -26,43 +26,8 @@ import {
   nodeBuildConfig,
 } from "@powerhousedao/shared/clis";
 import { execSync } from "node:child_process";
-import { existsSync } from "node:fs";
-import { createRequire } from "node:module";
-import { dirname, join, resolve } from "node:path";
+import { join } from "node:path";
 import { build, type InlineConfig } from "tsdown";
-
-const require = createRequire(import.meta.url);
-
-/**
- * Ensure the embedding model files are present. They're shipped in dist/
- * so the deployed switchboard never has to reach huggingface.co at runtime
- * — the container only needs to reach the same CDN that serves our JS.
- * Idempotent: the script skips files already on disk.
- */
-const modelMarkerPath = resolve(
-  "models/Supabase/gte-small/onnx/model_quantized.onnx",
-);
-if (!existsSync(modelMarkerPath)) {
-  execSync("node scripts/fetch-model.mjs", { stdio: "inherit" });
-}
-
-/**
- * Force `@huggingface/transformers` to resolve to its WASM (web) entry
- * instead of the default Node entry. The Node entry pulls in
- * `onnxruntime-node` whose native `.node` binary isn't shipped on the
- * deployed vetra switchboard image — runtime resolution fails with
- * `Cannot find module '../bin/napi-v6/linux/x64/onnxruntime_binding.node'`.
- * The web entry uses `onnxruntime-web` (WASM, no native deps) and runs in
- * any JS environment, including Node.
- */
-const transformersWebEntry = resolve(
-  dirname(require.resolve("@huggingface/transformers/package.json")),
-  "dist/transformers.web.js",
-);
-
-const transformersAlias = {
-  "@huggingface/transformers": transformersWebEntry,
-};
 
 const REACT_EXTERNALS = [
   "react",
@@ -145,7 +110,6 @@ await build({
     ...browserBuildConfig.deps,
     neverBundle: browserNeverBundle,
   },
-  alias: { ...transformersAlias },
 });
 
 await build({
@@ -156,38 +120,7 @@ await build({
     ...nodeBuildConfig.deps,
     neverBundle: nodeNeverBundle,
   },
-  alias: { ...transformersAlias },
 });
-
-// tsdown's `copy` option targets single files; for the model directory we
-// copy recursively after the bundles land. The embedder resolves
-// `${moduleDir}models/` at runtime, so the trees need to sit alongside the
-// emitted JS chunks in both dist/browser/ and dist/node/. Wipe any stale
-// copy first so re-runs don't accumulate nested `models/models/` paths.
-execSync("rm -rf dist/browser/models dist/node/models", { stdio: "inherit" });
-execSync("cp -r models dist/browser/", { stdio: "inherit" });
-execSync("cp -r models dist/node/", { stdio: "inherit" });
-
-// onnxruntime-web's runtime tries to dynamically import a WASM helper
-// module from cdn.jsdelivr.net. The deployed switchboard's Node loader
-// can't do `import("https://...")` against arbitrary CDN URLs, so we
-// ship the helper + the WASM blob alongside our chunks and set
-// transformers.env.backends.onnx.wasm.wasmPaths to point at them.
-const ortDist = dirname(
-  require.resolve("onnxruntime-web/package.json"),
-)
-  .replace(/\/dist$/, "")
-  .concat("/dist");
-const ortFiles = [
-  "ort-wasm-simd-threaded.asyncify.mjs",
-  "ort-wasm-simd-threaded.asyncify.wasm",
-];
-execSync("rm -rf dist/browser/wasm dist/node/wasm", { stdio: "inherit" });
-execSync("mkdir -p dist/browser/wasm dist/node/wasm", { stdio: "inherit" });
-for (const f of ortFiles) {
-  execSync(`cp ${ortDist}/${f} dist/browser/wasm/${f}`, { stdio: "inherit" });
-  execSync(`cp ${ortDist}/${f} dist/node/wasm/${f}`, { stdio: "inherit" });
-}
 
 // Tailwind step — mirrors what ph-cli's build does after the bundle phase.
 execSync("bun x @tailwindcss/cli -i ./style.css -o ./dist/style.css", {
