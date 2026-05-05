@@ -168,6 +168,27 @@ execSync("rm -rf dist/browser/models dist/node/models", { stdio: "inherit" });
 execSync("cp -r models dist/browser/", { stdio: "inherit" });
 execSync("cp -r models dist/node/", { stdio: "inherit" });
 
+// onnxruntime-web's runtime tries to dynamically import a WASM helper
+// module from cdn.jsdelivr.net. The deployed switchboard's Node loader
+// can't do `import("https://...")` against arbitrary CDN URLs, so we
+// ship the helper + the WASM blob alongside our chunks and set
+// transformers.env.backends.onnx.wasm.wasmPaths to point at them.
+const ortDist = dirname(
+  require.resolve("onnxruntime-web/package.json"),
+)
+  .replace(/\/dist$/, "")
+  .concat("/dist");
+const ortFiles = [
+  "ort-wasm-simd-threaded.asyncify.mjs",
+  "ort-wasm-simd-threaded.asyncify.wasm",
+];
+execSync("rm -rf dist/browser/wasm dist/node/wasm", { stdio: "inherit" });
+execSync("mkdir -p dist/browser/wasm dist/node/wasm", { stdio: "inherit" });
+for (const f of ortFiles) {
+  execSync(`cp ${ortDist}/${f} dist/browser/wasm/${f}`, { stdio: "inherit" });
+  execSync(`cp ${ortDist}/${f} dist/node/wasm/${f}`, { stdio: "inherit" });
+}
+
 // Tailwind step — mirrors what ph-cli's build does after the bundle phase.
 execSync("bun x @tailwindcss/cli -i ./style.css -o ./dist/style.css", {
   stdio: "inherit",

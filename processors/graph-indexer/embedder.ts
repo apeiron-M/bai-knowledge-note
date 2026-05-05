@@ -52,11 +52,26 @@ export async function getExtractor(): Promise<FeatureExtractionPipeline> {
       const moduleUrl = import.meta.url;
       const moduleDir = moduleUrl.slice(0, moduleUrl.lastIndexOf("/") + 1);
       const modelHost = `${moduleDir}models/`;
+      const wasmHost = `${moduleDir}wasm/`;
       transformers.env.allowLocalModels = false;
       transformers.env.allowRemoteModels = true;
       transformers.env.remoteHost = modelHost;
       transformers.env.remotePathTemplate = "{model}/";
       transformers.env.useBrowserCache = false;
+
+      // Override onnxruntime-web's default wasmPaths (which point at
+      // cdn.jsdelivr.net) — the deployed Node container can't do
+      // `import("https://cdn.jsdelivr.net/...")`. build.ts copies these
+      // helper files into dist/<platform>/wasm/.
+      const onnx = (
+        transformers.env.backends as { onnx?: { wasm?: Record<string, unknown> } }
+      ).onnx;
+      if (onnx?.wasm) {
+        onnx.wasm.wasmPaths = {
+          mjs: `${wasmHost}ort-wasm-simd-threaded.asyncify.mjs`,
+          wasm: `${wasmHost}ort-wasm-simd-threaded.asyncify.wasm`,
+        };
+      }
 
       const ext = await transformers.pipeline(
         "feature-extraction",
