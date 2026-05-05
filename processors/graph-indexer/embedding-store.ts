@@ -1,10 +1,21 @@
-import { PGlite } from "@electric-sql/pglite";
-import { vector } from "@electric-sql/pglite/vector";
+import type { PGlite } from "@electric-sql/pglite";
 
 let db: PGlite | null = null;
 
+/**
+ * Lazy-load PGlite at first use. The shared Powerhouse build config
+ * marks `@electric-sql/pglite` as `nodeNeverBundle`, so the bare import
+ * survives into our dist. On vetra's HTTP CDN deployments where
+ * transitive runtime deps aren't installed, a top-level import would
+ * crash module load — and module load is required for our processor +
+ * subgraph to register at all. Deferring the import to first call keeps
+ * registration unaffected.
+ */
 export async function getEmbeddingDb(): Promise<PGlite> {
   if (db) return db;
+
+  const { PGlite } = await import("@electric-sql/pglite");
+  const { vector } = await import("@electric-sql/pglite/vector");
 
   const dataDir =
     typeof window !== "undefined"

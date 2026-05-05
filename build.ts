@@ -16,9 +16,16 @@
  * `import … from "react"` / `"react-dom"` statements, which Connect resolves
  * against its own React at runtime — so there's only ever one React.
  *
- * Entry points are explicitly declared below so it's obvious what gets built:
- * the package root, document models, all 11 editors, the drive-app, the
- * graph-indexer processor, and the knowledge-graph subgraph.
+ * Embedder runtime support (for vetra HTTP-CDN deployments):
+ * - Aliases `@huggingface/transformers` → its `dist/transformers.web.js`
+ *   (WASM via onnxruntime-web; no native onnxruntime-node binary needed).
+ * - After bundling, copies the embedding model + onnxruntime-web's WASM
+ *   helper module + binary into `dist/{browser,node}/{models,wasm}/`. The
+ *   embedder fetches them at first use from the same CDN that delivered
+ *   the JS chunks, then loads ort via data:URL + inline wasmBinary so no
+ *   filesystem write is required (k8s readOnlyRootFilesystem-friendly).
+ *
+ * Entry points are explicitly declared below so it's obvious what gets built.
  */
 
 import {
@@ -26,8 +33,12 @@ import {
   nodeBuildConfig,
 } from "@powerhousedao/shared/clis";
 import { execSync } from "node:child_process";
-import { join } from "node:path";
+import { existsSync } from "node:fs";
+import { createRequire } from "node:module";
+import { dirname, join, resolve } from "node:path";
 import { build, type InlineConfig } from "tsdown";
+
+const require = createRequire(import.meta.url);
 
 const REACT_EXTERNALS = [
   "react",
@@ -36,10 +47,24 @@ const REACT_EXTERNALS = [
   "react-dom/client",
 ];
 
-// Explicit entry list — covers every public surface of this package.
-// Editors use `module.ts` (lazy-loaded `editor.tsx` via React.lazy).
-// Globs are kept as a safety net in case new modules are added without
-// updating this file.
+// Force `@huggingface/transformers` to its WASM (web) entry. The default
+// node entry pulls in onnxruntime-node (native .node binary) which can't
+// be loaded by the deployed switchboard's HTTP CDN module loader.
+const transformersWebEntry = resolve(
+  dirname(require.resolve("@huggingface/transformers/package.json")),
+  "dist/transformers.web.js",
+);
+const transformersAlias = {
+  "@huggingface/transformers": transformersWebEntry,
+};
+
+// Ensure HF model files are present locally before bundling. Idempotent.
+if (
+  !existsSync(resolve("models/Supabase/gte-small/onnx/model_quantized.onnx"))
+) {
+  execSync("node scripts/fetch-model.mjs", { stdio: "inherit" });
+}
+
 const entry = [
   // Package root
   "index.ts",
@@ -99,9 +124,6 @@ const nodeNeverBundle = Array.from(
   new Set([...existingNodeNeverBundle, ...REACT_EXTERNALS]),
 );
 
-// tsdown exports `browserBuildConfig`/`nodeBuildConfig` as `ResolvedConfig`,
-// but `build()` accepts `InlineConfig`. The shapes overlap at runtime — the
-// cast tells TS "trust me" for the few non-overlapping fields (like `copy`).
 await build({
   ...(browserBuildConfig as InlineConfig),
   entry,
@@ -110,6 +132,7 @@ await build({
     ...browserBuildConfig.deps,
     neverBundle: browserNeverBundle,
   },
+  alias: { ...transformersAlias },
 });
 
 await build({
@@ -120,7 +143,31 @@ await build({
     ...nodeBuildConfig.deps,
     neverBundle: nodeNeverBundle,
   },
+  alias: { ...transformersAlias },
 });
+
+// Asset copy: model files + onnxruntime-web wasm helpers. Wipe stale copies
+// first so re-runs don't accumulate nested paths.
+execSync(
+  "rm -rf dist/browser/models dist/node/models dist/browser/wasm dist/node/wasm",
+  { stdio: "inherit" },
+);
+execSync("cp -r models dist/browser/", { stdio: "inherit" });
+execSync("cp -r models dist/node/", { stdio: "inherit" });
+
+const ortDist = join(
+  dirname(require.resolve("onnxruntime-web/package.json")),
+  "dist",
+);
+const ortFiles = [
+  "ort-wasm-simd-threaded.asyncify.mjs",
+  "ort-wasm-simd-threaded.asyncify.wasm",
+];
+execSync("mkdir -p dist/browser/wasm dist/node/wasm", { stdio: "inherit" });
+for (const f of ortFiles) {
+  execSync(`cp ${ortDist}/${f} dist/browser/wasm/${f}`, { stdio: "inherit" });
+  execSync(`cp ${ortDist}/${f} dist/node/wasm/${f}`, { stdio: "inherit" });
+}
 
 // Tailwind step — mirrors what ph-cli's build does after the bundle phase.
 execSync("bun x @tailwindcss/cli -i ./style.css -o ./dist/style.css", {
