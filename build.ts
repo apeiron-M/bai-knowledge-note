@@ -169,6 +169,19 @@ for (const f of ortFiles) {
   execSync(`cp ${ortDist}/${f} dist/node/wasm/${f}`, { stdio: "inherit" });
 }
 
+// PGlite's vector extension loader does
+//   new URL("../vector.tar.gz", import.meta.url)
+// from its bundled chunk at dist/node/vector-*.mjs, which resolves to
+// dist/vector.tar.gz (the package root on the CDN). Copy the tarball
+// from pglite's distribution there so the extension can load.
+const pgliteDist = join(
+  dirname(require.resolve("@electric-sql/pglite/package.json")),
+  "dist",
+);
+execSync(`cp ${pgliteDist}/vector.tar.gz dist/vector.tar.gz`, {
+  stdio: "inherit",
+});
+
 // Tailwind step — mirrors what ph-cli's build does after the bundle phase.
 execSync("bun x @tailwindcss/cli -i ./style.css -o ./dist/style.css", {
   stdio: "inherit",
