@@ -17,6 +17,16 @@ export async function reindexDrive(
 
   try {
     const drive = await subgraph.reactorClient.get(driveId);
+    // Resolve to the drive's canonical UUID. reactorClient.get accepts either
+    // slug or UUID, but the processor's per-drive namespace was created by
+    // the factory using `driveHeader.id` (always UUID). If the caller passed a
+    // slug, we must align here before any namespace operation, otherwise we
+    // hit `relation "<ns>.graph_nodes" does not exist`.
+    const canonicalDriveId =
+      (drive as unknown as { header?: { id?: string }; id?: string }).header
+        ?.id ??
+      (drive as unknown as { id?: string }).id ??
+      driveId;
     const nodes = (
       drive.state as unknown as {
         global: {
@@ -36,7 +46,7 @@ export async function reindexDrive(
           n.documentType === "bai/moc"),
     );
 
-    const db = await getWritableDb(subgraph, driveId);
+    const db = await getWritableDb(subgraph, canonicalDriveId);
     const now = new Date().toISOString();
 
     for (const node of noteNodes) {
