@@ -1,0 +1,99 @@
+{
+  "id": "e540aae1-b236-459a-aef1-242d7b8d3cef",
+  "name": "v6-reactor-subgraph-replaces-legacy-endpoints",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "29de36be-088f-4371-ae64-47b0b1e38975",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "a46b1881-368e-4f0c-84b4-112a556c91ee"
+        },
+        {
+          "id": "53eb63f7-b71f-489e-8adb-9cb345ce9731",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "5ac93a5b-7e76-4dcf-8a78-6f19c4151ed8"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "The v6 reactor replaced legacy hardcoded subgraphs with a reactor subgraph at /graphql/r and auto-generated per-model subgraphs",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "3d5d19d7-bf63-4d3b-9560-67deed1463d8",
+          "name": "graphql",
+          "topicDocumentId": null
+        },
+        {
+          "id": "226cbbfc-1c9d-4d9e-b14b-d1445b7c7d2a",
+          "name": "subgraph",
+          "topicDocumentId": null
+        },
+        {
+          "id": "190a9375-be4f-413f-b20b-1c97c386a7ca",
+          "name": "migration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "8e74f3b9-1f33-4d24-bdff-c04858f70aa6",
+          "name": "v6-reactor",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The v6 Reactor introduced three subgraph types: the reactor subgraph (`/graphql/r`) for drives, documents, sync, and subscriptions; auto-generated document-model subgraphs (`/graphql/<model-name>`) with namespaced queries/mutations per registered model; and custom user-defined subgraphs. Document-model subgraphs auto-generate `document(identifier)`, `documents(paging)`, `findDocuments(search)`, `documentChildren(parentIdentifier)`, `createDocument(name)`, and per-operation mutations (e.g., `addTodoItem(docId, input)`) with async variants. Legacy strand-based sync (`registerPullResponderListener`, `system.sync.strands`) was replaced with channel-based sync (`touchChannel`, `pollSyncEnvelopes`) and GraphQL subscriptions (`documentChanges`).",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Legacy /graphql/document-drive and /graphql/system merged into /graphql/r; each document model gets its own namespaced subgraph.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:25.436Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:07:43.124Z"
+}

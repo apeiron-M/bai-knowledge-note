@@ -1,0 +1,81 @@
+{
+  "id": "9b8f5279-075a-4fc8-aba0-626cf8ff2e19",
+  "name": "swarm-feed-topic-naming-convention",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Swarm feed topics follow ph:v2:<category>:<scope> naming convention",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "3e55624b-a906-4a5d-9ecf-3c753c29af69",
+          "name": "swarm-feeds",
+          "topicDocumentId": null
+        },
+        {
+          "id": "04bfafe8-c454-449b-899c-b5ee3f5ca971",
+          "name": "feed-topics",
+          "topicDocumentId": null
+        },
+        {
+          "id": "aa7ca8d7-1a6c-4f84-b0b5-a1c908f805bf",
+          "name": "naming-convention",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# Swarm Feed Topic Naming Convention\n\nAll Powerhouse Swarm feeds follow the `ph:v2:<category>:<scope>` naming pattern.\n\n## Single-user feed topics\n\n- `ph:v2:user:<address>` — user's drive index\n- `ph:v2:drive:<driveId>` — drive's document list + folders\n- `ph:v2:doc:<docId>` — document's operation batch list\n- `ph:v2:profile:<address>` — public profile (unencrypted)\n- `ph:v2:share:<from>:<to>` — share manifest between users\n\n## Collaboration feed topics\n\n- `ph:v2:collab:<docId>` — collaboration index (who's in)\n- `ph:v2:ops:<address>:<docId>` — per-user operation stream\n\n## Pattern rules\n\n- Every feed has exactly one owner writing, anyone can read\n- Collaboration is modeled as N users, each with their own ops feed\n- The collab index feed tells everyone where to look\n- `v2` indicates schema version (future-proofing)\n",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:45:54.611Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:45:54.611Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Swarm feed topics use ph:v2 prefix with category (user, drive, doc, collab, ops, profile, share) and scope identifier to uniquely name each feed.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:40:42.487Z",
+  "lastModifiedAtUtcIso": "2026-04-21T14:45:55.953Z"
+}

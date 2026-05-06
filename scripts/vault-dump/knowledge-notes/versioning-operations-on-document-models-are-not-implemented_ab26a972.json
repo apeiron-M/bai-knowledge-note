@@ -1,0 +1,93 @@
+{
+  "id": "ab26a972-c3eb-4462-a122-cf2f93a94383",
+  "name": "versioning-operations-on-document-models-are-not-implemented",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "106ca15b-d7ab-4908-91ef-a48bc156baa0",
+          "linkType": "RELATES_TO",
+          "targetTitle": "document-model-structure-has-metadata-specifications-and-modules",
+          "targetDocumentId": "127650b0-79dc-4d1c-88d4-d416033b2cae"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "versioning operations on document models are not implemented",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "ac7f7641-c145-4c66-9cf5-aff61574f4c3",
+          "name": "gotchas",
+          "topicDocumentId": null
+        },
+        {
+          "id": "19440507-35ee-4abc-a76e-61c3d68ce9b7",
+          "name": "architecture decisions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a29a6051-fbea-4059-b53a-2034ef5014e2",
+          "name": "versioning",
+          "topicDocumentId": null
+        },
+        {
+          "id": "eacffa43-3aa4-440d-b104-57849d570d3a",
+          "name": "known limitations",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# versioning operations on document models are not implemented\n\nThe document model operation taxonomy includes a \"Versioning\" category, but it is explicitly marked as not implemented. Do not use any versioning-related operations — they will fail or produce undefined behavior.\n\nThis is a known gap in the current system. Version management for document models must be handled through other means (e.g., git versioning of the source files).\n\n---\n\nTopics:\n- [[gotchas]]\n- [[architecture decisions]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "OBSERVATION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:04:32.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T14:04:32.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The versioning category exists in the document model operation taxonomy but is explicitly marked DO NOT USE",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:50:59.055Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:06:59.583Z"
+}

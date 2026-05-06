@@ -1,0 +1,93 @@
+{
+  "id": "a46b1881-368e-4f0c-84b4-112a556c91ee",
+  "name": "custom-subgraphs-v6-reactor-client-access",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "da253b3a-0a7f-49c5-b3f9-97f3cce6eb04",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "6952a9b2-c4d2-4fa4-9b52-0940fb5ef98f"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "V6 custom subgraphs use getResolvers(subgraph: BaseSubgraph) pattern with access to reactorClient and relationalDb",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "36d999bd-ddcd-4c13-856b-d47150ae03e3",
+          "name": "subgraph",
+          "topicDocumentId": null
+        },
+        {
+          "id": "4b06e29d-ba37-424e-a588-6e617a5c638d",
+          "name": "graphql",
+          "topicDocumentId": null
+        },
+        {
+          "id": "23c87ab7-90fb-48fd-8b82-502da53ed158",
+          "name": "migration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "3036d238-2f07-4383-999c-685ec1fd80b3",
+          "name": "v6-reactor",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "In v6, custom subgraphs changed from exporting `resolvers` with `ctx.driveServer` to exporting `getResolvers(subgraph: BaseSubgraph)` with `subgraph.reactorClient` and `subgraph.relationalDb`. Schema format changed from template literal strings to `gql` tagged templates (`DocumentNode`). File structure changed from `resolvers.ts` + `type-defs.ts` to `resolvers.ts` + `schema.ts` + `index.ts`. Registration changed from manual to automatic via `ph generate --subgraph <name>`. The reactor subgraph at `/graphql/r` is the generic entry point; document-model subgraphs provide type-specific namespaced access.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Custom subgraphs export getResolvers receiving BaseSubgraph with reactorClient/relationalDb, replacing legacy ctx.driveServer pattern.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:49:57.096Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:05:13.994Z"
+}

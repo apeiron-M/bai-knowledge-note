@@ -1,0 +1,81 @@
+{
+  "id": "da589971-33ff-4cfc-a13d-d9de40063b92",
+  "name": "collab-initial-state-via-share-bundle",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Initial-state transfer for a new participant reuses the existing document-share bundle path",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-da589971-1",
+          "name": "live-collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-da589971-2",
+          "name": "initial-state-transfer",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-da589971-3",
+          "name": "share-bundle",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Initial-state transfer pattern\n\nA participant who accepts an invitation needs the current state, not just future ops. Rather than inventing a new snapshot protocol, the design **reuses the existing document-share bundle**:\n\n- The invitation message carries a `shareReference` plus `actHistoryAddress` pointing to a one-shot drive bundle built via `buildDriveShareBundle`.\n- On accept, the recipient imports the bundle. Drive, folders, and docs materialize locally with the original signatures preserved.\n- After import, the recipient's SwarmChannel registers the peer feeds and starts pulling incremental ops.\n\nThis keeps the **snapshot path and the incremental-ops path decoupled**. The snapshot path is the same battle-tested import flow used by one-off document sharing; collab adds only the peer-feed subscription on top.\n\nBecause `action.context.signer.signatures` is preserved through imports (per the 2026-04-17 fix), the imported history already shows correct per-author attribution. New ops arriving through peer feeds continue the same signed chain.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "pattern",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T19:44:53.072Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "A new participant joining a collab gets initial state through the existing document-share bundle — invitation carries shareReference + actHistoryAddress.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:18:54.067Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:44:53.077Z"
+}

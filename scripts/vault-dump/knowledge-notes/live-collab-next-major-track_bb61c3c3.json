@@ -1,0 +1,100 @@
+{
+  "id": "bb61c3c3-bc3a-42ef-962a-ea709a3152f0",
+  "name": "live-collab-next-major-track",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-9533becd",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Live collaboration uses per-user op feeds plus GSOC pings to trigger debounced pulls.",
+          "targetDocumentId": "de1cb00d-9dcb-4c36-b77d-ae3b697c8f75"
+        },
+        {
+          "id": "lnk-36e5e220",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Live collab uses per-user op feeds plus ACT-gated collab manifest",
+          "targetDocumentId": "90ee1c58-dbe9-4d62-9457-a401c64542fd"
+        },
+        {
+          "id": "lnk-aea97a22",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Chat 1-to-1 PSS messaging with feed-indexed history shipped",
+          "targetDocumentId": "cf218e83-8f98-424e-8f42-b93a12fd7679"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Live collaboration via ACT + GSOC is the next major track",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "7bc9772d-e7b3-430d-9785-412c37a8fa68",
+          "name": "chat-roadmap",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a452c58b-5098-429a-9694-3a9ded893528",
+          "name": "live-collab-track",
+          "topicDocumentId": null
+        },
+        {
+          "id": "5c9462a4-2958-4b86-9da5-868c6a9bbafc",
+          "name": "roadmap-next",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## The next track\n\nLive collaboration via ACT + GSOC is the remaining major track on the chat roadmap as of 2026-04-18. Detailed plan in `live-collaboration-design.md`.\n\n## What \"live\" means\n\nBoth users have the document open. When one commits an op, the other sees it appear in the **toolbar's History view within a second or two**, attributed to the correct signer.\n\n## Explicit non-goals\n\n- **No cursor overlays.**\n- **No caret labels.**\n- **No per-editor presence.**\n\nPowerhouse editors are too varied -- tables, visual canvases, dashboards, button grids -- for any of that to be meaningful across the surface.\n\n## Supporting foundation\n\nSignatures are already preserved end-to-end (shipped 2026-04-17), so the toolbar history shows the real author of every revision as soon as the pull mechanism lands. That's what makes attribution in live collab trivially correct.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "decision",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:38:00.466Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:41:27.802Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Live collab scope: both users see committed ops in toolbar History within 1-2s with correct signer. No cursor overlays or per-editor presence.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:35:11.913Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:29:15.827Z"
+}

@@ -1,0 +1,81 @@
+{
+  "id": "ef9c32c4-e93f-4583-a429-fcef43a4b342",
+  "name": "collab-testing-strategy-two-bee-nodes",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Collab testing requires two Bee nodes and covers signature attribution, permission boundary, and offline resilience",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-ef9c32c4-1",
+          "name": "live-collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-ef9c32c4-2",
+          "name": "testing-strategy",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-ef9c32c4-3",
+          "name": "bee-nodes",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Testing strategy: two Bee nodes, five dimensions\n\nCollab cannot be faithfully unit-tested alone — the mesh, ACT, and GSOC paths require real Bee infrastructure. The strategy pairs targeted unit tests with integration runs on **two live Bee nodes**.\n\n### Test dimensions\n\n- **Unit.** Collab-manifest read/write, participant add/remove idempotency, GSOC routing by `collabId` / `writerAddress`.\n- **Integration (two Bee nodes).** A creates drive-level collab with B; verify B receives invitation via PSS; B joins; both users make drive ops and doc ops; verify each sees the other's ops in the operation store within **2 s (GSOC path)** and within the **poll interval (fallback path)**.\n- **Signature attribution.** Every revision arriving on B's side is signed by A's signer, and vice versa, in the toolbar history. No unsigned or mis-attributed ops.\n- **Permission boundary (doc-level collab).** A and B collaborate on doc X only; verify B cannot read other docs in A's drive, and verify B's reactor does not materialize them locally.\n- **Offline resilience.** A goes offline, B makes 10 ops, A comes back, A pulls all 10 ops from B's feed. (No GSOC pings arrived during the offline window, so the poll fallback is doing the work.)\n\nThe two-Bee-node requirement is non-negotiable: a single-node test cannot exercise the cross-peer GSOC path or ACT grantee boundary.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "procedure",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T19:46:10.322Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Collab testing requires two Bee nodes and covers unit tests, integration, signature attribution, permission-boundary at doc scope, and offline resilience.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:24:03.101Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:46:10.327Z"
+}

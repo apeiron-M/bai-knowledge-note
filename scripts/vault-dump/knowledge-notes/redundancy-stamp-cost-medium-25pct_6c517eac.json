@@ -1,0 +1,88 @@
+{
+  "id": "6c517eac-85ca-4156-9c1b-4e0dfd511b9b",
+  "name": "redundancy-stamp-cost-medium-25pct",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-84d2dafe",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Dispersed replicas are a one-field opt-in via bee-js RedundancyLevel",
+          "targetDocumentId": "f16effb1-11f1-4e73-b2ab-ec24b2b197ff"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "RedundancyLevel MEDIUM adds ~25% stamp cost via parity chunks",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "d09a3f01-fcad-46ee-998c-48c0f67f5c9c",
+          "name": "stamp-utilization",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a629ff22-3ac4-457e-bc2e-0a590f330134",
+          "name": "redundancy-level",
+          "topicDocumentId": null
+        },
+        {
+          "id": "30a40aa4-64e4-4cff-a6c3-35fd2aecbba5",
+          "name": "parity-chunks",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Stamp-cost accounting for `RedundancyLevel.MEDIUM`\n\nThe tradeoff is write-side, not read-side:\n\n- **Stamp usage per write goes up ~25%**: MEDIUM adds ~1 parity chunk per 4 data chunks.\n- **Op-batches (~1KB) still fit in one SOC**, so the overhead is negligible for `collab-ops-feed.ts:138`.\n- **Larger chunks** (drive share bundle, manifest snapshots) see meaningful additional stamp consumption.\n- **Reader side: zero runtime cost** if chunks arrive — redundancy is only consulted on miss/timeout.\n\n**Required code change:** our existing stamp-utilization logic calls `calculateSize` / `calculateRemainingSize(encryption, ...)`. To report honest headroom, we must thread the `redundancyLevel` parameter through these calls: `calculateRemainingSize(true, MEDIUM)` rather than just `calculateRemainingSize(true)`.\n\n**Rollback rule from the experiment plan:** if stamp-utilization chirps warn of exhaustion, back off to `OFF` for ops and keep `MEDIUM` only for long-lived bundles.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "observation",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:42:03.432Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:42:03.432Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "MEDIUM adds roughly 1 parity chunk per 4 data chunks. Must thread the redundancy arg into calculateRemainingSize/calculateSize so stamp-utilization logic sees the real cost.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:37:02.976Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:26:29.281Z"
+}

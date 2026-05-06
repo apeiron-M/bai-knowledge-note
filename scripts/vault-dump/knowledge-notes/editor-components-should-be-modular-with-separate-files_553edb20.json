@@ -1,0 +1,111 @@
+{
+  "id": "553edb20-0819-400c-9a31-d48a2117c3b4",
+  "name": "editor-components-should-be-modular-with-separate-files",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "fdceb1d8-7f6e-46ad-856b-fd4796066194",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "editors-use-component-based-architecture",
+          "targetDocumentId": "797e8d01-5401-4e5b-af97-18eccdaee0a8"
+        },
+        {
+          "id": "dfbcd93f-86ea-4609-bf79-c873ac8fc8a3",
+          "linkType": "RELATES_TO",
+          "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags",
+          "targetDocumentId": "c0ee8850-076e-43b5-b34b-34ef9d1cf3ec"
+        },
+        {
+          "id": "65ad8b35-fadf-4a4a-bee3-21d3f99f639e",
+          "linkType": "RELATES_TO",
+          "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors",
+          "targetDocumentId": "1f9425dc-3735-4f53-8ff1-a3c4f6957c19"
+        },
+        {
+          "id": "c2920b76-ae38-45bb-9508-99aabf506dcc",
+          "linkType": "RELATES_TO",
+          "targetTitle": "model-editor-wiring",
+          "targetDocumentId": "7a351cf8-25cb-492b-bd97-5f7d6402f9b6"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "editor components should be modular with separate files",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "e7349d43-31ef-410e-8ea7-c9dcedbd7d69",
+          "name": "editor patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "85590da7-7c1d-4b6e-99b8-2499e304f2eb",
+          "name": "component architecture",
+          "topicDocumentId": null
+        },
+        {
+          "id": "73732e8c-d94b-4749-97c9-782fbc72188c",
+          "name": "TypeScript",
+          "topicDocumentId": null
+        },
+        {
+          "id": "cb7df5d9-f7c8-4854-8e7b-64a22912c64d",
+          "name": "modularity",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# editor components should be modular with separate files\n\nWhen building document editors:\n\n- Create modular components for UI elements in separate files for maintainability\n- Separate business logic (dispatch, data transformation) from presentation (rendering, layout)\n- Use TypeScript strictly — avoid `any` and type casting\n- Consider components from `@powerhousedao/design-system` and `@powerhousedao/document-engineering`\n\nThis modularity makes editors easier to test, maintain, and update when the underlying document model evolves.\n\n---\n\nTopics:\n- [[editor patterns]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:02:24.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T14:02:24.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Create modular UI components in separate files; separate business logic from presentation; use TypeScript without any or type casting",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:44.101Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:08:12.039Z"
+}

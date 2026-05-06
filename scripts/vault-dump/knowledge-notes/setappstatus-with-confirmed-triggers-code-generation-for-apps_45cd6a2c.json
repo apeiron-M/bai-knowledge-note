@@ -1,0 +1,99 @@
+{
+  "id": "45cd6a2c-3de2-461f-89a6-7507580d6f04",
+  "name": "setappstatus-with-confirmed-triggers-code-generation-for-apps",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "dd420e8c-3efd-4301-af8a-d7d872f90ab1",
+          "linkType": "RELATES_TO",
+          "targetTitle": "apps-use-useselecteddrive-to-access-drive-state-and-filter-nodes",
+          "targetDocumentId": "5346120b-34ea-44c1-9acf-e764710ec159"
+        },
+        {
+          "id": "6bb2c88a-a82e-44a1-872e-10daa775f513",
+          "linkType": "RELATES_TO",
+          "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes",
+          "targetDocumentId": "f3130153-8898-484a-b34b-8d7e7ee9bf5b"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "SET_APP_STATUS with CONFIRMED triggers code generation for apps",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "ecfce10e-66af-4167-86d4-f71603d9e909",
+          "name": "MCP workflows",
+          "topicDocumentId": null
+        },
+        {
+          "id": "6d162386-9da8-4644-8229-7cd821122faf",
+          "name": "editor patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "00892606-26d1-4199-a2cb-269f210069ed",
+          "name": "code generation",
+          "topicDocumentId": null
+        },
+        {
+          "id": "006dfece-3c72-46b6-9634-0afdd5949529",
+          "name": "app creation",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# SET_APP_STATUS with CONFIRMED triggers code generation for apps\n\nThe app creation flow has a specific trigger point. After configuring the app document (name, document types, drag-and-drop settings), setting the status to `CONFIRMED` kicks off code generation:\n\n```typescript\naddActions({\n  documentId: appDocId,\n  actions: [{\n    type: \"SET_APP_STATUS\",\n    scope: \"global\",\n    input: { status: \"CONFIRMED\" }\n  }]\n});\n```\n\nThis creates:\n- Editor scaffolding in `editors/<app-name>/`\n- Updated `powerhouse.manifest.json` with the app entry\n\nOnly after this step can you work on the generated `editor.tsx` to customize the UI.\n\n---\n\nTopics:\n- [[mcp workflows]]\n- [[editor patterns]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:01:51.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T14:01:51.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Setting app status to CONFIRMED triggers the code generator to create editor scaffolding and update powerhouse.manifest.json",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:52:44.322Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:09:43.750Z"
+}

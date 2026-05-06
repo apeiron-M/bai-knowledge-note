@@ -1,0 +1,99 @@
+{
+  "id": "182485a1-f337-4608-965b-ef649a73b7f3",
+  "name": "editors-use-react-hooks-for-document-state",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "a106e5ef-f1c6-4e60-8185-7710a1080bb0",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "797e8d01-5401-4e5b-af97-18eccdaee0a8"
+        },
+        {
+          "id": "cad9fc9e-bb1b-4155-858d-c915a531a878",
+          "linkType": "RELATES_TO",
+          "targetTitle": "apps-use-useselecteddrive-to-access-drive-state-and-filter-nodes",
+          "targetDocumentId": "5346120b-34ea-44c1-9acf-e764710ec159"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Powerhouse editors use generated React hooks as the recommended pattern for accessing document state and dispatching actions",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "18189490-2e1c-4968-949d-f23174f65b12",
+          "name": "editors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "e93a21b4-6dda-4d39-a0ba-53b38dac3518",
+          "name": "react",
+          "topicDocumentId": null
+        },
+        {
+          "id": "e335af16-0778-49cd-a49d-b73429e661a1",
+          "name": "state-management",
+          "topicDocumentId": null
+        },
+        {
+          "id": "68ec7f35-dd22-41a9-9ced-1038a06e207f",
+          "name": "hooks",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Each document model gets a generated hook like `useSelectedTodoListDocument()` that returns `[document, dispatch]`. This is the recommended approach over the props-based `EditorProps<T>` pattern because it makes components self-contained, eliminates prop drilling, and follows modern React conventions. The props approach (`document` and `dispatch` passed from parent) is reserved for reusable UI components that should work outside the Powerhouse context or for testing with mock state. Action creators are imported from the generated document model package and passed to `dispatch()`.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "useSelectedXDocument hook returns [document, dispatch] and is preferred over prop-drilling for editor components.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:39.317Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:08:04.490Z"
+}

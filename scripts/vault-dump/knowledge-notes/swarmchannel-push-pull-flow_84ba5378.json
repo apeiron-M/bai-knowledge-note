@@ -1,0 +1,141 @@
+{
+  "id": "84ba5378-49ec-49e8-918e-18e9c3ec1d1a",
+  "name": "swarmchannel-push-pull-flow",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-41a772e9",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The Swarm push cycle serializes, AES-256-GCM encrypts, uploads to /bytes, then writes a feed SOC.",
+          "targetDocumentId": "88ec1460-544f-49c4-949e-b6efd7faa113"
+        },
+        {
+          "id": "lnk-b5c4eee5",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The Swarm pull cycle polls user and document manifests then decrypts batches into the inbox.",
+          "targetDocumentId": "c634a118-b62c-4774-9b6f-90c038f755ed"
+        },
+        {
+          "id": "lnk-83825151",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Each reactor IChannel exposes three mailboxes: inbox, outbox, and deadLetter.",
+          "targetDocumentId": "1880798c-d4f1-4470-bd17-34a24b8b2c5e"
+        },
+        {
+          "id": "lnk-d1e8915f",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Powerhouse documents are stored as an append-only operation log, not state snapshots",
+          "targetDocumentId": "bac68765-3500-444c-94f1-4a7fd24bcdb9"
+        },
+        {
+          "id": "lnk-6ff06785",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Each document has a feed at ph:v2:doc:<id> pointing to a manifest that indexes operation batches on /bytes",
+          "targetDocumentId": "f232bc24-fa11-4411-8eb6-8f3aa25266dc"
+        },
+        {
+          "id": "lnk-3a5cf528",
+          "linkType": "RELATES_TO",
+          "targetTitle": "A user manifest indexes drives and a drive manifest lists documents plus folder structure",
+          "targetDocumentId": "d421cabb-492e-4dcb-bfa9-6e6c6e04b56e"
+        },
+        {
+          "id": "lnk-d795eb14",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "SwarmChannel implements IChannel so the reactor SyncManager is transport-agnostic",
+          "targetDocumentId": "021d8e43-ec03-4502-b088-2f76cbff192f"
+        },
+        {
+          "id": "lnk-804724e3",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Each reactor IChannel exposes three mailboxes: inbox, outbox, and deadLetter.",
+          "targetDocumentId": "1880798c-d4f1-4470-bd17-34a24b8b2c5e"
+        },
+        {
+          "id": "lnk-d11c3c2d",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Swarm manifests form a three-tier hierarchy of user, drive, and document feeds keyed by deterministic keccak256 topics.",
+          "targetDocumentId": "229d1154-be17-472c-92e3-2d6a0decc3ab"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "SwarmChannel push batches ordinals into SyncOperations; pull walks user → drive → doc manifests to rebuild inboxes",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "687dcbc1-6f82-4ddb-8b6f-09d94f0ba29c",
+          "name": "swarm-channel",
+          "topicDocumentId": null
+        },
+        {
+          "id": "2093910a-5269-4baa-8687-3b2fed15cb6a",
+          "name": "push-pull-sync",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a7c6d155-c282-4b51-9992-92221693ca8d",
+          "name": "reactor-sync",
+          "topicDocumentId": null
+        },
+        {
+          "id": "14a83d2b-5bf5-496a-9304-3fd47f1b8d92",
+          "name": "manifests",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "SwarmChannel implements two directional flows over the reactor's SyncManager.\n\n**Push (outbox)**: SyncManager detects new ordinals, groups ops into SyncOperations, and hands them to SwarmChannel. The channel serializes, encrypts, uploads to `/bytes`, writes the reference to the per-document feed, and updates drive/user manifests via `ManifestManager`.\n\n**Pull (inbox)**: SwarmChannel polls the user manifest at `ph:v2:user:<address>` to discover drives, reads each drive manifest to enumerate documents, reads document manifests to find operation batches, downloads batches from `/bytes` (auto-decrypted via SWE prefix detection), creates SyncOperations, and adds them to the inbox. SyncManager then applies via `reactor.load(docId, branch, ops)`.\n\nSupporting state is durable: `sync_cursors` in PGlite tracks ordinal progress and survives page reload, and failed operations land in `sync_dead_letters` for persisted, queryable retries. No custom persistence is needed.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "pattern",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:14.078Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:28:18.803Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Push encrypts and uploads to /bytes then updates manifests via ManifestManager; pull polls the user manifest, reads drive and doc manifests, downloads batches, and applies via reactor.load().",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:21:13.787Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:25:45.888Z"
+}

@@ -1,0 +1,93 @@
+{
+  "id": "f3130153-8898-484a-b34b-8d7e7ee9bf5b",
+  "name": "document-model-vs-document-editor-vs-app-serves-different-purposes",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "e42b0978-bb60-42f9-a2ec-ea9eacc60cd4",
+          "linkType": "RELATES_TO",
+          "targetTitle": "document-models-have-37-available-operations-across-7-categories",
+          "targetDocumentId": "5fb4afe1-37cb-4d19-b704-ba3e9c17662c"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "document model vs document editor vs app serves different purposes",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "78ea34a6-3787-4242-88d0-f8afb0f5aa6a",
+          "name": "architecture decisions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "8ad5134f-7cb3-4c3c-8579-28ca69ae364f",
+          "name": "document model",
+          "topicDocumentId": null
+        },
+        {
+          "id": "c8785969-2e3d-475b-852a-70a2bcf46134",
+          "name": "document editor",
+          "topicDocumentId": null
+        },
+        {
+          "id": "e7a0bec0-12d8-4ba7-9a4f-083a90642b82",
+          "name": "app",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# document model vs document editor vs app serves different purposes\n\nThree distinct document types serve different needs:\n\n| Type | Purpose | Document Type |\n|------|---------|---------------|\n| **Document Model** | Defines structure — schema and operations for a document type | `powerhouse/document-model` |\n| **Document Editor** | UI for editing a single document instance | `powerhouse/document-editor` |\n| **App (Drive Editor)** | UI for managing collections of documents in a drive | `powerhouse/app` |\n\nThe critical distinction: when a user says \"create an app\" or \"manage multiple documents,\" create a `powerhouse/app`, NOT a `powerhouse/document-model`.\n\nSince [[apps use useSelectedDrive to access drive state and filter nodes]], apps work at the drive level. Since [[editors use the modern React hooks pattern from reactor-browser]], editors work at the individual document level.\n\n---\n\nTopics:\n- [[architecture decisions]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "DECISION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:03:32.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T14:03:32.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Document models define structure; editors provide UI for single documents; apps manage collections in a drive",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:49:56.065Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:05:12.137Z"
+}

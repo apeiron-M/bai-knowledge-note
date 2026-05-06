@@ -1,0 +1,93 @@
+{
+  "id": "c313627e-cb9b-465d-aa97-75e71ee98259",
+  "name": "redundancy-hot-path-collab-ops-feed",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-6a193697",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Redundancy fixes read tail latency, not write propagation or feed-head discoverability",
+          "targetDocumentId": "2b87a5c2-2d08-419a-bfac-bb48f9f45c88"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "The highest-impact redundancy target is the collab-ops-feed upload",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "70dbd295-a5c7-4867-834e-9fd4e8e40549",
+          "name": "collab-ops-feed",
+          "topicDocumentId": null
+        },
+        {
+          "id": "f84decaf-12bf-47f7-8833-bc180b4c1b18",
+          "name": "redundancy-level",
+          "topicDocumentId": null
+        },
+        {
+          "id": "29bedc91-6abe-455c-885c-f1f1bbb74ae1",
+          "name": "hot-paths",
+          "topicDocumentId": null
+        },
+        {
+          "id": "f610a605-856e-43c6-97b2-0041859ee3ef",
+          "name": "tail-latency",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Ranked targets for `RedundancyLevel` (read-frequency × tail-impact)\n\n| Hot path | Call site | Read frequency | Impact |\n|---|---|---|---|\n| Collab ops batch | `collab-ops-feed.ts:138` (`uploadFile act:true`) | Every peer ping + every /bzz fetch on ping-miss | **HIGH** — on the 10s critical path |\n| Drive share bundle | `lifecycle.ts:169` (`uploadFile act:true`) | Once per accept (cold, urgent) | HIGH — currently retries with 0-2-5s backoff |\n| Collab manifest snapshot | `collab-manifest-feed.ts:106` | On accept + every member add/revoke | MEDIUM |\n| Drive manifest snapshot | `swarm-client.ts:503` | On recovery + push merges | MEDIUM |\n| Chat history page | `chat-history.ts:215` | On open + pagination | LOW |\n| Public profile feed | `share-manager.ts:29` | Sporadic peer lookups | LOW-MEDIUM — redundancy helps payload, not feed HEAD |\n\n**Minimal path:** thread `redundancyLevel` through `SwarmClient.uploadFile` / `uploadData` (`swarm-client.ts:212` and `:225-260`), then pass `RedundancyLevel.MEDIUM` at `collab-ops-feed.ts:138` only. Measure before expanding.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:57.182Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:41:57.182Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "collab-ops-feed.ts:138 uploadFile is read on every peer ping and every /bzz fetch on ping-miss, sitting directly on the 10s collab critical path — highest read frequency × tail-latency impact.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:37:01.233Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:26:31.531Z"
+}

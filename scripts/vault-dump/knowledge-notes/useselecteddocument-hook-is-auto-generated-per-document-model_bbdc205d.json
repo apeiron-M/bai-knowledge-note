@@ -1,0 +1,99 @@
+{
+  "id": "bbdc205d-ba2e-41d8-a3f9-13af4211d931",
+  "name": "useselecteddocument-hook-is-auto-generated-per-document-model",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "b93c4320-4c06-48d1-9185-40c06327fbf8",
+          "linkType": "RELATES_TO",
+          "targetTitle": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser",
+          "targetDocumentId": "5cc0a94d-0555-4686-b67b-d50e9c596982"
+        },
+        {
+          "id": "484c7924-7191-4312-9997-23641ab2931a",
+          "linkType": "RELATES_TO",
+          "targetTitle": "editor-components-should-be-modular-with-separate-files",
+          "targetDocumentId": "553edb20-0819-400c-9a31-d48a2117c3b4"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "useSelectedDocument hook is auto-generated per document model",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "25f30f48-66b6-4d48-aaa5-2d3c090a2da7",
+          "name": "editor patterns",
+          "topicDocumentId": null
+        },
+        {
+          "id": "3bdd838f-5114-4151-82dc-f6cee5028cc1",
+          "name": "model-editor wiring",
+          "topicDocumentId": null
+        },
+        {
+          "id": "48b65ff6-85ab-42cb-a197-0a6780b82392",
+          "name": "React hooks",
+          "topicDocumentId": null
+        },
+        {
+          "id": "bde7ffd0-4e4e-401a-8cde-320088c5a246",
+          "name": "code generation",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# useSelectedDocument hook is auto-generated per document model\n\nFor each document model, the system generates a corresponding hook:\n\n- `Todo` model → `useSelectedTodoDocument`\n- `Invoice` model → `useSelectedInvoiceDocument`\n- `ServiceOffering` model → `useSelectedServiceOfferingDocument`\n\nThese hooks are generated in `editors/hooks/` and return `[document, dispatch]`. Never implement them manually — they follow a specific pattern that matches the document model's type system.\n\nSince [[editors use the modern React hooks pattern from reactor-browser]], these hooks are the standard entry point for all editor components.\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[model-editor wiring]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "OBSERVATION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:02:45.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T14:02:45.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "like useSelectedTodoDocument are generated automatically when a document model is created; never implement them manually",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:49:47.340Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:04:57.224Z"
+}

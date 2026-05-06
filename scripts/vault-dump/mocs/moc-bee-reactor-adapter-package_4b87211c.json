@@ -1,0 +1,106 @@
+{
+  "id": "4b87211c-8bc6-449b-928a-1c4923f29fd3",
+  "name": "moc-bee-reactor-adapter-package",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "TOPIC",
+      "title": "Bee Reactor Adapter Package",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "ci-09435cf3ed",
+          "addedAt": "2026-04-21T19:32:46.712Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "12619fcb-3b7d-4539-b299-5c6b7b983e5d",
+          "sortOrder": 0,
+          "contextPhrase": "Top-level monorepo shape: pnpm, two packages — the entry point for the package structure."
+        },
+        {
+          "id": "ci-c174968833",
+          "addedAt": "2026-04-21T19:32:47.436Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "98c4a72a-dd3c-47ce-9305-696ea6ebbb7b",
+          "sortOrder": 1,
+          "contextPhrase": "What the two npm packages are: adapter + connect fork."
+        },
+        {
+          "id": "ci-0a1cd0d44b",
+          "addedAt": "2026-04-21T19:32:48.144Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "d7ee6e26-a7ea-42a9-a9ff-7c6bf71c5f71",
+          "sortOrder": 2,
+          "contextPhrase": "Adapter source layout: src/channel, src/swarm-client, src/chat, src/plugin — the file-level code map."
+        },
+        {
+          "id": "ci-87e9afe39b",
+          "addedAt": "2026-04-21T19:32:48.746Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "a129906b-c1dd-4203-be19-46807e50a0ba",
+          "sortOrder": 3,
+          "contextPhrase": "src/channel details — where all Swarm-sync code lives."
+        },
+        {
+          "id": "ci-69edb620b1",
+          "addedAt": "2026-04-21T19:32:49.421Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "27a6fbfd-1207-4091-967c-29161b650939",
+          "sortOrder": 4,
+          "contextPhrase": "Infrastructure modules wrap Bee APIs, wallet crypto, stamps — operational plumbing."
+        },
+        {
+          "id": "ci-261f7aa329",
+          "addedAt": "2026-04-21T19:32:50.038Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "a87ebd48-5bdf-4249-90e8-294639de2988",
+          "sortOrder": 5,
+          "contextPhrase": "src/chat and src/plugin host the PSS chat runtime and plugin orchestration."
+        },
+        {
+          "id": "ci-5ed6ce4590",
+          "addedAt": "2026-04-21T19:32:50.605Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "1e22c27f-ed2e-4ff0-9309-f77502743242",
+          "sortOrder": 6,
+          "contextPhrase": "src/plugin/init.ts — how the adapter exposes runtime status to Connect settings."
+        },
+        {
+          "id": "ci-060031053b",
+          "addedAt": "2026-04-21T19:32:51.273Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "5d4d9652-76f0-4a3a-b753-23cd49ece3dc",
+          "sortOrder": 7,
+          "contextPhrase": "Why the package exists: enables serverless Powerhouse Connect on Swarm."
+        },
+        {
+          "id": "ci-0414d99362",
+          "addedAt": "2026-04-21T19:32:51.908Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "d4eed853-c36c-4879-bad2-1cac217c2460",
+          "sortOrder": 8,
+          "contextPhrase": "Operational preconditions the package assumes (full Bee, mutable stamp, wallet, P2P)."
+        }
+      ],
+      "createdAt": "2026-04-21T19:32:46.310Z",
+      "noteCount": 9,
+      "parentRef": null,
+      "updatedAt": "2026-04-21T19:32:46.310Z",
+      "agentNotes": [],
+      "description": "Structure of the bee-reactor-adaptor monorepo: two npm packages, the src/channel + swarm-client + chat + plugin layout, and operational requirements.",
+      "orientation": "The bee-reactor-adaptor is the concrete code artifact that turns Path A into a real install. It's a pnpm monorepo with two published packages: the adapter itself and a Connect fork. Inside the adapter, src/channel/ holds the Swarm-sync code, src/swarm-client.ts wraps Bee APIs, and src/chat and src/plugin house the PSS chat runtime and plugin orchestration. This MOC collects the code-map notes, the required-environment notes, and the shared encryption/ACT dependencies that define how the package fits into a Connect install.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-21T19:32:45.408Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:32:52.364Z"
+}

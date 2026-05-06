@@ -1,0 +1,99 @@
+{
+  "id": "d9bb882c-d265-4a43-9097-0606d55469d7",
+  "name": "GSOC subscriptions only work on full Bee nodes and require mutable stamps",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-61127361",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Bee Reactor Adapter requires full Bee node, mutable stamp, wallet, and open P2P ports",
+          "targetDocumentId": "d4eed853-c36c-4879-bad2-1cac217c2460"
+        },
+        {
+          "id": "lnk-ce40bfd0",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Feed-backing stamps should be mutable to avoid bucket exhaustion from frequent updates",
+          "targetDocumentId": "5ce2683b-6d41-468d-b9a7-d9c9b1ff2e80"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "GSOC subscriptions only work on full Bee nodes and require mutable stamps",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "e53f1ef3-d710-4680-bffd-8914b77ff10d",
+          "name": "gsoc",
+          "topicDocumentId": null
+        },
+        {
+          "id": "28d0c913-521b-4f30-9a11-6d838754f6b0",
+          "name": "swarm",
+          "topicDocumentId": null
+        },
+        {
+          "id": "b3f32a9f-1d64-4184-aea7-7654adb409f6",
+          "name": "bee-node",
+          "topicDocumentId": null
+        },
+        {
+          "id": "62e387b9-dfe7-4c1f-a8db-b61829c110b6",
+          "name": "postage-stamps",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\n\nGSOC notifications have two hard constraints: the receiving node must be a **full node** (light nodes do not sync neighborhood chunks) and writers must use **mutable stamps** (to avoid bucket exhaustion on frequent signals).\n\n## Evidence\n\n- Light nodes do not store neighborhood chunks — they cannot see incoming SOC updates addressed to their neighborhood, so GSOC subscription is a full-node-only feature\n- Each GSOC send is a new SOC = a new chunk consuming a bucket slot. With immutable stamps, frequent notifications hot-spot a bucket and fail the batch well before TTL\n- Mutable stamps replace the oldest chunk in the overflowing bucket, so the notification channel self-garbage-collects\n\n## Why it matters\n\nAny architecture that uses GSOC for collaboration coordination (e.g. \"Connect instances register with a switchboard via GSOC\") has two environmental preconditions that affect deployment: the receiving instance must run a full node, and the stamp provisioning flow must request `immutableFlag: false`. Both are easy to get wrong silently.\n",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Light nodes do not sync neighborhood chunks, so they cannot receive GSOC updates. Writers must use mutable stamps to avoid bucket exhaustion from frequent signals.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:17:14.527Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:29:58.251Z"
+}

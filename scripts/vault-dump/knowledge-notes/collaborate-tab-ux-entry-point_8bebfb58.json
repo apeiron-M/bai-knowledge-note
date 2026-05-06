@@ -1,0 +1,88 @@
+{
+  "id": "8bebfb58-d52a-4358-ac17-1ac19dd40d5e",
+  "name": "collaborate-tab-ux-entry-point",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-f78f2137",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Live collaboration's only UI surface is the document toolbar History view, not per-editor cursors.",
+          "targetDocumentId": "993f29b0-be87-4f79-8c88-ff270d703628"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Collaborate tab in chat panel is the live-collab UX entry point",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "7084831b-36a6-49b2-9150-37294072ba22",
+          "name": "live-collab-track",
+          "topicDocumentId": null
+        },
+        {
+          "id": "5dccfce9-69fa-44d0-936a-4bdb6b4d6aaf",
+          "name": "collaborate-tab",
+          "topicDocumentId": null
+        },
+        {
+          "id": "dab59bd3-80d7-415c-86bd-47bae44dc9d0",
+          "name": "ux-decision",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## UX entry point\n\nLive collaboration is surfaced through a **Collaborate tab in the chat panel**, not through any editor chrome.\n\n## Flow\n\n1. Pick a **drive or doc** as the collaboration target.\n2. **Multi-select participants by Swarm ID**, reusing the document-share picker pattern.\n3. Invitation is delivered as a **chat card** with `[Join]` / `[Decline]` buttons.\n4. An **active collabs list** shows participant avatars and a last-activity timestamp.\n\n## Explicit non-goal\n\n**No editor-level UI work.** No cursor overlays, no caret labels, no per-editor presence widgets. The toolbar's existing History view -- auto-refreshed when a GSOC `op-committed` ping debounces in -- is the entire presence surface.\n\n## Why this shape\n\nReusing the document-share picker keeps the mental model consistent: collaboration is a natural extension of sharing, addressed by Swarm ID, negotiated via a chat card. It avoids building per-editor UI for a set of editors (tables, visual canvases, dashboards, button grids) where no shared cursor metaphor would generalize.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "decision",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:38:00.466Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:41:27.802Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Live collab UX reuses the document-share picker pattern: Collaborate tab to pick drive/doc, multi-select participants, send invitation card with Join/Decline. No editor UI.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:35:19.477Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:26:51.382Z"
+}

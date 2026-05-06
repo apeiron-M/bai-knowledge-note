@@ -45,7 +45,17 @@
       "Bash(python3 -c \"import json,sys; m=json.load\\(sys.stdin\\); print\\('subgraphs:', json.dumps\\(m.get\\('subgraphs'\\), indent=2\\)\\); print\\('processors:', json.dumps\\(m.get\\('processors'\\), indent=2\\)\\)\")",
       "Bash(awk '/ManifestSchema/,/^}/' node_modules/@powerhousedao/powerhouse-vetra-packages/dist/node/actions-CAH-hbfc-4Ddl_k7B.d.mts)",
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('versions:', list\\(d.get\\('versions',{}\\).keys\\(\\)\\)[-5:]\\)\")",
-      "Bash(awk '/class HttpPackageLoader|var HttpPackageLoader/,/^};?$/' node_modules/@powerhousedao/reactor-api/dist/index.mjs)"
+      "Bash(awk '/class HttpPackageLoader|var HttpPackageLoader/,/^};?$/' node_modules/@powerhousedao/reactor-api/dist/index.mjs)",
+      "Bash(python3 -c \"import json; print\\(json.load\\(open\\('package.json'\\)\\)['version']\\)\")",
+      "Bash(python3 -c \"import json; p=json.load\\(open\\('package.json'\\)\\); print\\(p['version']\\)\")",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('main:', p.get\\('main'\\)\\); print\\('module:', p.get\\('module'\\)\\); print\\('exports:', json.dumps\\(p.get\\('exports'\\), indent=2\\)[:1000]\\)\")",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\(json.dumps\\(p.get\\('exports'\\), indent=2\\)[:2000]\\)\")",
+      "Bash(echo \"exit=$?\")",
+      "Bash(host 138.199.129.93)",
+      "Bash(host huggingface.co)",
+      "Bash(host cdn.jsdelivr.net)",
+      "Bash(host registry.dev.vetra.io)",
+      "Bash(host switchboard.eager-hen-55.vetra.io)"
     ]
   },
   "enabledPlugins": {

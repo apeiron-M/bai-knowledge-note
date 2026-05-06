@@ -1,0 +1,100 @@
+{
+  "id": "de1cb00d-9dcb-4c36-b77d-ae3b697c8f75",
+  "name": "live-collaboration-uses-per-user-op-feeds-plus-gsoc-pings-to",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-f7816436",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Live collab uses per-user op feeds plus ACT-gated collab manifest",
+          "targetDocumentId": "90ee1c58-dbe9-4d62-9457-a401c64542fd"
+        },
+        {
+          "id": "lnk-2dbc8f56",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "GSOC provides many-to-one notifications with sub-second latency via symmetric shared-key SOCs.",
+          "targetDocumentId": "bc58fac1-0fc5-44b7-b49c-6dc8e5a97b3a"
+        },
+        {
+          "id": "lnk-4097be23",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Powerhouse documents are stored as an append-only operation log, not state snapshots",
+          "targetDocumentId": "bac68765-3500-444c-94f1-4a7fd24bcdb9"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Live collaboration uses per-user op feeds plus GSOC pings to trigger debounced pulls.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "topic-9fdfe7adf8f9",
+          "name": "live-collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-e59fc130b566",
+          "name": "swarm-feeds",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-87ab3644041e",
+          "name": "gsoc-notifications",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Model\n\nLive collaboration on a drive or document is **multi-writer**: each collaborator writes their own ops to their own feed, and everyone reads everyone else's. ACT gates read access (drive-level first, narrowed to doc-level later).\n\n## Flow\n\n1. Each peer mines a GSOC signer for the other's overlay (one-time, ~10–30s).\n2. Signers are exchanged via PSS (trusted channel, one-to-one).\n3. On op-committed, SwarmChannel pushes the op batch to the author's feed and sends a GSOC `doc-updated` ping to each other collaborator.\n4. Receivers pull new batches from the author's feed via `reactor.load()`.\n5. A timer-based poll remains as fallback when GSOC pings are missed.\n\n## GSOC notification payload\n\n```typescript\n{\n  type: \"doc-updated\",\n  documentId: \"b9e4fe2e-...\",\n  driveId: \"96ffdf26-...\",\n  fromAddress: \"0xadbA7C2F...\",\n  latestIndex: { document: 5, global: 12 },\n  timestamp: \"2026-04-15T18:30:05Z\"\n}\n```\n\nThe payload is small (<4KB) and only tells the receiver's SwarmChannel to pull; the actual ops travel via the feed.\n\n## Debouncing\n\nGSOC-triggered pulls are debounced so a flurry of ops (e.g. rapid typing) coalesces into a single pull.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:28:00.483Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:28:00.483Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Each collaborator writes ops to their own feed; peers subscribe. GSOC sends doc-updated pings on op-committed, which trigger debounced reactor.load() pulls.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:22:33.747Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:27:05.082Z"
+}

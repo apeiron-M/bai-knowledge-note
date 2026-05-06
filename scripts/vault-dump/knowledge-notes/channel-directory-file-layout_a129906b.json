@@ -1,0 +1,88 @@
+{
+  "id": "a129906b-c1dd-4203-be19-46807e50a0ba",
+  "name": "channel-directory-file-layout",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-8f814637",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Adapter package organizes Swarm integration into src/channel/, src/swarm-client.ts, src/swarm-crypto.ts, and src/plugin/",
+          "targetDocumentId": "d7ee6e26-a7ea-42a9-a9ff-7c6bf71c5f71"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "The adapter/src/channel/ directory holds all Swarm-sync integration code, split into factory wiring, the IChannel implementation, and manifest management.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t1",
+          "name": "file-structure",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t2",
+          "name": "channel-layer",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t3",
+          "name": "codebase-map",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## `adapter/src/channel/` layout\n\n```\nadapter/src/channel/\n  index.ts                    - Public exports\n  composite-factory.ts        - Routes \"gql\"/\"swarm\" to sub-factories\n  swarm-channel.ts            - IChannel: outbox push + inbox pull\n  swarm-channel-factory.ts    - Creates SwarmChannel from ChannelConfig\n  create-composite-factory.ts - createSwarmSyncBuilder() for ReactorBuilder.withSync()\n  register-swarm-channel.ts   - Runtime factory injection (legacy/edge cases)\n  add-swarm-remote.ts         - Per-drive Swarm remote registration\n  manifest-manager.ts         - User + drive manifest writes\n```\n\n### How they fit\n\n- `swarm-channel.ts` is the new code path — a native `IChannel` implementation that SyncManager treats identically to the GQL channel.\n- `composite-factory.ts` plus `create-composite-factory.ts` form the wiring that lets GQL and Swarm coexist behind one factory.\n- `add-swarm-remote.ts` is the entry point used by plugin init / registration retry to attach a Swarm remote to a specific drive.\n- `manifest-manager.ts` is the only module that writes the user and drive manifest feeds, keeping manifest-write logic in one place.\n- `register-swarm-channel.ts` exists for edge cases where the factory needs to be injected after reactor construction (legacy paths).",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Key files: swarm-channel.ts (IChannel), composite-factory.ts (routing), create-composite-factory.ts (builder wiring), add-swarm-remote.ts, manifest-manager.ts.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:45:18.297Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:23:56.231Z"
+}

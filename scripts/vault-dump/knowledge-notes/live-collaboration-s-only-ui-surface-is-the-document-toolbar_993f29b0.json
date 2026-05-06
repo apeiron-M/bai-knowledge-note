@@ -1,0 +1,81 @@
+{
+  "id": "993f29b0-be87-4f79-8c88-ff270d703628",
+  "name": "live-collaboration-s-only-ui-surface-is-the-document-toolbar",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Live collaboration's only UI surface is the document toolbar History view, not per-editor cursors.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "topic-963e56b7fc4a",
+          "name": "live-collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-d6047bda15ed",
+          "name": "ux",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-eae7d5c8e748",
+          "name": "reactor",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Decision\n\nLive collaboration on a document exposes **no per-editor cursors, no collaborative selection highlights, and no per-field presence**. The only live surface is the document toolbar's existing **History view**, where peer ops appear in real time, attributed to the correct signer.\n\n## Rationale\n\n- Powerhouse editors are too varied — tables, visual canvases, dashboards, button grids, forms — for a single cursor/selection abstraction to be meaningful across all of them.\n- Building per-editor collaborative cursor support would require each editor to opt in with custom instrumentation, a large ongoing maintenance cost.\n- The History view is already part of every document editor, already renders op-by-op, and already attributes ops to signers. Adding a real-time feed into it is the minimal integration.\n\n## UX implication\n\nCollaboration feels like 'watching the history tick in real time' rather than 'watching someone type in the same document'. That's a deliberate tradeoff — the reactor's op-attributed model is richer than a cursor ever could be, just presented differently.\n\n## What still needs design\n\n- A **Collaborate tab** in the chat panel: pick drive/doc, multi-select participants, send invite → arrives as a chat card with `[Join]` / `[Decline]`.\n- Drive-level ACT first, doc-level narrowing later.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "decision",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:30:03.256Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:30:03.256Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Powerhouse editors vary too widely (tables, canvases, dashboards, button grids) for meaningful cursors. Peer ops appear in the History timeline, attributed to the signer.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:22:41.082Z",
+  "lastModifiedAtUtcIso": "2026-04-21T14:30:06.704Z"
+}

@@ -1,0 +1,100 @@
+{
+  "id": "2dac8dc5-195a-4b33-b533-a11ab4414c14",
+  "name": "chat-history-persists-in-an-act-protected-feed-because-pss-m",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-848f2ddf",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "PSS provides 1-to-1 asymmetrically encrypted messaging with 2–10 second latency on Swarm.",
+          "targetDocumentId": "ea83f800-77bf-4bc3-bd87-2c625f2af31e"
+        },
+        {
+          "id": "lnk-dcae0aca",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "PSS provides 1-to-1 asymmetrically encrypted messaging with 2–10 second latency on Swarm.",
+          "targetDocumentId": "ea83f800-77bf-4bc3-bd87-2c625f2af31e"
+        },
+        {
+          "id": "lnk-6d3d26f2",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "ACT uses per-grantee Diffie-Hellman key derivation with encrypted access keys in a manifest",
+          "targetDocumentId": "3e046f6d-133f-49b2-94dd-e52e615ec473"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Chat history persists in an ACT-protected feed because PSS messages expire with stamp TTL.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "topic-28b5df4a3782",
+          "name": "pss-chat",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-f3ef259dd2e1",
+          "name": "act-encryption",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-f8e2d00aa472",
+          "name": "swarm-feeds",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Problem\n\nPSS messages live only as Trojan chunks and are garbage-collected once the associated postage stamp expires. Chat UX requires history that survives node restarts and stamp rotation.\n\n## Design\n\nEach message is written twice:\n\n1. **Ephemeral PSS send** — delivers the message to the live peer in 2–10s.\n2. **Persistent ACT-encrypted feed append** — at feed `ph:v2:chatlog:<sorted(alice, bob)>`, entries of the form `{ from, text, timestamp, attachments? }`.\n\nThe feed is uploaded with `{ act: true }` and both users' `beeNodePublicKey` values are registered as ACT grantees via `createGrantees()`. The Bee node handles ECDH decryption transparently when either party reads the feed — no app-level keys required.\n\n## Implications\n\n- History survives Bee restarts and stamp expiration\n- Either peer's Bee can rebuild the full thread on first open\n- Revocation is possible by rebuilding the ACT with a new access key\n- PSS inbox on reconnect must be reconciled against feed history",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:27:25.629Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:27:25.629Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "PSS messages are ephemeral Trojan chunks. Each message is also appended to ph:v2:chatlog:<sorted(alice,bob)> with ACT grantees set to both parties' Bee pubkeys.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:22:31.601Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:27:37.542Z"
+}

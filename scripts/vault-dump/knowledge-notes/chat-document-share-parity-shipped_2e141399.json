@@ -1,0 +1,88 @@
+{
+  "id": "2e141399-6d20-4400-86a4-6642c5481fb3",
+  "name": "chat-document-share-parity-shipped",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-521a04c9",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Chat 1-to-1 PSS messaging with feed-indexed history shipped",
+          "targetDocumentId": "cf218e83-8f98-424e-8f42-b93a12fd7679"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Document share in chat reaches parity with Settings-share",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "a8cdb1a4-7028-4885-a2ec-6d854f5b2b17",
+          "name": "chat-roadmap",
+          "topicDocumentId": null
+        },
+        {
+          "id": "58ab4a0e-da4a-42ba-9ec8-9b57999e50e4",
+          "name": "shipped-features",
+          "topicDocumentId": null
+        },
+        {
+          "id": "54f9f4ad-beff-48be-931d-960ec70fe719",
+          "name": "document-share",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## What shipped\n\nChat can now share documents with the same fidelity as the Settings-level share flow.\n\n- **Document-share attachment type** - `DocumentShareAttachment` plus `DocumentShareCard` rendering.\n- **Adapter method** - `shareDocumentInChat` builds the bundle via the unified `buildDriveShareBundle`, performs the ACT upload and delivers via PSS.\n- **Composer share-document button + picker modal** - `document-share-picker.tsx` provides a drive selector, multi-select of documents, and a caption.\n- **Parity with Settings-share** - same bundle shape, full op history (including unflushed ops), original signer preserved.\n\n## Why it matters\n\nSharing in chat no longer loses authorship or history relative to the Settings share path, so chat is now a legitimate distribution surface for collaborative documents rather than a lossy broadcast channel.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "observation",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:38:00.466Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:41:27.802Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Composer share-document button and picker modal deliver document shares through chat with full op history and original signer preserved, matching Settings-share.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:35:04.501Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:29:29.215Z"
+}

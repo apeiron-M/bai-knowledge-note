@@ -1,0 +1,93 @@
+{
+  "id": "8f9ffc85-4ce5-40cb-b665-7d06cca7efbb",
+  "name": "relational-db-processor-for-sql-projections",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "785a4247-9e29-4c4a-ba7d-5d65c10f279e",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "24ff2210-ff45-4a12-9547-139170126471"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "RelationalDbProcessor extends IProcessor to project document operations into SQL tables with type-safe migrations and namespaced databases per drive",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "c34fba22-589c-4866-9606-d477bc1c1416",
+          "name": "processors",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a469c8b8-5c1e-4daa-8c20-b5de8f114ad9",
+          "name": "relational-database",
+          "topicDocumentId": null
+        },
+        {
+          "id": "1eaea6d6-0d2d-4c71-abb5-122e887aa2b1",
+          "name": "migrations",
+          "topicDocumentId": null
+        },
+        {
+          "id": "0442b194-8251-447a-bcca-7388dfd90ccd",
+          "name": "CQRS",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Generate with `ph generate --processor <name> --processor-type relationalDb --document-types <type>`. Creates: processor class (extends `RelationalDbProcessor<DB>`), migrations.ts (up/down functions with Kysely-style schema builder), factory.ts (creates namespaced DB per drive), schema.ts (generated TypeScript types from migration via `ph generate --migration-file`). The processor lifecycle: `initAndUpgrade()` runs migrations on startup, `onOperations()` handles each batch, `onDisconnect()` cleans up. Namespaces (`getNamespace(driveId)`) prevent data collisions between drives. Data is exposed through subgraphs via `TodoIndexerProcessor.query(driveId, relationalDb)` for type-safe SQL queries.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Generated with --processor-type relationalDb; uses migrations for schema, namespaces to isolate per-drive data.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:49:45.145Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:04:53.440Z"
+}

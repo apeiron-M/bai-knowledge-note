@@ -1,0 +1,94 @@
+{
+  "id": "d38b8fea-2a3a-44dc-bb1c-d359e1704f0d",
+  "name": "public-profile-feed-publishes-the-beenodepublickey-and-overl",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-4cb9638e",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "PSS provides 1-to-1 asymmetrically encrypted messaging with 2–10 second latency on Swarm.",
+          "targetDocumentId": "ea83f800-77bf-4bc3-bd87-2c625f2af31e"
+        },
+        {
+          "id": "lnk-e0b0a35c",
+          "linkType": "RELATES_TO",
+          "targetTitle": "PSS provides 1-to-1 asymmetrically encrypted messaging with 2–10 second latency on Swarm.",
+          "targetDocumentId": "ea83f800-77bf-4bc3-bd87-2c625f2af31e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Public profile feed publishes the beeNodePublicKey and overlayAddress that PSS and ACT need.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "topic-aeea4cb859ed",
+          "name": "public-profile",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-a5871dd6728b",
+          "name": "pss-chat",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-906a37deec4b",
+          "name": "swarm-feeds",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Schema\n\nEach user publishes a public profile at feed `ph:v2:profile:<address>`:\n\n```typescript\n{\n  address: \"0xadbA7C2F...\",       // Swarm signer address\n  ethAddress: \"0x...\",            // Original ETH wallet (optional)\n  beeNodePublicKey: \"02abc...\",   // Compressed secp256k1 — for PSS targeting\n  swarmPublicKey: \"03def...\",     // Wallet-derived — for ECDH key agreement\n  overlayAddress: \"abc123...\",    // Bee overlay — for PSS/GSOC addressing\n  updatedAt: \"2026-04-15T...\"\n}\n```\n\n## Role in chat/collab\n\n- `beeNodePublicKey` is the PSS recipient key. It is also the ACT grantee pubkey.\n- `overlayAddress` is the PSS target and the GSOC-signer mining target.\n- `swarmPublicKey` is the ECDH partner for wallet-level key agreement.\n- `ethAddress` enables ENS → profile lookup (ENS resolves to ETH address, and profile indexes by ETH address).\n\n## Why unencrypted\n\nThe profile feed is intentionally **unencrypted** — it serves as a user-discovery directory. Discovery without some public rendezvous point is impossible; the data here is deliberately non-sensitive (public keys and overlay addresses, not wallet private keys or personal content).",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:30:20.417Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:30:20.417Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Feed ph:v2:profile:<address> exposes beeNodePublicKey for PSS encryption targeting and overlayAddress for PSS/GSOC neighborhood routing — the per-user directory for chat.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:22:42.309Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:23:12.771Z"
+}

@@ -1,0 +1,93 @@
+{
+  "id": "19e797d3-26a5-4928-b989-37ee2b3b8076",
+  "name": "packages-published-to-npm-installed-with-ph",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "fa1d2781-afc5-48cd-9d17-525a3077595b",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "95cf85b7-1b51-4aa9-ae7f-04ea090b8d6d"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Powerhouse packages are published to NPM with @org-ph scope convention and installed into any environment via ph install",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "30264b4b-4288-4775-91a0-ec40fbb86a93",
+          "name": "packages",
+          "topicDocumentId": null
+        },
+        {
+          "id": "b56203ca-669c-4fb5-ae1c-3685fa3bbfe7",
+          "name": "npm",
+          "topicDocumentId": null
+        },
+        {
+          "id": "10f1c25e-6a4d-463f-9212-ecf58b4b5b09",
+          "name": "publishing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "382b4f78-9827-456d-a8b0-a81defd2e8b7",
+          "name": "deployment",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "A Powerhouse package bundles document models, editors, processors, and scripts. The NPM org naming convention is `@yourorganization-ph` (the `-ph` suffix identifies Powerhouse ecosystem packages). Workflow: `ph init` creates project, `ph vetra --interactive --watch` for development, `pnpm build` to verify, `pnpm version patch|minor|major` for semver, `pnpm publish --access public` to NPM. Installation: `ph install @org-ph/package-name` makes document models and editors available. The `powerhouse.manifest.json` file declares all modules (documentModels, editors, apps, subgraphs, importScripts). `ph install` also automatically adds package styles to `styles.css`.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "WORKFLOW",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Organizations use @org-ph NPM scope; ph install adds document models, editors, and processors to an instance.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:52:40.596Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:09:38.227Z"
+}

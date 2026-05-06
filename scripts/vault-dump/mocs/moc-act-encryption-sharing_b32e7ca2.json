@@ -1,0 +1,130 @@
+{
+  "id": "b32e7ca2-5730-4c4a-a260-60aecc7d7e0d",
+  "name": "moc-act-encryption-sharing",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "TOPIC",
+      "title": "ACT Encryption and Sharing",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "ci-3d1c6e7cba",
+          "addedAt": "2026-04-21T19:32:16.366Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "f6d9ed2c-a699-4645-8d9f-d8caf9fb5df4",
+          "sortOrder": 0,
+          "contextPhrase": "Wallet-derived AES-256-GCM key — the root of the encryption tree; everything else inherits from this decision."
+        },
+        {
+          "id": "ci-abdaa57411",
+          "addedAt": "2026-04-21T19:32:17.005Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "b58de2db-f771-4457-84ad-ab90c23586a4",
+          "sortOrder": 1,
+          "contextPhrase": "App-layer encryption responsibility — adapter encrypts before uploading, rather than relying on Swarm features."
+        },
+        {
+          "id": "ci-b0589f1e28",
+          "addedAt": "2026-04-21T19:32:17.629Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "64ae2116-64df-45a8-8952-8255feaaf2a6",
+          "sortOrder": 2,
+          "contextPhrase": "Encryption lives at /bytes; feeds stay clean references — the layering invariant."
+        },
+        {
+          "id": "ci-ad1e11381e",
+          "addedAt": "2026-04-21T19:32:18.211Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "88ec1460-544f-49c4-949e-b6efd7faa113",
+          "sortOrder": 3,
+          "contextPhrase": "Concrete encryption checkpoint inside the push cycle."
+        },
+        {
+          "id": "ci-f6d42b007e",
+          "addedAt": "2026-04-21T19:32:18.754Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "3e046f6d-133f-49b2-94dd-e52e615ec473",
+          "sortOrder": 4,
+          "contextPhrase": "ACT primitives: per-grantee DH key + encrypted access key in a manifest — the sharing machinery."
+        },
+        {
+          "id": "ci-9f42944d5a",
+          "addedAt": "2026-04-21T19:32:19.360Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "c63ea66b-d2d8-471e-8ce4-ad2a70a7934a",
+          "sortOrder": 5,
+          "contextPhrase": "Cross-user sharing with ECDH-derived session keys — avoids touching the wallet key."
+        },
+        {
+          "id": "ci-810b7bcd53",
+          "addedAt": "2026-04-21T19:32:19.986Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "9408dcdb-eb2f-485d-98c9-2b28753c8906",
+          "sortOrder": 6,
+          "contextPhrase": "Parallel formulation: ACT + ECDH per-session key for cross-user share."
+        },
+        {
+          "id": "ci-5def99fc07",
+          "addedAt": "2026-04-21T19:32:20.609Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "8e4ac433-3055-4f04-89d6-de965e22a619",
+          "sortOrder": 7,
+          "contextPhrase": "ACT replaces legacy deriveShareKey — documents the security improvement."
+        },
+        {
+          "id": "ci-19a50d12d3",
+          "addedAt": "2026-04-21T19:32:21.215Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "4d9f8187-b1aa-4092-aa9f-968b8c9ebe87",
+          "sortOrder": 8,
+          "contextPhrase": "Adapter-level statement: AES hierarchical feeds for self, ACT for sharing — the clean separation."
+        },
+        {
+          "id": "ci-77f4e55440",
+          "addedAt": "2026-04-21T19:32:21.835Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "7fdf889e-2f83-4a1a-98cd-47d877dfee7b",
+          "sortOrder": 9,
+          "contextPhrase": "Cross-user share bundle = public profile + share manifest + ACT-protected doc."
+        },
+        {
+          "id": "ci-1e1923ef76",
+          "addedAt": "2026-04-21T19:32:22.459Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "5a905b62-150b-42cf-8026-40adfd8b7071",
+          "sortOrder": 10,
+          "contextPhrase": "Phase 2b raw-file sharing via ACT-encrypted /bzz, 200MB cap — recent feature built on this stack."
+        },
+        {
+          "id": "ci-8ac1bf97b6",
+          "addedAt": "2026-04-21T19:32:23.097Z",
+          "addedBy": "knowledge-agent",
+          "noteRef": "1adf86f4-3e84-434d-9b05-e20489172fee",
+          "sortOrder": 11,
+          "contextPhrase": "End-to-end chat-document-share flow that bundles reactor state + unflushed outbox through ACT."
+        }
+      ],
+      "createdAt": "2026-04-21T19:32:16.008Z",
+      "noteCount": 12,
+      "parentRef": null,
+      "updatedAt": "2026-04-21T19:32:16.008Z",
+      "agentNotes": [],
+      "description": "How Connect encrypts data at the Swarm /bytes layer with AES-256-GCM and uses ACT+ECDH for cross-user sharing without leaking the wallet key.",
+      "orientation": "Connect's privacy story has two layers. At rest, every payload uploaded to /bytes is AES-256-GCM encrypted with a deterministic key derived from a one-time wallet signature so any device with the wallet can recover state. For sharing across users, Connect uses Swarm's ACT with ECDH-derived per-session keys and per-grantee manifests — replacing the older deriveShareKey approach that leaked through publicly derivable SHA-256. This MOC collects the notes that define the encryption layer, the ACT model, and the concrete flows (chat sharing, raw-file sharing, session keys) that depend on them.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-21T19:32:15.103Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:32:23.660Z"
+}

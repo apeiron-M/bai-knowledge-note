@@ -1,0 +1,81 @@
+{
+  "id": "98c4a72a-dd3c-47ce-9305-696ea6ebbb7b",
+  "name": "bee-reactor-adapter-package-structure",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Bee Reactor Adapter ships two npm packages: adapter and connect fork",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "package-structure",
+          "name": "package-structure",
+          "topicDocumentId": null
+        },
+        {
+          "id": "npm-publishing",
+          "name": "npm-publishing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "connect-fork",
+          "name": "connect-fork",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The Bee Reactor Adapter repo publishes two independent packages:\n\n| Package | npm | Role |\n|---------|-----|------|\n| `packages/adapter` | `@liberuum-org/bee-reactor-adapter` | Core adapter: SwarmClient, SwarmChannel, ACT-encrypted sharing, PSS/GSOC chat, postage stamps |\n| `packages/connect` | `@liberuum-org/connect` | Fork of Powerhouse Connect with Swarm landing page, settings UI, and chat panel |\n\nExample integration into any Powerhouse project:\n\n```json\n{\n  \"dependencies\": {\n    \"@liberuum-org/bee-reactor-adapter\": \"0.23.0\"\n  },\n  \"overrides\": {\n    \"@powerhousedao/connect\": \"npm:@liberuum-org/connect@6.0.0-dev.174-swarm.1\"\n  }\n}\n```\n\nEach package publishes independently with `npm publish --otp=CODE` (the connect fork uses `--tag swarm`). Builds are driven by `npx tsc` for the adapter and `bun run build` for connect.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "integration",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:52:46.944Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:56:42.147Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The project publishes @liberuum-org/bee-reactor-adapter (core SwarmClient, SwarmChannel, ACT sharing, PSS/GSOC chat) and @liberuum-org/connect (a fork of Powerhouse Connect with Swarm UI).",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:53:00.774Z",
+  "lastModifiedAtUtcIso": "2026-04-21T15:00:52.578Z"
+}

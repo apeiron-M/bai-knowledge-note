@@ -1,0 +1,88 @@
+{
+  "id": "dd7715bc-354e-4af9-8069-ed8d8051b093",
+  "name": "reactor-abort-signal-cancellation",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "9356e977-8a25-456b-896d-b6f9b242c9be",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "9422d07d-0a9d-436f-8bdf-4ddd389a5fa4"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "IReactorClient methods accept AbortSignal for cancelling in-flight requests without stopping server-side processing",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "c4cd3ed6-fe99-4266-81ef-5495eef855dd",
+          "name": "abort-signal",
+          "topicDocumentId": null
+        },
+        {
+          "id": "127d4710-4a4d-4891-bfb7-41537173fe10",
+          "name": "reactor-client",
+          "topicDocumentId": null
+        },
+        {
+          "id": "24f36a05-b607-47dc-ad48-a3be6933161e",
+          "name": "pattern",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Most `IReactorClient` methods accept an optional `AbortSignal` parameter for cancellation. Use cases: cancel on React component unmount via `useEffect` cleanup with `AbortController`, cancel with timeout via `AbortSignal.timeout(5000)`, and cancel long-running writes where `execute()` waits for `READ_READY`. When aborted, methods throw `AbortError`. Important: aborting only cancels the client-side wait, not the server-side processing -- the underlying reactor job may still complete. Write methods like `execute()` wait for `READ_READY` status; `executeAsync()` returns immediately with a `PENDING` JobInfo, and `waitForJob()` can be used separately for tracking.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Aborting cancels the client-side wait only; the underlying reactor job may still complete on the server side.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:53:10.461Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:10:23.394Z"
+}

@@ -1,0 +1,106 @@
+{
+  "id": "2f9ad26c-c821-4adc-956d-d6c1bc5779b0",
+  "name": "chat-requires-both-users-to-run-full-bee-nodes-because-light",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-9f10e256",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "PSS provides 1-to-1 asymmetrically encrypted messaging with 2–10 second latency on Swarm.",
+          "targetDocumentId": "ea83f800-77bf-4bc3-bd87-2c625f2af31e"
+        },
+        {
+          "id": "lnk-d9983953",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "PSS provides 1-to-1 asymmetrically encrypted messaging with 2–10 second latency on Swarm.",
+          "targetDocumentId": "ea83f800-77bf-4bc3-bd87-2c625f2af31e"
+        },
+        {
+          "id": "lnk-de219f6c",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "GSOC provides many-to-one notifications with sub-second latency via symmetric shared-key SOCs.",
+          "targetDocumentId": "bc58fac1-0fc5-44b7-b49c-6dc8e5a97b3a"
+        },
+        {
+          "id": "lnk-eecf1757",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Bee Reactor Adapter requires full Bee node, mutable stamp, wallet, and open P2P ports",
+          "targetDocumentId": "d4eed853-c36c-4879-bad2-1cac217c2460"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Chat requires both users to run full Bee nodes because light nodes cannot receive PSS or GSOC.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "topic-cf31ed4f845a",
+          "name": "bee-node",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-c0d1d799aabb",
+          "name": "pss-chat",
+          "topicDocumentId": null
+        },
+        {
+          "id": "topic-41701de83d21",
+          "name": "deployment",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Hard requirement\n\nThe Swarm chat/collab feature requires **both users to run full Bee nodes**. This is not a soft recommendation — light nodes lack the neighborhood-sync capability needed to receive PSS Trojan chunks and GSOC SOC updates.\n\n## Capability matrix\n\n| Feature | Full Node | Light Node | Ultra-Light |\n|---------|-----------|------------|-------------|\n| PSS send | Yes | Yes | No |\n| PSS receive | **Yes** | No | No |\n| GSOC subscribe | **Yes** | No | No |\n| GSOC send | Yes | Yes | No |\n| Feed read/write | Yes | Yes | Read only |\n\n## Minimum viable Bee config\n\n- `full-node: true`\n- `swap-enable: true`\n- A funded **mutable** postage stamp (GSOC requires mutable)\n- Connected to Gnosis Chain RPC\n\n## Dev mode caveat\n\nPSS and GSOC do function in `bee dev` mode, but only within the same node — there are no peers. Multi-node testing requires either a real Swarm network or a local multi-node setup.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:29:32.951Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:29:32.951Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "PSS receive and GSOC subscribe both require full-node capability. Light and ultra-light nodes can send PSS/GSOC but cannot subscribe to incoming messages.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:22:38.725Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:25:59.728Z"
+}

@@ -1,0 +1,105 @@
+{
+  "id": "5851885a-0838-4b5e-acd1-2be06972b3b8",
+  "name": "reactor-client-auto-signs-all-actions",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "94df5be9-140a-4cfa-88e2-92919af2fdf9",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "3dffcf1c-0d80-44dd-a06f-cfcee8313c2e"
+        },
+        {
+          "id": "76b74cca-a82f-4c33-a26e-073c4976651c",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "9422d07d-0a9d-436f-8bdf-4ddd389a5fa4"
+        },
+        {
+          "id": "a3e76795-f2c7-4e49-b79e-ccd462028076",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "391165e6-41a5-47c8-89ac-ba360061b2da"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "ReactorClient automatically signs all actions before submitting them to the reactor, skipping already-signed actions",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "146f836c-2b76-40f7-9eb1-c15f005d167a",
+          "name": "reactor-client",
+          "topicDocumentId": null
+        },
+        {
+          "id": "c241c9ea-911d-4e9e-99f9-67be065fac7a",
+          "name": "signing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "961317c3-23b3-4320-974e-46428d1936e4",
+          "name": "auto-signing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "0d7d31cd-a584-45ef-8844-c243b14e58d3",
+          "name": "signer",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `ReactorClient` holds an `ISigner` instance and every mutation method (`execute()`, `create()`, `createChild()`, `add()`, `remove()`, `move()`) calls `signActions()` internally before submission. If `action.context.signer.signatures` already has entries, the action passes through unchanged. `ReactorClientBuilder.withSigner()` accepts an `ISigner` or `SignerConfig` (signer + optional verifier). Without a signer, `PassthroughSigner` is used (no-op, empty signatures). The production implementation is `RenownCryptoSigner` from the `renown` package, using ECDSA P-256 with `did:key` identity. Signature verification is optional and runs in the reactor's executor pipeline via `SignatureVerifier`.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Every mutation method calls signActions() internally; pre-signed actions pass through unchanged.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:04.896Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:07:09.053Z"
+}

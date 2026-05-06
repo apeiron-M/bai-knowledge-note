@@ -1,0 +1,105 @@
+{
+  "id": "8cbccb9e-e5bc-4902-bdee-bb1b9f2e75d2",
+  "name": "ddup-reactor-native-sync-2x",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-abb018f9",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Powerhouse documents are stored as an append-only operation log, not state snapshots",
+          "targetDocumentId": "bac68765-3500-444c-94f1-4a7fd24bcdb9"
+        },
+        {
+          "id": "lnk-529b0561",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Powerhouse documents are stored as an append-only operation log, not state snapshots",
+          "targetDocumentId": "bac68765-3500-444c-94f1-4a7fd24bcdb9"
+        },
+        {
+          "id": "lnk-1eb69e78",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Connect-on-Swarm data spans four distinct storage layers with different durability",
+          "targetDocumentId": "8064e63a-9af1-4870-82f0-6e2257844718"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Reactor native sync stores every operation twice: once in PGlite, once in PostgreSQL",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "9f5e354f-e611-454d-b098-418426496c55",
+          "name": "data-duplication",
+          "topicDocumentId": null
+        },
+        {
+          "id": "5de0d98d-c9c9-4e6f-bbf8-c2b88fba9018",
+          "name": "reactor-sync",
+          "topicDocumentId": null
+        },
+        {
+          "id": "2021328e-e75d-44eb-a5a5-2ead42849f32",
+          "name": "switchboard",
+          "topicDocumentId": null
+        },
+        {
+          "id": "3c03f11d-5723-472d-8cd6-e9dd3cc48cea",
+          "name": "sync-envelope",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The current Powerhouse default sync path creates 2x duplication by design:\n\n```\nCONNECT (browser)                    SWITCHBOARD (server)\nPGlite (local)                       PostgreSQL (remote)\n  - operations                         - operations (SAME data)\n  - documents                          - documents\n  - relationships                      - relationships\n\nSyncManager                          SyncManager\n  outbox -> GqlRequestChannel -----> inbox -> reactor.load()\n  inbox  <- GqlRequestChannel <----- outbox\n```\n\n**Every operation exists in BOTH databases.** The SyncManager on each side moves `SyncEnvelope` payloads across the `GqlRequestChannel`, ensuring eventual consistency.\n\nThe Switchboard is the authoritative remote — a server someone runs. This is the baseline duplication everything else is compared against. It's not a bug or inefficiency; it's the cost of having a multi-device-sync-capable remote copy.\n\nThis 2x pattern is the yardstick: any alternative sync path (Swarm, Swarm+Switchboard, fully decentralized) inherits or exceeds it.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:55.863Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:47:05.337Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The default Connect-Switchboard path duplicates every op in both databases. GraphQL moves SyncEnvelopes; Switchboard is the authoritative remote.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:42:03.726Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:23:20.850Z"
+}

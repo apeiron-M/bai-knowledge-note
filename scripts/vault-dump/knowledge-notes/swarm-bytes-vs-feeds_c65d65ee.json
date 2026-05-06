@@ -1,0 +1,86 @@
+{
+  "id": "c65d65ee-5e30-4f78-867e-1d6edbeddf0f",
+  "name": "swarm-bytes-vs-feeds",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Swarm exposes two primitives: immutable content-addressed /bytes and mutable owner-signed feeds",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "3f3b0c5d-3382-46f9-8e5d-38e579c31ad8",
+          "name": "swarm-primitives",
+          "topicDocumentId": null
+        },
+        {
+          "id": "ce0849e0-5a3f-4f4f-81fc-dbd480295ed8",
+          "name": "feeds",
+          "topicDocumentId": null
+        },
+        {
+          "id": "ed81133e-5ae0-498e-a551-9bbab6c1ff44",
+          "name": "bytes-storage",
+          "topicDocumentId": null
+        },
+        {
+          "id": "72c29c05-3a74-4f18-b501-da5f2862715a",
+          "name": "content-addressing",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Swarm exposes two storage primitives that Connect composes for sync:\n\n- `/bytes` — immutable, content-addressed. Upload data, get back a 64-char hex hash; the same data always yields the same hash and can never be mutated in place.\n- Feeds — mutable pointers identified by the pair `(topic, owner address)`. Only the owner can update what the feed points to, but anyone who knows the topic and owner can read it.\n\nConnect's write layering uses both: encrypted operation bytes are uploaded to `/bytes`, and the resulting reference is written to a feed. This lets readers look up a known topic (for example `ph:v2:doc:<documentId>`), follow the reference to `/bytes`, and fetch the latest encrypted batch.\n\nThe separation also clarifies where encryption belongs: encryption lives at the `/bytes` layer, while feeds hold plain-text references only.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "concept",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:07.369Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:27:52.124Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "/bytes uploads return a content hash and never change; feeds are (topic, owner) pointers that the owner updates and anyone can read — Connect uses bytes for data and feeds as pointers.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:21:07.085Z",
+  "lastModifiedAtUtcIso": "2026-04-21T14:27:52.128Z"
+}

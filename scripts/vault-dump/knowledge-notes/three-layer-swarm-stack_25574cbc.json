@@ -1,0 +1,99 @@
+{
+  "id": "25574cbc-c405-46aa-a7a8-ca4cad2d0b6c",
+  "name": "three-layer-swarm-stack",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-9985d969",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "SwarmChannel implements IChannel so the reactor SyncManager is transport-agnostic",
+          "targetDocumentId": "021d8e43-ec03-4502-b088-2f76cbff192f"
+        },
+        {
+          "id": "lnk-ea823e35",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Connect acts as a bridge between the Switchboard ecosystem and the decentralized Swarm network.",
+          "targetDocumentId": "d199b695-9da6-4742-bbbf-91060a9d3fe0"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Connect's Swarm integration is split into three layers: bee-reactor-adapter, SwarmChannel, and Connect UI",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "fd74c7e5-b525-4655-9a0f-b48b06ba751d",
+          "name": "architecture-layers",
+          "topicDocumentId": null
+        },
+        {
+          "id": "c8fc7f31-d9ee-42cc-8464-12145fa4e8a7",
+          "name": "swarm-channel",
+          "topicDocumentId": null
+        },
+        {
+          "id": "1fb976e0-caff-4d1d-8fe9-e19493b1a71a",
+          "name": "bee-adapter",
+          "topicDocumentId": null
+        },
+        {
+          "id": "13f9fb0d-1e92-4e95-99d0-9f9a12dbd7a9",
+          "name": "connect-ui",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The integration decomposes into three layers with clear seams:\n\n**Layer 1 — `bee-reactor-adapter` (npm)**: the `SwarmClient` class wraps the Bee SDK. It exposes `uploadData`/`downloadData` for encrypted `/bytes`, `uploadFile`/`downloadFile` for ACT-protected `/bzz`, `createGrantees`/`patchGrantees` for ACT grantee lists, `pssSend`/`pssSubscribe` for 1-to-1 messaging, `gsocSend`/`gsocSubscribe` for sub-second notifications, and manifest helpers (`updateManifest`, `readManifest`, `updateDriveManifest`, `updateUserManifest`). It also handles per-topic write locks, 3-retry backoff on feed writes, and auto-detects reference vs inline feed format.\n\n**Layer 2 — SwarmChannel**: a native `IChannel` implementation wired via `ReactorBuilder.withSync()` and a `CompositeChannelFactory` that routes `\"swarm\"` and `\"gql\"` config types to the right sub-factory. Owns push (outbox) and pull (inbox), cursor tracking via `sync_cursors`, and dead letters via `sync_dead_letters`.\n\n**Layer 3 — Connect UI**: the `swarm-settings/` panel shows connection status, stamp health, doc tree with sync badges, and share/import controls; the `components/chat/` panel ships the chat UI.\n\nThe plugin layer still owns Bee detection, stamp selection, wallet key derivation, and UI event emission.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:12.396Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:28:12.719Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "SwarmClient wraps the Bee SDK (CRUD + ACT + PSS + GSOC); SwarmChannel implements IChannel for reactor sync; swarm-settings and chat panels expose state and controls in Connect UI.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:21:12.125Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:22:00.727Z"
+}

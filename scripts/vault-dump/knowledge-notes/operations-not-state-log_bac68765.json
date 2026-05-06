@@ -1,0 +1,99 @@
+{
+  "id": "bac68765-3500-444c-94f1-4a7fd24bcdb9",
+  "name": "operations-not-state-log",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-340ac059",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "233aa2f8-e0da-4f09-a80c-e0c64eaf6fd7"
+        },
+        {
+          "id": "lnk-62805efc",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Document state is organized into global and local scopes for sync control",
+          "targetDocumentId": "7e5a677b-e1da-470f-9d79-7d0177bbcbbd"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Powerhouse documents are stored as an append-only operation log, not state snapshots",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "eb9bc90d-3285-47a2-894d-1821014f065b",
+          "name": "operations-log",
+          "topicDocumentId": null
+        },
+        {
+          "id": "40756e45-157e-41d6-8716-f66f06d9f3e7",
+          "name": "event-sourcing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "ec82568d-7238-42c9-ab5c-02df67d87258",
+          "name": "reactor-sync",
+          "topicDocumentId": null
+        },
+        {
+          "id": "fd6b2570-7317-4f9b-8816-ac15447d389c",
+          "name": "document-model",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Powerhouse stores documents as an append-only log of operations rather than as snapshots of state. Each edit (add a row, change a title, move an item) becomes an Operation with an index, timestamp, and hash.\n\nTo get the current document state you replay all operations through the document model's reducer, a pure function. Same operations in the same order always produce the same state.\n\nThis property is what makes Swarm sync possible: uploading the operations is sufficient for any device to reconstruct the full document by replaying them. It also means network transport only needs to carry new ordinals since the last cursor, not re-sync full documents.\n\nEvidence: the write path serializes operation batches with `uploadData(JSON.stringify(ops))`, SyncManager detects new ordinals in `operation_index_operations`, and recovery reconstructs documents by downloading batches and calling `reactor.load()` to replay them.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "concept",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:17:36.098Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:27:47.757Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Every edit becomes an Operation (index, timestamp, hash); current state is reconstructed by replaying operations through a pure reducer, enabling deterministic Swarm sync.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:16:53.250Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:30:49.080Z"
+}

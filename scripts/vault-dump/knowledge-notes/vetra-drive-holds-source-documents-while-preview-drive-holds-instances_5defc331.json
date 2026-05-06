@@ -1,0 +1,88 @@
+{
+  "id": "5defc331-65a4-494b-8062-f1420d9b2190",
+  "name": "vetra-drive-holds-source-documents-while-preview-drive-holds-instances",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "56247aca-ad44-4de9-9555-9512ed000923",
+          "linkType": "RELATES_TO",
+          "targetTitle": "vetra-remote-drive-collaborative-dev",
+          "targetDocumentId": "2bff5b6a-dcc3-4fec-8afa-fd093743d660"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "vetra drive holds source documents while preview drive holds instances",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "dac5cc5a-c0c2-4f69-a5e1-1af5f345cb87",
+          "name": "architecture decisions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "711a59d7-9575-472c-9e1d-bcc0ff3540d7",
+          "name": "MCP workflows",
+          "topicDocumentId": null
+        },
+        {
+          "id": "332343f1-300c-401c-b665-c0e0eaadb16a",
+          "name": "drive architecture",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# vetra drive holds source documents while preview drive holds instances\n\nThe system has two drives with distinct purposes:\n\n1. **Vetra Drive** (`vetra-{hash}`) — Contains source documents: document models, document editors, and apps. This is the development drive where you define and build things.\n\n2. **Preview Drive** (`preview-{hash}`, named \"Vetra Preview\") — Contains demo and preview documents (actual document instances). Used for showcasing and testing document models in action.\n\nThe separation ensures development artifacts (models, editors) stay separate from test data (document instances). Since [[document models must be added to the vetra drive by default]], new models always go to vetra, not preview.\n\n---\n\nTopics:\n- [[architecture decisions]]\n- [[mcp workflows]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "DECISION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:04:26.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T14:04:26.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The vetra drive contains document models and editors for development; the preview drive contains demo document instances",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:53:12.899Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:10:27.249Z"
+}

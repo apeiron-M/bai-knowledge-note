@@ -1,0 +1,86 @@
+{
+  "id": "44e2d872-e05f-4207-8b9a-868ed0d8368b",
+  "name": "offline-edits-replay-on-reconnect-via-cursor",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Offline edits accumulate locally and replay to Swarm on reconnect via the outbox cursor.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-44e2d872-1",
+          "name": "offline-first",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-44e2d872-2",
+          "name": "outbox-cursor",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-44e2d872-3",
+          "name": "durability",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-44e2d872-4",
+          "name": "user-flow",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\nOffline-edit durability is provided by PGlite + the outbox cursor: the local reactor keeps working, and on reconnect the cursor replays accumulated ops to Swarm.\n\n## Flow\n1. User edits documents while Bee node is unreachable.\n2. Operations accumulate in PGlite (local reactor works fine).\n3. SwarmChannel connection state transitions to `error` → push is blocked.\n4. User reconnects Bee node → state becomes `connected`.\n5. Outbox cursor catches up: all accumulated ops are pushed to Swarm.\n6. No data loss — cursors in PGlite track exactly what was synced.\n\n## Why this is safe\n- The cursor is only advanced after a successful feed write, so a crash mid-push is idempotent.\n- The local reactor is the source of truth; Swarm is purely a mirror.\n- User never loses work due to Bee downtime.\n\n## Source\nSwarm Channel Architecture, \"Flow 4: Offline Edits → Reconnect\".",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "workflow",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "When Bee is unreachable the channel goes to error; ops pile up in PGlite; on reconnect the outbox cursor catches up, replaying everything with no data loss.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:17:04.723Z",
+  "lastModifiedAtUtcIso": "2026-04-21T14:20:13.064Z"
+}

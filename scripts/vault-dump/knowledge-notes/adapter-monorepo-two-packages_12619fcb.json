@@ -1,0 +1,94 @@
+{
+  "id": "12619fcb-3b7d-4539-b299-5c6b7b983e5d",
+  "name": "adapter-monorepo-two-packages",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-5314eb35",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Bee Reactor Adapter ships two npm packages: adapter and connect fork",
+          "targetDocumentId": "98c4a72a-dd3c-47ce-9305-696ea6ebbb7b"
+        },
+        {
+          "id": "lnk-6787b49c",
+          "linkType": "RELATES_TO",
+          "targetTitle": "A Powerhouse project has four main directories: document-models, editors, processors, and subgraphs",
+          "targetDocumentId": "60e8385c-c2e6-4fa1-847b-c3c3961014cf"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "bee-reactor-adaptor is a pnpm monorepo of two packages: @liberuum-org/bee-reactor-adapter and @liberuum-org/connect",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "b65d8802-4d3a-4523-bdf1-7152c604f7c3",
+          "name": "adapter-package",
+          "topicDocumentId": null
+        },
+        {
+          "id": "1101efda-5f8f-4a02-81ce-85dd119cfeb6",
+          "name": "monorepo",
+          "topicDocumentId": null
+        },
+        {
+          "id": "5c2f025c-4b1b-4dae-bf86-b1454038a26f",
+          "name": "package-exports",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# Two-Package Monorepo Structure\n\nThe `bee-reactor-adaptor` repository is a pnpm monorepo with two publishable npm packages that split responsibilities between the core adapter library and the forked Connect host app.\n\n| Package | npm name | Role |\n|---------|----------|------|\n| `packages/adapter/` | `@liberuum-org/bee-reactor-adapter` | Core adapter: SwarmClient, SwarmChannel, encryption, feeds, stamps |\n| `packages/connect/` | `@liberuum-org/connect` | Fork of Connect with Swarm landing page + settings UI |\n\nThe adapter package is framework-agnostic and can in principle integrate into any Reactor-based host. The connect package is a Connect fork that consumes it and adds the Swarm-specific landing page plus settings UI (stamp management, storage stats, sync badges, folder tree, USD pricing).\n\nDevelopment uses `pnpm install` at the repo root, `pnpm build` to compile both, and `pnpm test` to run the 12-test E2E suite against a live `bee dev` node.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:57:41.685Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T15:00:54.965Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Monorepo splits into the framework-agnostic adapter (SwarmClient, SwarmChannel, encryption, feeds, stamps) and a Connect fork consuming it with a Swarm landing page and settings UI.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:57:02.829Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:31:07.977Z"
+}

@@ -1,0 +1,111 @@
+{
+  "id": "9a31b6a3-fef1-4acb-9a42-ca020aca67d4",
+  "name": "ddup-pglite-primary-swarm-backup",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-e1fd7875",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Connect-on-Swarm data spans four distinct storage layers with different durability",
+          "targetDocumentId": "8064e63a-9af1-4870-82f0-6e2257844718"
+        },
+        {
+          "id": "lnk-a5d23a66",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Each storage copy serves a distinct role: local reads, multi-device sync, or self-sovereign recovery",
+          "targetDocumentId": "72885c2c-0b6f-4d23-988f-a39308c8b030"
+        },
+        {
+          "id": "lnk-ff726378",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Connect-on-Swarm data spans four distinct storage layers with different durability",
+          "targetDocumentId": "8064e63a-9af1-4870-82f0-6e2257844718"
+        },
+        {
+          "id": "lnk-d10d46a1",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Each storage copy serves a distinct role: local reads, multi-device sync, or self-sovereign recovery",
+          "targetDocumentId": "72885c2c-0b6f-4d23-988f-a39308c8b030"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "PGlite is the primary store and Swarm /bytes is the durable backup for raw operations",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "1e7a90a7-f398-47de-926d-692044c96f9c",
+          "name": "data-duplication",
+          "topicDocumentId": null
+        },
+        {
+          "id": "44a563eb-2e37-4953-9e92-87e7aebb6060",
+          "name": "primary-backup",
+          "topicDocumentId": null
+        },
+        {
+          "id": "6dcc233a-6ce6-476a-95ea-e60255197c9e",
+          "name": "swarm-bytes",
+          "topicDocumentId": null
+        },
+        {
+          "id": "9e1c24c8-5edc-4dcd-8d1e-069eb2f63440",
+          "name": "pglite",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Operations have a clear primary/backup relationship across layers:\n\n| Data | PGlite | Swarm /bytes | Swarm feeds | IndexedDB |\n|---|---|---|---|---|\n| Operations (raw) | PRIMARY | BACKUP | — | pending only |\n| Document state (computed) | DERIVED | not stored | — | — |\n| Doc/drive/user manifests | — | PAYLOAD | POINTER | — |\n| Signer key | — | — | — | cache only (re-derivable from wallet) |\n| Pending ops buffer | — | — | — | temporary (cleared after flush) |\n\nKey consequences:\n- **Document state is derived**, never stored on Swarm — always recomputed from operations on load.\n- **Manifests exist in both /bytes and feeds**: the /bytes chunk holds the payload, the feed holds the pointer to the latest version.\n- **The signer key is a cache only**, re-derivable from the wallet signature.\n- **Pending ops are temporary** — cleared once flushed to Swarm.\n\nThis split is intentional: PGlite optimizes hot reads, Swarm optimizes durability, manifests use the feed-as-pointer pattern to make \"latest version\" lookups cheap.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:55.863Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:47:05.337Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Operations are primary in PGlite (hot reads), backed up to Swarm /bytes. Document state is derived from operations and never stored on Swarm.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:41:56.870Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:23:42.120Z"
+}

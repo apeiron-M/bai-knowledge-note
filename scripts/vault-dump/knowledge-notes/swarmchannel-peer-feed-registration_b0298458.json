@@ -1,0 +1,81 @@
+{
+  "id": "b0298458-c3b0-43bd-9656-aa78fb09b7a8",
+  "name": "swarmchannel-peer-feed-registration",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "SwarmChannel extends to register peer feeds as additional pull sources per collab",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-b0298458-1",
+          "name": "live-collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-b0298458-2",
+          "name": "swarm-channel",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-b0298458-3",
+          "name": "sync-cursors",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Extending SwarmChannel with peer pull sources\n\nExisting SwarmChannel push/pull is per-drive and per-owner. To support collaboration, each collab registers **additional pull sources** on the SwarmChannel — one per participant's feed(s).\n\n```typescript\nclass SwarmChannel implements IChannel {\n  private peerFeeds: Array<{\n    participantAddress: string;\n    driveFeedTopic: string;\n    docFeedTopics: string[];\n    cursor: number;\n  }> = [];\n\n  async registerCollab(collab: CollabSummary) {\n    for (const p of collab.participants) {\n      if (p.address === this.ownerAddress) continue; // skip self\n      this.peerFeeds.push(/* topics derived from driveId/docIds */);\n      await this.subscribePeerGsoc(p);\n    }\n  }\n\n  // GSOC triggers — bypasses the poll timer\n  private async onPeerOpCommitted(evt: GsocNotification) {\n    await this.pullPeerFeedNow(evt.writerAddress, evt.collabId);\n  }\n}\n```\n\nEach peer source has its own cursor row in `sync_cursors`, so pulls are incremental and idempotent across reloads. The polling walker iterates `peerSources` alongside the owner's own feeds. Nothing changes about how the reactor applies ops — `reactor.load()` remains the entry point and already preserves signer signatures.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "pattern",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T19:45:21.234Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "SwarmChannel registers additional per-peer pull sources for each collab, each with its own cursor row, and subscribes to each peer's GSOC signer.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:20:59.511Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:45:21.239Z"
+}

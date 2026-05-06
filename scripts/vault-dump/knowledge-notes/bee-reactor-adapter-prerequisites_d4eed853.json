@@ -1,0 +1,86 @@
+{
+  "id": "d4eed853-c36c-4879-bad2-1cac217c2460",
+  "name": "bee-reactor-adapter-prerequisites",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Bee Reactor Adapter requires full Bee node, mutable stamp, wallet, and open P2P ports",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "prerequisites",
+          "name": "prerequisites",
+          "topicDocumentId": null
+        },
+        {
+          "id": "bee-node",
+          "name": "bee-node",
+          "topicDocumentId": null
+        },
+        {
+          "id": "postage-stamp",
+          "name": "postage-stamp",
+          "topicDocumentId": null
+        },
+        {
+          "id": "wallet-login",
+          "name": "wallet-login",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Prerequisites for running the Bee Reactor Adapter:\n\n- **Full Bee node** reachable from the browser. Chat requires full-node PSS + GSOC support — light nodes can send messages but not receive them.\n- **Mutable postage stamp** at depth 22+ (~7.7 GB capacity). Mutability is required so feed updates reuse bucket slots rather than re-paying for storage.\n- **Ethereum wallet** (MetaMask or any Web3 wallet) for Renown login and for deriving the encryption key.\n- **Open inbound ports** `1634` (TCP) and `1635` (WSS) for libp2p WebSocket transport used by peer-to-peer chat.\n\nIf chat cannot start, the chat panel surfaces a requirements screen showing the exact Bee config keys needed. Wallet signatures double as both authentication and the seed for device-portable decryption keys, which is what enables cross-device recovery from just a wallet.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:52:46.944Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:56:42.147Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Running the adapter requires a browser-reachable full Bee node, a mutable postage stamp at depth 22+, an Ethereum wallet for Renown login, and TCP 1634 / WSS 1635 open for peer-to-peer chat.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:53:04.186Z",
+  "lastModifiedAtUtcIso": "2026-04-21T15:00:56.200Z"
+}

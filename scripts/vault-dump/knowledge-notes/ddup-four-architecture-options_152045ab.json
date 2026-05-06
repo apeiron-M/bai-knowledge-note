@@ -1,0 +1,86 @@
+{
+  "id": "152045ab-9f41-46ea-847b-83b8eecf7112",
+  "name": "ddup-four-architecture-options",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Four sync architectures (A-D) trade server dependence against storage duplication",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "83f9607c-d5b5-42b9-aea8-2c1d2aa6ea0d",
+          "name": "architecture-options",
+          "topicDocumentId": null
+        },
+        {
+          "id": "42e624e7-3065-4fdf-ba99-5b9de52457bd",
+          "name": "decision",
+          "topicDocumentId": null
+        },
+        {
+          "id": "27254abf-7899-4302-a6c8-ffd0f46826b9",
+          "name": "decentralization",
+          "topicDocumentId": null
+        },
+        {
+          "id": "706e4872-7a72-4f09-a9e2-ff968c8e78c9",
+          "name": "trade-offs",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Four architecture options lay out the full trade-space:\n\n**A — Connect + Switchboard (current default)**\n- PGlite <-> Switchboard (PostgreSQL) via GraphQL SyncManager\n- Duplication: 2x\n- Recovery: from Switchboard\n- Requires: running a server\n\n**B — Connect + Swarm plugin (no Switchboard)**\n- PGlite -> Swarm via plugin\n- Duplication: 2x\n- Recovery: from Swarm (wallet signature)\n- Requires: running a Bee node (local or remote)\n\n**C — Connect + Switchboard + Swarm (both)**\n- Both sync paths active\n- Duplication: 3x\n- Recovery: from either Switchboard OR Swarm\n- Requires: server + Bee node\n\n**D — Connect on Swarm (fully decentralized, end goal)**\n- Connect SPA deployed to Swarm via ENS\n- PGlite <-> Swarm via plugin (no Switchboard)\n- Collaboration: SwarmChannel (peer-to-peer via feeds)\n- Duplication: 2x (same as B and A)\n- Recovery: from Swarm (wallet signature)\n- Requires: wallet + local Bee node\n- Servers: ZERO\n\n**Key insight**: the end-goal architecture (D) has **identical 2x duplication** to the current default (A). Going fully decentralized does not cost extra storage — it just swaps where the remote copy lives (server PostgreSQL -> Swarm network).",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "decision",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:55.863Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:47:05.337Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Architectures A (Switchboard), B (Swarm plugin), C (both), D (fully decentralized Connect-on-Swarm) differ in duplication cost and server requirements.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:42:28.971Z",
+  "lastModifiedAtUtcIso": "2026-04-21T14:49:20.026Z"
+}

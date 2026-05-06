@@ -1,0 +1,99 @@
+{
+  "id": "732b3e79-d034-49f7-87be-c5b9a17cc80b",
+  "name": "Mantaray manifests are compacted Merkle tries that let Swarm resolve paths under a single hash",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-713ef7fc",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Swarm stores all data as 4KB content-addressed chunks in a Merkle hash tree",
+          "targetDocumentId": "7d90bdc8-b137-4a02-9e88-d7884fb72ef9"
+        },
+        {
+          "id": "lnk-c8595884",
+          "linkType": "RELATES_TO",
+          "targetTitle": "A user manifest indexes drives and a drive manifest lists documents plus folder structure",
+          "targetDocumentId": "d421cabb-492e-4dcb-bfa9-6e6c6e04b56e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Mantaray manifests are compacted Merkle tries that let Swarm resolve paths under a single hash",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "5aabcea2-b2db-4a87-821b-3dbe3379fd04",
+          "name": "mantaray",
+          "topicDocumentId": null
+        },
+        {
+          "id": "cdec8133-156d-48a3-8573-aea6328c980a",
+          "name": "swarm",
+          "topicDocumentId": null
+        },
+        {
+          "id": "4b430747-8566-4866-aab5-d3f659114ac2",
+          "name": "manifests",
+          "topicDocumentId": null
+        },
+        {
+          "id": "23619ec0-8abe-4806-b65a-3ff95a50729e",
+          "name": "file-storage",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\n\n**Mantaray manifests** are Swarm's native file-collection format — compacted Merkle tries where each node carries a path segment, a target chunk reference, and metadata, exposing a single root hash that resolves arbitrary paths.\n\n## Evidence\n\n- Used for file collections (directories, websites), not our custom document manifests\n- Upload: `POST /bzz` with `Swarm-Collection: true` header + TAR body\n- Download: `GET /bzz/{manifest-hash}/{path}` resolves the path through the trie\n- Supports `indexDocument` (default page) and `errorDocument` (404 page) metadata\n- bee-js: `bee.uploadFile()`, `bee.downloadFile()`, `bee.uploadFiles()`, `bee.uploadCollection()`\n\n## What this unlocks for us\n\n1. **File attachments**: upload images/PDFs via `/bzz`, store the manifest reference inside document ops — content-addressed and encrypted\n2. **Document export**: package an entire drive as a Swarm collection (HTML + JSON), share via one hash or ENS name\n3. **Static publishing**: deploy the Connect SPA itself to Swarm (HashRouter + ENS = fully decentralized app)\n\n## Why it matters\n\nMantaray is distinct from our app-level `manifest-as-reference` pattern and provides the transport for any file-shaped content. It's also the route to deploying Connect itself on Swarm.\n",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "concept",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Each trie node has a path segment, target reference, and metadata. Upload via POST /bzz with Swarm-Collection: true; download at /bzz/{hash}/{path}.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:17:09.266Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:25:41.433Z"
+}

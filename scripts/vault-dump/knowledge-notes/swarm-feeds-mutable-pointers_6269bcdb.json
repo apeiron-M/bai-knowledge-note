@@ -1,0 +1,99 @@
+{
+  "id": "6269bcdb-2e65-459f-96c2-fc9b541d1c60",
+  "name": "Swarm feeds are sequences of SOCs at predictable addresses that act as mutable pointers",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-969128f3",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Single Owner Chunks give each Ethereum account a virtual namespace of writable slots",
+          "targetDocumentId": "f23c6efe-0c05-4f45-9ac4-6ad35cf76190"
+        },
+        {
+          "id": "lnk-bbd49435",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Swarm exposes two primitives: immutable content-addressed /bytes and mutable owner-signed feeds",
+          "targetDocumentId": "c65d65ee-5e30-4f78-867e-1d6edbeddf0f"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Swarm feeds are sequences of SOCs at predictable addresses that act as mutable pointers",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "5d3d26ea-32d6-4973-ab2e-740e4f10e537",
+          "name": "swarm-feeds",
+          "topicDocumentId": null
+        },
+        {
+          "id": "9a5591ed-8bf0-4326-87fd-0cf111190cc1",
+          "name": "soc",
+          "topicDocumentId": null
+        },
+        {
+          "id": "96d2ab95-0efc-4fa9-aeef-398db191cddc",
+          "name": "swarm",
+          "topicDocumentId": null
+        },
+        {
+          "id": "570313cf-b54e-42e4-95e3-1108cd3ee154",
+          "name": "mutable-state",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\n\nSwarm **feeds** are mutable pointers built as a sequence of SOCs whose addresses are deterministically derivable from `(owner, topic, index)`.\n\n## Evidence\n\n- Feed address: `Keccak256(Keccak256(topic || index) || owner_address)`\n- Topic is an arbitrary 32-byte identifier (the adapter uses `ph:v2:doc:<docId>`, `ph:v2:drive:<driveId>`, etc.)\n- Only the owner private key can publish updates; anyone knowing `owner + topic` can read\n- Typical feed payload is 8-byte timestamp + 32-byte Swarm reference\n- Two indexing schemes:\n  - **Sequential**: 0, 1, 2, ... — best for ordered updates and messaging\n  - **Epoch-based**: nested time epochs with binary search — best for sporadic/irregular updates\n- The adapter uses sequential indexing via bee-js `feedIndexNext` header auto-detection\n\n## Why it matters\n\nFeeds let Swarm support named, mutable resources despite chunks being immutable. They are the transport for every manifest update our adapter writes.\n",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "concept",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Feed address = Keccak256(Keccak256(topic || index) || owner). Sequential or epoch-based indexing; only owner writes. Used for manifests in our adapter.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:16:56.127Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:24:33.840Z"
+}

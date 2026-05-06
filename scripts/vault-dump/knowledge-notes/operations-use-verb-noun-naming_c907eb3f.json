@@ -1,0 +1,94 @@
+{
+  "id": "c907eb3f-36df-484e-a33a-ea21f5e9204f",
+  "name": "operations-use-verb-noun-naming",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "fe2c5ac2-ea7a-4289-bd02-ad82407eeace",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "0901e6f4-6221-4de3-bffe-d23ef7428143"
+        },
+        {
+          "id": "0b577c24-ba56-4849-a64f-8d7f3e6dda28",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "221464cf-d6b4-46d5-89de-20b116e8063e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Document operations follow VERB_NOUN naming convention with corresponding Input types",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "591cc21d-2653-4400-b10d-93a834ae507a",
+          "name": "operations",
+          "topicDocumentId": null
+        },
+        {
+          "id": "1f46addf-77dd-4ac1-88d9-b00c61e29f76",
+          "name": "naming-conventions",
+          "topicDocumentId": null
+        },
+        {
+          "id": "d334e0bd-76e7-4010-89cf-774b2e1ebc22",
+          "name": "document-model",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Document operations in Powerhouse follow specific naming conventions:\n\n- **Operation names**: `VERB_NOUN` or `VERB_NOUN_SUBJECT` in SCREAMING_SNAKE_CASE (e.g., `ADD_TODO_ITEM`, `UPDATE_USER_PROFILE`)\n- **Input types**: PascalCase with `Input` suffix (e.g., `AddTodoItemInput`)\n- **Reducer functions**: camelCase with `Operation` suffix (e.g., `addTodoItemOperation`)\n\nWhen adding operations in Vetra Studio, you only provide the operation name (e.g., `ADD_TODO_ITEM`) and the `Input` suffix is generated automatically.\n\nOperations are organized into **modules** (e.g., a `todos` module containing ADD_TODO_ITEM, UPDATE_TODO_ITEM, DELETE_TODO_ITEM). This modular organization helps manage complexity as document models grow.\n\nDesign principles for operations:\n- Should be granular enough to represent distinct user intentions\n- Input types should contain all necessary info and nothing more\n- Use optional fields for partial updates (e.g., `text: String` without `!` in UpdateTodoItemInput)",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Operations are named like ADD_TODO_ITEM with a matching GraphQL input type AddTodoItemInput defining the payload.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:53:17.656Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:10:34.716Z"
+}

@@ -1,0 +1,93 @@
+{
+  "id": "9408dcdb-eb2f-485d-98c9-2b28753c8906",
+  "name": "act-sharing-ecdh-publisher-grantee",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-9ea129da",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "ACT uses per-grantee Diffie-Hellman key derivation with encrypted access keys in a manifest",
+          "targetDocumentId": "3e046f6d-133f-49b2-94dd-e52e615ec473"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Cross-user sharing rides Swarm ACT with an ECDH-derived per-session key instead of the wallet AES key",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "3c676881-3c2e-4c89-8712-b13e1137e02c",
+          "name": "act-sharing",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a85fb38d-71b9-428d-aefd-188b83ceb0b6",
+          "name": "ecdh",
+          "topicDocumentId": null
+        },
+        {
+          "id": "fdad3e1b-be2e-453b-8cf7-10449c104b93",
+          "name": "grantees",
+          "topicDocumentId": null
+        },
+        {
+          "id": "b866ec11-ef67-49c5-9786-d8109d0f487d",
+          "name": "swarm-primitives",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "Sharing with other users does NOT use the per-wallet AES key. Cross-user shares and chat history instead ride Swarm's Access Control Trie (ACT):\n\n- The publisher's Bee node computes `ECDH(publisher_privkey × grantee_pubkey)` to derive a per-session key.\n- A third party that only knows public addresses cannot derive the key (classic discrete-log problem).\n- The Bee node handles encrypt/decrypt transparently; the app calls `uploadFile({ act: true, actHistoryAddress, skipEncryption: true })` on send and `downloadFile({ actPublisher, actHistoryAddress, skipDecryption: true })` on receive.\n\nShare manifests and public profiles themselves stay unencrypted — they serve as discovery indexes so recipients can find what's shared with them. The data those indexes point to is ACT-protected.\n\nThis split matters for threat modeling: a grantee can decrypt what was shared with them, but revoking access means rotating ACT state, not rotating the wallet-derived sync key used for the owner's own operations.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:25.261Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:28:57.650Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Bee node computes ECDH(publisher_privkey × grantee_pubkey) to encrypt shared content; third parties cannot derive it from public addresses alone (discrete-log problem).",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:21:24.919Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:27:18.322Z"
+}

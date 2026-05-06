@@ -1,0 +1,83 @@
+{
+  "id": "3aed7c99-b1fa-4a37-9a69-1cecfffb5f1a",
+  "name": "arrays-in-state-schemas-must-use-mandatory-notation",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "d509a970-4136-4a7b-9bee-aceadabf1cc2",
+          "linkType": "RELATES_TO",
+          "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro",
+          "targetDocumentId": "84537913-2de0-4506-924b-1da4610825f0"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "arrays in state schemas must use mandatory notation",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "67771ace-9e80-47ee-a021-cbaf7c4ce7ce",
+          "name": "service-offering",
+          "topicDocumentId": null
+        },
+        {
+          "id": "2abb461f-9574-4b62-af11-5f08755e7056",
+          "name": "schema-design",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# arrays in state schemas must use mandatory notation\n\nIn GraphQL state schemas, arrays follow a strict convention:\n\n```graphql\ntype ServiceOfferingState {\n    tiers: [Tier!]!        # ✅ Correct — both inner and outer are required\n    items: [Item]           # ❌ Wrong — must use [Item!]!\n}\n```\n\nObjects inside arrays must include an `OID!` field for unique identification:\n\n```graphql\ntype Tier {\n    id: OID!               # Required for array items\n    name: String\n    label: OLabel          # Optional but useful for metadata\n}\n```\n\nThe `OID!` field enables operations to target specific items within arrays (e.g., \"update the tier with this ID\"). Without it, there is no stable way to reference individual array elements across operations.\n\n---\n\nTopics:\n- [[schema design]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:56:12.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T13:56:12.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Arrays must be declared as [ObjectType!]! and objects within arrays must include an OID! field for unique identification",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:53:51.574Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:11:27.616Z"
+}

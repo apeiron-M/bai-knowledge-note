@@ -1,0 +1,105 @@
+{
+  "id": "c767e2c9-5871-4d40-b20b-c81848a96e72",
+  "name": "pglite-sync-tables-persist-remote-state",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-bdd10974",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Sync state is persisted in three PGlite tables owned by SyncManager: remotes, cursors, and dead letters",
+          "targetDocumentId": "92984e79-3739-4249-8a43-1f3c13dbdf7e"
+        },
+        {
+          "id": "lnk-9e4f2881",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Sync state is persisted in three PGlite tables owned by SyncManager: remotes, cursors, and dead letters",
+          "targetDocumentId": "92984e79-3739-4249-8a43-1f3c13dbdf7e"
+        },
+        {
+          "id": "lnk-e9c6bd59",
+          "linkType": "RELATES_TO",
+          "targetTitle": "Each reactor IChannel exposes three mailboxes: inbox, outbox, and deadLetter.",
+          "targetDocumentId": "1880798c-d4f1-4470-bd17-34a24b8b2c5e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "The reactor persists sync state in four PGlite tables: remotes, cursors, dead letters, and operation index.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-c767e2c9-1",
+          "name": "pglite",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-c767e2c9-2",
+          "name": "sync-state",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-c767e2c9-3",
+          "name": "reactor-sync",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-c767e2c9-4",
+          "name": "persistence",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\nReactor sync state is durable across sessions because it lives in four dedicated PGlite tables.\n\n## Tables (from source)\n| Table | Purpose |\n|---|---|\n| `sync_remotes` | Registered remotes: name, collection_id, channel_type, push/pull state |\n| `sync_cursors` | Per-remote cursor tracking: ordinal position (inbox & outbox) |\n| `sync_dead_letters` | Failed operations with error details |\n| `operation_index_operations` | Global ordinal index across all operations |\n\n## Why this matters\n- Swarm remotes registered via `syncManager.add(...)` persist in `sync_remotes` and are recreated natively on startup — no re-registration code needed after reload.\n- Cursors in `sync_cursors` provide exactly-once push semantics: the outbox cursor advances only after a successful remote write.\n- `operation_index_operations` is the shared global ordinal space that lets multiple remotes coexist without stepping on each other.\n\n## Source\nSwarm Channel Architecture, \"PGlite Tables\" table.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "sync_remotes, sync_cursors, sync_dead_letters, and operation_index_operations together let channels be recreated natively on startup.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:17:07.285Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:22:16.554Z"
+}

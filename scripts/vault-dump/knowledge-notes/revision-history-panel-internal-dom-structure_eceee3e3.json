@@ -1,0 +1,86 @@
+{
+  "id": "eceee3e3-fe71-45f3-9f7b-cd888f70fec3",
+  "name": "revision-history-panel-internal-dom-structure",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Revision History panel DOM structure anchors the selectors needed to theme its internals",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "eb1d160e-03b1-4fdf-8829-8a3fdbd60ab2",
+          "name": "document-toolbar",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a3a68a18-0d94-49db-9a32-63f040c06201",
+          "name": "revision-history",
+          "topicDocumentId": null
+        },
+        {
+          "id": "546ba937-2547-4661-af7c-dbc1814ab419",
+          "name": "dom-structure",
+          "topicDocumentId": null
+        },
+        {
+          "id": "fc4786d9-d8fd-497a-865a-f40abd3b15c8",
+          "name": "editor-styling",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The Revision History panel (opened by the toolbar history button) has a stable internal structure that CSS selectors can rely on when theming it.\n\nRoot: `#document-editor-context[data-editor][data-document-type]`\n\nInside that, the tree is:\n\n- `div.p-6` — main container\n  - `header` — top bar\n    - `button[name=\"close-revision-history\"]` — back arrow\n    - `h1` — document title\n    - `button.bg-slate-50` — DOC ID pill\n    - `button.bg-slate-50` — BRANCH pill\n    - `div[id=\"scope select\"]` — scope dropdown\n  - `div.rounded-md.bg-slate-50` — timeline content area\n    - `div.border-slate-100` — timeline with left border\n      - `h2.bg-slate-50` — day separator (e.g. \"Changes on Mar 26\")\n      - `article.bg-white` — revision card, repeated per revision\n        - RevisionNumber, Operation, Timestamp, Signature, Errors rows\n  - `div` — pagination (if needed)\n\nKey selector anchors for theming:\n- `.bg-slate-50` — header pills and day separators\n- `.rounded-md.bg-slate-50` — timeline content area background\n- `.border-slate-100` — timeline left border\n- `article` — revision cards (bg-white by default)\n- `.text-gray-900`, `.text-stone-300`, `.text-gray-600` — text color tiers\n- `.border-gray-200`, `.bg-white` — card borders and backgrounds\n\nScope all overrides to `[data-document-type=\"your/document-type\"]` to avoid bleeding into other editors.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "reference",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:54:40.792Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:54:40.792Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The Revision History panel has a fixed internal DOM tree under #document-editor-context — header pills, timeline, day separators, article revision cards — that CSS rules target by class.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:54:41.860Z",
+  "lastModifiedAtUtcIso": "2026-04-21T14:58:02.653Z"
+}

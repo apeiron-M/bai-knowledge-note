@@ -1,0 +1,81 @@
+{
+  "id": "ccbd016f-332c-48a3-8e51-c18d1369cf83",
+  "name": "collaborate-tab-in-chat-panel",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [],
+      "model": null,
+      "scope": null,
+      "title": "Collaboration management lives in a new Collaborate tab inside the existing chat panel",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-ccbd016f-1",
+          "name": "live-collaboration",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-ccbd016f-2",
+          "name": "ux-design",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-ccbd016f-3",
+          "name": "chat-panel",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## UX: Collaborate tab inside the Chat panel\n\n### Why the chat panel?\n\nThe chat panel already owns everything collab needs:\n\n- Peer address resolution.\n- Public profile lookup (Bee pubkey for ACT).\n- Multi-user picker patterns (from the existing document-share picker).\n- Notification plumbing.\n\nAdding Collaborate next to the existing conversation list keeps everything multi-peer in one place rather than scattering peer-oriented UI across the app.\n\n### Layout\n\n```\nChat Panel (left pane)\n  ├── [Conversations] tab    ← existing\n  └── [Collaborate]    tab   ← NEW\n        ├── \"+ New collaboration\" button\n        ├── Pending invitations  (I received)\n        └── Active collaborations (I'm part of)\n```\n\n### Key flows\n\n- **Create:** pick target (Drive or Document), pick participants (multi-select from known chat peers or paste a Swarm ID), optional caption, click Invite.\n- **Accept:** recipient sees a `CollabInviteCard` in chat — mirrors `DocumentShareCard` but with `[Join]` instead of `[Import]`.\n- **Active row:** drive/doc name, participant avatars (initials — allowed as a list, not a per-editor overlay), last activity timestamp. Click opens the drive/doc in Connect.\n- **Leave:** local-only stop (feed writes/pulls stop); initiator can later remove from manifest.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "architecture",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T19:45:14.133Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The Collaborate tab is added to the existing chat panel — reuses peer resolution, public-profile lookup, multi-user picker, and notification plumbing already built for chat.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:20:31.063Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:45:14.137Z"
+}

@@ -1,0 +1,186 @@
+{
+  "id": "90946e28-f79f-4ccb-aa40-9e556a31bb35",
+  "name": "moc-document-model-system",
+  "documentType": "bai/moc",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "tier": "DOMAIN",
+      "title": "Document Model System",
+      "tensions": [],
+      "childRefs": [],
+      "coreIdeas": [
+        {
+          "id": "8173258a-4979-4483-8299-3fcb0b105ac7",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "233aa2f8-06b3-4c94-9425-d0bbb6a98f6f",
+          "sortOrder": 1,
+          "contextPhrase": "Event sourcing is the foundational persistence pattern — every document change is an immutable operation in an append-only log, enabling full auditability, time travel, and deterministic state reconstruction from any point in history."
+        },
+        {
+          "id": "75611a4a-2db2-4778-8809-758fbd6b2091",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "0901e6f4-6221-4de3-bffe-d23ef7428143",
+          "sortOrder": 2,
+          "contextPhrase": "Every document model consists of three components — schema, operations, and reducers — which together define what state looks like, what can change it, and how those changes are applied. This trifecta is the minimum viable contract for any Powerhouse document."
+        },
+        {
+          "id": "c7ca437e-954e-43d7-a11c-0e9a3bf64e54",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "221464cf-d6b4-46d5-89de-20b116e8063e",
+          "sortOrder": 3,
+          "contextPhrase": "GraphQL SDL serves as the single source of truth for both state shape and operation signatures, making schemas human-readable, tooling-friendly, and automatically translatable into TypeScript types and validation logic."
+        },
+        {
+          "id": "9d1b4d3f-b7db-4fbc-8ded-aa92bfcd018b",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "4ac678fe-71b2-451e-942d-09fb6d7ce8d6",
+          "sortOrder": 4,
+          "contextPhrase": "Reducers must be pure synchronous functions that use Immer for immutable updates — this constraint guarantees deterministic replay, makes testing trivial, and ensures that the same sequence of operations always produces the same final state regardless of environment."
+        },
+        {
+          "id": "a3a4259e-4dc8-4434-818e-8a333bff1417",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "6e7e50b7-a692-49c3-b7b0-10035733fd3d",
+          "sortOrder": 5,
+          "contextPhrase": "The gen/ folder is sacrosanct — it contains auto-generated TypeScript from document model specifications, and manual edits will be silently overwritten. Knowing this boundary prevents one of the most common onboarding mistakes."
+        },
+        {
+          "id": "25cdcdd5-7d9b-4fe6-a6f8-bbb08ccc36b2",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "7e5a677b-e1da-470f-9d79-7d0177bbcbbd",
+          "sortOrder": 6,
+          "contextPhrase": "The global/local state split lets document models separate shared collaborative state from per-device preferences and UI state, enabling multi-user sync without conflicts over ephemeral or device-specific data."
+        },
+        {
+          "id": "b0c58a11-0c1e-4b35-9dff-267da42cccf1",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "c907eb3f-36df-484e-a33a-ea21f5e9204f",
+          "sortOrder": 7,
+          "contextPhrase": "The verb-noun naming convention for operations creates a self-documenting API where every action reads as a clear intent — addItem, removeComment, updateTitle — making operation logs immediately understandable without additional context."
+        },
+        {
+          "id": "62f320cb-8359-42cd-94d5-258b2c9d10a4",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "c501fd67-576d-4605-ba84-c30580b2b3a4",
+          "sortOrder": 8,
+          "contextPhrase": "The OID scalar type provides stable unique identifiers for items within arrays, solving the fundamental problem of referencing nested objects in event-sourced documents where array indices are unreliable across concurrent edits."
+        },
+        {
+          "id": "b16b7dd2-5094-4edf-9b68-10bd00b17fbb",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "2f2a9ae4-7318-4559-ae83-b267c6a5726a",
+          "sortOrder": 9,
+          "contextPhrase": "The versioning system tracks document model evolution over time, enabling controlled schema migration and ensuring that documents created under older versions can still be loaded, validated, and upgraded to newer specifications."
+        },
+        {
+          "id": "ba85feb7-abe6-4471-b60f-879ae68b1ed7",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "8dd5e7a8-4d2a-4967-b03c-6fab30f92374",
+          "sortOrder": 10,
+          "contextPhrase": "Namespaced document type identifiers like powerhouse/budget-statement prevent collision across organizations and packages, establishing a global namespace that scales as the ecosystem of document models grows."
+        },
+        {
+          "id": "7470d1e9-2b96-49e9-9e2f-7a03d8c15c63",
+          "addedAt": "2026-04-02T13:00:00.000Z",
+          "addedBy": null,
+          "noteRef": "e4828ae1-c1a0-4473-a064-ec59de8166c8",
+          "sortOrder": 11,
+          "contextPhrase": "Document-model-driven architecture enables rapid application development by generating boilerplate from specifications, allowing teams to focus on business logic rather than infrastructure wiring — the key productivity multiplier of the Powerhouse approach."
+        },
+        {
+          "id": "8ad3c32e-ae6a-4fef-a703-887794bf885e",
+          "addedAt": "2026-04-03T14:24:51.000Z",
+          "addedBy": null,
+          "noteRef": "127650b0-79dc-4d1c-88d4-d416033b2cae",
+          "sortOrder": 100,
+          "contextPhrase": "Details the three-layer internal anatomy (metadata, specifications, modules) that every document model shares"
+        },
+        {
+          "id": "29efbc8a-6c3e-4bac-ac9c-7092a699abad",
+          "addedAt": "2026-04-03T14:24:51.000Z",
+          "addedBy": null,
+          "noteRef": "f3130153-8898-484a-b34b-8d7e7ee9bf5b",
+          "sortOrder": 101,
+          "contextPhrase": "Clarifies the decision framework for when to create a model vs editor vs app — the first architectural choice"
+        },
+        {
+          "id": "525cba89-c10d-4c77-8da6-b68fb14bbfcd",
+          "addedAt": "2026-04-03T14:24:52.000Z",
+          "addedBy": null,
+          "noteRef": "5fb4afe1-37cb-4d19-b704-ba3e9c17662c",
+          "sortOrder": 102,
+          "contextPhrase": "Catalogs the full operation taxonomy (7 categories, 37 ops) — the action vocabulary every model inherits"
+        },
+        {
+          "id": "d9639cbe-6acc-4d30-a83c-911e1a6cdd15",
+          "addedAt": "2026-04-03T14:24:52.000Z",
+          "addedBy": null,
+          "noteRef": "337c1711-67a7-4d63-8ed7-e9f8ab005411",
+          "sortOrder": 103,
+          "contextPhrase": "Explains the action-to-operation lifecycle: how proposed changes become immutable history"
+        },
+        {
+          "id": "566a2429-d9b1-424c-9cf3-e62cb4392478",
+          "addedAt": "2026-04-03T14:24:53.000Z",
+          "addedBy": null,
+          "noteRef": "ab26a972-c3eb-4462-a122-cf2f93a94383",
+          "sortOrder": 104,
+          "contextPhrase": "Documents a known gap: versioning operations exist in the schema but are non-functional"
+        },
+        {
+          "id": "303faaa5-5bb2-483f-ba56-a124d9382f68",
+          "addedAt": "2026-04-03T14:24:53.000Z",
+          "addedBy": null,
+          "noteRef": "7657ed19-4e81-43dd-ae42-1b85770c33c4",
+          "sortOrder": 105,
+          "contextPhrase": "Maps all 21 concrete domain models across 5 functional zones — the full model inventory"
+        },
+        {
+          "id": "23c90ff9-b541-41f1-9751-0b1d876d4b03",
+          "addedAt": "2026-04-03T14:24:53.000Z",
+          "addedBy": null,
+          "noteRef": "e5e2a999-eacc-43f0-9b35-6ea7f2e34dfa",
+          "sortOrder": 106,
+          "contextPhrase": "Documents the PHID/OID cross-model reference graph — how models wire to each other"
+        },
+        {
+          "id": "39591639-5227-4ab2-badc-656a5c87cc1b",
+          "addedAt": "2026-04-03T14:24:54.000Z",
+          "addedBy": null,
+          "noteRef": "137d141a-13bf-4c73-92bd-103f76668279",
+          "sortOrder": 107,
+          "contextPhrase": "Describes the service-pricing chain from facet to instance — the most complex multi-model hierarchy"
+        }
+      ],
+      "createdAt": "2026-04-02T13:00:00.000Z",
+      "noteCount": 19,
+      "parentRef": null,
+      "updatedAt": "2026-04-02T13:00:00.000Z",
+      "agentNotes": [],
+      "description": "The foundational architecture of Powerhouse document models: event sourcing, state scopes, GraphQL schemas, reducers, code generation, and versioning.",
+      "orientation": "The document model system is the conceptual and technical bedrock of everything built in Powerhouse. Every piece of domain logic, every editor, every processor ultimately traces back to a document model definition. Understanding this system means understanding how GraphQL SDL schemas get transformed into typed state containers, how reducers enforce pure deterministic state transitions through Immer, and how the code generation pipeline in the gen/ folder bridges the gap between human-authored specifications and machine-executable code. This MOC collects the core primitives — from event sourcing fundamentals to OID identifiers to versioning semantics — that a developer must internalize before they can effectively build on the platform.",
+      "openQuestions": []
+    },
+    "local": {}
+  },
+  "createdAtUtcIso": "2026-04-14T21:54:19.984Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:11:58.933Z"
+}

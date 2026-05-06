@@ -1,0 +1,105 @@
+{
+  "id": "1880798c-d4f1-4470-bd17-34a24b8b2c5e",
+  "name": "reactor-sync-ichannel-three-mailbox-model",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "lnk-211c4b4d",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Powerhouse documents are stored as an append-only operation log, not state snapshots",
+          "targetDocumentId": "bac68765-3500-444c-94f1-4a7fd24bcdb9"
+        },
+        {
+          "id": "lnk-1719ab54",
+          "linkType": "BUILDS_ON",
+          "targetTitle": "Powerhouse documents are stored as an append-only operation log, not state snapshots",
+          "targetDocumentId": "bac68765-3500-444c-94f1-4a7fd24bcdb9"
+        },
+        {
+          "id": "lnk-dd549738",
+          "linkType": "RELATES_TO",
+          "targetTitle": "The Inspector Modal exposes the local PGlite database and sync remote channel states (inbox, outbox, dead letter) for debugging",
+          "targetDocumentId": "cc437bb2-a35a-4c07-b829-c55a53c8c04e"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "Each reactor IChannel exposes three mailboxes: inbox, outbox, and deadLetter.",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "t-1880798c-1",
+          "name": "ichannel",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-1880798c-2",
+          "name": "mailbox",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-1880798c-3",
+          "name": "reactor-sync",
+          "topicDocumentId": null
+        },
+        {
+          "id": "t-1880798c-4",
+          "name": "interface",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "## Claim\nEvery reactor `IChannel` implementation exposes three `IMailbox` instances — `inbox`, `outbox`, and `deadLetter` — plus lifecycle and connection-state APIs.\n\n## Interface (from source)\n```typescript\ninterface IChannel {\n  inbox: IMailbox;        // Ops received from remote\n  outbox: IMailbox;       // Ops to send to remote\n  deadLetter: IMailbox;   // Failed ops\n  init(): Promise<void>;\n  shutdown(): Promise<void>;\n  getConnectionState(): ConnectionStateSnapshot;\n  onConnectionStateChange(callback): () => void;\n}\n```\n\n## Why this shape\n- Uniform contract lets SyncManager treat GQL, Swarm, or any future channel identically.\n- `deadLetter` is a first-class concept, not an afterthought — failed ops are observable and retryable.\n- Connection state is part of the interface, enabling UI-level channel health without channel-specific code.\n\n## Source\nSwarm Channel Architecture, \"Key Types\" section.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "concept",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The reactor sync protocol standardizes every channel to have inbox for pulls, outbox for pushes, and deadLetter for failed ops, plus init/shutdown lifecycle.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-21T14:17:05.954Z",
+  "lastModifiedAtUtcIso": "2026-04-21T19:31:01.128Z"
+}

@@ -1,0 +1,106 @@
+{
+  "id": "9422d07d-0a9d-436f-8bdf-4ddd389a5fa4",
+  "name": "reactor-client-vs-reactor-interface",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "950e2574-0883-433a-9e56-54e91a9d3052",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "d824b1e7-3ee0-4812-b325-5d6e92e8df7d"
+        },
+        {
+          "id": "f729e96e-666c-43dd-87ab-79f18806b0ca",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "dd7715bc-354e-4af9-8069-ed8d8051b093"
+        },
+        {
+          "id": "ceab5a71-2765-4474-8f9a-ddc2f8e1064a",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "62756f73-681f-46c0-b281-a68828fd31ae"
+        },
+        {
+          "id": "5361d776-7aa8-4752-826d-776d40039e84",
+          "linkType": "RELATES_TO",
+          "targetTitle": null,
+          "targetDocumentId": "5851885a-0838-4b5e-acd1-2be06972b3b8"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "IReactorClient is a high-level Promise-based wrapper while IReactor provides low-level fire-and-forget job submission",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "65ebd03a-69b6-4e48-ad3a-856054ce89db",
+          "name": "reactor-client",
+          "topicDocumentId": null
+        },
+        {
+          "id": "ed155298-b883-4d9d-91a1-4ca951291ed0",
+          "name": "reactor",
+          "topicDocumentId": null
+        },
+        {
+          "id": "258eecee-5c82-4744-a899-d6b56a77f54b",
+          "name": "architecture",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `IReactorClient` interface wraps `IReactor` to provide a simpler Promise-based API. Key differences: IReactorClient write methods wait for `READ_READY` status before resolving (returning final documents), while IReactor returns `JobInfo` immediately. IReactorClient manages signing internally and handles consistency tokens automatically; IReactor requires explicit `ISigner` and manual token passing. IReactorClient provides convenience methods like `createEmpty()`, `createDocumentInDrive()`, `rename()`, `moveChildren()`, and `deleteDocuments()`. IReactorClient offers `subscribe(search, callback)` for real-time changes; IReactor requires direct event bus access. Use IReactor when you need fire-and-forget jobs, explicit consistency token control, custom signing, or `executeBatch()` for multi-document atomic operations.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "IReactorClient waits for job completion and returns documents; IReactor returns JobInfo immediately for fire-and-forget patterns.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:53:22.533Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:10:42.287Z"
+}

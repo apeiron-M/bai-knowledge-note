@@ -1,0 +1,122 @@
+{
+  "id": "7a351cf8-25cb-492b-bd97-5f7d6402f9b6",
+  "name": "model-editor-wiring",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "2f97f4fe-c961-4d0d-9ca5-a25ec336b0d1",
+          "linkType": "RELATES_TO",
+          "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro",
+          "targetDocumentId": "84537913-2de0-4506-924b-1da4610825f0"
+        },
+        {
+          "id": "184e0c44-8623-4c26-a89e-42c2feaa7b23",
+          "linkType": "RELATES_TO",
+          "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-",
+          "targetDocumentId": "c97ea650-ee26-4c04-b952-b2a7a51bd57e"
+        },
+        {
+          "id": "2ca62e9e-54e5-4c94-905a-64d0a97a0555",
+          "linkType": "RELATES_TO",
+          "targetTitle": "resource-template-model-defines-reusable-service-catalog-blueprints",
+          "targetDocumentId": "783c2dad-a99b-4cbf-b340-8742c47ec635"
+        },
+        {
+          "id": "2491e07d-ab1a-4d15-949b-c8cf0f537a99",
+          "linkType": "RELATES_TO",
+          "targetTitle": "resource-instance-model-tracks-provisioned-resource-lifecycle",
+          "targetDocumentId": "e96bb5fb-f993-45c4-9c9b-8f8a975c6c0c"
+        },
+        {
+          "id": "ba7227df-eb92-46f6-a233-f2e85eb24200",
+          "linkType": "RELATES_TO",
+          "targetTitle": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser",
+          "targetDocumentId": "5cc0a94d-0555-4686-b67b-d50e9c596982"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "model-editor wiring",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "773a957f-5e8f-46f2-ae8f-7aff55af8538",
+          "name": "service-offering",
+          "topicDocumentId": null
+        },
+        {
+          "id": "c00587b4-747b-4b31-8ad8-85c04dd25de0",
+          "name": "subscription-instance",
+          "topicDocumentId": null
+        },
+        {
+          "id": "b1465032-9942-4c7c-b411-5ea1b8f59dd5",
+          "name": "resource-template",
+          "topicDocumentId": null
+        },
+        {
+          "id": "3277a46d-0ad9-4652-b071-c591c5163d60",
+          "name": "resource-instance",
+          "topicDocumentId": null
+        },
+        {
+          "id": "a6dd6517-fa3f-407f-b9cb-80d64772b2fb",
+          "name": "editor-integration",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# model-editor wiring\n\nThe integration layer between document models and their editors.\n\n## Core Wiring Pattern\n- [[editors use the modern React hooks pattern from reactor-browser]] — the useSelectedXDocument pattern\n- [[editors import action creators from gen/creators not from model source]] — correct import path for creators\n- [[generateId from document-model/core provides deterministic IDs for dispatch]] — ID generation before dispatch\n- [[useSelectedDocument hook is auto-generated per document model]] — auto-generated hooks per model\n\n## Drive-Level Wiring\n- [[apps use useSelectedDrive to access drive state and filter nodes]] — drive editors filter nodes by type\n\n## By Editor\n- [[service-offering editor wires four tab views to the service-offering model]] — ResourceTemplateSelector, ServiceCatalog, TierDefinition, TheMatrix\n- [[subscription-instance editor provides client and operator views with billing]] — dual-mode with ImportServiceConfigButton bridge to ServiceOffering\n- [[resource-template editor manages template info and facet targeting]] — simplest editor, two components\n- [[resource-instance editor manages provisioning lifecycle and facet configuration]] — most action creator imports (17), lifecycle state machine\n\n## By Document Model\n\n| Model | Editor | Hook | Modules Used |\n|-------|--------|------|--------------|\n| service-offering | service-offering-editor | useSelectedServiceOfferingDocument | offering, services, tiers, option-groups, service-groups, configuration |\n| subscription-instance | subscription-instance-editor | useSelectedSubscriptionInstanceDocument | subscription, service, service-group, metrics, customer |\n| resource-template | resource-template-editor | useSelectedResourceTemplateDocument | template-management, facet-targeting |\n| resource-instance | resource-instance-editor | useSelectedResourceInstanceDocument | instance-management, configuration-management |\n| facet | (no dedicated editor) | useFacetDocument | — |\n\n## Cross-Model Editors\n- [[subscription-instance editor provides client and operator views with billing]] — imports from ServiceOffering via mapOfferingToSubscription\n\n---\n\nTopics:\n- [[index]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "ARCHITECTURE",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:57:20.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T13:57:20.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Which document model feeds which editor — hook imports, dispatch targets, state reads, helper dependencies",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:52:52.428Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:09:54.914Z"
+}

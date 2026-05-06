@@ -1,0 +1,94 @@
+{
+  "id": "eeccb128-12a5-40a0-a887-3831f85b00bd",
+  "name": "reactor-builder-fluent-api-construction",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "cc9cccc6-16c0-4299-996c-d80b58d931f1",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "9422d07d-0a9d-436f-8bdf-4ddd389a5fa4"
+        },
+        {
+          "id": "abeb6513-4ec3-4fd3-bea0-d48c9306b81f",
+          "linkType": "BUILDS_ON",
+          "targetTitle": null,
+          "targetDocumentId": "d824b1e7-3ee0-4812-b325-5d6e92e8df7d"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "ReactorBuilder uses a fluent API to wire storage, executors, read models, sync, and document models into a reactor instance",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "4c2a0e0f-8946-4c37-8db9-67a15321d3f0",
+          "name": "reactor-builder",
+          "topicDocumentId": null
+        },
+        {
+          "id": "c92cd1a3-032e-403b-badb-b842bc6652d8",
+          "name": "architecture",
+          "topicDocumentId": null
+        },
+        {
+          "id": "56091692-1a9c-4b78-b68f-7c2248b466fe",
+          "name": "configuration",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "The `ReactorBuilder` from `@powerhousedao/reactor` provides a fluent API for constructing reactors: `withDocumentModels()`, `withExecutorConfig({ maxConcurrency, jobTimeoutMs })`, `withWriteCacheConfig({ maxDocuments, ringBufferSize })`, `withMigrationStrategy('auto')`, `withKysely()` (defaults to in-memory PGlite), `withQueue()` (defaults to InMemoryQueue), `withEventBus()`, `withReadModel()`, `withSync()`, and more. Calling `build()` returns `IReactor`; calling `buildModule()` returns a `ReactorModule` exposing all internal components including operationStore, keyframeStore, writeCache, documentView, documentIndexer, readModelCoordinator, processorManager, and the underlying Kysely database.",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "PATTERN",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "The builder pattern configures maxConcurrency, write cache, migration strategy, Kysely DB, queues, event bus, and sync for reactor construction.",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:50:33.664Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:06:17.519Z"
+}

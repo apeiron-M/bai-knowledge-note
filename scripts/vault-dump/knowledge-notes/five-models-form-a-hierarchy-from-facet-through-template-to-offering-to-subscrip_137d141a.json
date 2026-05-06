@@ -1,0 +1,107 @@
+{
+  "id": "137d141a-13bf-4c73-92bd-103f76668279",
+  "name": "five-models-form-a-hierarchy-from-facet-through-template-to-offering-to-subscrip",
+  "documentType": "bai/knowledge-note",
+  "state": {
+    "auth": {},
+    "document": {
+      "hash": {
+        "encoding": "base64",
+        "algorithm": "sha1"
+      },
+      "version": 1
+    },
+    "global": {
+      "links": [
+        {
+          "id": "dcd19a19-87db-4537-a6f4-41fc1fd144b0",
+          "linkType": "RELATES_TO",
+          "targetTitle": "facet-model-provides-configurable-classification-dimensions",
+          "targetDocumentId": "8f0c3326-46f9-4f7e-904e-900aa5ea9e51"
+        },
+        {
+          "id": "483ed538-3a50-4bfb-875b-00504e7c2da5",
+          "linkType": "RELATES_TO",
+          "targetTitle": "resource-template-model-defines-reusable-service-catalog-blueprints",
+          "targetDocumentId": "783c2dad-a99b-4cbf-b340-8742c47ec635"
+        },
+        {
+          "id": "6b2544b5-25b7-49dd-a693-f95d4536db37",
+          "linkType": "RELATES_TO",
+          "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro",
+          "targetDocumentId": "84537913-2de0-4506-924b-1da4610825f0"
+        },
+        {
+          "id": "a1df3072-5ba0-48e6-839b-8e0fe9401718",
+          "linkType": "RELATES_TO",
+          "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-",
+          "targetDocumentId": "c97ea650-ee26-4c04-b952-b2a7a51bd57e"
+        },
+        {
+          "id": "b0cb67be-4a49-45ef-8894-e463d65f9d7e",
+          "linkType": "RELATES_TO",
+          "targetTitle": "resource-instance-model-tracks-provisioned-resource-lifecycle",
+          "targetDocumentId": "e96bb5fb-f993-45c4-9c9b-8f8a975c6c0c"
+        }
+      ],
+      "model": null,
+      "scope": null,
+      "title": "five models form a hierarchy from facet through template to offering to subscription to instance",
+      "editor": null,
+      "inputs": [],
+      "models": [],
+      "status": "DRAFT",
+      "topics": [
+        {
+          "id": "7beb2306-17b3-4fc9-91c3-aa877537493a",
+          "name": "facet",
+          "topicDocumentId": null
+        },
+        {
+          "id": "948606d6-7384-4742-8afc-ce2fc137aef1",
+          "name": "service-pricing",
+          "topicDocumentId": null
+        }
+      ],
+      "content": "# five models form a hierarchy from facet through template to offering to subscription to instance\n\nThe five document models in this project form a directed graph:\n\n```\nFacet ──referenced-by──→ ResourceTemplate ──referenced-by──→ ServiceOffering\n                                                                    │\n                                                          (mapOfferingToSubscription)\n                                                                    ↓\n                                                         SubscriptionInstance\n                                                                    │\n                                                           resource.id PHID\n                                                                    ↓\n                                                          ResourceInstance\n```\n\n## Cross-Model PHID References\n\n| From | Field | To | Relationship |\n|------|-------|----|-------------|\n| ServiceOffering | `resourceTemplateId` | ResourceTemplate | \"built from this template\" |\n| ServiceOffering | `operatorId` | BuilderProfile (external) | \"offered by\" |\n| ServiceOffering | `facetBindings.facetType` | Facet | \"uses this classification\" |\n| SubscriptionInstance | `serviceOfferingId` | ServiceOffering | \"subscribed to\" |\n| SubscriptionInstance | `operatorId` | BuilderProfile (external) | \"operated by\" |\n| SubscriptionInstance | `customerId` | External | \"purchased by\" |\n| SubscriptionInstance | `resource.id` | ResourceInstance | \"has this resource\" |\n| ResourceInstance | `resourceTemplateId` | ResourceTemplate | \"based on template\" |\n| ResourceInstance | `customerId` | External | \"owned by\" |\n| ResourceTemplate | `operatorId` | BuilderProfile (external) | \"created by\" |\n| ResourceTemplate | `facetBindings.facetType` | Facet | \"uses this classification\" |\n\n## Data Flow Direction\n\n1. **Facet** defines classification options\n2. **ResourceTemplate** references Facets and defines base service catalog\n3. **ServiceOffering** references a template and adds pricing (tiers, discounts, billing cycles)\n4. **SubscriptionInstance** is initialized from an offering's final configuration via mapOfferingToSubscription\n5. **ResourceInstance** is provisioned per subscription and tracks lifecycle\n\n## Broader Ecosystem Context\n\nThese 5 local models are part of a 21-model ecosystem (see [[ecosystem map]]). Key cross-zone dependencies:\n\n- `operatorId` fields reference [[builder-profile model describes individual contributor identities]] (Organization & Identity zone)\n- SubscriptionInstance feeds into [[billing-statement model captures periodic billing summaries]] and [[invoice model generates formal payment requests]] (Finance & Reporting zones)\n- [[service-subscription model tracks service-level subscription agreements]] sits between ServiceOffering and SubscriptionInstance as the agreement layer\n\n---\n\nTopics:\n- [[object relations]]\n- [[architecture decisions]]\n- [[ecosystem map]]",
+      "context": null,
+      "modelId": null,
+      "modules": [],
+      "outputs": [],
+      "version": null,
+      "computes": null,
+      "filePath": null,
+      "noteType": "RELATION",
+      "severity": null,
+      "hooksUsed": [],
+      "rootCause": null,
+      "confidence": null,
+      "consumedBy": [],
+      "provenance": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:41:30.000Z",
+        "sessionId": null,
+        "updatedAt": "2026-04-03T13:41:30.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "sourceType": null,
+      "targetType": null,
+      "cardinality": null,
+      "description": "Facet → ResourceTemplate → ServiceOffering → SubscriptionInstance → ResourceInstance forms the primary data flow; PHID references link across model boundaries",
+      "alternatives": [],
+      "consequences": [],
+      "errorMessage": null,
+      "relationType": null,
+      "correctPattern": null,
+      "decisionStatus": null,
+      "dispatchTargets": [],
+      "lifecycleEvents": []
+    },
+    "local": {
+      "lastViewedAt": null,
+      "personalTags": []
+    }
+  },
+  "createdAtUtcIso": "2026-04-14T21:51:02.453Z",
+  "lastModifiedAtUtcIso": "2026-04-14T22:07:05.071Z"
+}
