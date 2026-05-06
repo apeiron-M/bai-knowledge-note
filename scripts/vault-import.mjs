@@ -87,6 +87,7 @@ async function main() {
   }
   const liveNodes = driveDoc?.state?.global?.nodes ?? [];
   const liveFolders = liveNodes.filter((n) => n.kind === "folder");
+  const liveFiles = liveNodes.filter((n) => n.kind === "file");
 
   const oldFolderIdToNew = new Map();
   const sortedDumpFolders = topoSortFolders(manifest.folderStructure);
@@ -97,7 +98,7 @@ async function main() {
       (lf) =>
         lf.name === f.name &&
         ((newParent === null && (lf.parentFolder ?? null) === null) ||
-         lf.parentFolder === newParent),
+          lf.parentFolder === newParent),
     );
     if (match) {
       oldFolderIdToNew.set(f.id, match.id);
@@ -119,6 +120,18 @@ async function main() {
   }
   console.log(`  Mapped ${oldFolderIdToNew.size}/${manifest.folderStructure.length} folders\n`);
 
+  // Live-drive lookup: (name | documentType | newParentFolderId) → existing id.
+  // Used in Phase 1 to detect docs already present on the destination — whether
+  // hand-created, left over from a previous run that didn't persist
+  // id-mapping.json, or carried over from a different import. We treat a hit as
+  // "already there, reuse its id"; the dump's old id is mapped to the live id
+  // so Phase 2/3 still wire up that doc's links/refs against the right node.
+  const liveDocByKey = new Map();
+  for (const f of liveFiles) {
+    const parent = f.parentFolder ?? "";
+    liveDocByKey.set(`${f.name}|${f.documentType ?? ""}|${parent}`, f.id);
+  }
+
   // ─── Phase 1: Create documents + apply state actions ───
   console.log("=== Phase 1: Create documents ===");
   const oldIdToNew = new Map();
@@ -138,7 +151,7 @@ async function main() {
   }
   const linkQueue = [];
   const mocRefQueue = [];
-  const counts = { ok: 0, fail: 0, skip: 0, already: 0 };
+  const counts = { ok: 0, fail: 0, skip: 0, already: 0, matched: 0 };
   const errors = [];
 
   const orderedTypes = [
@@ -227,6 +240,27 @@ async function main() {
       continue;
     }
 
+    // Live-drive match: if a document with the same name + type already
+    // exists under the same (mapped) parent folder, reuse its id instead of
+    // creating a duplicate. Captures destinations seeded by hand and partial
+    // previous runs that didn't persist id-mapping.json.
+    if (!DRY_RUN) {
+      const newParentForLookup = entry.parentFolder
+        ? (oldFolderIdToNew.get(entry.parentFolder) ?? "")
+        : "";
+      const liveKey = `${entry.name}|${entry.documentType}|${newParentForLookup}`;
+      const liveId = liveDocByKey.get(liveKey);
+      if (liveId) {
+        oldIdToNew.set(doc.id, liveId);
+        writeJson(mappingPath, Object.fromEntries(oldIdToNew));
+        console.log(
+          `${tag} ${entry.documentType} — ${entry.name} → already on drive (${liveId.slice(0, 8)}...), reusing`,
+        );
+        counts.matched++;
+        continue;
+      }
+    }
+
     if (DRY_RUN) {
       oldIdToNew.set(doc.id, `dry-${i}`);
       console.log(`${tag} ${entry.documentType} — ${entry.name} (${actions.length} actions)`);
@@ -258,7 +292,9 @@ async function main() {
   }
 
   writeJson(mappingPath, Object.fromEntries(oldIdToNew));
-  console.log(`\nCreated: ${counts.ok}, already: ${counts.already}, failed: ${counts.fail}, skipped: ${counts.skip}\n`);
+  console.log(
+    `\nCreated: ${counts.ok}, matched-on-drive: ${counts.matched}, already-mapped: ${counts.already}, failed: ${counts.fail}, skipped: ${counts.skip}\n`,
+  );
 
   if (DRY_RUN) {
     console.log("Dry run complete. No documents created.\n");

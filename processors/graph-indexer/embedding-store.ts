@@ -17,10 +17,15 @@ export async function getEmbeddingDb(): Promise<PGlite> {
   const { PGlite } = await import("@electric-sql/pglite");
   const { vector } = await import("@electric-sql/pglite/vector");
 
+  // Browser persists in IndexedDB; Node runs in-memory so we don't depend
+  // on writable container filesystem. pgvector unpacks into PGlite's
+  // internal emscripten FS regardless. Embeddings are recomputed via
+  // `knowledgeGraphReindex` after a pod restart, which is the existing
+  // recovery path anyway.
   const dataDir =
     typeof window !== "undefined"
       ? "idb://knowledge-embeddings"
-      : "./.ph/knowledge-embeddings";
+      : "memory://knowledge-embeddings";
 
   db = new PGlite({
     dataDir,
