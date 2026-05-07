@@ -53,12 +53,18 @@ def wait_for_doc(doc_id: str, timeout: int = 15) -> bool:
     return False
 
 
-def apply_actions(doc_id: str, actions: Iterable[dict], retries: int = 3) -> None:
+def apply_actions(doc_id: str, actions: Iterable[dict]) -> None:
     """Apply a batch of actions via `docs apply --wait`.
 
     Each action: {"type": "...", "input": {...}, "scope": "global"} — the
     function injects `id` (UUID) and `timestampUtcMs` (ISO) if missing.
     Blocks until the reactor confirms the job completed.
+
+    No retries: a partial failure mid-batch would double-apply the
+    successful prefix on retry, creating duplicate ADD_TOPIC / ADD_LINK /
+    ADD_CHECK / ADD_NODE entries with the same OID. The orchestrator in
+    upload.py catches per-doc failures and continues; on a transient blip
+    the user re-runs the upload (Phase 2 is idempotent via id-map).
     """
     actions = list(actions)
     if not actions:
@@ -73,42 +79,35 @@ def apply_actions(doc_id: str, actions: Iterable[dict], retries: int = 3) -> Non
         json.dump(actions, f)
         tmp = f.name
     try:
-        last_err = ""
-        for attempt in range(retries):
-            r = subprocess.run(
-                ["switchboard", "docs", "apply", doc_id,
-                 "--file", tmp, "--wait", "--format", "json"],
-                capture_output=True, text=True, timeout=120,
-            )
-            if r.returncode == 0:
-                return
-            last_err = r.stderr[:300]
-            if attempt < retries - 1:
-                time.sleep((attempt + 1) * 3)
-        raise RuntimeError(f"apply on {doc_id} failed after {retries} attempts: {last_err}")
+        r = subprocess.run(
+            ["switchboard", "docs", "apply", doc_id,
+             "--file", tmp, "--wait", "--format", "json"],
+            capture_output=True, text=True, timeout=120,
+        )
+        if r.returncode != 0:
+            raise RuntimeError(f"apply on {doc_id} failed: {r.stderr[:300]}")
     finally:
         os.unlink(tmp)
 
 
-def mutate(doc_id: str, op: str, input_data: dict, retries: int = 3) -> None:
-    """Single-action mutation via `docs mutate --op <camelCase>`."""
+def mutate(doc_id: str, op: str, input_data: dict) -> None:
+    """Single-action mutation via `docs mutate --op <camelCase>`.
+
+    No retries: same partial-application risk as apply_actions. Single
+    actions are less likely to partially apply, but the schema-level
+    invariants (e.g., unique OID) make double-dispatch unsafe.
+    """
     with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
         json.dump(input_data, f)
         tmp = f.name
     try:
-        last_err = ""
-        for attempt in range(retries):
-            r = subprocess.run(
-                ["switchboard", "docs", "mutate", doc_id, "--op", op,
-                 "--input-file", tmp, "--quiet", "--format", "json"],
-                capture_output=True, text=True, timeout=30,
-            )
-            if r.returncode == 0:
-                return
-            last_err = r.stderr[:300]
-            if attempt < retries - 1:
-                time.sleep((attempt + 1) * 2)
-        raise RuntimeError(f"mutate {doc_id} --op {op} failed: {last_err}")
+        r = subprocess.run(
+            ["switchboard", "docs", "mutate", doc_id, "--op", op,
+             "--input-file", tmp, "--quiet", "--format", "json"],
+            capture_output=True, text=True, timeout=30,
+        )
+        if r.returncode != 0:
+            raise RuntimeError(f"mutate {doc_id} --op {op} failed: {r.stderr[:300]}")
     finally:
         os.unlink(tmp)
 

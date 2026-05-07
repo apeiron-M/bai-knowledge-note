@@ -75,6 +75,27 @@ def load_state(data_dir: Path, doc_id: str) -> dict | None:
     return json.loads(p.read_text())
 
 
+def _safe_cli_name(name: str, fallback: str) -> str:
+    """Return `name` if safe to pass as `--name <value>` to the switchboard
+    CLI; otherwise return `fallback`. Unsafe cases:
+      - empty / None
+      - leading '-' (parsed as a flag by argparse-style CLIs)
+      - any control character (NUL, newline, tab, etc. — including DEL 0x7F)
+      - characters known to confuse downstream parsers (',', '"', backslash)
+    The original title is reapplied via SET_TITLE in Phase 3, so the placeholder
+    name is invisible to end users.
+    """
+    if not name:
+        return fallback
+    if name.startswith("-"):
+        return fallback
+    if any(ord(ch) < 32 or ord(ch) == 127 for ch in name):
+        return fallback
+    if any(ch in name for ch in (",", '"', "\\")):
+        return fallback
+    return name
+
+
 def topo_sort_folders(folders: list[dict]) -> list[dict]:
     by_id = {f["id"]: f for f in folders}
     visited: set[str] = set()
@@ -150,11 +171,9 @@ def phase_2_create_documents(args, manifest: dict, id_map: IdMap, drive_id: str)
     for i, d in enumerate(docs, start=1):
         if id_map.get(d["id"]):
             continue  # already created on a prior run
-        # CLI quoting: replace name if it could choke the CLI (commas, double-quotes).
-        # Title is set later via setTitle in Phase 3, so this name is purely a placeholder.
-        safe_name = d["name"]
-        if any(ch in safe_name for ch in (",", '"', "\\")):
-            safe_name = "doc-" + d["id"][:8]
+        # CLI quoting: replace name if anything could choke the CLI. Title is
+        # set later via setTitle in Phase 3, so this name is just a placeholder.
+        safe_name = _safe_cli_name(d["name"], fallback="doc-" + d["id"][:8])
         try:
             new_id = sb.docs_create(d["type"], safe_name, drive_id)
             id_map.set(d["id"], new_id)

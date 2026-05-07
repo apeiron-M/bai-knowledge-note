@@ -76,10 +76,13 @@ def build_actions(
             inp["sessionId"] = prov["sessionId"]
         scalar.append(_act("SET_PROVENANCE", inp))
 
-    # Topics — no cross-doc dependency, applied in scalar phase
+    # Topics: emitted in scalar phase. `topicDocumentId` is `String` (not OID/PHID)
+    # in the schema — opaque, not validated as a real cross-ref. When it does
+    # happen to point to another doc, remap is safe here because Phase 2 in
+    # upload.py finishes creating ALL docs before Phase 3 starts, so id_map is
+    # fully populated by the time any handler runs.
     for t in state.get("topics") or []:
         inp: dict = {"id": t["id"], "name": t.get("name") or ""}
-        # topicDocumentId may reference another doc; remap if mapped, else pass through
         tdoc = t.get("topicDocumentId")
         if tdoc is not None:
             inp["topicDocumentId"] = id_map.resolve(tdoc)
