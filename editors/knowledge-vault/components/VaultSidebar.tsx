@@ -6,7 +6,7 @@ import {
   useSelectedDriveId,
   addDocument,
 } from "@powerhousedao/reactor-browser";
-import { useDocumentsSafe } from "../hooks/use-documents-safe.js";
+import { useReactorDocs, type ReactorDocSpec } from "../hooks/use-reactor-docs.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
@@ -77,13 +77,18 @@ export function VaultSidebar({
     () => ["bai/vault-config", "bai/moc", "bai/observation", "bai/tension"],
     [],
   );
-  const overrideIds = useMemo(() => {
-    if (!serverFileNodes || serverFileNodes.length === 0) return undefined;
+  // Fetch MoC / observation / tension / vault-config state directly
+  // from the reactor's GraphQL endpoint, bypassing Connect's
+  // KyselyDocumentView (which throws "Document not found" for IDs that
+  // exist on the server). Specs come from the reactor-sourced file
+  // nodes — we already trust those.
+  const reactorSpecs: ReactorDocSpec[] = useMemo(() => {
+    if (!serverFileNodes || serverFileNodes.length === 0) return [];
     return serverFileNodes
       .filter((n) => ALL_TARGETED_TYPES.includes(n.documentType))
-      .map((n) => n.id);
+      .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name }));
   }, [serverFileNodes, ALL_TARGETED_TYPES]);
-  const documents = useDocumentsSafe(ALL_TARGETED_TYPES, overrideIds);
+  const documents = useReactorDocs(reactorSpecs);
 
   // Tree view: prefer reactor-sourced full tree; fall back to local cache
   // only if server fetch hasn't completed. Cast to Node[] for the
