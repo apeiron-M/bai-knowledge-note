@@ -30,6 +30,22 @@ import type { Node } from "@powerhousedao/shared/document-drive";
 // ─── Module-level state (survives re-renders, prevents duplicates) ───
 const initStartedForDrives = new Set<string>();
 
+// Drive IDs we have seen at least once with a populated node list. After
+// that point we trust an empty/missing-folder check to mean "drive is
+// genuinely empty, init is needed". This guards the race where the
+// WebSocket sync hasn't yet delivered existing folders on first render.
+const driveSyncSeen = new Set<string>();
+
+// Top-level folder names that any initialized vault drive must have.
+// If at least one is present at the root, init is already done.
+const KNOWN_ROOT_FOLDERS = ["knowledge", "ops", "self", "sources"];
+
+// How long to wait for the first reactor sync before treating an empty
+// node list as authoritative. WebSocket sync on a freshly-loaded drive
+// typically completes within <1s, but migration drives with hundreds
+// of nodes can take longer.
+const SYNC_GRACE_PERIOD_MS = 3000;
+
 type FolderSpec = { name: string; parentPath?: string };
 type SingletonSpec = { name: string; type: string; folderPath: string };
 
@@ -68,16 +84,40 @@ export function useDriveInit() {
     if (!driveId || nodes === undefined) return;
     if (initStartedForDrives.has(driveId)) return;
 
-    // Check if already initialized (knowledge folder exists)
-    const hasKnowledgeFolder = (nodes ?? []).some(
+    // Check the broader set of well-known root folders. Any one is enough
+    // to prove this drive has been initialized previously (covers
+    // migrated drives where naming may not include "knowledge" first).
+    const hasKnownRoot = (nodes ?? []).some(
       (n) =>
-        n.kind === "folder" && n.name === "knowledge" && n.parentFolder == null,
+        n.kind === "folder" &&
+        n.parentFolder == null &&
+        KNOWN_ROOT_FOLDERS.includes(n.name),
     );
-    if (hasKnowledgeFolder) {
+    if (hasKnownRoot) {
       initStartedForDrives.add(driveId);
+      driveSyncSeen.add(driveId);
       return;
     }
 
+    // Race guard: an empty `nodes` array on first render may just mean
+    // the WebSocket sync hasn't delivered the existing nodes yet. Only
+    // treat empty as "drive needs init" after a short grace period.
+    if (!driveSyncSeen.has(driveId) && (nodes ?? []).length === 0) {
+      const timer = setTimeout(() => {
+        // After the grace period, if no other render has populated
+        // `nodes`, we treat the drive as genuinely empty.
+        if (!initStartedForDrives.has(driveId)) {
+          driveSyncSeen.add(driveId);
+          initStartedForDrives.add(driveId);
+          void initDrive(driveId, []);
+        }
+      }, SYNC_GRACE_PERIOD_MS);
+      return () => clearTimeout(timer);
+    }
+
+    // Drive has nodes but none are recognized — uncommon, but still safe
+    // to init (creates the standard layout alongside whatever exists).
+    driveSyncSeen.add(driveId);
     initStartedForDrives.add(driveId);
     void initDrive(driveId, nodes ?? []);
   }, [driveId, nodes]);
