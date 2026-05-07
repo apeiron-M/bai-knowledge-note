@@ -1,11 +1,12 @@
 import { useMemo } from "react";
 import { useFileNodesInSelectedDrive } from "@powerhousedao/reactor-browser";
-import { useDocumentsSafe } from "./use-documents-safe.js";
-import type { KnowledgeNoteState } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import { useGraphMetadata } from "./use-graph-metadata.js";
 
 export type KnowledgeNoteInfo = {
   id: string;
+  /** Drive-tree node name (slug used at create-time). */
   name: string;
+  /** state.global.title — populated from the subgraph projection. */
   title: string | null;
   noteType: string | null;
   status: string | null;
@@ -24,9 +25,23 @@ export type KnowledgeNoteInfo = {
   } | null;
 };
 
+/**
+ * Sidebar/list source for knowledge-notes.
+ *
+ * Reads metadata from the `knowledgeGraph` subgraph (one query)
+ * rather than fetching each document individually. Falls back to the
+ * drive-tree node `name` (the create-time slug) for any node whose
+ * subgraph row hasn't been indexed yet — typical on first drive open
+ * before the GraphIndexerProcessor finishes its historical replay.
+ *
+ * Returns `{ notes, noteMap, isLoading, error, refetch }`. The
+ * `isLoading` is true only on the very first fetch; subsequent
+ * refetches keep returning the previous nodes so the sidebar doesn't
+ * flicker.
+ */
 export function useKnowledgeNotes() {
   const fileNodes = useFileNodesInSelectedDrive();
-  const documents = useDocumentsSafe();
+  const { nodeMap, edges, isLoading, error, refetch } = useGraphMetadata();
 
   const knowledgeFileNodes = useMemo(
     () =>
@@ -34,25 +49,32 @@ export function useKnowledgeNotes() {
     [fileNodes],
   );
 
-  const docMap = useMemo(() => {
-    const map = new Map<string, Record<string, unknown>>();
-    for (const doc of documents ?? []) {
-      if (doc.header.documentType === "bai/knowledge-note") {
-        map.set(doc.header.id, doc as Record<string, unknown>);
+  // Group edges by source document so each note can carry its outgoing
+  // links inline — preserves the shape downstream consumers (auto-health,
+  // graph-sync) already rely on.
+  const linksBySource = useMemo(() => {
+    const map = new Map<string, KnowledgeNoteInfo["links"]>();
+    for (const e of edges) {
+      let arr = map.get(e.sourceDocumentId);
+      if (!arr) {
+        arr = [];
+        map.set(e.sourceDocumentId, arr);
       }
+      arr.push({
+        id: e.id,
+        targetDocumentId: e.targetDocumentId,
+        targetTitle: e.targetTitle,
+        linkType: e.linkType,
+      });
     }
     return map;
-  }, [documents]);
+  }, [edges]);
 
   const notes: KnowledgeNoteInfo[] = useMemo(() => {
-    // Return one entry per drive file node so the lists/graph render even
-    // before each per-doc payload has replicated into IndexedDB. Title /
-    // topics / links / provenance fill in progressively as docs arrive.
     return knowledgeFileNodes.map((node) => {
-      const doc = docMap.get(node.id);
-      const state = (doc?.state as { global?: KnowledgeNoteState } | undefined)
-        ?.global;
-      if (!state) {
+      const meta = nodeMap.get(node.id);
+      const links = linksBySource.get(node.id) ?? [];
+      if (!meta) {
         return {
           id: node.id,
           name: node.name,
@@ -61,42 +83,42 @@ export function useKnowledgeNotes() {
           status: "DRAFT",
           description: null,
           topics: [],
-          links: [],
+          links,
           provenance: null,
         };
       }
+      // The subgraph hands us topic names as a flat string[]. Reconstruct
+      // a stable id by index so consumers that key by id still work.
+      const topics = meta.topics.map((name, i) => ({
+        id: `${node.id}-topic-${i}`,
+        name,
+      }));
       return {
         id: node.id,
         name: node.name,
-        title: state.title ?? null,
-        noteType: state.noteType ?? null,
-        status: (state.status as string) ?? "DRAFT",
-        description: state.description ?? null,
-        topics: (state.topics ?? []).map((t) => ({ id: t.id, name: t.name })),
-        links: (state.links ?? []).map((l) => ({
-          id: l.id,
-          targetDocumentId: l.targetDocumentId ?? null,
-          targetTitle: l.targetTitle ?? null,
-          linkType: (l.linkType as string) ?? null,
-        })),
-        provenance: state.provenance
-          ? {
-              author: state.provenance.author ?? null,
-              createdAt: (state.provenance.createdAt as string) ?? null,
-              updatedAt: (state.provenance.updatedAt as string) ?? null,
-            }
-          : null,
+        title: meta.title,
+        noteType: meta.noteType,
+        status: meta.status ?? "DRAFT",
+        description: meta.description,
+        topics,
+        links,
+        provenance:
+          meta.author || meta.sourceOrigin || meta.createdAt
+            ? {
+                author: meta.author,
+                createdAt: meta.createdAt,
+                updatedAt: meta.updatedAt,
+              }
+            : null,
       };
     });
-  }, [knowledgeFileNodes, docMap]);
+  }, [knowledgeFileNodes, nodeMap, linksBySource]);
 
   const noteMap = useMemo(() => {
-    const map = new Map<string, KnowledgeNoteInfo>();
-    for (const note of notes) {
-      map.set(note.id, note);
-    }
-    return map;
+    const m = new Map<string, KnowledgeNoteInfo>();
+    for (const n of notes) m.set(n.id, n);
+    return m;
   }, [notes]);
 
-  return { notes, noteMap };
+  return { notes, noteMap, isLoading, error, refetch };
 }
