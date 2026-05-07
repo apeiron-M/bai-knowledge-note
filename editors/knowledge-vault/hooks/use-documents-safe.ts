@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from "react";
 import {
   useDispatch,
+  useDocumentCache,
   useFileNodesInSelectedDrive,
-  useGetDocument,
   useGetDocumentAsync,
 } from "@powerhousedao/reactor-browser";
 import type { Action, PHDocument } from "document-model";
@@ -69,11 +69,12 @@ async function pMapLimited<T, U>(
  */
 export function useDocumentsSafe(): PHDocument[] {
   const fileNodes = useFileNodesInSelectedDrive();
-  const getDocument = useGetDocument();
+  const documentCache = useDocumentCache();
   const [docs, setDocs] = useState<PHDocument[]>([]);
   const lastIdsRef = useRef<string>("");
 
   useEffect(() => {
+    if (!documentCache) return;
     const ids = (fileNodes ?? []).map((n) => n.id);
     if (!ids.length) {
       if (docs.length) setDocs([]);
@@ -84,24 +85,32 @@ export function useDocumentsSafe(): PHDocument[] {
     lastIdsRef.current = idsKey;
 
     let cancelled = false;
-    void pMapLimited(ids, FETCH_CONCURRENCY, (id) => getDocument(id)).then(
-      (results) => {
-        if (cancelled) return;
-        const ok = results
-          .filter(
-            (r): r is PromiseFulfilledResult<PHDocument> =>
-              r.status === "fulfilled",
-          )
-          .map((r) => r.value)
-          .filter((d): d is PHDocument => !!d);
-        setDocs(ok);
-      },
-    );
+    // Pass `true` as the second arg to `documentCache.get` to FORCE a fresh
+    // fetch via the reactor client even if the cache has stale or absent
+    // entries. Without this flag, freshly migrated docs (whose state isn't
+    // yet in the in-browser cache because the WebSocket sync hasn't
+    // delivered them) resolve to undefined and the sidebar permanently
+    // shows slugs instead of titles. The cost is one network round-trip
+    // per doc on first load — concurrency-capped at 6 to stay below
+    // Chrome's HTTP/1.1 connection limit.
+    void pMapLimited(ids, FETCH_CONCURRENCY, (id) =>
+      documentCache.get(id, true),
+    ).then((results) => {
+      if (cancelled) return;
+      const ok = results
+        .filter(
+          (r): r is PromiseFulfilledResult<PHDocument> =>
+            r.status === "fulfilled",
+        )
+        .map((r) => r.value)
+        .filter((d): d is PHDocument => !!d);
+      setDocs(ok);
+    });
 
     return () => {
       cancelled = true;
     };
-  }, [fileNodes, getDocument, docs.length]);
+  }, [fileNodes, documentCache]);
 
   return docs;
 }
