@@ -14,8 +14,8 @@ from urllib.request import Request, urlopen
 
 
 REINDEX_MUTATION = """
-mutation Reindex($driveId: String!) {
-  reindexDrive(driveId: $driveId) {
+mutation Reindex($driveId: ID!) {
+  knowledgeGraphReindex(driveId: $driveId) {
     indexedNodes
     indexedEdges
     errors
@@ -33,7 +33,7 @@ def reindex(endpoint: str, drive_id: str) -> dict:
     if payload.get("errors"):
         msgs = "; ".join(e.get("message", "?") for e in payload["errors"])
         raise RuntimeError(f"GraphQL errors: {msgs}")
-    return payload["data"]["reindexDrive"]
+    return payload["data"]["knowledgeGraphReindex"]
 
 
 def main() -> int:
