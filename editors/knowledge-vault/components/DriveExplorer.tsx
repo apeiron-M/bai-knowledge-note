@@ -9,6 +9,7 @@ import {
   useDocumentsSafe,
 } from "../hooks/use-documents-safe.js";
 import { VaultSidebar } from "./VaultSidebar.js";
+import { NoteViewer } from "./NoteViewer.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import { GraphView } from "./GraphView.js";
 import { NoteList } from "./NoteList.js";
@@ -409,7 +410,12 @@ export function DriveExplorer({ children }: EditorProps) {
         {/* Content */}
         <div className="flex-1 overflow-auto">
           {showDocumentEditor ? (
-            <div className="h-full">{children}</div>
+            // Bypass Connect's <DocumentEditorContainer>, which crashes
+            // on every doc whose state hasn't backfilled into Connect's
+            // browser-side KyselyDocumentView (frequent post-migration).
+            // NoteViewer fetches the doc state directly from the
+            // reactor via GraphQL — read-only for now.
+            <NoteViewer serverFileNodes={serverFileNodes} />
           ) : viewMode === "graph" ? (
             <GraphView
               notes={notes}
