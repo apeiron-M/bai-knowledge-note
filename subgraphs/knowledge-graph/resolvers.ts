@@ -1,5 +1,5 @@
 import type { ISubgraph } from "@powerhousedao/reactor-api";
-import { getDb, getQuery } from "./helpers/db.js";
+import { getDb, getQuery, resolveCanonicalDriveId } from "./helpers/db.js";
 import { ensureGraphDoc } from "./helpers/ensure-graph-doc.js";
 import { reindexDrive } from "./helpers/reindex.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
@@ -8,6 +8,41 @@ import {
   searchSimilar,
   getEmbedding,
 } from "../../processors/graph-indexer/embedding-store.js";
+
+type Resolver = (
+  parent: unknown,
+  args: Record<string, unknown>,
+  ctx: unknown,
+  info: unknown,
+) => unknown;
+
+/**
+ * Wraps a record of resolvers so that any `driveId` argument is
+ * resolved to its canonical UUID before the resolver runs. This
+ * fixes a class of "relation does not exist" errors when GraphQL
+ * clients pass a slug — the GraphIndexerProcessor's namespace is
+ * keyed by the drive's canonical UUID and a slug-driven query
+ * looks up a non-existent SQL namespace.
+ */
+function withCanonicalDriveIds<T extends Record<string, Resolver>>(
+  subgraph: ISubgraph,
+  resolvers: T,
+): T {
+  const out: Record<string, Resolver> = {};
+  for (const [name, fn] of Object.entries(resolvers)) {
+    out[name] = async (parent, args, ctx, info) => {
+      if (args && typeof args.driveId === "string") {
+        const canonical = await resolveCanonicalDriveId(
+          subgraph,
+          args.driveId,
+        );
+        args = { ...args, driveId: canonical };
+      }
+      return fn(parent, args, ctx, info);
+    };
+  }
+  return out as T;
+}
 
 export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
   return {
@@ -26,12 +61,12 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
       },
     },
 
-    Mutation: {
-      knowledgeGraphReindex: (_: unknown, args: { driveId: string }) =>
-        reindexDrive(subgraph, args.driveId),
-    },
+    Mutation: withCanonicalDriveIds(subgraph, {
+      knowledgeGraphReindex: ((_: unknown, args: { driveId: string }) =>
+        reindexDrive(subgraph, args.driveId)) as unknown as Resolver,
+    }),
 
-    Query: {
+    Query: withCanonicalDriveIds(subgraph, {
       // --- Core graph queries ---
 
       knowledgeGraphNodes: async (_: unknown, args: { driveId: string }) => {
@@ -375,6 +410,6 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
           };
         }
       },
-    },
+    } as unknown as Record<string, Resolver>),
   };
 };
