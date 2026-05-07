@@ -92,7 +92,9 @@ This is a **sanity gate**, not a hard failure — divergence is expected if the 
 
 #### Phase 1 — Drive + folders (upload.sh)
 
-Creates a fresh local drive via `switchboard drives create --name "knowledge vault"`. Topologically sorts folders (parents before children), generates new UUIDs for each, and dispatches all `ADD_FOLDER` actions in one batch via `switchboard docs apply --wait`.
+Creates a fresh local drive via `switchboard drives create --name "knowledge vault" --preferred-editor knowledge-vault`. The `preferred-editor` flag is **required** because the Knowledge Vault is a custom drive — its editor module (id `knowledge-vault` in `editors/knowledge-vault/module.ts`) is the drive-app Connect mounts when the drive is opened. Without it, Connect renders the default drive UI and the custom navigation/search panes won't appear.
+
+Topologically sorts folders (parents before children), generates new UUIDs for each, and dispatches all `ADD_FOLDER` actions in one batch via `switchboard docs apply --wait`.
 
 Records old-folder-id → new-folder-id in `id-map.json`.
 
