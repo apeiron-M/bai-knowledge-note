@@ -45,7 +45,11 @@ export function DriveExplorer({ children }: EditorProps) {
   const { notes } = useKnowledgeNotes();
   const { graphDoc, graphState, hasGraphDoc } = useKnowledgeGraph(notes);
   const fileNodes = useFileNodesInSelectedDrive();
-  const allDocuments = useDocumentsSafe();
+  // Narrow the bulk-fetch to just the document types the views below
+  // actually consume. The sidebar list reads metadata via the
+  // knowledgeGraph subgraph (see useKnowledgeNotes), so knowledge-note
+  // states no longer need to flow through this fetch path.
+  const allDocuments = useDocumentsSafe(["bai/moc", "bai/tension"]);
   const showDocumentEditor = !!children;
 
   // Read MOC documents for the graph view

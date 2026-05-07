@@ -1,8 +1,8 @@
 import { useMemo } from "react";
 import { generateId } from "document-model/core";
+import { useFileNodesInSelectedDrive } from "@powerhousedao/reactor-browser";
 import type { KnowledgeGraphDocument } from "../../../document-models/knowledge-graph/index.js";
-import { isKnowledgeGraphDocument } from "../../../document-models/knowledge-graph/v1/gen/document-schema.js";
-import { useDocumentsSafe } from "./use-documents-safe.js";
+import { useDocumentByIdSafe } from "./use-documents-safe.js";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 
 export type GraphState = {
@@ -23,16 +23,25 @@ export type GraphState = {
 };
 
 /**
- * Returns the first KnowledgeGraph document in the drive (created by use-drive-init).
- * Does NOT auto-create — that's handled solely by useDriveInit to avoid duplicates.
+ * Returns the KnowledgeGraph singleton document for the drive (created
+ * by use-drive-init). Does NOT auto-create — that's handled solely by
+ * useDriveInit to avoid duplicates.
+ *
+ * Resolves the singleton's id via the drive's file-node tree (one
+ * filter pass over the file nodes — no per-doc fetching), then loads
+ * only that single document via useDocumentByIdSafe. Avoids the
+ * previous pattern of fetching every document in the drive just to
+ * pick one out by type.
  */
-export function useKnowledgeGraph(notes: KnowledgeNoteInfo[]) {
-  const allDocs = useDocumentsSafe();
-  const graphDocs = useMemo(
-    () => allDocs.filter(isKnowledgeGraphDocument) as KnowledgeGraphDocument[],
-    [allDocs],
+export function useKnowledgeGraph(_notes: KnowledgeNoteInfo[]) {
+  const fileNodes = useFileNodesInSelectedDrive();
+  const graphNodeId = useMemo(
+    () =>
+      (fileNodes ?? []).find((n) => n.documentType === "bai/knowledge-graph")
+        ?.id ?? null,
+    [fileNodes],
   );
-  const graphDoc = graphDocs[0];
+  const [graphDoc] = useDocumentByIdSafe<KnowledgeGraphDocument>(graphNodeId);
   const graphState: GraphState | null = graphDoc?.state.global ?? null;
 
   return {

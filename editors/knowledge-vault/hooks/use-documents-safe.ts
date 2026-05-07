@@ -67,15 +67,20 @@ async function pMapLimited<T, U>(
  * Concurrency-capped at 6 so we don't trip Chrome's HTTP/1.1 connection
  * limit and get `ERR_INSUFFICIENT_RESOURCES`.
  */
-export function useDocumentsSafe(): PHDocument[] {
+export function useDocumentsSafe(documentTypes?: string[]): PHDocument[] {
   const fileNodes = useFileNodesInSelectedDrive();
   const documentCache = useDocumentCache();
   const [docs, setDocs] = useState<PHDocument[]>([]);
   const lastIdsRef = useRef<string>("");
+  // Stable string version of the filter so the effect dep is primitive.
+  const typeFilterKey = documentTypes ? documentTypes.slice().sort().join(",") : "";
 
   useEffect(() => {
     if (!documentCache) return;
-    const ids = (fileNodes ?? []).map((n) => n.id);
+    const filtered = documentTypes && documentTypes.length
+      ? (fileNodes ?? []).filter((n) => documentTypes.includes(n.documentType))
+      : (fileNodes ?? []);
+    const ids = filtered.map((n) => n.id);
     if (!ids.length) {
       if (docs.length) setDocs([]);
       return;
@@ -110,7 +115,7 @@ export function useDocumentsSafe(): PHDocument[] {
     return () => {
       cancelled = true;
     };
-  }, [fileNodes, documentCache]);
+  }, [fileNodes, documentCache, typeFilterKey]);
 
   return docs;
 }
