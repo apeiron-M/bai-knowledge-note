@@ -13,6 +13,12 @@ import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 
 type VaultSidebarProps = {
   notes: KnowledgeNoteInfo[];
+  /** True until the first subgraph fetch resolves. */
+  isLoading?: boolean;
+  /** Last subgraph error, if any. Sidebar shows it above the notes list. */
+  error?: Error | null;
+  /** Manual retry trigger for the user. */
+  refetch?: () => void;
 };
 
 const STATUS_ORDER = ["CANONICAL", "IN_REVIEW", "DRAFT", "ARCHIVED"] as const;
@@ -35,7 +41,12 @@ const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
 const DEFAULT_WIDTH = 256;
 
-export function VaultSidebar({ notes }: VaultSidebarProps) {
+export function VaultSidebar({
+  notes,
+  isLoading,
+  error,
+  refetch,
+}: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [section, setSection] = useState<SidebarSection>("notes");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
@@ -45,7 +56,16 @@ export function VaultSidebar({ notes }: VaultSidebarProps) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
   const resizing = useRef(false);
-  const documents = useDocumentsSafe();
+  // Sidebar reads only these four singleton/MoC/observation/tension types.
+  // Knowledge-note metadata is delivered via the `notes` prop (subgraph-
+  // backed) — pulling 348 knowledge-note states through this path was
+  // the original sidebar slowness.
+  const documents = useDocumentsSafe([
+    "bai/vault-config",
+    "bai/moc",
+    "bai/observation",
+    "bai/tension",
+  ]);
   const allNodes = useNodesInSelectedDrive();
 
   const handleMouseDown = useCallback(
@@ -321,6 +341,44 @@ export function VaultSidebar({ notes }: VaultSidebarProps) {
       <div className="flex-1 overflow-y-auto px-2 pb-4">
         {section === "notes" && (
           <>
+            {error && (
+              <div
+                className="mb-2 rounded-md border border-red-500/30 bg-red-500/10 px-2 py-1.5 text-[11px]"
+                style={{ color: "var(--bai-text-secondary)" }}
+              >
+                <div className="font-medium text-red-400">
+                  Could not load note metadata
+                </div>
+                <div
+                  className="mt-0.5 truncate"
+                  title={error.message}
+                  style={{ color: "var(--bai-text-faint)" }}
+                >
+                  {error.message}
+                </div>
+                {refetch && (
+                  <button
+                    type="button"
+                    onClick={refetch}
+                    className="mt-1 rounded px-1.5 py-0.5 text-[10px] transition-colors hover:opacity-80"
+                    style={{
+                      backgroundColor: "var(--bai-hover)",
+                      color: "var(--bai-accent)",
+                    }}
+                  >
+                    Retry
+                  </button>
+                )}
+              </div>
+            )}
+            {isLoading && notes.length === 0 && !error && (
+              <div
+                className="mb-2 px-2 py-1 text-[11px]"
+                style={{ color: "var(--bai-text-faint)" }}
+              >
+                Loading note metadata…
+              </div>
+            )}
             {STATUS_ORDER.map((status) => {
               const groupNotes = grouped[status];
               if (groupNotes.length === 0) return null;

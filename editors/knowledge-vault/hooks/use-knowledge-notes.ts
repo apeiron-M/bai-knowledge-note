@@ -39,7 +39,15 @@ export type KnowledgeNoteInfo = {
  * refetches keep returning the previous nodes so the sidebar doesn't
  * flicker.
  */
-export function useKnowledgeNotes() {
+export type UseKnowledgeNotesResult = {
+  notes: KnowledgeNoteInfo[];
+  noteMap: Map<string, KnowledgeNoteInfo>;
+  isLoading: boolean;
+  error: Error | null;
+  refetch: () => void;
+};
+
+export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   const fileNodes = useFileNodesInSelectedDrive();
   const { nodeMap, edges, isLoading, error, refetch } = useGraphMetadata();
 

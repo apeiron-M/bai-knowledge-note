@@ -42,7 +42,12 @@ type ViewMode =
 
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
-  const { notes } = useKnowledgeNotes();
+  const {
+    notes,
+    isLoading: notesLoading,
+    error: notesError,
+    refetch: notesRefetch,
+  } = useKnowledgeNotes();
   const { graphDoc, graphState, hasGraphDoc } = useKnowledgeGraph(notes);
   const fileNodes = useFileNodesInSelectedDrive();
   // Narrow the bulk-fetch to just the document types the views below
@@ -311,7 +316,12 @@ export function DriveExplorer({ children }: EditorProps) {
 
   return (
     <div className="flex h-full">
-      <VaultSidebar notes={notes} />
+      <VaultSidebar
+        notes={notes}
+        isLoading={notesLoading}
+        error={notesError}
+        refetch={notesRefetch}
+      />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
