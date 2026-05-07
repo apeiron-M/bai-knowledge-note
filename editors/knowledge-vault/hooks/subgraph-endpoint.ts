@@ -8,8 +8,11 @@
  *   1. `VITE_SUBGRAPH_URL` env override (escape hatch for unusual deploys)
  *   2. Explicit Connect → Switchboard mappings (`DOMAIN_MAP`)
  *   3. Vetra subdomain pattern: connect.<slug>.vetra.io ↔ switchboard.<slug>.vetra.io
- *   4. Vite dev proxy (port 3000/3001 → localhost:4001)
- *   5. Same-origin (Connect production where the subgraph is co-hosted)
+ *   4. Any localhost / 127.0.0.1 → http://localhost:4001
+ *      (covers `ph vetra` direct on 3001 AND Cursor/VS Code remote-dev
+ *      port-forwarding which proxies Connect to a random localhost port
+ *      like 26045 — the IDE typically auto-forwards 4001 too).
+ *   5. Same-origin (production where the subgraph is co-hosted)
  */
 
 const SUBGRAPH_PATH = "/graphql/knowledgeGraph";
@@ -35,8 +38,11 @@ export function resolveKnowledgeGraphEndpoint(): string {
     return `https://${sbHost}${SUBGRAPH_PATH}`;
   }
 
-  const port = globalThis.window?.location?.port;
-  if (port === "3000" || port === "3001") {
+  // Any localhost / loopback hostname → use the conventional `ph vetra`
+  // switchboard port (4001), regardless of which port Connect itself is
+  // served on. This covers IDE remote-dev tunnels (Cursor, VS Code
+  // Remote, etc.) where Connect ends up on a random forwarded port.
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
     return `http://localhost:4001${SUBGRAPH_PATH}`;
   }
 
