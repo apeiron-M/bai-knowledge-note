@@ -37,6 +37,26 @@ export default function Editor() {
   );
   const [contentMode, setContentMode] = useState<"preview" | "edit">("preview");
 
+  // Guard: useSelectedDocumentSafe returns undefined when Connect's
+  // local cache doesn't yet have this doc. Show a loading state
+  // instead of crashing the render with the error boundary.
+  if (!document || !dispatch) {
+    return (
+      <div
+        className="flex h-full items-center justify-center"
+        style={{ color: "var(--bai-text-faint)" }}
+      >
+        <div className="text-center text-sm">
+          <div>Loading note…</div>
+          <div className="mt-1 text-[11px]">
+            If this persists, the document may not have synced from the
+            reactor yet — try refreshing.
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   const state = document.state.global;
 
   const handleSetTitle = useCallback(
