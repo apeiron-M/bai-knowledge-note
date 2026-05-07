@@ -48,12 +48,20 @@ export type UseKnowledgeNotesResult = {
 };
 
 export function useKnowledgeNotes(): UseKnowledgeNotesResult {
-  const fileNodes = useFileNodesInSelectedDrive();
-  const { nodeMap, edges, isLoading, error, refetch } = useGraphMetadata();
+  // Connect's local drive-document cache can be stale (we've observed
+  // server having 398 file nodes while the cache reports 2). The
+  // metadata hook now also fetches the drive's authoritative file-node
+  // list from the reactor; prefer that source. Fall back to the local
+  // cache only if the server fetch hasn't completed or returned empty.
+  const cachedFileNodes = useFileNodesInSelectedDrive();
+  const { nodeMap, edges, fileNodes: serverFileNodes, isLoading, error, refetch } =
+    useGraphMetadata();
+
+  const fileNodes =
+    serverFileNodes.length > 0 ? serverFileNodes : (cachedFileNodes ?? []);
 
   const knowledgeFileNodes = useMemo(
-    () =>
-      (fileNodes ?? []).filter((n) => n.documentType === "bai/knowledge-note"),
+    () => fileNodes.filter((n) => n.documentType === "bai/knowledge-note"),
     [fileNodes],
   );
 
@@ -79,6 +87,20 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   }, [edges]);
 
   const notes: KnowledgeNoteInfo[] = useMemo(() => {
+    // DEBUG: log compose stats once per render. Remove once verified.
+    if (knowledgeFileNodes.length > 0) {
+      const firstId = knowledgeFileNodes[0]?.id;
+      // eslint-disable-next-line no-console
+      console.log(
+        "[useKnowledgeNotes] compose:",
+        "fileNodes=", knowledgeFileNodes.length,
+        "nodeMapSize=", nodeMap.size,
+        "linksBySourceSize=", linksBySource.size,
+        "firstFileNodeId=", firstId,
+        "firstNodeMapKeys=", Array.from(nodeMap.keys()).slice(0, 3),
+        "firstFileNodeFoundInMap=", firstId ? nodeMap.has(firstId) : "n/a",
+      );
+    }
     return knowledgeFileNodes.map((node) => {
       const meta = nodeMap.get(node.id);
       const links = linksBySource.get(node.id) ?? [];

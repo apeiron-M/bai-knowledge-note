@@ -54,11 +54,25 @@ export type GraphEdgeMetadata = {
   targetTitle: string | null;
 };
 
+/**
+ * A node in the drive's tree, sourced directly from the reactor. Used
+ * to bypass Connect's local drive-document cache when it goes out of
+ * sync (the persistent "0 file nodes despite 398 on server" symptom).
+ */
+export type DriveFileNode = {
+  id: string;
+  name: string;
+  documentType: string;
+  parentFolder: string | null;
+};
+
 export type GraphMetadata = {
   nodes: GraphNodeMetadata[];
   edges: GraphEdgeMetadata[];
   /** Map by `documentId` for O(1) lookup. */
   nodeMap: Map<string, GraphNodeMetadata>;
+  /** Drive file nodes fetched authoritatively from the reactor. */
+  fileNodes: DriveFileNode[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -88,6 +102,14 @@ const NODES_QUERY = `
   }
 `;
 
+const DRIVE_TREE_QUERY = `
+  query DriveTree($id: String!) {
+    document(identifier: $id) {
+      document { state }
+    }
+  }
+`;
+
 type RawResponse = {
   data?: {
     knowledgeGraphNodes?: GraphNodeMetadata[];
@@ -96,14 +118,63 @@ type RawResponse = {
   errors?: { message?: string }[];
 };
 
+type DriveTreeRaw = {
+  data?: {
+    document?: { document?: { state?: { global?: { nodes?: unknown[] } } } };
+  };
+  errors?: { message?: string }[];
+};
+
 const EMPTY_NODES: GraphNodeMetadata[] = [];
 const EMPTY_EDGES: GraphEdgeMetadata[] = [];
+const EMPTY_FILE_NODES: DriveFileNode[] = [];
+
+function reactorEndpoint(): string {
+  // Mirror subgraph-endpoint.ts logic for hostname → port mapping.
+  const hostname = globalThis.window?.location?.hostname;
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://localhost:4001/graphql";
+  }
+  if (hostname && /^connect\..+\.vetra\.io$/.test(hostname)) {
+    const sbHost = hostname.replace(/^connect\./, "switchboard.");
+    return `https://${sbHost}/graphql`;
+  }
+  return "/graphql";
+}
+
+async function fetchDriveFileNodes(driveId: string): Promise<DriveFileNode[]> {
+  const res = await fetch(reactorEndpoint(), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      query: DRIVE_TREE_QUERY,
+      variables: { id: driveId },
+    }),
+  });
+  if (!res.ok) return EMPTY_FILE_NODES;
+  const json = (await res.json()) as DriveTreeRaw;
+  if (json.errors?.length) return EMPTY_FILE_NODES;
+  const nodes = json.data?.document?.document?.state?.global?.nodes ?? [];
+  return nodes
+    .filter(
+      (n): n is { id: string; name: string; kind: string; documentType?: string; parentFolder?: string | null } =>
+        typeof n === "object" && n !== null && (n as { kind?: string }).kind === "file",
+    )
+    .map((n) => ({
+      id: n.id,
+      name: n.name,
+      documentType: n.documentType ?? "",
+      parentFolder: n.parentFolder ?? null,
+    }));
+}
 
 export function useGraphMetadata(): GraphMetadata {
   const driveId = useSelectedDriveId();
   const fileNodes = useFileNodesInSelectedDrive();
   const [nodes, setNodes] = useState<GraphNodeMetadata[]>(EMPTY_NODES);
   const [edges, setEdges] = useState<GraphEdgeMetadata[]>(EMPTY_EDGES);
+  const [serverFileNodes, setServerFileNodes] =
+    useState<DriveFileNode[]>(EMPTY_FILE_NODES);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [refetchKey, setRefetchKey] = useState(0);
@@ -192,6 +263,16 @@ export function useGraphMetadata(): GraphMetadata {
         setNodes(data?.knowledgeGraphNodes ?? EMPTY_NODES);
         setEdges(data?.knowledgeGraphEdges ?? EMPTY_EDGES);
       })
+      // Also fetch the drive's authoritative tree from the reactor —
+      // bypasses Connect's stale local drive-document copy.
+      .then(() =>
+        fetchDriveFileNodes(driveId).then((nodes) => {
+          if (cancelled) return;
+          // eslint-disable-next-line no-console
+          console.log("[useGraphMetadata] fileNodes from reactor:", nodes.length);
+          setServerFileNodes(nodes);
+        }),
+      )
       .catch((err: unknown) => {
         if (cancelled) return;
         const e = err instanceof Error ? err : new Error(String(err));
@@ -217,5 +298,13 @@ export function useGraphMetadata(): GraphMetadata {
     setRefetchKey((k) => k + 1);
   }, []);
 
-  return { nodes, edges, nodeMap, isLoading, error, refetch };
+  return {
+    nodes,
+    edges,
+    nodeMap,
+    fileNodes: serverFileNodes,
+    isLoading,
+    error,
+    refetch,
+  };
 }
