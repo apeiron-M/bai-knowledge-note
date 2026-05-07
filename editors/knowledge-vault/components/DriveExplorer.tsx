@@ -44,6 +44,8 @@ export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
   const {
     notes,
+    serverFileNodes,
+    serverAllNodes,
     isLoading: notesLoading,
     error: notesError,
     refetch: notesRefetch,
@@ -321,6 +323,8 @@ export function DriveExplorer({ children }: EditorProps) {
         isLoading={notesLoading}
         error={notesError}
         refetch={notesRefetch}
+        serverFileNodes={serverFileNodes}
+        serverAllNodes={serverAllNodes}
       />
 
       <div className="flex flex-1 flex-col overflow-hidden">

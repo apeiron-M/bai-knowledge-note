@@ -1,6 +1,10 @@
 import { useMemo } from "react";
 import { useFileNodesInSelectedDrive } from "@powerhousedao/reactor-browser";
-import { useGraphMetadata } from "./use-graph-metadata.js";
+import {
+  useGraphMetadata,
+  type DriveFileNode,
+  type DriveTreeNode,
+} from "./use-graph-metadata.js";
 
 export type KnowledgeNoteInfo = {
   id: string;
@@ -42,6 +46,10 @@ export type KnowledgeNoteInfo = {
 export type UseKnowledgeNotesResult = {
   notes: KnowledgeNoteInfo[];
   noteMap: Map<string, KnowledgeNoteInfo>;
+  /** Authoritative file nodes from the reactor (bypasses Connect cache). */
+  serverFileNodes: DriveFileNode[];
+  /** Authoritative full drive tree (folders + files) from the reactor. */
+  serverAllNodes: DriveTreeNode[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -54,8 +62,15 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   // list from the reactor; prefer that source. Fall back to the local
   // cache only if the server fetch hasn't completed or returned empty.
   const cachedFileNodes = useFileNodesInSelectedDrive();
-  const { nodeMap, edges, fileNodes: serverFileNodes, isLoading, error, refetch } =
-    useGraphMetadata();
+  const {
+    nodeMap,
+    edges,
+    fileNodes: serverFileNodes,
+    allNodes: serverAllNodes,
+    isLoading,
+    error,
+    refetch,
+  } = useGraphMetadata();
 
   const fileNodes =
     serverFileNodes.length > 0 ? serverFileNodes : (cachedFileNodes ?? []);
@@ -150,5 +165,13 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
     return m;
   }, [notes]);
 
-  return { notes, noteMap, isLoading, error, refetch };
+  return {
+    notes,
+    noteMap,
+    serverFileNodes,
+    serverAllNodes,
+    isLoading,
+    error,
+    refetch,
+  };
 }

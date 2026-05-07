@@ -67,20 +67,38 @@ async function pMapLimited<T, U>(
  * Concurrency-capped at 6 so we don't trip Chrome's HTTP/1.1 connection
  * limit and get `ERR_INSUFFICIENT_RESOURCES`.
  */
-export function useDocumentsSafe(documentTypes?: string[]): PHDocument[] {
+export function useDocumentsSafe(
+  documentTypes?: string[],
+  /**
+   * Optional explicit list of document IDs to fetch. When provided, the
+   * cached `useFileNodesInSelectedDrive()` is bypassed entirely — useful
+   * when callers have a more authoritative source (e.g. the reactor's
+   * drive document fetched directly via GraphQL).
+   */
+  idsOverride?: string[],
+): PHDocument[] {
   const fileNodes = useFileNodesInSelectedDrive();
   const documentCache = useDocumentCache();
   const [docs, setDocs] = useState<PHDocument[]>([]);
   const lastIdsRef = useRef<string>("");
   // Stable string version of the filter so the effect dep is primitive.
   const typeFilterKey = documentTypes ? documentTypes.slice().sort().join(",") : "";
+  const overrideKey = idsOverride ? idsOverride.slice().sort().join(",") : "";
 
   useEffect(() => {
     if (!documentCache) return;
-    const filtered = documentTypes && documentTypes.length
-      ? (fileNodes ?? []).filter((n) => documentTypes.includes(n.documentType))
-      : (fileNodes ?? []);
-    const ids = filtered.map((n) => n.id);
+    let ids: string[];
+    if (idsOverride && idsOverride.length > 0) {
+      ids = idsOverride;
+    } else {
+      const filtered =
+        documentTypes && documentTypes.length
+          ? (fileNodes ?? []).filter((n) =>
+              documentTypes.includes(n.documentType),
+            )
+          : (fileNodes ?? []);
+      ids = filtered.map((n) => n.id);
+    }
     if (!ids.length) {
       if (docs.length) setDocs([]);
       return;
@@ -115,7 +133,7 @@ export function useDocumentsSafe(documentTypes?: string[]): PHDocument[] {
     return () => {
       cancelled = true;
     };
-  }, [fileNodes, documentCache, typeFilterKey]);
+  }, [fileNodes, documentCache, typeFilterKey, overrideKey]);
 
   return docs;
 }

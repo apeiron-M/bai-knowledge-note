@@ -66,6 +66,14 @@ export type DriveFileNode = {
   parentFolder: string | null;
 };
 
+export type DriveTreeNode = {
+  id: string;
+  name: string;
+  kind: "file" | "folder";
+  documentType?: string;
+  parentFolder: string | null;
+};
+
 export type GraphMetadata = {
   nodes: GraphNodeMetadata[];
   edges: GraphEdgeMetadata[];
@@ -73,6 +81,8 @@ export type GraphMetadata = {
   nodeMap: Map<string, GraphNodeMetadata>;
   /** Drive file nodes fetched authoritatively from the reactor. */
   fileNodes: DriveFileNode[];
+  /** All drive nodes (folders + files) fetched from the reactor. */
+  allNodes: DriveTreeNode[];
   isLoading: boolean;
   error: Error | null;
   refetch: () => void;
@@ -127,7 +137,6 @@ type DriveTreeRaw = {
 
 const EMPTY_NODES: GraphNodeMetadata[] = [];
 const EMPTY_EDGES: GraphEdgeMetadata[] = [];
-const EMPTY_FILE_NODES: DriveFileNode[] = [];
 
 function reactorEndpoint(): string {
   // Mirror subgraph-endpoint.ts logic for hostname → port mapping.
@@ -142,7 +151,7 @@ function reactorEndpoint(): string {
   return "/graphql";
 }
 
-async function fetchDriveFileNodes(driveId: string): Promise<DriveFileNode[]> {
+async function fetchDriveAllNodes(driveId: string): Promise<DriveTreeNode[]> {
   const res = await fetch(reactorEndpoint(), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -151,19 +160,23 @@ async function fetchDriveFileNodes(driveId: string): Promise<DriveFileNode[]> {
       variables: { id: driveId },
     }),
   });
-  if (!res.ok) return EMPTY_FILE_NODES;
+  if (!res.ok) return [];
   const json = (await res.json()) as DriveTreeRaw;
-  if (json.errors?.length) return EMPTY_FILE_NODES;
+  if (json.errors?.length) return [];
   const nodes = json.data?.document?.document?.state?.global?.nodes ?? [];
   return nodes
     .filter(
       (n): n is { id: string; name: string; kind: string; documentType?: string; parentFolder?: string | null } =>
-        typeof n === "object" && n !== null && (n as { kind?: string }).kind === "file",
+        typeof n === "object" &&
+        n !== null &&
+        ((n as { kind?: string }).kind === "file" ||
+          (n as { kind?: string }).kind === "folder"),
     )
     .map((n) => ({
       id: n.id,
       name: n.name,
-      documentType: n.documentType ?? "",
+      kind: n.kind as "file" | "folder",
+      documentType: n.documentType ?? undefined,
       parentFolder: n.parentFolder ?? null,
     }));
 }
@@ -173,8 +186,19 @@ export function useGraphMetadata(): GraphMetadata {
   const fileNodes = useFileNodesInSelectedDrive();
   const [nodes, setNodes] = useState<GraphNodeMetadata[]>(EMPTY_NODES);
   const [edges, setEdges] = useState<GraphEdgeMetadata[]>(EMPTY_EDGES);
-  const [serverFileNodes, setServerFileNodes] =
-    useState<DriveFileNode[]>(EMPTY_FILE_NODES);
+  const [allNodes, setAllNodes] = useState<DriveTreeNode[]>([]);
+  const serverFileNodes: DriveFileNode[] = useMemo(
+    () =>
+      allNodes
+        .filter((n): n is DriveTreeNode & { documentType: string } => n.kind === "file" && !!n.documentType)
+        .map((n) => ({
+          id: n.id,
+          name: n.name,
+          documentType: n.documentType,
+          parentFolder: n.parentFolder,
+        })),
+    [allNodes],
+  );
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [refetchKey, setRefetchKey] = useState(0);
@@ -266,11 +290,16 @@ export function useGraphMetadata(): GraphMetadata {
       // Also fetch the drive's authoritative tree from the reactor —
       // bypasses Connect's stale local drive-document copy.
       .then(() =>
-        fetchDriveFileNodes(driveId).then((nodes) => {
+        fetchDriveAllNodes(driveId).then((nodes) => {
           if (cancelled) return;
+          const fileCount = nodes.filter((n) => n.kind === "file").length;
           // eslint-disable-next-line no-console
-          console.log("[useGraphMetadata] fileNodes from reactor:", nodes.length);
-          setServerFileNodes(nodes);
+          console.log(
+            "[useGraphMetadata] tree from reactor:",
+            "all=", nodes.length,
+            "files=", fileCount,
+          );
+          setAllNodes(nodes);
         }),
       )
       .catch((err: unknown) => {
@@ -303,6 +332,7 @@ export function useGraphMetadata(): GraphMetadata {
     edges,
     nodeMap,
     fileNodes: serverFileNodes,
+    allNodes,
     isLoading,
     error,
     refetch,

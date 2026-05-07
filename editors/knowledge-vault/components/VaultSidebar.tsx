@@ -19,6 +19,10 @@ type VaultSidebarProps = {
   error?: Error | null;
   /** Manual retry trigger for the user. */
   refetch?: () => void;
+  /** Authoritative file nodes from the reactor (bypasses Connect cache). */
+  serverFileNodes?: import("../hooks/use-graph-metadata.js").DriveFileNode[];
+  /** Authoritative full tree (folders + files) from the reactor. */
+  serverAllNodes?: import("../hooks/use-graph-metadata.js").DriveTreeNode[];
 };
 
 const STATUS_ORDER = ["CANONICAL", "IN_REVIEW", "DRAFT", "ARCHIVED"] as const;
@@ -46,6 +50,8 @@ export function VaultSidebar({
   isLoading,
   error,
   refetch,
+  serverFileNodes,
+  serverAllNodes,
 }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [section, setSection] = useState<SidebarSection>("notes");
@@ -60,13 +66,33 @@ export function VaultSidebar({
   // Knowledge-note metadata is delivered via the `notes` prop (subgraph-
   // backed) — pulling 348 knowledge-note states through this path was
   // the original sidebar slowness.
-  const documents = useDocumentsSafe([
-    "bai/vault-config",
-    "bai/moc",
-    "bai/observation",
-    "bai/tension",
-  ]);
-  const allNodes = useNodesInSelectedDrive();
+  //
+  // For MoCs/observations/tensions/vault-config we still need the full
+  // document state. We use the reactor-sourced fileNodes (from the
+  // `serverFileNodes` prop) to compute the IDs, then have
+  // useDocumentsSafe fetch each via documentCache.get(id, true). This
+  // bypasses Connect's stale drive-document cache for the ID list while
+  // still relying on the per-doc cache for state.
+  const ALL_TARGETED_TYPES = useMemo(
+    () => ["bai/vault-config", "bai/moc", "bai/observation", "bai/tension"],
+    [],
+  );
+  const overrideIds = useMemo(() => {
+    if (!serverFileNodes || serverFileNodes.length === 0) return undefined;
+    return serverFileNodes
+      .filter((n) => ALL_TARGETED_TYPES.includes(n.documentType))
+      .map((n) => n.id);
+  }, [serverFileNodes, ALL_TARGETED_TYPES]);
+  const documents = useDocumentsSafe(ALL_TARGETED_TYPES, overrideIds);
+
+  // Tree view: prefer reactor-sourced full tree; fall back to local cache
+  // only if server fetch hasn't completed. Cast to Node[] for the
+  // existing FolderTreeView component which expects the cached shape.
+  const cachedAllNodes = useNodesInSelectedDrive();
+  const allNodes =
+    serverAllNodes && serverAllNodes.length > 0
+      ? (serverAllNodes as unknown as typeof cachedAllNodes)
+      : cachedAllNodes;
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
