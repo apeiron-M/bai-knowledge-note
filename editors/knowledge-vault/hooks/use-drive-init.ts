@@ -8,6 +8,59 @@ import {
 import type { Node } from "@powerhousedao/shared/document-drive";
 
 /**
+ * Same-origin GraphQL endpoint resolver for the drive document query.
+ * Reuses the same logic as `subgraph-endpoint.ts`: any localhost variant
+ * (including IDE-tunnel proxy ports) maps to switchboard's :4001.
+ */
+function resolveReactorEndpoint(): string {
+  const hostname = globalThis.window?.location?.hostname;
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://localhost:4001/graphql";
+  }
+  // Vetra remote subdomain pattern.
+  if (hostname && /^connect\..+\.vetra\.io$/.test(hostname)) {
+    const sbHost = hostname.replace(/^connect\./, "switchboard.");
+    return `https://${sbHost}/graphql`;
+  }
+  return "/graphql";
+}
+
+/**
+ * Authoritatively fetch the drive's tree from the reactor (NOT from
+ * Connect's local cache) so we can determine init state without
+ * waiting for WebSocket sync to deliver existing nodes. This is the
+ * fix for the "vault-init re-creates folders after a read-storage
+ * wipe" bug — the local cache lies until sync completes; the reactor
+ * always tells the truth.
+ */
+async function fetchDriveNodes(driveId: string): Promise<Node[] | null> {
+  const endpoint = resolveReactorEndpoint();
+  try {
+    const res = await fetch(endpoint, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        query:
+          "query DriveNodes($id: String!){document(identifier:$id){document{state}}}",
+        variables: { id: driveId },
+      }),
+    });
+    if (!res.ok) return null;
+    const json = (await res.json()) as {
+      data?: { document?: { document?: { state?: unknown } } };
+      errors?: unknown[];
+    };
+    if (json.errors?.length) return null;
+    const state = json.data?.document?.document?.state as
+      | { global?: { nodes?: Node[] } }
+      | undefined;
+    return state?.global?.nodes ?? [];
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Drive folder structure matching Ars Contexta layout:
  *
  * /knowledge/              <- notes, MOCs, knowledge graph
@@ -81,46 +134,31 @@ export function useDriveInit() {
   const nodes = useNodesInSelectedDrive();
 
   useEffect(() => {
-    if (!driveId || nodes === undefined) return;
+    if (!driveId) return;
     if (initStartedForDrives.has(driveId)) return;
 
-    // Check the broader set of well-known root folders. Any one is enough
-    // to prove this drive has been initialized previously (covers
-    // migrated drives where naming may not include "knowledge" first).
-    const hasKnownRoot = (nodes ?? []).some(
-      (n) =>
-        n.kind === "folder" &&
-        n.parentFolder == null &&
-        KNOWN_ROOT_FOLDERS.includes(n.name),
-    );
-    if (hasKnownRoot) {
-      initStartedForDrives.add(driveId);
-      driveSyncSeen.add(driveId);
-      return;
-    }
-
-    // Race guard: an empty `nodes` array on first render may just mean
-    // the WebSocket sync hasn't delivered the existing nodes yet. Only
-    // treat empty as "drive needs init" after a short grace period.
-    if (!driveSyncSeen.has(driveId) && (nodes ?? []).length === 0) {
-      const timer = setTimeout(() => {
-        // After the grace period, if no other render has populated
-        // `nodes`, we treat the drive as genuinely empty.
-        if (!initStartedForDrives.has(driveId)) {
-          driveSyncSeen.add(driveId);
-          initStartedForDrives.add(driveId);
-          void initDrive(driveId, []);
-        }
-      }, SYNC_GRACE_PERIOD_MS);
-      return () => clearTimeout(timer);
-    }
-
-    // Drive has nodes but none are recognized — uncommon, but still safe
-    // to init (creates the standard layout alongside whatever exists).
-    driveSyncSeen.add(driveId);
+    // Authoritative server-side check: query the reactor directly for
+    // this drive's full node list. The cached `nodes` from
+    // `useNodesInSelectedDrive` is unreliable on a fresh open
+    // (especially after a `read-storage` wipe) because Connect's
+    // WebSocket sync hasn't necessarily delivered the existing tree
+    // when the editor mounts. Hitting the reactor's GraphQL endpoint
+    // gives us ground truth on the very first call, so we never make a
+    // false "drive looks empty" decision.
     initStartedForDrives.add(driveId);
-    void initDrive(driveId, nodes ?? []);
-  }, [driveId, nodes]);
+    driveSyncSeen.add(driveId);
+    void (async () => {
+      const serverNodes = await fetchDriveNodes(driveId);
+      // Use whichever source has more entries — the reactor query is
+      // authoritative, but if the local cache happens to have more
+      // (race during the fetch), take the union via cache.
+      const truth =
+        serverNodes && serverNodes.length >= (nodes ?? []).length
+          ? serverNodes
+          : (nodes ?? []);
+      void initDrive(driveId, truth);
+    })();
+  }, [driveId]);
 }
 
 // ─── Single sequential init: folders then singletons ───
