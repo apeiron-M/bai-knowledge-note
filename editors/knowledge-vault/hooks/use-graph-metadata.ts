@@ -109,12 +109,31 @@ export function useGraphMetadata(): GraphMetadata {
   const [refetchKey, setRefetchKey] = useState(0);
   const lastFetchKeyRef = useRef<string>("");
 
-  // Re-fetch trigger: drive changed OR doc count changed (new docs imported)
-  // OR explicit refetch requested.
-  const fingerprint = useMemo(() => {
-    const count = fileNodes?.length ?? 0;
-    return `${driveId ?? ""}:${count}:${refetchKey}`;
-  }, [driveId, fileNodes?.length, refetchKey]);
+  // Re-fetch trigger: drive changed OR explicit refetch requested.
+  // We deliberately do NOT key on fileNodes.length — it changes rapidly
+  // during drive init / bulk import (e.g., 348 notes landing one-by-one)
+  // and the per-change cancel-and-restart prevents any fetch from
+  // resolving. Instead the count-driven refetch is debounced below.
+  const driveFingerprint = useMemo(
+    () => `${driveId ?? ""}:${refetchKey}`,
+    [driveId, refetchKey],
+  );
+
+  // Debounced count-driven refetch: when fileNodes.length changes (new
+  // docs landed), bump the refetch key after 1.5s of stability.
+  const fileCount = fileNodes?.length ?? 0;
+  const lastSeenCountRef = useRef<number>(-1);
+  useEffect(() => {
+    if (fileCount === lastSeenCountRef.current) return;
+    const prev = lastSeenCountRef.current;
+    lastSeenCountRef.current = fileCount;
+    // Skip the very first observation (the initial main-effect fetch
+    // already covers it). Only schedule a refetch on subsequent file
+    // count changes.
+    if (prev === -1) return;
+    const timer = setTimeout(() => setRefetchKey((k) => k + 1), 1500);
+    return () => clearTimeout(timer);
+  }, [fileCount]);
 
   useEffect(() => {
     if (!driveId) {
@@ -123,14 +142,14 @@ export function useGraphMetadata(): GraphMetadata {
       setError(null);
       return;
     }
-    if (lastFetchKeyRef.current === fingerprint) return;
-    lastFetchKeyRef.current = fingerprint;
 
     let cancelled = false;
     setIsLoading(true);
     setError(null);
 
     const endpoint = resolveKnowledgeGraphEndpoint();
+    // eslint-disable-next-line no-console
+    console.log("[useGraphMetadata] fetch start", { endpoint, driveId, fingerprint: driveFingerprint });
 
     fetch(endpoint, {
       method: "POST",
@@ -145,6 +164,17 @@ export function useGraphMetadata(): GraphMetadata {
           throw new Error(`HTTP ${res.status} from ${endpoint}`);
         }
         const json = (await res.json()) as RawResponse;
+        // eslint-disable-next-line no-console
+        console.log(
+          "[useGraphMetadata] response",
+          {
+            hasData: !!json.data,
+            errors: json.errors,
+            nodeCount: json.data?.knowledgeGraphNodes?.length ?? 0,
+            edgeCount: json.data?.knowledgeGraphEdges?.length ?? 0,
+            firstNode: json.data?.knowledgeGraphNodes?.[0],
+          },
+        );
         if (json.errors?.length) {
           throw new Error(
             json.errors.map((e) => e.message ?? "?").join("; "),
@@ -153,6 +183,11 @@ export function useGraphMetadata(): GraphMetadata {
         return json.data;
       })
       .then((data) => {
+        // eslint-disable-next-line no-console
+        console.log("[useGraphMetadata] applying state", {
+          cancelled,
+          nodeCount: data?.knowledgeGraphNodes?.length ?? 0,
+        });
         if (cancelled) return;
         setNodes(data?.knowledgeGraphNodes ?? EMPTY_NODES);
         setEdges(data?.knowledgeGraphEdges ?? EMPTY_EDGES);
@@ -170,7 +205,7 @@ export function useGraphMetadata(): GraphMetadata {
     return () => {
       cancelled = true;
     };
-  }, [driveId, fingerprint]);
+  }, [driveId, driveFingerprint]);
 
   const nodeMap = useMemo(() => {
     const m = new Map<string, GraphNodeMetadata>();
