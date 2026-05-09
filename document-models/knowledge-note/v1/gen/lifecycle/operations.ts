@@ -1,36 +1,40 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { type SignalDispatch } from "document-model";
+import type { KnowledgeNoteGlobalState } from "../types.js";
 import type {
-  SubmitForReviewAction,
   ApproveNoteAction,
-  RejectNoteAction,
   ArchiveNoteAction,
+  RejectNoteAction,
   RestoreNoteAction,
+  SubmitForReviewAction,
 } from "./actions.js";
-import type { KnowledgeNoteState } from "../types.js";
 
 export interface KnowledgeNoteLifecycleOperations {
   submitForReviewOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: SubmitForReviewAction,
     dispatch?: SignalDispatch,
   ) => void;
   approveNoteOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: ApproveNoteAction,
     dispatch?: SignalDispatch,
   ) => void;
   rejectNoteOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: RejectNoteAction,
     dispatch?: SignalDispatch,
   ) => void;
   archiveNoteOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: ArchiveNoteAction,
     dispatch?: SignalDispatch,
   ) => void;
   restoreNoteOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: RestoreNoteAction,
     dispatch?: SignalDispatch,
   ) => void;

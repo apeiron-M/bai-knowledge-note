@@ -1,5 +1,9 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { Action } from "document-model";
-import type { GenerateReportInput, AddCheckInput } from "../types.js";
+import type { AddCheckInput, GenerateReportInput } from "../types.js";
 
 export type GenerateReportAction = Action & {
   type: "GENERATE_REPORT";

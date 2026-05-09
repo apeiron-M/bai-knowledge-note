@@ -1,12 +1,16 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { Action } from "document-model";
 import type {
-  SetTitleInput,
-  SetDescriptionInput,
-  SetNoteTypeInput,
-  SetContentInput,
   PatchContentInput,
+  SetContentInput,
+  SetDescriptionInput,
   SetMetadataFieldInput,
   SetMetadataListFieldInput,
+  SetNoteTypeInput,
+  SetTitleInput,
 } from "../types.js";
 
 export type SetTitleAction = Action & {

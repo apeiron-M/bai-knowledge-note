@@ -1,30 +1,34 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { type SignalDispatch } from "document-model";
+import type { ObservationGlobalState } from "../types.js";
 import type {
-  CreateObservationAction,
-  PromoteObservationAction,
-  ImplementObservationAction,
   ArchiveObservationAction,
+  CreateObservationAction,
+  ImplementObservationAction,
+  PromoteObservationAction,
 } from "./actions.js";
-import type { ObservationState } from "../types.js";
 
 export interface ObservationObservationManagementOperations {
   createObservationOperation: (
-    state: ObservationState,
+    state: ObservationGlobalState,
     action: CreateObservationAction,
     dispatch?: SignalDispatch,
   ) => void;
   promoteObservationOperation: (
-    state: ObservationState,
+    state: ObservationGlobalState,
     action: PromoteObservationAction,
     dispatch?: SignalDispatch,
   ) => void;
   implementObservationOperation: (
-    state: ObservationState,
+    state: ObservationGlobalState,
     action: ImplementObservationAction,
     dispatch?: SignalDispatch,
   ) => void;
   archiveObservationOperation: (
-    state: ObservationState,
+    state: ObservationGlobalState,
     action: ArchiveObservationAction,
     dispatch?: SignalDispatch,
   ) => void;

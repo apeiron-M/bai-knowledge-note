@@ -1,3 +1,7 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import { SetProvenanceInputSchema } from "../schema/zod.js";
 import type { SetProvenanceInput } from "../types.js";

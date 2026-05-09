@@ -21,11 +21,9 @@ let profileUrlCache = null;
 
 export function listProfiles() {
   if (profileUrlCache) return profileUrlCache;
-  const res = spawnSync(
-    "switchboard",
-    ["config", "list", "--format", "json"],
-    { encoding: "utf-8" },
-  );
+  const res = spawnSync("switchboard", ["config", "list", "--format", "json"], {
+    encoding: "utf-8",
+  });
   if (res.status !== 0) {
     throw new Error(`switchboard config list failed: ${res.stderr}`);
   }
@@ -115,7 +113,16 @@ export function cliListDocs(profile, drive) {
 }
 
 export function cliCreateDoc(profile, { type, name, drive, parentFolder }) {
-  const args = ["docs", "create", "--type", type, "--name", name, "--drive", drive];
+  const args = [
+    "docs",
+    "create",
+    "--type",
+    type,
+    "--name",
+    name,
+    "--drive",
+    drive,
+  ];
   if (parentFolder) args.push("--parent-folder", parentFolder);
   const out = runCli(profile, args);
   const obj = JSON.parse(out);
@@ -146,7 +153,9 @@ export function cliApplyActions(profile, docId, actions, { wait = true } = {}) {
     const stdout = runCli(profile, args);
     return parseApplyOutput(stdout);
   } finally {
-    try { fs.unlinkSync(tmp); } catch {}
+    try {
+      fs.unlinkSync(tmp);
+    } catch {}
   }
 }
 
@@ -156,7 +165,11 @@ function parseApplyOutput(stdout) {
   const matches = stdout.match(/\{[\s\S]*?\n\}/g) ?? [];
   const last = matches[matches.length - 1] ?? matches[0];
   if (!last) return { raw: stdout };
-  try { return JSON.parse(last); } catch { return { raw: stdout }; }
+  try {
+    return JSON.parse(last);
+  } catch {
+    return { raw: stdout };
+  }
 }
 
 // ─── Action builders (current schema) ───
@@ -178,19 +191,39 @@ export function buildKnowledgeNoteActions(state) {
   const actions = [];
 
   if (g.title) {
-    actions.push({ type: "SET_TITLE", input: { title: g.title, updatedAt: createdAt }, scope: "global" });
+    actions.push({
+      type: "SET_TITLE",
+      input: { title: g.title, updatedAt: createdAt },
+      scope: "global",
+    });
   }
   if (g.description) {
-    actions.push({ type: "SET_DESCRIPTION", input: { description: g.description, updatedAt: now }, scope: "global" });
+    actions.push({
+      type: "SET_DESCRIPTION",
+      input: { description: g.description, updatedAt: now },
+      scope: "global",
+    });
   }
   if (g.noteType) {
-    actions.push({ type: "SET_NOTE_TYPE", input: { noteType: g.noteType, updatedAt: now }, scope: "global" });
+    actions.push({
+      type: "SET_NOTE_TYPE",
+      input: { noteType: g.noteType, updatedAt: now },
+      scope: "global",
+    });
   }
   if (g.content) {
-    actions.push({ type: "SET_CONTENT", input: { content: g.content, updatedAt: now }, scope: "global" });
+    actions.push({
+      type: "SET_CONTENT",
+      input: { content: g.content, updatedAt: now },
+      scope: "global",
+    });
   }
   if (g.status && g.status !== "DRAFT") {
-    actions.push({ type: "SET_STATUS", input: { status: g.status }, scope: "global" });
+    actions.push({
+      type: "SET_STATUS",
+      input: { status: g.status },
+      scope: "global",
+    });
   }
   if (g.provenance) {
     actions.push({
@@ -206,28 +239,61 @@ export function buildKnowledgeNoteActions(state) {
   for (const t of g.topics ?? []) {
     const name = typeof t === "string" ? t : t.name;
     if (name) {
-      actions.push({ type: "ADD_TOPIC", input: { id: genId("topic"), name }, scope: "global" });
+      actions.push({
+        type: "ADD_TOPIC",
+        input: { id: genId("topic"), name },
+        scope: "global",
+      });
     }
   }
 
   const stringFields = [
-    "scope", "confidence", "severity", "editor", "modelId", "model",
-    "version", "filePath", "computes", "context", "decisionStatus",
-    "sourceType", "targetType", "relationType", "cardinality",
-    "errorMessage", "rootCause", "correctPattern",
+    "scope",
+    "confidence",
+    "severity",
+    "editor",
+    "modelId",
+    "model",
+    "version",
+    "filePath",
+    "computes",
+    "context",
+    "decisionStatus",
+    "sourceType",
+    "targetType",
+    "relationType",
+    "cardinality",
+    "errorMessage",
+    "rootCause",
+    "correctPattern",
   ];
   for (const f of stringFields) {
     if (g[f]) {
-      actions.push({ type: "SET_METADATA_FIELD", input: { field: f, value: g[f], updatedAt: now }, scope: "global" });
+      actions.push({
+        type: "SET_METADATA_FIELD",
+        input: { field: f, value: g[f], updatedAt: now },
+        scope: "global",
+      });
     }
   }
   const listFields = [
-    "modules", "models", "hooksUsed", "dispatchTargets",
-    "inputs", "outputs", "consumedBy", "alternatives", "consequences",
+    "modules",
+    "models",
+    "hooksUsed",
+    "dispatchTargets",
+    "inputs",
+    "outputs",
+    "consumedBy",
+    "alternatives",
+    "consequences",
   ];
   for (const f of listFields) {
     if (Array.isArray(g[f]) && g[f].length > 0) {
-      actions.push({ type: "SET_METADATA_LIST_FIELD", input: { field: f, values: g[f], updatedAt: now }, scope: "global" });
+      actions.push({
+        type: "SET_METADATA_LIST_FIELD",
+        input: { field: f, values: g[f], updatedAt: now },
+        scope: "global",
+      });
     }
   }
 
@@ -237,20 +303,26 @@ export function buildKnowledgeNoteActions(state) {
 export function buildMocActions(state) {
   const g = state.global ?? {};
   const now = new Date().toISOString();
-  const actions = [{
-    type: "CREATE_MOC",
-    input: {
-      title: g.title ?? "Untitled MOC",
-      description: g.description ?? "",
-      orientation: g.orientation ?? "",
-      tier: g.tier ?? "TOPIC",
-      parentRef: g.parentRef ?? null,
-      createdAt: g.createdAt ?? now,
+  const actions = [
+    {
+      type: "CREATE_MOC",
+      input: {
+        title: g.title ?? "Untitled MOC",
+        description: g.description ?? "",
+        orientation: g.orientation ?? "",
+        tier: g.tier ?? "TOPIC",
+        parentRef: g.parentRef ?? null,
+        createdAt: g.createdAt ?? now,
+      },
+      scope: "global",
     },
-    scope: "global",
-  }];
+  ];
   for (const q of g.openQuestions ?? []) {
-    actions.push({ type: "ADD_OPEN_QUESTION", input: { question: q }, scope: "global" });
+    actions.push({
+      type: "ADD_OPEN_QUESTION",
+      input: { question: q },
+      scope: "global",
+    });
   }
   return actions;
 }
@@ -276,10 +348,18 @@ export function buildSourceActions(state) {
     });
   }
   if (g.status && g.status !== "INBOX") {
-    actions.push({ type: "SET_SOURCE_STATUS", input: { status: g.status }, scope: "global" });
+    actions.push({
+      type: "SET_SOURCE_STATUS",
+      input: { status: g.status },
+      scope: "global",
+    });
   }
   for (const ref of g.extractedClaims ?? []) {
-    actions.push({ type: "ADD_EXTRACTED_CLAIM", input: { claimRef: ref }, scope: "global" });
+    actions.push({
+      type: "ADD_EXTRACTED_CLAIM",
+      input: { claimRef: ref },
+      scope: "global",
+    });
   }
   if (g.extractionStats) {
     actions.push({

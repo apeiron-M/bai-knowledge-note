@@ -1,18 +1,18 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
-  isSourceDocument,
-  ingestSource,
-  setSourceStatus,
   addExtractedClaim,
-  recordExtractionStats,
-  IngestSourceInputSchema,
-  SetSourceStatusInputSchema,
   AddExtractedClaimInputSchema,
+  ingestSource,
+  IngestSourceInputSchema,
+  isSourceDocument,
+  recordExtractionStats,
   RecordExtractionStatsInputSchema,
+  reducer,
+  setSourceStatus,
+  SetSourceStatusInputSchema,
+  utils,
 } from "document-models/source/v1";
+import { describe, expect, it } from "vitest";
 
 describe("SourceManagementOperations", () => {
   it("should handle ingestSource operation", () => {

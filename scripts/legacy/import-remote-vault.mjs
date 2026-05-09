@@ -35,7 +35,10 @@ function getArg(name, fallback) {
 const DRIVE_ID = getArg("--drive-id", null);
 const BACKUP_DIR = getArg(
   "--backup-dir",
-  path.join(path.dirname(new URL(import.meta.url).pathname), "remote-knowledge-vault"),
+  path.join(
+    path.dirname(new URL(import.meta.url).pathname),
+    "remote-knowledge-vault",
+  ),
 );
 const MCP_URL = "http://localhost:4001/mcp";
 
@@ -181,10 +184,24 @@ function buildKnowledgeNoteActions(state) {
 
   // Metadata fields (string fields)
   const metadataFields = [
-    "scope", "confidence", "severity", "editor", "modelId", "model",
-    "version", "filePath", "computes", "context", "decisionStatus",
-    "sourceType", "targetType", "relationType", "cardinality",
-    "errorMessage", "rootCause", "correctPattern",
+    "scope",
+    "confidence",
+    "severity",
+    "editor",
+    "modelId",
+    "model",
+    "version",
+    "filePath",
+    "computes",
+    "context",
+    "decisionStatus",
+    "sourceType",
+    "targetType",
+    "relationType",
+    "cardinality",
+    "errorMessage",
+    "rootCause",
+    "correctPattern",
   ];
   for (const field of metadataFields) {
     if (g[field]) {
@@ -198,8 +215,15 @@ function buildKnowledgeNoteActions(state) {
 
   // Metadata list fields
   const listFields = [
-    "modules", "models", "hooksUsed", "dispatchTargets",
-    "inputs", "outputs", "consumedBy", "alternatives", "consequences",
+    "modules",
+    "models",
+    "hooksUsed",
+    "dispatchTargets",
+    "inputs",
+    "outputs",
+    "consumedBy",
+    "alternatives",
+    "consequences",
   ];
   for (const field of listFields) {
     if (g[field] && Array.isArray(g[field]) && g[field].length > 0) {
@@ -332,7 +356,9 @@ async function main() {
       (f) => f.parentFolder === null || sortedIds.has(f.parentFolder),
     );
     if (batch.length === 0) {
-      console.warn(`  Circular/orphan folders: ${remaining.map((f) => f.name).join(", ")}`);
+      console.warn(
+        `  Circular/orphan folders: ${remaining.map((f) => f.name).join(", ")}`,
+      );
       break;
     }
     sorted.push(...batch);
@@ -373,7 +399,7 @@ async function main() {
     const existing = liveFolders.find(
       (n) =>
         n.name === folder.name &&
-        ((parentId ?? null) === (n.parentFolder ?? null)),
+        (parentId ?? null) === (n.parentFolder ?? null),
     );
     if (existing) {
       oldFolderIdToNew.set(folder.id, existing.id);
@@ -407,7 +433,7 @@ async function main() {
       const newFolder = liveFolders.find(
         (n) =>
           n.name === folder.name &&
-          ((parentId ?? null) === (n.parentFolder ?? null)),
+          (parentId ?? null) === (n.parentFolder ?? null),
       );
 
       if (newFolder) {
@@ -422,7 +448,9 @@ async function main() {
     }
   }
 
-  console.log(`\nFolders: ${oldFolderIdToNew.size}/${folderStructure.length}\n`);
+  console.log(
+    `\nFolders: ${oldFolderIdToNew.size}/${folderStructure.length}\n`,
+  );
 
   // ─── Phase 1: Create documents ───
   console.log("=== Phase 1: Creating documents ===\n");
@@ -440,13 +468,19 @@ async function main() {
     try {
       const existing = readJson(idMapPath);
       for (const [oldId, newId] of Object.entries(existing)) {
-        if (typeof newId === "string" && newId.length > 0 && !newId.startsWith("dry-")) {
+        if (
+          typeof newId === "string" &&
+          newId.length > 0 &&
+          !newId.startsWith("dry-")
+        ) {
           oldIdToNew.set(oldId, newId);
           preExistingCount++;
         }
       }
       if (preExistingCount > 0) {
-        console.log(`Loaded ${preExistingCount} pre-existing mapping(s) from previous run; will skip those docs.\n`);
+        console.log(
+          `Loaded ${preExistingCount} pre-existing mapping(s) from previous run; will skip those docs.\n`,
+        );
       }
     } catch (err) {
       console.warn(`Could not read existing id-mapping.json: ${err.message}\n`);
@@ -463,7 +497,14 @@ async function main() {
       !SKIP_TYPES.has(d.documentType),
   );
   const orderedEntries = [
-    ...docEntries.filter((d) => ["bai/knowledge-graph", "bai/vault-config", "bai/health-report", "bai/pipeline-queue"].includes(d.documentType)),
+    ...docEntries.filter((d) =>
+      [
+        "bai/knowledge-graph",
+        "bai/vault-config",
+        "bai/health-report",
+        "bai/pipeline-queue",
+      ].includes(d.documentType),
+    ),
     ...docEntries.filter((d) => d.documentType === "bai/knowledge-note"),
     ...docEntries.filter((d) => d.documentType === "bai/source"),
     ...docEntries.filter((d) => d.documentType === "bai/research-claim"),
@@ -495,7 +536,10 @@ async function main() {
     // Phase 2 can re-resolve them against the now-larger map.
     const alreadyImported = oldIdToNew.has(doc.id);
     if (alreadyImported) {
-      if (entry.documentType === "bai/knowledge-note" && state.global?.links?.length > 0) {
+      if (
+        entry.documentType === "bai/knowledge-note" &&
+        state.global?.links?.length > 0
+      ) {
         linkQueue.push({
           oldDocId: doc.id,
           links: state.global.links.map((l) => ({
@@ -578,7 +622,9 @@ async function main() {
           break;
       }
     } catch (err) {
-      console.error(`${progress} ACTION BUILD ERROR: ${entry.name} — ${err.message}`);
+      console.error(
+        `${progress} ACTION BUILD ERROR: ${entry.name} — ${err.message}`,
+      );
       results.failed++;
       continue;
     }
@@ -632,7 +678,9 @@ async function main() {
   // Save ID mapping
   const mapPath = path.join(BACKUP_DIR, "id-mapping.json");
   writeJson(mapPath, Object.fromEntries(oldIdToNew));
-  console.log(`\nSaved ID mapping to ${mapPath} (${oldIdToNew.size} entries)\n`);
+  console.log(
+    `\nSaved ID mapping to ${mapPath} (${oldIdToNew.size} entries)\n`,
+  );
 
   if (DRY_RUN) {
     console.log("Dry run complete. No documents created.\n");
@@ -671,7 +719,10 @@ async function main() {
 
     if (linkActions.length > 0) {
       try {
-        await mcpCall("addActions", { documentId: newDocId, actions: linkActions });
+        await mcpCall("addActions", {
+          documentId: newDocId,
+          actions: linkActions,
+        });
         await delay(THROTTLE_MS);
       } catch (err) {
         console.error(`Link error for ${newDocId}: ${err.message}`);
@@ -730,7 +781,10 @@ async function main() {
 
     if (refActions.length > 0) {
       try {
-        await mcpCall("addActions", { documentId: newDocId, actions: refActions });
+        await mcpCall("addActions", {
+          documentId: newDocId,
+          actions: refActions,
+        });
         await delay(THROTTLE_MS);
       } catch (err) {
         console.error(`MOC ref error for ${newDocId}: ${err.message}`);

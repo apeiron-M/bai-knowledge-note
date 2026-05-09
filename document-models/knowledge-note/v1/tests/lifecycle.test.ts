@@ -1,20 +1,20 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
-  isKnowledgeNoteDocument,
-  submitForReview,
   approveNote,
-  rejectNote,
-  archiveNote,
-  restoreNote,
-  SubmitForReviewInputSchema,
   ApproveNoteInputSchema,
-  RejectNoteInputSchema,
+  archiveNote,
   ArchiveNoteInputSchema,
+  isKnowledgeNoteDocument,
+  reducer,
+  rejectNote,
+  RejectNoteInputSchema,
+  restoreNote,
   RestoreNoteInputSchema,
+  submitForReview,
+  SubmitForReviewInputSchema,
+  utils,
 } from "document-models/knowledge-note/v1";
+import { describe, expect, it } from "vitest";
 
 describe("LifecycleOperations", () => {
   it("should handle submitForReview operation", () => {

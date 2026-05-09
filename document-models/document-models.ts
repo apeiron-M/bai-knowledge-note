@@ -1,17 +1,21 @@
-import type { DocumentModelModule } from "document-model";
-import { Derivation as DerivationV1 } from "./derivation/v1/module.js";
-import { HealthReport as HealthReportV1 } from "./health-report/v1/module.js";
-import { KnowledgeGraph as KnowledgeGraphV1 } from "./knowledge-graph/v1/module.js";
-import { KnowledgeNote as KnowledgeNoteV1 } from "./knowledge-note/v1/module.js";
-import { Moc as MocV1 } from "./moc/v1/module.js";
-import { Observation as ObservationV1 } from "./observation/v1/module.js";
-import { PipelineQueue as PipelineQueueV1 } from "./pipeline-queue/v1/module.js";
-import { ResearchClaim as ResearchClaimV1 } from "./research-claim/v1/module.js";
-import { Source as SourceV1 } from "./source/v1/module.js";
-import { Tension as TensionV1 } from "./tension/v1/module.js";
-import { VaultConfig as VaultConfigV1 } from "./vault-config/v1/module.js";
+import { Derivation as DerivationV1 } from "document-models/derivation/v1";
+import { HealthReport as HealthReportV1 } from "document-models/health-report/v1";
+import { KnowledgeGraph as KnowledgeGraphV1 } from "document-models/knowledge-graph/v1";
+import { KnowledgeNote as KnowledgeNoteV1 } from "document-models/knowledge-note/v1";
+import { Moc as MocV1 } from "document-models/moc/v1";
+import { Observation as ObservationV1 } from "document-models/observation/v1";
+import { PipelineQueue as PipelineQueueV1 } from "document-models/pipeline-queue/v1";
+import { ResearchClaim as ResearchClaimV1 } from "document-models/research-claim/v1";
+import { Source as SourceV1 } from "document-models/source/v1";
+import { Tension as TensionV1 } from "document-models/tension/v1";
+import { VaultConfig as VaultConfigV1 } from "document-models/vault-config/v1";
 
-export const documentModels: DocumentModelModule<any>[] = [
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
+
+export const documentModels = [
   DerivationV1,
   HealthReportV1,
   KnowledgeGraphV1,
@@ -23,4 +27,4 @@ export const documentModels: DocumentModelModule<any>[] = [
   SourceV1,
   TensionV1,
   VaultConfigV1,
-];
+] as const;

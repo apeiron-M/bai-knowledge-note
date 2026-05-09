@@ -1,7 +1,9 @@
 /**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
  * Factory methods for creating VaultConfigDocument instances
  */
-import type { PHAuthState, PHDocumentState, PHBaseState } from "document-model";
+import type { PHAuthState, PHBaseState, PHDocumentState } from "document-model";
 import { createBaseState, defaultBaseState } from "document-model";
 import type {
   VaultConfigDocument,
@@ -45,7 +47,7 @@ export function createGlobalState(
   return {
     ...defaultGlobalState(),
     ...(state || {}),
-  } as VaultConfigGlobalState;
+  };
 }
 
 export function createLocalState(

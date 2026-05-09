@@ -1,30 +1,34 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
-  SetTitleInputSchema,
-  SetDescriptionInputSchema,
-  SetNoteTypeInputSchema,
-  SetContentInputSchema,
   PatchContentInputSchema,
+  SetContentInputSchema,
+  SetDescriptionInputSchema,
   SetMetadataFieldInputSchema,
   SetMetadataListFieldInputSchema,
+  SetNoteTypeInputSchema,
+  SetTitleInputSchema,
 } from "../schema/zod.js";
 import type {
-  SetTitleInput,
-  SetDescriptionInput,
-  SetNoteTypeInput,
-  SetContentInput,
   PatchContentInput,
+  SetContentInput,
+  SetDescriptionInput,
   SetMetadataFieldInput,
   SetMetadataListFieldInput,
+  SetNoteTypeInput,
+  SetTitleInput,
 } from "../types.js";
 import type {
-  SetTitleAction,
-  SetDescriptionAction,
-  SetNoteTypeAction,
-  SetContentAction,
   PatchContentAction,
+  SetContentAction,
+  SetDescriptionAction,
   SetMetadataFieldAction,
   SetMetadataListFieldAction,
+  SetNoteTypeAction,
+  SetTitleAction,
 } from "./actions.js";
 
 export const setTitle = (input: SetTitleInput) =>

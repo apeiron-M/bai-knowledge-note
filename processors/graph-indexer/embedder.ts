@@ -128,7 +128,7 @@ export async function getExtractor(): Promise<FeatureExtractionPipeline> {
         "Supabase/gte-small",
         { dtype: "q8" },
       );
-      extractor = ext as FeatureExtractionPipeline;
+      extractor = ext;
       loading = null;
       console.log(
         `[Embedder] Model loaded: Supabase/gte-small (q8) from ${modelHost}`,

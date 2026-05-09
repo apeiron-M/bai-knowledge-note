@@ -1,21 +1,25 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
-  CreateObservationInputSchema,
-  PromoteObservationInputSchema,
-  ImplementObservationInputSchema,
   ArchiveObservationInputSchema,
+  CreateObservationInputSchema,
+  ImplementObservationInputSchema,
+  PromoteObservationInputSchema,
 } from "../schema/zod.js";
 import type {
-  CreateObservationInput,
-  PromoteObservationInput,
-  ImplementObservationInput,
   ArchiveObservationInput,
+  CreateObservationInput,
+  ImplementObservationInput,
+  PromoteObservationInput,
 } from "../types.js";
 import type {
-  CreateObservationAction,
-  PromoteObservationAction,
-  ImplementObservationAction,
   ArchiveObservationAction,
+  CreateObservationAction,
+  ImplementObservationAction,
+  PromoteObservationAction,
 } from "./actions.js";
 
 export const createObservation = (input: CreateObservationInput) =>

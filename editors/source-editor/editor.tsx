@@ -1,14 +1,11 @@
 import { useState } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
-import {
-  useSelectedSourceDocument,
-  actions,
-} from "../../document-models/source/index.js";
+import { useSelectedSourceDocument, actions } from "document-models/source";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { useFileNodesInSelectedDrive } from "@powerhousedao/reactor-browser";
 import { generateId } from "document-model/core";
 import { usePipelineQueueDocumentById } from "../../document-models/pipeline-queue/v1/hooks.js";
-import { actions as pipelineActions } from "../../document-models/pipeline-queue/index.js";
+import { actions as pipelineActions } from "document-models/pipeline-queue";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 
 const SOURCE_TYPES = [

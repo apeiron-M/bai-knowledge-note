@@ -52,10 +52,7 @@ export async function ensureGraphDoc(
       );
     }
   } catch (err: unknown) {
-    console.error(
-      `[KnowledgeGraphSubgraph] Failed to ensure graph doc:`,
-      err,
-    );
+    console.error(`[KnowledgeGraphSubgraph] Failed to ensure graph doc:`, err);
     // Don't block queries if this fails — processor data still works
   }
 }

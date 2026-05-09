@@ -1,48 +1,52 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { type SignalDispatch } from "document-model";
+import type { PipelineQueueGlobalState } from "../types.js";
 import type {
   AddTaskAction,
-  AssignTaskAction,
   AdvancePhaseAction,
+  AssignTaskAction,
+  BlockTaskAction,
   CompleteTaskAction,
   FailTaskAction,
-  BlockTaskAction,
   UnblockTaskAction,
 } from "./actions.js";
-import type { PipelineQueueState } from "../types.js";
 
 export interface PipelineQueueQueueManagementOperations {
   addTaskOperation: (
-    state: PipelineQueueState,
+    state: PipelineQueueGlobalState,
     action: AddTaskAction,
     dispatch?: SignalDispatch,
   ) => void;
   assignTaskOperation: (
-    state: PipelineQueueState,
+    state: PipelineQueueGlobalState,
     action: AssignTaskAction,
     dispatch?: SignalDispatch,
   ) => void;
   advancePhaseOperation: (
-    state: PipelineQueueState,
+    state: PipelineQueueGlobalState,
     action: AdvancePhaseAction,
     dispatch?: SignalDispatch,
   ) => void;
   completeTaskOperation: (
-    state: PipelineQueueState,
+    state: PipelineQueueGlobalState,
     action: CompleteTaskAction,
     dispatch?: SignalDispatch,
   ) => void;
   failTaskOperation: (
-    state: PipelineQueueState,
+    state: PipelineQueueGlobalState,
     action: FailTaskAction,
     dispatch?: SignalDispatch,
   ) => void;
   blockTaskOperation: (
-    state: PipelineQueueState,
+    state: PipelineQueueGlobalState,
     action: BlockTaskAction,
     dispatch?: SignalDispatch,
   ) => void;
   unblockTaskOperation: (
-    state: PipelineQueueState,
+    state: PipelineQueueGlobalState,
     action: UnblockTaskAction,
     dispatch?: SignalDispatch,
   ) => void;

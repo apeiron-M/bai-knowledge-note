@@ -1,7 +1,7 @@
 import { useMemo } from "react";
 import { generateId } from "document-model/core";
 import { useFileNodesInSelectedDrive } from "@powerhousedao/reactor-browser";
-import type { KnowledgeGraphDocument } from "../../../document-models/knowledge-graph/index.js";
+import type { KnowledgeGraphDocument } from "document-models/knowledge-graph";
 import { useDocumentByIdSafe } from "./use-documents-safe.js";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 

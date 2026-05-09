@@ -1,8 +1,8 @@
+import type { KnowledgeGraphNodesOperations } from "document-models/knowledge-graph/v1";
 import {
   DuplicateNodeError,
   NodeNotFoundError,
 } from "../../gen/nodes/error.js";
-import type { KnowledgeGraphNodesOperations } from "document-models/knowledge-graph/v1";
 
 export const knowledgeGraphNodesOperations: KnowledgeGraphNodesOperations = {
   addNodeOperation(state, action) {

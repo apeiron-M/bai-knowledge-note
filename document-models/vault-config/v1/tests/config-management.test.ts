@@ -1,26 +1,26 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
-  isVaultConfigDocument,
-  initializeConfig,
-  updateDimension,
-  updateVocabulary,
-  updatePipelineConfig,
-  updateMaintenanceThreshold,
   addExtractionCategory,
-  toggleExtractionCategory,
-  toggleFeature,
-  InitializeConfigInputSchema,
-  UpdateDimensionInputSchema,
-  UpdateVocabularyInputSchema,
-  UpdatePipelineConfigInputSchema,
-  UpdateMaintenanceThresholdInputSchema,
   AddExtractionCategoryInputSchema,
+  initializeConfig,
+  InitializeConfigInputSchema,
+  isVaultConfigDocument,
+  reducer,
+  toggleExtractionCategory,
   ToggleExtractionCategoryInputSchema,
+  toggleFeature,
   ToggleFeatureInputSchema,
+  updateDimension,
+  UpdateDimensionInputSchema,
+  updateMaintenanceThreshold,
+  UpdateMaintenanceThresholdInputSchema,
+  updatePipelineConfig,
+  UpdatePipelineConfigInputSchema,
+  updateVocabulary,
+  UpdateVocabularyInputSchema,
+  utils,
 } from "document-models/vault-config/v1";
+import { describe, expect, it } from "vitest";
 
 describe("ConfigManagementOperations", () => {
   it("should handle initializeConfig operation", () => {

@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { Reducer, StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model";
+import { createReducer, isDocumentAction } from "document-model";
 import type { VaultConfigPHState } from "document-models/vault-config/v1";
 
 import { vaultConfigConfigManagementOperations } from "../src/reducers/config-management.js";
 
 import {
-  InitializeConfigInputSchema,
-  UpdateDimensionInputSchema,
-  UpdateVocabularyInputSchema,
-  UpdatePipelineConfigInputSchema,
-  UpdateMaintenanceThresholdInputSchema,
   AddExtractionCategoryInputSchema,
+  InitializeConfigInputSchema,
   ToggleExtractionCategoryInputSchema,
   ToggleFeatureInputSchema,
+  UpdateDimensionInputSchema,
+  UpdateMaintenanceThresholdInputSchema,
+  UpdatePipelineConfigInputSchema,
+  UpdateVocabularyInputSchema,
 } from "./schema/zod.js";
 
 const stateReducer: StateReducer<VaultConfigPHState> = (

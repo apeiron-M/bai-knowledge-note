@@ -1,12 +1,12 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
   isKnowledgeNoteDocument,
+  reducer,
   setProvenance,
   SetProvenanceInputSchema,
+  utils,
 } from "document-models/knowledge-note/v1";
+import { describe, expect, it } from "vitest";
 
 describe("ProvenanceOperations", () => {
   it("should handle setProvenance operation", () => {

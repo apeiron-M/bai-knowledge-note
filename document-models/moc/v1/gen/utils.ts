@@ -1,19 +1,23 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { DocumentModelUtils } from "document-model";
 import {
   baseCreateDocument,
-  baseSaveToFileHandle,
   baseLoadFromInput,
+  baseSaveToFileHandle,
   defaultBaseState,
   generateId,
 } from "document-model";
-import { reducer } from "./reducer.js";
-import { mocDocumentType } from "./document-type.js";
 import {
   assertIsMocDocument,
   assertIsMocState,
   isMocDocument,
   isMocState,
 } from "./document-schema.js";
+import { mocDocumentType } from "./document-type.js";
+import { reducer } from "./reducer.js";
 import type { MocGlobalState, MocLocalState, MocPHState } from "./types.js";
 
 export const initialGlobalState: MocGlobalState = {

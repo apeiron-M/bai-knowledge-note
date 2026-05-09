@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { Reducer, StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model";
+import { createReducer, isDocumentAction } from "document-model";
 import type { TensionPHState } from "document-models/tension/v1";
 
 import { tensionTensionManagementOperations } from "../src/reducers/tension-management.js";
 
 import {
-  CreateTensionInputSchema,
-  ResolveTensionInputSchema,
-  DissolveTensionInputSchema,
   AddInvolvedRefInputSchema,
+  CreateTensionInputSchema,
+  DissolveTensionInputSchema,
+  ResolveTensionInputSchema,
 } from "./schema/zod.js";
 
 const stateReducer: StateReducer<TensionPHState> = (

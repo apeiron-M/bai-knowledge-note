@@ -3,7 +3,7 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   useSelectedKnowledgeNoteDocument,
   actions,
-} from "../../document-models/knowledge-note/index.js";
+} from "document-models/knowledge-note";
 import { StatusBar } from "./components/status-bar.js";
 import { TopicsBar } from "./components/topics-bar.js";
 import { LinksSection } from "./components/links-section.js";
@@ -49,8 +49,8 @@ export default function Editor() {
         <div className="text-center text-sm">
           <div>Loading note…</div>
           <div className="mt-1 text-[11px]">
-            If this persists, the document may not have synced from the
-            reactor yet — try refreshing.
+            If this persists, the document may not have synced from the reactor
+            yet — try refreshing.
           </div>
         </div>
       </div>

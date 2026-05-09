@@ -25,17 +25,26 @@ import os from "node:os";
 import path from "node:path";
 
 const args = process.argv.slice(2);
-const get = (n, fb) => { const i = args.indexOf(n); return i !== -1 ? args[i + 1] : fb; };
+const get = (n, fb) => {
+  const i = args.indexOf(n);
+  return i !== -1 ? args[i + 1] : fb;
+};
 const PROFILE = get("--profile", "local");
 const DRIVE = get("--drive", null);
 const EXPORT_DIR = get("--export", null);
 if (!DRIVE || !EXPORT_DIR) {
-  console.error("Usage: node scripts/relink.mjs --profile <name> --drive <id|slug> --export <dir>");
+  console.error(
+    "Usage: node scripts/relink.mjs --profile <name> --drive <id|slug> --export <dir>",
+  );
   process.exit(2);
 }
 
 function gqlUrlFromProfile(profile) {
-  const out = execFileSync("switchboard", ["config", "list", "--format", "json"], { encoding: "utf-8" });
+  const out = execFileSync(
+    "switchboard",
+    ["config", "list", "--format", "json"],
+    { encoding: "utf-8" },
+  );
   const list = JSON.parse(out);
   const hit = list.find((p) => p.name === profile);
   if (!hit) throw new Error(`profile '${profile}' not found`);
@@ -68,20 +77,44 @@ function listPhd(dir) {
 
 function readPhdHeader(phdPath) {
   // Use unzip -p to stream a single file from the archive without extracting.
-  const out = spawnSync("unzip", ["-p", phdPath, "header.json"], { encoding: "utf-8" });
-  if (out.status !== 0) throw new Error(`unzip failed for ${phdPath}: ${out.stderr}`);
+  const out = spawnSync("unzip", ["-p", phdPath, "header.json"], {
+    encoding: "utf-8",
+  });
+  if (out.status !== 0)
+    throw new Error(`unzip failed for ${phdPath}: ${out.stderr}`);
   return JSON.parse(out.stdout);
 }
 
 function applyActions(profile, docId, actions) {
   if (!actions.length) return;
-  const tmp = path.join(os.tmpdir(), `relink-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`);
+  const tmp = path.join(
+    os.tmpdir(),
+    `relink-${Date.now()}-${Math.random().toString(36).slice(2, 8)}.json`,
+  );
   fs.writeFileSync(tmp, JSON.stringify(actions));
   try {
-    const r = spawnSync("switchboard", ["--profile", profile, "docs", "apply", docId, "--file", tmp, "--wait", "--format", "json"], { encoding: "utf-8" });
-    if (r.status !== 0) throw new Error(`docs apply failed: ${r.stderr || r.stdout}`);
+    const r = spawnSync(
+      "switchboard",
+      [
+        "--profile",
+        profile,
+        "docs",
+        "apply",
+        docId,
+        "--file",
+        tmp,
+        "--wait",
+        "--format",
+        "json",
+      ],
+      { encoding: "utf-8" },
+    );
+    if (r.status !== 0)
+      throw new Error(`docs apply failed: ${r.stderr || r.stdout}`);
   } finally {
-    try { fs.unlinkSync(tmp); } catch {}
+    try {
+      fs.unlinkSync(tmp);
+    } catch {}
   }
 }
 
@@ -112,37 +145,61 @@ async function main() {
   console.log(`  remote ids: ${allRemoteIds.size}`);
 
   // Step 2: read target drive nodes → local (id, name, type)
-  const drive = (await gql(url, `query($id:String!){document(identifier:$id){document{state}}}`, { id: DRIVE }))
-    .document.document;
+  const drive = (
+    await gql(
+      url,
+      `query($id:String!){document(identifier:$id){document{state}}}`,
+      { id: DRIVE },
+    )
+  ).document.document;
   const nodes = drive.state.global.nodes ?? [];
   const fileNodes = nodes.filter((n) => n.kind === "file");
   console.log(`  local files: ${fileNodes.length}`);
 
   // Step 3: build remote → local map by (type, name)
   const r2l = new Map();
-  let matched = 0, missingLocal = 0;
+  let matched = 0,
+    missingLocal = 0;
   for (const n of fileNodes) {
     const key = `${n.documentType}::${n.name}`;
     const remoteId = remoteByKey.get(key);
-    if (remoteId) { r2l.set(remoteId, n.id); matched++; }
-    else { missingLocal++; }
+    if (remoteId) {
+      r2l.set(remoteId, n.id);
+      matched++;
+    } else {
+      missingLocal++;
+    }
   }
   const localIds = new Set(fileNodes.map((n) => n.id));
-  console.log(`  matched remote→local: ${matched} (no remote match for ${missingLocal} local nodes)`);
+  console.log(
+    `  matched remote→local: ${matched} (no remote match for ${missingLocal} local nodes)`,
+  );
 
   // Step 4: walk knowledge-notes, fix links
-  const notes = fileNodes.filter((n) => n.documentType === "bai/knowledge-note");
+  const notes = fileNodes.filter(
+    (n) => n.documentType === "bai/knowledge-note",
+  );
   console.log(`\nrelinking ${notes.length} knowledge-notes...`);
-  let alreadyLocal = 0, repointed = 0, unresolvable = 0, docsTouched = 0;
+  let alreadyLocal = 0,
+    repointed = 0,
+    unresolvable = 0,
+    docsTouched = 0;
 
   for (let i = 0; i < notes.length; i++) {
     const n = notes[i];
     let doc;
     try {
-      doc = (await gql(url, `query($id:String!){document(identifier:$id){document{state}}}`, { id: n.id }))
-        .document.document;
+      doc = (
+        await gql(
+          url,
+          `query($id:String!){document(identifier:$id){document{state}}}`,
+          { id: n.id },
+        )
+      ).document.document;
     } catch (e) {
-      console.warn(`  [${i + 1}/${notes.length}] fetch failed ${n.id}: ${e.message}`);
+      console.warn(
+        `  [${i + 1}/${notes.length}] fetch failed ${n.id}: ${e.message}`,
+      );
       continue;
     }
     const links = doc.state?.global?.links ?? [];
@@ -152,10 +209,20 @@ async function main() {
     for (const l of links) {
       const t = l.targetDocumentId;
       if (!t) continue;
-      if (localIds.has(t)) { alreadyLocal++; continue; }
+      if (localIds.has(t)) {
+        alreadyLocal++;
+        continue;
+      }
       const newTarget = r2l.get(t);
-      if (!newTarget) { unresolvable++; continue; }
-      actions.push({ type: "REMOVE_LINK", input: { id: l.id }, scope: "global" });
+      if (!newTarget) {
+        unresolvable++;
+        continue;
+      }
+      actions.push({
+        type: "REMOVE_LINK",
+        input: { id: l.id },
+        scope: "global",
+      });
       actions.push({
         type: "ADD_LINK",
         input: {
@@ -174,10 +241,14 @@ async function main() {
         applyActions(PROFILE, n.id, actions);
         docsTouched++;
         if (docsTouched % 10 === 0) {
-          console.log(`  [${i + 1}/${notes.length}] touched=${docsTouched} repointed=${repointed}`);
+          console.log(
+            `  [${i + 1}/${notes.length}] touched=${docsTouched} repointed=${repointed}`,
+          );
         }
       } catch (e) {
-        console.warn(`  apply failed ${n.id}: ${(e.message || "").slice(0, 200)}`);
+        console.warn(
+          `  apply failed ${n.id}: ${(e.message || "").slice(0, 200)}`,
+        );
       }
     }
   }
@@ -189,4 +260,7 @@ async function main() {
   console.log(`  unresolvable      : ${unresolvable}`);
 }
 
-main().catch((err) => { console.error("Fatal:", err); process.exit(1); });
+main().catch((err) => {
+  console.error("Fatal:", err);
+  process.exit(1);
+});

@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { Reducer, StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model";
+import { createReducer, isDocumentAction } from "document-model";
 import type { ObservationPHState } from "document-models/observation/v1";
 
 import { observationObservationManagementOperations } from "../src/reducers/observation-management.js";
 
 import {
-  CreateObservationInputSchema,
-  PromoteObservationInputSchema,
-  ImplementObservationInputSchema,
   ArchiveObservationInputSchema,
+  CreateObservationInputSchema,
+  ImplementObservationInputSchema,
+  PromoteObservationInputSchema,
 } from "./schema/zod.js";
 
 const stateReducer: StateReducer<ObservationPHState> = (

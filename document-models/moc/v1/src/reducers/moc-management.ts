@@ -1,10 +1,10 @@
-import {
-  DuplicateCoreIdeaError,
-  CoreIdeaNotFoundError,
-  TensionNotFoundError,
-  DuplicateChildMocError,
-} from "../../gen/moc-management/error.js";
 import type { MocMocManagementOperations } from "document-models/moc/v1";
+import {
+  CoreIdeaNotFoundError,
+  DuplicateChildMocError,
+  DuplicateCoreIdeaError,
+  TensionNotFoundError,
+} from "../../gen/moc-management/error.js";
 
 export const mocMocManagementOperations: MocMocManagementOperations = {
   createMocOperation(state, action) {

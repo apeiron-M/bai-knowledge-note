@@ -1,4 +1,8 @@
-import type { PHDocument, PHBaseState } from "document-model";
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
+import type { PHBaseState, PHDocument } from "document-model";
 import type { MocAction } from "./actions.js";
 import type { MocState as MocGlobalState } from "./schema/types.js";
 
@@ -13,9 +17,9 @@ type MocDocument = PHDocument<MocPHState>;
 export * from "./schema/types.js";
 
 export type {
+  MocAction,
+  MocDocument,
   MocGlobalState,
   MocLocalState,
   MocPHState,
-  MocAction,
-  MocDocument,
 };

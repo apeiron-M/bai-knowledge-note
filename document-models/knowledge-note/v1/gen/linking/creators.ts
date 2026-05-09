@@ -1,24 +1,28 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
   AddLinkInputSchema,
-  RemoveLinkInputSchema,
-  UpdateLinkTypeInputSchema,
   AddTopicInputSchema,
+  RemoveLinkInputSchema,
   RemoveTopicInputSchema,
+  UpdateLinkTypeInputSchema,
 } from "../schema/zod.js";
 import type {
   AddLinkInput,
-  RemoveLinkInput,
-  UpdateLinkTypeInput,
   AddTopicInput,
+  RemoveLinkInput,
   RemoveTopicInput,
+  UpdateLinkTypeInput,
 } from "../types.js";
 import type {
   AddLinkAction,
-  RemoveLinkAction,
-  UpdateLinkTypeAction,
   AddTopicAction,
+  RemoveLinkAction,
   RemoveTopicAction,
+  UpdateLinkTypeAction,
 } from "./actions.js";
 
 export const addLink = (input: AddLinkInput) =>

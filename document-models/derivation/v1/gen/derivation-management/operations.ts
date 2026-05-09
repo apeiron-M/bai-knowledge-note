@@ -1,30 +1,34 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { type SignalDispatch } from "document-model";
+import type { DerivationGlobalState } from "../types.js";
 import type {
-  InitializeDerivationAction,
-  AddSignalAction,
   AddReseedEntryAction,
+  AddSignalAction,
+  InitializeDerivationAction,
   UpdateDimensionRationaleAction,
 } from "./actions.js";
-import type { DerivationState } from "../types.js";
 
 export interface DerivationDerivationManagementOperations {
   initializeDerivationOperation: (
-    state: DerivationState,
+    state: DerivationGlobalState,
     action: InitializeDerivationAction,
     dispatch?: SignalDispatch,
   ) => void;
   addSignalOperation: (
-    state: DerivationState,
+    state: DerivationGlobalState,
     action: AddSignalAction,
     dispatch?: SignalDispatch,
   ) => void;
   addReseedEntryOperation: (
-    state: DerivationState,
+    state: DerivationGlobalState,
     action: AddReseedEntryAction,
     dispatch?: SignalDispatch,
   ) => void;
   updateDimensionRationaleOperation: (
-    state: DerivationState,
+    state: DerivationGlobalState,
     action: UpdateDimensionRationaleAction,
     dispatch?: SignalDispatch,
   ) => void;

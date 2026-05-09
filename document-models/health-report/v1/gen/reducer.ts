@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { Reducer, StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model";
+import { createReducer, isDocumentAction } from "document-model";
 import type { HealthReportPHState } from "document-models/health-report/v1";
 
 import { healthReportReportManagementOperations } from "../src/reducers/report-management.js";
 
 import {
-  GenerateReportInputSchema,
   AddCheckInputSchema,
+  GenerateReportInputSchema,
 } from "./schema/zod.js";
 
 const stateReducer: StateReducer<HealthReportPHState> = (

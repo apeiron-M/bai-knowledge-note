@@ -1,12 +1,12 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
   isKnowledgeGraphDocument,
+  reducer,
   syncGraph,
   SyncGraphInputSchema,
+  utils,
 } from "document-models/knowledge-graph/v1";
+import { describe, expect, it } from "vitest";
 
 describe("SyncOperations", () => {
   it("should handle syncGraph operation", () => {

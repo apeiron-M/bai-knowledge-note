@@ -1,7 +1,9 @@
 /**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
  * Factory methods for creating SourceDocument instances
  */
-import type { PHAuthState, PHDocumentState, PHBaseState } from "document-model";
+import type { PHAuthState, PHBaseState, PHDocumentState } from "document-model";
 import { createBaseState, defaultBaseState } from "document-model";
 import type {
   SourceDocument,
@@ -44,7 +46,7 @@ export function createGlobalState(
   return {
     ...defaultGlobalState(),
     ...(state || {}),
-  } as SourceGlobalState;
+  };
 }
 
 export function createLocalState(

@@ -1,10 +1,14 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { Action } from "document-model";
 import type {
-  SubmitForReviewInput,
   ApproveNoteInput,
-  RejectNoteInput,
   ArchiveNoteInput,
+  RejectNoteInput,
   RestoreNoteInput,
+  SubmitForReviewInput,
 } from "../types.js";
 
 export type SubmitForReviewAction = Action & {

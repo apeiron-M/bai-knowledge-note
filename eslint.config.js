@@ -73,7 +73,7 @@ const typescriptLanguageOptions = {
   },
   parserOptions: {
     projectService: {
-      allowDefaultProject: ["eslint.config.js", "vitest.config.ts"],
+      allowDefaultProject: ["eslint.config.js", "vitest.config.ts", "main.tsx"],
     },
     tsconfigRootDir: import.meta.dirname,
     ecmaFeatures: {

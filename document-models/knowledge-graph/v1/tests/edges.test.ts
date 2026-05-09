@@ -1,16 +1,16 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
-  isKnowledgeGraphDocument,
   addEdge,
-  removeEdge,
-  updateEdge,
   AddEdgeInputSchema,
+  isKnowledgeGraphDocument,
+  reducer,
+  removeEdge,
   RemoveEdgeInputSchema,
+  updateEdge,
   UpdateEdgeInputSchema,
+  utils,
 } from "document-models/knowledge-graph/v1";
+import { describe, expect, it } from "vitest";
 
 describe("EdgesOperations", () => {
   it("should handle addEdge operation", () => {

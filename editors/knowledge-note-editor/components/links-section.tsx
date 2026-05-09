@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { generateId } from "document-model/core";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
-import { useKnowledgeNoteDocumentsInSelectedDrive } from "../../../document-models/knowledge-note/index.js";
+import { useKnowledgeNoteDocumentsInSelectedDrive } from "document-models/knowledge-note";
 import type {
   NoteLink,
   LinkType,
@@ -180,7 +180,10 @@ function LinkCard({
 
   if (isEditing) {
     return (
-      <div ref={editRef} className="rounded-lg border border-[#cba6f7]/20 bg-[#cba6f7]/5 p-2">
+      <div
+        ref={editRef}
+        className="rounded-lg border border-[#cba6f7]/20 bg-[#cba6f7]/5 p-2"
+      >
         <p className="mb-1.5 text-[10px] font-medium uppercase text-gray-500">
           Change target document
         </p>
@@ -235,7 +238,13 @@ function LinkCard({
         aria-label="Change target"
         title="Change target document"
       >
-        <svg className="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+        <svg
+          className="h-3.5 w-3.5"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
           <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7" />
           <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z" />
         </svg>

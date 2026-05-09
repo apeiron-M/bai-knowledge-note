@@ -1,12 +1,12 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
   isKnowledgeNoteDocument,
+  reducer,
   setLastViewed,
   SetLastViewedInputSchema,
+  utils,
 } from "document-models/knowledge-note/v1";
+import { describe, expect, it } from "vitest";
 
 describe("LocalOperations", () => {
   it("should handle setLastViewed operation", () => {

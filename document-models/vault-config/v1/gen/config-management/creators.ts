@@ -1,33 +1,37 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
-  InitializeConfigInputSchema,
-  UpdateDimensionInputSchema,
-  UpdateVocabularyInputSchema,
-  UpdatePipelineConfigInputSchema,
-  UpdateMaintenanceThresholdInputSchema,
   AddExtractionCategoryInputSchema,
+  InitializeConfigInputSchema,
   ToggleExtractionCategoryInputSchema,
   ToggleFeatureInputSchema,
+  UpdateDimensionInputSchema,
+  UpdateMaintenanceThresholdInputSchema,
+  UpdatePipelineConfigInputSchema,
+  UpdateVocabularyInputSchema,
 } from "../schema/zod.js";
 import type {
-  InitializeConfigInput,
-  UpdateDimensionInput,
-  UpdateVocabularyInput,
-  UpdatePipelineConfigInput,
-  UpdateMaintenanceThresholdInput,
   AddExtractionCategoryInput,
+  InitializeConfigInput,
   ToggleExtractionCategoryInput,
   ToggleFeatureInput,
+  UpdateDimensionInput,
+  UpdateMaintenanceThresholdInput,
+  UpdatePipelineConfigInput,
+  UpdateVocabularyInput,
 } from "../types.js";
 import type {
-  InitializeConfigAction,
-  UpdateDimensionAction,
-  UpdateVocabularyAction,
-  UpdatePipelineConfigAction,
-  UpdateMaintenanceThresholdAction,
   AddExtractionCategoryAction,
+  InitializeConfigAction,
   ToggleExtractionCategoryAction,
   ToggleFeatureAction,
+  UpdateDimensionAction,
+  UpdateMaintenanceThresholdAction,
+  UpdatePipelineConfigAction,
+  UpdateVocabularyAction,
 } from "./actions.js";
 
 export const initializeConfig = (input: InitializeConfigInput) =>

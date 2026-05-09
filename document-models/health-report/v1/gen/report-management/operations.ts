@@ -1,15 +1,19 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { type SignalDispatch } from "document-model";
-import type { GenerateReportAction, AddCheckAction } from "./actions.js";
-import type { HealthReportState } from "../types.js";
+import type { HealthReportGlobalState } from "../types.js";
+import type { AddCheckAction, GenerateReportAction } from "./actions.js";
 
 export interface HealthReportReportManagementOperations {
   generateReportOperation: (
-    state: HealthReportState,
+    state: HealthReportGlobalState,
     action: GenerateReportAction,
     dispatch?: SignalDispatch,
   ) => void;
   addCheckOperation: (
-    state: HealthReportState,
+    state: HealthReportGlobalState,
     action: AddCheckAction,
     dispatch?: SignalDispatch,
   ) => void;

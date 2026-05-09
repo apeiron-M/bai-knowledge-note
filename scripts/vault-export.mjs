@@ -34,9 +34,15 @@ const PROFILE = getArg("--profile", "remote-dev");
 const DRIVE = getArg("--drive", "powerhouse-vault");
 const OUT_DIR = path.resolve(getArg("--out", "./scripts/vault-dump"));
 
-function ensureDir(d) { if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true }); }
-function writeJson(p, data) { fs.writeFileSync(p, JSON.stringify(data, null, 2)); }
-function sanitize(name) { return name.replace(/[^a-zA-Z0-9_\-. ]/g, "_").slice(0, 100); }
+function ensureDir(d) {
+  if (!fs.existsSync(d)) fs.mkdirSync(d, { recursive: true });
+}
+function writeJson(p, data) {
+  fs.writeFileSync(p, JSON.stringify(data, null, 2));
+}
+function sanitize(name) {
+  return name.replace(/[^a-zA-Z0-9_\-. ]/g, "_").slice(0, 100);
+}
 
 async function main() {
   const url = resolveProfileUrl(PROFILE);
@@ -131,4 +137,7 @@ async function main() {
   console.log(`  Manifest:  ${path.join(OUT_DIR, "manifest.json")}`);
 }
 
-main().catch((err) => { console.error("Fatal:", err); process.exit(1); });
+main().catch((err) => {
+  console.error("Fatal:", err);
+  process.exit(1);
+});

@@ -1,3 +1,7 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { Manifest } from "document-model";
 import manifestJson from "./powerhouse.manifest.json" with { type: "json" };
 export { documentModels } from "./document-models/document-models.js";

@@ -1,20 +1,20 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
-  isKnowledgeNoteDocument,
   addLink,
-  removeLink,
-  updateLinkType,
-  addTopic,
-  removeTopic,
   AddLinkInputSchema,
-  RemoveLinkInputSchema,
-  UpdateLinkTypeInputSchema,
+  addTopic,
   AddTopicInputSchema,
+  isKnowledgeNoteDocument,
+  reducer,
+  removeLink,
+  RemoveLinkInputSchema,
+  removeTopic,
   RemoveTopicInputSchema,
+  updateLinkType,
+  UpdateLinkTypeInputSchema,
+  utils,
 } from "document-models/knowledge-note/v1";
+import { describe, expect, it } from "vitest";
 
 describe("LinkingOperations", () => {
   it("should handle addLink operation", () => {

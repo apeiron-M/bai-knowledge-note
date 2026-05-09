@@ -1,10 +1,14 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
-  GenerateReportInputSchema,
   AddCheckInputSchema,
+  GenerateReportInputSchema,
 } from "../schema/zod.js";
-import type { GenerateReportInput, AddCheckInput } from "../types.js";
-import type { GenerateReportAction, AddCheckAction } from "./actions.js";
+import type { AddCheckInput, GenerateReportInput } from "../types.js";
+import type { AddCheckAction, GenerateReportAction } from "./actions.js";
 
 export const generateReport = (input: GenerateReportInput) =>
   createAction<GenerateReportAction>(

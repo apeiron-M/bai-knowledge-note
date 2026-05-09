@@ -1,21 +1,25 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
-  IngestSourceInputSchema,
-  SetSourceStatusInputSchema,
   AddExtractedClaimInputSchema,
+  IngestSourceInputSchema,
   RecordExtractionStatsInputSchema,
+  SetSourceStatusInputSchema,
 } from "../schema/zod.js";
 import type {
-  IngestSourceInput,
-  SetSourceStatusInput,
   AddExtractedClaimInput,
+  IngestSourceInput,
   RecordExtractionStatsInput,
+  SetSourceStatusInput,
 } from "../types.js";
 import type {
-  IngestSourceAction,
-  SetSourceStatusAction,
   AddExtractedClaimAction,
+  IngestSourceAction,
   RecordExtractionStatsAction,
+  SetSourceStatusAction,
 } from "./actions.js";
 
 export const ingestSource = (input: IngestSourceInput) =>

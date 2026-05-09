@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  reducer,
-  utils,
-  actions,
-} from "document-models/knowledge-note/v1";
+import { reducer, utils, actions } from "document-models/knowledge-note/v1";
 
 // ─── Content Module ──────────────────────────────────────────────────────────
 

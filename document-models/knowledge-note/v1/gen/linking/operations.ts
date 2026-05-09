@@ -1,36 +1,40 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { type SignalDispatch } from "document-model";
+import type { KnowledgeNoteGlobalState } from "../types.js";
 import type {
   AddLinkAction,
-  RemoveLinkAction,
-  UpdateLinkTypeAction,
   AddTopicAction,
+  RemoveLinkAction,
   RemoveTopicAction,
+  UpdateLinkTypeAction,
 } from "./actions.js";
-import type { KnowledgeNoteState } from "../types.js";
 
 export interface KnowledgeNoteLinkingOperations {
   addLinkOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: AddLinkAction,
     dispatch?: SignalDispatch,
   ) => void;
   removeLinkOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: RemoveLinkAction,
     dispatch?: SignalDispatch,
   ) => void;
   updateLinkTypeOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: UpdateLinkTypeAction,
     dispatch?: SignalDispatch,
   ) => void;
   addTopicOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: AddTopicAction,
     dispatch?: SignalDispatch,
   ) => void;
   removeTopicOperation: (
-    state: KnowledgeNoteState,
+    state: KnowledgeNoteGlobalState,
     action: RemoveTopicAction,
     dispatch?: SignalDispatch,
   ) => void;

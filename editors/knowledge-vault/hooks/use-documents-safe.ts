@@ -82,7 +82,9 @@ export function useDocumentsSafe(
   const [docs, setDocs] = useState<PHDocument[]>([]);
   const lastIdsRef = useRef<string>("");
   // Stable string version of the filter so the effect dep is primitive.
-  const typeFilterKey = documentTypes ? documentTypes.slice().sort().join(",") : "";
+  const typeFilterKey = documentTypes
+    ? documentTypes.slice().sort().join(",")
+    : "";
   const overrideKey = idsOverride ? idsOverride.slice().sort().join(",") : "";
 
   useEffect(() => {

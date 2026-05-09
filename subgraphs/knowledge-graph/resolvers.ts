@@ -32,10 +32,7 @@ function withCanonicalDriveIds<T extends Record<string, Resolver>>(
   for (const [name, fn] of Object.entries(resolvers)) {
     out[name] = async (parent, args, ctx, info) => {
       if (args && typeof args.driveId === "string") {
-        const canonical = await resolveCanonicalDriveId(
-          subgraph,
-          args.driveId,
-        );
+        const canonical = await resolveCanonicalDriveId(subgraph, args.driveId);
         args = { ...args, driveId: canonical };
       }
       return fn(parent, args, ctx, info);

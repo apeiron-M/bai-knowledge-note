@@ -1,2 +1,2 @@
 export { mocUpgradeManifest } from "./upgrade-manifest.js";
-export { supportedVersions, latestVersion } from "./versions.js";
+export { latestVersion, supportedVersions } from "./versions.js";

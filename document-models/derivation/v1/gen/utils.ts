@@ -1,19 +1,23 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { DocumentModelUtils } from "document-model";
 import {
   baseCreateDocument,
-  baseSaveToFileHandle,
   baseLoadFromInput,
+  baseSaveToFileHandle,
   defaultBaseState,
   generateId,
 } from "document-model";
-import { reducer } from "./reducer.js";
-import { derivationDocumentType } from "./document-type.js";
 import {
   assertIsDerivationDocument,
   assertIsDerivationState,
   isDerivationDocument,
   isDerivationState,
 } from "./document-schema.js";
+import { derivationDocumentType } from "./document-type.js";
+import { reducer } from "./reducer.js";
 import type {
   DerivationGlobalState,
   DerivationLocalState,

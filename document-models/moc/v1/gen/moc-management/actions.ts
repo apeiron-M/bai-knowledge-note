@@ -1,18 +1,22 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { Action } from "document-model";
 import type {
-  CreateMocInput,
-  UpdateOrientationInput,
-  UpdateDescriptionInput,
-  AddCoreIdeaInput,
-  UpdateCoreIdeaInput,
-  RemoveCoreIdeaInput,
-  ReorderCoreIdeasInput,
-  AddTensionInput,
-  RemoveTensionInput,
-  AddOpenQuestionInput,
-  RemoveOpenQuestionInput,
   AddChildMocInput,
+  AddCoreIdeaInput,
+  AddOpenQuestionInput,
+  AddTensionInput,
+  CreateMocInput,
   RemoveChildMocInput,
+  RemoveCoreIdeaInput,
+  RemoveOpenQuestionInput,
+  RemoveTensionInput,
+  ReorderCoreIdeasInput,
+  UpdateCoreIdeaInput,
+  UpdateDescriptionInput,
+  UpdateOrientationInput,
 } from "../types.js";
 
 export type CreateMocAction = Action & {

@@ -371,3 +371,5 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     }
   }
 }
+
+export { graphIndexerFactoryBuilder } from "./factory.js";

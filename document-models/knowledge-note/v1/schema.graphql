@@ -19,16 +19,6 @@ scalar Amount_Crypto
 scalar Amount
 scalar Upload
 
-type KnowledgeNoteLocalState {
-    lastViewedAt: DateTime
-    personalTags: [PersonalTag!]!
-}
-
-type PersonalTag {
-    id: OID!
-    name: String!
-}
-
 enum NoteStatus {
     DRAFT
     IN_REVIEW
@@ -118,6 +108,16 @@ type LifecycleEvent {
     actor: String
     timestamp: DateTime
     comment: String
+}
+
+type KnowledgeNoteLocalState {
+    lastViewedAt: DateTime
+    personalTags: [PersonalTag!]!
+}
+
+type PersonalTag {
+    id: OID!
+    name: String!
 }
 
 # content

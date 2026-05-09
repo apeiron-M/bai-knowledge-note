@@ -1,10 +1,10 @@
+import type { KnowledgeNoteContentOperations } from "document-models/knowledge-note/v1";
 import {
   DescriptionTooLongError,
-  PatchOutOfBoundsError,
   InvalidMetadataFieldError,
   InvalidMetadataListFieldError,
+  PatchOutOfBoundsError,
 } from "../../gen/content/error.js";
-import type { KnowledgeNoteContentOperations } from "document-models/knowledge-note/v1";
 
 export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
   setTitleOperation(state, action) {

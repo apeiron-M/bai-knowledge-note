@@ -1,24 +1,28 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
-  SubmitForReviewInputSchema,
   ApproveNoteInputSchema,
-  RejectNoteInputSchema,
   ArchiveNoteInputSchema,
+  RejectNoteInputSchema,
   RestoreNoteInputSchema,
+  SubmitForReviewInputSchema,
 } from "../schema/zod.js";
 import type {
-  SubmitForReviewInput,
   ApproveNoteInput,
-  RejectNoteInput,
   ArchiveNoteInput,
+  RejectNoteInput,
   RestoreNoteInput,
+  SubmitForReviewInput,
 } from "../types.js";
 import type {
-  SubmitForReviewAction,
   ApproveNoteAction,
-  RejectNoteAction,
   ArchiveNoteAction,
+  RejectNoteAction,
   RestoreNoteAction,
+  SubmitForReviewAction,
 } from "./actions.js";
 
 export const submitForReview = (input: SubmitForReviewInput) =>

@@ -1,19 +1,23 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { DocumentModelUtils } from "document-model";
 import {
   baseCreateDocument,
-  baseSaveToFileHandle,
   baseLoadFromInput,
+  baseSaveToFileHandle,
   defaultBaseState,
   generateId,
 } from "document-model";
-import { reducer } from "./reducer.js";
-import { researchClaimDocumentType } from "./document-type.js";
 import {
   assertIsResearchClaimDocument,
   assertIsResearchClaimState,
   isResearchClaimDocument,
   isResearchClaimState,
 } from "./document-schema.js";
+import { researchClaimDocumentType } from "./document-type.js";
+import { reducer } from "./reducer.js";
 import type {
   ResearchClaimGlobalState,
   ResearchClaimLocalState,

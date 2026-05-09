@@ -1,20 +1,24 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
-  InitializeDerivationInputSchema,
-  AddSignalInputSchema,
   AddReseedEntryInputSchema,
+  AddSignalInputSchema,
+  InitializeDerivationInputSchema,
   UpdateDimensionRationaleInputSchema,
 } from "../schema/zod.js";
 import type {
-  InitializeDerivationInput,
-  AddSignalInput,
   AddReseedEntryInput,
+  AddSignalInput,
+  InitializeDerivationInput,
   UpdateDimensionRationaleInput,
 } from "../types.js";
 import type {
-  InitializeDerivationAction,
-  AddSignalAction,
   AddReseedEntryAction,
+  AddSignalAction,
+  InitializeDerivationAction,
   UpdateDimensionRationaleAction,
 } from "./actions.js";
 

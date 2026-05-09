@@ -1,10 +1,14 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { type SignalDispatch } from "document-model";
+import type { KnowledgeGraphGlobalState } from "../types.js";
 import type { SyncGraphAction } from "./actions.js";
-import type { KnowledgeGraphState } from "../types.js";
 
 export interface KnowledgeGraphSyncOperations {
   syncGraphOperation: (
-    state: KnowledgeGraphState,
+    state: KnowledgeGraphGlobalState,
     action: SyncGraphAction,
     dispatch?: SignalDispatch,
   ) => void;

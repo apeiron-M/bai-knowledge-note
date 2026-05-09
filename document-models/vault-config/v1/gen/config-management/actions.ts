@@ -1,13 +1,17 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { Action } from "document-model";
 import type {
-  InitializeConfigInput,
-  UpdateDimensionInput,
-  UpdateVocabularyInput,
-  UpdatePipelineConfigInput,
-  UpdateMaintenanceThresholdInput,
   AddExtractionCategoryInput,
+  InitializeConfigInput,
   ToggleExtractionCategoryInput,
   ToggleFeatureInput,
+  UpdateDimensionInput,
+  UpdateMaintenanceThresholdInput,
+  UpdatePipelineConfigInput,
+  UpdateVocabularyInput,
 } from "../types.js";
 
 export type InitializeConfigAction = Action & {

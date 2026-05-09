@@ -19,8 +19,21 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
  */
 
 const SYNC_RACE_PREFIX = "Document not found:";
-const RETRY_DELAY_MS = 500;
-const MAX_RETRIES = 30; // ~15s
+// Connect's <DocumentEditorContainer> calls useSelectedDocument()
+// (throwing variant). When the GraphQL fetch is still in flight, the
+// suspense path returns undefined briefly and that hook throws this:
+const NO_SELECTED_DOC_PREFIX = "There is no selected document";
+const RETRY_DELAY_MS = 1000;
+const MAX_RETRIES = 120; // ~2 minutes — gives WebSocket sync time to deliver
+// hundreds of doc states for large migrated vaults
+
+function isSyncRaceError(message: string | undefined): boolean {
+  if (!message) return false;
+  return (
+    message.startsWith(SYNC_RACE_PREFIX) ||
+    message.startsWith(NO_SELECTED_DOC_PREFIX)
+  );
+}
 
 type State = { err: Error | null; retries: number };
 
@@ -36,7 +49,7 @@ export class DebugErrorBoundary extends Component<
   }
 
   componentDidCatch(err: Error, info: ErrorInfo) {
-    const isSyncRace = err.message?.startsWith(SYNC_RACE_PREFIX);
+    const isSyncRace = isSyncRaceError(err.message);
 
     if (isSyncRace && this.state.retries < MAX_RETRIES) {
       // Schedule a re-mount after the in-browser sync has more time.
@@ -61,7 +74,7 @@ export class DebugErrorBoundary extends Component<
   render() {
     if (!this.state.err) return this.props.children;
 
-    const isSyncRace = this.state.err.message?.startsWith(SYNC_RACE_PREFIX);
+    const isSyncRace = isSyncRaceError(this.state.err.message);
     if (isSyncRace && this.state.retries < MAX_RETRIES) {
       return (
         <div

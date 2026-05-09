@@ -1,19 +1,23 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { DocumentModelUtils } from "document-model";
 import {
   baseCreateDocument,
-  baseSaveToFileHandle,
   baseLoadFromInput,
+  baseSaveToFileHandle,
   defaultBaseState,
   generateId,
 } from "document-model";
-import { reducer } from "./reducer.js";
-import { vaultConfigDocumentType } from "./document-type.js";
 import {
   assertIsVaultConfigDocument,
   assertIsVaultConfigState,
   isVaultConfigDocument,
   isVaultConfigState,
 } from "./document-schema.js";
+import { vaultConfigDocumentType } from "./document-type.js";
+import { reducer } from "./reducer.js";
 import type {
   VaultConfigGlobalState,
   VaultConfigLocalState,

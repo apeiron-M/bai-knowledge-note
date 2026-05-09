@@ -1,35 +1,35 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { Reducer, StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model";
+import { createReducer, isDocumentAction } from "document-model";
 import type { KnowledgeNotePHState } from "document-models/knowledge-note/v1";
 
 import { knowledgeNoteContentOperations } from "../src/reducers/content.js";
-import { knowledgeNoteProvenanceOperations } from "../src/reducers/provenance.js";
-import { knowledgeNoteLinkingOperations } from "../src/reducers/linking.js";
 import { knowledgeNoteLifecycleOperations } from "../src/reducers/lifecycle.js";
+import { knowledgeNoteLinkingOperations } from "../src/reducers/linking.js";
 import { knowledgeNoteLocalOperations } from "../src/reducers/local.js";
+import { knowledgeNoteProvenanceOperations } from "../src/reducers/provenance.js";
 
 import {
-  SetTitleInputSchema,
-  SetDescriptionInputSchema,
-  SetNoteTypeInputSchema,
-  SetContentInputSchema,
+  AddLinkInputSchema,
+  AddTopicInputSchema,
+  ApproveNoteInputSchema,
+  ArchiveNoteInputSchema,
   PatchContentInputSchema,
+  RejectNoteInputSchema,
+  RemoveLinkInputSchema,
+  RemoveTopicInputSchema,
+  RestoreNoteInputSchema,
+  SetContentInputSchema,
+  SetDescriptionInputSchema,
+  SetLastViewedInputSchema,
   SetMetadataFieldInputSchema,
   SetMetadataListFieldInputSchema,
+  SetNoteTypeInputSchema,
   SetProvenanceInputSchema,
-  AddLinkInputSchema,
-  RemoveLinkInputSchema,
-  UpdateLinkTypeInputSchema,
-  AddTopicInputSchema,
-  RemoveTopicInputSchema,
+  SetTitleInputSchema,
   SubmitForReviewInputSchema,
-  ApproveNoteInputSchema,
-  RejectNoteInputSchema,
-  ArchiveNoteInputSchema,
-  RestoreNoteInputSchema,
-  SetLastViewedInputSchema,
+  UpdateLinkTypeInputSchema,
 } from "./schema/zod.js";
 
 const stateReducer: StateReducer<KnowledgeNotePHState> = (

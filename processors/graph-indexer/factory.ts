@@ -6,7 +6,7 @@ import type { ProcessorFilter } from "@powerhousedao/shared/processors";
 import type { PHDocumentHeader } from "document-model";
 import { GraphIndexerProcessor } from "./index.js";
 
-export const graphIndexerProcessorFactory =
+export const graphIndexerFactoryBuilder =
   (module: IProcessorHostModule) =>
   async (driveHeader: PHDocumentHeader): Promise<ProcessorRecord[]> => {
     const namespace = GraphIndexerProcessor.getNamespace(driveHeader.id);
@@ -22,7 +22,11 @@ export const graphIndexerProcessorFactory =
     const filter: ProcessorFilter = {
       branch: ["main"],
       documentId: ["*"],
-      documentType: ["bai/knowledge-note", "bai/moc", "powerhouse/document-drive"],
+      documentType: [
+        "bai/knowledge-note",
+        "bai/moc",
+        "powerhouse/document-drive",
+      ],
       scope: ["global"],
     };
 

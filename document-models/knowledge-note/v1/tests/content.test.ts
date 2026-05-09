@@ -1,24 +1,24 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
   isKnowledgeNoteDocument,
-  setTitle,
-  setDescription,
-  setNoteType,
-  setContent,
   patchContent,
-  setMetadataField,
-  setMetadataListField,
-  SetTitleInputSchema,
-  SetDescriptionInputSchema,
-  SetNoteTypeInputSchema,
-  SetContentInputSchema,
   PatchContentInputSchema,
+  reducer,
+  setContent,
+  SetContentInputSchema,
+  setDescription,
+  SetDescriptionInputSchema,
+  setMetadataField,
   SetMetadataFieldInputSchema,
+  setMetadataListField,
   SetMetadataListFieldInputSchema,
+  setNoteType,
+  SetNoteTypeInputSchema,
+  setTitle,
+  SetTitleInputSchema,
+  utils,
 } from "document-models/knowledge-note/v1";
+import { describe, expect, it } from "vitest";
 
 describe("ContentOperations", () => {
   it("should handle setTitle operation", () => {

@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { Reducer, StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model";
+import { createReducer, isDocumentAction } from "document-model";
 import type { SourcePHState } from "document-models/source/v1";
 
 import { sourceSourceManagementOperations } from "../src/reducers/source-management.js";
 
 import {
-  IngestSourceInputSchema,
-  SetSourceStatusInputSchema,
   AddExtractedClaimInputSchema,
+  IngestSourceInputSchema,
   RecordExtractionStatsInputSchema,
+  SetSourceStatusInputSchema,
 } from "./schema/zod.js";
 
 const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {

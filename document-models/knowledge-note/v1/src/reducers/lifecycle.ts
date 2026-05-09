@@ -1,8 +1,8 @@
+import type { KnowledgeNoteLifecycleOperations } from "document-models/knowledge-note/v1";
 import {
   InvalidStatusTransitionError,
   SelfApprovalError,
 } from "../../gen/lifecycle/error.js";
-import type { KnowledgeNoteLifecycleOperations } from "document-models/knowledge-note/v1";
 
 export const knowledgeNoteLifecycleOperations: KnowledgeNoteLifecycleOperations =
   {

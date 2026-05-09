@@ -1,19 +1,23 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
-  CreateClaimInputSchema,
   AddResearchConnectionInputSchema,
+  CreateClaimInputSchema,
   RemoveResearchConnectionInputSchema,
   UpdateClaimContentInputSchema,
 } from "../schema/zod.js";
 import type {
-  CreateClaimInput,
   AddResearchConnectionInput,
+  CreateClaimInput,
   RemoveResearchConnectionInput,
   UpdateClaimContentInput,
 } from "../types.js";
 import type {
-  CreateClaimAction,
   AddResearchConnectionAction,
+  CreateClaimAction,
   RemoveResearchConnectionAction,
   UpdateClaimContentAction,
 } from "./actions.js";

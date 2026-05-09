@@ -1,18 +1,18 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
+  archiveObservation,
+  ArchiveObservationInputSchema,
+  createObservation,
+  CreateObservationInputSchema,
+  implementObservation,
+  ImplementObservationInputSchema,
+  isObservationDocument,
+  promoteObservation,
+  PromoteObservationInputSchema,
   reducer,
   utils,
-  isObservationDocument,
-  createObservation,
-  promoteObservation,
-  implementObservation,
-  archiveObservation,
-  CreateObservationInputSchema,
-  PromoteObservationInputSchema,
-  ImplementObservationInputSchema,
-  ArchiveObservationInputSchema,
 } from "document-models/observation/v1";
+import { describe, expect, it } from "vitest";
 
 describe("ObservationManagementOperations", () => {
   it("should handle createObservation operation", () => {

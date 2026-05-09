@@ -1,21 +1,21 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { Reducer, StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model";
+import { createReducer, isDocumentAction } from "document-model";
 import type { KnowledgeGraphPHState } from "document-models/knowledge-graph/v1";
 
-import { knowledgeGraphNodesOperations } from "../src/reducers/nodes.js";
 import { knowledgeGraphEdgesOperations } from "../src/reducers/edges.js";
+import { knowledgeGraphNodesOperations } from "../src/reducers/nodes.js";
 import { knowledgeGraphSyncOperations } from "../src/reducers/sync.js";
 
 import {
-  AddNodeInputSchema,
-  RemoveNodeInputSchema,
-  UpdateNodeInputSchema,
   AddEdgeInputSchema,
+  AddNodeInputSchema,
   RemoveEdgeInputSchema,
-  UpdateEdgeInputSchema,
+  RemoveNodeInputSchema,
   SyncGraphInputSchema,
+  UpdateEdgeInputSchema,
+  UpdateNodeInputSchema,
 } from "./schema/zod.js";
 
 const stateReducer: StateReducer<KnowledgeGraphPHState> = (

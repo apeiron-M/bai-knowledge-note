@@ -1,4 +1,8 @@
-import type { PHDocument, PHBaseState } from "document-model";
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
+import type { PHBaseState, PHDocument } from "document-model";
 import type { PipelineQueueAction } from "./actions.js";
 import type { PipelineQueueState as PipelineQueueGlobalState } from "./schema/types.js";
 
@@ -13,9 +17,9 @@ type PipelineQueueDocument = PHDocument<PipelineQueuePHState>;
 export * from "./schema/types.js";
 
 export type {
+  PipelineQueueAction,
+  PipelineQueueDocument,
   PipelineQueueGlobalState,
   PipelineQueueLocalState,
   PipelineQueuePHState,
-  PipelineQueueAction,
-  PipelineQueueDocument,
 };

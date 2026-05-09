@@ -1,92 +1,92 @@
 import type { DocumentModelGlobalState } from "document-model";
 
 export const documentModel: DocumentModelGlobalState = {
-  id: "bai/source",
-  name: "Source",
   author: {
     name: "BAI",
     website: "https://bai.powerhouse.io/",
   },
-  extension: "",
   description:
-    "Ingested source material \u2014 articles, papers, transcripts, and other content that feeds the knowledge extraction pipeline.",
+    "Ingested source material \u2014 articles, papers, transcripts, and other content that feeds the knowledge extraction pipeline",
+  extension: "",
+  id: "bai/source",
+  name: "Source",
   specifications: [
     {
-      state: {
-        local: {
-          schema: "",
-          examples: [],
-          initialValue: "",
-        },
-        global: {
-          schema:
-            "enum SourceType {\n    ARTICLE\n    PAPER\n    BOOK_CHAPTER\n    TRANSCRIPT\n    DOCUMENTATION\n    CONVERSATION\n    WEB_PAGE\n    MANUAL_ENTRY\n}\n\nenum SourceStatus {\n    INBOX\n    EXTRACTING\n    EXTRACTED\n    ARCHIVED\n}\n\ntype SourceProvenance {\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n}\n\ntype ExtractionStats {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime\n    extractedBy: String\n}\n\ntype SourceState {\n    title: String\n    description: String\n    content: String\n    sourceType: SourceType\n    status: SourceStatus\n    provenance: SourceProvenance\n    extractedClaims: [String!]!\n    extractionStats: ExtractionStats\n    createdAt: DateTime\n    createdBy: String\n}",
-          examples: [],
-          initialValue:
-            '{\n    "title": null,\n    "description": null,\n    "content": null,\n    "sourceType": null,\n    "status": "INBOX",\n    "provenance": null,\n    "extractedClaims": [],\n    "extractionStats": null,\n    "createdAt": null,\n    "createdBy": null\n}',
-        },
-      },
+      changeLog: [],
       modules: [
         {
+          description: "Source lifecycle and extraction tracking",
           id: "source-management",
           name: "source-management",
           operations: [
             {
+              description: "Add new source material",
+              errors: [],
+              examples: [],
               id: "ingest-source",
               name: "INGEST_SOURCE",
-              scope: "global",
-              errors: [],
-              schema:
-                "input IngestSourceInput {\n    title: String!\n    content: String!\n    sourceType: SourceType!\n    description: String\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n    createdAt: DateTime!\n    createdBy: String\n}",
               reducer:
                 'state.title = action.input.title;\nstate.content = action.input.content;\nstate.sourceType = action.input.sourceType;\nstate.description = action.input.description || null;\nstate.status = "INBOX";\nstate.createdAt = action.input.createdAt;\nstate.createdBy = action.input.createdBy || null;\nif (action.input.url || action.input.author || action.input.publishedAt) {\n    state.provenance = {\n        url: action.input.url || null,\n        author: action.input.author || null,\n        publishedAt: action.input.publishedAt || null,\n        method: action.input.method || null,\n        tool: action.input.tool || null,\n    };\n}',
-              examples: [],
+              schema:
+                "input IngestSourceInput {\n    title: String!\n    content: String!\n    sourceType: SourceType!\n    description: String\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n    createdAt: DateTime!\n    createdBy: String\n}",
               template: "Add new source material",
-              description: "Add new source material",
+              scope: "global",
             },
             {
+              description: "Transition source status",
+              errors: [],
+              examples: [],
               id: "set-source-status",
               name: "SET_SOURCE_STATUS",
-              scope: "global",
-              errors: [],
+              reducer: "state.status = action.input.status;",
               schema:
                 "input SetSourceStatusInput {\n    status: SourceStatus!\n}",
-              reducer: "state.status = action.input.status;",
-              examples: [],
               template: "Transition source status",
-              description: "Transition source status",
+              scope: "global",
             },
             {
+              description: "Link an extracted claim to this source",
+              errors: [],
+              examples: [],
               id: "add-extracted-claim",
               name: "ADD_EXTRACTED_CLAIM",
-              scope: "global",
-              errors: [],
+              reducer: "state.extractedClaims.push(action.input.claimRef);",
               schema:
                 "input AddExtractedClaimInput {\n    claimRef: String!\n}",
-              reducer: "state.extractedClaims.push(action.input.claimRef);",
-              examples: [],
               template: "Link an extracted claim to this source",
-              description: "Link an extracted claim to this source",
+              scope: "global",
             },
             {
+              description: "Record extraction statistics",
+              errors: [],
+              examples: [],
               id: "record-extraction-stats",
               name: "RECORD_EXTRACTION_STATS",
-              scope: "global",
-              errors: [],
-              schema:
-                "input RecordExtractionStatsInput {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime!\n    extractedBy: String\n}",
               reducer:
                 "state.extractionStats = {\n    claimCount: action.input.claimCount,\n    skippedCount: action.input.skippedCount,\n    skipRate: action.input.skipRate,\n    extractedAt: action.input.extractedAt,\n    extractedBy: action.input.extractedBy || null,\n};",
-              examples: [],
+              schema:
+                "input RecordExtractionStatsInput {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime!\n    extractedBy: String\n}",
               template: "Record extraction statistics",
-              description: "Record extraction statistics",
+              scope: "global",
             },
           ],
-          description: "Source lifecycle and extraction tracking",
         },
       ],
+      state: {
+        global: {
+          examples: [],
+          initialValue:
+            '{\n    "title": null,\n    "description": null,\n    "content": null,\n    "sourceType": null,\n    "status": "INBOX",\n    "provenance": null,\n    "extractedClaims": [],\n    "extractionStats": null,\n    "createdAt": null,\n    "createdBy": null\n}',
+          schema:
+            "enum SourceType {\n    ARTICLE\n    PAPER\n    BOOK_CHAPTER\n    TRANSCRIPT\n    DOCUMENTATION\n    CONVERSATION\n    WEB_PAGE\n    MANUAL_ENTRY\n}\n\nenum SourceStatus {\n    INBOX\n    EXTRACTING\n    EXTRACTED\n    ARCHIVED\n}\n\ntype SourceProvenance {\n    url: String\n    author: String\n    publishedAt: DateTime\n    method: String\n    tool: String\n}\n\ntype ExtractionStats {\n    claimCount: Int!\n    skippedCount: Int!\n    skipRate: Float!\n    extractedAt: DateTime\n    extractedBy: String\n}\n\ntype SourceState {\n    title: String\n    description: String\n    content: String\n    sourceType: SourceType\n    status: SourceStatus\n    provenance: SourceProvenance\n    extractedClaims: [String!]!\n    extractionStats: ExtractionStats\n    createdAt: DateTime\n    createdBy: String\n}",
+        },
+        local: {
+          examples: [],
+          initialValue: "",
+          schema: "",
+        },
+      },
       version: 1,
-      changeLog: [],
     },
   ],
 };

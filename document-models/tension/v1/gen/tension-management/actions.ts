@@ -1,9 +1,13 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { Action } from "document-model";
 import type {
-  CreateTensionInput,
-  ResolveTensionInput,
-  DissolveTensionInput,
   AddInvolvedRefInput,
+  CreateTensionInput,
+  DissolveTensionInput,
+  ResolveTensionInput,
 } from "../types.js";
 
 export type CreateTensionAction = Action & {

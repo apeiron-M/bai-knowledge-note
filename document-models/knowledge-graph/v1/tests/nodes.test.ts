@@ -1,16 +1,16 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
-  isKnowledgeGraphDocument,
   addNode,
-  removeNode,
-  updateNode,
   AddNodeInputSchema,
+  isKnowledgeGraphDocument,
+  reducer,
+  removeNode,
   RemoveNodeInputSchema,
+  updateNode,
   UpdateNodeInputSchema,
+  utils,
 } from "document-models/knowledge-graph/v1";
+import { describe, expect, it } from "vitest";
 
 describe("NodesOperations", () => {
   it("should handle addNode operation", () => {

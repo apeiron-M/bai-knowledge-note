@@ -1,18 +1,18 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
-  isTensionDocument,
-  createTension,
-  resolveTension,
-  dissolveTension,
   addInvolvedRef,
-  CreateTensionInputSchema,
-  ResolveTensionInputSchema,
-  DissolveTensionInputSchema,
   AddInvolvedRefInputSchema,
+  createTension,
+  CreateTensionInputSchema,
+  dissolveTension,
+  DissolveTensionInputSchema,
+  isTensionDocument,
+  reducer,
+  resolveTension,
+  ResolveTensionInputSchema,
+  utils,
 } from "document-models/tension/v1";
+import { describe, expect, it } from "vitest";
 
 describe("TensionManagementOperations", () => {
   it("should handle createTension operation", () => {

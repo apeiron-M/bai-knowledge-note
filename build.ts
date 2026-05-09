@@ -114,9 +114,7 @@ const browserNeverBundle = Array.from(
   new Set([...existingBrowserNeverBundle, ...REACT_EXTERNALS]),
 );
 
-const existingNodeNeverBundle = Array.isArray(
-  nodeBuildConfig.deps?.neverBundle,
-)
+const existingNodeNeverBundle = Array.isArray(nodeBuildConfig.deps?.neverBundle)
   ? (nodeBuildConfig.deps?.neverBundle as string[])
   : [];
 

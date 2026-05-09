@@ -1,21 +1,25 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { createAction } from "document-model";
 import {
-  CreateTensionInputSchema,
-  ResolveTensionInputSchema,
-  DissolveTensionInputSchema,
   AddInvolvedRefInputSchema,
+  CreateTensionInputSchema,
+  DissolveTensionInputSchema,
+  ResolveTensionInputSchema,
 } from "../schema/zod.js";
 import type {
-  CreateTensionInput,
-  ResolveTensionInput,
-  DissolveTensionInput,
   AddInvolvedRefInput,
+  CreateTensionInput,
+  DissolveTensionInput,
+  ResolveTensionInput,
 } from "../types.js";
 import type {
-  CreateTensionAction,
-  ResolveTensionAction,
-  DissolveTensionAction,
   AddInvolvedRefAction,
+  CreateTensionAction,
+  DissolveTensionAction,
+  ResolveTensionAction,
 } from "./actions.js";
 
 export const createTension = (input: CreateTensionInput) =>

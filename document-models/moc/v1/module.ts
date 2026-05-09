@@ -1,16 +1,20 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { DocumentModelModule } from "document-model";
 import { createState, defaultBaseState } from "document-model";
-import type { MocPHState } from "./gen/types.js";
+import { actions } from "./actions.js";
 import { documentModel } from "./gen/document-model.js";
 import { reducer } from "./gen/reducer.js";
-import { actions } from "./actions.js";
+import type { MocPHState } from "./gen/types.js";
 import { utils } from "./utils.js";
 
 /** Document model module for the Moc document type */
-export const Moc: DocumentModelModule<MocPHState> = {
+export const Moc = {
   version: 1,
   reducer,
   actions,
   utils,
   documentModel: createState(defaultBaseState(), documentModel),
-};
+} as const satisfies DocumentModelModule<MocPHState>;

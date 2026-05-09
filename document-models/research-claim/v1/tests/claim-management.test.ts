@@ -1,18 +1,18 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
-  reducer,
-  utils,
-  isResearchClaimDocument,
-  createClaim,
   addResearchConnection,
-  removeResearchConnection,
-  updateClaimContent,
-  CreateClaimInputSchema,
   AddResearchConnectionInputSchema,
+  createClaim,
+  CreateClaimInputSchema,
+  isResearchClaimDocument,
+  reducer,
+  removeResearchConnection,
   RemoveResearchConnectionInputSchema,
+  updateClaimContent,
   UpdateClaimContentInputSchema,
+  utils,
 } from "document-models/research-claim/v1";
+import { describe, expect, it } from "vitest";
 
 describe("ClaimManagementOperations", () => {
   it("should handle createClaim operation", () => {

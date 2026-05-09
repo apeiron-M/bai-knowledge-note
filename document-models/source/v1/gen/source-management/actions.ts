@@ -1,9 +1,13 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { Action } from "document-model";
 import type {
-  IngestSourceInput,
-  SetSourceStatusInput,
   AddExtractedClaimInput,
+  IngestSourceInput,
   RecordExtractionStatsInput,
+  SetSourceStatusInput,
 } from "../types.js";
 
 export type IngestSourceAction = Action & {

@@ -35,10 +35,7 @@ const ENDPOINT = getArg(
   "--endpoint",
   "https://switchboard-dev.powerhouse.xyz/graphql/r",
 );
-const DRIVE_ID = getArg(
-  "--drive-id",
-  "cbbc2a6c-65ba-4732-b3cd-c4796ddcb734",
-);
+const DRIVE_ID = getArg("--drive-id", "cbbc2a6c-65ba-4732-b3cd-c4796ddcb734");
 const OUT_DIR = path.join(
   path.dirname(new URL(import.meta.url).pathname),
   "remote-knowledge-vault",
@@ -130,9 +127,7 @@ async function main() {
   const fileNodes = nodes.filter((n) => n.kind === "file");
   const folderNodes = nodes.filter((n) => n.kind === "folder");
 
-  console.log(
-    `  ${fileNodes.length} files, ${folderNodes.length} folders\n`,
-  );
+  console.log(`  ${fileNodes.length} files, ${folderNodes.length} folders\n`);
 
   // Count by type
   const typeCounts = {};
@@ -178,9 +173,7 @@ async function main() {
         parentFolder: node.parentFolder ?? null,
       });
 
-      console.log(
-        `${progress} ${node.documentType} — ${node.name}`,
-      );
+      console.log(`${progress} ${node.documentType} — ${node.name}`);
       results.success++;
     } catch (err) {
       console.error(`${progress} FAILED: ${node.name} — ${err.message}`);

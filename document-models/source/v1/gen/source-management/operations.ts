@@ -1,30 +1,34 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { type SignalDispatch } from "document-model";
+import type { SourceGlobalState } from "../types.js";
 import type {
-  IngestSourceAction,
-  SetSourceStatusAction,
   AddExtractedClaimAction,
+  IngestSourceAction,
   RecordExtractionStatsAction,
+  SetSourceStatusAction,
 } from "./actions.js";
-import type { SourceState } from "../types.js";
 
 export interface SourceSourceManagementOperations {
   ingestSourceOperation: (
-    state: SourceState,
+    state: SourceGlobalState,
     action: IngestSourceAction,
     dispatch?: SignalDispatch,
   ) => void;
   setSourceStatusOperation: (
-    state: SourceState,
+    state: SourceGlobalState,
     action: SetSourceStatusAction,
     dispatch?: SignalDispatch,
   ) => void;
   addExtractedClaimOperation: (
-    state: SourceState,
+    state: SourceGlobalState,
     action: AddExtractedClaimAction,
     dispatch?: SignalDispatch,
   ) => void;
   recordExtractionStatsOperation: (
-    state: SourceState,
+    state: SourceGlobalState,
     action: RecordExtractionStatsAction,
     dispatch?: SignalDispatch,
   ) => void;

@@ -1,30 +1,34 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import { type SignalDispatch } from "document-model";
+import type { TensionGlobalState } from "../types.js";
 import type {
-  CreateTensionAction,
-  ResolveTensionAction,
-  DissolveTensionAction,
   AddInvolvedRefAction,
+  CreateTensionAction,
+  DissolveTensionAction,
+  ResolveTensionAction,
 } from "./actions.js";
-import type { TensionState } from "../types.js";
 
 export interface TensionTensionManagementOperations {
   createTensionOperation: (
-    state: TensionState,
+    state: TensionGlobalState,
     action: CreateTensionAction,
     dispatch?: SignalDispatch,
   ) => void;
   resolveTensionOperation: (
-    state: TensionState,
+    state: TensionGlobalState,
     action: ResolveTensionAction,
     dispatch?: SignalDispatch,
   ) => void;
   dissolveTensionOperation: (
-    state: TensionState,
+    state: TensionGlobalState,
     action: DissolveTensionAction,
     dispatch?: SignalDispatch,
   ) => void;
   addInvolvedRefOperation: (
-    state: TensionState,
+    state: TensionGlobalState,
     action: AddInvolvedRefAction,
     dispatch?: SignalDispatch,
   ) => void;

@@ -36,7 +36,10 @@ import {
 } from "./lib/sb-client.mjs";
 
 const args = process.argv.slice(2);
-function getArg(n, fb) { const i = args.indexOf(n); return i !== -1 ? args[i + 1] : fb; }
+function getArg(n, fb) {
+  const i = args.indexOf(n);
+  return i !== -1 ? args[i + 1] : fb;
+}
 const PROFILE = getArg("--profile", "local");
 const DRIVE = getArg("--drive", "local-knowledge-hub");
 const IN_DIR = path.resolve(getArg("--in", "./scripts/vault-dump"));
@@ -52,9 +55,15 @@ const SKIP_TYPES = new Set(
     .filter(Boolean),
 );
 
-function readJson(p) { return JSON.parse(fs.readFileSync(p, "utf-8")); }
-function writeJson(p, d) { fs.writeFileSync(p, JSON.stringify(d, null, 2)); }
-function delay(ms) { return new Promise((r) => setTimeout(r, ms)); }
+function readJson(p) {
+  return JSON.parse(fs.readFileSync(p, "utf-8"));
+}
+function writeJson(p, d) {
+  fs.writeFileSync(p, JSON.stringify(d, null, 2));
+}
+function delay(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 async function main() {
   console.log(`\n=== Vault Import ===`);
@@ -64,7 +73,9 @@ async function main() {
   console.log(`Dry run:    ${DRY_RUN}`);
   console.log(`Limit:      ${LIMIT === Infinity ? "none" : LIMIT}`);
   console.log(`Throttle:   ${THROTTLE_MS}ms between docs`);
-  console.log(`Skip types: ${SKIP_TYPES.size ? [...SKIP_TYPES].join(", ") : "(none)"}`);
+  console.log(
+    `Skip types: ${SKIP_TYPES.size ? [...SKIP_TYPES].join(", ") : "(none)"}`,
+  );
   console.log(`Singletons: ${INCLUDE_SINGLETONS ? "INCLUDED" : "skipped"}\n`);
 
   // Refresh schema cache for this profile so action validation is current.
@@ -81,7 +92,12 @@ async function main() {
   // ─── Phase 0: Reconcile folder tree ───
   console.log("=== Phase 0: Reconcile folders ===");
   const targetUrl = resolveProfileUrl(PROFILE);
-  const driveDoc = DRY_RUN ? null : await fetchDocument(targetUrl, DRIVE);
+  // Wait for drive auto-init to settle. Editor-bound drives (e.g. the
+  // `knowledge-vault` editor) seed their own folder set asynchronously when
+  // the drive is created — if we fetch nodes the moment after `drives create`,
+  // we may miss those writes and end up creating duplicate folders. Poll
+  // until the node count is stable across consecutive samples.
+  const driveDoc = DRY_RUN ? null : await fetchDriveStable(targetUrl, DRIVE);
   if (!DRY_RUN && !driveDoc) {
     throw new Error(`Drive '${DRIVE}' not found on profile '${PROFILE}'`);
   }
@@ -93,7 +109,9 @@ async function main() {
   const sortedDumpFolders = topoSortFolders(manifest.folderStructure);
 
   for (const f of sortedDumpFolders) {
-    const newParent = f.parentFolder ? oldFolderIdToNew.get(f.parentFolder) ?? null : null;
+    const newParent = f.parentFolder
+      ? (oldFolderIdToNew.get(f.parentFolder) ?? null)
+      : null;
     const match = liveFolders.find(
       (lf) =>
         lf.name === f.name &&
@@ -118,7 +136,9 @@ async function main() {
     }
     await delay(150);
   }
-  console.log(`  Mapped ${oldFolderIdToNew.size}/${manifest.folderStructure.length} folders\n`);
+  console.log(
+    `  Mapped ${oldFolderIdToNew.size}/${manifest.folderStructure.length} folders\n`,
+  );
 
   // Live-drive lookup: (name | documentType | newParentFolderId) → existing id.
   // Used in Phase 1 to detect docs already present on the destination — whether
@@ -144,9 +164,13 @@ async function main() {
       for (const [oldId, newId] of Object.entries(existing)) {
         oldIdToNew.set(oldId, newId);
       }
-      console.log(`  Loaded ${oldIdToNew.size} entries from existing id-mapping.json (incremental)\n`);
+      console.log(
+        `  Loaded ${oldIdToNew.size} entries from existing id-mapping.json (incremental)\n`,
+      );
     } catch (err) {
-      console.warn(`  Could not load existing id-mapping.json: ${err.message}\n`);
+      console.warn(
+        `  Could not load existing id-mapping.json: ${err.message}\n`,
+      );
     }
   }
   const linkQueue = [];
@@ -263,13 +287,17 @@ async function main() {
 
     if (DRY_RUN) {
       oldIdToNew.set(doc.id, `dry-${i}`);
-      console.log(`${tag} ${entry.documentType} — ${entry.name} (${actions.length} actions)`);
+      console.log(
+        `${tag} ${entry.documentType} — ${entry.name} (${actions.length} actions)`,
+      );
       counts.ok++;
       continue;
     }
 
     try {
-      const parentFolder = entry.parentFolder ? oldFolderIdToNew.get(entry.parentFolder) : undefined;
+      const parentFolder = entry.parentFolder
+        ? oldFolderIdToNew.get(entry.parentFolder)
+        : undefined;
       const newId = cliCreateDoc(PROFILE, {
         type: entry.documentType,
         name: entry.name,
@@ -285,13 +313,14 @@ async function main() {
       writeJson(mappingPath, Object.fromEntries(oldIdToNew));
       await delay(THROTTLE_MS);
     } catch (err) {
-      console.error(`${tag} ERROR: ${entry.name} — ${err.message.slice(0, 200)}`);
+      console.error(
+        `${tag} ERROR: ${entry.name} — ${err.message.slice(0, 200)}`,
+      );
       counts.fail++;
       errors.push({ name: entry.name, error: err.message });
     }
   }
 
-  writeJson(mappingPath, Object.fromEntries(oldIdToNew));
   console.log(
     `\nCreated: ${counts.ok}, matched-on-drive: ${counts.matched}, already-mapped: ${counts.already}, failed: ${counts.fail}, skipped: ${counts.skip}\n`,
   );
@@ -300,11 +329,19 @@ async function main() {
     console.log("Dry run complete. No documents created.\n");
     return;
   }
+  // Persist the final mapping. Skipped above for DRY_RUN so the placeholder
+  // `dry-N` sentinels we wrote into oldIdToNew don't end up on disk — that
+  // would poison the next non-dry run, which loads this file and treats
+  // every entry as "already imported".
+  writeJson(mappingPath, Object.fromEntries(oldIdToNew));
 
   // ─── Phase 2: Resolve links ───
   console.log("=== Phase 2: Resolve links ===");
-  let linksOk = 0, linksMissing = 0;
-  for (const { oldDocId, links } of linkQueue) {
+  let linksOk = 0,
+    linksMissing = 0;
+  for (let qi = 0; qi < linkQueue.length; qi++) {
+    const { oldDocId, links } = linkQueue[qi];
+    const tag = `[${qi + 1}/${linkQueue.length}]`;
     const newDocId = oldIdToNew.get(oldDocId);
     if (!newDocId) continue;
     const linkActions = [];
@@ -327,16 +364,27 @@ async function main() {
       }
     }
     if (linkActions.length) {
-      try { cliApplyActions(PROFILE, newDocId, linkActions); }
-      catch (err) { console.error(`  link error ${newDocId}: ${err.message.slice(0, 200)}`); }
+      try {
+        cliApplyActions(PROFILE, newDocId, linkActions);
+        console.log(
+          `${tag} ${newDocId.slice(0, 8)}... +${linkActions.length} links`,
+        );
+      } catch (err) {
+        console.error(
+          `${tag} link error ${newDocId}: ${err.message.slice(0, 200)}`,
+        );
+      }
     }
   }
   console.log(`  Resolved ${linksOk} links, ${linksMissing} unresolved\n`);
 
   // ─── Phase 3: Resolve MOC refs ───
   console.log("=== Phase 3: Resolve MOC core ideas + child refs ===");
-  let refsOk = 0, refsMissing = 0;
-  for (const { oldDocId, coreIdeas, childRefs } of mocRefQueue) {
+  let refsOk = 0,
+    refsMissing = 0;
+  for (let qi = 0; qi < mocRefQueue.length; qi++) {
+    const { oldDocId, coreIdeas, childRefs } = mocRefQueue[qi];
+    const tag = `[${qi + 1}/${mocRefQueue.length}]`;
     const newDocId = oldIdToNew.get(oldDocId);
     if (!newDocId) continue;
     const refActions = [];
@@ -355,27 +403,78 @@ async function main() {
           scope: "global",
         });
         refsOk++;
-      } else { refsMissing++; }
+      } else {
+        refsMissing++;
+      }
     }
     for (const oldChild of childRefs) {
       const newChild = oldIdToNew.get(oldChild);
       if (newChild) {
-        refActions.push({ type: "ADD_CHILD_MOC", input: { childRef: newChild }, scope: "global" });
+        refActions.push({
+          type: "ADD_CHILD_MOC",
+          input: { childRef: newChild },
+          scope: "global",
+        });
         refsOk++;
-      } else { refsMissing++; }
+      } else {
+        refsMissing++;
+      }
     }
     if (refActions.length) {
-      try { cliApplyActions(PROFILE, newDocId, refActions); }
-      catch (err) { console.error(`  moc ref error ${newDocId}: ${err.message.slice(0, 200)}`); }
+      try {
+        cliApplyActions(PROFILE, newDocId, refActions);
+        console.log(
+          `${tag} ${newDocId.slice(0, 8)}... +${refActions.length} refs`,
+        );
+      } catch (err) {
+        console.error(
+          `${tag} moc ref error ${newDocId}: ${err.message.slice(0, 200)}`,
+        );
+      }
     }
   }
   console.log(`  Resolved ${refsOk} MOC refs, ${refsMissing} unresolved\n`);
 
   console.log("=== Import Summary ===");
-  console.log(`  Documents:    ok=${counts.ok}, already=${counts.already}, fail=${counts.fail}, skip=${counts.skip}`);
+  console.log(
+    `  Documents:    ok=${counts.ok}, already=${counts.already}, fail=${counts.fail}, skip=${counts.skip}`,
+  );
   console.log(`  Links:        ok=${linksOk}, missing=${linksMissing}`);
   console.log(`  MOC refs:     ok=${refsOk}, missing=${refsMissing}`);
   console.log(`  ID mapping:   ${mappingPath}`);
+}
+
+/**
+ * Fetch the drive document, polling until the node count is stable across
+ * `stableSamples` consecutive samples or `timeoutMs` is reached. This dodges
+ * a race where editor-bound drives (e.g. `knowledge-vault`) seed folders
+ * asynchronously after drive creation — a single fetch right after the
+ * `drives create` mutation can return before those writes land, and we'd
+ * then create a parallel set of folders with the same names.
+ */
+async function fetchDriveStable(
+  url,
+  drive,
+  { intervalMs = 200, stableSamples = 3, timeoutMs = 5000 } = {},
+) {
+  const start = Date.now();
+  let prevCount = null;
+  let stable = 0;
+  let lastDoc = null;
+  while (Date.now() - start < timeoutMs) {
+    const doc = await fetchDocument(url, drive);
+    lastDoc = doc;
+    const count = (doc?.state?.global?.nodes ?? []).length;
+    if (prevCount !== null && count === prevCount) {
+      stable += 1;
+      if (stable >= stableSamples) return doc;
+    } else {
+      stable = 1;
+    }
+    prevCount = count;
+    await new Promise((r) => setTimeout(r, intervalMs));
+  }
+  return lastDoc;
 }
 
 function topoSortFolders(folders) {
@@ -387,7 +486,9 @@ function topoSortFolders(folders) {
       (f) => f.parentFolder === null || seen.has(f.parentFolder),
     );
     if (!ready.length) {
-      console.warn(`  WARN: ${remaining.length} orphan folder(s): ${remaining.map((f) => f.name).join(", ")}`);
+      console.warn(
+        `  WARN: ${remaining.length} orphan folder(s): ${remaining.map((f) => f.name).join(", ")}`,
+      );
       break;
     }
     sorted.push(...ready);
@@ -417,9 +518,12 @@ async function createFolder(driveDocId, name, parentFolderId) {
     (n) =>
       n.kind === "folder" &&
       n.name === name &&
-      ((parentFolderId ?? null) === (n.parentFolder ?? null)),
+      (parentFolderId ?? null) === (n.parentFolder ?? null),
   );
   return created?.id ?? null;
 }
 
-main().catch((err) => { console.error("Fatal:", err); process.exit(1); });
+main().catch((err) => {
+  console.error("Fatal:", err);
+  process.exit(1);
+});

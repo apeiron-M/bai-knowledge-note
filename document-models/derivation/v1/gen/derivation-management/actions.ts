@@ -1,8 +1,12 @@
+/**
+ * WARNING: DO NOT EDIT
+ * This file is auto-generated and updated by codegen
+ */
 import type { Action } from "document-model";
 import type {
-  InitializeDerivationInput,
-  AddSignalInput,
   AddReseedEntryInput,
+  AddSignalInput,
+  InitializeDerivationInput,
   UpdateDimensionRationaleInput,
 } from "../types.js";
 

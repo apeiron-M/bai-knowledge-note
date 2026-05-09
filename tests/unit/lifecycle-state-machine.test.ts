@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  reducer,
-  utils,
-  actions,
-} from "document-models/knowledge-note/v1";
+import { reducer, utils, actions } from "document-models/knowledge-note/v1";
 
 // Helper: build a document with provenance set (author "alice") and a title set.
 // provenance = op 0, title = op 1 — lifecycle ops start at index 2.

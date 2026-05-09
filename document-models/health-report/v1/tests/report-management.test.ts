@@ -1,14 +1,14 @@
 import { generateMock } from "document-model";
-import { describe, expect, it } from "vitest";
 import {
+  addCheck,
+  AddCheckInputSchema,
+  generateReport,
+  GenerateReportInputSchema,
+  isHealthReportDocument,
   reducer,
   utils,
-  isHealthReportDocument,
-  generateReport,
-  addCheck,
-  GenerateReportInputSchema,
-  AddCheckInputSchema,
 } from "document-models/health-report/v1";
+import { describe, expect, it } from "vitest";
 
 describe("ReportManagementOperations", () => {
   it("should handle generateReport operation", () => {

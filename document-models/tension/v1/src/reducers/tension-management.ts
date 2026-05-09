@@ -1,5 +1,5 @@
-import { TensionAlreadyResolvedError } from "../../gen/tension-management/error.js";
 import type { TensionTensionManagementOperations } from "document-models/tension/v1";
+import { TensionAlreadyResolvedError } from "../../gen/tension-management/error.js";
 
 export const tensionTensionManagementOperations: TensionTensionManagementOperations =
   {

@@ -1,59 +1,59 @@
 {
-  "id": "bai/health-report",
-  "name": "HealthReport",
   "author": {
     "name": "BAI",
     "website": "https://bai.powerhouse.io/"
   },
+  "description": "Vault diagnostics — point-in-time health report with graph metrics, check results, and recommendations",
   "extension": "",
-  "description": "Vault diagnostics — point-in-time health report with graph metrics, check results, and recommendations.",
+  "id": "bai/health-report",
+  "name": "HealthReport",
   "specifications": [
     {
-      "state": {
-        "local": {
-          "schema": "",
-          "examples": [],
-          "initialValue": ""
-        },
-        "global": {
-          "schema": "enum HealthStatus {\n    PASS\n    WARN\n    FAIL\n}\n\nenum HealthCategory {\n    SCHEMA_COMPLIANCE\n    ORPHAN_DETECTION\n    LINK_HEALTH\n    DESCRIPTION_QUALITY\n    THREE_SPACE_BOUNDARIES\n    PROCESSING_THROUGHPUT\n    STALE_NOTES\n    MOC_COHERENCE\n}\n\ntype HealthCheck {\n    id: OID!\n    category: HealthCategory!\n    status: HealthStatus!\n    message: String!\n    affectedItems: [String!]!\n}\n\ntype GraphMetrics {\n    noteCount: Int!\n    mocCount: Int!\n    connectionCount: Int!\n    density: Float!\n    orphanCount: Int!\n    danglingLinkCount: Int!\n    mocCoverage: Float!\n    averageLinksPerNote: Float!\n}\n\ntype HealthReportState {\n    generatedAt: DateTime\n    generatedBy: String\n    mode: String\n    overallStatus: HealthStatus\n    checks: [HealthCheck!]!\n    graphMetrics: GraphMetrics\n    recommendations: [String!]!\n}",
-          "examples": [],
-          "initialValue": "{\n    \"generatedAt\": null,\n    \"generatedBy\": null,\n    \"mode\": null,\n    \"overallStatus\": null,\n    \"checks\": [],\n    \"graphMetrics\": null,\n    \"recommendations\": []\n}"
-        }
-      },
+      "changeLog": [],
       "modules": [
         {
+          "description": "Health report generation",
           "id": "report-management",
           "name": "report-management",
           "operations": [
             {
+              "description": "Generate a health report",
+              "errors": [],
+              "examples": [],
               "id": "generate-report",
               "name": "GENERATE_REPORT",
-              "scope": "global",
-              "errors": [],
-              "schema": "input GraphMetricsInput {\n    noteCount: Int!\n    mocCount: Int!\n    connectionCount: Int!\n    density: Float!\n    orphanCount: Int!\n    danglingLinkCount: Int!\n    mocCoverage: Float!\n    averageLinksPerNote: Float!\n}\n\ninput GenerateReportInput {\n    generatedAt: DateTime!\n    generatedBy: String\n    mode: String!\n    overallStatus: HealthStatus!\n    graphMetrics: GraphMetricsInput!\n    recommendations: [String!]!\n}",
               "reducer": "state.generatedAt = action.input.generatedAt;\nstate.generatedBy = action.input.generatedBy || null;\nstate.mode = action.input.mode;\nstate.overallStatus = action.input.overallStatus;\nstate.graphMetrics = action.input.graphMetrics;\nstate.recommendations = action.input.recommendations;\nstate.checks = [];",
-              "examples": [],
+              "schema": "input GraphMetricsInput {\n    noteCount: Int!\n    mocCount: Int!\n    connectionCount: Int!\n    density: Float!\n    orphanCount: Int!\n    danglingLinkCount: Int!\n    mocCoverage: Float!\n    averageLinksPerNote: Float!\n}\n\ninput GenerateReportInput {\n    generatedAt: DateTime!\n    generatedBy: String\n    mode: String!\n    overallStatus: HealthStatus!\n    graphMetrics: GraphMetricsInput!\n    recommendations: [String!]!\n}",
               "template": "Generate a health report",
-              "description": "Generate a health report"
+              "scope": "global"
             },
             {
+              "description": "Add a health check result",
+              "errors": [],
+              "examples": [],
               "id": "add-check",
               "name": "ADD_CHECK",
-              "scope": "global",
-              "errors": [],
-              "schema": "input AddCheckInput {\n    id: OID!\n    category: HealthCategory!\n    status: HealthStatus!\n    message: String!\n    affectedItems: [String!]!\n}",
               "reducer": "state.checks.push({\n    id: action.input.id,\n    category: action.input.category,\n    status: action.input.status,\n    message: action.input.message,\n    affectedItems: action.input.affectedItems,\n});",
-              "examples": [],
+              "schema": "input AddCheckInput {\n    id: OID!\n    category: HealthCategory!\n    status: HealthStatus!\n    message: String!\n    affectedItems: [String!]!\n}",
               "template": "Add a health check result",
-              "description": "Add a health check result"
+              "scope": "global"
             }
-          ],
-          "description": "Health report generation"
+          ]
         }
       ],
-      "version": 1,
-      "changeLog": []
+      "state": {
+        "global": {
+          "examples": [],
+          "initialValue": "{\n    \"generatedAt\": null,\n    \"generatedBy\": null,\n    \"mode\": null,\n    \"overallStatus\": null,\n    \"checks\": [],\n    \"graphMetrics\": null,\n    \"recommendations\": []\n}",
+          "schema": "enum HealthStatus {\n    PASS\n    WARN\n    FAIL\n}\n\nenum HealthCategory {\n    SCHEMA_COMPLIANCE\n    ORPHAN_DETECTION\n    LINK_HEALTH\n    DESCRIPTION_QUALITY\n    THREE_SPACE_BOUNDARIES\n    PROCESSING_THROUGHPUT\n    STALE_NOTES\n    MOC_COHERENCE\n}\n\ntype HealthCheck {\n    id: OID!\n    category: HealthCategory!\n    status: HealthStatus!\n    message: String!\n    affectedItems: [String!]!\n}\n\ntype GraphMetrics {\n    noteCount: Int!\n    mocCount: Int!\n    connectionCount: Int!\n    density: Float!\n    orphanCount: Int!\n    danglingLinkCount: Int!\n    mocCoverage: Float!\n    averageLinksPerNote: Float!\n}\n\ntype HealthReportState {\n    generatedAt: DateTime\n    generatedBy: String\n    mode: String\n    overallStatus: HealthStatus\n    checks: [HealthCheck!]!\n    graphMetrics: GraphMetrics\n    recommendations: [String!]!\n}"
+        },
+        "local": {
+          "examples": [],
+          "initialValue": "",
+          "schema": ""
+        }
+      },
+      "version": 1
     }
   ]
 }

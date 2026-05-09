@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 import type { Reducer, StateReducer } from "document-model";
-import { isDocumentAction, createReducer } from "document-model";
+import { createReducer, isDocumentAction } from "document-model";
 import type { ResearchClaimPHState } from "document-models/research-claim/v1";
 
 import { researchClaimClaimManagementOperations } from "../src/reducers/claim-management.js";
 
 import {
-  CreateClaimInputSchema,
   AddResearchConnectionInputSchema,
+  CreateClaimInputSchema,
   RemoveResearchConnectionInputSchema,
   UpdateClaimContentInputSchema,
 } from "./schema/zod.js";

@@ -302,8 +302,7 @@ function OperationRow({ op }: { op: OperationRecord }) {
               {" by "}
               {op.signerAddress
                 ? `${op.signerAddress.slice(0, 6)}...${op.signerAddress.slice(-4)}`
-                : op.signerApp}
-              {" "}
+                : op.signerApp}{" "}
               <svg
                 className="inline-block h-2.5 w-2.5 opacity-0 group-hover:opacity-50"
                 viewBox="0 0 24 24"
