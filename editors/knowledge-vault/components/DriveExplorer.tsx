@@ -1,15 +1,10 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useMemo } from "react";
 import type { EditorProps } from "document-model";
 import {
   setSelectedNode,
   useFileNodesInSelectedDrive,
 } from "@powerhousedao/reactor-browser";
-import {
-  useDocumentByIdSafe,
-  useDocumentsSafe,
-} from "../hooks/use-documents-safe.js";
 import { VaultSidebar } from "./VaultSidebar.js";
-import { NoteViewer } from "./NoteViewer.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import { GraphView } from "./GraphView.js";
 import { NoteList } from "./NoteList.js";
@@ -19,16 +14,9 @@ import { SearchView } from "./SearchView.js";
 import { ActivityView } from "./ActivityView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
-import {
-  useKnowledgeGraph,
-  buildSyncPayload,
-} from "../hooks/use-knowledge-graph.js";
+import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
+import { useKnowledgeGraph } from "../hooks/use-knowledge-graph.js";
 import { useAutoHealth } from "../hooks/use-auto-health.js";
-import type {
-  KnowledgeGraphAction,
-  KnowledgeGraphDocument,
-} from "../../../document-models/knowledge-graph/index.js";
-import { actions as graphActions } from "../../../document-models/knowledge-graph/index.js";
 import { ThemeToggle } from "../../shared/theme-context.js";
 
 type ViewMode =
@@ -43,100 +31,36 @@ type ViewMode =
 
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
-  const {
-    notes,
-    serverFileNodes,
-    serverAllNodes,
-    isLoading: notesLoading,
-    error: notesError,
-    refetch: notesRefetch,
-  } = useKnowledgeNotes();
-  const { graphDoc, graphState, hasGraphDoc } = useKnowledgeGraph(notes);
+  const { notes } = useKnowledgeNotes();
+  const { graphState, hasGraphDoc } = useKnowledgeGraph(notes);
   const fileNodes = useFileNodesInSelectedDrive();
-  // Narrow the bulk-fetch to just the document types the views below
-  // actually consume. The sidebar list reads metadata via the
-  // knowledgeGraph subgraph (see useKnowledgeNotes), so knowledge-note
-  // states no longer need to flow through this fetch path.
-  const allDocuments = useDocumentsSafe(["bai/moc", "bai/tension"]);
   const showDocumentEditor = !!children;
 
-  // Read MOC documents for the graph view
-  const mocs = useMemo(() => {
-    return (allDocuments ?? [])
-      .filter((d) => d.header.documentType === "bai/moc")
-      .map((d) => {
-        const state = (
-          d.state as unknown as { global: Record<string, unknown> }
-        ).global;
-        return {
-          id: d.header.id,
-          title: (state.title as string) ?? d.header.name,
-          tier: (state.tier as string) ?? null,
-          coreIdeas: (
-            (state.coreIdeas as Array<{
-              noteRef: string;
-              contextPhrase: string;
-            }>) ?? []
-          ).map((ci) => ({
-            noteRef: ci.noteRef,
-            contextPhrase: ci.contextPhrase,
-          })),
-          childRefs: (state.childRefs as string[]) ?? [],
-        };
-      });
-  }, [allDocuments]);
-
-  // Read tension documents for the graph view
-  const tensions = useMemo(() => {
-    return (allDocuments ?? [])
-      .filter((d) => d.header.documentType === "bai/tension")
-      .map((d) => {
-        const state = (
-          d.state as unknown as { global: Record<string, unknown> }
-        ).global;
-        return {
-          id: d.header.id,
-          title: (state.title as string) ?? d.header.name,
-          status: (state.status as string) ?? null,
-          involvedRefs: (state.involvedRefs as string[]) ?? [],
-        };
-      });
-  }, [allDocuments]);
+  // MoCs sourced from the knowledgeGraph subgraph projection — same
+  // round-trip the notes sidebar already makes (no extra fetch). Tensions
+  // remain stubbed: the graph-indexer doesn't ingest bai/tension yet, so
+  // there's no projection to read; revisit when that lands.
+  const { mocs } = useKnowledgeMocs();
+  const tensions = useMemo<
+    Array<{
+      id: string;
+      title: string;
+      status: string | null;
+      involvedRefs: string[];
+    }>
+  >(() => [], []);
 
   // Auto-generate health metrics
   useAutoHealth(notes, graphState);
 
-  // Auto-sync graph — triggers on any note data change (not just count)
-  const graphDocId = graphDoc?.header.id ?? null;
-  const [graphDocument, graphDispatch] = useDocumentByIdSafe<
-    KnowledgeGraphDocument,
-    KnowledgeGraphAction
-  >(graphDocId);
-  const lastSyncFingerprint = useRef("");
-
-  // Build a fingerprint from note data that changes when links/titles/statuses change
-  const notesFingerprint = useMemo(() => {
-    return notes
-      .map(
-        (n) =>
-          `${n.id}:${n.title}:${n.status}:${n.links.length}:${n.links.map((l) => l.targetDocumentId).join(",")}`,
-      )
-      .join("|");
-  }, [notes]);
-
-  useEffect(() => {
-    if (!graphDocument || !graphDispatch || notes.length === 0) return;
-    if (lastSyncFingerprint.current === notesFingerprint) return;
-    lastSyncFingerprint.current = notesFingerprint;
-    const { nodes: gNodes, edges } = buildSyncPayload(notes);
-    graphDispatch(
-      graphActions.syncGraph({
-        nodes: gNodes,
-        edges,
-        syncedAt: new Date().toISOString(),
-      }),
-    );
-  }, [graphDocument, graphDispatch, notes, notesFingerprint]);
+  // Auto-sync of bai/knowledge-graph is intentionally disabled. Each
+  // syncGraph dispatch fan-outs into ADD_NODE/ADD_EDGE ops; with 348 notes
+  // and 1021 edges, two passes exceed the reactor's reshuffle-detection
+  // threshold (1000 ops) and leave the doc in a dead-letter loop. The
+  // graph-indexer subgraph already projects nodes/edges from note state for
+  // read access (see use-graph-metadata.ts), so the doc-of-ops mirror is
+  // redundant for read views. Re-introduce only behind an explicit user
+  // action with a chunked dispatch path.
 
   // Count doc types
   const allFiles = fileNodes ?? [];
@@ -319,14 +243,7 @@ export function DriveExplorer({ children }: EditorProps) {
 
   return (
     <div className="flex h-full">
-      <VaultSidebar
-        notes={notes}
-        isLoading={notesLoading}
-        error={notesError}
-        refetch={notesRefetch}
-        serverFileNodes={serverFileNodes}
-        serverAllNodes={serverAllNodes}
-      />
+      <VaultSidebar notes={notes} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
@@ -410,12 +327,7 @@ export function DriveExplorer({ children }: EditorProps) {
         {/* Content */}
         <div className="flex-1 overflow-auto">
           {showDocumentEditor ? (
-            // Bypass Connect's <DocumentEditorContainer>, which crashes
-            // on every doc whose state hasn't backfilled into Connect's
-            // browser-side KyselyDocumentView (frequent post-migration).
-            // NoteViewer fetches the doc state directly from the
-            // reactor via GraphQL — read-only for now.
-            <NoteViewer serverFileNodes={serverFileNodes} />
+            <div className="h-full">{children}</div>
           ) : viewMode === "graph" ? (
             <GraphView
               notes={notes}
