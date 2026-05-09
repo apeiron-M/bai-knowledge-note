@@ -1,28 +1,17 @@
-import { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import { useState, useMemo, useCallback, useRef } from "react";
 import {
+  isFileNodeKind,
   setSelectedNode,
-  showCreateDocumentModal,
   useNodesInSelectedDrive,
-  useSelectedDriveId,
-  addDocument,
+  useSelectedDrive,
 } from "@powerhousedao/reactor-browser";
-import { useReactorDocs, type ReactorDocSpec } from "../hooks/use-reactor-docs.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
+import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 
 type VaultSidebarProps = {
   notes: KnowledgeNoteInfo[];
-  /** True until the first subgraph fetch resolves. */
-  isLoading?: boolean;
-  /** Last subgraph error, if any. Sidebar shows it above the notes list. */
-  error?: Error | null;
-  /** Manual retry trigger for the user. */
-  refetch?: () => void;
-  /** Authoritative file nodes from the reactor (bypasses Connect cache). */
-  serverFileNodes?: import("../hooks/use-graph-metadata.js").DriveFileNode[];
-  /** Authoritative full tree (folders + files) from the reactor. */
-  serverAllNodes?: import("../hooks/use-graph-metadata.js").DriveTreeNode[];
 };
 
 const STATUS_ORDER = ["CANONICAL", "IN_REVIEW", "DRAFT", "ARCHIVED"] as const;
@@ -45,14 +34,7 @@ const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
 const DEFAULT_WIDTH = 256;
 
-export function VaultSidebar({
-  notes,
-  isLoading,
-  error,
-  refetch,
-  serverFileNodes,
-  serverAllNodes,
-}: VaultSidebarProps) {
+export function VaultSidebar({ notes }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [section, setSection] = useState<SidebarSection>("notes");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
@@ -62,42 +44,19 @@ export function VaultSidebar({
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
   const resizing = useRef(false);
-  // Sidebar reads only these four singleton/MoC/observation/tension types.
-  // Knowledge-note metadata is delivered via the `notes` prop (subgraph-
-  // backed) — pulling 348 knowledge-note states through this path was
-  // the original sidebar slowness.
-  //
-  // For MoCs/observations/tensions/vault-config we still need the full
-  // document state. We use the reactor-sourced fileNodes (from the
-  // `serverFileNodes` prop) to compute the IDs, then have
-  // useDocumentsSafe fetch each via documentCache.get(id, true). This
-  // bypasses Connect's stale drive-document cache for the ID list while
-  // still relying on the per-doc cache for state.
-  const ALL_TARGETED_TYPES = useMemo(
-    () => ["bai/vault-config", "bai/moc", "bai/observation", "bai/tension"],
-    [],
+  // File nodes only — no doc state fetch. `useDocumentsInSelectedDrive`
+  // would suspend-and-throw on any orphan id missing from the cache,
+  // freezing the whole drive editor in retry-loops.
+  const allNodes = useNodesInSelectedDrive();
+  const fileNodes = useMemo(
+    () =>
+      (allNodes ?? []).filter(
+        (n): n is Node & { kind: "file"; documentType: string } =>
+          isFileNodeKind(n),
+      ),
+    [allNodes],
   );
-  // Fetch MoC / observation / tension / vault-config state directly
-  // from the reactor's GraphQL endpoint, bypassing Connect's
-  // KyselyDocumentView (which throws "Document not found" for IDs that
-  // exist on the server). Specs come from the reactor-sourced file
-  // nodes — we already trust those.
-  const reactorSpecs: ReactorDocSpec[] = useMemo(() => {
-    if (!serverFileNodes || serverFileNodes.length === 0) return [];
-    return serverFileNodes
-      .filter((n) => ALL_TARGETED_TYPES.includes(n.documentType))
-      .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name }));
-  }, [serverFileNodes, ALL_TARGETED_TYPES]);
-  const documents = useReactorDocs(reactorSpecs);
-
-  // Tree view: prefer reactor-sourced full tree; fall back to local cache
-  // only if server fetch hasn't completed. Cast to Node[] for the
-  // existing FolderTreeView component which expects the cached shape.
-  const cachedAllNodes = useNodesInSelectedDrive();
-  const allNodes =
-    serverAllNodes && serverAllNodes.length > 0
-      ? (serverAllNodes as unknown as typeof cachedAllNodes)
-      : cachedAllNodes;
+  const [selectedDrive] = useSelectedDrive();
 
   const handleMouseDown = useCallback(
     (e: React.MouseEvent) => {
@@ -125,69 +84,31 @@ export function VaultSidebar({
     [sidebarWidth],
   );
 
-  // Read vault name from VaultConfig singleton
-  const vaultName = useMemo(() => {
-    const configDoc = (documents ?? []).find(
-      (d) => d.header.documentType === "bai/vault-config",
-    );
-    if (!configDoc) return "Knowledge Vault";
-    const name = (configDoc.state as unknown as { global: { name?: string } })
-      ?.global?.name;
-    return name || "Knowledge Vault";
-  }, [documents]);
+  // Drive header has the name; no doc-state fetch needed.
+  const vaultName = selectedDrive?.header.name || "Knowledge Vault";
 
-  // MOCs
-  const mocs = useMemo(() => {
-    return (documents ?? [])
-      .filter((d) => d.header.documentType === "bai/moc")
-      .map((d) => ({
-        id: d.header.id,
-        name: d.header.name,
-        title:
-          ((d.state as unknown as { global: Record<string, unknown> }).global
-            .title as string) ?? d.header.name,
-        tier:
-          ((d.state as unknown as { global: Record<string, unknown> }).global
-            .tier as string) ?? null,
-        noteCount:
-          ((d.state as unknown as { global: Record<string, unknown> }).global
-            .noteCount as number) ?? 0,
-      }));
-  }, [documents]);
+  const { mocs } = useKnowledgeMocs();
 
-  // Observations + Tensions
   const observations = useMemo(() => {
-    return (documents ?? [])
-      .filter((d) => d.header.documentType === "bai/observation")
-      .map((d) => ({
-        id: d.header.id,
-        title:
-          ((d.state as unknown as { global: Record<string, unknown> }).global
-            .title as string) ?? d.header.name,
-        category:
-          ((d.state as unknown as { global: Record<string, unknown> }).global
-            .category as string) ?? null,
-        status:
-          ((d.state as unknown as { global: Record<string, unknown> }).global
-            .status as string) ?? "PENDING",
-      }))
-      .filter((o) => o.status === "PENDING");
-  }, [documents]);
+    return fileNodes
+      .filter((n) => n.documentType === "bai/observation")
+      .map((n) => ({
+        id: n.id,
+        title: n.name,
+        category: null as string | null,
+        status: "PENDING" as const,
+      }));
+  }, [fileNodes]);
 
   const tensions = useMemo(() => {
-    return (documents ?? [])
-      .filter((d) => d.header.documentType === "bai/tension")
-      .map((d) => ({
-        id: d.header.id,
-        title:
-          ((d.state as unknown as { global: Record<string, unknown> }).global
-            .title as string) ?? d.header.name,
-        status:
-          ((d.state as unknown as { global: Record<string, unknown> }).global
-            .status as string) ?? "OPEN",
-      }))
-      .filter((t) => t.status === "OPEN");
-  }, [documents]);
+    return fileNodes
+      .filter((n) => n.documentType === "bai/tension")
+      .map((n) => ({
+        id: n.id,
+        title: n.name,
+        status: "OPEN" as const,
+      }));
+  }, [fileNodes]);
 
   const filtered = useMemo(() => {
     if (!search.trim()) return notes;
@@ -372,44 +293,6 @@ export function VaultSidebar({
       <div className="flex-1 overflow-y-auto px-2 pb-4">
         {section === "notes" && (
           <>
-            {error && (
-              <div
-                className="mb-2 rounded-md border border-red-500/30 bg-red-500/10 px-2 py-1.5 text-[11px]"
-                style={{ color: "var(--bai-text-secondary)" }}
-              >
-                <div className="font-medium text-red-400">
-                  Could not load note metadata
-                </div>
-                <div
-                  className="mt-0.5 truncate"
-                  title={error.message}
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  {error.message}
-                </div>
-                {refetch && (
-                  <button
-                    type="button"
-                    onClick={refetch}
-                    className="mt-1 rounded px-1.5 py-0.5 text-[10px] transition-colors hover:opacity-80"
-                    style={{
-                      backgroundColor: "var(--bai-hover)",
-                      color: "var(--bai-accent)",
-                    }}
-                  >
-                    Retry
-                  </button>
-                )}
-              </div>
-            )}
-            {isLoading && notes.length === 0 && !error && (
-              <div
-                className="mb-2 px-2 py-1 text-[11px]"
-                style={{ color: "var(--bai-text-faint)" }}
-              >
-                Loading note metadata…
-              </div>
-            )}
             {STATUS_ORDER.map((status) => {
               const groupNotes = grouped[status];
               if (groupNotes.length === 0) return null;
@@ -550,6 +433,52 @@ export function VaultSidebar({
                     </div>
                   );
                 })}
+                {(() => {
+                  const untiered = mocs.filter((m) => m.tier === null);
+                  if (untiered.length === 0) return null;
+                  return (
+                    <div key="untiered">
+                      <p
+                        className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                        style={{ color: "var(--bai-text-faint)" }}
+                      >
+                        UNTIERED
+                      </p>
+                      {untiered.map((moc) => (
+                        <button
+                          key={moc.id}
+                          type="button"
+                          onClick={() => setSelectedNode(moc.id)}
+                          className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+                        >
+                          <svg
+                            className="h-3.5 w-3.5 shrink-0"
+                            style={{ color: "var(--bai-accent)", opacity: 0.6 }}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <circle cx="12" cy="12" r="10" />
+                            <path d="M12 6v6l4 2" />
+                          </svg>
+                          <span
+                            className="sidebar-note-title truncate text-xs"
+                            style={{ color: "var(--bai-text-secondary)" }}
+                          >
+                            {moc.title}
+                          </span>
+                          <span
+                            className="ml-auto text-[10px]"
+                            style={{ color: "var(--bai-text-faint)" }}
+                          >
+                            {moc.noteCount}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })()}
               </>
             )}
           </div>
