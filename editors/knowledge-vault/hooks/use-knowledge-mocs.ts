@@ -1,5 +1,8 @@
 import { useMemo } from "react";
-import { useGraphMetadata } from "./use-graph-metadata.js";
+import {
+  useGraphMetadata,
+  type GraphEdgeMetadata,
+} from "./use-graph-metadata.js";
 
 export type MocTier = "HUB" | "DOMAIN" | "TOPIC";
 
@@ -23,6 +26,8 @@ const TIER_RANK: Record<MocTier, number> = {
   TOPIC: 2,
 };
 
+const UNTIERED_RANK = 99;
+
 const MOC_NOTE_TYPE_RE = /^MOC \((HUB|DOMAIN|TOPIC)\)$/;
 
 /**
@@ -36,6 +41,11 @@ const MOC_NOTE_TYPE_RE = /^MOC \((HUB|DOMAIN|TOPIC)\)$/;
  * `coreIdea.contextPhrase` is not in the projection — only the target
  * document id. Returned as empty string; GraphView uses it for tooltips
  * only.
+ *
+ * Note: `useKnowledgeNotes` also calls `useGraphMetadata()`, so when both
+ * this hook and `useKnowledgeNotes` are mounted, the subgraph fetch fires
+ * twice. This is an accepted tradeoff for now; long-term the call should
+ * be lifted into a shared context/provider.
  */
 export function useKnowledgeMocs(): UseKnowledgeMocsResult {
   const { nodeMap, edges } = useGraphMetadata();
@@ -50,7 +60,19 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
       }
     }
 
-    // Second pass: build a MocInfo for each MoC node, walking outgoing
+    // Build a Map<sourceId, edges> for O(1) lookup by source document.
+    // This avoids O(MoCs × edges) behavior from the naive nested loop.
+    const edgesBySource = new Map<string, GraphEdgeMetadata[]>();
+    for (const edge of edges) {
+      let arr = edgesBySource.get(edge.sourceDocumentId);
+      if (!arr) {
+        arr = [];
+        edgesBySource.set(edge.sourceDocumentId, arr);
+      }
+      arr.push(edge);
+    }
+
+    // Second pass: build a MocInfo for each MoC node, looking up outgoing
     // CORE_IDEA edges to populate coreIdeas and childRefs.
     const mocs: MocInfo[] = [];
     for (const node of nodeMap.values()) {
@@ -61,8 +83,8 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
 
       const coreIdeas: MocInfo["coreIdeas"] = [];
       const childRefs: string[] = [];
-      for (const edge of edges) {
-        if (edge.sourceDocumentId !== node.documentId) continue;
+      const sourceEdges = edgesBySource.get(node.documentId) ?? [];
+      for (const edge of sourceEdges) {
         if (edge.linkType !== "CORE_IDEA") continue;
         if (mocIds.has(edge.targetDocumentId)) {
           childRefs.push(edge.targetDocumentId);
@@ -87,8 +109,8 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
     // Sort: known tiers (HUB → DOMAIN → TOPIC) first ranked by TIER_RANK,
     // then untiered MoCs, then alphabetical by title within each tier.
     mocs.sort((a, b) => {
-      const ra = a.tier ? TIER_RANK[a.tier] : 99;
-      const rb = b.tier ? TIER_RANK[b.tier] : 99;
+      const ra = a.tier ? TIER_RANK[a.tier] : UNTIERED_RANK;
+      const rb = b.tier ? TIER_RANK[b.tier] : UNTIERED_RANK;
       if (ra !== rb) return ra - rb;
       return a.title.localeCompare(b.title);
     });
