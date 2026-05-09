@@ -102,20 +102,6 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
   }, [edges]);
 
   const notes: KnowledgeNoteInfo[] = useMemo(() => {
-    // DEBUG: log compose stats once per render. Remove once verified.
-    if (knowledgeFileNodes.length > 0) {
-      const firstId = knowledgeFileNodes[0]?.id;
-      // eslint-disable-next-line no-console
-      console.log(
-        "[useKnowledgeNotes] compose:",
-        "fileNodes=", knowledgeFileNodes.length,
-        "nodeMapSize=", nodeMap.size,
-        "linksBySourceSize=", linksBySource.size,
-        "firstFileNodeId=", firstId,
-        "firstNodeMapKeys=", Array.from(nodeMap.keys()).slice(0, 3),
-        "firstFileNodeFoundInMap=", firstId ? nodeMap.has(firstId) : "n/a",
-      );
-    }
     return knowledgeFileNodes.map((node) => {
       const meta = nodeMap.get(node.id);
       const links = linksBySource.get(node.id) ?? [];

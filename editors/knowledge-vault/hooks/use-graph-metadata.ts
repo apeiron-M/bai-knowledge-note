@@ -166,7 +166,15 @@ async function fetchDriveAllNodes(driveId: string): Promise<DriveTreeNode[]> {
   const nodes = json.data?.document?.document?.state?.global?.nodes ?? [];
   return nodes
     .filter(
-      (n): n is { id: string; name: string; kind: string; documentType?: string; parentFolder?: string | null } =>
+      (
+        n,
+      ): n is {
+        id: string;
+        name: string;
+        kind: string;
+        documentType?: string;
+        parentFolder?: string | null;
+      } =>
         typeof n === "object" &&
         n !== null &&
         ((n as { kind?: string }).kind === "file" ||
@@ -190,7 +198,10 @@ export function useGraphMetadata(): GraphMetadata {
   const serverFileNodes: DriveFileNode[] = useMemo(
     () =>
       allNodes
-        .filter((n): n is DriveTreeNode & { documentType: string } => n.kind === "file" && !!n.documentType)
+        .filter(
+          (n): n is DriveTreeNode & { documentType: string } =>
+            n.kind === "file" && !!n.documentType,
+        )
         .map((n) => ({
           id: n.id,
           name: n.name,
@@ -243,8 +254,6 @@ export function useGraphMetadata(): GraphMetadata {
     setError(null);
 
     const endpoint = resolveKnowledgeGraphEndpoint();
-    // eslint-disable-next-line no-console
-    console.log("[useGraphMetadata] fetch start", { endpoint, driveId, fingerprint: driveFingerprint });
 
     fetch(endpoint, {
       method: "POST",
@@ -259,30 +268,12 @@ export function useGraphMetadata(): GraphMetadata {
           throw new Error(`HTTP ${res.status} from ${endpoint}`);
         }
         const json = (await res.json()) as RawResponse;
-        // eslint-disable-next-line no-console
-        console.log(
-          "[useGraphMetadata] response",
-          {
-            hasData: !!json.data,
-            errors: json.errors,
-            nodeCount: json.data?.knowledgeGraphNodes?.length ?? 0,
-            edgeCount: json.data?.knowledgeGraphEdges?.length ?? 0,
-            firstNode: json.data?.knowledgeGraphNodes?.[0],
-          },
-        );
         if (json.errors?.length) {
-          throw new Error(
-            json.errors.map((e) => e.message ?? "?").join("; "),
-          );
+          throw new Error(json.errors.map((e) => e.message ?? "?").join("; "));
         }
         return json.data;
       })
       .then((data) => {
-        // eslint-disable-next-line no-console
-        console.log("[useGraphMetadata] applying state", {
-          cancelled,
-          nodeCount: data?.knowledgeGraphNodes?.length ?? 0,
-        });
         if (cancelled) return;
         setNodes(data?.knowledgeGraphNodes ?? EMPTY_NODES);
         setEdges(data?.knowledgeGraphEdges ?? EMPTY_EDGES);
@@ -292,13 +283,6 @@ export function useGraphMetadata(): GraphMetadata {
       .then(() =>
         fetchDriveAllNodes(driveId).then((nodes) => {
           if (cancelled) return;
-          const fileCount = nodes.filter((n) => n.kind === "file").length;
-          // eslint-disable-next-line no-console
-          console.log(
-            "[useGraphMetadata] tree from reactor:",
-            "all=", nodes.length,
-            "files=", fileCount,
-          );
           setAllNodes(nodes);
         }),
       )

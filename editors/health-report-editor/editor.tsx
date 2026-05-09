@@ -1,10 +1,8 @@
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedHealthReportDocument } from "../../document-models/health-report/v1/hooks.js";
-import {
-  setSelectedNode,
-  useDocumentsInSelectedDrive,
-} from "@powerhousedao/reactor-browser";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { useDocumentsSafe } from "../knowledge-vault/hooks/use-documents-safe.js";
 
 const STATUS_BADGE: Record<string, string> = {
   PASS: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
@@ -15,7 +13,8 @@ const STATUS_BADGE: Record<string, string> = {
 export default function Editor() {
   const [document] = useSelectedHealthReportDocument();
   const state = document.state.global;
-  const documents = useDocumentsInSelectedDrive();
+  // Safe variant — see moc-editor for rationale.
+  const documents = useDocumentsSafe(["bai/knowledge-note", "bai/moc"]);
 
   const isEmpty = !state.generatedAt;
 

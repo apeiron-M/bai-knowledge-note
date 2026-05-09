@@ -165,7 +165,6 @@ export function useDriveInit() {
 async function initDrive(driveId: string, existingNodes: Node[]) {
   try {
     // Phase 1: Create folders
-    console.log(`[VaultInit] Creating folders for drive ${driveId}...`);
     const existingFolderMap = buildExistingFolderMap(existingNodes);
     const folderIds = new Map<string, string>(existingFolderMap);
 
@@ -185,21 +184,16 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
       try {
         const result = await addFolder(driveId, folder.name, parentId);
         folderIds.set(path, result.id);
-        console.log(`[VaultInit] Created folder: /${path}/`);
         await new Promise((r) => setTimeout(r, 500));
       } catch (err) {
         console.error(`[VaultInit] Failed to create folder /${path}/:`, err);
       }
     }
 
-    console.log("[VaultInit] Folders complete");
-
     // Wait for reactor to process all folder operations
     await new Promise((r) => setTimeout(r, 1500));
 
     // Phase 2: Create singletons
-    console.log(`[VaultInit] Creating singletons...`);
-
     const existingTypes = new Set(
       existingNodes
         .filter((n) => n.kind === "file")
@@ -211,7 +205,6 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
 
     for (const singleton of SINGLETONS) {
       if (existingTypes.has(singleton.type)) {
-        console.log(`[VaultInit] ${singleton.name} already exists, skipping`);
         continue;
       }
 
@@ -224,16 +217,11 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
           singleton.type,
           parentFolderId,
         );
-        console.log(
-          `[VaultInit] Created ${singleton.name} in /${singleton.folderPath}/`,
-        );
         await new Promise((r) => setTimeout(r, 1000));
       } catch (err) {
         console.error(`[VaultInit] Failed to create ${singleton.name}:`, err);
       }
     }
-
-    console.log("[VaultInit] Drive initialization complete");
   } catch (err) {
     console.error("[VaultInit] Drive initialization failed:", err);
   }

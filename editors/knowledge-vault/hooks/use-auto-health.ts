@@ -4,7 +4,7 @@ import {
   useFileNodesInSelectedDrive,
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
-import type { HealthReportDocument } from "../../../document-models/health-report/index.js";
+import type { HealthReportDocument } from "document-models/health-report";
 import { useDocumentByIdSafe } from "./use-documents-safe.js";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 import type { GraphState } from "./use-knowledge-graph.js";
@@ -133,10 +133,5 @@ export function useAutoHealth(
       recommendations.push("Increase link density — aim for 2+ links per note");
     if (noDesc.length > 0)
       recommendations.push(`Add descriptions to ${noDesc.length} note(s)`);
-
-    // Log the report (the health-report doc gets updated via the editor or plugin)
-    console.log(
-      `[AutoHealth] ${overallStatus}: ${nodeCount} notes, ${edgeCount} edges, ${orphanCount} orphans, density ${(density * 100).toFixed(1)}%`,
-    );
   }, [healthDoc, driveId, notes, graphState]);
 }
