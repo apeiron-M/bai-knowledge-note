@@ -3,13 +3,17 @@ import cytoscape from "cytoscape";
 
 // @ts-expect-error - no types available for cytoscape-fcose
 import fcose from "cytoscape-fcose";
+// @ts-expect-error - no types available for cytoscape-elk
+import elk from "cytoscape-elk";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
 
-// Register the fcose layout once
+// Register layout extensions once
 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 cytoscape.use(fcose);
+// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+cytoscape.use(elk);
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -192,6 +196,7 @@ function buildElements(
           linkCount: linkCounts.get(node.documentId) ?? 0,
           color:
             STATUS_NODE_COLORS[node.status ?? "DRAFT"] ?? DEFAULT_NODE_COLOR,
+          layer: 3,
         },
       });
     }
@@ -249,6 +254,7 @@ function buildElements(
           linkCount: linkCounts.get(note.id) ?? 0,
           color:
             STATUS_NODE_COLORS[note.status ?? "DRAFT"] ?? DEFAULT_NODE_COLOR,
+          layer: 3,
         },
       });
     }
@@ -279,7 +285,20 @@ function buildElements(
       existingNodeIds.add(moc.id);
     }
 
+    // First-parent-wins: record which MoC first claims each note as a coreIdea
+    const firstParentByNote = new Map<string, string>();
     for (const moc of mocs) {
+      for (const idea of moc.coreIdeas) {
+        if (!firstParentByNote.has(idea.noteRef)) {
+          firstParentByNote.set(idea.noteRef, moc.id);
+        }
+      }
+    }
+
+    const tierToLayer: Record<string, number> = { HUB: 0, DOMAIN: 1, TOPIC: 2 };
+
+    for (const moc of mocs) {
+      const layer = tierToLayer[moc.tier ?? "TOPIC"] ?? 2;
       elements.push({
         data: {
           id: moc.id,
@@ -291,6 +310,7 @@ function buildElements(
           linkCount: moc.coreIdeas.length + moc.childRefs.length,
           color: MOC_NODE_COLOR,
           isMoc: true,
+          layer,
         },
       });
 
@@ -303,6 +323,7 @@ function buildElements(
               target: idea.noteRef,
               linkType: "CORE_IDEA",
               color: MOC_EDGE_COLOR,
+              isPrimaryParent: firstParentByNote.get(idea.noteRef) === moc.id,
             },
           });
         }
@@ -317,6 +338,7 @@ function buildElements(
               target: childRef,
               linkType: "CORE_IDEA",
               color: MOC_EDGE_COLOR,
+              isPrimaryParent: true,
             },
           });
         }
@@ -441,7 +463,7 @@ const cyStylesheet: cytoscape.StylesheetStyle[] = [
       "line-dash-pattern": [2, 4],
     } as cytoscape.Css.Edge,
   },
-  // MOC edges — dashed
+  // MOC edges — dashed (primary parent edges)
   {
     selector: "edge[linkType = 'CORE_IDEA']",
     style: {
@@ -449,6 +471,30 @@ const cyStylesheet: cytoscape.StylesheetStyle[] = [
       "line-dash-pattern": [6, 3],
       opacity: 0.6,
       width: 1,
+    } as cytoscape.Css.Edge,
+  },
+  // Secondary parent edges — hidden by default.
+  // Scoped to CORE_IDEA edges with isPrimaryParent explicitly false.
+  // [!isPrimaryParent] matches falsy values (false, 0, undefined);
+  // scoping to CORE_IDEA prevents accidentally hiding note→note edges
+  // which have no isPrimaryParent field (undefined is also falsy).
+  // But note→note edges don't have linkType = 'CORE_IDEA', so they
+  // are never matched here regardless.
+  {
+    selector: "edge[linkType = 'CORE_IDEA'][!isPrimaryParent]",
+    style: {
+      opacity: 0.0,
+      events: "no",
+    } as cytoscape.Css.Edge,
+  },
+  // Secondary parent edges — visible (dashed) when their endpoint is a neighbor
+  {
+    selector: "edge[linkType = 'CORE_IDEA'][!isPrimaryParent].neighbor",
+    style: {
+      opacity: 0.55,
+      events: "yes",
+      "line-style": "dashed",
+      "line-dash-pattern": [6, 4],
     } as cytoscape.Css.Edge,
   },
   // Highlighted node (hovered or selected)
@@ -525,46 +571,33 @@ function getLayoutOptions(opts?: {
     } as cytoscape.LayoutOptions;
   }
 
-  // Some or all nodes need computation.
-  // Conservative params: at >300 nodes, randomized init + high repulsion
-  // overflows fcose's calcGrid array. Lower numIter and repulsion keep
-  // the bounding rect from blowing up before convergence.
-  const nodeCount = currentNodeCount();
-  const isLarge = nodeCount > 300;
-  const randomize = !hasPositions;
-  // fcose constraint: `randomize: false` requires `quality: "default" | "proof"`.
-  // Only switch to "draft" when we're randomizing (i.e. on the first layout
-  // for a fresh drive); otherwise fcose throws/warns and falls through to cose.
-  const quality = randomize && isLarge ? "draft" : "default";
+  // First load: use ELK layered (Sugiyama) layout with per-node tier pinning.
+  // Nodes carry data.layer (0=HUB, 1=DOMAIN, 2=TOPIC, 3=notes); ELK's
+  // layerChoiceConstraint pins each node to its designated layer.
   return {
-    name: "fcose",
-    animate: false,
-    quality,
-    randomize,
-    // Spread nodes apart: bumped from 6000 → 9000 to give notes around
-    // each MOC enough breathing room without overlapping.
-    nodeRepulsion: isLarge ? 9000 : 12000,
-    // Longer edges: notes orbit their MOC at greater radius.
-    idealEdgeLength: isLarge ? 220 : 180,
-    edgeElasticity: 0.08,
-    nestingFactor: 0.1,
-    // Almost no center-pull so isolated chains float free.
-    gravity: 0.025,
-    // More iterations to actually settle into the dispersed equilibrium.
-    numIter: isLarge ? 700 : 1200,
-    tile: true,
-    tilingPaddingVertical: 60,
-    tilingPaddingHorizontal: 60,
+    name: "elk",
     fit: false,
     padding: 80,
-    // Pin existing nodes, only layout new ones
-    ...(hasPositions
-      ? {
-          fixedNodeConstraint: Object.entries(saved)
-            .filter(([id]) => !opts?.newNodeIds?.has(id))
-            .map(([id, pos]) => ({ nodeId: id, position: pos })),
-        }
-      : {}),
+    elk: {
+      algorithm: "layered",
+      "elk.direction": "DOWN",
+      "elk.layered.layering.strategy": "INTERACTIVE",
+      "elk.layered.crossingMinimization.semiInteractive": "true",
+      "elk.layered.crossingMinimization.strategy": "LAYER_SWEEP",
+      "elk.layered.cycleBreaking.strategy": "GREEDY",
+      "elk.layered.spacing.nodeNodeBetweenLayers": "120",
+      "elk.spacing.nodeNode": "40",
+      "elk.layered.spacing.edgeNodeBetweenLayers": "20",
+      "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
+      "elk.edgeRouting": "POLYLINE",
+      "elk.aspectRatio": "1.6",
+    },
+    // Per-node: pin each node to its tier layer via layerChoiceConstraint
+    nodeLayoutOptions: (node: cytoscape.NodeSingular) => ({
+      "elk.layered.layering.layerChoiceConstraint": String(
+        node.data("layer") ?? 3,
+      ),
+    }),
   } as cytoscape.LayoutOptions;
 }
 
@@ -576,21 +609,63 @@ function currentNodeCount() {
 }
 
 /**
- * Run a layout, falling back to cose (force-directed but more stable) if
- * fcose throws `RangeError: Invalid array length` in `calcGrid`. Final
- * fallback is grid so the graph always renders. Returns the name of the
- * layout that ran so callers can skip persisting grid positions.
+ * Run a layout, falling back through elk → fcose → cose → grid.
+ * ELK is the preferred first-load layout (Sugiyama/layered with tier pinning).
+ * Falls back to fcose if ELK fails (e.g. worker unavailable), then cose, then
+ * grid as a last resort so the graph always renders.
+ * Returns the name of the layout that ran so callers can skip persisting grid
+ * positions (only "elk", "fcose", and "cose" positions are worth persisting).
  */
 function runLayoutWithFallback(
   cy: cytoscape.Core,
   options: cytoscape.LayoutOptions,
-): "fcose" | "cose" | "grid" | "none" {
+): "elk" | "fcose" | "cose" | "grid" | "none" {
+  const layoutName = (options as { name: string }).name;
   try {
     cy.layout(options).run();
-    return (options as { name: string }).name === "preset" ? "fcose" : "fcose";
+    // preset counts as "fcose" for persistence purposes (positions already saved)
+    return layoutName === "preset"
+      ? "fcose"
+      : (layoutName as "elk" | "fcose" | "cose" | "grid");
   } catch (err) {
-    console.warn("[GraphView] fcose failed, retrying with cose:", err);
+    if (layoutName === "elk") {
+      console.warn("[GraphView] elk failed, retrying with fcose:", err);
+    } else {
+      console.warn("[GraphView] fcose failed, retrying with cose:", err);
+    }
   }
+
+  // If ELK was the primary attempt, fall through to fcose
+  if (layoutName === "elk") {
+    const nodeCount = currentNodeCount();
+    const isLarge = nodeCount > 300;
+    try {
+      cy.layout({
+        name: "fcose",
+        animate: false,
+        quality: isLarge ? "draft" : "default",
+        randomize: true,
+        nodeRepulsion: isLarge ? 9000 : 12000,
+        idealEdgeLength: isLarge ? 220 : 180,
+        edgeElasticity: 0.08,
+        nestingFactor: 0.1,
+        gravity: 0.025,
+        numIter: isLarge ? 700 : 1200,
+        tile: true,
+        tilingPaddingVertical: 60,
+        tilingPaddingHorizontal: 60,
+        fit: false,
+        padding: 80,
+      } as cytoscape.LayoutOptions).run();
+      return "fcose";
+    } catch (err) {
+      console.warn(
+        "[GraphView] fcose fallback failed, retrying with cose:",
+        err,
+      );
+    }
+  }
+
   try {
     cy.layout({
       name: "cose",
@@ -717,6 +792,11 @@ export function GraphView({
     if (!node.length) return;
 
     const neighborhood = node.closedNeighborhood();
+    // Also collect secondary-parent edges that touch any node in the neighborhood
+    // (these are invisible by default and need the .neighbor class to fade in)
+    const secondaryEdgesInNeighborhood = neighborhood
+      .nodes()
+      .connectedEdges("edge[linkType = 'CORE_IDEA'][!isPrimaryParent]");
 
     cy.batch(() => {
       cy.elements().removeClass("highlighted neighbor dimmed");
@@ -724,6 +804,8 @@ export function GraphView({
       neighborhood.edges().addClass("highlighted");
       neighborhood.nodes().not(node).addClass("neighbor");
       node.addClass("highlighted");
+      // Fade in secondary-parent edges for neighboring nodes
+      secondaryEdgesInNeighborhood.addClass("neighbor");
     });
   }, []);
 
@@ -780,7 +862,8 @@ export function GraphView({
         newNodeIds: newNodeIds.size > 0 ? newNodeIds : undefined,
       }),
     );
-    const shouldPersist = ranLayout === "fcose" || ranLayout === "cose";
+    const shouldPersist =
+      ranLayout === "elk" || ranLayout === "fcose" || ranLayout === "cose";
 
     // After layout settles, save positions and center view.
     const centerGraph = () => {
