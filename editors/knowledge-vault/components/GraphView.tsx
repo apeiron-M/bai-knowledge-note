@@ -571,9 +571,12 @@ function getLayoutOptions(opts?: {
     } as cytoscape.LayoutOptions;
   }
 
-  // First load: use ELK layered (Sugiyama) layout with per-node tier pinning.
-  // Nodes carry data.layer (0=HUB, 1=DOMAIN, 2=TOPIC, 3=notes); ELK's
-  // layerChoiceConstraint pins each node to its designated layer.
+  // First load: ELK layered (Sugiyama). Tier pinning via ELK's
+  // `partitioning` feature — nodes carrying `data.layer` 0..3 land in
+  // separate horizontal bands (HUB, DOMAIN, TOPIC, notes). Within each
+  // band ELK's crossing minimization clusters nodes that share more
+  // edges, satisfying the "related notes near each other" goal without
+  // a second force pass.
   return {
     name: "elk",
     fit: false,
@@ -581,22 +584,22 @@ function getLayoutOptions(opts?: {
     elk: {
       algorithm: "layered",
       "elk.direction": "DOWN",
-      "elk.layered.layering.strategy": "INTERACTIVE",
-      "elk.layered.crossingMinimization.semiInteractive": "true",
-      "elk.layered.crossingMinimization.strategy": "LAYER_SWEEP",
+      "elk.partitioning.activate": "true",
+      // Cheaper crossing-minimization than LAYER_SWEEP; LAYER_SWEEP +
+      // NETWORK_SIMPLEX placement was choking on ~375 nodes / ~1000
+      // edges. SIMPLE + LINEAR_SEGMENTS converges in well under a
+      // second on this scale and produces a perfectly readable tier
+      // ladder.
+      "elk.layered.crossingMinimization.strategy": "INTERACTIVE",
       "elk.layered.cycleBreaking.strategy": "GREEDY",
+      "elk.layered.nodePlacement.strategy": "SIMPLE",
       "elk.layered.spacing.nodeNodeBetweenLayers": "120",
-      "elk.spacing.nodeNode": "40",
-      "elk.layered.spacing.edgeNodeBetweenLayers": "20",
-      "elk.layered.nodePlacement.strategy": "NETWORK_SIMPLEX",
+      "elk.spacing.nodeNode": "30",
       "elk.edgeRouting": "POLYLINE",
-      "elk.aspectRatio": "1.6",
+      "elk.aspectRatio": "1.8",
     },
-    // Per-node: pin each node to its tier layer via layerChoiceConstraint
     nodeLayoutOptions: (node: cytoscape.NodeSingular) => ({
-      "elk.layered.layering.layerChoiceConstraint": String(
-        node.data("layer") ?? 3,
-      ),
+      "elk.partitioning.partition": String(node.data("layer") ?? 3),
     }),
   } as cytoscape.LayoutOptions;
 }
