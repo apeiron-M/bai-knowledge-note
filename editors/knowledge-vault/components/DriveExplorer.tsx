@@ -243,7 +243,7 @@ export function DriveExplorer({ children }: EditorProps) {
 
   return (
     <div className="flex h-full">
-      <VaultSidebar notes={notes} />
+      <VaultSidebar notes={notes} mocs={mocs} />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}

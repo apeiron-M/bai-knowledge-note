@@ -7,11 +7,12 @@ import {
 } from "@powerhousedao/reactor-browser";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
-import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
+import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 
 type VaultSidebarProps = {
   notes: KnowledgeNoteInfo[];
+  mocs: MocInfo[];
 };
 
 const STATUS_ORDER = ["CANONICAL", "IN_REVIEW", "DRAFT", "ARCHIVED"] as const;
@@ -34,7 +35,7 @@ const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
 const DEFAULT_WIDTH = 256;
 
-export function VaultSidebar({ notes }: VaultSidebarProps) {
+export function VaultSidebar({ notes, mocs }: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [section, setSection] = useState<SidebarSection>("notes");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
@@ -86,8 +87,6 @@ export function VaultSidebar({ notes }: VaultSidebarProps) {
 
   // Drive header has the name; no doc-state fetch needed.
   const vaultName = selectedDrive?.header.name || "Knowledge Vault";
-
-  const { mocs } = useKnowledgeMocs();
 
   const observations = useMemo(() => {
     return fileNodes

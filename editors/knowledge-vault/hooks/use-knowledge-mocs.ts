@@ -36,16 +36,17 @@ const MOC_NOTE_TYPE_RE = /^MOC \((HUB|DOMAIN|TOPIC)\)$/;
  * Reuses the in-flight `useGraphMetadata()` response — the graph-indexer
  * already projects MoCs into `graph_nodes` (note_type prefixed `MOC (...)`)
  * and their coreIdeas/childRefs into `graph_edges` (link_type `CORE_IDEA`).
- * No additional fetch is performed.
+ * No additional fetch is performed here.
+ *
+ * Note on duplication: `useKnowledgeNotes` and this hook each call
+ * `useGraphMetadata()` independently — React does not dedupe hook calls.
+ * Both run from the single `DriveExplorer` mount, so two concurrent fetches
+ * fire on drive open. The long-term fix is to lift `useGraphMetadata()` into
+ * a shared context/provider so all consumers share one fetch instance.
  *
  * `coreIdea.contextPhrase` is not in the projection — only the target
  * document id. Returned as empty string; GraphView uses it for tooltips
  * only.
- *
- * Note: `useKnowledgeNotes` also calls `useGraphMetadata()`, so when both
- * this hook and `useKnowledgeNotes` are mounted, the subgraph fetch fires
- * twice. This is an accepted tradeoff for now; long-term the call should
- * be lifted into a shared context/provider.
  */
 export function useKnowledgeMocs(): UseKnowledgeMocsResult {
   const { nodeMap, edges } = useGraphMetadata();

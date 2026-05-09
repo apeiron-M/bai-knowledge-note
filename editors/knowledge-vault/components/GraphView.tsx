@@ -5,6 +5,7 @@ import cytoscape from "cytoscape";
 import fcose from "cytoscape-fcose";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
+import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
 
 // Register the fcose layout once
 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
@@ -30,14 +31,6 @@ type PersistedGraphState = {
   }[];
   lastSyncedAt?: string | null;
 } | null;
-
-type MocInfo = {
-  id: string;
-  title: string;
-  tier: string | null;
-  coreIdeas: { noteRef: string; contextPhrase: string }[];
-  childRefs: string[];
-};
 
 type TensionInfo = {
   id: string;
