@@ -23,8 +23,6 @@ export type TopicInfo = {
   noteCount: number;
 };
 
-export type SearchMode = "hybrid" | "semantic" | "keyword";
-
 /* ------------------------------------------------------------------ */
 /*  GraphQL helpers                                                   */
 /* ------------------------------------------------------------------ */
@@ -87,25 +85,22 @@ const TOPICS_QUERY = `
 
 const STORAGE_KEY = "bai-search-state";
 
-function loadSearchState(): { query: string; mode: SearchMode } {
+function loadSearchState(): { query: string } {
   try {
     const raw = sessionStorage.getItem(STORAGE_KEY);
     if (raw) {
-      const parsed = JSON.parse(raw) as { query?: string; mode?: string };
-      return {
-        query: parsed.query ?? "",
-        mode: "hybrid",
-      };
+      const parsed = JSON.parse(raw) as { query?: string };
+      return { query: parsed.query ?? "" };
     }
   } catch {
     // ignore
   }
-  return { query: "", mode: "semantic" };
+  return { query: "" };
 }
 
-function saveSearchState(query: string, mode: SearchMode): void {
+function saveSearchState(query: string): void {
   try {
-    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ query, mode }));
+    sessionStorage.setItem(STORAGE_KEY, JSON.stringify({ query }));
   } catch {
     // ignore
   }
@@ -119,29 +114,15 @@ export function useGraphSearch() {
   const [topics, setTopics] = useState<TopicInfo[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [searchMode, setSearchModeRaw] = useState<SearchMode>(
-    saved.current.mode,
-  );
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endpoint = useMemo(() => resolveKnowledgeGraphEndpoint(), []);
   const { embed, error: embedderError } = useEmbedder();
 
-  // Persist query and mode to sessionStorage
-  const setQuery = useCallback(
-    (q: string) => {
-      setQueryRaw(q);
-      saveSearchState(q, searchMode);
-    },
-    [searchMode],
-  );
-
-  const setSearchMode = useCallback(
-    (m: SearchMode) => {
-      setSearchModeRaw(m);
-      saveSearchState(query, m);
-    },
-    [query],
-  );
+  // Persist query to sessionStorage
+  const setQuery = useCallback((q: string) => {
+    setQueryRaw(q);
+    saveSearchState(q);
+  }, []);
 
   // Fetch topics on mount for empty-state overview
   useEffect(() => {
@@ -157,9 +138,14 @@ export function useGraphSearch() {
     });
   }, [driveId, endpoint]);
 
-  // Debounced search
+  // Debounced search. Always runs hybrid (semantic + keyword fused)
+  // when the embedder is available; falls back to keyword silently
+  // if the embedder fails. Mode is no longer a user choice — hybrid
+  // dominates both other strategies for typical "find me notes about X"
+  // queries, and the keyword fallback handles the rare embedder-unavailable
+  // case without breaking the search box.
   const executeSearch = useCallback(
-    async (q: string, mode: SearchMode) => {
+    async (q: string) => {
       if (!driveId || !q.trim()) {
         setResults([]);
         setLoading(false);
@@ -169,78 +155,60 @@ export function useGraphSearch() {
       setLoading(true);
       setError(null);
 
-      if (mode === "hybrid" || mode === "semantic") {
-        // Embed the query in-browser; fall back to keyword if embedder unavailable
-        let embedding: number[] | null = null;
-        if (!embedderError) {
-          try {
-            embedding = await embed(q);
-          } catch {
-            embedding = null;
-          }
+      let embedding: number[] | null = null;
+      if (!embedderError) {
+        try {
+          embedding = await embed(q);
+        } catch {
+          embedding = null;
         }
+      }
 
-        if (!embedding) {
-          // Embedder unavailable — fall back to keyword silently
-          const data = await graphqlFetch<{
-            knowledgeGraphFullSearch: SearchResult[];
-          }>(endpoint, KEYWORD_SEARCH_QUERY, { driveId, query: q, limit: 20 });
-          if (data?.knowledgeGraphFullSearch) {
-            setResults(data.knowledgeGraphFullSearch);
-          } else {
-            setResults([]);
-            setError("Search failed.");
-          }
-        } else {
-          const apiMode = mode === "semantic" ? "SEMANTIC" : "HYBRID";
-          const data = await graphqlFetch<{
-            knowledgeGraphSearchByEmbedding: Array<{
-              node: Omit<SearchResult, "similarity" | "matchedBy">;
-              similarity: number;
-            }>;
-          }>(endpoint, SEARCH_BY_EMBEDDING_QUERY, {
-            driveId,
-            query: q,
-            embedding,
-            mode: apiMode,
-            limit: 20,
-          });
-
-          if (data?.knowledgeGraphSearchByEmbedding) {
-            setResults(
-              data.knowledgeGraphSearchByEmbedding.map((r) => ({
-                ...r.node,
-                similarity: r.similarity,
-              })),
-            );
-          } else {
-            setResults([]);
-            setError(
-              mode === "semantic"
-                ? "Semantic search unavailable. Try keyword mode."
-                : "Hybrid search unavailable. Try keyword mode.",
-            );
-          }
-        }
-      } else {
+      if (!embedding) {
+        // Embedder unavailable — silent keyword fallback
         const data = await graphqlFetch<{
           knowledgeGraphFullSearch: SearchResult[];
         }>(endpoint, KEYWORD_SEARCH_QUERY, { driveId, query: q, limit: 20 });
-
         if (data?.knowledgeGraphFullSearch) {
           setResults(data.knowledgeGraphFullSearch);
         } else {
           setResults([]);
           setError("Search failed.");
         }
+        setLoading(false);
+        return;
       }
 
+      const data = await graphqlFetch<{
+        knowledgeGraphSearchByEmbedding: Array<{
+          node: Omit<SearchResult, "similarity" | "matchedBy">;
+          similarity: number;
+        }>;
+      }>(endpoint, SEARCH_BY_EMBEDDING_QUERY, {
+        driveId,
+        query: q,
+        embedding,
+        mode: "HYBRID",
+        limit: 20,
+      });
+
+      if (data?.knowledgeGraphSearchByEmbedding) {
+        setResults(
+          data.knowledgeGraphSearchByEmbedding.map((r) => ({
+            ...r.node,
+            similarity: r.similarity,
+          })),
+        );
+      } else {
+        setResults([]);
+        setError("Search failed.");
+      }
       setLoading(false);
     },
     [driveId, endpoint, embed, embedderError],
   );
 
-  // Trigger debounced search on query or mode change
+  // Trigger debounced search on query change
   useEffect(() => {
     if (debounceRef.current) clearTimeout(debounceRef.current);
 
@@ -252,13 +220,13 @@ export function useGraphSearch() {
 
     setLoading(true);
     debounceRef.current = setTimeout(() => {
-      void executeSearch(query, searchMode);
+      void executeSearch(query);
     }, DEBOUNCE_MS);
 
     return () => {
       if (debounceRef.current) clearTimeout(debounceRef.current);
     };
-  }, [query, searchMode, executeSearch]);
+  }, [query, executeSearch]);
 
   return {
     query,
@@ -267,7 +235,5 @@ export function useGraphSearch() {
     topics,
     loading,
     error,
-    searchMode,
-    setSearchMode,
   };
 }

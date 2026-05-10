@@ -4,7 +4,6 @@ import {
   useGraphSearch,
   type SearchResult,
   type TopicInfo,
-  type SearchMode,
 } from "../hooks/use-graph-search.js";
 import type { CSSProperties } from "react";
 
@@ -46,16 +45,7 @@ function similarityColor(score: number): string {
 /* ------------------------------------------------------------------ */
 
 export function SearchView() {
-  const {
-    query,
-    setQuery,
-    results,
-    topics,
-    loading,
-    error,
-    searchMode,
-    setSearchMode,
-  } = useGraphSearch();
+  const { query, setQuery, results, topics, loading, error } = useGraphSearch();
 
   return (
     <div className="flex h-full flex-col p-4">
@@ -106,7 +96,6 @@ export function SearchView() {
             </button>
           )}
         </div>
-        <ModeToggle mode={searchMode} onChange={setSearchMode} />
       </div>
 
       {/* Status line */}
@@ -122,15 +111,11 @@ export function SearchView() {
               <span>
                 {results.length} result{results.length !== 1 ? "s" : ""}
               </span>
-              {(searchMode === "semantic" || searchMode === "hybrid") &&
-                results.length > 0 && (
-                  <span style={{ opacity: 0.6 }}>
-                    — score shows relevance
-                    {searchMode === "hybrid"
-                      ? " combining keyword + semantic matching"
-                      : " by meaning"}
-                  </span>
-                )}
+              {results.length > 0 && (
+                <span style={{ opacity: 0.6 }}>
+                  — relevance combines meaning + keyword match
+                </span>
+              )}
             </>
           )}
           {error && <span style={{ color: "#ef4444" }}>{error}</span>}
@@ -142,44 +127,9 @@ export function SearchView() {
         {!query.trim() ? (
           <EmptyState topics={topics} onTopicClick={setQuery} />
         ) : (
-          <ResultList results={results} searchMode={searchMode} />
+          <ResultList results={results} />
         )}
       </div>
-    </div>
-  );
-}
-
-/* ------------------------------------------------------------------ */
-/*  Mode toggle                                                       */
-/* ------------------------------------------------------------------ */
-
-function ModeToggle({
-  mode,
-  onChange,
-}: {
-  mode: SearchMode;
-  onChange: (m: SearchMode) => void;
-}) {
-  return (
-    <div
-      className="flex shrink-0 overflow-hidden rounded-lg border text-xs"
-      style={{ borderColor: "var(--bai-border)" }}
-    >
-      {(["hybrid", "semantic", "keyword"] as const).map((m) => (
-        <button
-          key={m}
-          type="button"
-          onClick={() => onChange(m)}
-          className="px-3 py-2 transition-colors capitalize"
-          style={{
-            backgroundColor:
-              mode === m ? "var(--bai-accent)" : "var(--bai-surface)",
-            color: mode === m ? "#fff" : "var(--bai-text-muted)",
-          }}
-        >
-          {m}
-        </button>
-      ))}
     </div>
   );
 }
@@ -279,13 +229,7 @@ function EmptyState({
 /*  Result list                                                       */
 /* ------------------------------------------------------------------ */
 
-function ResultList({
-  results,
-  searchMode,
-}: {
-  results: SearchResult[];
-  searchMode: SearchMode;
-}) {
+function ResultList({ results }: { results: SearchResult[] }) {
   if (results.length === 0) {
     return (
       <div
@@ -303,7 +247,7 @@ function ResultList({
         <ResultCard
           key={result.documentId}
           result={result}
-          showSimilarity={searchMode !== "keyword"}
+          showSimilarity={typeof result.similarity === "number"}
         />
       ))}
     </div>
