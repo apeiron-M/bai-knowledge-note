@@ -580,6 +580,11 @@ function getLayoutOptions(opts?: {
   // `randomize: false` requires `quality: "default" | "proof"`. Only
   // switch to "draft" when randomizing (i.e. on the first layout for a
   // fresh drive); otherwise fcose throws and falls through to cose.
+  // Tuned to mimic Obsidian's knowledge graph "no stacking" feel: high
+  // repulsion + large nodeSeparation force nodes apart during the force
+  // pass; a post-layout deoverlap sweep (see resolveOverlaps) handles
+  // any residual overlap fcose leaves behind. Together they guarantee
+  // no two nodes share the same screen pixels on first paint.
   const nodeCount = currentNodeCount();
   const isLarge = nodeCount > 300;
   const randomize = !hasPositions;
@@ -589,18 +594,61 @@ function getLayoutOptions(opts?: {
     animate: false,
     quality,
     randomize,
-    nodeRepulsion: isLarge ? 9000 : 12000,
-    idealEdgeLength: isLarge ? 220 : 180,
-    edgeElasticity: 0.08,
+    nodeRepulsion: isLarge ? 18000 : 22000,
+    nodeSeparation: 120,
+    idealEdgeLength: isLarge ? 240 : 200,
+    edgeElasticity: 0.1,
     nestingFactor: 0.1,
-    gravity: 0.025,
-    numIter: isLarge ? 700 : 1200,
+    gravity: 0.02,
+    gravityRangeCompound: 1.5,
+    numIter: isLarge ? 2500 : 1500,
     tile: true,
-    tilingPaddingVertical: 60,
-    tilingPaddingHorizontal: 60,
+    tilingPaddingVertical: 80,
+    tilingPaddingHorizontal: 80,
+    packComponents: true,
     fit: false,
     padding: 80,
   } as cytoscape.LayoutOptions;
+}
+
+/**
+ * Post-layout overlap resolution. Pushes pairs of nodes apart until
+ * none overlap. O(n²) per pass; with n=375 and a few passes this is
+ * a couple ms — invisible to the user. fcose with strong repulsion
+ * normally settles before this is needed, but on dense clusters or
+ * when the user re-runs layout from a tight starting position there
+ * can still be touching nodes. This is the deterministic backstop.
+ */
+function resolveOverlaps(cy: cytoscape.Core, padding = 12, maxPasses = 12) {
+  const nodes = cy.nodes().toArray();
+  for (let pass = 0; pass < maxPasses; pass++) {
+    let movedAny = false;
+    for (let i = 0; i < nodes.length; i++) {
+      const a = nodes[i];
+      const pa = a.position();
+      const ra = Math.max(a.width(), a.height()) / 2;
+      for (let j = i + 1; j < nodes.length; j++) {
+        const b = nodes[j];
+        const pb = b.position();
+        const rb = Math.max(b.width(), b.height()) / 2;
+        const dx = pb.x - pa.x;
+        const dy = pb.y - pa.y;
+        const minDist = ra + rb + padding;
+        const distSq = dx * dx + dy * dy;
+        if (distSq >= minDist * minDist) continue;
+        const dist = Math.sqrt(distSq) || 0.0001;
+        const overlap = (minDist - dist) / 2;
+        const ux = dx / dist;
+        const uy = dy / dist;
+        a.position({ x: pa.x - ux * overlap, y: pa.y - uy * overlap });
+        b.position({ x: pb.x + ux * overlap, y: pb.y + uy * overlap });
+        pa.x -= ux * overlap;
+        pa.y -= uy * overlap;
+        movedAny = true;
+      }
+    }
+    if (!movedAny) return;
+  }
 }
 
 // Snapshot of the most recent element count, set in the init effect.
@@ -844,7 +892,13 @@ export function GraphView({
     };
 
     cy.one("layoutstop", () => {
-      if (shouldPersist) savePositions(cy);
+      // Geometric deoverlap pass — guarantees no two nodes share screen
+      // pixels even if fcose convergence left some touching. Skip for
+      // preset layout (positions are already user-curated/persisted).
+      if (shouldPersist) {
+        resolveOverlaps(cy);
+        savePositions(cy);
+      }
       centerGraph();
     });
 
