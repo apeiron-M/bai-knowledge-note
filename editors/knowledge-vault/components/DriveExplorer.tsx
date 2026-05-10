@@ -6,7 +6,7 @@ import {
 } from "@powerhousedao/reactor-browser";
 import { VaultSidebar } from "./VaultSidebar.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
-import { GraphView } from "./GraphView.js";
+import GraphViewPixi from "./GraphViewPixi.js";
 import { NoteList } from "./NoteList.js";
 import { SourceList } from "./SourceList.js";
 import { HealthDashboard } from "./HealthDashboard.js";
@@ -329,7 +329,7 @@ export function DriveExplorer({ children }: EditorProps) {
           {showDocumentEditor ? (
             <div className="h-full">{children}</div>
           ) : viewMode === "graph" ? (
-            <GraphView
+            <GraphViewPixi
               notes={notes}
               graphState={graphState}
               mocs={mocs}
