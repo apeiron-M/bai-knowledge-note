@@ -6,6 +6,8 @@ import {
   forceLink,
   forceCenter,
   forceCollide,
+  forceX,
+  forceY,
   type Simulation,
   type SimulationNodeDatum,
   type SimulationLinkDatum,
@@ -164,6 +166,17 @@ export default function GraphViewPixi(props: GraphViewProps) {
 
   // Tooltip uses React state (HTML overlay)
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
+  // Sticky selection card — appears on click. Has an "Open" button so
+  // drag-then-release doesn't navigate by accident.
+  const [selectedDetail, setSelectedDetail] = useState<{
+    id: string;
+    label: string;
+    type: string;
+    tier: string | null;
+    linkCount: number;
+    x: number;
+    y: number;
+  } | null>(null);
 
   useEffect(() => {
     const host = containerRef.current;
@@ -298,20 +311,22 @@ export default function GraphViewPixi(props: GraphViewProps) {
       const w = app.screen.width;
       const h = app.screen.height;
 
-      // Forces tuned for larger nodes: stronger repulsion + longer links
-      // give breathing room without losing cluster cohesion. Collide radius
-      // adds a 6px gap on top of each node's visual radius — guarantees
-      // no two nodes share screen pixels.
+      // Forces tuned for "Obsidian-like cluster + tight perimeter".
+      // forceX/forceY give every node a gentle pull toward the canvas
+      // center — without them, isolated/lightly-connected nodes drift
+      // out to the perimeter. Collide radius keeps them from stacking.
       const sim = forceSimulation<SimNode, SimLink>(nodes)
-        .force("charge", forceManyBody<SimNode>().strength(-340))
+        .force("charge", forceManyBody<SimNode>().strength(-220))
         .force(
           "link",
           forceLink<SimNode, SimLink>(links)
             .id((d) => d.id)
-            .distance((l) => (l.linkType === "CORE_IDEA" ? 110 : 90))
-            .strength(0.2),
+            .distance((l) => (l.linkType === "CORE_IDEA" ? 95 : 75))
+            .strength(0.25),
         )
         .force("center", forceCenter<SimNode>(w / 2, h / 2))
+        .force("x", forceX<SimNode>(w / 2).strength(0.06))
+        .force("y", forceY<SimNode>(h / 2).strength(0.06))
         .force(
           "collide",
           forceCollide<SimNode>()
@@ -444,16 +459,27 @@ export default function GraphViewPixi(props: GraphViewProps) {
           e.stopPropagation();
         });
 
-        g.on("pointertap", () => {
-          // Update sticky selection
+        g.on("pointertap", (e) => {
+          // Toggle selection. Don't navigate — that's the Open button's
+          // job on the metacard. This way drag-and-release doesn't
+          // accidentally open the doc.
           if (selectedIdRef.current === n.id) {
             selectedIdRef.current = null;
+            setSelectedDetail(null);
           } else {
             selectedIdRef.current = n.id;
+            const nodeData = nodeById.get(n.id);
+            setSelectedDetail({
+              id: n.id,
+              label: n.label,
+              type: nodeData?.isMoc ? "MoC" : "Note",
+              tier: nodeData?.tier ?? null,
+              linkCount: nodeData?.linkCount ?? 0,
+              x: e.global.x,
+              y: e.global.y,
+            });
           }
           sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
-          // Navigate
-          setSelectedNode(n.id);
         });
 
         nodeContainer.addChild(g);
@@ -517,6 +543,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
       app.stage.on("pointertap", (e) => {
         if (e.target === app.stage) {
           selectedIdRef.current = null;
+          setSelectedDetail(null);
           sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
         }
       });
@@ -781,8 +808,9 @@ export default function GraphViewPixi(props: GraphViewProps) {
         </div>
       </div>
 
-      {/* Hover tooltip */}
-      {hoverInfo && (
+      {/* Hover tooltip — only when nothing is selected (the metacard
+          covers that role for selected nodes) */}
+      {hoverInfo && !selectedDetail && (
         <div
           className="pointer-events-none absolute z-20 rounded-md px-2 py-1.5 text-[11px] shadow-lg"
           style={{
@@ -799,6 +827,62 @@ export default function GraphViewPixi(props: GraphViewProps) {
             {hoverInfo.type}
             {hoverInfo.meta ? ` · ${hoverInfo.meta}` : ""}
           </div>
+        </div>
+      )}
+
+      {/* Selection metacard — appears on click. Has Open button so a
+          drag-then-release doesn't open the doc by accident. */}
+      {selectedDetail && (
+        <div
+          className="absolute z-30 w-72 rounded-lg border p-3 shadow-xl"
+          style={{
+            left: Math.min(
+              selectedDetail.x + 14,
+              (containerRef.current?.offsetWidth ?? 800) - 300,
+            ),
+            top: Math.max(8, selectedDetail.y - 20),
+            backgroundColor: "var(--bai-surface, #181825)",
+            color: "var(--bai-text, #e4e4e7)",
+            borderColor: "var(--bai-border, rgba(255,255,255,0.1))",
+          }}
+        >
+          <div className="mb-1 flex items-start justify-between gap-2">
+            <div className="text-sm font-medium leading-tight">
+              {selectedDetail.label}
+            </div>
+            <button
+              type="button"
+              onClick={() => {
+                selectedIdRef.current = null;
+                setSelectedDetail(null);
+              }}
+              className="shrink-0 text-xs opacity-60 hover:opacity-100"
+              title="Close"
+            >
+              ✕
+            </button>
+          </div>
+          <div
+            className="mb-3 text-[11px]"
+            style={{ color: "var(--bai-text-muted, #9ca3af)" }}
+          >
+            {selectedDetail.type}
+            {selectedDetail.tier ? ` · ${selectedDetail.tier}` : ""}
+            {` · ${selectedDetail.linkCount} link${selectedDetail.linkCount !== 1 ? "s" : ""}`}
+          </div>
+          <button
+            type="button"
+            onClick={() => {
+              setSelectedNode(selectedDetail.id);
+            }}
+            className="w-full rounded-md px-3 py-1.5 text-xs font-medium transition-colors"
+            style={{
+              backgroundColor: "var(--bai-accent, #cba6f7)",
+              color: "var(--bai-accent-text, #1e1e2e)",
+            }}
+          >
+            Open document
+          </button>
         </div>
       )}
     </div>
