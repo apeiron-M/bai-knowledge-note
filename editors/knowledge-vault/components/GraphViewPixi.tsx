@@ -180,7 +180,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
           label: n.title ?? n.name,
           isMoc: false,
           tier: null,
-          radius: 6 + Math.min(14, Math.sqrt(linkCount) * 2.2),
+          radius: 9 + Math.min(22, Math.sqrt(linkCount) * 3.2),
           color: NOTE_COLOR,
           linkCount,
         };
@@ -195,7 +195,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
           label: m.title,
           isMoc: true,
           tier: m.tier,
-          radius: 14 + Math.min(20, Math.sqrt(linkCount) * 2.5),
+          radius: 22 + Math.min(36, Math.sqrt(linkCount) * 3.6),
           color: MOC_COLOR,
           linkCount,
         };
@@ -310,14 +310,19 @@ export default function GraphViewPixi(props: GraphViewProps) {
 
       for (const n of nodes) {
         const g = new Graphics();
-        g.circle(0, 0, n.radius).fill({ color: n.color });
         if (n.isMoc) {
-          const r = n.radius + 3;
-          g.poly([0, -r, r, 0, 0, r, -r, 0]).stroke({
-            color: MOC_COLOR,
-            width: 1,
-            alpha: 0.5,
+          // MoC visual treatment: solid mauve fill + bright halo ring +
+          // dark inner border. Much larger than notes so they read as the
+          // graph's structural backbone at any zoom.
+          g.circle(0, 0, n.radius + 6).fill({ color: MOC_COLOR, alpha: 0.18 }); // glow
+          g.circle(0, 0, n.radius).fill({ color: MOC_COLOR });
+          g.circle(0, 0, n.radius).stroke({
+            color: 0xfaf5ff,
+            width: 2,
+            alpha: 0.9,
           });
+        } else {
+          g.circle(0, 0, n.radius).fill({ color: n.color });
         }
 
         // Per-node interaction
