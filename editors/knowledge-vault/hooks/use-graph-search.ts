@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { resolveKnowledgeGraphEndpoint } from "./subgraph-endpoint.js";
+import { useEmbedder } from "./use-embedder.js";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -57,9 +58,9 @@ async function graphqlFetch<T>(
 /*  Queries                                                           */
 /* ------------------------------------------------------------------ */
 
-const SEMANTIC_SEARCH_QUERY = `
-  query SemanticSearch($driveId: ID!, $query: String!, $limit: Int) {
-    knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, limit: $limit) {
+const SEARCH_BY_EMBEDDING_QUERY = `
+  query SearchByEmbedding($driveId: ID!, $query: String!, $embedding: [Float!]!, $mode: SearchMode!, $limit: Int) {
+    knowledgeGraphSearchByEmbedding(driveId: $driveId, query: $query, embedding: $embedding, mode: $mode, limit: $limit) {
       node { documentId title description noteType status topics }
       similarity
     }
@@ -70,16 +71,6 @@ const KEYWORD_SEARCH_QUERY = `
   query FullSearch($driveId: ID!, $query: String!, $limit: Int) {
     knowledgeGraphFullSearch(driveId: $driveId, query: $query, limit: $limit) {
       documentId title description noteType status topics
-    }
-  }
-`;
-
-const HYBRID_SEARCH_QUERY = `
-  query HybridSearch($driveId: ID!, $query: String!, $limit: Int) {
-    knowledgeGraphHybridSearch(driveId: $driveId, query: $query, limit: $limit) {
-      node { documentId title description noteType status topics }
-      score
-      matchedBy
     }
   }
 `;
@@ -133,6 +124,7 @@ export function useGraphSearch() {
   );
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endpoint = useMemo(() => resolveKnowledgeGraphEndpoint(), []);
+  const { embed, error: embedderError } = useEmbedder();
 
   // Persist query and mode to sessionStorage
   const setQuery = useCallback(
@@ -154,7 +146,7 @@ export function useGraphSearch() {
   // Fetch topics on mount for empty-state overview
   useEffect(() => {
     if (!driveId) return;
-    graphqlFetch<{ knowledgeGraphTopics: TopicInfo[] }>(
+    void graphqlFetch<{ knowledgeGraphTopics: TopicInfo[] }>(
       endpoint,
       TOPICS_QUERY,
       { driveId },
@@ -177,48 +169,58 @@ export function useGraphSearch() {
       setLoading(true);
       setError(null);
 
-      if (mode === "hybrid") {
-        const data = await graphqlFetch<{
-          knowledgeGraphHybridSearch: Array<{
-            node: Omit<SearchResult, "similarity" | "matchedBy">;
-            score: number;
-            matchedBy: string[];
-          }>;
-        }>(endpoint, HYBRID_SEARCH_QUERY, { driveId, query: q, limit: 20 });
-
-        if (data?.knowledgeGraphHybridSearch) {
-          const raw = data.knowledgeGraphHybridSearch;
-          // Normalize RRF scores to 0-1 range (top result = 1.0)
-          const maxScore = raw.length > 0 ? raw[0].score : 1;
-          setResults(
-            raw.map((r) => ({
-              ...r.node,
-              similarity: maxScore > 0 ? r.score / maxScore : 0,
-              matchedBy: r.matchedBy,
-            })),
-          );
-        } else {
-          setResults([]);
-          setError("Hybrid search unavailable. Try keyword mode.");
+      if (mode === "hybrid" || mode === "semantic") {
+        // Embed the query in-browser; fall back to keyword if embedder unavailable
+        let embedding: number[] | null = null;
+        if (!embedderError) {
+          try {
+            embedding = await embed(q);
+          } catch {
+            embedding = null;
+          }
         }
-      } else if (mode === "semantic") {
-        const data = await graphqlFetch<{
-          knowledgeGraphSemanticSearch: Array<{
-            node: Omit<SearchResult, "similarity">;
-            similarity: number;
-          }>;
-        }>(endpoint, SEMANTIC_SEARCH_QUERY, { driveId, query: q, limit: 20 });
 
-        if (data?.knowledgeGraphSemanticSearch) {
-          setResults(
-            data.knowledgeGraphSemanticSearch.map((r) => ({
-              ...r.node,
-              similarity: r.similarity,
-            })),
-          );
+        if (!embedding) {
+          // Embedder unavailable — fall back to keyword silently
+          const data = await graphqlFetch<{
+            knowledgeGraphFullSearch: SearchResult[];
+          }>(endpoint, KEYWORD_SEARCH_QUERY, { driveId, query: q, limit: 20 });
+          if (data?.knowledgeGraphFullSearch) {
+            setResults(data.knowledgeGraphFullSearch);
+          } else {
+            setResults([]);
+            setError("Search failed.");
+          }
         } else {
-          setResults([]);
-          setError("Semantic search unavailable. Try keyword mode.");
+          const apiMode = mode === "semantic" ? "SEMANTIC" : "HYBRID";
+          const data = await graphqlFetch<{
+            knowledgeGraphSearchByEmbedding: Array<{
+              node: Omit<SearchResult, "similarity" | "matchedBy">;
+              similarity: number;
+            }>;
+          }>(endpoint, SEARCH_BY_EMBEDDING_QUERY, {
+            driveId,
+            query: q,
+            embedding,
+            mode: apiMode,
+            limit: 20,
+          });
+
+          if (data?.knowledgeGraphSearchByEmbedding) {
+            setResults(
+              data.knowledgeGraphSearchByEmbedding.map((r) => ({
+                ...r.node,
+                similarity: r.similarity,
+              })),
+            );
+          } else {
+            setResults([]);
+            setError(
+              mode === "semantic"
+                ? "Semantic search unavailable. Try keyword mode."
+                : "Hybrid search unavailable. Try keyword mode.",
+            );
+          }
         }
       } else {
         const data = await graphqlFetch<{
@@ -235,7 +237,7 @@ export function useGraphSearch() {
 
       setLoading(false);
     },
-    [driveId, endpoint],
+    [driveId, endpoint, embed, embedderError],
   );
 
   // Trigger debounced search on query or mode change
