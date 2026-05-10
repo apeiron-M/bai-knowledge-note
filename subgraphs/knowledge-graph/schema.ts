@@ -66,6 +66,16 @@ export const schema: DocumentNode = gql`
     matchedBy: [String!]!
   }
 
+  enum SearchMode {
+    SEMANTIC
+    HYBRID
+  }
+
+  type UpsertEmbeddingResult {
+    documentId: ID!
+    ok: Boolean!
+  }
+
   type OperationRecord {
     id: String!
     documentId: String!
@@ -154,21 +164,19 @@ export const schema: DocumentNode = gql`
       since: String
     ): [KnowledgeGraphNode!]!
 
-    knowledgeGraphSemanticSearch(
-      driveId: ID!
-      query: String!
-      limit: Int
-    ): [SemanticResult!]!
     knowledgeGraphSimilar(
       driveId: ID!
       documentId: String!
       limit: Int
     ): [SemanticResult!]!
-    knowledgeGraphHybridSearch(
+    knowledgeGraphSearchByEmbedding(
       driveId: ID!
       query: String!
+      embedding: [Float!]!
+      mode: SearchMode!
       limit: Int
-    ): [HybridResult!]!
+    ): [SemanticResult!]!
+    knowledgeGraphMissingEmbeddings(driveId: ID!): [ID!]!
 
     knowledgeGraphHistory(
       driveId: ID!
@@ -203,5 +211,13 @@ export const schema: DocumentNode = gql`
     in the drive. Use when the processor missed historical operations.
     """
     knowledgeGraphReindex(driveId: ID!): ReindexResult!
+    """
+    Store or update a pre-computed embedding for a document.
+    Called by browser clients after running the embedding model locally.
+    """
+    knowledgeGraphUpsertEmbedding(
+      documentId: ID!
+      embedding: [Float!]!
+    ): UpsertEmbeddingResult!
   }
 `;

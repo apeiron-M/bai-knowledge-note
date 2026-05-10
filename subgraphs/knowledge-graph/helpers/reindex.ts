@@ -4,8 +4,6 @@
  */
 import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getWritableDb } from "./db.js";
-import { generateEmbedding } from "../../../processors/graph-indexer/embedder.js";
-import { upsertEmbedding } from "../../../processors/graph-indexer/embedding-store.js";
 
 export async function reindexDrive(
   subgraph: ISubgraph,
@@ -203,22 +201,6 @@ export async function reindexDrive(
         if (edgeValues.length > 0) {
           await db.insertInto("graph_edges").values(edgeValues).execute();
           indexedEdges += edgeValues.length;
-        }
-
-        // Generate embedding for semantic search
-        const text = [global.title, global.description, global.content]
-          .filter(Boolean)
-          .join(" ");
-        if (text.length > 0) {
-          try {
-            const emb = await generateEmbedding(text);
-            await upsertEmbedding(node.id, emb);
-          } catch (embErr: unknown) {
-            console.warn(
-              `[KnowledgeGraphSubgraph] Embedding failed for ${node.id}:`,
-              embErr,
-            );
-          }
         }
       } catch (err: unknown) {
         const msg = err instanceof Error ? err.message : String(err);

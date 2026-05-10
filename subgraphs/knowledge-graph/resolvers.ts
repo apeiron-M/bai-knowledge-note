@@ -2,10 +2,10 @@ import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getDb, getQuery, resolveCanonicalDriveId } from "./helpers/db.js";
 import { reindexDrive } from "./helpers/reindex.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
-import { generateEmbedding } from "../../processors/graph-indexer/embedder.js";
 import {
   searchSimilar,
   getEmbedding,
+  upsertEmbedding,
 } from "../../processors/graph-indexer/embedding-store.js";
 
 type Resolver = (
@@ -60,6 +60,14 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
     Mutation: withCanonicalDriveIds(subgraph, {
       knowledgeGraphReindex: ((_: unknown, args: { driveId: string }) =>
         reindexDrive(subgraph, args.driveId)) as unknown as Resolver,
+
+      knowledgeGraphUpsertEmbedding: (async (
+        _: unknown,
+        args: { documentId: string; embedding: number[] },
+      ) => {
+        await upsertEmbedding(args.documentId, args.embedding);
+        return { documentId: args.documentId, ok: true };
+      }) as unknown as Resolver,
     }),
 
     Query: withCanonicalDriveIds(subgraph, {
@@ -254,27 +262,6 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       // --- Semantic search queries ---
 
-      knowledgeGraphSemanticSearch: async (
-        _: unknown,
-        args: { driveId: string; query: string; limit?: number },
-      ) => {
-        const queryEmbedding = await generateEmbedding(args.query);
-        const results = await searchSimilar(queryEmbedding, args.limit ?? 10);
-        const graphQuery = getQuery(subgraph, args.driveId);
-
-        const semanticResults = [];
-        for (const result of results) {
-          const node = await graphQuery.nodeByDocumentId(result.documentId);
-          if (node) {
-            semanticResults.push({
-              node: { ...node, _driveId: args.driveId },
-              similarity: result.similarity,
-            });
-          }
-        }
-        return semanticResults;
-      },
-
       knowledgeGraphSimilar: async (
         _: unknown,
         args: { driveId: string; documentId: string; limit?: number },
@@ -299,26 +286,53 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         return semanticResults.slice(0, args.limit ?? 10);
       },
 
-      knowledgeGraphHybridSearch: async (
+      knowledgeGraphSearchByEmbedding: async (
         _: unknown,
-        args: { driveId: string; query: string; limit?: number },
+        args: {
+          driveId: string;
+          query: string;
+          embedding: number[];
+          mode: "SEMANTIC" | "HYBRID";
+          limit?: number;
+        },
       ) => {
-        const queryEmbedding = await generateEmbedding(args.query);
-        const semanticResults = await searchSimilar(
-          queryEmbedding,
-          (args.limit ?? 20) * 2,
-        );
+        const limit = args.limit ?? 20;
+        const semanticHits = await searchSimilar(args.embedding, limit * 2);
         const graphQuery = getQuery(subgraph, args.driveId);
+
+        if (args.mode === "SEMANTIC") {
+          const out = [];
+          for (const hit of semanticHits.slice(0, limit)) {
+            const node = await graphQuery.nodeByDocumentId(hit.documentId);
+            if (node) {
+              out.push({
+                node: { ...node, _driveId: args.driveId },
+                similarity: hit.similarity,
+              });
+            }
+          }
+          return out;
+        }
+
+        // HYBRID: fuse semantic + keyword via RRF in graphQuery.hybridSearch,
+        // then map the score back to similarity for a uniform SemanticResult shape.
         const hybridResults = await graphQuery.hybridSearch(
           args.query,
-          semanticResults,
-          args.limit ?? 20,
+          semanticHits,
+          limit,
         );
         return hybridResults.map((r) => ({
           node: { ...r.node, _driveId: args.driveId },
-          score: r.score,
-          matchedBy: r.matchedBy,
+          similarity: r.score,
         }));
+      },
+
+      knowledgeGraphMissingEmbeddings: async (
+        _: unknown,
+        args: { driveId: string },
+      ) => {
+        const graphQuery = getQuery(subgraph, args.driveId);
+        return graphQuery.documentIdsWithoutEmbeddings();
       },
 
       // --- History queries ---

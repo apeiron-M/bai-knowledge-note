@@ -1,6 +1,7 @@
 import type { Kysely } from "kysely";
 import { sql } from "kysely";
 import type { DB, GraphNode, GraphEdge } from "./schema.js";
+import { listEmbeddedDocumentIds } from "./embedding-store.js";
 
 export interface GraphNodeResult {
   id: string;
@@ -668,6 +669,21 @@ export function createGraphQuery(db: Kysely<DB>) {
         .limit(limit)
         .execute();
       return staleRows.map(rowToNode);
+    },
+
+    /**
+     * Returns document IDs that are in graph_nodes but have no stored embedding.
+     * The browser backfill UI uses this to know which documents need embedding.
+     */
+    async documentIdsWithoutEmbeddings(): Promise<string[]> {
+      const [nodeRows, embeddedIds] = await Promise.all([
+        db.selectFrom("graph_nodes").select("document_id").execute(),
+        listEmbeddedDocumentIds(),
+      ]);
+      const embeddedSet = new Set(embeddedIds);
+      return nodeRows
+        .map((r) => r.document_id)
+        .filter((id) => !embeddedSet.has(id));
     },
   };
 }

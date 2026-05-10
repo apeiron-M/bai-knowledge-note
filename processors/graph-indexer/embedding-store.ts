@@ -114,6 +114,14 @@ export async function deleteEmbedding(documentId: string): Promise<void> {
   ]);
 }
 
+export async function listEmbeddedDocumentIds(): Promise<string[]> {
+  const store = await getEmbeddingDb();
+  const result = await store.query<{ document_id: string }>(
+    `SELECT document_id FROM note_embeddings`,
+  );
+  return (result.rows ?? []).map((row) => row.document_id);
+}
+
 export async function closeEmbeddingDb(): Promise<void> {
   if (db) {
     await db.close();

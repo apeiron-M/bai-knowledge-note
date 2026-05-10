@@ -2,8 +2,7 @@ import { RelationalDbProcessor } from "@powerhousedao/shared/processors";
 import type { OperationWithContext } from "@powerhousedao/shared/document-model";
 import { up } from "./migrations.js";
 import type { DB } from "./schema.js";
-import { generateEmbedding } from "./embedder.js";
-import { upsertEmbedding, deleteEmbedding } from "./embedding-store.js";
+import { deleteEmbedding } from "./embedding-store.js";
 
 function summarizeOperation(
   type: string,
@@ -312,21 +311,6 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         console.log(
           `[GraphIndexer] Reconciled ${documentId}: ${edgeValues.length} edges`,
         );
-
-        // Fire-and-forget embedding generation (don't block operation processing)
-        const text = [global.title, global.description, global.content]
-          .filter(Boolean)
-          .join(" ");
-        if (text.length > 0) {
-          generateEmbedding(text)
-            .then((emb) => upsertEmbedding(documentId, emb))
-            .catch((err) =>
-              console.warn(
-                `[GraphIndexer] Embedding failed for ${documentId}:`,
-                err,
-              ),
-            );
-        }
       } catch (err: unknown) {
         console.error(
           `[GraphIndexer] Error reconciling document ${documentId}:`,
