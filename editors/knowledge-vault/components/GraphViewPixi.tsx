@@ -1,5 +1,5 @@
-import { useEffect, useRef } from "react";
-import { Application, Container, Graphics } from "pixi.js";
+import { useEffect, useRef, useState } from "react";
+import { Application, Container, Graphics, Circle } from "pixi.js";
 import {
   forceSimulation,
   forceManyBody,
@@ -10,6 +10,7 @@ import {
   type SimulationNodeDatum,
   type SimulationLinkDatum,
 } from "d3-force";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
 
@@ -57,6 +58,15 @@ type SimLink = SimulationLinkDatum<SimNode> & {
   linkType: string | null;
 };
 
+type HoverInfo = {
+  id: string;
+  label: string;
+  type: string;
+  meta: string;
+  x: number;
+  y: number;
+};
+
 /* ------------------------------------------------------------------ */
 /*  Color tokens                                                        */
 /* ------------------------------------------------------------------ */
@@ -68,6 +78,40 @@ const MOC_EDGE_COLOR = 0x9ca3af; // lighter for MoC edges
 const BG_COLOR = 0x11111b; // catppuccin mocha base
 
 /* ------------------------------------------------------------------ */
+/*  Helpers                                                             */
+/* ------------------------------------------------------------------ */
+
+function computeNodeAlpha(
+  id: string,
+  highlightSet: Set<string> | null,
+): number {
+  if (!highlightSet) return 1.0;
+  return highlightSet.has(id) ? 1.0 : 0.15;
+}
+
+function computeEdgeAlpha(
+  sId: string,
+  tId: string,
+  highlightSet: Set<string> | null,
+): number {
+  if (!highlightSet) return 0.45;
+  if (highlightSet.has(sId) && highlightSet.has(tId)) return 0.8;
+  return 0.04;
+}
+
+function buildNeighborhood(
+  id: string,
+  adjacency: Map<string, Set<string>>,
+): Set<string> {
+  const set = new Set<string>([id]);
+  const neighbors = adjacency.get(id);
+  if (neighbors) {
+    for (const nb of neighbors) set.add(nb);
+  }
+  return set;
+}
+
+/* ------------------------------------------------------------------ */
 /*  Component                                                           */
 /* ------------------------------------------------------------------ */
 
@@ -75,6 +119,14 @@ export default function GraphViewPixi(props: GraphViewProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const appRef = useRef<Application | null>(null);
   const simRef = useRef<Simulation<SimNode, SimLink> | null>(null);
+
+  // Visual state refs (avoid React re-renders in PIXI loop)
+  const highlightedIdsRef = useRef<Set<string> | null>(null);
+  const selectedIdRef = useRef<string | null>(null);
+  const recenterRef = useRef<(() => void) | null>(null);
+
+  // Tooltip uses React state (HTML overlay)
+  const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
 
   useEffect(() => {
     const host = containerRef.current;
@@ -221,6 +273,27 @@ export default function GraphViewPixi(props: GraphViewProps) {
 
       simRef.current = sim;
 
+      /* ---- Adjacency map (computed once) ---- */
+      const adjacency = new Map<string, Set<string>>();
+      for (const n of nodes) adjacency.set(n.id, new Set());
+      for (const l of links) {
+        const sId =
+          typeof l.source === "string" ? l.source : (l.source as SimNode).id;
+        const tId =
+          typeof l.target === "string" ? l.target : (l.target as SimNode).id;
+        adjacency.get(sId)?.add(tId);
+        adjacency.get(tId)?.add(sId);
+      }
+
+      /* ---- Helper: effective highlight set ---- */
+      function effectiveHighlight(): Set<string> | null {
+        if (highlightedIdsRef.current) return highlightedIdsRef.current;
+        if (selectedIdRef.current) {
+          return buildNeighborhood(selectedIdRef.current, adjacency);
+        }
+        return null;
+      }
+
       /* ---- Per-node Graphics ---- */
       const nodeGfx = new Map<string, Graphics>();
 
@@ -235,30 +308,132 @@ export default function GraphViewPixi(props: GraphViewProps) {
             alpha: 0.5,
           });
         }
+
+        // Per-node interaction
+        g.eventMode = "static";
+        g.cursor = "pointer";
+        g.hitArea = new Circle(0, 0, n.radius + 4);
+
+        g.on("pointerover", (e) => {
+          highlightedIdsRef.current = buildNeighborhood(n.id, adjacency);
+          const nodeData = nodeById.get(n.id);
+          const type = nodeData?.isMoc ? "MoC" : "Note";
+          const tier = nodeData?.tier;
+          const meta = tier
+            ? tier
+            : nodeData?.linkCount != null
+              ? `${nodeData.linkCount} link${nodeData.linkCount !== 1 ? "s" : ""}`
+              : "";
+          setHoverInfo({
+            id: n.id,
+            label: n.label,
+            type,
+            meta,
+            x: e.global.x,
+            y: e.global.y,
+          });
+          // Kick sim to repaint (even if settled)
+          sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
+        });
+
+        g.on("pointerout", () => {
+          highlightedIdsRef.current = null;
+          setHoverInfo(null);
+          sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
+        });
+
+        g.on("pointerdown", (e) => {
+          // Fix node and start drag
+          n.fx = n.x;
+          n.fy = n.y;
+          sim.alphaTarget(0.3).restart();
+
+          const onMove = (ev: { global: { x: number; y: number } }) => {
+            const local = world.toLocal(ev.global as { x: number; y: number });
+            n.fx = local.x;
+            n.fy = local.y;
+          };
+
+          const onUp = () => {
+            n.fx = null;
+            n.fy = null;
+            sim.alphaTarget(0);
+            app.stage.off("globalpointermove", onMove);
+            app.stage.off("pointerup", onUp);
+            app.stage.off("pointerupoutside", onUp);
+          };
+
+          app.stage.on("globalpointermove", onMove);
+          app.stage.on("pointerup", onUp);
+          app.stage.on("pointerupoutside", onUp);
+
+          // Stop event from triggering stage pan
+          e.stopPropagation();
+        });
+
+        g.on("pointertap", () => {
+          // Update sticky selection
+          if (selectedIdRef.current === n.id) {
+            selectedIdRef.current = null;
+          } else {
+            selectedIdRef.current = n.id;
+          }
+          sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
+          // Navigate
+          setSelectedNode(n.id);
+        });
+
         nodeContainer.addChild(g);
         nodeGfx.set(n.id, g);
       }
 
       /* ---- Tick: redraw edges + reposition nodes ---- */
       sim.on("tick", () => {
+        const hlSet = effectiveHighlight();
+
         edgeGraphics.clear();
         for (const l of links) {
           const s = l.source as SimNode;
           const t = l.target as SimNode;
           if (s.x == null || s.y == null || t.x == null || t.y == null)
             continue;
+
+          const sId = s.id;
+          const tId = t.id;
+
+          // Skip secondary (non-primary-parent) edges unless highlighted
+          if (!l.isPrimaryParent) {
+            const inHighlight = hlSet && (hlSet.has(sId) || hlSet.has(tId));
+            if (!inHighlight) continue;
+          }
+
           const color =
             l.linkType === "CORE_IDEA" ? MOC_EDGE_COLOR : EDGE_COLOR;
+          const alpha = computeEdgeAlpha(sId, tId, hlSet);
+
+          // Secondary edges: thinner
+          const width = l.isPrimaryParent ? 0.6 : 0.4;
+
           edgeGraphics
             .moveTo(s.x, s.y)
             .lineTo(t.x, t.y)
-            .stroke({ color, width: 0.6, alpha: 0.45 });
+            .stroke({ color, width, alpha });
         }
+
         for (const n of nodes) {
           const g = nodeGfx.get(n.id);
           if (g && n.x != null && n.y != null) {
             g.position.set(n.x, n.y);
+            g.alpha = computeNodeAlpha(n.id, hlSet);
           }
+        }
+      });
+
+      /* ---- Stage tap: clear selection ---- */
+      app.stage.on("pointertap", (e) => {
+        if (e.target === app.stage) {
+          selectedIdRef.current = null;
+          sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
         }
       });
 
@@ -312,6 +487,34 @@ export default function GraphViewPixi(props: GraphViewProps) {
 
       host.addEventListener("wheel", onWheel, { passive: false });
 
+      /* ---- Recenter ---- */
+      recenterRef.current = () => {
+        world.position.set(0, 0);
+        world.scale.set(1);
+        // Fit all nodes in view
+        if (nodes.length === 0) return;
+        let minX = Infinity,
+          maxX = -Infinity,
+          minY = Infinity,
+          maxY = -Infinity;
+        for (const n of nodes) {
+          if (n.x == null || n.y == null) continue;
+          if (n.x - n.radius < minX) minX = n.x - n.radius;
+          if (n.x + n.radius > maxX) maxX = n.x + n.radius;
+          if (n.y - n.radius < minY) minY = n.y - n.radius;
+          if (n.y + n.radius > maxY) maxY = n.y + n.radius;
+        }
+        if (!isFinite(minX)) return;
+        const cw = app.screen.width;
+        const ch = app.screen.height;
+        const padding = 40;
+        const scaleX = (cw - padding * 2) / (maxX - minX);
+        const scaleY = (ch - padding * 2) / (maxY - minY);
+        const scale = Math.min(scaleX, scaleY, 2); // cap at 2x
+        world.scale.set(scale);
+        world.position.set(padding - minX * scale, padding - minY * scale);
+      };
+
       // Stash for cleanup
       (app as unknown as { __wheelHandler?: typeof onWheel }).__wheelHandler =
         onWheel;
@@ -319,6 +522,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
 
     return () => {
       cancelled = true;
+      recenterRef.current = null;
 
       const currentSim = simRef.current;
       if (currentSim) currentSim.stop();
@@ -347,8 +551,44 @@ export default function GraphViewPixi(props: GraphViewProps) {
   return (
     <div
       ref={containerRef}
-      className="h-full w-full"
+      className="relative h-full w-full"
       style={{ touchAction: "none" }}
-    />
+    >
+      {/* Recenter button */}
+      <button
+        type="button"
+        onClick={() => recenterRef.current?.()}
+        className="absolute right-3 top-3 z-10 rounded-md px-2 py-1 text-xs"
+        style={{
+          backgroundColor: "var(--bai-surface, #181825)",
+          color: "var(--bai-text-secondary, #d4d4d8)",
+          border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
+        }}
+        title="Recenter graph"
+      >
+        Recenter
+      </button>
+
+      {/* Hover tooltip */}
+      {hoverInfo && (
+        <div
+          className="pointer-events-none absolute z-20 rounded-md px-2 py-1.5 text-[11px] shadow-lg"
+          style={{
+            left: hoverInfo.x + 12,
+            top: hoverInfo.y + 12,
+            backgroundColor: "var(--bai-surface, #181825)",
+            color: "var(--bai-text, #e4e4e7)",
+            border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
+            maxWidth: 320,
+          }}
+        >
+          <div className="font-medium">{hoverInfo.label}</div>
+          <div className="text-[10px] opacity-70">
+            {hoverInfo.type}
+            {hoverInfo.meta ? ` · ${hoverInfo.meta}` : ""}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
