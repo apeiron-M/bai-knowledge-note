@@ -436,19 +436,53 @@ export default function GraphViewPixi(props: GraphViewProps) {
           n.fy = n.y;
           sim.alphaTarget(0.3).restart();
 
+          // Track drag distance so we can distinguish a click (no
+          // movement) from a drag. PIXI's built-in `pointertap` event
+          // is too lenient and was firing after small drags too.
+          const startX = e.global.x;
+          const startY = e.global.y;
+          let dragMoved = false;
+          const DRAG_THRESHOLD_SQ = 16; // 4px squared
+
           const onMove = (ev: { global: { x: number; y: number } }) => {
+            const dx = ev.global.x - startX;
+            const dy = ev.global.y - startY;
+            if (dx * dx + dy * dy > DRAG_THRESHOLD_SQ) dragMoved = true;
             const local = world.toLocal(ev.global as { x: number; y: number });
             n.fx = local.x;
             n.fy = local.y;
           };
 
-          const onUp = () => {
+          const onUp = (upEv?: { global: { x: number; y: number } }) => {
             n.fx = null;
             n.fy = null;
             sim.alphaTarget(0);
             app.stage.off("globalpointermove", onMove);
             app.stage.off("pointerup", onUp);
             app.stage.off("pointerupoutside", onUp);
+
+            // Treat as click only if no drag occurred. Toggle the
+            // metacard; never navigate (Open button on the card does
+            // that).
+            if (!dragMoved) {
+              if (selectedIdRef.current === n.id) {
+                selectedIdRef.current = null;
+                setSelectedDetail(null);
+              } else {
+                selectedIdRef.current = n.id;
+                const nodeData = nodeById.get(n.id);
+                setSelectedDetail({
+                  id: n.id,
+                  label: n.label,
+                  type: nodeData?.isMoc ? "MoC" : "Note",
+                  tier: nodeData?.tier ?? null,
+                  linkCount: nodeData?.linkCount ?? 0,
+                  x: upEv?.global.x ?? startX,
+                  y: upEv?.global.y ?? startY,
+                });
+              }
+              sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
+            }
           };
 
           app.stage.on("globalpointermove", onMove);
@@ -457,29 +491,6 @@ export default function GraphViewPixi(props: GraphViewProps) {
 
           // Stop event from triggering stage pan
           e.stopPropagation();
-        });
-
-        g.on("pointertap", (e) => {
-          // Toggle selection. Don't navigate — that's the Open button's
-          // job on the metacard. This way drag-and-release doesn't
-          // accidentally open the doc.
-          if (selectedIdRef.current === n.id) {
-            selectedIdRef.current = null;
-            setSelectedDetail(null);
-          } else {
-            selectedIdRef.current = n.id;
-            const nodeData = nodeById.get(n.id);
-            setSelectedDetail({
-              id: n.id,
-              label: n.label,
-              type: nodeData?.isMoc ? "MoC" : "Note",
-              tier: nodeData?.tier ?? null,
-              linkCount: nodeData?.linkCount ?? 0,
-              x: e.global.x,
-              y: e.global.y,
-            });
-          }
-          sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
         });
 
         nodeContainer.addChild(g);
