@@ -73,8 +73,8 @@ type HoverInfo = {
 
 const NOTE_COLOR = 0xfab387; // amber
 const MOC_COLOR = 0xcba6f7; // mauve
-const EDGE_COLOR = 0x4b5563; // slate
-const MOC_EDGE_COLOR = 0x9ca3af; // lighter for MoC edges
+const EDGE_COLOR = 0x6b7280; // slate-500 — readable on dark bg
+const MOC_EDGE_COLOR = 0xcba6f7; // mauve — links to/from MoCs match the MoC color
 const BG_COLOR = 0x11111b; // catppuccin mocha base
 
 /* ------------------------------------------------------------------ */
@@ -94,8 +94,8 @@ function computeEdgeAlpha(
   tId: string,
   highlightSet: Set<string> | null,
 ): number {
-  if (!highlightSet) return 0.45;
-  if (highlightSet.has(sId) && highlightSet.has(tId)) return 0.8;
+  if (!highlightSet) return 0.55;
+  if (highlightSet.has(sId) && highlightSet.has(tId)) return 0.9;
   return 0.04;
 }
 
@@ -151,6 +151,12 @@ export default function GraphViewPixi(props: GraphViewProps) {
         return;
       }
 
+      // Lock canvas to host bounds so it never escapes the parent layout.
+      // Without this the canvas can flow outside the panel and cover
+      // surrounding chrome (top toolbar, sidebar).
+      app.canvas.style.display = "block";
+      app.canvas.style.width = "100%";
+      app.canvas.style.height = "100%";
       host.appendChild(app.canvas);
       appRef.current = app;
 
@@ -174,7 +180,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
           label: n.title ?? n.name,
           isMoc: false,
           tier: null,
-          radius: 4 + Math.min(8, Math.sqrt(linkCount) * 1.2),
+          radius: 6 + Math.min(14, Math.sqrt(linkCount) * 2.2),
           color: NOTE_COLOR,
           linkCount,
         };
@@ -189,7 +195,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
           label: m.title,
           isMoc: true,
           tier: m.tier,
-          radius: 8 + Math.min(10, Math.sqrt(linkCount) * 1.3),
+          radius: 14 + Math.min(20, Math.sqrt(linkCount) * 2.5),
           color: MOC_COLOR,
           linkCount,
         };
@@ -252,21 +258,26 @@ export default function GraphViewPixi(props: GraphViewProps) {
       const w = app.screen.width;
       const h = app.screen.height;
 
+      // Forces tuned for larger nodes: stronger repulsion + longer links
+      // give breathing room without losing cluster cohesion. Collide radius
+      // adds a 6px gap on top of each node's visual radius — guarantees
+      // no two nodes share screen pixels.
       const sim = forceSimulation<SimNode, SimLink>(nodes)
-        .force("charge", forceManyBody<SimNode>().strength(-180))
+        .force("charge", forceManyBody<SimNode>().strength(-340))
         .force(
           "link",
           forceLink<SimNode, SimLink>(links)
             .id((d) => d.id)
-            .distance((l) => (l.linkType === "CORE_IDEA" ? 80 : 60))
-            .strength(0.15),
+            .distance((l) => (l.linkType === "CORE_IDEA" ? 110 : 90))
+            .strength(0.2),
         )
         .force("center", forceCenter<SimNode>(w / 2, h / 2))
         .force(
           "collide",
           forceCollide<SimNode>()
-            .radius((d) => d.radius + 4)
-            .iterations(2),
+            .radius((d) => d.radius + 6)
+            .iterations(2)
+            .strength(0.9),
         )
         .alpha(1)
         .alphaDecay(0.02);
@@ -411,8 +422,13 @@ export default function GraphViewPixi(props: GraphViewProps) {
             l.linkType === "CORE_IDEA" ? MOC_EDGE_COLOR : EDGE_COLOR;
           const alpha = computeEdgeAlpha(sId, tId, hlSet);
 
-          // Secondary edges: thinner
-          const width = l.isPrimaryParent ? 0.6 : 0.4;
+          // Edges visible by default; thicker for primary, thinner for
+          // surfaced-on-hover secondaries.
+          const width = l.isPrimaryParent
+            ? l.linkType === "CORE_IDEA"
+              ? 1.4
+              : 1.0
+            : 0.8;
 
           edgeGraphics
             .moveTo(s.x, s.y)
