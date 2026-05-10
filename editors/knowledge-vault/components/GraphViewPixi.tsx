@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Application, Container, Graphics, Circle } from "pixi.js";
 import {
   forceSimulation,
@@ -47,6 +47,7 @@ type SimNode = SimulationNodeDatum & {
   label: string;
   isMoc: boolean;
   tier: "HUB" | "DOMAIN" | "TOPIC" | null;
+  status: string | null;
   radius: number;
   color: number;
   linkCount: number;
@@ -68,13 +69,45 @@ type HoverInfo = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  Color tokens                                                        */
+/*  Color tokens — match the legacy Cytoscape graph 1:1 so users see  */
+/*  the same status / link-type semantics they're used to.            */
 /* ------------------------------------------------------------------ */
 
-const NOTE_COLOR = 0xfab387; // amber
+const STATUS_COLOR_HEX: Record<string, string> = {
+  DRAFT: "#f59e0b", // amber
+  IN_REVIEW: "#3b82f6", // blue
+  CANONICAL: "#10b981", // emerald
+  ARCHIVED: "#6b7280", // gray
+};
+
+const STATUS_COLOR_NUM: Record<string, number> = {
+  DRAFT: 0xf59e0b,
+  IN_REVIEW: 0x3b82f6,
+  CANONICAL: 0x10b981,
+  ARCHIVED: 0x6b7280,
+};
+
+const LINK_TYPE_COLOR_HEX: Record<string, string> = {
+  RELATES_TO: "#64748b",
+  BUILDS_ON: "#0ea5e9",
+  CONTRADICTS: "#ef4444",
+  SUPERSEDES: "#a855f7",
+  DERIVED_FROM: "#f59e0b",
+};
+
+const LINK_TYPE_COLOR_NUM: Record<string, number> = {
+  RELATES_TO: 0x64748b,
+  BUILDS_ON: 0x0ea5e9,
+  CONTRADICTS: 0xef4444,
+  SUPERSEDES: 0xa855f7,
+  DERIVED_FROM: 0xf59e0b,
+};
+
+const MOC_COLOR_HEX = "#cba6f7";
 const MOC_COLOR = 0xcba6f7; // mauve
-const EDGE_COLOR = 0x6b7280; // slate-500 — readable on dark bg
-const MOC_EDGE_COLOR = 0xcba6f7; // mauve — links to/from MoCs match the MoC color
+const DEFAULT_NODE_COLOR = 0x6b7280;
+const DEFAULT_EDGE_COLOR = 0x64748b;
+const MOC_EDGE_COLOR = 0xcba6f7; // mauve dashed-equivalent
 const BG_COLOR = 0x11111b; // catppuccin mocha base
 
 /* ------------------------------------------------------------------ */
@@ -124,6 +157,10 @@ export default function GraphViewPixi(props: GraphViewProps) {
   const highlightedIdsRef = useRef<Set<string> | null>(null);
   const selectedIdRef = useRef<string | null>(null);
   const recenterRef = useRef<(() => void) | null>(null);
+  const zoomByRef = useRef<((factor: number) => void) | null>(null);
+  // True once the user pans/zooms/drags — turns OFF the auto-fit-on-cool
+  // behaviour so we don't yank the view out from under them.
+  const userInteractedRef = useRef(false);
 
   // Tooltip uses React state (HTML overlay)
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
@@ -175,13 +212,15 @@ export default function GraphViewPixi(props: GraphViewProps) {
 
       for (const n of props.notes) {
         const linkCount = n.links.length;
+        const status = n.status ?? "DRAFT";
         const node: SimNode = {
           id: n.id,
           label: n.title ?? n.name,
           isMoc: false,
           tier: null,
+          status,
           radius: 9 + Math.min(22, Math.sqrt(linkCount) * 3.2),
-          color: NOTE_COLOR,
+          color: STATUS_COLOR_NUM[status] ?? DEFAULT_NODE_COLOR,
           linkCount,
         };
         nodes.push(node);
@@ -195,6 +234,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
           label: m.title,
           isMoc: true,
           tier: m.tier,
+          status: null,
           radius: 22 + Math.min(36, Math.sqrt(linkCount) * 3.6),
           color: MOC_COLOR,
           linkCount,
@@ -311,18 +351,34 @@ export default function GraphViewPixi(props: GraphViewProps) {
       for (const n of nodes) {
         const g = new Graphics();
         if (n.isMoc) {
-          // MoC visual treatment: solid mauve fill + bright halo ring +
-          // dark inner border. Much larger than notes so they read as the
-          // graph's structural backbone at any zoom.
-          g.circle(0, 0, n.radius + 6).fill({ color: MOC_COLOR, alpha: 0.18 }); // glow
-          g.circle(0, 0, n.radius).fill({ color: MOC_COLOR });
-          g.circle(0, 0, n.radius).stroke({
+          // Solid purple diamond — matches the legacy graph's MoC shape.
+          // Diamond points: top, right, bottom, left at distance r from
+          // center. Stroked with a brighter mauve so the silhouette
+          // separates cleanly from any overlapping note circle below.
+          const r = n.radius;
+          const pts = [0, -r, r, 0, 0, r, -r, 0];
+          // Soft glow halo (slightly larger diamond at low alpha)
+          const haloR = r + 6;
+          g.poly([0, -haloR, haloR, 0, 0, haloR, -haloR, 0]).fill({
+            color: MOC_COLOR,
+            alpha: 0.15,
+          });
+          // Solid mauve fill
+          g.poly(pts).fill({ color: MOC_COLOR });
+          // Bright outer stroke
+          g.poly(pts).stroke({
             color: 0xfaf5ff,
             width: 2,
-            alpha: 0.9,
+            alpha: 0.95,
           });
         } else {
           g.circle(0, 0, n.radius).fill({ color: n.color });
+          // Subtle 1px border so notes pop on dense backgrounds
+          g.circle(0, 0, n.radius).stroke({
+            color: 0xfaf5ff,
+            width: 0.6,
+            alpha: 0.4,
+          });
         }
 
         // Per-node interaction
@@ -359,6 +415,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
         });
 
         g.on("pointerdown", (e) => {
+          userInteractedRef.current = true;
           // Fix node and start drag
           n.fx = n.x;
           n.fy = n.y;
@@ -423,8 +480,14 @@ export default function GraphViewPixi(props: GraphViewProps) {
             if (!inHighlight) continue;
           }
 
+          // Colour edges by linkType — MoC→note CORE_IDEA edges keep
+          // mauve so the MoC backbone is visible; note↔note edges pick
+          // up their semantic colour (relates_to / builds_on / contradicts
+          // / supersedes / derived_from).
           const color =
-            l.linkType === "CORE_IDEA" ? MOC_EDGE_COLOR : EDGE_COLOR;
+            l.linkType === "CORE_IDEA"
+              ? MOC_EDGE_COLOR
+              : (LINK_TYPE_COLOR_NUM[l.linkType ?? ""] ?? DEFAULT_EDGE_COLOR);
           const alpha = computeEdgeAlpha(sId, tId, hlSet);
 
           // Edges visible by default; thicker for primary, thinner for
@@ -468,6 +531,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
       app.stage.on("pointerdown", (e) => {
         if (e.target === app.stage) {
           isPanning = true;
+          userInteractedRef.current = true;
           panStart = {
             x: e.global.x,
             y: e.global.y,
@@ -495,6 +559,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
 
       const onWheel = (ev: WheelEvent) => {
         ev.preventDefault();
+        userInteractedRef.current = true;
         const factor = ev.deltaY < 0 ? 1.1 : 0.9;
         const newScale = Math.max(0.1, Math.min(4, world.scale.x * factor));
         const rect = host.getBoundingClientRect();
@@ -507,6 +572,18 @@ export default function GraphViewPixi(props: GraphViewProps) {
       };
 
       host.addEventListener("wheel", onWheel, { passive: false });
+
+      /* ---- Zoom toolbar helper (zooms around canvas center) ---- */
+      zoomByRef.current = (factor: number) => {
+        userInteractedRef.current = true;
+        const newScale = Math.max(0.1, Math.min(4, world.scale.x * factor));
+        const cx = app.screen.width / 2;
+        const cy = app.screen.height / 2;
+        const wx = (cx - world.x) / world.scale.x;
+        const wy = (cy - world.y) / world.scale.y;
+        world.scale.set(newScale);
+        world.position.set(cx - wx * newScale, cy - wy * newScale);
+      };
 
       /* ---- Recenter ---- */
       recenterRef.current = () => {
@@ -536,26 +613,47 @@ export default function GraphViewPixi(props: GraphViewProps) {
         world.position.set(padding - minX * scale, padding - minY * scale);
       };
 
+      // Auto-fit the whole graph in view on first cooldown — only if the
+      // user hasn't already pan/zoomed/dragged. Subsequent layouts are
+      // left alone so the user's framing isn't yanked away.
+      sim.on("end", () => {
+        if (!userInteractedRef.current) recenterRef.current?.();
+      });
+      // Belt-and-suspenders: also fit after a timed budget in case the
+      // sim never fires "end" (rare, but cheap to guard).
+      const initialFitTimer = setTimeout(() => {
+        if (!userInteractedRef.current) recenterRef.current?.();
+      }, 4000);
+
       // Stash for cleanup
-      (app as unknown as { __wheelHandler?: typeof onWheel }).__wheelHandler =
-        onWheel;
+      (
+        app as unknown as {
+          __wheelHandler?: typeof onWheel;
+          __initialFitTimer?: ReturnType<typeof setTimeout>;
+        }
+      ).__wheelHandler = onWheel;
+      (
+        app as unknown as { __initialFitTimer?: ReturnType<typeof setTimeout> }
+      ).__initialFitTimer = initialFitTimer;
     })();
 
     return () => {
       cancelled = true;
       recenterRef.current = null;
+      zoomByRef.current = null;
 
       const currentSim = simRef.current;
       if (currentSim) currentSim.stop();
 
       const currentApp = appRef.current;
       if (currentApp) {
-        const wheel = (
-          currentApp as unknown as {
-            __wheelHandler?: (ev: WheelEvent) => void;
-          }
-        ).__wheelHandler;
-        if (wheel && host) host.removeEventListener("wheel", wheel);
+        const ext = currentApp as unknown as {
+          __wheelHandler?: (ev: WheelEvent) => void;
+          __initialFitTimer?: ReturnType<typeof setTimeout>;
+        };
+        if (ext.__wheelHandler && host)
+          host.removeEventListener("wheel", ext.__wheelHandler);
+        if (ext.__initialFitTimer) clearTimeout(ext.__initialFitTimer);
         currentApp.destroy(
           { removeView: true },
           { children: true, texture: true, textureSource: true },
@@ -575,20 +673,110 @@ export default function GraphViewPixi(props: GraphViewProps) {
       className="relative h-full w-full"
       style={{ touchAction: "none" }}
     >
-      {/* Recenter button */}
-      <button
-        type="button"
-        onClick={() => recenterRef.current?.()}
-        className="absolute right-3 top-3 z-10 rounded-md px-2 py-1 text-xs"
+      {/* Toolbar: zoom in/out + fit */}
+      <div className="absolute right-3 top-3 z-10 flex flex-col gap-1.5">
+        <ToolbarButton title="Zoom in" onClick={() => zoomByRef.current?.(1.2)}>
+          <svg
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="M11 8v6M8 11h6M21 21l-4.35-4.35" />
+          </svg>
+        </ToolbarButton>
+        <ToolbarButton
+          title="Zoom out"
+          onClick={() => zoomByRef.current?.(0.83)}
+        >
+          <svg
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="M8 11h6M21 21l-4.35-4.35" />
+          </svg>
+        </ToolbarButton>
+        <ToolbarButton
+          title="Fit to screen"
+          onClick={() => recenterRef.current?.()}
+        >
+          <svg
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" />
+          </svg>
+        </ToolbarButton>
+      </div>
+
+      {/* Legend */}
+      <div
+        className="absolute bottom-4 left-4 z-10 flex flex-col gap-2 rounded-lg px-3 py-2.5 text-[10px] backdrop-blur-sm"
         style={{
-          backgroundColor: "var(--bai-surface, #181825)",
-          color: "var(--bai-text-secondary, #d4d4d8)",
+          backgroundColor:
+            "color-mix(in srgb, var(--bai-bg, #11111b) 90%, transparent)",
           border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
         }}
-        title="Recenter graph"
       >
-        Recenter
-      </button>
+        {/* Node types */}
+        <div className="flex flex-wrap items-center gap-3">
+          {Object.entries(STATUS_COLOR_HEX).map(([status, color]) => (
+            <div key={status} className="flex items-center gap-1.5">
+              <span
+                className="inline-block h-2.5 w-2.5 rounded-full"
+                style={{ backgroundColor: color }}
+              />
+              <span style={{ color: "var(--bai-text-tertiary, #9ca3af)" }}>
+                {status.replace("_", " ")}
+              </span>
+            </div>
+          ))}
+          <div className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-3 w-3"
+              style={{
+                backgroundColor: MOC_COLOR_HEX,
+                clipPath: "polygon(50% 0%, 100% 50%, 50% 100%, 0% 50%)",
+              }}
+            />
+            <span style={{ color: "var(--bai-text-tertiary, #9ca3af)" }}>
+              MOC
+            </span>
+          </div>
+        </div>
+        {/* Edge types */}
+        <div className="flex flex-wrap items-center gap-3">
+          {Object.entries(LINK_TYPE_COLOR_HEX).map(([type, color]) => (
+            <div key={type} className="flex items-center gap-1.5">
+              <span
+                className="inline-block h-0 w-3 border-t-2"
+                style={{ borderColor: color }}
+              />
+              <span style={{ color: "var(--bai-text-muted, #6b7280)" }}>
+                {type.replace(/_/g, " ").toLowerCase()}
+              </span>
+            </div>
+          ))}
+          <div className="flex items-center gap-1.5">
+            <span
+              className="inline-block h-0 w-3 border-t-2"
+              style={{ borderColor: MOC_COLOR_HEX }}
+            />
+            <span style={{ color: "var(--bai-text-muted, #6b7280)" }}>
+              core idea
+            </span>
+          </div>
+        </div>
+      </div>
 
       {/* Hover tooltip */}
       {hoverInfo && (
@@ -611,5 +799,28 @@ export default function GraphViewPixi(props: GraphViewProps) {
         </div>
       )}
     </div>
+  );
+}
+
+function ToolbarButton(props: {
+  title: string;
+  onClick: () => void;
+  children: ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      onClick={props.onClick}
+      title={props.title}
+      className="flex h-8 w-8 items-center justify-center rounded-md backdrop-blur-sm transition-colors"
+      style={{
+        backgroundColor:
+          "color-mix(in srgb, var(--bai-bg, #11111b) 90%, transparent)",
+        color: "var(--bai-text-secondary, #d4d4d8)",
+        border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
+      }}
+    >
+      {props.children}
+    </button>
   );
 }
