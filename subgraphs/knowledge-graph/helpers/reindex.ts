@@ -65,6 +65,22 @@ export async function reindexDrive(
             }
           | undefined;
 
+        // MoCs have `tier` (HUB/DOMAIN/TOPIC) and no `noteType` field;
+        // notes have `noteType` and no `tier`. Tag the projection's
+        // `note_type` accordingly so the frontend filter
+        // (`noteType.startsWith("MOC (")`) sees them. This mirrors
+        // the per-op processor logic in
+        // processors/graph-indexer/index.ts so reindexed and
+        // live-indexed rows look identical.
+        const isMoc = node.documentType === "bai/moc";
+        const noteType = isMoc
+          ? `MOC (${(global.tier as string) ?? "TOPIC"})`
+          : ((global.noteType as string) ?? null);
+        const content = isMoc
+          ? ((global.orientation as string) ?? null)
+          : ((global.content as string) ?? null);
+        const status = isMoc ? "MOC" : ((global.status as string) ?? "DRAFT");
+
         await db
           .insertInto("graph_nodes")
           .values({
@@ -72,9 +88,9 @@ export async function reindexDrive(
             document_id: node.id,
             title: (global.title as string) ?? null,
             description: (global.description as string) ?? null,
-            note_type: (global.noteType as string) ?? null,
-            status: (global.status as string) ?? "DRAFT",
-            content: (global.content as string) ?? null,
+            note_type: noteType,
+            status,
+            content,
             author: provenance?.author ?? null,
             source_origin: provenance?.sourceOrigin ?? null,
             created_at: provenance?.createdAt ?? null,
@@ -84,9 +100,9 @@ export async function reindexDrive(
             oc.column("document_id").doUpdateSet({
               title: (global.title as string) ?? null,
               description: (global.description as string) ?? null,
-              note_type: (global.noteType as string) ?? null,
-              status: (global.status as string) ?? "DRAFT",
-              content: (global.content as string) ?? null,
+              note_type: noteType,
+              status,
+              content,
               author: provenance?.author ?? null,
               source_origin: provenance?.sourceOrigin ?? null,
               created_at: provenance?.createdAt ?? null,
@@ -124,30 +140,70 @@ export async function reindexDrive(
             .execute();
         }
 
-        // Reconcile edges
+        // Reconcile edges. For MoCs the edge sources are
+        // global.coreIdeas (note targets) and global.childRefs (child
+        // MoC targets), both keyed `linkType: "CORE_IDEA"` to match
+        // the per-op processor's tagging. Notes use global.links.
         await db
           .deleteFrom("graph_edges")
           .where("source_document_id", "=", node.id)
           .execute();
 
-        const links = (global.links as Array<Record<string, unknown>>) ?? [];
-        if (links.length > 0) {
-          await db
-            .insertInto("graph_edges")
-            .values(
-              links.map((link) => ({
-                id:
-                  (link.id as string) ??
-                  `${node.id}-${link.targetDocumentId as string}`,
+        const edgeValues: Array<{
+          id: string;
+          source_document_id: string;
+          target_document_id: string;
+          link_type: string | null;
+          target_title: string | null;
+          updated_at: string;
+        }> = [];
+
+        if (isMoc) {
+          const coreIdeas =
+            (global.coreIdeas as Array<Record<string, unknown>>) ?? [];
+          for (const idea of coreIdeas) {
+            if (idea.noteRef) {
+              edgeValues.push({
+                id: `${node.id}-ci-${(idea.id as string) ?? (idea.noteRef as string)}`,
                 source_document_id: node.id,
-                target_document_id: (link.targetDocumentId as string) ?? "",
-                link_type: (link.linkType as string) ?? null,
-                target_title: (link.targetTitle as string) ?? null,
+                target_document_id: idea.noteRef as string,
+                link_type: "CORE_IDEA",
+                target_title: null,
                 updated_at: now,
-              })),
-            )
-            .execute();
-          indexedEdges += links.length;
+              });
+            }
+          }
+          const childRefs = (global.childRefs as string[]) ?? [];
+          for (const ref of childRefs) {
+            edgeValues.push({
+              id: `${node.id}-child-${ref}`,
+              source_document_id: node.id,
+              target_document_id: ref,
+              link_type: "CORE_IDEA",
+              target_title: null,
+              updated_at: now,
+            });
+          }
+        } else {
+          const links =
+            (global.links as Array<Record<string, unknown>>) ?? [];
+          for (const link of links) {
+            edgeValues.push({
+              id:
+                (link.id as string) ??
+                `${node.id}-${link.targetDocumentId as string}`,
+              source_document_id: node.id,
+              target_document_id: (link.targetDocumentId as string) ?? "",
+              link_type: (link.linkType as string) ?? null,
+              target_title: (link.targetTitle as string) ?? null,
+              updated_at: now,
+            });
+          }
+        }
+
+        if (edgeValues.length > 0) {
+          await db.insertInto("graph_edges").values(edgeValues).execute();
+          indexedEdges += edgeValues.length;
         }
 
         // Generate embedding for semantic search

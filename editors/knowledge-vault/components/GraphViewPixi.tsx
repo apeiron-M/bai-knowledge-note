@@ -663,7 +663,10 @@ export default function GraphViewPixi(props: GraphViewProps) {
       appRef.current = null;
       simRef.current = null;
 
-      while (host.firstChild) host.removeChild(host.firstChild);
+      // Do NOT wipe host.firstChild — that destroys the React-managed
+      // toolbar / legend / tooltip nodes too, and React won't re-attach
+      // them until something else triggers a re-render. `app.destroy`
+      // with `removeView: true` already removes the canvas.
     };
   }, [props.notes, props.mocs]);
 

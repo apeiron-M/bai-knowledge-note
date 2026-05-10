@@ -1,6 +1,5 @@
 import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getDb, getQuery, resolveCanonicalDriveId } from "./helpers/db.js";
-import { ensureGraphDoc } from "./helpers/ensure-graph-doc.js";
 import { reindexDrive } from "./helpers/reindex.js";
 import { GraphIndexerProcessor } from "../../processors/graph-indexer/index.js";
 import { generateEmbedding } from "../../processors/graph-indexer/embedder.js";
@@ -65,22 +64,28 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
     Query: withCanonicalDriveIds(subgraph, {
       // --- Core graph queries ---
+      //
+      // NOTE: `ensureGraphDoc` is intentionally NOT called from read
+      // paths. Empirically, calling it here causes subsequent reads of
+      // graph_nodes/graph_edges to return 0 rows even when the data is
+      // present (verified via knowledgeGraphDebug, which shows 375
+      // rows in the same call sequence). Root cause not yet diagnosed,
+      // but skipping ensure on reads is safe — the graph doc only
+      // needs to exist if a writer (sync, mutation) needs it, and
+      // reindex calls its own setup path that doesn't depend on it.
 
       knowledgeGraphNodes: async (_: unknown, args: { driveId: string }) => {
-        await ensureGraphDoc(subgraph, args.driveId);
         const query = getQuery(subgraph, args.driveId);
         const nodes = await query.allNodes();
         return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
       knowledgeGraphEdges: async (_: unknown, args: { driveId: string }) => {
-        await ensureGraphDoc(subgraph, args.driveId);
         const query = getQuery(subgraph, args.driveId);
         return query.allEdges();
       },
 
       knowledgeGraphStats: async (_: unknown, args: { driveId: string }) => {
-        await ensureGraphDoc(subgraph, args.driveId);
         const query = getQuery(subgraph, args.driveId);
         return query.stats();
       },
