@@ -1,11 +1,11 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { generateId } from "document-model/core";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
-import { useKnowledgeNoteDocumentsInSelectedDrive } from "document-models/knowledge-note";
 import type {
   NoteLink,
   LinkType,
 } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import { useDocumentsSafe } from "../../knowledge-vault/hooks/use-documents-safe.js";
 
 type LinksSectionProps = {
   links: NoteLink[];
@@ -54,26 +54,39 @@ export function LinksSection({
   const [isAdding, setIsAdding] = useState(false);
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
 
-  const allDocs = useKnowledgeNoteDocumentsInSelectedDrive();
+  // Safe variant — Connect's `useDocumentsInSelectedDrive` (which the
+  // generated `useKnowledgeNoteDocumentsInSelectedDrive` wraps) rejects
+  // its whole promise if any single `reactor.get(id)` fails, taking
+  // down the editor when an orphan id sits in the drive's node list.
+  // `useDocumentsSafe` per-doc try/catches and silently drops misses.
+  const allDocs = useDocumentsSafe(["bai/knowledge-note"]);
 
   const docOptions: DocOption[] = useMemo(() => {
     const linkedIds = new Set(links.map((l) => l.targetDocumentId));
-    return (allDocs ?? [])
+    return allDocs
       .filter(
         (d) => d.header.id !== currentDocId && !linkedIds.has(d.header.id),
       )
       .map((d) => ({
         id: d.header.id,
-        title: d.state.global.title ?? d.header.name ?? d.header.id,
+        title:
+          (d.state as unknown as { global?: { title?: string } }).global
+            ?.title ??
+          d.header.name ??
+          d.header.id,
       }));
   }, [allDocs, currentDocId, links]);
 
   const allDocOptions: DocOption[] = useMemo(() => {
-    return (allDocs ?? [])
+    return allDocs
       .filter((d) => d.header.id !== currentDocId)
       .map((d) => ({
         id: d.header.id,
-        title: d.state.global.title ?? d.header.name ?? d.header.id,
+        title:
+          (d.state as unknown as { global?: { title?: string } }).global
+            ?.title ??
+          d.header.name ??
+          d.header.id,
       }));
   }, [allDocs, currentDocId]);
 
