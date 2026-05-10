@@ -185,8 +185,7 @@ export async function reindexDrive(
             });
           }
         } else {
-          const links =
-            (global.links as Array<Record<string, unknown>>) ?? [];
+          const links = (global.links as Array<Record<string, unknown>>) ?? [];
           for (const link of links) {
             edgeValues.push({
               id:

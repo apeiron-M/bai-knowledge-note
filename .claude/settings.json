@@ -138,7 +138,20 @@
       "Bash(grep -nE \"^COPY |^\\\\\\\\\\\\\\\\\\\\.$\" /home/p/Powerhouse/bai-knowledge-note/database-export-1778340219224.sql)",
       "Bash(echo \"Exit code: $?\")",
       "Bash(bunx eslint *)",
-      "Bash(xargs -I {} sh -c 'grep -lE \"API_KEY|SECRET|PASSWORD|TOKEN|PRIVATE_KEY\" {} 2>/dev/null')"
+      "Bash(xargs -I {} sh -c 'grep -lE \"API_KEY|SECRET|PASSWORD|TOKEN|PRIVATE_KEY\" {} 2>/dev/null')",
+      "Bash(sed -n '510,560p' editors/knowledge-vault/components/GraphView.tsx)",
+      "Bash(sed -n '850,890p' editors/knowledge-vault/components/GraphView.tsx)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('total nodes:', len\\(d.get\\('data',{}\\).get\\('knowledgeGraphNodes',[]\\)\\)\\); print\\('first 3:', d.get\\('data',{}\\).get\\('knowledgeGraphNodes',[]\\)[:3]\\)\")",
+      "Bash(python3 -c \"import json,sys; print\\(json.dumps\\(json.load\\(sys.stdin\\), indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('reindex:', json.dumps\\(d.get\\('data'\\) or d.get\\('errors'\\), indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('debug:', json.dumps\\(d.get\\('data'\\) or d.get\\('errors'\\), indent=2\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); n=d.get\\('data',{}\\).get\\('knowledgeGraphNodes',[]\\); print\\('nodes total:', len\\(n\\)\\); print\\('mocs:', sum\\(1 for x in n if \\(x.get\\('noteType'\\) or ''\\).startswith\\('MOC \\('\\)\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; print\\('reindex:', json.load\\(sys.stdin\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; n=json.load\\(sys.stdin\\)['data']['knowledgeGraphNodes']; print\\('nodes:', len\\(n\\)\\)\")",
+      "Bash(python3 -c \"import json,sys; print\\('debug after nodes:', json.load\\(sys.stdin\\)\\)\")",
+      "Bash(curl -s -X POST http://localhost:4001/graphql/knowledgeGraph -H \"Content-Type: application/json\" -d '{\"query\":\"query { knowledgeGraphNodes\\(driveId: \\\\\"195bf8fd-6610-45b0-9427-51f2c7154414\\\\\"\\) { documentId noteType title } }\"}')",
+      "Bash(curl -s -X POST http://localhost:4001/graphql/knowledgeGraph -H \"Content-Type: application/json\" -d '{\"query\":\"query { knowledgeGraphNodes\\(driveId: \\\\\"195bf8fd-6610-45b0-9427-51f2c7154414\\\\\"\\) { documentId noteType } }\"}')",
+      "Bash(git log *)"
     ]
   },
   "enabledPlugins": {
