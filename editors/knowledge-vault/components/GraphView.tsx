@@ -3,17 +3,13 @@ import cytoscape from "cytoscape";
 
 // @ts-expect-error - no types available for cytoscape-fcose
 import fcose from "cytoscape-fcose";
-// @ts-expect-error - no types available for cytoscape-elk
-import elk from "cytoscape-elk";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
 
-// Register layout extensions once
+// Register the fcose layout once
 // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
 cytoscape.use(fcose);
-// eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-cytoscape.use(elk);
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -571,36 +567,39 @@ function getLayoutOptions(opts?: {
     } as cytoscape.LayoutOptions;
   }
 
-  // First load: ELK layered (Sugiyama). Tier pinning via ELK's
-  // `partitioning` feature — nodes carrying `data.layer` 0..3 land in
-  // separate horizontal bands (HUB, DOMAIN, TOPIC, notes). Within each
-  // band ELK's crossing minimization clusters nodes that share more
-  // edges, satisfying the "related notes near each other" goal without
-  // a second force pass.
+  // First load: force-directed (fcose). Layered/tree layouts for this
+  // graph created strict tier ladders that hid the cluster structure
+  // the user wants to see — knowledge graphs are not trees, and notes
+  // commonly link across tiers. Force layout reveals clusters by edge
+  // density. MoCs naturally float above their notes via the CORE_IDEA
+  // edges, but nothing is locked into a row.
+  //
+  // At >300 nodes, randomized init + high repulsion overflows fcose's
+  // calcGrid array. Lower numIter and repulsion keep the bounding rect
+  // from blowing up before convergence. fcose constraint:
+  // `randomize: false` requires `quality: "default" | "proof"`. Only
+  // switch to "draft" when randomizing (i.e. on the first layout for a
+  // fresh drive); otherwise fcose throws and falls through to cose.
+  const nodeCount = currentNodeCount();
+  const isLarge = nodeCount > 300;
+  const randomize = !hasPositions;
+  const quality = randomize && isLarge ? "draft" : "default";
   return {
-    name: "elk",
+    name: "fcose",
+    animate: false,
+    quality,
+    randomize,
+    nodeRepulsion: isLarge ? 9000 : 12000,
+    idealEdgeLength: isLarge ? 220 : 180,
+    edgeElasticity: 0.08,
+    nestingFactor: 0.1,
+    gravity: 0.025,
+    numIter: isLarge ? 700 : 1200,
+    tile: true,
+    tilingPaddingVertical: 60,
+    tilingPaddingHorizontal: 60,
     fit: false,
     padding: 80,
-    elk: {
-      algorithm: "layered",
-      "elk.direction": "DOWN",
-      "elk.partitioning.activate": "true",
-      // Cheaper crossing-minimization than LAYER_SWEEP; LAYER_SWEEP +
-      // NETWORK_SIMPLEX placement was choking on ~375 nodes / ~1000
-      // edges. SIMPLE + LINEAR_SEGMENTS converges in well under a
-      // second on this scale and produces a perfectly readable tier
-      // ladder.
-      "elk.layered.crossingMinimization.strategy": "INTERACTIVE",
-      "elk.layered.cycleBreaking.strategy": "GREEDY",
-      "elk.layered.nodePlacement.strategy": "SIMPLE",
-      "elk.layered.spacing.nodeNodeBetweenLayers": "120",
-      "elk.spacing.nodeNode": "30",
-      "elk.edgeRouting": "POLYLINE",
-      "elk.aspectRatio": "1.8",
-    },
-    nodeLayoutOptions: (node: cytoscape.NodeSingular) => ({
-      "elk.partitioning.partition": String(node.data("layer") ?? 3),
-    }),
   } as cytoscape.LayoutOptions;
 }
 
@@ -612,61 +611,26 @@ function currentNodeCount() {
 }
 
 /**
- * Run a layout, falling back through elk → fcose → cose → grid.
- * ELK is the preferred first-load layout (Sugiyama/layered with tier pinning).
- * Falls back to fcose if ELK fails (e.g. worker unavailable), then cose, then
- * grid as a last resort so the graph always renders.
- * Returns the name of the layout that ran so callers can skip persisting grid
- * positions (only "elk", "fcose", and "cose" positions are worth persisting).
+ * Run a layout, falling back through fcose → cose → grid.
+ * fcose is the primary first-load layout (force-directed, reveals
+ * cluster structure). Falls back to cose if fcose fails, then grid as
+ * a last resort so the graph always renders.
+ * Returns the name of the layout that ran so callers can skip persisting
+ * grid positions (only "fcose" and "cose" positions are worth persisting).
  */
 function runLayoutWithFallback(
   cy: cytoscape.Core,
   options: cytoscape.LayoutOptions,
-): "elk" | "fcose" | "cose" | "grid" | "none" {
+): "fcose" | "cose" | "grid" | "none" {
   const layoutName = (options as { name: string }).name;
   try {
     cy.layout(options).run();
     // preset counts as "fcose" for persistence purposes (positions already saved)
     return layoutName === "preset"
       ? "fcose"
-      : (layoutName as "elk" | "fcose" | "cose" | "grid");
+      : (layoutName as "fcose" | "cose" | "grid");
   } catch (err) {
-    if (layoutName === "elk") {
-      console.warn("[GraphView] elk failed, retrying with fcose:", err);
-    } else {
-      console.warn("[GraphView] fcose failed, retrying with cose:", err);
-    }
-  }
-
-  // If ELK was the primary attempt, fall through to fcose
-  if (layoutName === "elk") {
-    const nodeCount = currentNodeCount();
-    const isLarge = nodeCount > 300;
-    try {
-      cy.layout({
-        name: "fcose",
-        animate: false,
-        quality: isLarge ? "draft" : "default",
-        randomize: true,
-        nodeRepulsion: isLarge ? 9000 : 12000,
-        idealEdgeLength: isLarge ? 220 : 180,
-        edgeElasticity: 0.08,
-        nestingFactor: 0.1,
-        gravity: 0.025,
-        numIter: isLarge ? 700 : 1200,
-        tile: true,
-        tilingPaddingVertical: 60,
-        tilingPaddingHorizontal: 60,
-        fit: false,
-        padding: 80,
-      } as cytoscape.LayoutOptions).run();
-      return "fcose";
-    } catch (err) {
-      console.warn(
-        "[GraphView] fcose fallback failed, retrying with cose:",
-        err,
-      );
-    }
+    console.warn("[GraphView] fcose failed, retrying with cose:", err);
   }
 
   try {
@@ -865,8 +829,7 @@ export function GraphView({
         newNodeIds: newNodeIds.size > 0 ? newNodeIds : undefined,
       }),
     );
-    const shouldPersist =
-      ranLayout === "elk" || ranLayout === "fcose" || ranLayout === "cose";
+    const shouldPersist = ranLayout === "fcose" || ranLayout === "cose";
 
     // After layout settles, save positions and center view.
     const centerGraph = () => {
