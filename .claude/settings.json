@@ -151,7 +151,13 @@
       "Bash(python3 -c \"import json,sys; print\\('debug after nodes:', json.load\\(sys.stdin\\)\\)\")",
       "Bash(curl -s -X POST http://localhost:4001/graphql/knowledgeGraph -H \"Content-Type: application/json\" -d '{\"query\":\"query { knowledgeGraphNodes\\(driveId: \\\\\"195bf8fd-6610-45b0-9427-51f2c7154414\\\\\"\\) { documentId noteType title } }\"}')",
       "Bash(curl -s -X POST http://localhost:4001/graphql/knowledgeGraph -H \"Content-Type: application/json\" -d '{\"query\":\"query { knowledgeGraphNodes\\(driveId: \\\\\"195bf8fd-6610-45b0-9427-51f2c7154414\\\\\"\\) { documentId noteType } }\"}')",
-      "Bash(git log *)"
+      "Bash(git log *)",
+      "Bash(git -C /home/p/Powerhouse/bai-knowledge-note diff --stat HEAD -- subgraphs/knowledge-graph/schema.ts subgraphs/knowledge-graph/resolvers.ts subgraphs/knowledge-graph/helpers/reindex.ts processors/graph-indexer/index.ts processors/graph-indexer/query.ts processors/graph-indexer/embedding-store.ts)",
+      "Bash(git -C /home/p/Powerhouse/bai-knowledge-note add subgraphs/knowledge-graph/schema.ts subgraphs/knowledge-graph/resolvers.ts subgraphs/knowledge-graph/helpers/reindex.ts processors/graph-indexer/index.ts processors/graph-indexer/query.ts processors/graph-indexer/embedding-store.ts)",
+      "Bash(git -C /home/p/Powerhouse/bai-knowledge-note commit -m ' *)",
+      "Bash(python3 -c \"import json,sys; p=json.load\\(sys.stdin\\); print\\('build:', p.get\\('scripts',{}\\).get\\('build'\\)\\); print\\('custom build.ts present:', __import__\\('os'\\).path.exists\\('build.ts'\\)\\)\")",
+      "Bash(bash -ic 'nvm use lts/krypton 2>&1 | tail -1 && bun run build 2>&1 | tail -50')",
+      "Bash(~/.nvm/versions/node/v24.15.0/bin/node ./node_modules/.bin/ph-cli build)"
     ]
   },
   "enabledPlugins": {
