@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedTensionDocument, actions } from "document-models/tension";
-import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import {
+  setSelectedNode,
+  useDocumentsInSelectedDrive,
+} from "@powerhousedao/reactor-browser";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
-import { useDocumentsSafe } from "../knowledge-vault/hooks/use-documents-safe.js";
 
 const STATUS_COLORS: Record<string, string> = {
   OPEN: "bg-red-500/20 text-red-300 border-red-500/30",
@@ -18,8 +20,18 @@ function ts() {
 export default function Editor() {
   const [document, dispatch] = useSelectedTensionDocument();
   const state = document.state.global;
-  // Safe variant — see moc-editor for rationale.
-  const allDocs = useDocumentsSafe(["bai/knowledge-note", "bai/moc"]);
+  // reactor-browser dev.239+ — useDocumentsInSelectedDrive is now
+  // tolerant of per-doc fetch failures; filter client-side.
+  const allDriveDocs = useDocumentsInSelectedDrive();
+  const allDocs = useMemo(
+    () =>
+      (allDriveDocs ?? []).filter(
+        (d) =>
+          d.header.documentType === "bai/knowledge-note" ||
+          d.header.documentType === "bai/moc",
+      ),
+    [allDriveDocs],
+  );
   const initialized = !!state.title;
 
   if (!initialized) {

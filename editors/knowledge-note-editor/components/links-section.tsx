@@ -1,11 +1,13 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { generateId } from "document-model/core";
-import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import {
+  setSelectedNode,
+  useDocumentsInSelectedDrive,
+} from "@powerhousedao/reactor-browser";
 import type {
   NoteLink,
   LinkType,
 } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
-import { useDocumentsSafe } from "../../knowledge-vault/hooks/use-documents-safe.js";
 
 type LinksSectionProps = {
   links: NoteLink[];
@@ -54,12 +56,17 @@ export function LinksSection({
   const [isAdding, setIsAdding] = useState(false);
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
 
-  // Safe variant — Connect's `useDocumentsInSelectedDrive` (which the
-  // generated `useKnowledgeNoteDocumentsInSelectedDrive` wraps) rejects
-  // its whole promise if any single `reactor.get(id)` fails, taking
-  // down the editor when an orphan id sits in the drive's node list.
-  // `useDocumentsSafe` per-doc try/catches and silently drops misses.
-  const allDocs = useDocumentsSafe(["bai/knowledge-note"]);
+  // reactor-browser dev.239+ — useDocumentsInSelectedDrive is now
+  // tolerant of per-doc fetch failures (orphan ids no longer reject
+  // the whole promise). Filter to knowledge-notes client-side.
+  const allDriveDocs = useDocumentsInSelectedDrive();
+  const allDocs = useMemo(
+    () =>
+      (allDriveDocs ?? []).filter(
+        (d) => d.header.documentType === "bai/knowledge-note",
+      ),
+    [allDriveDocs],
+  );
 
   const docOptions: DocOption[] = useMemo(() => {
     const linkedIds = new Set(links.map((l) => l.targetDocumentId));

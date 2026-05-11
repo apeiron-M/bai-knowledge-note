@@ -1,10 +1,10 @@
 import { useState, useMemo, useCallback } from "react";
 import {
   setSelectedNode,
+  useDocumentsInSelectedDrive,
   useSelectedDriveId,
   deleteNode,
 } from "@powerhousedao/reactor-browser";
-import { useDocumentsSafe } from "../hooks/use-documents-safe.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 
 type DeleteTarget = { id: string; title: string } | null;
@@ -111,7 +111,7 @@ const STATUS_COLORS: Record<string, string> = {
 export function SourceList() {
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
-  const documents = useDocumentsSafe();
+  const documents = useDocumentsInSelectedDrive();
   const driveId = useSelectedDriveId();
 
   const sources = useMemo(() => {

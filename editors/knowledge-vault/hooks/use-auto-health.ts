@@ -1,11 +1,11 @@
 import { useEffect, useMemo, useRef } from "react";
 import { generateId } from "document-model/core";
 import {
+  useDocumentSafe,
   useFileNodesInSelectedDrive,
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
 import type { HealthReportDocument } from "document-models/health-report";
-import { useDocumentByIdSafe } from "./use-documents-safe.js";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 import type { GraphState } from "./use-knowledge-graph.js";
 
@@ -26,7 +26,11 @@ export function useAutoHealth(
         ?.id ?? null,
     [fileNodes],
   );
-  const [healthDoc] = useDocumentByIdSafe<HealthReportDocument>(healthNodeId);
+  const healthResult = useDocumentSafe(healthNodeId);
+  const healthDoc =
+    healthResult.status === "success"
+      ? (healthResult.data as unknown as HealthReportDocument)
+      : null;
   const lastReportFingerprint = useRef("");
 
   useEffect(() => {

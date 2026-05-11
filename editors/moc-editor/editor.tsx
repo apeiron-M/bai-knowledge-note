@@ -1,10 +1,12 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { generateId } from "document-model/core";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
-import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import {
+  setSelectedNode,
+  useDocumentsInSelectedDrive,
+} from "@powerhousedao/reactor-browser";
 import { useSelectedMocDocument, actions } from "document-models/moc";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
-import { useDocumentsSafe } from "../knowledge-vault/hooks/use-documents-safe.js";
 
 const TIERS = ["HUB", "DOMAIN", "TOPIC"] as const;
 const TIER_COLORS: Record<string, string> = {
@@ -19,10 +21,20 @@ function ts() {
 export default function Editor() {
   const [document, dispatch] = useSelectedMocDocument();
   const state = document.state.global;
-  // Use the safe variant so the editor doesn't crash when a stalled
-  // local cache can't materialize a singleton (e.g., bai/knowledge-graph).
-  // Restrict to types this editor actually looks up.
-  const allDocs = useDocumentsSafe(["bai/knowledge-note", "bai/moc"]);
+  // reactor-browser 6.0.0-dev.239+ makes `useDocumentsInSelectedDrive`
+  // tolerant of per-doc fetch failures (no whole-promise reject on
+  // orphan ids), so we use it directly and filter to the types this
+  // editor looks up.
+  const allDriveDocs = useDocumentsInSelectedDrive();
+  const allDocs = useMemo(
+    () =>
+      (allDriveDocs ?? []).filter(
+        (d) =>
+          d.header.documentType === "bai/knowledge-note" ||
+          d.header.documentType === "bai/moc",
+      ),
+    [allDriveDocs],
+  );
   const [newQuestion, setNewQuestion] = useState("");
   const [newIdeaRef, setNewIdeaRef] = useState("");
   const [newIdeaPhrase, setNewIdeaPhrase] = useState("");

@@ -1,8 +1,10 @@
 import { useMemo } from "react";
 import { generateId } from "document-model/core";
-import { useFileNodesInSelectedDrive } from "@powerhousedao/reactor-browser";
+import {
+  useDocumentSafe,
+  useFileNodesInSelectedDrive,
+} from "@powerhousedao/reactor-browser";
 import type { KnowledgeGraphDocument } from "document-models/knowledge-graph";
-import { useDocumentByIdSafe } from "./use-documents-safe.js";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
 
 export type GraphState = {
@@ -29,9 +31,9 @@ export type GraphState = {
  *
  * Resolves the singleton's id via the drive's file-node tree (one
  * filter pass over the file nodes — no per-doc fetching), then loads
- * only that single document via useDocumentByIdSafe. Avoids the
- * previous pattern of fetching every document in the drive just to
- * pick one out by type.
+ * only that single document via the official `useDocumentSafe`
+ * (reactor-browser dev.239+), which exposes loading/error state and
+ * never throws.
  */
 export function useKnowledgeGraph(_notes: KnowledgeNoteInfo[]) {
   const fileNodes = useFileNodesInSelectedDrive();
@@ -41,7 +43,11 @@ export function useKnowledgeGraph(_notes: KnowledgeNoteInfo[]) {
         ?.id ?? null,
     [fileNodes],
   );
-  const [graphDoc] = useDocumentByIdSafe<KnowledgeGraphDocument>(graphNodeId);
+  const result = useDocumentSafe(graphNodeId);
+  const graphDoc =
+    result.status === "success"
+      ? (result.data as unknown as KnowledgeGraphDocument)
+      : null;
   const graphState: GraphState | null = graphDoc?.state.global ?? null;
 
   return {
