@@ -77,12 +77,36 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
   ): Promise<void> {
     if (operations.length === 0) return;
 
-    // Deduplicate: keep the last operation per document
+    // Deduplicate: keep the last GLOBAL-scope op per document for state
+    // reconciliation. Document-scope ops (ADD_RELATIONSHIP / REMOVE_RELATIONSHIP)
+    // are applied individually as they arrive — edges aren't a reduction
+    // of doc state.
     const lastByDocument = new Map<string, OperationWithContext>();
 
     for (const entry of operations) {
       const { operation, context } = entry;
       const documentId = context.documentId;
+
+      // Handle reactor-native relationship system actions first. These
+      // fire in `document` scope on the SOURCE document of the edge and
+      // are the sole source-of-truth for graph_edges now that note/moc
+      // state no longer carries inline links.
+      if (operation.action.type === "ADD_RELATIONSHIP") {
+        await this.applyAddRelationship(operation.action.input as {
+          sourceId: string;
+          targetId: string;
+          relationshipType?: string;
+        });
+        continue;
+      }
+      if (operation.action.type === "REMOVE_RELATIONSHIP") {
+        await this.applyRemoveRelationship(operation.action.input as {
+          sourceId: string;
+          targetId: string;
+          relationshipType?: string;
+        });
+        continue;
+      }
 
       // Handle document/drive deletion
       if (
@@ -95,7 +119,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         continue;
       }
 
-      // Only process knowledge-note and moc documents
+      // Only process knowledge-note and moc documents for state reconciliation
       if (
         context.documentType !== "bai/knowledge-note" &&
         context.documentType !== "bai/moc"
@@ -229,88 +253,10 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             .execute();
         }
 
-        // Reconcile edges: delete old, insert new
-        await this.relationalDb
-          .deleteFrom("graph_edges")
-          .where("source_document_id", "=", documentId)
-          .execute();
-
-        // Build edge list from links (notes) or coreIdeas + childRefs (MOCs)
-        const edgeValues: Array<{
-          id: string;
-          source_document_id: string;
-          target_document_id: string;
-          link_type: string | null;
-          target_title: string | null;
-          updated_at: string;
-        }> = [];
-
-        if (isMoc) {
-          const coreIdeas =
-            (global.coreIdeas as Array<Record<string, unknown>>) ?? [];
-          for (const idea of coreIdeas) {
-            if (idea.noteRef) {
-              edgeValues.push({
-                id: `${documentId}-ci-${idea.id ?? idea.noteRef}`,
-                source_document_id: documentId,
-                target_document_id: idea.noteRef as string,
-                link_type: "CORE_IDEA",
-                target_title: null,
-                updated_at: now,
-              });
-            }
-          }
-          const childRefs = (global.childRefs as string[]) ?? [];
-          for (const ref of childRefs) {
-            edgeValues.push({
-              id: `${documentId}-child-${ref}`,
-              source_document_id: documentId,
-              target_document_id: ref,
-              link_type: "CORE_IDEA",
-              target_title: null,
-              updated_at: now,
-            });
-          }
-        } else {
-          const links = (global.links as Array<Record<string, unknown>>) ?? [];
-          for (const link of links) {
-            edgeValues.push({
-              id:
-                (link.id as string) ??
-                `${documentId}-${link.targetDocumentId as string}`,
-              source_document_id: documentId,
-              target_document_id: (link.targetDocumentId as string) ?? "",
-              link_type: (link.linkType as string) ?? null,
-              target_title: (link.targetTitle as string) ?? null,
-              updated_at: now,
-            });
-          }
-        }
-
-        if (edgeValues.length > 0) {
-          // UPSERT instead of plain INSERT — concurrent reconciles on the same
-          // doc race after the DELETE above; without ON CONFLICT, the second
-          // insert hits `graph_edges_pkey` and the whole reconcile errors out.
-          await this.relationalDb
-            .insertInto("graph_edges")
-            .values(edgeValues)
-            .onConflict((oc) =>
-              oc.column("id").doUpdateSet({
-                source_document_id: (eb) =>
-                  eb.ref("excluded.source_document_id"),
-                target_document_id: (eb) =>
-                  eb.ref("excluded.target_document_id"),
-                link_type: (eb) => eb.ref("excluded.link_type"),
-                target_title: (eb) => eb.ref("excluded.target_title"),
-                updated_at: (eb) => eb.ref("excluded.updated_at"),
-              }),
-            )
-            .execute();
-        }
-
-        console.log(
-          `[GraphIndexer] Reconciled ${documentId}: ${edgeValues.length} edges`,
-        );
+        // Edges are NOT reconciled from doc state anymore — they live in
+        // the reactor's DocumentRelationship table, populated via
+        // ADD_RELATIONSHIP / REMOVE_RELATIONSHIP and mirrored into
+        // graph_edges by `applyAddRelationship` / `applyRemoveRelationship`.
       } catch (err: unknown) {
         console.error(
           `[GraphIndexer] Error reconciling document ${documentId}:`,
@@ -318,6 +264,68 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         );
       }
     }
+  }
+
+  /**
+   * Mirror an ADD_RELATIONSHIP event into `graph_edges`. Backfills the
+   * `target_title` from `graph_nodes` if the target is already indexed;
+   * otherwise leaves it null (rendering falls back to the target's slug
+   * until the target's own state reconciles).
+   */
+  private async applyAddRelationship(input: {
+    sourceId: string;
+    targetId: string;
+    relationshipType?: string;
+  }): Promise<void> {
+    if (!input.sourceId || !input.targetId) return;
+    const now = new Date().toISOString();
+    const relType = input.relationshipType ?? null;
+    const edgeId = `${input.sourceId}-${input.targetId}-${relType ?? "_"}`;
+
+    let targetTitle: string | null = null;
+    try {
+      const row = await this.relationalDb
+        .selectFrom("graph_nodes")
+        .where("document_id", "=", input.targetId)
+        .select("title")
+        .executeTakeFirst();
+      targetTitle = row?.title ?? null;
+    } catch {
+      // graph_nodes lookup is best-effort; non-fatal
+    }
+
+    await this.relationalDb
+      .insertInto("graph_edges")
+      .values({
+        id: edgeId,
+        source_document_id: input.sourceId,
+        target_document_id: input.targetId,
+        link_type: relType,
+        target_title: targetTitle,
+        updated_at: now,
+      })
+      .onConflict((oc) =>
+        oc.column("id").doUpdateSet({
+          link_type: (eb) => eb.ref("excluded.link_type"),
+          target_title: (eb) => eb.ref("excluded.target_title"),
+          updated_at: (eb) => eb.ref("excluded.updated_at"),
+        }),
+      )
+      .execute();
+  }
+
+  private async applyRemoveRelationship(input: {
+    sourceId: string;
+    targetId: string;
+    relationshipType?: string;
+  }): Promise<void> {
+    if (!input.sourceId || !input.targetId) return;
+    const relType = input.relationshipType ?? null;
+    const edgeId = `${input.sourceId}-${input.targetId}-${relType ?? "_"}`;
+    await this.relationalDb
+      .deleteFrom("graph_edges")
+      .where("id", "=", edgeId)
+      .execute();
   }
 
   async onDisconnect(): Promise<void> {
@@ -341,6 +349,12 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         .execute();
       await this.relationalDb
         .deleteFrom("graph_nodes")
+        .where("document_id", "=", documentId)
+        .execute();
+      // Also prune the doc's history rows so the projection doesn't carry
+      // ghost data for deleted documents.
+      await this.relationalDb
+        .deleteFrom("graph_operations")
         .where("document_id", "=", documentId)
         .execute();
       deleteEmbedding(documentId).catch((err) =>

@@ -1,5 +1,7 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useMemo } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
+import { generateId } from "document-model/core";
+import { dispatchActions } from "@powerhousedao/reactor-browser";
 import {
   useSelectedKnowledgeNoteDocument,
   actions,
@@ -12,6 +14,14 @@ import { LifecycleTimeline } from "./components/lifecycle-timeline.js";
 import { MetadataPanel } from "./components/metadata-panel.js";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { useKnowledgeNotes } from "../knowledge-vault/hooks/use-knowledge-notes.js";
+
+type NoteLinkLite = {
+  id: string;
+  targetDocumentId: string | null;
+  targetTitle: string | null;
+  linkType: string | null;
+};
 
 const NOTE_TYPES = [
   "concept",
@@ -36,6 +46,15 @@ export default function Editor() {
     "content",
   );
   const [contentMode, setContentMode] = useState<"preview" | "edit">("preview");
+
+  // Links now live in the reactor's DocumentRelationship table; read
+  // the current note's outgoing edges from the subgraph projection
+  // (already populated drive-wide for the sidebar).
+  const { noteMap } = useKnowledgeNotes();
+  const links: NoteLinkLite[] = useMemo(() => {
+    if (!document) return [];
+    return noteMap.get(document.header.id)?.links ?? [];
+  }, [noteMap, document]);
 
   // Guard: useSelectedDocumentSafe returns undefined when Connect's
   // local cache doesn't yet have this doc. Show a loading state
@@ -271,7 +290,7 @@ export default function Editor() {
                   }
                 >
                   {label}
-                  {key === "links" && state.links.length > 0 && (
+                  {key === "links" && links.length > 0 && (
                     <span
                       className="ml-1.5 rounded-full px-1.5 py-0.5 text-xs"
                       style={{
@@ -279,7 +298,7 @@ export default function Editor() {
                         color: "var(--bai-text-tertiary)",
                       }}
                     >
-                      {state.links.length}
+                      {links.length}
                     </span>
                   )}
                 </button>
@@ -366,22 +385,86 @@ export default function Editor() {
 
             {activeTab === "links" && (
               <LinksSection
-                links={state.links}
+                links={links}
                 currentDocId={document.header.id}
-                onAddLink={(id, targetDocumentId, targetTitle, linkType) =>
-                  dispatch(
-                    actions.addLink({
-                      id,
-                      targetDocumentId,
-                      targetTitle,
-                      linkType,
-                    }),
-                  )
-                }
-                onRemoveLink={(id) => dispatch(actions.removeLink({ id }))}
-                onUpdateLinkType={(id, linkType) =>
-                  dispatch(actions.updateLinkType({ id, linkType }))
-                }
+                onAddLink={(_id, targetDocumentId, _targetTitle, linkType) => {
+                  // ADD_RELATIONSHIP is a reactor system action (scope:
+                  // "document") on the SOURCE document. The reactor
+                  // writes one row to DocumentRelationship and the
+                  // graph-indexer mirrors it into graph_edges.
+                  void dispatchActions(
+                    [
+                      {
+                        id: generateId(),
+                        type: "ADD_RELATIONSHIP",
+                        scope: "document",
+                        timestampUtcMs: timestamp(),
+                        input: {
+                          sourceId: document.header.id,
+                          targetId: targetDocumentId,
+                          relationshipType: linkType,
+                        },
+                      } as never,
+                    ],
+                    document.header.id,
+                  );
+                }}
+                onRemoveLink={(id) => {
+                  // The subgraph link id is composite: `${source}-${target}-${type}`.
+                  // Extract the parts so we can issue the corresponding
+                  // REMOVE_RELATIONSHIP with the right args.
+                  const link = links.find((l) => l.id === id);
+                  if (!link?.targetDocumentId) return;
+                  void dispatchActions(
+                    [
+                      {
+                        id: generateId(),
+                        type: "REMOVE_RELATIONSHIP",
+                        scope: "document",
+                        timestampUtcMs: timestamp(),
+                        input: {
+                          sourceId: document.header.id,
+                          targetId: link.targetDocumentId,
+                          relationshipType: link.linkType ?? "RELATES_TO",
+                        },
+                      } as never,
+                    ],
+                    document.header.id,
+                  );
+                }}
+                onUpdateLinkType={(id, linkType) => {
+                  // No native UPDATE_RELATIONSHIP — emulate as remove + add.
+                  const link = links.find((l) => l.id === id);
+                  if (!link?.targetDocumentId) return;
+                  const now = timestamp();
+                  void dispatchActions(
+                    [
+                      {
+                        id: generateId(),
+                        type: "REMOVE_RELATIONSHIP",
+                        scope: "document",
+                        timestampUtcMs: now,
+                        input: {
+                          sourceId: document.header.id,
+                          targetId: link.targetDocumentId,
+                          relationshipType: link.linkType ?? "RELATES_TO",
+                        },
+                      } as never,
+                      {
+                        id: generateId(),
+                        type: "ADD_RELATIONSHIP",
+                        scope: "document",
+                        timestampUtcMs: now,
+                        input: {
+                          sourceId: document.header.id,
+                          targetId: link.targetDocumentId,
+                          relationshipType: linkType,
+                        },
+                      } as never,
+                    ],
+                    document.header.id,
+                  );
+                }}
               />
             )}
 

@@ -19,6 +19,11 @@ export const graphIndexerFactoryBuilder =
         namespace,
       );
 
+    // `scope: ["global", "document"]` — the indexer needs to see
+    // ADD_RELATIONSHIP / REMOVE_RELATIONSHIP, which are reactor-native
+    // system actions dispatched in `document` scope. Without that scope in
+    // the filter, our indexer is blind to every edge change and
+    // graph_edges never updates.
     const filter: ProcessorFilter = {
       branch: ["main"],
       documentId: ["*"],
@@ -27,7 +32,7 @@ export const graphIndexerFactoryBuilder =
         "bai/moc",
         "powerhouse/document-drive",
       ],
-      scope: ["global"],
+      scope: ["global", "document"],
     };
 
     const processor = new GraphIndexerProcessor(namespace, filter, store);

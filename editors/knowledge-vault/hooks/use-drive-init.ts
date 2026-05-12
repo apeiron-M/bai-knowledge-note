@@ -124,7 +124,6 @@ const SINGLETONS: SingletonSpec[] = [
     folderPath: "ops/queue",
   },
   { name: "HealthReport", type: "bai/health-report", folderPath: "ops/health" },
-  { name: "KnowledgeGraph", type: "bai/knowledge-graph", folderPath: "self" },
   { name: "VaultConfig", type: "bai/vault-config", folderPath: "self" },
 ];
 

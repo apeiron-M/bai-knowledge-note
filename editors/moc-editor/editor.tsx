@@ -4,9 +4,11 @@ import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   setSelectedNode,
   useDocumentsInSelectedDrive,
+  dispatchActions,
 } from "@powerhousedao/reactor-browser";
 import { useSelectedMocDocument, actions } from "document-models/moc";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import { useKnowledgeMocs } from "../knowledge-vault/hooks/use-knowledge-mocs.js";
 
 const TIERS = ["HUB", "DOMAIN", "TOPIC"] as const;
 const TIER_COLORS: Record<string, string> = {
@@ -21,6 +23,13 @@ function ts() {
 export default function Editor() {
   const [document, dispatch] = useSelectedMocDocument();
   const state = document.state.global;
+  // Core ideas + child refs live in the reactor's DocumentRelationship
+  // table now — read this MoC's outgoing edges from the subgraph
+  // projection rather than from inline state.
+  const { mocMap } = useKnowledgeMocs();
+  const mocProj = mocMap.get(document.header.id);
+  const coreIdeas: { noteRef: string; contextPhrase: string }[] =
+    mocProj?.coreIdeas ?? [];
   // reactor-browser 6.0.0-dev.239+ makes `useDocumentsInSelectedDrive`
   // tolerant of per-doc fetch failures (no whole-promise reject on
   // orphan ids), so we use it directly and filter to the types this
@@ -156,10 +165,10 @@ export default function Editor() {
                 className="mb-3 text-xs font-semibold uppercase tracking-wider"
                 style={{ color: "var(--bai-text-muted)" }}
               >
-                Core Ideas ({(state.coreIdeas ?? []).length})
+                Core Ideas ({coreIdeas.length})
               </h3>
               <div className="space-y-2">
-                {(state.coreIdeas ?? []).map((idea) => {
+                {coreIdeas.map((idea) => {
                   const linkedDoc = (allDocs ?? []).find(
                     (d) => d.header.id === idea.noteRef,
                   );
@@ -170,9 +179,10 @@ export default function Editor() {
                         }
                       ).global.title ?? linkedDoc.header.name)
                     : null;
+                  const ideaKey = `${document.header.id}-${idea.noteRef}`;
                   return (
                     <div
-                      key={idea.id}
+                      key={ideaKey}
                       className="group flex items-start gap-2 rounded-lg px-3 py-2"
                       style={{
                         backgroundColor: "var(--bai-bg)",
@@ -223,9 +233,26 @@ export default function Editor() {
                       </div>
                       <button
                         type="button"
-                        onClick={() =>
-                          dispatch(actions.removeCoreIdea({ id: idea.id }))
-                        }
+                        onClick={() => {
+                          // Remove the underlying DocumentRelationship row;
+                          // the indexer mirrors the deletion into graph_edges.
+                          void dispatchActions(
+                            [
+                              {
+                                id: generateId(),
+                                type: "REMOVE_RELATIONSHIP",
+                                scope: "document",
+                                timestampUtcMs: ts(),
+                                input: {
+                                  sourceId: document.header.id,
+                                  targetId: idea.noteRef,
+                                  relationshipType: "CORE_IDEA",
+                                },
+                              } as never,
+                            ],
+                            document.header.id,
+                          );
+                        }}
                         className="opacity-0 hover:text-red-400 group-hover:opacity-100"
                         style={{ color: "var(--bai-text-faint)" }}
                       >
@@ -238,15 +265,28 @@ export default function Editor() {
                   className="flex gap-2"
                   onSubmit={(e) => {
                     e.preventDefault();
-                    if (!newIdeaRef.trim() || !newIdeaPhrase.trim()) return;
-                    dispatch(
-                      actions.addCoreIdea({
-                        id: generateId(),
-                        noteRef: newIdeaRef.trim(),
-                        contextPhrase: newIdeaPhrase.trim(),
-                        sortOrder: (state.coreIdeas ?? []).length,
-                        addedAt: ts(),
-                      }),
+                    if (!newIdeaRef.trim()) return;
+                    // contextPhrase used to live on the inline coreIdea
+                    // entry; the relationship table has no slot for it.
+                    // The phrase input is kept for future re-introduction
+                    // (e.g., as a `bai/derivation` document linking the
+                    // MoC to the note with annotation), but it's not
+                    // persisted by ADD_RELATIONSHIP today.
+                    void dispatchActions(
+                      [
+                        {
+                          id: generateId(),
+                          type: "ADD_RELATIONSHIP",
+                          scope: "document",
+                          timestampUtcMs: ts(),
+                          input: {
+                            sourceId: document.header.id,
+                            targetId: newIdeaRef.trim(),
+                            relationshipType: "CORE_IDEA",
+                          },
+                        } as never,
+                      ],
+                      document.header.id,
                     );
                     setNewIdeaRef("");
                     setNewIdeaPhrase("");

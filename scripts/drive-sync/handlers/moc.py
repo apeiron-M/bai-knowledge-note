@@ -40,7 +40,11 @@ def build_actions(
     for q in state.get("openQuestions") or []:
         scalar.append(_act("ADD_OPEN_QUESTION", {"question": q}))
 
-    # Core ideas reference notes — defer
+    # Core ideas reference notes — emit reactor-native ADD_RELATIONSHIP
+    # actions (scope: "document"). Phase 4 fills in sourceId at dispatch
+    # time. Loses the `contextPhrase`/`sortOrder` metadata that ADD_CORE_IDEA
+    # carried; if those are needed, store them on the note itself or model
+    # context as a separate document.
     for ci in state.get("coreIdeas") or []:
         note_old = ci.get("noteRef")
         note_new = id_map.get(note_old) if note_old else None
@@ -48,17 +52,18 @@ def build_actions(
             if drop_unmapped:
                 continue
             note_new = note_old
-        crossref.append(_act("ADD_CORE_IDEA", {
-            "id": ci["id"],
-            "noteRef": note_new,
-            "contextPhrase": ci.get("contextPhrase") or "",
-            "sortOrder": int(ci.get("sortOrder") or 0),
-            "addedAt": ci.get("addedAt") or now,
-            **({"addedBy": ci["addedBy"]} if ci.get("addedBy") else {}),
-        }))
+        crossref.append({
+            "type": "ADD_RELATIONSHIP",
+            "scope": "document",
+            "input": {
+                "targetId": note_new,
+                "relationshipType": "CORE_IDEA",
+            },
+        })
 
-    # Tensions reference multiple docs — defer; remap each ref individually,
-    # passing through unmapped refs
+    # Tensions reference multiple docs as a set — kept on MoC state for now
+    # (no clean parent-child shape; revisit when bai/tension docs replace
+    # inline tensions entirely).
     for t in state.get("tensions") or []:
         refs = t.get("involvedRefs") or []
         remapped = [id_map.resolve(r) for r in refs]
@@ -69,14 +74,21 @@ def build_actions(
             "addedAt": t.get("addedAt") or now,
         }))
 
-    # Child mocs reference other mocs — defer; drop if unmapped
+    # Child mocs reference other mocs — emit ADD_RELATIONSHIP
     for child in state.get("childRefs") or []:
         new_child = id_map.get(child)
         if new_child is None:
             if drop_unmapped:
                 continue
             new_child = child
-        crossref.append(_act("ADD_CHILD_MOC", {"childRef": new_child}))
+        crossref.append({
+            "type": "ADD_RELATIONSHIP",
+            "scope": "document",
+            "input": {
+                "targetId": new_child,
+                "relationshipType": "CHILD_MOC",
+            },
+        })
 
     return scalar, crossref
 

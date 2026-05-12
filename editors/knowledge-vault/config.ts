@@ -4,7 +4,6 @@ export const editorConfig: PHAppConfig = {
   isDragAndDropEnabled: true,
   allowedDocumentTypes: [
     "bai/knowledge-note",
-    "bai/knowledge-graph",
     "bai/moc",
     "bai/source",
     "bai/pipeline-queue",

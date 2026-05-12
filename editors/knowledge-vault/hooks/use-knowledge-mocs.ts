@@ -86,14 +86,19 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
       const childRefs: string[] = [];
       const sourceEdges = edgesBySource.get(node.documentId) ?? [];
       for (const edge of sourceEdges) {
-        if (edge.linkType !== "CORE_IDEA") continue;
-        if (mocIds.has(edge.targetDocumentId)) {
+        if (edge.linkType === "CHILD_MOC") {
           childRefs.push(edge.targetDocumentId);
-        } else {
-          coreIdeas.push({
-            noteRef: edge.targetDocumentId,
-            contextPhrase: "",
-          });
+        } else if (edge.linkType === "CORE_IDEA") {
+          // MoC → note core idea; on legacy data CORE_IDEA also pointed
+          // at child MoCs, so fall back to target-type for disambiguation.
+          if (mocIds.has(edge.targetDocumentId)) {
+            childRefs.push(edge.targetDocumentId);
+          } else {
+            coreIdeas.push({
+              noteRef: edge.targetDocumentId,
+              contextPhrase: "",
+            });
+          }
         }
       }
 

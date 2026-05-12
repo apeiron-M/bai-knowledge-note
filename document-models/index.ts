@@ -1,6 +1,5 @@
 export { Derivation as DerivationV1 } from "./derivation/v1/module.js";
 export { HealthReport as HealthReportV1 } from "./health-report/v1/module.js";
-export { KnowledgeGraph as KnowledgeGraphV1 } from "./knowledge-graph/v1/module.js";
 export { KnowledgeNote as KnowledgeNoteV1 } from "./knowledge-note/v1/module.js";
 export { Moc as MocV1 } from "./moc/v1/module.js";
 export { Observation as ObservationV1 } from "./observation/v1/module.js";

@@ -4,13 +4,20 @@ import {
   setSelectedNode,
   useDocumentsInSelectedDrive,
 } from "@powerhousedao/reactor-browser";
-import type {
-  NoteLink,
-  LinkType,
-} from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+import type { LinkType } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
+
+// Links now come from the subgraph projection of DocumentRelationship
+// rows, so the prop shape is the loose projection type, not the
+// model-generated `NoteLink` (which is going away once Phase 5 lands).
+type LinkRow = {
+  id: string;
+  targetDocumentId: string | null;
+  targetTitle: string | null;
+  linkType: string | null;
+};
 
 type LinksSectionProps = {
-  links: NoteLink[];
+  links: LinkRow[];
   currentDocId: string;
   onAddLink: (
     id: string,
@@ -140,7 +147,7 @@ export function LinksSection({
               generateId(),
               targetId,
               targetTitle,
-              link.linkType ?? "RELATES_TO",
+              (link.linkType ?? "RELATES_TO") as LinkType,
             );
             setEditingLinkId(null);
           }}
@@ -176,7 +183,7 @@ function LinkCard({
   onRemoveLink,
   onChangeTarget,
 }: {
-  link: NoteLink;
+  link: LinkRow;
   isEditing: boolean;
   allDocOptions: DocOption[];
   onStartEdit: () => void;
@@ -222,7 +229,7 @@ function LinkCard({
       <select
         value={link.linkType ?? "RELATES_TO"}
         onChange={(e) => onUpdateLinkType(link.id, e.target.value as LinkType)}
-        className={`rounded-md border-0 px-2 py-0.5 text-xs font-medium ${LINK_TYPE_COLORS[link.linkType ?? "RELATES_TO"]} bg-transparent`}
+        className={`rounded-md border-0 px-2 py-0.5 text-xs font-medium ${LINK_TYPE_COLORS[(link.linkType ?? "RELATES_TO") as LinkType] ?? ""} bg-transparent`}
       >
         {LINK_TYPES.map((lt) => (
           <option key={lt} value={lt}>

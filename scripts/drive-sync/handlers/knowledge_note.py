@@ -90,7 +90,11 @@ def build_actions(
             inp["topicDocumentId"] = None
         scalar.append(_act("ADD_TOPIC", inp))
 
-    # Links — cross-doc, deferred to phase 4
+    # Links — dispatched as reactor-native ADD_RELATIONSHIP system actions
+    # (scope: "document"). Phase 4 fills in sourceId at dispatch time so the
+    # action input matches the dispatch target. The reactor writes one row to
+    # DocumentRelationship per action and `documentOutgoingRelationships`
+    # serves the read path — no per-note state bloat.
     for ln in state.get("links") or []:
         target_old = ln.get("targetDocumentId")
         target_new = id_map.get(target_old) if target_old else None
@@ -98,14 +102,15 @@ def build_actions(
             if drop_unmapped:
                 continue
             target_new = target_old
-        inp = {
-            "id": ln["id"],
-            "targetDocumentId": target_new,
-            "linkType": ln.get("linkType") or "RELATES_TO",
-        }
-        if ln.get("targetTitle"):
-            inp["targetTitle"] = ln["targetTitle"]
-        crossref.append(_act("ADD_LINK", inp))
+        crossref.append({
+            "type": "ADD_RELATIONSHIP",
+            "scope": "document",
+            "input": {
+                # sourceId injected by upload.py phase 4
+                "targetId": target_new,
+                "relationshipType": ln.get("linkType") or "RELATES_TO",
+            },
+        })
 
     return scalar, crossref
 

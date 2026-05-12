@@ -29,7 +29,7 @@ const FILTER_TYPES: Record<FilterType, { label: string; ops: string[] }> = {
   },
   links: {
     label: "Links",
-    ops: ["ADD_LINK", "REMOVE_LINK", "UPDATE_LINK_TYPE"],
+    ops: ["ADD_RELATIONSHIP", "REMOVE_RELATIONSHIP"],
   },
   lifecycle: {
     label: "Lifecycle",
@@ -50,8 +50,8 @@ const OP_ICONS: Record<string, string> = {
   SET_DESCRIPTION: "D",
   SET_CONTENT: "C",
   SET_NOTE_TYPE: "N",
-  ADD_LINK: "+L",
-  REMOVE_LINK: "-L",
+  ADD_RELATIONSHIP: "+L",
+  REMOVE_RELATIONSHIP: "-L",
   ADD_TOPIC: "+#",
   REMOVE_TOPIC: "-#",
   SET_STATUS: "S",
@@ -348,7 +348,10 @@ function OperationRow({ op }: { op: OperationRecord }) {
 function opColor(type: string): string {
   if (type.startsWith("SET_TITLE") || type.startsWith("SET_CONTENT"))
     return "#f59e0b";
-  if (type.startsWith("ADD_LINK") || type.startsWith("REMOVE_LINK"))
+  if (
+    type === "ADD_RELATIONSHIP" ||
+    type === "REMOVE_RELATIONSHIP"
+  )
     return "#3b82f6";
   if (type.startsWith("ADD_TOPIC") || type.startsWith("REMOVE_TOPIC"))
     return "#10b981";

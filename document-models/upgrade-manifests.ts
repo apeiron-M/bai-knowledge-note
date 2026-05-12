@@ -5,7 +5,6 @@
 import type { UpgradeManifest } from "document-model";
 import { derivationUpgradeManifest } from "document-models/derivation/upgrades";
 import { healthReportUpgradeManifest } from "document-models/health-report/upgrades";
-import { knowledgeGraphUpgradeManifest } from "document-models/knowledge-graph/upgrades";
 import { knowledgeNoteUpgradeManifest } from "document-models/knowledge-note/upgrades";
 import { mocUpgradeManifest } from "document-models/moc/upgrades";
 import { observationUpgradeManifest } from "document-models/observation/upgrades";
@@ -18,7 +17,6 @@ import { vaultConfigUpgradeManifest } from "document-models/vault-config/upgrade
 export const upgradeManifests: UpgradeManifest<readonly number[]>[] = [
   derivationUpgradeManifest,
   healthReportUpgradeManifest,
-  knowledgeGraphUpgradeManifest,
   knowledgeNoteUpgradeManifest,
   mocUpgradeManifest,
   observationUpgradeManifest,

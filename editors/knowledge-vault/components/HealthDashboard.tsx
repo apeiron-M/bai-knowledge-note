@@ -4,6 +4,7 @@ import {
   useDocumentsInSelectedDrive,
 } from "@powerhousedao/reactor-browser";
 import { generateId } from "document-model/core";
+import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 
 const STATUS_BADGE: Record<string, string> = {
   PASS: "bg-emerald-500/20 text-emerald-300 border-emerald-500/30",
@@ -21,6 +22,10 @@ type HealthCheck = {
 
 export function HealthDashboard() {
   const documents = useDocumentsInSelectedDrive();
+  // Links live in the reactor's DocumentRelationship table now — read
+  // them via the subgraph projection rather than from note doc state
+  // (which no longer carries inline `links[]`).
+  const { notes: subgraphNotes } = useKnowledgeNotes();
 
   // Read from bai/health-report document (written by agent via /health skill)
   const agentReport = useMemo(() => {
@@ -73,7 +78,19 @@ export function HealthDashboard() {
       (d) => d.header.documentType === "bai/tension",
     );
 
-    // Extract note state
+    // Extract note state — links come from the subgraph projection
+    // (graph_edges mirrored from DocumentRelationship), not from inline
+    // state, since notes no longer carry their own `links[]`.
+    const linksBySource = new Map<
+      string,
+      Array<{ targetDocumentId: string | null }>
+    >();
+    for (const n of subgraphNotes) {
+      linksBySource.set(
+        n.id,
+        n.links.map((l) => ({ targetDocumentId: l.targetDocumentId })),
+      );
+    }
     const noteStates = notes.map((d) => {
       const state = (d.state as unknown as { global: Record<string, unknown> })
         .global;
@@ -83,7 +100,7 @@ export function HealthDashboard() {
         status: (state.status as string) ?? "DRAFT",
         noteType: (state.noteType as string) ?? null,
         description: (state.description as string) ?? null,
-        links: (state.links as Array<{ targetDocumentId?: string }>) ?? [],
+        links: linksBySource.get(d.header.id) ?? [],
         topics: (state.topics as Array<{ name: string }>) ?? [],
       };
     });
@@ -265,7 +282,7 @@ export function HealthDashboard() {
       checks,
       recommendations,
     };
-  }, [documents]);
+  }, [documents, subgraphNotes]);
 
   return (
     <div className="p-4 space-y-6">

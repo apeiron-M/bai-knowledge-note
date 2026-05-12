@@ -1,6 +1,5 @@
 import { Derivation as DerivationV1 } from "document-models/derivation/v1";
 import { HealthReport as HealthReportV1 } from "document-models/health-report/v1";
-import { KnowledgeGraph as KnowledgeGraphV1 } from "document-models/knowledge-graph/v1";
 import { KnowledgeNote as KnowledgeNoteV1 } from "document-models/knowledge-note/v1";
 import { Moc as MocV1 } from "document-models/moc/v1";
 import { Observation as ObservationV1 } from "document-models/observation/v1";
@@ -18,7 +17,6 @@ import { VaultConfig as VaultConfigV1 } from "document-models/vault-config/v1";
 export const documentModels = [
   DerivationV1,
   HealthReportV1,
-  KnowledgeGraphV1,
   KnowledgeNoteV1,
   MocV1,
   ObservationV1,

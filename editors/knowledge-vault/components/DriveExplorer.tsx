@@ -15,7 +15,6 @@ import { ActivityView } from "./ActivityView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
-import { useKnowledgeGraph } from "../hooks/use-knowledge-graph.js";
 import { useAutoHealth } from "../hooks/use-auto-health.js";
 import { useEmbeddingBackfill } from "../hooks/use-embedding-backfill.js";
 import { ThemeToggle } from "../../shared/theme-context.js";
@@ -33,7 +32,6 @@ type ViewMode =
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
   const { notes } = useKnowledgeNotes();
-  const { graphState, hasGraphDoc } = useKnowledgeGraph(notes);
   const fileNodes = useFileNodesInSelectedDrive();
   const showDocumentEditor = !!children;
 
@@ -52,19 +50,10 @@ export function DriveExplorer({ children }: EditorProps) {
   >(() => [], []);
 
   // Auto-generate health metrics
-  useAutoHealth(notes, graphState);
+  useAutoHealth(notes);
 
   // Background embedding backfill — runs once per drive load when embedder is ready
   const backfill = useEmbeddingBackfill();
-
-  // Auto-sync of bai/knowledge-graph is intentionally disabled. Each
-  // syncGraph dispatch fan-outs into ADD_NODE/ADD_EDGE ops; with 348 notes
-  // and 1021 edges, two passes exceed the reactor's reshuffle-detection
-  // threshold (1000 ops) and leave the doc in a dead-letter loop. The
-  // graph-indexer subgraph already projects nodes/edges from note state for
-  // read access (see use-graph-metadata.ts), so the doc-of-ops mirror is
-  // redundant for read views. Re-introduce only behind an explicit user
-  // action with a chunked dispatch path.
 
   // Count doc types
   const allFiles = fileNodes ?? [];
@@ -84,9 +73,6 @@ export function DriveExplorer({ children }: EditorProps) {
   )?.id;
   const vaultConfigDocId = allFiles.find(
     (n) => n.documentType === "bai/vault-config",
-  )?.id;
-  const graphDocId2 = allFiles.find(
-    (n) => n.documentType === "bai/knowledge-graph",
   )?.id;
 
   function handleSwitchView(mode: ViewMode) {
@@ -314,14 +300,12 @@ export function DriveExplorer({ children }: EditorProps) {
             )}
           </div>
           <div className="flex items-center gap-3">
-            {hasGraphDoc && graphState && (
-              <span
-                className="text-[10px]"
-                style={{ color: "var(--bai-text-faint)" }}
-              >
-                {graphState.nodes.length}n / {graphState.edges.length}e
-              </span>
-            )}
+            <span
+              className="text-[10px]"
+              style={{ color: "var(--bai-text-faint)" }}
+            >
+              {notes.length}n
+            </span>
             <ThemeToggle />
             <GettingStartedButton />
             <CreateMenu />
@@ -333,12 +317,7 @@ export function DriveExplorer({ children }: EditorProps) {
           {showDocumentEditor ? (
             <div className="h-full">{children}</div>
           ) : viewMode === "graph" ? (
-            <GraphViewPixi
-              notes={notes}
-              graphState={graphState}
-              mocs={mocs}
-              tensions={tensions}
-            />
+            <GraphViewPixi notes={notes} mocs={mocs} tensions={tensions} />
           ) : viewMode === "search" ? (
             <SearchView />
           ) : viewMode === "activity" ? (

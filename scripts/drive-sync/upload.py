@@ -23,11 +23,11 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from lib.id_map import IdMap
 from lib import sb
+from lib import gql
 from handlers import (
     knowledge_note,
     moc as moc_handler,
     source as source_handler,
-    knowledge_graph,
     pipeline_queue,
     health_report,
     vault_config,
@@ -38,7 +38,6 @@ HANDLERS = {
     "bai/knowledge-note": knowledge_note,
     "bai/moc": moc_handler,
     "bai/source": source_handler,
-    "bai/knowledge-graph": knowledge_graph,
     "bai/pipeline-queue": pipeline_queue,
     "bai/health-report": health_report,
     "bai/vault-config": vault_config,
@@ -50,10 +49,9 @@ TYPE_ORDER = {
     "bai/source": 0,
     "bai/knowledge-note": 1,
     "bai/moc": 2,
-    "bai/knowledge-graph": 3,
-    "bai/pipeline-queue": 4,
-    "bai/health-report": 5,
-    "bai/vault-config": 6,
+    "bai/pipeline-queue": 3,
+    "bai/health-report": 4,
+    "bai/vault-config": 5,
 }
 
 
@@ -152,7 +150,14 @@ def phase_1_create_drive_and_folders(args, manifest: dict, id_map: IdMap) -> tup
 
 def phase_2_create_documents(args, manifest: dict, id_map: IdMap, drive_id: str) -> None:
     print("\n━━━ Phase 2: create documents ━━━")
-    docs = list(manifest["documents"])
+    # Filter out docs whose type no longer has a handler — currently
+    # `bai/knowledge-graph`, which is part of the drive-override migration.
+    # Leaving these in would crash CREATE_DOCUMENT against a model the
+    # reactor no longer recognises.
+    docs = [d for d in manifest["documents"] if d.get("type") in HANDLERS]
+    skipped = len(manifest["documents"]) - len(docs)
+    if skipped:
+        print(f"  (skipping {skipped} doc(s) with no registered handler)")
     # Within bai/moc, parent mocs must be created before children. Compute the
     # moc-internal ordering up front using the source state files (parentRef).
     moc_states = {d["id"]: load_state(Path(args.data), d["id"]) or {}
@@ -171,11 +176,25 @@ def phase_2_create_documents(args, manifest: dict, id_map: IdMap, drive_id: str)
     for i, d in enumerate(docs, start=1):
         if id_map.get(d["id"]):
             continue  # already created on a prior run
-        # CLI quoting: replace name if anything could choke the CLI. Title is
-        # set later via setTitle in Phase 3, so this name is just a placeholder.
+        # Name is a placeholder — Phase 3 overrides via SET_TITLE. We
+        # used to sanitise it for CLI subprocess argv quoting; with the
+        # GraphQL bypass that constraint is gone, but we still keep the
+        # fallback for empty/weird names so the drive's node list stays
+        # readable.
         safe_name = _safe_cli_name(d["name"], fallback="doc-" + d["id"][:8])
+        parent_old = d.get("parentFolder")
+        parent_folder = id_map.get(parent_old) if parent_old else None
         try:
-            new_id = sb.docs_create(d["type"], safe_name, drive_id)
+            # The reactor's namespaced createDocument always creates the
+            # doc at the drive root (parentIdentifier accepts only a
+            # real document — folders aren't documents). Follow with
+            # moveNode to slot the doc into its target folder. This is
+            # the same two-step the CLI does internally; we just skip
+            # the CLI's subprocess overhead by talking directly to the
+            # supergraph endpoint.
+            new_id = gql.create_document(d["type"], safe_name, drive_id)
+            if parent_folder:
+                gql.move_node(drive_id, new_id, parent_folder)
             id_map.set(d["id"], new_id)
             print(f"  [{i}/{len(docs)}] ✓ {d['type']:24s} {safe_name[:50]} → {new_id}")
         except Exception as e:
@@ -186,25 +205,8 @@ def phase_2_create_documents(args, manifest: dict, id_map: IdMap, drive_id: str)
         print(f"\n  ! Phase 2 had {len(failed)} failures (re-run upload to retry — already-created docs are skipped):", file=sys.stderr)
         for did, msg in failed[:10]:
             print(f"    {did}: {msg}", file=sys.stderr)
-
-    # MOVE_NODE batch: place each doc into its remapped parent folder
-    move_actions = []
-    for d in manifest["documents"]:
-        new_doc = id_map.get(d["id"])
-        parent_old = d.get("parentFolder")
-        if not new_doc or not parent_old:
-            continue
-        new_parent = id_map.get(parent_old)
-        if not new_parent:
-            continue
-        move_actions.append({
-            "type": "MOVE_NODE",
-            "input": {"srcFolder": new_doc, "targetParentFolder": new_parent},
-            "scope": "global",
-        })
-    if move_actions:
-        sb.apply_actions(drive_id, move_actions)
-        print(f"  ✓ placed {len(move_actions)} docs into folders")
+    placed = sum(1 for d in docs if id_map.get(d["id"]) and d.get("parentFolder"))
+    print(f"  ✓ created+placed {placed} docs (create+move inline, no separate MOVE_NODE batch)")
 
 
 def phase_3_apply_state(args, manifest: dict, id_map: IdMap, drive_id: str) -> dict:
@@ -216,7 +218,8 @@ def phase_3_apply_state(args, manifest: dict, id_map: IdMap, drive_id: str) -> d
     data = Path(args.data)
 
     # Re-sort with same key as Phase 2 so dependent state lands in order.
-    docs = list(manifest["documents"])
+    # Same filter as Phase 2 — drop unhandled types.
+    docs = [d for d in manifest["documents"] if d.get("type") in HANDLERS]
     moc_states = {d["id"]: load_state(data, d["id"]) or {}
                   for d in docs if d.get("type") == "bai/moc"}
     moc_creation_order = moc_handler.sort_mocs_for_creation(docs, moc_states)
@@ -242,7 +245,10 @@ def phase_3_apply_state(args, manifest: dict, id_map: IdMap, drive_id: str) -> d
         try:
             scalars, crossrefs = handler.build_actions(state, id_map, drop_unmapped=True)
             if scalars:
-                sb.apply_actions(new_id, scalars)
+                # gql.mutate_document handles `id`, `timestampUtcMs`, `scope`
+                # defaults — the handler's action dicts only need `type`
+                # and `input`.
+                gql.mutate_document(new_id, scalars)
             if crossrefs:
                 deferred[new_id] = crossrefs
             tag = f"[{i}/{len(docs)}]"
@@ -267,14 +273,52 @@ def phase_4_apply_crossrefs(deferred: dict[str, list[dict]]) -> None:
     applied = 0
     failed: list[tuple[str, str]] = []
     for i, (doc_id, actions) in enumerate(deferred.items(), start=1):
-        try:
-            sb.apply_actions(doc_id, actions)
-            applied += len(actions)
-            print(f"  [{i}/{len(deferred)}] ✓ {doc_id} +{len(actions)} refs")
-        except Exception as e:
-            failed.append((doc_id, str(e)[:200]))
-            print(f"  ✗ {doc_id}: {e}", file=sys.stderr)
-    print(f"  → applied {applied}/{total} cross-ref actions")
+        # Two dispatch paths for ADD_RELATIONSHIP:
+        #
+        # 1. Native `addRelationship(source, target, type)` GraphQL
+        #    mutation — one HTTP call per ref. Produces a different sync
+        #    envelope shape than dispatching ADD_RELATIONSHIP through the
+        #    action queue, which may avoid the reactor-browser's
+        #    `skip:1 CREATE_DOCUMENT` synthesis bug.
+        #
+        # 2. Fallback: route through `mutate_document` with the
+        #    ADD_RELATIONSHIP action shape (the old behaviour). Cheaper
+        #    network-wise (one call per source doc instead of N) but
+        #    susceptible to the dead-letter pattern.
+        #
+        # We use path 1 to maximise the chance that the dead-letter bug
+        # doesn't reproduce; the per-doc HTTP cost is negligible against
+        # the python script's overall runtime.
+        doc_failed = 0
+        doc_applied = 0
+        for a in actions:
+            if a.get("type") == "ADD_RELATIONSHIP":
+                inp = a.get("input") or {}
+                try:
+                    gql.add_relationship(
+                        doc_id,
+                        inp["targetId"],
+                        inp.get("relationshipType") or "child",
+                    )
+                    doc_applied += 1
+                except Exception as e:
+                    doc_failed += 1
+                    failed.append((doc_id, str(e)[:160]))
+            else:
+                # Non-RELATIONSHIP cross-refs (e.g. ADD_TENSION on MoCs)
+                # — keep the mutateDocument path.
+                try:
+                    gql.mutate_document(doc_id, [a])
+                    doc_applied += 1
+                except Exception as e:
+                    doc_failed += 1
+                    failed.append((doc_id, str(e)[:160]))
+        applied += doc_applied
+        suffix = f" ({doc_failed} failed)" if doc_failed else ""
+        print(f"  [{i}/{len(deferred)}] ✓ {doc_id} +{doc_applied} refs{suffix}")
+    print(f"  → applied {applied}/{total} cross-ref actions ({len(failed)} failures)")
+    for doc_id, msg in failed[:5]:
+        print(f"    {doc_id}: {msg}", file=sys.stderr)
 
 
 def main() -> int:

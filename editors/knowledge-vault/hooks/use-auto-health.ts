@@ -7,17 +7,12 @@ import {
 } from "@powerhousedao/reactor-browser";
 import type { HealthReportDocument } from "document-models/health-report";
 import type { KnowledgeNoteInfo } from "./use-knowledge-notes.js";
-import type { GraphState } from "./use-knowledge-graph.js";
 
 /**
  * Auto-generates a health report document whenever the vault loads
- * and note data changes. Updates the existing health-report doc
- * or creates observations about issues found.
+ * and note data changes.
  */
-export function useAutoHealth(
-  notes: KnowledgeNoteInfo[],
-  graphState: GraphState | null,
-) {
+export function useAutoHealth(notes: KnowledgeNoteInfo[]) {
   const driveId = useSelectedDriveId();
   const fileNodes = useFileNodesInSelectedDrive();
   const healthNodeId = useMemo(
@@ -36,14 +31,11 @@ export function useAutoHealth(
   useEffect(() => {
     if (!healthDoc || !driveId || notes.length === 0) return;
 
-    // Build fingerprint to avoid re-reporting same state
-    const fingerprint = `${notes.length}:${graphState?.nodes.length ?? 0}:${graphState?.edges.length ?? 0}`;
-    if (lastReportFingerprint.current === fingerprint) return;
-    lastReportFingerprint.current = fingerprint;
-
-    // Compute health metrics
     const nodeCount = notes.length;
     const edgeCount = notes.reduce((sum, n) => sum + n.links.length, 0);
+    const fingerprint = `${nodeCount}:${edgeCount}`;
+    if (lastReportFingerprint.current === fingerprint) return;
+    lastReportFingerprint.current = fingerprint;
     const noteIds = new Set(notes.map((n) => n.id));
     const incomingCounts = new Map<string, number>();
     for (const note of notes) {
@@ -137,5 +129,5 @@ export function useAutoHealth(
       recommendations.push("Increase link density — aim for 2+ links per note");
     if (noDesc.length > 0)
       recommendations.push(`Add descriptions to ${noDesc.length} note(s)`);
-  }, [healthDoc, driveId, notes, graphState]);
+  }, [healthDoc, driveId, notes]);
 }
