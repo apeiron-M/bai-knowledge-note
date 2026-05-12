@@ -5,6 +5,21 @@
 import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getWritableDb } from "./db.js";
 
+// Source-of-truth for edges since the drive-override migration. ADD_LINK /
+// ADD_CORE_IDEA / ADD_CHILD_MOC are gone; edges live in the reactor's
+// `DocumentRelationship` table, populated via ADD_RELATIONSHIP system
+// actions. We have to fan out per type because `getOutgoingRelationships`
+// requires a specific `relationshipType` arg.
+const RELATIONSHIP_TYPES = [
+  "RELATES_TO",
+  "BUILDS_ON",
+  "CONTRADICTS",
+  "SUPERSEDES",
+  "DERIVED_FROM",
+  "CORE_IDEA",
+  "CHILD_MOC",
+] as const;
+
 export async function reindexDrive(
   subgraph: ISubgraph,
   driveId: string,
@@ -138,10 +153,13 @@ export async function reindexDrive(
             .execute();
         }
 
-        // Reconcile edges. For MoCs the edge sources are
-        // global.coreIdeas (note targets) and global.childRefs (child
-        // MoC targets), both keyed `linkType: "CORE_IDEA"` to match
-        // the per-op processor's tagging. Notes use global.links.
+        // Reconcile edges from the reactor's DocumentRelationship table
+        // (the source of truth since the drive-override migration). Each
+        // ADD_RELATIONSHIP system action writes one row there; the
+        // processor's onOperations mirrors those events into graph_edges,
+        // but for a backfill we need to read existing rows directly. The
+        // GraphQL field requires a specific `relationshipType`, so we fan
+        // out per known type.
         await db
           .deleteFrom("graph_edges")
           .where("source_document_id", "=", node.id)
@@ -156,50 +174,45 @@ export async function reindexDrive(
           updated_at: string;
         }> = [];
 
-        if (isMoc) {
-          const coreIdeas =
-            (global.coreIdeas as Array<Record<string, unknown>>) ?? [];
-          for (const idea of coreIdeas) {
-            if (idea.noteRef) {
+        for (const relType of RELATIONSHIP_TYPES) {
+          try {
+            const page =
+              await subgraph.reactorClient.getOutgoingRelationships(
+                node.id,
+                relType,
+              );
+            const results =
+              (page as unknown as { results?: Array<{ header?: { id?: string }; id?: string }> })
+                .results ?? [];
+            for (const target of results) {
+              const targetId = target.header?.id ?? target.id;
+              if (!targetId) continue;
               edgeValues.push({
-                id: `${node.id}-ci-${(idea.id as string) ?? (idea.noteRef as string)}`,
+                id: `${node.id}-${targetId}-${relType}`,
                 source_document_id: node.id,
-                target_document_id: idea.noteRef as string,
-                link_type: "CORE_IDEA",
+                target_document_id: targetId,
+                link_type: relType,
                 target_title: null,
                 updated_at: now,
               });
             }
-          }
-          const childRefs = (global.childRefs as string[]) ?? [];
-          for (const ref of childRefs) {
-            edgeValues.push({
-              id: `${node.id}-child-${ref}`,
-              source_document_id: node.id,
-              target_document_id: ref,
-              link_type: "CORE_IDEA",
-              target_title: null,
-              updated_at: now,
-            });
-          }
-        } else {
-          const links = (global.links as Array<Record<string, unknown>>) ?? [];
-          for (const link of links) {
-            edgeValues.push({
-              id:
-                (link.id as string) ??
-                `${node.id}-${link.targetDocumentId as string}`,
-              source_document_id: node.id,
-              target_document_id: (link.targetDocumentId as string) ?? "",
-              link_type: (link.linkType as string) ?? null,
-              target_title: (link.targetTitle as string) ?? null,
-              updated_at: now,
-            });
+          } catch {
+            // Some relationship types may not be indexed for this doc —
+            // ignore per-type errors and keep going.
           }
         }
 
         if (edgeValues.length > 0) {
-          await db.insertInto("graph_edges").values(edgeValues).execute();
+          await db
+            .insertInto("graph_edges")
+            .values(edgeValues)
+            .onConflict((oc) =>
+              oc.column("id").doUpdateSet({
+                link_type: (eb) => eb.ref("excluded.link_type"),
+                updated_at: (eb) => eb.ref("excluded.updated_at"),
+              }),
+            )
+            .execute();
           indexedEdges += edgeValues.length;
         }
       } catch (err: unknown) {
