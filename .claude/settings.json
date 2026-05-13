@@ -246,7 +246,14 @@
       "Bash(curl -s -m 5 'http://localhost:4001/knowledge-vault/graphql' -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __schema { queryType { name } } }\"}')",
       "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ document\\(identifier: \\\\\"9b4cfef2-52f7-4071-bed4-56d546155b82\\\\\"\\) { id documentType } }\"}')",
       "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ document\\(identifier: \\\\\"9b4cfef2-52f7-4071-bed4-56d546155b82\\\\\"\\) { document { header { id documentType } } } }\"}')",
-      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ document\\(identifier: \\\\\"9b4cfef2-52f7-4071-bed4-56d546155b82\\\\\"\\) { document { documentType } } }\"}')"
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ document\\(identifier: \\\\\"9b4cfef2-52f7-4071-bed4-56d546155b82\\\\\"\\) { document { documentType } } }\"}')",
+      "Bash(curl -s -m 10 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __typename }\"}')",
+      "Bash(PH_GRAPHQL_ENDPOINT=https://switchboard.eager-hen-55.vetra.io/graphql python3 scripts/drive-sync/upload.py --data scripts/drive-sync/data/powerhouse-vault --drive-name \"knowledge vault\")",
+      "Bash(tee /tmp/upload-remote-dev244.log)",
+      "Bash(curl -s -I -m 5 https://connect.eager-hen-55.vetra.io/ph-packages.json)",
+      "Bash(curl -s -m 5 https://connect.eager-hen-55.vetra.io/ph-packages.json)",
+      "Bash(PH_GRAPHQL_ENDPOINT=https://switchboard.eager-hen-55.vetra.io/graphql python3 /tmp/connect-orphans.py)",
+      "Bash(tee /tmp/connect-output.log)"
     ]
   },
   "enabledPlugins": {
