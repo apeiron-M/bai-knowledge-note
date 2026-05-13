@@ -140,7 +140,7 @@ export default function Editor() {
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-6xl">
-        <DocumentToolbar className={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
 
         <div className="flex gap-6 p-6 pb-12">
           {/* Main content area */}

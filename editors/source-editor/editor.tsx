@@ -103,7 +103,7 @@ export default function Editor() {
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-5xl">
-        <DocumentToolbar className={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
         <div className="flex gap-6 p-6">
           {/* Main */}
           <div
@@ -422,7 +422,7 @@ function EditForm({
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-3xl">
-        <DocumentToolbar className={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
         <div className="p-6">
           <div
             className="rounded-xl p-8 space-y-4"
@@ -566,7 +566,7 @@ function IngestForm({
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-3xl">
-        <DocumentToolbar className={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
         <div className="p-6">
           <div
             className="rounded-xl p-8 space-y-4"

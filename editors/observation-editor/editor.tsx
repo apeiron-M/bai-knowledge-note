@@ -46,7 +46,7 @@ export default function Editor() {
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-3xl">
-        <DocumentToolbar className={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
         <div className="p-6 space-y-6">
           <div
             className="rounded-xl p-6 space-y-4"
@@ -186,7 +186,7 @@ function CreateForm({
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-2xl">
-        <DocumentToolbar className={TOOLBAR_CLASS} />
+        <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
         <div className="p-6">
           <div
             className="rounded-xl p-8 space-y-4"

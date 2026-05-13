@@ -266,7 +266,15 @@
       "Bash(python3 scripts/drive-sync/download.py --endpoint https://switchboard.eager-hen-55.vetra.io/graphql/r --drive 20b86b85-3f51-4246-a9ce-129655b4a0c8 --out scripts/drive-sync/data/knowledge-vault --concurrency 3)",
       "Bash(tee /tmp/download3.log)",
       "Bash(git check-ignore *)",
-      "Bash(awk '{print $1}')"
+      "Bash(awk '{print $1}')",
+      "Bash(python3 scripts/drive-sync/upload.py --data scripts/drive-sync/data/knowledge-vault --drive-name 'knowledge vault')",
+      "Bash(tee /tmp/upload-local-densified.log)",
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ knowledgeGraphStats\\(driveId: \\\\\"a29dd0b8-5479-4ff0-92fb-40fde64a0af0\\\\\"\\) { nodeCount edgeCount orphanCount } }\"}')",
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/knowledgeGraph -X POST -H 'content-type: application/json' -d '{\"query\":\"{ knowledgeGraphStats\\(driveId: \\\\\"a29dd0b8-5479-4ff0-92fb-40fde64a0af0\\\\\"\\) { nodeCount edgeCount orphanCount } }\"}')",
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ document\\(identifier: \\\\\"85656020-c628-4848-a37a-679e05541629\\\\\"\\) { document { documentType state } } }\"}')",
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ documentOutgoingRelationships\\(sourceIdentifier: \\\\\"85656020-c628-4848-a37a-679e05541629\\\\\", relationshipType: \\\\\"CHILD_MOC\\\\\"\\) { items { id } } }\"}')",
+      "Bash(python3 scripts/drive-sync/download.py --endpoint http://localhost:4001/graphql/r --drive a29dd0b8-5479-4ff0-92fb-40fde64a0af0 --out scripts/drive-sync/data/knowledge-vault --concurrency 5)",
+      "Bash(tee /tmp/download-local.log)"
     ]
   },
   "enabledPlugins": {
