@@ -237,7 +237,16 @@
       "Bash(curl -sS http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"mutation { knowledgeGraphReindex\\(driveId: \\\\\"ad5dfd16-d4bb-436c-a46b-7f156174f3e2\\\\\"\\) { indexedNodes indexedEdges errors } }\"}')",
       "Bash(curl -sS -o /dev/null -w \"vetra: %{http_code}\\\\n\" --max-time 3 http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{__typename}\"}')",
       "Bash(tee /tmp/upload-local-243-fresh.log)",
-      "Bash(curl -sS http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ knowledgeGraphStats\\(driveId: \\\\\"f3e27b56-c5d6-4817-9b57-31395769d0c7\\\\\"\\) { nodeCount edgeCount } }\"}')"
+      "Bash(curl -sS http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ knowledgeGraphStats\\(driveId: \\\\\"f3e27b56-c5d6-4817-9b57-31395769d0c7\\\\\"\\) { nodeCount edgeCount } }\"}')",
+      "Bash(curl -s -m 3 http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __typename }\"}')",
+      "Bash(python3 scripts/drive-sync/upload.py --data scripts/drive-sync/data/powerhouse-vault --drive-name \"knowledge vault\")",
+      "Bash(tee /tmp/upload-dev244.log)",
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ documentOperations\\(filter: { skip_gt: 0 }\\) { totalCount } }\"}')",
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"query { documentRelationships\\(filter: { sourceDocumentId: null }\\) { totalCount } }\"}')",
+      "Bash(curl -s -m 5 'http://localhost:4001/knowledge-vault/graphql' -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __schema { queryType { name } } }\"}')",
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ document\\(identifier: \\\\\"9b4cfef2-52f7-4071-bed4-56d546155b82\\\\\"\\) { id documentType } }\"}')",
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ document\\(identifier: \\\\\"9b4cfef2-52f7-4071-bed4-56d546155b82\\\\\"\\) { document { header { id documentType } } } }\"}')",
+      "Bash(curl -s -m 5 http://localhost:4001/graphql/r -X POST -H 'content-type: application/json' -d '{\"query\":\"{ document\\(identifier: \\\\\"9b4cfef2-52f7-4071-bed4-56d546155b82\\\\\"\\) { document { documentType } } }\"}')"
     ]
   },
   "enabledPlugins": {
