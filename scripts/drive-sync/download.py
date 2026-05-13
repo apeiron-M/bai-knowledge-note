@@ -12,9 +12,9 @@ Idempotent: skips per-doc fetch if state file already exists.
 
 Usage:
     python3 scripts/drive-sync/download.py \
-        --endpoint https://switchboard-dev.powerhouse.xyz/graphql \
-        --drive powerhouse-vault \
-        --out scripts/drive-sync/data/powerhouse-vault
+        --endpoint https://switchboard.eager-hen-55.vetra.io/graphql/r \
+        --drive knowledge-vault \
+        --out scripts/drive-sync/data/knowledge-vault
 """
 import argparse
 import datetime
@@ -64,6 +64,26 @@ query DocState($id: String!, $cursor: String) {
         totalCount
       }
     }
+  }
+}
+"""
+
+# Relationship types supported by the document-relationship system.
+# Since the drive-override migration, edges between documents live in the
+# reactor's DocumentRelationship table — not in the per-doc state's
+# `links[]` array. The handlers in upload.py still read state.links /
+# state.coreIdeas / state.childRefs, so on download we fan out per type
+# and reconstruct those state fields from the live relationship rows.
+KNOWLEDGE_NOTE_LINK_TYPES = (
+    "RELATES_TO", "BUILDS_ON", "CONTRADICTS", "SUPERSEDES", "DERIVED_FROM",
+)
+MOC_LINK_TYPES = ("CORE_IDEA", "CHILD_MOC")
+ALL_LINK_TYPES = KNOWLEDGE_NOTE_LINK_TYPES + MOC_LINK_TYPES
+
+OUTGOING_RELATIONSHIPS_QUERY = """
+query Outgoing($sid: String!, $type: String!) {
+  documentOutgoingRelationships(sourceIdentifier: $sid, relationshipType: $type) {
+    items { id }
   }
 }
 """
@@ -139,6 +159,83 @@ def fetch_doc(client: GraphQLClient, doc_id: str) -> tuple[dict, list]:
     return g, all_ops
 
 
+def fetch_outgoing_relationships(
+    client: GraphQLClient, source_id: str, rel_type: str
+) -> list[str]:
+    """Return target document IDs for one (source, type) pair."""
+    data = client.query(
+        OUTGOING_RELATIONSHIPS_QUERY,
+        {"sid": source_id, "type": rel_type},
+    )
+    items = (data.get("documentOutgoingRelationships") or {}).get("items") or []
+    out: list[str] = []
+    for it in items:
+        tid = it.get("id")
+        if tid:
+            out.append(tid)
+    return out
+
+
+def attach_relationships_to_state(
+    client: GraphQLClient,
+    doc_id: str,
+    doc_type: str,
+    state: dict,
+    title_by_id: dict[str, str],
+) -> None:
+    """Fan out per relationship type and populate the state fields the
+    upload-script handlers consume:
+
+      knowledge-note: state.links[]   = [{id, linkType, targetDocumentId, targetTitle}]
+      moc:            state.coreIdeas[] (CORE_IDEA targets)
+                      state.childRefs[] (CHILD_MOC targets — IDs only)
+
+    This is purely informational — the source of truth on the remote is
+    the DocumentRelationship table. We reconstruct here so the next
+    `upload.py` run can replay ADD_RELATIONSHIP through the existing
+    handler logic without changes.
+    """
+    links: list[dict] = []
+    core_ideas: list[dict] = []
+    child_refs: list[str] = []
+    is_moc = doc_type == "bai/moc"
+
+    for rel_type in ALL_LINK_TYPES:
+        targets = fetch_outgoing_relationships(client, doc_id, rel_type)
+        for tid in targets:
+            if rel_type in KNOWLEDGE_NOTE_LINK_TYPES:
+                links.append({
+                    "id": f"lnk-{tid[:8]}-{rel_type[:3].lower()}",
+                    "linkType": rel_type,
+                    "targetDocumentId": tid,
+                    "targetTitle": title_by_id.get(tid, ""),
+                })
+            elif rel_type == "CORE_IDEA" and is_moc:
+                core_ideas.append({
+                    "id": f"ci-{tid[:8]}",
+                    "noteRef": tid,
+                    "contextPhrase": "",
+                    "sortOrder": len(core_ideas),
+                    "addedAt": _now_iso(),
+                    "addedBy": "knowledge-agent",
+                })
+            elif rel_type == "CHILD_MOC" and is_moc:
+                child_refs.append(tid)
+
+    # Overwrite the state fields. We deliberately replace any stale
+    # arrays from the source state with the live relationship graph.
+    state["links"] = links
+    if is_moc:
+        state["coreIdeas"] = core_ideas
+        state["childRefs"] = child_refs
+
+
+def _now_iso() -> str:
+    return datetime.datetime.now(datetime.timezone.utc).strftime(
+        "%Y-%m-%dT%H:%M:%S.000Z"
+    )
+
+
 def main() -> int:
     args = parse_args()
     out = Path(args.out)
@@ -174,6 +271,14 @@ def main() -> int:
     states_dir = out / "states"
     ops_dir = out / "ops"
 
+    # Build a {id → title} map from the drive's file nodes so we can
+    # fill in `targetTitle` on synthesized link entries without an extra
+    # round-trip per relationship.
+    title_by_id: dict[str, str] = {f["id"]: f.get("name") or "" for f in all_files}
+    type_by_id: dict[str, str] = {
+        f["id"]: (f.get("documentType") or f.get("type") or "unknown") for f in all_files
+    }
+
     def fetch_one(idx: int, total: int, node: dict) -> tuple[str, bool, str]:
         doc_id = node["id"]
         state_path = states_dir / f"{doc_id}.json"
@@ -182,9 +287,22 @@ def main() -> int:
             return (doc_id, True, "cached")
         try:
             g, ops = fetch_doc(client, doc_id)
+            # Reconstruct relationship-driven state fields from the
+            # reactor's DocumentRelationship table so the next upload
+            # can replay them via ADD_RELATIONSHIP.
+            attach_relationships_to_state(
+                client, doc_id, type_by_id.get(doc_id, "unknown"), g, title_by_id
+            )
             state_path.write_text(json.dumps(g, indent=2))
             ops_path.write_text(json.dumps(ops, indent=2))
-            return (doc_id, True, f"{len(ops)} ops")
+            n_links = len(g.get("links") or [])
+            n_core = len(g.get("coreIdeas") or [])
+            n_child = len(g.get("childRefs") or [])
+            return (
+                doc_id,
+                True,
+                f"{len(ops)} ops, {n_links} links, {n_core} core, {n_child} children",
+            )
         except Exception as e:
             return (doc_id, False, str(e)[:160])
 

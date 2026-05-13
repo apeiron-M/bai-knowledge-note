@@ -6,8 +6,8 @@ human-readable report. Exit 0 always — this is a sanity gate, not a guard.
 
 Usage:
     python3 scripts/drive-sync/compare.py \
-        --left scripts/drive-sync/data/powerhouse-vault \
-        --right scripts/vault-dump-canonical
+        --left scripts/drive-sync/data/knowledge-vault \
+        --right /path/to/another-dump
 """
 import argparse
 import json

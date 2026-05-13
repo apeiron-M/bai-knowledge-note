@@ -253,7 +253,20 @@
       "Bash(curl -s -I -m 5 https://connect.eager-hen-55.vetra.io/ph-packages.json)",
       "Bash(curl -s -m 5 https://connect.eager-hen-55.vetra.io/ph-packages.json)",
       "Bash(PH_GRAPHQL_ENDPOINT=https://switchboard.eager-hen-55.vetra.io/graphql python3 /tmp/connect-orphans.py)",
-      "Bash(tee /tmp/connect-output.log)"
+      "Bash(tee /tmp/connect-output.log)",
+      "Bash(PH_GRAPHQL_ENDPOINT=https://switchboard.eager-hen-55.vetra.io/graphql python3 /tmp/connect-all.py)",
+      "Bash(tee /tmp/connect-all.log)",
+      "Bash(PH_GRAPHQL_ENDPOINT=https://switchboard.eager-hen-55.vetra.io/graphql python3 /tmp/synthesize-mocs.py)",
+      "Bash(tee /tmp/synthesize.log)",
+      "Bash(python3 scripts/drive-sync/download.py --endpoint https://switchboard.eager-hen-55.vetra.io/graphql/r --drive 20b86b85-3f51-4246-a9ce-129655b4a0c8 --out scripts/drive-sync/data/knowledge-vault --concurrency 5)",
+      "Bash(tee /tmp/download.log)",
+      "Bash(curl -s https://switchboard.eager-hen-55.vetra.io/graphql/r -H 'content-type: application/json' -d '{\"query\":\"query Outgoing\\($sid: String!, $type: String!\\) { documentOutgoingRelationships\\(sourceIdentifier: $sid, relationshipType: $type\\) { items { id } } }\",\"variables\":{\"sid\":\"021931ad-d280-4475-85b7-6e284843991d\",\"type\":\"CORE_IDEA\"}}')",
+      "Bash(tee /tmp/download2.log)",
+      "Bash(python3 scripts/drive-sync/download.py --endpoint https://switchboard.eager-hen-55.vetra.io/graphql/r --drive 20b86b85-3f51-4246-a9ce-129655b4a0c8 --out scripts/drive-sync/data/knowledge-vault --concurrency 5 --limit 10)",
+      "Bash(python3 scripts/drive-sync/download.py --endpoint https://switchboard.eager-hen-55.vetra.io/graphql/r --drive 20b86b85-3f51-4246-a9ce-129655b4a0c8 --out scripts/drive-sync/data/knowledge-vault --concurrency 3)",
+      "Bash(tee /tmp/download3.log)",
+      "Bash(git check-ignore *)",
+      "Bash(awk '{print $1}')"
     ]
   },
   "enabledPlugins": {

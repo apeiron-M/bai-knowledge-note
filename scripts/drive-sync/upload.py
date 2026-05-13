@@ -9,7 +9,7 @@ Output: writes id-map.json into the data dir as it progresses.
 
 Usage:
     python3 scripts/drive-sync/upload.py \
-        --data scripts/drive-sync/data/powerhouse-vault \
+        --data scripts/drive-sync/data/knowledge-vault \
         --drive-name "knowledge vault"
 """
 import argparse
