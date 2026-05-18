@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-d7e42f09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d7e42f09-bb6b-4b97-b4d9-177acd0335e3",
+      "targetTitle": "composite-channel-factory-routing"
+    },
+    {
+      "id": "lnk-37f3acba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "37f3acba-44dc-4cb7-b575-1a967a7144f3",
+      "targetTitle": "reactor-builder-fluent-api-construction"
+    },
+    {
+      "id": "lnk-0da87457-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0da87457-dfb3-4acc-b6cb-6906f7e07a94",
+      "targetTitle": "create-swarm-sync-builder-hook"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The GQL channel factory must be registered after buildModule() because it needs the document-model queue.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-85c093e2-1",
+      "name": "gql-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-85c093e2-2",
+      "name": "reactor-builder",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-85c093e2-3",
+      "name": "initialization-order",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nThe Swarm factory is registered at build time, but the GQL factory registration is deferred until after `buildModule()` completes, because it requires the reactor queue (which hosts the document-model resolver).\n\n## Evidence\nFrom the source: \"GQL is registered after build because `GqlRequestChannelFactory` needs the queue (for poll timer backpressure), which requires the document model resolver created inside `buildModule()`.\"\n\nThe wiring code shows this explicitly:\n\n```typescript\nconst module = await builder.buildModule();\nconst queue = module.reactorModule?.queue;\nif (queue) registerGqlFactory(queue);\n```\n\n## Why this ordering\n- Swarm's factory has no dependency on the queue, so it can be registered up front.\n- GQL's poll timer uses the queue to apply backpressure when the reactor is busy.\n- Attempting to register GQL before the queue exists would fail.\n\n## Source\nSwarm Channel Architecture, \"Wiring Into createBrowserReactor\" (createSwarmSyncBuilder note).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "observation",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:19:49.348Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GqlRequestChannelFactory depends on the reactor queue for poll-timer backpressure, and that queue only exists after buildModule() runs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

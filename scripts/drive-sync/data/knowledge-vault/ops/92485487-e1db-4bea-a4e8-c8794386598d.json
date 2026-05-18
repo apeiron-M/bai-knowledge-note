@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:14.526Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "usephtoast-replaces-direct-toast-library-imports-in-editors",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "92485487-e1db-4bea-a4e8-c8794386598d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:14.526Z"
+        },
+        "version": 0,
+        "documentId": "92485487-e1db-4bea-a4e8-c8794386598d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:14.526Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "9hLvktxib0owedANBK4/EJolqWg=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "usePHToast replaces direct toast library imports in editors",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:14.526Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "92485487-e1db-4bea-a4e8-c8794386598d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:14.526Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "uonIWNqfE3iIx1rhrDtSySqIsGg=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:47.000Z",
+        "description": "The host app Connect provides toast infrastructure; importing ToastContainer directly causes conflicts; use usePHToast instead"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.682Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "92485487-e1db-4bea-a4e8-c8794386598d",
+        "targetId": "87e23c2a-8551-4614-a4b4-7331e4069e6a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.682Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "xdjMmBLxPloCZirTFivS0CttH5I=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.705Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "92485487-e1db-4bea-a4e8-c8794386598d",
+        "targetId": "0da87457-dfb3-4acc-b6cb-6906f7e07a94",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.705Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "03sBd+mXVxkMfnu+0MxAhCng1RQ=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# usePHToast replaces direct toast library imports in editors\n\nNever import `ToastContainer` or any toast library directly in editors or apps. The host app (Connect) already provides the toast infrastructure.\n\n```typescript\nimport { usePHToast } from \"@powerhousedao/reactor-browser\";\n\nexport default function Editor() {\n  const toast = usePHToast();\n\n  const handleSave = () => {\n    toast(\"Document saved!\", { type: \"success\" });\n  };\n}\n```\n\nAvailable toast types: `default`, `success`, `error`, `warning`, `info`, `connect-success`, `connect-warning`, `connect-loading`, `connect-deleted`.\n\nOptions include `autoClose` (ms or false) and `containerId` for targeting specific containers.\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[gotchas]]",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.727Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "92485487-e1db-4bea-a4e8-c8794386598d",
+        "targetId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.727Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "sTusUvWNdgUefhrgUlUPibjKnGs=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:02:29.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "tZ4hTQFt7t0zM9URSJp6QVI9bNM=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6192fd09-7d79-41ea-b5c0-06f25db4917f",
+        "name": "editor patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "wWXMROnHhCkiI2w+uQ6iHBpBZC8=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "76c6f5c7-13b1-4444-981a-8a809ed02607",
+        "name": "gotchas",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "1Zn/Eh7wJajOl/8Q7jHW5UMUU7A=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a7e7ea1b-1dd6-4c0d-9d40-3197f84cb1ce",
+        "name": "React hooks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "m9cJH2Jer81annETRHzB7+uUwqs=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c306159b-7a95-43c7-9dff-375e7aabda31",
+        "name": "UI components",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  }
+]

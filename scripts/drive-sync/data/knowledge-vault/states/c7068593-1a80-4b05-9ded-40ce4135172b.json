@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b74db7b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b74db7b7-367d-4f6d-98d7-1f0e16d125d9",
+      "targetTitle": "docker-images-for-connect-and-switchboard"
+    },
+    {
+      "id": "lnk-d39b8d6a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d39b8d6a-3095-4893-8ec6-5a45d7a11f6c",
+      "targetTitle": "builder-profile-model-describes-individual-contributor-identities"
+    },
+    {
+      "id": "lnk-010b9a46-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "010b9a46-8f86-4f5d-8808-9ec0bd97f9dc",
+      "targetTitle": "document-model-structure-has-metadata-specifications-and-modules"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Environment variables always override powerhouse.config.json values, enabling per-environment configuration layering",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d0a1dfd8-85f0-4700-9d18-2144ce04b985",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0dc68885-4558-4478-bdd7-a334b287477e",
+      "name": "environment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "53229b75-9848-435f-bb6e-15185990aa8a",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cb2c8bde-01d8-4eb5-bf66-1354cd39be59",
+      "name": "feature-flags",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse services accept configuration via two methods: `.env` file (key-value pairs, loaded by `ph service start`) and `powerhouse.config.json` (structured JSON). Environment variables always take precedence over config file values. This enables a layered approach: define defaults in the JSON file, override for specific environments using env vars. Connect has extensive feature flags (PH_CONNECT_DISABLE_ADD_DRIVE, PH_CONNECT_STUDIO_MODE, PH_CONNECT_PUBLIC_DRIVES_ENABLED, etc.) and Renown configuration (PH_CONNECT_RENOWN_URL, RENOWN_CHAIN_ID). Switchboard config includes DATABASE_URL, AUTH_ENABLED, ADMINS, DEFAULT_PROTECTION. Changes require `ph service restart`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Set defaults in powerhouse.config.json, override for dev/staging/prod via .env file or shell environment.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,160 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:25.253Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "HealthReport",
+        "slug": "",
+        "model": "bai/health-report",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "282f7ec8-7dd3-444a-9c62-ac6ee426a15b",
+          "documentType": "bai/health-report",
+          "createdAtUtcIso": "2026-05-13T13:00:25.253Z"
+        },
+        "version": 0,
+        "documentId": "282f7ec8-7dd3-444a-9c62-ac6ee426a15b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.253Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "2vczenQDJKE3QgBRWzQrxWzv/Hc=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "GENERATE_REPORT",
+      "input": {
+        "mode": "full",
+        "generatedAt": "2026-05-13T12:40:54.000Z",
+        "generatedBy": "knowledge-agent",
+        "graphMetrics": {
+          "density": 0.0199,
+          "mocCount": 37,
+          "noteCount": 348,
+          "mocCoverage": 0.95,
+          "orphanCount": 32,
+          "connectionCount": 2949,
+          "danglingLinkCount": 0,
+          "averageLinksPerNote": 7.66
+        },
+        "overallStatus": "PASS",
+        "recommendations": [
+          "Densification pass complete: 32 isolated notes \u2192 0; min degree raised from 1 to 3; avg outgoing edges/node 5.54 \u2192 7.66.",
+          "10 new MoCs created for previously un-MoC'd topic clusters (reducer patterns, MCP workflows, operational-hub, etc.). 84 CORE_IDEA edges added.",
+          "Remaining 32 no-incoming nodes are mostly HUB/TOPIC MoCs at the top of the hierarchy \u2014 expected for entry-point documents.",
+          "Indexer bug persists: graph_edges.link_type field is null for all rows (DocumentRelationship has the correct type). Investigate the processor's mirror write in a follow-up."
+        ]
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:25.253Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/health-report",
+        "toVersion": 1,
+        "documentId": "282f7ec8-7dd3-444a-9c62-ac6ee426a15b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "mode": null,
+            "checks": [],
+            "generatedAt": null,
+            "generatedBy": null,
+            "graphMetrics": null,
+            "overallStatus": null,
+            "recommendations": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.253Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "zyXkEpW5Hpw8qM4cZwcU7/DXx98=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_CHECK",
+      "input": {
+        "id": "chk-orphan-after",
+        "status": "PASS",
+        "message": "0 truly isolated notes. 32 nodes have no incoming edges (HUB/TOPIC MoCs \u2014 expected for entry points).",
+        "category": "ORPHAN_DETECTION",
+        "affectedItems": []
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "lVSVpHGORzEr6b5EmDdodbSzjhI=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_CHECK",
+      "input": {
+        "id": "chk-link-after",
+        "status": "PASS",
+        "message": "Avg 7.66 outgoing edges/node (up from 5.54). Minimum degree 3 across all 385 nodes.",
+        "category": "LINK_HEALTH",
+        "affectedItems": []
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "fYKniP+x5xSgRs7joPOGM5ZFDtA=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_CHECK",
+      "input": {
+        "id": "chk-moc-after",
+        "status": "PASS",
+        "message": "37 MoCs (27 pre-existing + 10 created via /synthesize). Top topic clusters now have dedicated MoCs.",
+        "category": "MOC_COHERENCE",
+        "affectedItems": []
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Gzz8E8U/EiVQKB/BZrUrhO/b3aI=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_CHECK",
+      "input": {
+        "id": "chk-schema-after",
+        "status": "WARN",
+        "message": "Note types still case-inconsistent (PATTERN vs pattern) from mixed-source ingestion. Normalize via setNoteType in a follow-up.",
+        "category": "SCHEMA_COMPLIANCE",
+        "affectedItems": []
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  }
+]

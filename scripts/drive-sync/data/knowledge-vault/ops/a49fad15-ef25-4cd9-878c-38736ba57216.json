@@ -1,0 +1,289 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:39.074Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a49fad15-ef25-4cd9-878c-38736ba57216",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:39.074Z"
+        },
+        "version": 0,
+        "documentId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:39.074Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "uuZ3yNJ/AzgaA5hf98/Ac3EO4W0=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "CQRS separates write commands from read queries so each can scale independently.",
+        "updatedAt": "2026-05-13T13:00:30.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:39.074Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:39.074Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9FKvljCbugvsFopHozGQbgeSaFI=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:30.000Z",
+        "description": "Commands modify state as validated events; queries use optimized read models for analytics and search."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:58.832Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+        "targetId": "549857ac-5ba5-4911-b1a3-0ffb568b2ce4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:58.832Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "VEGjcCQv8sbpZVbfy6GEB2Q6dy8=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:30.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:58.866Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+        "targetId": "c2892079-a6f8-4e18-955c-898bf6505c1d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:58.866Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "rlLaDXvCuapoe1TR7PYwcceH1qs=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "CQRS (Command Query Responsibility Segregation) is a key design principle in Powerhouse. Commands handle operations that modify state -- creating or updating documents -- validated and stored as events forming the immutable history. Queries are optimized for retrieval using read models designed for performance, scalability, and flexibility. This separation enables write and read models to scale independently, isolates business logic from query logic for maintainability, and supports multiple read model types (relational databases, full-text search, analytics).",
+        "updatedAt": "2026-05-13T13:00:30.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:58.888Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+        "targetId": "3efc23f3-f6b4-4477-bba9-40c87ad50b0e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:58.888Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "cf7xbQ4d2otJngB1SQ57QQDP9g4=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-03-30T18:30:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:58.913Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+        "targetId": "56d65b3e-73d0-4d6f-b88f-348b9beaf683",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:58.913Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "C+K4PRv6VJpA2xWjdaJFeFcXK9Y=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4614dfd4-16b0-452e-afff-74da95828eb0",
+        "name": "cqrs",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ac9djreqzPoKjQy5/wTVjlHjo78=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "580d81bf-00de-4c52-8430-c0954a75d941",
+        "name": "commands",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "5Hzwoy4IWhsx4WX8FZVdULDZWf0=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1d008c62-db7f-4e6f-89d8-8146376debc9",
+        "name": "queries",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "gdjeSvo6SBfqC7gL2FRUEwL6kz0=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ea95b382-2239-48e5-af56-85919d47f5f1",
+        "name": "scalability",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "bOE0V2n6a+XJk/Qzw7rICzUGXHg=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0a6fd569-de8f-442a-a9ad-c62e8654825c",
+        "name": "event-sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  }
+]

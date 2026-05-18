@@ -1,0 +1,156 @@
+{
+  "links": [
+    {
+      "id": "lnk-647e3ae9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "647e3ae9-3176-4df3-8e82-b6c913f4823e",
+      "targetTitle": "five-models-form-a-hierarchy-from-facet-through-template-to-offering-to-subscrip"
+    },
+    {
+      "id": "lnk-5739f1f1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5739f1f1-4e1e-49f9-9fca-0a559b466276",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-31789818-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "31789818-4f9d-479a-ae72-109f09b72514",
+      "targetTitle": "powa-revenue-distribution-model-captures-epoch-based-token-revenue-sharing"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-d39b8d6a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d39b8d6a-3095-4893-8ec6-5a45d7a11f6c",
+      "targetTitle": "builder-profile-model-describes-individual-contributor-identities"
+    },
+    {
+      "id": "lnk-96d2584d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "96d2584d-af04-4557-8e79-b1f43312d8ca",
+      "targetTitle": "workstream-model-organizes-ongoing-work-streams"
+    },
+    {
+      "id": "lnk-46a28f33-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "46a28f33-95d0-4dab-83a7-dc2369e31e32",
+      "targetTitle": "expense-report-model-tracks-expense-claims-and-approvals"
+    },
+    {
+      "id": "lnk-f927cadf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f927cadf-4f92-40d7-9cb5-224ef7740f5c",
+      "targetTitle": "invoice-model-generates-formal-payment-requests"
+    },
+    {
+      "id": "lnk-71234201-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "71234201-777d-40e9-9b5c-71ef0e32b00a",
+      "targetTitle": "request-for-proposals-model-manages-procurement-workflows"
+    },
+    {
+      "id": "lnk-5135bc30-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5135bc30-5dc3-44f7-a604-f53b22b40793",
+      "targetTitle": "snapshot-report-model-provides-point-in-time-data-captures"
+    },
+    {
+      "id": "lnk-de30ff50-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de30ff50-ce08-4489-a1bf-beea965d54d0",
+      "targetTitle": "operational-hub-profile-model-defines-operational-hub-configurations"
+    },
+    {
+      "id": "lnk-34b863c7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "34b863c7-afa4-4b3d-958b-6937efca6f4f",
+      "targetTitle": "payment-terms-model-defines-payment-conditions-and-schedules"
+    },
+    {
+      "id": "lnk-1a9a115a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+      "targetTitle": "object-relations"
+    },
+    {
+      "id": "lnk-c72c5803-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c72c5803-1287-47af-af48-ec124e337b8b",
+      "targetTitle": "achra-brand-identity"
+    },
+    {
+      "id": "lnk-53fffa62-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "53fffa62-25e4-48e2-9c05-2f6236b1120d",
+      "targetTitle": "builder-platform-transforms-powerhouse-from-platform-to-living-ecosystem"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ecosystem map",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0cfde00d-ebe2-46f8-b640-41da2170255a",
+      "name": "ecosystem map",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2545376a-457b-49c5-86f7-f5091391005e",
+      "name": "document models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "547ba04a-1321-42a5-82f2-600c8152919c",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0402766a-ecca-4a42-afda-218f68f1520c",
+      "name": "MOC",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# ecosystem map\n\nThe complete Powerhouse document model ecosystem as reported by switchboard CLI. 21 domain models, 346 total operations, organized into 5 functional zones.\n\n## Service & Pricing (6 models, 155 ops)\n\nThe core of this project. These models define the product catalog, commercialization, and subscription lifecycle.\n\n- [[facet model provides configurable classification dimensions]] \u2014 6 ops, categorical options consumed by templates and offerings\n- [[resource-template model defines reusable service catalog blueprints]] \u2014 28 ops, product-level configuration without pricing\n- [[service-offering model defines tiered pricing with option groups and service groups]] \u2014 51 ops (largest), tiered pricing and configuration\n- [[service-subscription model tracks service-level subscription agreements]] \u2014 12 ops, agreement-level subscription tracking\n- [[subscription-instance model tracks active customer subscriptions with lifecycle state]] \u2014 39 ops, individual customer subscription with billing\n- [[resource-instance model tracks provisioned resource lifecycle]] \u2014 19 ops, provisioned resources with lifecycle state machine\n\nData flow: Facet \u2192 ResourceTemplate \u2192 ServiceOffering \u2192 ServiceSubscription \u2192 SubscriptionInstance \u2192 ResourceInstance\n\n## Finance & Billing (4 models, 37 ops)\n\nFinancial recording and billing infrastructure.\n\n- [[accounts model defines the chart of accounts structure]] \u2014 4 ops, foundation account entities\n- [[account-transactions model tracks financial transaction records]] \u2014 10 ops, debit/credit recording\n- [[billing-statement model captures periodic billing summaries]] \u2014 7 ops, periodic billing aggregation\n- [[payment-terms model defines payment conditions and schedules]] \u2014 16 ops, payment conditions and terms\n\n## Reporting (3 models, 67 ops)\n\nOutput documents \u2014 invoices, expense claims, snapshots.\n\n- [[invoice model generates formal payment requests]] \u2014 31 ops (second largest), formal invoice generation\n- [[expense-report model tracks expense claims and approvals]] \u2014 18 ops, expense claim workflow\n- [[snapshot-report model provides point-in-time data captures]] \u2014 18 ops, point-in-time archival\n\n## Organization & Identity (4 models, 29 ops)\n\nWho operates in the ecosystem \u2014 builders, teams, networks.\n\n- [[builder-profile model describes individual contributor identities]] \u2014 12 ops, individual contributor profiles (referenced by SO.operatorId)\n- [[builders model aggregates builder collections]] \u2014 2 ops (smallest), builder directory\n- [[network-profile model represents network-level organizational entities]] \u2014 11 ops, DAOs and ecosystem networks\n- [[operational-hub-profile model defines operational hub configurations]] \u2014 4 ops, teams and working groups\n\n## Work Management (3 models, 48 ops)\n\nProject scoping, procurement, and work organization.\n\n- [[scope-of-work model structures deliverables and milestones]] \u2014 33 ops (third largest), project deliverables and budgets\n- [[request-for-proposals model manages procurement workflows]] \u2014 6 ops, procurement funnel\n- [[workstream model organizes ongoing work streams]] \u2014 9 ops, portfolio-level grouping\n\n## Cross-Zone Dependencies\n\n- ServiceOffering.`operatorId` \u2192 BuilderProfile (Service & Pricing \u2192 Organization)\n- SubscriptionInstance \u2192 BillingStatement (Service & Pricing \u2192 Finance)\n- SubscriptionInstance \u2192 Invoice (Service & Pricing \u2192 Reporting)\n- ScopeOfWork \u2192 Invoice (Work Management \u2192 Reporting, milestone billing)\n- ScopeOfWork \u2192 BuilderProfile (Work Management \u2192 Organization, assignees)\n\n## Token Economics / Revenue Distribution (1 model, requirements stage)\n\nRevenue distribution and token holder economics. New zone introduced by the POWA system.\n\n- [[powa-revenue-distribution model captures epoch-based token revenue sharing]] \u2014 requirements stage, epoch-based multi-token revenue distribution with governance lifecycle\n\nData flow: EpochConfig \u2192 RevenueDeposit \u2192 DistributionRecord \u2192 ClaimEvent\n\n## Local Project Scope\n\nThis repository implements 5 of the 21 models (Facet, ResourceTemplate, ServiceOffering, SubscriptionInstance, ResourceInstance) with 4 editors. The POWA revenue distribution model is in requirements stage (not yet implemented). The remaining 16 models exist in the broader Powerhouse ecosystem.\n\n---\n\nTopics:\n- [[index]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:05:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:05:03.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "All 21 Powerhouse domain document models organized by functional area across 5 zones with cross-zone dependencies",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

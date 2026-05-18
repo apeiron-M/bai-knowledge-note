@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-a510be45-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-5cc3c6a5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5cc3c6a5-e5e3-4aa2-af00-39265af3023f",
+      "targetTitle": "pglite-sync-tables-persist-remote-state"
+    },
+    {
+      "id": "lnk-1499ac7f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1499ac7f-c5cc-4b36-a48f-257620cb540f",
+      "targetTitle": "sync-state-pglite-tables"
+    },
+    {
+      "id": "lnk-5dad8435-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+      "targetTitle": "reactor-subscriptions-document-changes"
+    },
+    {
+      "id": "lnk-3e894e41-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3e894e41-ada3-43bc-a3fa-96eb1dde2686",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Connect core data flow routes UI actions through ReactorClient, PGlite, SyncManager, and out to both GQL and Swarm channels.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "architecture-diagram",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "data-flow",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "sync-pipeline",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Pipeline\n\nThe end-to-end flow inside the browser:\n\n1. **Connect UI (React)** \u2014 user actions (create drive, add doc, edit).\n2. **ReactorClient** \u2014 turns actions into Jobs, enqueues them.\n3. **Job Executor** \u2014 applies operations (`CREATE_DOCUMENT`, `UPGRADE_DOCUMENT`, `ADD_FILE`, `ADD_FOLDER`, `MOVE_NODE`, domain actions).\n4. **PGlite (WASM Postgres, IndexedDB-backed)** \u2014 stores `reactor.Document`, `reactor.Operation`, `reactor.DocumentSnapshot`, `reactor.DocumentRelationship`, plus `operation_index_operations`, `sync_remotes`, `sync_cursors`, `sync_dead_letters`.\n5. **SyncManager** \u2014 detects new ordinals, groups ops by `(docId, scope, branch)`, pushes to channel outboxes, processes inboxes via `reactor.load()`.\n6. **Channels** \u2014 `GqlRequestChannel` for Switchboard, `SwarmChannel` for Swarm. SyncManager treats both identically.\n\nBeyond the browser: the SwarmChannel talks to the user's **Bee node** (`/bytes`, `/feeds`, `/stamps`, `/health`), which gossips chunks into the **Swarm network** (content-addressed, encrypted, replicated across neighborhoods).\n\nKey architectural insight: PGlite's `operation_index_operations` is the single source for both channels' outbound sync, with independent cursors per remote.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:47:10.583Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect dispatches React actions to ReactorClient, which queues jobs, writes to PGlite (IndexedDB), and triggers SyncManager to fan out via GQL or Swarm channels.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

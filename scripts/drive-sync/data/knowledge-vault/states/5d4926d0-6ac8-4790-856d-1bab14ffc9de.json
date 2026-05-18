@@ -1,0 +1,89 @@
+{
+  "tier": "DOMAIN",
+  "title": "Data Processing and CQRS",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-310c16dc",
+      "noteRef": "310c16dc-f6ba-49ac-a854-4823c88a9d4c",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d905fc18",
+      "noteRef": "d905fc18-f7d9-4463-a722-f76a6c8823f9",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c8b0d149",
+      "noteRef": "c8b0d149-1e69-413c-9319-1afcaeb64bef",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-ace588c7",
+      "noteRef": "ace588c7-efdc-483b-baa6-7a280bef8731",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-264f9723",
+      "noteRef": "264f9723-8c03-42b0-8ed2-1064ee7e40fc",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-cff98458",
+      "noteRef": "cff98458-434d-4c99-8311-c477d8b2084c",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-f42a7135",
+      "noteRef": "f42a7135-f688-40be-bf9b-365f0744a292",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-e598786c",
+      "noteRef": "e598786c-d2e2-42e1-ad78-cc71fde187d6",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-01631563",
+      "noteRef": "01631563-4f79-4ac1-83b5-f9197901ae63",
+      "contextPhrase": "",
+      "sortOrder": 8,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-02T13:00:00.000Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-04-02T13:00:00.000Z",
+  "agentNotes": [],
+  "description": "Processors, subgraphs, relational database projections, live queries, and the analytics engine that transform event-sourced documents into queryable read models.",
+  "orientation": "The write side of Powerhouse captures intent through operations on event-sourced documents, but real-world applications need to query, aggregate, and analyze that data in ways the document model alone cannot efficiently support. This is where the CQRS read side comes in. Subgraphs extend document models with custom GraphQL resolvers. Processors receive operation streams and project them into relational databases for SQL-friendly querying. The RelationalDBProcessor base class standardizes this pattern with PgLite for live queries that push updates to connected clients. And the analytics engine adds time-series aggregation with interval-based bucketing and level-of-detail dimension querying. Together, these components transform a stream of document operations into the rich, queryable data surfaces that dashboards, reports, and integrations demand.",
+  "openQuestions": [],
+  "links": []
+}

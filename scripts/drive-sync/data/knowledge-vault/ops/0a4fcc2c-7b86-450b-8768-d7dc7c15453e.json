@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.047Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "redundancy-hot-path-collab-ops-feed",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0a4fcc2c-7b86-450b-8768-d7dc7c15453e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:03.047Z"
+        },
+        "version": 0,
+        "documentId": "0a4fcc2c-7b86-450b-8768-d7dc7c15453e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.047Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "GEvD8KWNE4CxwaeYwiycBMl3daY=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The highest-impact redundancy target is the collab-ops-feed upload",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.047Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0a4fcc2c-7b86-450b-8768-d7dc7c15453e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.047Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ZMh9LZ9Xirt23KwsxONduSV/uMc=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:43.000Z",
+        "description": "collab-ops-feed.ts:138 uploadFile is read on every peer ping and every /bzz fetch on ping-miss, sitting directly on the 10s collab critical path \u2014 highest read frequency \u00d7 tail-latency impact."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.928Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0a4fcc2c-7b86-450b-8768-d7dc7c15453e",
+        "targetId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.928Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ok8d8jf4qF91Oii8xE8TDw1UBfY=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.951Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0a4fcc2c-7b86-450b-8768-d7dc7c15453e",
+        "targetId": "acfa1e91-3649-4211-a427-bee333272500",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.951Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ducNFGQuRJ56XfcU2o2qlP5VX5I=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Ranked targets for `RedundancyLevel` (read-frequency \u00d7 tail-impact)\n\n| Hot path | Call site | Read frequency | Impact |\n|---|---|---|---|\n| Collab ops batch | `collab-ops-feed.ts:138` (`uploadFile act:true`) | Every peer ping + every /bzz fetch on ping-miss | **HIGH** \u2014 on the 10s critical path |\n| Drive share bundle | `lifecycle.ts:169` (`uploadFile act:true`) | Once per accept (cold, urgent) | HIGH \u2014 currently retries with 0-2-5s backoff |\n| Collab manifest snapshot | `collab-manifest-feed.ts:106` | On accept + every member add/revoke | MEDIUM |\n| Drive manifest snapshot | `swarm-client.ts:503` | On recovery + push merges | MEDIUM |\n| Chat history page | `chat-history.ts:215` | On open + pagination | LOW |\n| Public profile feed | `share-manager.ts:29` | Sporadic peer lookups | LOW-MEDIUM \u2014 redundancy helps payload, not feed HEAD |\n\n**Minimal path:** thread `redundancyLevel` through `SwarmClient.uploadFile` / `uploadData` (`swarm-client.ts:212` and `:225-260`), then pass `RedundancyLevel.MEDIUM` at `collab-ops-feed.ts:138` only. Measure before expanding.",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.969Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0a4fcc2c-7b86-450b-8768-d7dc7c15453e",
+        "targetId": "f468c3d1-a8fe-47e8-9b9e-f6e218378365",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.969Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "BB8UJ/AKOG3CqD2qGwOlAlJ4k4Y=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:57.182Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "TAgiIkwir6j21QHZxYjF8Njw/pY=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "70dbd295-a5c7-4867-834e-9fd4e8e40549",
+        "name": "collab-ops-feed",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "WcdPVVhtm0J1xDtpW7Ucz9bbHkA=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f84decaf-12bf-47f7-8833-bc180b4c1b18",
+        "name": "redundancy-level",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "YFW3qOEa8cWvAz4H0O+c1AF361Y=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "29bedc91-6abe-455c-885c-f1f1bbb74ae1",
+        "name": "hot-paths",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "5r6Ki25VKGf/BAfcyZQodVS1urg=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f610a605-856e-43c6-97b2-0041859ee3ef",
+        "name": "tail-latency",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  }
+]

@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-56cdb75c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56cdb75c-6b2c-4a41-8736-f6429620f44f",
+      "targetTitle": "graphql-schema-lingua-franca-cqrs"
+    },
+    {
+      "id": "lnk-310c16dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "310c16dc-f6ba-49ac-a854-4823c88a9d4c",
+      "targetTitle": "subgraphs-extend-document-models-via-graphql"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-0e465bb9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0e465bb9-9a40-4da6-90c1-6aea3126d60b",
+      "targetTitle": "accounts-model-defines-the-chart-of-accounts-structure"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse uses GraphQL Schema Definition Language to define both state schemas and operation inputs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "fb9b6168-add1-49c3-ad6b-65494754c368",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "23f5f81a-cb91-45fc-b040-283c6b73daa3",
+      "name": "schema",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a18420cb-38ed-4d70-89ca-5475c89cc61f",
+      "name": "specification-driven-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse uses GraphQL SDL as the specification language for document models. This serves two purposes:\n\n- **State schema**: `type` definitions describe the document's data structure (e.g., `type TodoListState { items: [TodoItem!]! }`).\n- **Operations schema**: `input` definitions describe the payload for each operation (e.g., `input AddTodoItemInput { text: String! }`).\n\nGraphQL SDL was chosen because it provides a clear, structured schema that supports custom scalar types (like `OID`, `Currency`, `DateTime`), enforces non-null constraints, and serves as a machine-readable specification that both humans and AI agents can understand. This is the foundation of Powerhouse's \"Specification Driven Design & Development\" approach.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GraphQL SDL is the shared specification language for document structure (types) and operation payloads (input types).",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

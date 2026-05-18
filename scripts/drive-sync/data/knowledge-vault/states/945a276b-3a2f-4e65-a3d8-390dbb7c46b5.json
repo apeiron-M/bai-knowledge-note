@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-34195ec3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "34195ec3-e008-423a-8478-0ea7c8f57183",
+      "targetTitle": "gsoc-triggered-pull-debounced-with-polling-fallback"
+    },
+    {
+      "id": "lnk-c319b35a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c319b35a-ee90-47b0-8f8c-1e9be63b8382",
+      "targetTitle": "local-first-workflows-diverge-from-blockchain-global-consensus"
+    },
+    {
+      "id": "lnk-41f83093-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "41f83093-f177-4ec5-be8e-458c8818208f",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Consistency tokens in the reactor guarantee read-after-write correctness by capturing operation coordinates from writes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b6efcdd9-1222-449b-8306-3ed0763bdb30",
+      "name": "consistency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71dac70f-3ce2-4d00-b3cb-d71b8c7b662e",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c520df8e-7c06-40f0-959c-45749f2851f1",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every reactor write operation returns a `JobInfo` containing a `ConsistencyToken` with `version`, `createdAtUtcIso`, and `coordinates` (array of `{ documentId, scope, branch, operationIndex }`). Passing this token to subsequent reads guarantees you see the effects of the write: `await reactor.get(docId, undefined, token)`. Without a consistency token, reads may return stale data if read models haven't indexed the latest operations. `IReactorClient` handles this automatically by waiting for `READ_READY` before returning, but `IReactor` requires explicit token management.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every write returns a ConsistencyToken with document/scope/branch/operationIndex coordinates for subsequent reads.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-2d6a278b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2d6a278b-e72f-4922-86bb-a0e0f49d7285",
+      "targetTitle": "chat-document-share-parity-shipped"
+    },
+    {
+      "id": "lnk-bd87d072-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-3535d1e9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3535d1e9-8efc-4efd-a7fe-4616748301d6",
+      "targetTitle": "live-collaboration-s-only-ui-surface-is-the-document-toolbar"
+    },
+    {
+      "id": "lnk-ef28d2ab-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ef28d2ab-bec2-4809-989f-316f6eca08e6",
+      "targetTitle": "feed-count-scales-linearly-with-drives-and-documents"
+    },
+    {
+      "id": "lnk-799e6ff2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "799e6ff2-ee08-4171-a23d-de65667f4988",
+      "targetTitle": "per-user-operation-feed-structure"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Single-user feeds remain intact as personal backups when a doc becomes collaborative",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "28edf190-d72e-44e7-ad80-0734461772a9",
+      "name": "collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3c3b48e0-39aa-4dfc-b1b2-6d72c647e93e",
+      "name": "feed-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "94b3154b-be8e-4018-9cdd-f43cd51129ac",
+      "name": "backup",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Single-User Feeds Persist During Collaboration\n\nCollaboration does not rewrite or migrate the single-user feed layout. When Alice shares `doc-001` with Bob:\n\n## Alice still owns and maintains\n\n- `ph:v2:user:0xalice` \u2014 user manifest\n- `ph:v2:drive:drive-abc` \u2014 drive manifest\n- `ph:v2:doc:doc-001` \u2014 document manifest (her personal backup)\n\n## And adds on top\n\n- `ph:v2:collab:doc-001` \u2014 collaboration index\n- `ph:v2:ops:0xalice_signer:doc-001` \u2014 her op feed\n\n## Bob brings his own\n\n- `ph:v2:user:0xbob` \u2014 Bob's user manifest\n- `ph:v2:ops:0xbob_signer:doc-001` \u2014 Bob's op feed\n\n## Why\n\n- Single-user feeds serve as the user's personal recovery path \u2014 they can reconstruct their whole vault independently\n- Collaboration adds a real-time transport layer, it doesn't own the source of truth\n- If collaboration ends, the single-user feeds continue working unchanged\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:45:54.611Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When a document becomes collaborative, the original user/drive/doc manifest feeds remain as personal backups; collab feeds layer additively on top rather than replace.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

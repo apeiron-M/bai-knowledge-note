@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:13.707Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "truthy-checks-are-safer-than-undefined-checks-for-optional-state-assignment",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b595cf41-a279-48e0-ba46-6cf4e6e575fd",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:13.707Z"
+        },
+        "version": 0,
+        "documentId": "b595cf41-a279-48e0-ba46-6cf4e6e575fd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:13.707Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "EkalonsGrPMXndX408wrJpMIVO4=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "truthy checks are safer than undefined checks for optional state assignment",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:13.707Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b595cf41-a279-48e0-ba46-6cf4e6e575fd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:13.707Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "YTB9XRHZH+0DaBWxcQ/ic8YkooY=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:47.000Z",
+        "description": "Using if (action.input.field) avoids type errors from !== undefined when the field type is string | null; booleans need explicit checks"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.282Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b595cf41-a279-48e0-ba46-6cf4e6e575fd",
+        "targetId": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.282Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "RDLGfctDZd41FNVNC6BX9iqs4vE=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.308Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b595cf41-a279-48e0-ba46-6cf4e6e575fd",
+        "targetId": "055a25fa-4a15-4dc8-bbd1-3a366c7040be",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.308Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "DeDCmYi8BUfB5tiU1drotiNHaZ0=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# truthy checks are safer than undefined checks for optional state assignment\n\nWhen conditionally assigning optional input values to state:\n\n```typescript\n// \u274c Type error \u2014 'string | null' is not assignable to 'string'\nif (action.input.field !== undefined) entry.field = action.input.field;\n\n// \u2705 Truthy check handles both null and undefined\nif (action.input.field) state.field = action.input.field;\n\n// \u2705 For booleans, use explicit null/undefined checks\nif (action.input.field !== undefined && action.input.field !== null)\n  state.field = action.input.field;\n```\n\nThe truthy check works because both `null` and `undefined` are falsy. For boolean fields, you cannot use truthy checks since `false` is also falsy \u2014 use explicit null/undefined guards instead.\n\nSince [[nullable input types require explicit coalescing to match state types]], this pattern complements the `|| null` coalescing approach for different assignment scenarios.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.328Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b595cf41-a279-48e0-ba46-6cf4e6e575fd",
+        "targetId": "96d2584d-af04-4557-8e79-b1f43312d8ca",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.328Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "O7ifLl0Mq2X1AvqIYlPuZ3NnU0k=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:57:43.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "CJyvxI+ukLf1yp436g4NxWVsAto=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6134ae8c-60a8-4c51-b6de-dd78de1d6965",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "pWzGJdv4arwFB3aJpYr6PharlRI=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2490d534-72b0-4fef-b6f0-b827317762d2",
+        "name": "TypeScript",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "m8lkSVytGPvXBUEhPPALZf6bu9c=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "114977a7-8997-462c-b631-6bfe019582c0",
+        "name": "state assignment",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1khc/9bLk8FME9lk2kbPJ4kLNZc=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7d4520e4-722b-4a85-9a29-2ab030624929",
+        "name": "null handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  }
+]

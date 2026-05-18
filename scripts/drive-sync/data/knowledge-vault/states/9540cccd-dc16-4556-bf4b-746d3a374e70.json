@@ -1,0 +1,74 @@
+{
+  "links": [
+    {
+      "id": "lnk-31789818-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "31789818-4f9d-479a-ae72-109f09b72514",
+      "targetTitle": "powa-revenue-distribution-model-captures-epoch-based-token-revenue-sharing"
+    },
+    {
+      "id": "lnk-ad215bd1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad215bd1-74af-4a08-bdee-be8f5f51ed07",
+      "targetTitle": "powa-document-model-bridges-on-chain-contracts-with-off-chain-governance"
+    },
+    {
+      "id": "lnk-ee86286c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee86286c-ed83-495f-8194-cc323ee49eea",
+      "targetTitle": "ddup-four-storage-layers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "epochs distribute revenue proportionally by weighted token supply",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8bffe2c6-c774-4b00-9da1-0e9291ef9e2b",
+      "name": "powa-revenue-distribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "965cebd9-723d-442e-8fff-2c95fc76b182",
+      "name": "epoch-revenue-distribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# epochs distribute revenue proportionally by weighted token supply\n\n## Objects Involved\n- **Source**: Epoch \u2014 a time period with iPOWA supply, cPOWA supply, and a weight factor\n- **Target**: DistributionRecord \u2014 a record of actual revenue distributed to an epoch's token contracts\n\n## Relationship\n\nEach epoch's share of total revenue is:\n```\nepochWeightedSupply = (iPOWA_supply + cPOWA_supply) \u00d7 weight\nepochShare = epochWeightedSupply / totalWeightedSupply \u00d7 totalRevenue\n```\n\nWithin an epoch, revenue splits further between iPOWA and cPOWA proportionally to their individual weighted supplies. A single revenue deposit creates one DistributionRecord per epoch.\n\nThe weight factor controls relative importance: weight=1.0 means full participation, weight=0.5 means half. This enables governance to phase epochs in/out gradually.\n\n## Implications\n\n- Adding a new epoch dilutes all existing epochs' revenue share (totalWeightedSupply increases)\n- Changing an epoch's weight recalculates all epoch shares (zero-sum redistribution)\n- Distribution records are immutable once created \u2014 they represent on-chain facts\n- Dust (1-2 wei rounding error per epoch) is inherent to the proportional math and must be tracked explicitly\n\n---\n\nRelevant Notes:\n- [[powa-revenue-distribution model captures epoch-based token revenue sharing]]\n- [[masterchef accumulator pattern enables per-token revenue tracking]]\n\nTopics:\n- [[object relations]]\n- [[schema design]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "RELATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:57:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:57:09.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each POWA epoch's revenue share is determined by its weighted supply (iPOWA + cPOWA supply multiplied by epoch weight) relative to total weighted supply",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-2656f583-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2656f583-0350-4c5b-bd0a-c707646e8807",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    },
+    {
+      "id": "lnk-010b9a46-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "010b9a46-8f86-4f5d-8808-9ec0bd97f9dc",
+      "targetTitle": "document-model-structure-has-metadata-specifications-and-modules"
+    },
+    {
+      "id": "lnk-7d431931-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d431931-4abb-4545-b427-891f2a5b6478",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-8c201bbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8c201bbe-513a-4003-9069-1762cbdd6f67",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-67ce34f9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "67ce34f9-bdbc-4ff4-96c9-66bbb2145772",
+      "targetTitle": "document-models-are-the-core-unit-of-powerhouse-architecture"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A document model consists of a state schema, document operations, and event history",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "737fa639-f314-4e18-ac68-609e82613234",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d1a71a1-9f1e-48db-afd7-cb8c0ada6e59",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "073ed0a1-e882-4e1b-994b-0da7a1a5784e",
+      "name": "schema",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each document model has three key components:\n\n1. **State Schema** - Defines the structure of the document using GraphQL SDL (types, fields, scalars). This is the blueprint for data storage and validation.\n2. **Document Operations** - Defines how the document can be modified. Operations are specified as GraphQL `input` types and represent valid state transitions (e.g., `AddTodoItemInput`, `UpdateTodoItemInput`).\n3. **Event History** - An append-only log storing every operation applied to the document as a timestamped event.\n\nThe state schema acts as a template for document instances, operations act as commands, and the event history provides the complete audit trail.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The three structural components define what data exists, how it can change, and the record of all changes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

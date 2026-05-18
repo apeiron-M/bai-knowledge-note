@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-7036dd62-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7036dd62-002b-47e1-b8db-ea1083e7b415",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-bd87d072-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-8918651f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-42273fd3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-afaaa77b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+      "targetTitle": "ddup-both-sync-paths-3x-cost"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collaboration API lives under a new window.ph.swarm.collab adapter namespace",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-b0deaac8-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-b0deaac8-2",
+      "name": "adapter-surface",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-b0deaac8-3",
+      "name": "api-reference",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Collab adapter API \u2014 `window.ph.swarm.collab`\n\nThe collaboration surface lives under a new namespace on the global adapter:\n\n```typescript\ninterface SwarmCollab {\n  /** Create a new collab. Mines GSOC signers in the background and\n   *  returns immediately. */\n  create(input: {\n    target: { driveId: string; documentId?: string };\n    participants: string[];  // Swarm signer addresses\n    caption?: string;\n  }): Promise<CollabSummary>;\n\n  /** Accept an invitation received via chat. */\n  accept(inviteRef: {\n    collabId: string;\n    manifestRef: string;\n    actHistoryAddress: string;\n    publisherBeeNodePubKey: string;\n  }): Promise<CollabSummary>;\n\n  /** Locally stop participating. Future: propagate to initiator. */\n  leave(collabId: string): Promise<void>;\n\n  /** Snapshot of all collaborations the user is part of. */\n  list(): CollabSummary[];\n\n  /** Subscribe to changes (op arrived, participant joined/left). */\n  on(event: \"updated\", handler: (s: CollabSummary) => void): () => void;\n}\n\ntype CollabSummary = {\n  collabId: string;\n  kind: \"drive\" | \"document\";\n  driveId: string;\n  documentId?: string;\n  participants: Array<{ address: string; displayName?: string }>;\n  lastActivityAt: string;\n};\n```\n\n`create` is non-blocking \u2014 it returns a summary immediately while signer mining runs in the background. `accept` handles manifest read, bundle import, and peer-feed registration atomically. `leave` is local-only in v1.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The collab adapter lives under window.ph.swarm.collab with create/accept/leave/list/on methods and CollabSummary shape.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

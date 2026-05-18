@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-f42a7135-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f42a7135-f688-40be-bf9b-365f0744a292",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    },
+    {
+      "id": "lnk-945a276b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "945a276b-3a2f-4e65-a3d8-390dbb7c46b5",
+      "targetTitle": "consistency-tokens-read-after-write"
+    },
+    {
+      "id": "lnk-a49fad15-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Powerhouse Analytics Engine stores time-series as value-interval triples instead of value-time tuples enabling delta and interpolation queries",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "daf501ed-fc80-4879-be1f-c9f032e0ef47",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc4430fc-22e3-4800-ad22-0960d43fb87b",
+      "name": "time-series",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc12c0a6-d47e-477d-8621-3367f012f0ed",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Powerhouse Analytics Engine is a TypeScript time-series analytics system with optional GraphQL interface, designed to run anywhere (browsers, servers, CLI). Unlike typical time-series databases that store `(time, value)` tuples, it stores `(value, start, end)` intervals, enabling interpolation functions (default: constant) and first-class delta queries. `AnalyticsSeries` are the individual metric values; `AnalyticsDimension` objects decorate series with `name` and `path` information for cross-series querying and aggregation. Paths are `/`-delimited strings determining query specificity (e.g., `/atlas/mip40/MIP40c3SP61`). LOD (level of detail) controls aggregation across dimensions; granularity (total/annual/quarterly/monthly/weekly/daily/hourly) controls time aggregation. Data cannot be input through GraphQL, only through the TypeScript API.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Series values have start and end times (not just a point), supporting interval interpolation, running totals, and delta calculations.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

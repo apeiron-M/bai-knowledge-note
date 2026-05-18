@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:08.805Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-bytes-vs-feeds",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:08.805Z"
+        },
+        "version": 0,
+        "documentId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:08.805Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "U8ilCaHeYxcGNAx2aYF6smHQ2+8=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Swarm exposes two primitives: immutable content-addressed /bytes and mutable owner-signed feeds",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:08.805Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:08.805Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ll3kFT3sRlH2Ssr/voul1GUYfPI=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:45.000Z",
+        "description": "/bytes uploads return a content hash and never change; feeds are (topic, owner) pointers that the owner updates and anyone can read \u2014 Connect uses bytes for data and feeds as pointers."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.852Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+        "targetId": "ee86286c-ed83-495f-8194-cc323ee49eea",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.852Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Df3t4BeL1qtqiwgVxpOOJLWloEQ=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.874Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+        "targetId": "ab2f57d0-d99f-4d40-80e1-7a35b8c169e8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.874Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "fmGLB5PxoxqkebLKrmHESqGKa+s=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Swarm exposes two storage primitives that Connect composes for sync:\n\n- `/bytes` \u2014 immutable, content-addressed. Upload data, get back a 64-char hex hash; the same data always yields the same hash and can never be mutated in place.\n- Feeds \u2014 mutable pointers identified by the pair `(topic, owner address)`. Only the owner can update what the feed points to, but anyone who knows the topic and owner can read it.\n\nConnect's write layering uses both: encrypted operation bytes are uploaded to `/bytes`, and the resulting reference is written to a feed. This lets readers look up a known topic (for example `ph:v2:doc:<documentId>`), follow the reference to `/bytes`, and fetch the latest encrypted batch.\n\nThe separation also clarifies where encryption belongs: encryption lives at the `/bytes` layer, while feeds hold plain-text references only.",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "w/Xe0I2Gjxth0vCtdZkLhH4ZhOs=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:07.369Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "3PT14U4r5jEXUTSZbuvTyQ27Z0o=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3f3b0c5d-3382-46f9-8e5d-38e579c31ad8",
+        "name": "swarm-primitives",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "oqlFTLm69XDtZ8xZRql8T7V55Rc=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ce0849e0-5a3f-4f4f-81fc-dbd480295ed8",
+        "name": "feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "xm+JijW1mPHTSVSagL7Zk2VP5Fs=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ed81133e-5ae0-498e-a551-9bbab6c1ff44",
+        "name": "bytes-storage",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "68f6PwsrmhA/nPrLOp1N4424eOA=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "72c29c05-3a74-4f18-b501-da5f2862715a",
+        "name": "content-addressing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  }
+]

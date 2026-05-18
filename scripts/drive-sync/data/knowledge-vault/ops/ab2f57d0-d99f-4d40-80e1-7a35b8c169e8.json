@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:10.165Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-gsoc-requires-full-nodes",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ab2f57d0-d99f-4d40-80e1-7a35b8c169e8",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:10.165Z"
+        },
+        "version": 0,
+        "documentId": "ab2f57d0-d99f-4d40-80e1-7a35b8c169e8",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:10.165Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "esAEyf2eIhwovIpBOZGv11aBekA=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "GSOC subscriptions only work on full Bee nodes and require mutable stamps",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:10.165Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ab2f57d0-d99f-4d40-80e1-7a35b8c169e8",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:10.165Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9orZJfJhLch9K5h7YSw6nTjiFeM=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:45.000Z",
+        "description": "Light nodes do not sync neighborhood chunks, so they cannot receive GSOC updates. Writers must use mutable stamps to avoid bucket exhaustion from frequent signals."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.318Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ab2f57d0-d99f-4d40-80e1-7a35b8c169e8",
+        "targetId": "e7f6fc14-e78a-4f56-81f6-2540f44a0fb1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.318Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "dE9tGYfZiLbR8fIs/mj/0DF5APs=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.339Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ab2f57d0-d99f-4d40-80e1-7a35b8c169e8",
+        "targetId": "0b548435-7d91-4cca-9beb-9fb14d5fce38",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.339Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "g7QEwO+hYuhPSs4pWemddF24Ycc=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nGSOC notifications have two hard constraints: the receiving node must be a **full node** (light nodes do not sync neighborhood chunks) and writers must use **mutable stamps** (to avoid bucket exhaustion on frequent signals).\n\n## Evidence\n\n- Light nodes do not store neighborhood chunks \u2014 they cannot see incoming SOC updates addressed to their neighborhood, so GSOC subscription is a full-node-only feature\n- Each GSOC send is a new SOC = a new chunk consuming a bucket slot. With immutable stamps, frequent notifications hot-spot a bucket and fail the batch well before TTL\n- Mutable stamps replace the oldest chunk in the overflowing bucket, so the notification channel self-garbage-collects\n\n## Why it matters\n\nAny architecture that uses GSOC for collaboration coordination (e.g. \"Connect instances register with a switchboard via GSOC\") has two environmental preconditions that affect deployment: the receiving instance must run a full node, and the stamp provisioning flow must request `immutableFlag: false`. Both are easy to get wrong silently.\n",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.357Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ab2f57d0-d99f-4d40-80e1-7a35b8c169e8",
+        "targetId": "590a66b8-06f7-4736-96f3-b22e7b737fd7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.357Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "2pkGp6rOojygO7qWHcwVI0UZ+fw=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.377Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ab2f57d0-d99f-4d40-80e1-7a35b8c169e8",
+        "targetId": "5aba7d9f-e7b8-4bea-b898-94ce2dfd7edc",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.377Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "fLYkjoIDm1kr2wH9YmzxoCvM2HU=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e53f1ef3-d710-4680-bffd-8914b77ff10d",
+        "name": "gsoc",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "pTTAW4+DPMZZscRAsdGF7sPhYUc=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "28d0c913-521b-4f30-9a11-6d838754f6b0",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "zSX/SyKD4zHz3fJ36accYgy7tBU=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b3f32a9f-1d64-4184-aea7-7654adb409f6",
+        "name": "bee-node",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "+NVFRdVIgcmPFqhy3nxmQt3F8HE=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "62e387b9-dfe7-4c1f-a8db-b61829c110b6",
+        "name": "postage-stamps",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  }
+]

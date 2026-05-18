@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-2389f590-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+      "targetTitle": "new-device-recovery-via-wallet-and-manifest"
+    },
+    {
+      "id": "lnk-83598633-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83598633-2b97-4852-9d62-e50ea45508a0",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    },
+    {
+      "id": "lnk-a5352301-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a5352301-cc42-4c0d-a6d8-e9654a8e9fc8",
+      "targetTitle": "wallet-derived-aes256-encryption"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The AES-256 sync key is deterministically derived from a MetaMask signature so any device rehydrates the same key",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e502e901-5a96-4fb0-a847-a8db7c2f9025",
+      "name": "aes-encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc930bfa-c529-4538-8021-fa9e152f0736",
+      "name": "key-derivation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "af225f42-f6d0-47bf-9c86-e46fe19b06cc",
+      "name": "wallet-signature",
+      "topicDocumentId": null
+    },
+    {
+      "id": "01283031-4c7f-482a-8463-c98cacf57d5f",
+      "name": "recovery",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "All sync data is encrypted with AES-256-GCM in the browser before it leaves the machine; the Bee node never sees plaintext. The encryption key is derived deterministically from the user's wallet so the same user on any device recovers the same key without a server.\n\nDerivation steps:\n\n1. User connects MetaMask.\n2. User signs a domain-specific message via `personal_sign`.\n3. `keccak256(signature)` produces a 32-byte secp256k1 private key.\n4. `SHA-256(private_key)` produces the 32-byte AES-256 encryption key.\n\nThe ciphertext format is `[SWE prefix (3 bytes)] [IV (12 bytes)] [AES-256-GCM ciphertext + auth tag]`. The 3-byte prefix `0x535745` marks encrypted payloads; older unencrypted data is detected by its absence, which keeps the reader backward compatible.\n\nBecause the key is deterministic from the wallet signature, recovery on a new device only needs the wallet \u2014 no cloud key store.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:09.098Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:21:09.098Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "personal_sign over a domain message yields a signature; keccak256 of it gives a secp256k1 key; SHA-256 of that gives the AES-256 key \u2014 same wallet, same key, no server.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

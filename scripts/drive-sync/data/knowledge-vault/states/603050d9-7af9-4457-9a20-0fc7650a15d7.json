@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e803f11b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e803f11b-b047-408f-9a8a-082cd51e349b",
+      "targetTitle": "document-manifest-feed-structure"
+    },
+    {
+      "id": "lnk-7d431931-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d431931-4abb-4545-b427-891f2a5b6478",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-8c201bbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8c201bbe-513a-4003-9069-1762cbdd6f67",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-9362a1a3-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "9362a1a3-1359-4e74-ab8f-5db4a8f2fa97",
+      "targetTitle": "user-and-drive-manifests"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Each document has a feed at ph:v2:doc:<id> pointing to a manifest that indexes operation batches on /bytes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "05e3baf3-320f-4c0d-b73d-6f7bf0c0f2fd",
+      "name": "document-manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "88d28644-a837-46ac-829f-7b7e7889246c",
+      "name": "manifests",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11fc1cfa-10bc-42e5-9ee9-e972a215c356",
+      "name": "operations-log",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6c246b4-dd2a-4c16-b27d-4b2a556e123f",
+      "name": "data-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each document on Swarm has a feed at topic `ph:v2:doc:<documentId>`. The feed points to a JSON manifest that indexes operation batches uploaded to `/bytes`:\n\n```json\n{\n  \"documentId\": \"abc-123\",\n  \"documentType\": \"powerhouse/budget-statement\",\n  \"latestRevision\": { \"global\": 47 },\n  \"operationBatches\": [\n    { \"reference\": \"a1b2c3d4...\", \"scope\": \"global\", \"branch\": \"main\", \"startIndex\": 0,  \"endIndex\": 23, \"timestamp\": \"...\" },\n    { \"reference\": \"e5f6a7b8...\", \"scope\": \"global\", \"branch\": \"main\", \"startIndex\": 24, \"endIndex\": 47, \"timestamp\": \"...\" }\n  ],\n  \"encrypted\": true,\n  \"updatedAt\": \"2026-04-07T10:05:00Z\"\n}\n```\n\nEach `reference` points to a `/bytes` upload containing the encrypted batch. `latestRevision` is keyed by scope, allowing multi-scope documents. `encrypted: true` signals the payload format; readers validate via the SWE prefix at `/bytes`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:15.700Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:21:15.700Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Document manifest carries documentId, documentType, latestRevision per scope, and an operationBatches array with reference, scope, branch, startIndex, endIndex, and timestamp.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-ca2440be-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ca2440be-6ce3-4732-bbce-2b5e4163863b",
+      "targetTitle": "ddup-swarm-plugin-mirrors-switchboard"
+    },
+    {
+      "id": "lnk-ee86286c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee86286c-ed83-495f-8194-cc323ee49eea",
+      "targetTitle": "ddup-four-storage-layers"
+    },
+    {
+      "id": "lnk-42273fd3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-dc4d768b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+      "targetTitle": "ddup-copy-distinct-recovery-role"
+    },
+    {
+      "id": "lnk-ee86286c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ee86286c-ed83-495f-8194-cc323ee49eea",
+      "targetTitle": "ddup-four-storage-layers"
+    },
+    {
+      "id": "lnk-bc3b5418-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+      "targetTitle": "live-collaboration-uses-per-user-op-feeds-plus-gsoc-pings-to"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collaboration adds SyncEnvelope wrappers and per-user feeds but does not re-duplicate raw ops",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0f1debfc-b251-41c6-8ab4-e289b8fa1e32",
+      "name": "collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "50778ccb-7e38-48d5-b6e3-93cd6f918d90",
+      "name": "sync-envelope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2753cee2-a781-4223-8ad1-191dc84d643d",
+      "name": "data-duplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "06e33d74-c90c-46ac-8571-a0c9346f8bc3",
+      "name": "per-user-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Collaboration adds per-user op feeds on top of the single-user sync \u2014 and the additional storage cost is small and structural rather than full re-duplication:\n\n**Already present (single-user baseline)**\n- PGlite: all operations (local + remote)\n- Swarm /bytes: operation batches (per user)\n- Single-user feeds: doc/drive/user manifests (personal backup)\n\n**New in collaboration**\n- Collab index feed: 1 per shared document (~1 KB)\n- Per-user op feeds: 1 per user per document\n  - Content: `SyncEnvelope` wrapping the SAME operations that are already in the single-user /bytes batches\n\n**What's actually added**:\n- Feed pointer updates: ~64 bytes per update per user\n- SyncEnvelope wrappers around operations (OperationContext metadata)\n\n**Overhead quantified**: ~20% per op for the context metadata. The core action data itself is not duplicated \u2014 only the wrapping envelope.\n\n**Why it matters**: this means collaboration scales linearly in users rather than in users x ops. Adding N collaborators to a document doesn't N-duplicate the ops; it adds N small-wrapped pointers over the same underlying content-addressed operation chunks.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "observation",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:42:40.589Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:42:40.589Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Per-user op feeds wrap the same operations in SyncEnvelope context metadata (~20% per-op overhead) plus small feed pointers \u2014 the core action data isn't duplicated.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

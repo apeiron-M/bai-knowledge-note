@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-92485487-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "92485487-e1db-4bea-a4e8-c8794386598d",
+      "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors"
+    },
+    {
+      "id": "lnk-08438292-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "08438292-9838-4051-b4ff-7043e0af90a8",
+      "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags"
+    },
+    {
+      "id": "lnk-2551d197-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-7ea81389-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-f10dc4e9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f10dc4e9-fe23-4f24-9911-5a4b8aca82ba",
+      "targetTitle": "editors-use-react-hooks-for-document-state"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "editors use the modern React hooks pattern from reactor-browser",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6f3402a2-d7db-4dfe-90fb-5577a737d182",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e01eebb8-6a13-42a7-94dd-584ce1affd34",
+      "name": "model-editor wiring",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64e9c8f2-2469-40fc-b40a-03a54e60b103",
+      "name": "React hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a9071bd-f4a9-485b-8b2b-19fd761cb5f1",
+      "name": "code generation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# editors use the modern React hooks pattern from reactor-browser\n\nDocument editors follow a consistent pattern using auto-generated hooks from `@powerhousedao/reactor-browser`:\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport { useSelectedTodoDocument } from \"../hooks/useTodoDocument.js\";\nimport { addTodo } from \"../../document-models/todo/gen/creators.js\";\n\nexport default function Editor() {\n  const [document, dispatch] = useSelectedTodoDocument();\n\n  function handleAddTodo(values: { title: string }) {\n    if (values.title) {\n      dispatch(addTodo({ id: generateId(), title: values.title }));\n    }\n  }\n}\n```\n\nKey points:\n- `useSelectedXDocument` is auto-generated per document model \u2014 since [[useSelectedDocument hook is auto-generated per document model]], never implement it manually\n- Since [[editors import action creators from gen/creators not from model source]], the import path is `../../document-models/<model>/gen/creators.js`\n- Since [[generateId from document-model/core provides deterministic IDs for dispatch]], IDs are created before dispatch, not inside reducers\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[model-editor wiring]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:02:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:02:07.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The useSelectedXDocument hook is auto-generated and returns [document, dispatch]; action creators come from gen/creators.js",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

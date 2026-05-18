@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:10.899Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-mantaray-manifests",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "658449cc-d8be-48d0-ad33-39d25a934b74",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:10.899Z"
+        },
+        "version": 0,
+        "documentId": "658449cc-d8be-48d0-ad33-39d25a934b74",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:10.899Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "2YJ68ncqgfMb8wYdNtHM6m5sOwA=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Mantaray manifests are compacted Merkle tries that let Swarm resolve paths under a single hash",
+        "updatedAt": "2026-05-13T13:00:46.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:10.899Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "658449cc-d8be-48d0-ad33-39d25a934b74",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:10.899Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "rX2EtIFnLLBfUYWoZKdl4hUt3pc=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:46.000Z",
+        "description": "Each trie node has a path segment, target reference, and metadata. Upload via POST /bzz with Swarm-Collection: true; download at /bzz/{hash}/{path}."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.616Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "658449cc-d8be-48d0-ad33-39d25a934b74",
+        "targetId": "9362a1a3-1359-4e74-ab8f-5db4a8f2fa97",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.616Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "xnLde4vsbQkTNNRzbNyXjKiHNOg=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-05-13T13:00:46.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.638Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "658449cc-d8be-48d0-ad33-39d25a934b74",
+        "targetId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.638Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "TG0pxKcZGeUg8MO2/G5ryER7a9A=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\n**Mantaray manifests** are Swarm's native file-collection format \u2014 compacted Merkle tries where each node carries a path segment, a target chunk reference, and metadata, exposing a single root hash that resolves arbitrary paths.\n\n## Evidence\n\n- Used for file collections (directories, websites), not our custom document manifests\n- Upload: `POST /bzz` with `Swarm-Collection: true` header + TAR body\n- Download: `GET /bzz/{manifest-hash}/{path}` resolves the path through the trie\n- Supports `indexDocument` (default page) and `errorDocument` (404 page) metadata\n- bee-js: `bee.uploadFile()`, `bee.downloadFile()`, `bee.uploadFiles()`, `bee.uploadCollection()`\n\n## What this unlocks for us\n\n1. **File attachments**: upload images/PDFs via `/bzz`, store the manifest reference inside document ops \u2014 content-addressed and encrypted\n2. **Document export**: package an entire drive as a Swarm collection (HTML + JSON), share via one hash or ENS name\n3. **Static publishing**: deploy the Connect SPA itself to Swarm (HashRouter + ENS = fully decentralized app)\n\n## Why it matters\n\nMantaray is distinct from our app-level `manifest-as-reference` pattern and provides the transport for any file-shaped content. It's also the route to deploying Connect itself on Swarm.\n",
+        "updatedAt": "2026-05-13T13:00:46.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.657Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "658449cc-d8be-48d0-ad33-39d25a934b74",
+        "targetId": "56d65b3e-73d0-4d6f-b88f-348b9beaf683",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.657Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "EHB/ccPsJJnr3dxV5ndIV7jSByc=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.678Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "658449cc-d8be-48d0-ad33-39d25a934b74",
+        "targetId": "b16e0f9a-a6f7-4bc8-ba71-df6aac10ed2f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.678Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "RocgSG0iApbF4hm1kR0CGcXZVs8=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5aabcea2-b2db-4a87-821b-3dbe3379fd04",
+        "name": "mantaray",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "U8sRBw1Aiz3Un8sdN8+341c9xRI=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cdec8133-156d-48a3-8573-aea6328c980a",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "0G8TYSucf+bK65V9pt/MeOX7Trs=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4b430747-8566-4866-aab5-d3f659114ac2",
+        "name": "manifests",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "BMa+CAGGT9tgWSqhU8tr8hcs9TU=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "23619ec0-8abe-4806-b65a-3ff95a50729e",
+        "name": "file-storage",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  }
+]

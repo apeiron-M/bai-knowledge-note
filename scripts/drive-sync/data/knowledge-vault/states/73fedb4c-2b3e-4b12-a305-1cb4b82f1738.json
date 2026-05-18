@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-5739f1f1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5739f1f1-4e1e-49f9-9fca-0a559b466276",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-13c5e640-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+      "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-"
+    },
+    {
+      "id": "lnk-83b1af9a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83b1af9a-4757-47cb-9925-6ff33d564642",
+      "targetTitle": "resource-template-model-defines-reusable-service-catalog-blueprints"
+    },
+    {
+      "id": "lnk-4791cd33-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4791cd33-4d85-4e68-8c36-73f4ff063295",
+      "targetTitle": "resource-instance-model-tracks-provisioned-resource-lifecycle"
+    },
+    {
+      "id": "lnk-87e23c2a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87e23c2a-8551-4614-a4b4-7331e4069e6a",
+      "targetTitle": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser"
+    },
+    {
+      "id": "lnk-2551d197-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-cfb81bd5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cfb81bd5-6d7c-4501-8276-f067558734a1",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "model-editor wiring",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "773a957f-5e8f-46f2-ae8f-7aff55af8538",
+      "name": "service-offering",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c00587b4-747b-4b31-8ad8-85c04dd25de0",
+      "name": "subscription-instance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b1465032-9942-4c7c-b411-5ea1b8f59dd5",
+      "name": "resource-template",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3277a46d-0ad9-4652-b071-c591c5163d60",
+      "name": "resource-instance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a6dd6517-fa3f-407f-b9cb-80d64772b2fb",
+      "name": "editor-integration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# model-editor wiring\n\nThe integration layer between document models and their editors.\n\n## Core Wiring Pattern\n- [[editors use the modern React hooks pattern from reactor-browser]] \u2014 the useSelectedXDocument pattern\n- [[editors import action creators from gen/creators not from model source]] \u2014 correct import path for creators\n- [[generateId from document-model/core provides deterministic IDs for dispatch]] \u2014 ID generation before dispatch\n- [[useSelectedDocument hook is auto-generated per document model]] \u2014 auto-generated hooks per model\n\n## Drive-Level Wiring\n- [[apps use useSelectedDrive to access drive state and filter nodes]] \u2014 drive editors filter nodes by type\n\n## By Editor\n- [[service-offering editor wires four tab views to the service-offering model]] \u2014 ResourceTemplateSelector, ServiceCatalog, TierDefinition, TheMatrix\n- [[subscription-instance editor provides client and operator views with billing]] \u2014 dual-mode with ImportServiceConfigButton bridge to ServiceOffering\n- [[resource-template editor manages template info and facet targeting]] \u2014 simplest editor, two components\n- [[resource-instance editor manages provisioning lifecycle and facet configuration]] \u2014 most action creator imports (17), lifecycle state machine\n\n## By Document Model\n\n| Model | Editor | Hook | Modules Used |\n|-------|--------|------|--------------|\n| service-offering | service-offering-editor | useSelectedServiceOfferingDocument | offering, services, tiers, option-groups, service-groups, configuration |\n| subscription-instance | subscription-instance-editor | useSelectedSubscriptionInstanceDocument | subscription, service, service-group, metrics, customer |\n| resource-template | resource-template-editor | useSelectedResourceTemplateDocument | template-management, facet-targeting |\n| resource-instance | resource-instance-editor | useSelectedResourceInstanceDocument | instance-management, configuration-management |\n| facet | (no dedicated editor) | useFacetDocument | \u2014 |\n\n## Cross-Model Editors\n- [[subscription-instance editor provides client and operator views with billing]] \u2014 imports from ServiceOffering via mapOfferingToSubscription\n\n---\n\nTopics:\n- [[index]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:57:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:57:20.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Which document model feeds which editor \u2014 hook imports, dispatch targets, state reads, helper dependencies",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

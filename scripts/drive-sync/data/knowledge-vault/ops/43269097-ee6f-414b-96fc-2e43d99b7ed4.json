@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.713Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-type-is-namespaced-identifier",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "43269097-ee6f-414b-96fc-2e43d99b7ed4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:43.713Z"
+        },
+        "version": 0,
+        "documentId": "43269097-ee6f-414b-96fc-2e43d99b7ed4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.713Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "UCXEjzTuSG6aY9G895Sn5ef93VM=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Document types use a namespaced identifier format like powerhouse/todo-list",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.713Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "43269097-ee6f-414b-96fc-2e43d99b7ed4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.713Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "RmfsZ7SgTKZD3RPB5SBt/7vYe3w=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:33.000Z",
+        "description": "The document type field (e.g., powerhouse/todo-list) uniquely identifies the document model and links editors to models."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.742Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "43269097-ee6f-414b-96fc-2e43d99b7ed4",
+        "targetId": "67ce34f9-bdbc-4ff4-96c9-66bbb2145772",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.742Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "NhpbS/MZjDNMr5WAPzNeoe9NBfU=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.766Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "43269097-ee6f-414b-96fc-2e43d99b7ed4",
+        "targetId": "08fb292d-0342-4e7f-bc8a-1746df34e2b2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.766Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "0i21PNnzwzfj7kS/NV4Ze5ac6kw=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every document model has a **document type** - a namespaced identifier that uniquely identifies it across the ecosystem. Format: `namespace/model-name` (lowercase with hyphens).\n\nExamples:\n- `powerhouse/todo-list`\n- `my-org/todo`\n\nThis identifier is used to:\n- Link editors to their document models (`documentTypes: [\"powerhouse/todo-list\"]` in manifest)\n- Create new document instances of a specific type\n- Query documents by type across drives\n- Register document models in Reactors\n\nThe document model name in Vetra Studio uses PascalCase (e.g., `TodoList`) while the document type uses lowercase-hyphenated format. Capitalization matters because it influences code generation (type names, function names, etc.).",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.787Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "43269097-ee6f-414b-96fc-2e43d99b7ed4",
+        "targetId": "e7d3c3eb-f775-4554-8ade-0203b40dfe78",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.787Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "CVDrFORDOJqxeaKtSV6lqUssh/4=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.812Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "43269097-ee6f-414b-96fc-2e43d99b7ed4",
+        "targetId": "7774c794-c29f-420f-b8bf-d3fdc6ca1c9a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.812Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "/91ZGXpshm1LY0WiyUlat/z6k9k=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ac84223e-5b61-4c14-823f-77b03ae748da",
+        "name": "document-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.832Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "43269097-ee6f-414b-96fc-2e43d99b7ed4",
+        "targetId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.832Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "xBk40zudY2MZBZWKpdvZ+w6bGq8=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f54eac0f-1e87-4dd2-b543-50e703c9b53c",
+        "name": "naming-conventions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "GAT42k3zzAVL4+NEJAcqj+EXYIs=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ac7a3e3f-25f7-439b-856e-29a4eccc163f",
+        "name": "identifiers",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  }
+]

@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:32.823Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "act-replaces-the-legacy-derivesharekey-which-used-a-publicly",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9ca80593-b1fa-41df-b83e-47f8b179d270",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:32.823Z"
+        },
+        "version": 0,
+        "documentId": "9ca80593-b1fa-41df-b83e-47f8b179d270",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:32.823Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "evEAgwHH8jiKVK0d0nmnTbm7SSw=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ACT replaces the legacy deriveShareKey, which used a publicly derivable SHA-256 of both addresses.",
+        "updatedAt": "2026-05-13T13:00:26.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:32.823Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9ca80593-b1fa-41df-b83e-47f8b179d270",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:32.823Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ezNMYPLSiuZ3lOayVPQoB00L71I=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:26.000Z",
+        "description": "Old share encryption hashed sender_address + recipient_address \u2014 both public values \u2014 so any third party could decrypt. ACT uses ECDH requiring the sender's private key."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.565Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9ca80593-b1fa-41df-b83e-47f8b179d270",
+        "targetId": "83598633-2b97-4852-9d62-e50ea45508a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.565Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "tjZXuooa+GY9abWYwYxyY6FMRWw=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "decision",
+        "updatedAt": "2026-05-13T13:00:26.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.587Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9ca80593-b1fa-41df-b83e-47f8b179d270",
+        "targetId": "1cf845a2-3197-4b2f-867f-c5d3fc34bef6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.587Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "gKJr2NrXhKnWhDZMXl2yRIQ5XdM=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Vulnerability (fixed)\n\nThe original document-sharing code derived its encryption key as:\n\n```\nkey = SHA-256(sender_address + \":\" + recipient_address)\n```\n\nBoth inputs are public (on-chain, ENS, etherscan). Any third party who knew both addresses could reconstruct the key and decrypt any shared bundle. This was **security theater**, not encryption.\n\n## Fix: Swarm ACT (Access Control Trie)\n\nACT derives its session key via ECDH:\n\n```\nsession_key = SHA-256( ECDH(publisher_privkey, grantee_pubkey) || salt )\n```\n\nThe publisher's **private key** is required \u2014 only their Bee node has it. A third party with both public keys still faces the discrete-log problem.\n\n## Comparison\n\n| | Old (deriveShareKey) | New (ACT) |\n|---|---|---|\n| Key derivation | `SHA-256(public_addr_a + public_addr_b)` | `ECDH(privkey \u00d7 pubkey) + salt` |\n| Third-party attack | Trivial | Impossible \u2014 DLP |\n| Encryption | App-level AES-256-GCM | Bee node native |\n| Grantee management | None | `patchGrantees()` add/remove |\n| Revocation | Impossible | Rebuild ACT with new access key |\n\n## Status\n\nShareManager rewritten, 105/105 tests passing. ACT now protects document sharing, chat history feeds, and multi-party collaboration data.",
+        "updatedAt": "2026-05-13T13:00:26.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.607Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9ca80593-b1fa-41df-b83e-47f8b179d270",
+        "targetId": "4f0dfdaa-dccc-49b2-b7c4-aa8328d4af34",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.607Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "0ULF7U8pS+nkAyn2jqCKFExOZvU=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:30:37.900Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "CFMi0Qv9k1CptmI46vyqq2HdvOw=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-76a84b492721",
+        "name": "act-encryption",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "KI/lDwpvcyZ4feWgRuGHVUNxd/8=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-af4ddf49f237",
+        "name": "security",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "GLRMcvoT2pUaejLC/D5duqTtdyA=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-7b1d5490fc6d",
+        "name": "document-sharing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  }
+]

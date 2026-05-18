@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-65b6b0c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65b6b0c3-c068-4ec6-b36e-71bc00b79aa9",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-c7b131a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-3058e945-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3058e945-8ca6-46c4-a44b-7ab8bd3728d6",
+      "targetTitle": "adapter-key-source-files"
+    },
+    {
+      "id": "lnk-a9803a1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adapter chat uses PSS+GSOC with ACT-encrypted history; settings surface live Bee diagnostics",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "chat-features",
+      "name": "chat-features",
+      "topicDocumentId": null
+    },
+    {
+      "id": "pss-gsoc",
+      "name": "pss-gsoc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "settings-ui",
+      "name": "settings-ui",
+      "topicDocumentId": null
+    },
+    {
+      "id": "feature-categories",
+      "name": "feature-categories",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Chat (PSS + GSOC) features:\n- **1-to-1 encrypted messaging** via PSS, with GSOC-backed offline delivery.\n- **Discord-style UI** with unread badge on the sidebar.\n- **Persistent history** in ACT-encrypted feeds, paginated backwards.\n- **File sharing** for images, GIFs, PDFs, audio, video, and text \u2014 all ACT-encrypted.\n- **External `bzz://<hash>` previews** for files uploaded outside the chat.\n- **Drag-and-drop uploads**, inline previews, lightbox, **200 MB cap**.\n- **Pre-flight codec check for video** so unplayable formats fall back to a download instead of failing mid-playback.\n\nSettings features:\n- **Live chain-price fetching** for stamp top-ups (no hardcoded price drift).\n- **Real Bee error surfacing** on stamp operations. The UI parses `BeeResponseError.responseBody`, so users see the actual on-chain reason instead of a generic `500`.\n- **Bucket-utilization diagnostics** with dilute, expand, and top-up actions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:52:46.944Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:52:46.944Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Chat delivers 1-to-1 encrypted messaging via PSS with offline delivery, persistent ACT-encrypted history, file sharing up to 200 MB; settings show live chain prices and real Bee error reasons.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

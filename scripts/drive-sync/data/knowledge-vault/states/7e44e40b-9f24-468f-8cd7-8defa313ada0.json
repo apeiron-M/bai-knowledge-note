@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-56a911e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+      "targetTitle": "three-layer-swarm-stack"
+    },
+    {
+      "id": "lnk-2cf91263-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2cf91263-00a4-478e-b7f4-cd76e9123339",
+      "targetTitle": "bridge-pattern-gql-swarm-dual-sync"
+    },
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-db78322a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "db78322a-9553-4dca-b1da-d88f98149429",
+      "targetTitle": "connect-as-switchboard-swarm-bridge"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect's end-state vision is a fully decentralized browser app served from Swarm with no servers.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-6647ea48-1",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-6647ea48-2",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-6647ea48-3",
+      "name": "decentralization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-6647ea48-4",
+      "name": "architecture-vision",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nConnect's long-term vision is to run entirely in the browser, served from Swarm itself, with no supporting servers.\n\n## Evidence\nThe Swarm Channel Architecture document opens with this vision: \"Connect runs entirely in the browser, served from Swarm itself. No servers. The user loads the app, PGlite initializes the reactor, and the user connects their Bee node. All data lives on Swarm \u2014 encrypted, decentralized, owned by the user.\"\n\n## Implications\n- PGlite (WASM SQLite) is the sole local persistence layer.\n- The user's Bee node is the only required external dependency.\n- Switchboard is optional \u2014 Connect bridges to it but does not depend on it.\n\n## Source\n- Swarm Channel Architecture, \"Vision\" section.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:19:49.348Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect runs entirely in the browser, loads PGlite locally, connects a user-owned Bee node, and stores all data encrypted on Swarm.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

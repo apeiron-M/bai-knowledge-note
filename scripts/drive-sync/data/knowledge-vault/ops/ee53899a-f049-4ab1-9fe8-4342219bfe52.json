@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:13.876Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "two-signing-mechanisms-header-and-action",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ee53899a-f049-4ab1-9fe8-4342219bfe52",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:13.876Z"
+        },
+        "version": 0,
+        "documentId": "ee53899a-f049-4ab1-9fe8-4342219bfe52",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:13.876Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "zl7FFka6+rKprzSpx4U2cLf9Km0=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Powerhouse uses header signing (document ID = cryptographic signature of creator) and action signing (every mutation signed with ECDSA P-256)",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:13.876Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ee53899a-f049-4ab1-9fe8-4342219bfe52",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:13.876Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "t4hU+t00LdGCDrdBvcXGHfGhvtg=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:47.000Z",
+        "description": "Document ID is the creator's signature over header fields; each action gets a 5-tuple Signature with did:key."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.350Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ee53899a-f049-4ab1-9fe8-4342219bfe52",
+        "targetId": "3e894e41-ada3-43bc-a3fa-96eb1dde2686",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.350Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "e3QrreidXbd1VmiWn9m//ppp/Ig=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.372Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ee53899a-f049-4ab1-9fe8-4342219bfe52",
+        "targetId": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.372Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "xhC3/OFFT3vofD8aQgxtrYgnnfk=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Header signing: when a document is created, `documentType + createdAtUtcIso + nonce` is signed with the creator's private key and the resulting signature becomes the document's `id`. The header embeds the public key (JWK) for self-contained verification via `validateHeader()`. Action signing: each dispatched action produces a 5-element Signature tuple `[timestamp, signerKey, actionHash, hashField, signatureHex]`. The `actionHash` is SHA-1 of `documentId + scope + actionType + JSON(input)`. The signed message uses prefix `\\x19Signed Operation:\\n{length}` matching Ethereum-style signing. Both use ECDSA with P-256 curve and SHA-256 via Web Crypto API.",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.392Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ee53899a-f049-4ab1-9fe8-4342219bfe52",
+        "targetId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.392Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Qjt4OSjU1kRwQY3Ug+QLoTJha4k=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.412Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ee53899a-f049-4ab1-9fe8-4342219bfe52",
+        "targetId": "9b5889f7-82e9-4775-a9da-8eba5c9d0f96",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.412Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "P2Rk7pHGXAys7CISGGCsVQ0ffaU=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4f432524-bb1f-4b65-9b71-abf90ba8965a",
+        "name": "signing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "pX0BP7PNNNSjyHggY7u7Vcxrzhs=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9e15a19a-4505-4b27-bea6-c6e912c9c962",
+        "name": "cryptography",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "LSZEb3Wwv/hoWlwiz1n/6gdr7T8=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c150e804-dd48-40c8-a017-30c10ce8f39b",
+        "name": "ECDSA",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "hTWogagdrC78H1i+ytGdyB+O5P8=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a68c5451-66da-443a-87af-a6f5c984f0ed",
+        "name": "document-identity",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  }
+]

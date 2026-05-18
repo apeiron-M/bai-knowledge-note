@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-d508a76d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d508a76d-410b-4192-bb0d-49adec440906",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-cfb81bd5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cfb81bd5-6d7c-4501-8276-f067558734a1",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-139dad67-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "139dad67-0851-4575-bc96-1276067c618e",
+      "targetTitle": "swarm-manifest-three-tier-hierarchy"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Document manifest feed holds latestRevision per scope and ordered operationBatches array",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a87affa9-a55f-4307-bc0d-259d42e5ade2",
+      "name": "document-manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5de989c9-3a94-4057-bbba-65a4a14dcc9f",
+      "name": "operation-batches",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dce2ea33-1923-452e-b26e-b25a3936bae8",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Document Manifest Feed Structure\n\nEach document has its own manifest feed at topic `ph:v2:doc:<docId>`, owned by the document creator's signer. Each feed index points to encrypted JSON on `/bytes`.\n\n## Schema\n\n```json\n{\n  \"documentId\": \"doc-001\",\n  \"documentType\": \"powerhouse/budget-statement\",\n  \"latestRevision\": { \"global\": 12 },\n  \"operationBatches\": [\n    {\n      \"reference\": \"ddd444...\",\n      \"scope\": \"global\",\n      \"branch\": \"main\",\n      \"startIndex\": 0,\n      \"endIndex\": 5,\n      \"timestamp\": \"2026-04-10T12:01:00Z\"\n    }\n  ],\n  \"keyframes\": [],\n  \"updatedAt\": \"2026-04-10T12:03:00Z\"\n}\n```\n\n## Role\n\n- Points to a list of operation batches, each an immutable `/bytes` reference\n- `latestRevision` tracks the highest operation index per scope\n- Batches are appended, not rewritten \u2014 new operations get a new batch entry\n- Clients reconstruct full state by fetching each batch in order and replaying\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:45:54.611Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Document manifest feed at ph:v2:doc:<docId> holds latestRevision per scope, operationBatches array (reference, scope, branch, startIndex, endIndex), and keyframes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

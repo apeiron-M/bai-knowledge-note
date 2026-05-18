@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:11.933Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-single-owner-chunks",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c596b25e-f410-4aa3-822a-646ab559c3c7",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:11.933Z"
+        },
+        "version": 0,
+        "documentId": "c596b25e-f410-4aa3-822a-646ab559c3c7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:11.933Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "WeqPSuRls36Fd4zzXrWNAi30qcA=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Single Owner Chunks give each Ethereum account a virtual namespace of writable slots",
+        "updatedAt": "2026-05-13T13:00:46.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:11.933Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c596b25e-f410-4aa3-822a-646ab559c3c7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:11.933Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fR4TMutJSIgBbjPXBf5wr6fjLfQ=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:46.000Z",
+        "description": "SOC address = Keccak256(identifier || owner_address). Only the owner's private key can write; anyone can read. Basis for feeds and GSOC."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.185Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c596b25e-f410-4aa3-822a-646ab559c3c7",
+        "targetId": "a54a9f24-04ea-405c-89bd-b6c73d65fbe6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.185Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Cq9DJ4oGBTmpE8w4DcSgeCtK4Mw=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-05-13T13:00:46.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.205Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c596b25e-f410-4aa3-822a-646ab559c3c7",
+        "targetId": "7774c794-c29f-420f-b8bf-d3fdc6ca1c9a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.205Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ugnIjCRItMXv0+zKnfFgAZMbfWI=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nA **Single Owner Chunk (SOC)** is a chunk whose address is derived from an identifier and an owner Ethereum address, giving every account a private virtual namespace of writable chunk slots.\n\n## Evidence\n\n- Address formula: `Keccak256(identifier || owner_address)` \u2014 deterministic from a 32-byte identifier and the owner's Ethereum address\n- Content layout: 32-byte identifier + 65-byte signature (r, s, v) + span + payload\n- Only the private-key holder can sign updates; anyone can read\n- A SOC can **wrap** a CAC \u2014 the SOC payload becomes the CAC's span + data\n- The addressing scheme means each account controls what lives at each identifier \u2014 the primitive underneath feeds and GSOC\n\n## Why it matters\n\nSOCs are the primitive that turns Swarm from immutable content storage into a system that supports mutable, signed state. Feeds and GSOC are both built on top of SOCs.\n",
+        "updatedAt": "2026-05-13T13:00:46.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.226Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c596b25e-f410-4aa3-822a-646ab559c3c7",
+        "targetId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.226Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "O2/zjmXqOcNmy/Cnc0/Pjw1tVdI=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "H415ytDTN8qXlmsN/e3C8bTIScA=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "31df80d5-ed37-420a-b205-d5493aef44a1",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "k8yMU/FoyL1zVs0uTlikMPie3EE=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c92ec02f-01c5-4ac6-a4d3-5a3b741a2086",
+        "name": "soc",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "KLu1zy0cdtfWX6tff+YaDL1qA6o=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e348e011-f188-482e-9f53-43d5089f8ac3",
+        "name": "chunks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "GKPV71gGrpBr7GpTkK9E2d7OEGc=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "28eaa4a1-a7c2-4d0f-ab60-6443dbe8e061",
+        "name": "identity",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  }
+]

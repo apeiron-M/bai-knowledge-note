@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-7d431931-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d431931-4abb-4545-b427-891f2a5b6478",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-598070fd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "598070fd-2bf5-4152-8819-1e4700e01996",
+      "targetTitle": "open-source-capitalism-makes-oss-self-sustaining-investable-and-scalable"
+    },
+    {
+      "id": "lnk-0e465bb9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0e465bb9-9a40-4da6-90c1-6aea3126d60b",
+      "targetTitle": "accounts-model-defines-the-chart-of-accounts-structure"
+    },
+    {
+      "id": "lnk-8c201bbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8c201bbe-513a-4003-9069-1762cbdd6f67",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Revision History panel DOM structure anchors the selectors needed to theme its internals",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "eb1d160e-03b1-4fdf-8829-8a3fdbd60ab2",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a3a68a18-0d94-49db-9a32-63f040c06201",
+      "name": "revision-history",
+      "topicDocumentId": null
+    },
+    {
+      "id": "546ba937-2547-4661-af7c-dbc1814ab419",
+      "name": "dom-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc4786d9-d8fd-497a-865a-f40abd3b15c8",
+      "name": "editor-styling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Revision History panel (opened by the toolbar history button) has a stable internal structure that CSS selectors can rely on when theming it.\n\nRoot: `#document-editor-context[data-editor][data-document-type]`\n\nInside that, the tree is:\n\n- `div.p-6` \u2014 main container\n  - `header` \u2014 top bar\n    - `button[name=\"close-revision-history\"]` \u2014 back arrow\n    - `h1` \u2014 document title\n    - `button.bg-slate-50` \u2014 DOC ID pill\n    - `button.bg-slate-50` \u2014 BRANCH pill\n    - `div[id=\"scope select\"]` \u2014 scope dropdown\n  - `div.rounded-md.bg-slate-50` \u2014 timeline content area\n    - `div.border-slate-100` \u2014 timeline with left border\n      - `h2.bg-slate-50` \u2014 day separator (e.g. \"Changes on Mar 26\")\n      - `article.bg-white` \u2014 revision card, repeated per revision\n        - RevisionNumber, Operation, Timestamp, Signature, Errors rows\n  - `div` \u2014 pagination (if needed)\n\nKey selector anchors for theming:\n- `.bg-slate-50` \u2014 header pills and day separators\n- `.rounded-md.bg-slate-50` \u2014 timeline content area background\n- `.border-slate-100` \u2014 timeline left border\n- `article` \u2014 revision cards (bg-white by default)\n- `.text-gray-900`, `.text-stone-300`, `.text-gray-600` \u2014 text color tiers\n- `.border-gray-200`, `.bg-white` \u2014 card borders and backgrounds\n\nScope all overrides to `[data-document-type=\"your/document-type\"]` to avoid bleeding into other editors.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:54:40.792Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:54:40.792Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Revision History panel has a fixed internal DOM tree under #document-editor-context \u2014 header pills, timeline, day separators, article revision cards \u2014 that CSS rules target by class.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

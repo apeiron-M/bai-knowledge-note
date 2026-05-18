@@ -1,0 +1,303 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:39.802Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ddup-both-sync-paths-3x-cost",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:39.802Z"
+        },
+        "version": 0,
+        "documentId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:39.802Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "yapCAMa9vqG6FRvgelb+qgDGErg=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Running Switchboard and Swarm sync simultaneously triples operation storage to 3x",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:39.802Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:39.802Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "YVnSUFvJH3scDlfiyLhUCWG0Zz4=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:31.000Z",
+        "description": "Architecture C (Connect + Switchboard + Swarm) stores every operation three times: PGlite, PostgreSQL, and Swarm /bytes \u2014 enabling recovery from either remote."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.369Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "targetId": "ca2440be-6ce3-4732-bbce-2b5e4163863b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.369Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Hh5TI49Hd5THKCGJ5slyQtZ+Ojc=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "observation",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.402Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "targetId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.402Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "/qsrCHD/82r7HhbuuWmqPiCj+AA=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "When Connect runs the native SyncManager against a Switchboard AND the Swarm plugin at the same time, every operation is stored in three places:\n\n```\nCONNECT (browser)          SWITCHBOARD (server)       SWARM NETWORK\nPGlite                     PostgreSQL                  /bytes + feeds\n  - operations ----------> - operations\n              <----------\n                                                       - operation batches\n  - operations ----------------------------------------> - manifests\n```\n\n**Storage cost**: 3x per operation (PGlite + PostgreSQL + Swarm).\n\n**The upside is optional resilience**:\n- Can recover from either Switchboard OR Swarm\n- Team collaboration continues working via Switchboard\n- Censorship-resistant backup via Swarm\n- Useful during migration or for high-value data\n\n**The cost is real**:\n- Triple bandwidth for writes\n- Triple stamp/storage cost for operations on Swarm\n- Two sync paths to reason about for conflicts\n\nThis is Architecture C \u2014 not a target state but a useful interim for users who want both properties simultaneously, or while migrating off a Switchboard.",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.426Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "targetId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.426Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "EEpYCrwPRpKmoxYN0PJutMhC4Gg=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:55.863Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.450Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "targetId": "2cf91263-00a4-478e-b7f4-cd76e9123339",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.450Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ZQp08viBYWMFFMRZaN8dU9wBKqM=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "de3261a5-ffce-4c8c-ac5c-90398703b6c8",
+        "name": "data-duplication",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.473Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "targetId": "ca2440be-6ce3-4732-bbce-2b5e4163863b",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.473Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "zdDHlLuBhhvicku/u4N92tH+jQU=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d1b114dd-1fc5-4246-acfb-dbfd9be42c9a",
+        "name": "architecture-options",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.499Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "targetId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.499Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "AJTMkb8+z/bbu97UKr9rqXcIdfA=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2c8dea8b-b440-4e43-ac54-a82ac2391641",
+        "name": "triple-replication",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "s9OX6vF/UobWLgtnp71vi7lSegs=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b09a99f8-69de-4525-8018-7634f600cf27",
+        "name": "migration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  }
+]

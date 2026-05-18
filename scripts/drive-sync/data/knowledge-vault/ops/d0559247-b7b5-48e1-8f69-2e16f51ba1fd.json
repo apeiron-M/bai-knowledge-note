@@ -1,0 +1,233 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:49.378Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "live-collab-per-user-feeds-manifest",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d0559247-b7b5-48e1-8f69-2e16f51ba1fd",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:49.378Z"
+        },
+        "version": 0,
+        "documentId": "d0559247-b7b5-48e1-8f69-2e16f51ba1fd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:49.378Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "CbUYSKKa/LhzbT2LT+5R8psMN8A=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Live collab uses per-user op feeds plus ACT-gated collab manifest",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:49.378Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d0559247-b7b5-48e1-8f69-2e16f51ba1fd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:49.378Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "SjUdsaJenCG+JHrWZ16Vwc6ypHc=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:36.000Z",
+        "description": "Live collab starts drive-level, then doc-level. Each collaborator writes to their own feed; an ACT-gated manifest lists participants; GSOC pings replace polling."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.413Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d0559247-b7b5-48e1-8f69-2e16f51ba1fd",
+        "targetId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.413Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "SZuPgJNcWEw4uRzsvIbGMpKgSSw=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.436Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d0559247-b7b5-48e1-8f69-2e16f51ba1fd",
+        "targetId": "8abdf393-6a17-4036-ad20-492d0aaeb4a5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.436Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "R/jKCVVo9H22Iw+9VXj8jJngtiI=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Shape of live collaboration\n\n- **Drive-level first, doc-level second.** Start with \"collaborate on this whole drive\" -- covers `ADD_FOLDER`, `MOVE_NODE`, and per-doc ops. Narrow to doc-level in a second pass using a tighter ACT grantee chain.\n- **Per-user op feeds + collab manifest.** Each collaborator writes ops to their own feed, because the Swarm constraint is that only the owner can write. A **collaboration manifest**, ACT-gated, lists participants and targets. Each collaborator reads every other collaborator's feeds.\n- **ACT gates read access.** Removing a participant rebuilds the ACT chain via `patchGrantees`.\n- **GSOC `op-committed` pings** replace the polling timer for active collabs. Debounced ~300 ms so a burst of ops triggers one pull, not one per op.\n- **Signatures already preserved** end-to-end (shipped 2026-04-17), so toolbar history shows the real author of every revision.\n\n## Build order\n\n1. Adapter plumbing\n2. Collab manifest + ACT\n3. SwarmChannel peer-feed registration\n4. GSOC pings\n5. Collaborate tab\n6. Invitation card\n7. Toolbar history auto-refresh\n8. Doc-level scope\n\nSee `live-collaboration-design.md` for detail.",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "4DJM2HPCoMkl6v5nFrPae6/FkiU=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:38:00.466Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "+223QLl0BlwGdZu2mkWRPmuqReU=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0b5db2f1-c02a-4855-b602-2e47222f05a3",
+        "name": "live-collab-track",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "j85jmhuAn/lgWSNPnJQXtryjasM=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6f119434-fd3e-4b36-aa74-2981b08ab65b",
+        "name": "act-gsoc-architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "vsHBv3qQ2vNgOVxEPvKaZvxKWLs=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "70c1a7ec-c356-4c30-95e5-1fd53075a28a",
+        "name": "per-user-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  }
+]

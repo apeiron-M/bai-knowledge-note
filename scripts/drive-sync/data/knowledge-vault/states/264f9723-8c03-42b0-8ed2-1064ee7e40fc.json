@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-47df89fb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "47df89fb-e7b4-4892-acd9-649a12003c75",
+      "targetTitle": "inspector-modal-for-debugging-sync"
+    },
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-a49fad15-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-ace588c7-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ace588c7-efdc-483b-baa6-7a280bef8731",
+      "targetTitle": "relational-db-processor-base-class"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse relational database hooks provide type-safe live queries backed by PGlite with automatic re-rendering on data changes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d4f16e9b-a69d-457c-8202-3ed2545c71d1",
+      "name": "relational-db",
+      "topicDocumentId": null
+    },
+    {
+      "id": "98071082-f4e4-48ff-a315-0005a3c782fa",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d9578a1-1452-4324-b3d0-c2299fd882c0",
+      "name": "pglite",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `@powerhousedao/reactor-browser/relational` package provides three main hooks: `createProcessorQuery(ProcessorClass)` creates a typed query hook factory returning `{ isLoading, error, result: LiveQueryResults<T> }` with automatic retry logic and deep-comparison parameter memoization; `useRelationalDb<Schema>()` provides direct access to the enhanced Kysely database instance; `useRelationalQuery<Schema, T, TParams>()` is a lower-level hook for manual query control. Queries can use either Kysely query builder (with `.compile()`) or raw SQL with `{ sql, parameters }` objects. All queries are live and update automatically when underlying data changes, backed by PGlite integration.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "createProcessorQuery() creates typed hooks that return live-updating results with automatic parameter memoization via deep comparison.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-9362a1a3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9362a1a3-1359-4e74-ab8f-5db4a8f2fa97",
+      "targetTitle": "user-and-drive-manifests"
+    },
+    {
+      "id": "lnk-c7b131a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-56d65b3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56d65b3e-73d0-4d6f-b88f-348b9beaf683",
+      "targetTitle": "adr-002-extract-stamp-share-managers"
+    },
+    {
+      "id": "lnk-b16e0f9a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "b16e0f9a-a6f7-4bc8-ba71-df6aac10ed2f",
+      "targetTitle": "swarm-chunks-4kb-content-addressing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Mantaray manifests are compacted Merkle tries that let Swarm resolve paths under a single hash",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "5aabcea2-b2db-4a87-821b-3dbe3379fd04",
+      "name": "mantaray",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cdec8133-156d-48a3-8573-aea6328c980a",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b430747-8566-4866-aab5-d3f659114ac2",
+      "name": "manifests",
+      "topicDocumentId": null
+    },
+    {
+      "id": "23619ec0-8abe-4806-b65a-3ff95a50729e",
+      "name": "file-storage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\n**Mantaray manifests** are Swarm's native file-collection format \u2014 compacted Merkle tries where each node carries a path segment, a target chunk reference, and metadata, exposing a single root hash that resolves arbitrary paths.\n\n## Evidence\n\n- Used for file collections (directories, websites), not our custom document manifests\n- Upload: `POST /bzz` with `Swarm-Collection: true` header + TAR body\n- Download: `GET /bzz/{manifest-hash}/{path}` resolves the path through the trie\n- Supports `indexDocument` (default page) and `errorDocument` (404 page) metadata\n- bee-js: `bee.uploadFile()`, `bee.downloadFile()`, `bee.uploadFiles()`, `bee.uploadCollection()`\n\n## What this unlocks for us\n\n1. **File attachments**: upload images/PDFs via `/bzz`, store the manifest reference inside document ops \u2014 content-addressed and encrypted\n2. **Document export**: package an entire drive as a Swarm collection (HTML + JSON), share via one hash or ENS name\n3. **Static publishing**: deploy the Connect SPA itself to Swarm (HashRouter + ENS = fully decentralized app)\n\n## Why it matters\n\nMantaray is distinct from our app-level `manifest-as-reference` pattern and provides the transport for any file-shaped content. It's also the route to deploying Connect itself on Swarm.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:24:54.753Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each trie node has a path segment, target reference, and metadata. Upload via POST /bzz with Swarm-Collection: true; download at /bzz/{hash}/{path}.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

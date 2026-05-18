@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:33.483Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "always-check-document-model-schema-before-calling-addactions",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:33.483Z"
+        },
+        "version": 0,
+        "documentId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:33.483Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "cQM6bpF7mDAEOBJryz4h77gnHvk=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "always check document model schema before calling addActions",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:33.483Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:33.483Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "XhijdmD7irkBgHZhjbs0k6mDHhw=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:27.000Z",
+        "description": "Using getDocumentModelSchema first prevents failed calls by ensuring required parameters and input shapes are known"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.116Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+        "targetId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.116Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "CbDnW/Dz2DNhT33Q5yxn+IWNSqw=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.138Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+        "targetId": "8ec2f252-ad31-4a1f-b593-23480968c452",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.138Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "kyMkGkTu5KkK/gLqdFrfAEjRb24=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# always check document model schema before calling addActions\n\nBefore dispatching any actions via `addActions`, always call `getDocumentModelSchema` to understand the input requirements:\n\n```\nmcp__reactor-mcp__getDocumentModelSchema({ type: \"powerhouse/document-model\" })\n```\n\nThis reveals required fields (like `id` or `scope`), valid enum values, and input shapes. Without this step, actions frequently fail due to missing or malformed parameters.\n\nThis applies to all document types \u2014 document models, editors, apps, and drives. Since [[document model changes require both MCP update and src file update]], understanding the schema prevents wasted round trips on both sides.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.159Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+        "targetId": "6cc71c47-35eb-40f0-b9f0-791ba606aee6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.159Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "G9vlMf1kvj8JjaWGvXA+BNePeOk=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:01:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.178Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+        "targetId": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.178Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "l3LVbsHy2vrgVXptvrF8dP/9huE=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3822f0b6-dffe-4057-bd34-df9365cdb2e0",
+        "name": "MCP workflows",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Q+wxpMeDMeRK0nMjO7hK9Y0sQMY=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "647a7248-b5d3-463c-812d-a28a563b9bab",
+        "name": "schema validation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "hixxdSP5AWlNqlv4jxqsrMrHWw0=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "852370c8-3243-4196-841f-e2284deb1bd4",
+        "name": "best practices",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  }
+]

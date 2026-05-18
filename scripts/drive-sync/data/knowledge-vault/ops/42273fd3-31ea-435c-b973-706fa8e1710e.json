@@ -1,0 +1,233 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:36.224Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "chat-pss-messaging-history-shipped",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "42273fd3-31ea-435c-b973-706fa8e1710e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:36.224Z"
+        },
+        "version": 0,
+        "documentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:36.224Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "68Z7i6yus07SFYZi/xUqcR+Osr0=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Chat 1-to-1 PSS messaging with feed-indexed history shipped",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:36.224Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:36.224Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "2t6yumnt4oka52Dy23/1SWeP1WE=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:29.000Z",
+        "description": "PSS-based 1-to-1 chat with ACT-encrypted paginated feed history is shipped, including recovery across browser wipes and clear-all-chats."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:56.259Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+        "targetId": "9f165bef-3f1d-4405-97ec-4e091d43efae",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:56.259Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ROl5KNLqyXu/QjSwjAkSNlppOw0=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "observation",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:56.280Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+        "targetId": "83598633-2b97-4852-9d62-e50ea45508a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:56.280Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ESsczbVpxN6YLb8vpaGTMwfTIC4=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Context\n\nAs of 2026-04-18, the core chat stack on Swarm is shipped and stable.\n\n## Shipped capabilities\n\n- **PSS 1-to-1 messaging** via `pss-messenger.ts` and `ChatManager.sendMessage`.\n- **Broadcast ping for new conversations** - `pss.subscribeAll` + `sendBroadcastPing`, with a synchronous `seenMessageIds` guard to deduplicate.\n- **Feed-indexed chat history** - paginated, ACT-encrypted, chapter-rotated. Both parties are grantees; a 64-byte wrapper chunk keeps ACT decode self-contained (`chat-history.ts`).\n- **Recovery across browser wipes** - `chatPeers[]` stored in the user manifest, with chapter tracking in localStorage using `Date.now()` to stay wipe-safe.\n- **Clear-all-chats** - two-step confirm in `conversation-list.tsx` calls `ph.swarm.clearChats()`, which bumps the chapter, wipes caches, and clears `chatPeers`.\n- **Dedup across Bee re-serves and broadcast+direct overlap** - `seenMessageIds` set, batch-trimmed.\n\n## Implications\n\nMessaging is no longer the bottleneck. Further chat investment should concentrate on live collaboration and polish items, not on the base conversation layer.",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "zIWPPha6SPmM3Gr3/5Zt6YsLpdc=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:38:00.466Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ILm2Scc0zVP5LPcu9Wq903/fzgM=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ae86cf2c-b271-45d8-a34e-801402cbe643",
+        "name": "chat-roadmap",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ljY4GQNeIXFJu9uih3nA6DUio6o=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d1fec93a-835f-44b7-8c47-7355257119bb",
+        "name": "shipped-features",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "2ErRoEDvwu6QnX+5RtDd3EvOdvc=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "65bd1a0a-bb48-43cf-9adc-741bf555c126",
+        "name": "pss-messaging",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  }
+]

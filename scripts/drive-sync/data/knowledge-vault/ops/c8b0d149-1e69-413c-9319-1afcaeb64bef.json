@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.687Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "relational-db-processor-for-sql-projections",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c8b0d149-1e69-413c-9319-1afcaeb64bef",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:03.687Z"
+        },
+        "version": 0,
+        "documentId": "c8b0d149-1e69-413c-9319-1afcaeb64bef",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.687Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "w7nuoOPjliFtoHRs8IG9nWfvPWs=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "RelationalDbProcessor extends IProcessor to project document operations into SQL tables with type-safe migrations and namespaced databases per drive",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.687Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c8b0d149-1e69-413c-9319-1afcaeb64bef",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.687Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fWkxvYoZ5mkMgVGLrZssh2GYpLE=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:43.000Z",
+        "description": "Generated with --processor-type relationalDb; uses migrations for schema, namespaces to isolate per-drive data."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.218Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c8b0d149-1e69-413c-9319-1afcaeb64bef",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.218Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "IlAAw9NfcD59vnfMDN4mfWN3jz8=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.242Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c8b0d149-1e69-413c-9319-1afcaeb64bef",
+        "targetId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.242Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "atMuUNUm6/hPBLS8PAozMhD+Xu4=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Generate with `ph generate --processor <name> --processor-type relationalDb --document-types <type>`. Creates: processor class (extends `RelationalDbProcessor<DB>`), migrations.ts (up/down functions with Kysely-style schema builder), factory.ts (creates namespaced DB per drive), schema.ts (generated TypeScript types from migration via `ph generate --migration-file`). The processor lifecycle: `initAndUpgrade()` runs migrations on startup, `onOperations()` handles each batch, `onDisconnect()` cleans up. Namespaces (`getNamespace(driveId)`) prevent data collisions between drives. Data is exposed through subgraphs via `TodoIndexerProcessor.query(driveId, relationalDb)` for type-safe SQL queries.",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.263Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c8b0d149-1e69-413c-9319-1afcaeb64bef",
+        "targetId": "d905fc18-f7d9-4463-a722-f76a6c8823f9",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.263Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "x0E9atZOIA1BVvZrCX7xp9aVJeo=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "8Q3T1NTXYMip/w5WLe9VVShAp+w=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c34fba22-589c-4866-9606-d477bc1c1416",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "q00jeLDdXrcTGhxqbSUXmU1oSlw=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a469c8b8-5c1e-4daa-8c20-b5de8f114ad9",
+        "name": "relational-database",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "U+I+W6xcTN4ga12vP9aT5PmBp0g=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1eaea6d6-0d2d-4c71-abb5-122e887aa2b1",
+        "name": "migrations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "JtkBsoJvrkE6ErmbgdDZ3vkJ59w=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0442b194-8251-447a-bcca-7388dfd90ccd",
+        "name": "CQRS",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  }
+]

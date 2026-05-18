@@ -1,0 +1,303 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:50.263Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "mcp-workflows",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "552d28f2-020c-402f-b6ad-34e986c63373",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:50.263Z"
+        },
+        "version": 0,
+        "documentId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:50.263Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "eZeMlJK58KMxZkwtFWrIwMMDyno=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "mcp workflows",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:50.263Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:50.263Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "DJGlkaPvyXz2va6p13muyvNMNzY=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:37.000Z",
+        "description": "reactor-mcp tool sequencing, batch operations, and the two-step document modification rule"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.924Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "targetId": "8ec2f252-ad31-4a1f-b593-23480968c452",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.924Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "1M0FBjTDa+xxMA4RU+Hyi54fGr0=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.949Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "targetId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.949Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "7uheo0Wdjwe7OJdlDZR8TO7nKho=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# mcp workflows\n\nWorkflows and sequencing rules for interacting with the reactor-mcp toolset.\n\n## Schema-First Rule\n- [[always check document model schema before calling addActions]] \u2014 prevents failed calls from missing required parameters\n\n## Batch Operations\n- [[batch multiple actions in a single addActions call to minimize round trips]] \u2014 combine related operations\n\n## Two-Step Modification\n- [[document model changes require both MCP update and src file update]] \u2014 never skip either step\n\n## Document Creation\n- [[document IDs are auto-generated by createDocument never set manually]] \u2014 let the system generate IDs\n- [[document models must be added to the vetra drive by default]] \u2014 source documents go to vetra drive\n- [[present document model proposals to user before implementing]] \u2014 planning phase is mandatory\n\n## App Creation\n- [[SET_APP_STATUS with CONFIRMED triggers code generation for apps]] \u2014 CONFIRMED status kicks off generation\n\n## Drive Operations\n- [[delete nodes with DELETE_NODE not DELETE_FILE]] \u2014 correct operation name for removing nodes\n- [[vetra drive holds source documents while preview drive holds instances]] \u2014 two drives, different purposes\n\n## Reducer Code via MCP\n- [[reducer code goes into SET_OPERATION_REDUCER without function headers]] \u2014 body only, no wrapper\n- [[external imports go in src reducer files not in SET_OPERATION_REDUCER]] \u2014 imports in src/ only\n\n## Prerequisites\n- [[reactor-mcp must be running before document operations]] \u2014 user must start with `ph vetra`\n\n## Reference\n- [[document models have 37 available operations across 7 categories]] \u2014 full operation taxonomy\n\n---\n\nTopics:\n- [[index]]",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.974Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.974Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "8Obky5oIXCIsJ0yyml32deegBLk=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:04:58.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.996Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "targetId": "de1d3746-cf2f-4166-b955-fa74d1825c80",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.996Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "47CK1/R6PXVdSCMuScA0fgR8euQ=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "91635f19-38ee-44b5-b3e9-85af4382a0cf",
+        "name": "MCP workflows",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.015Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "targetId": "c72c5803-1287-47af-af48-ec124e337b8b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.015Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "/kIKRyXrXI2ntXX2EpSj0O4ToZg=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "08ee8a4b-f954-41b1-a894-abb85add6c9c",
+        "name": "reactor-mcp",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.035Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "targetId": "078c83af-db2d-44c3-bad4-0b88d12af054",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.035Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "P59/J85CNxsoPLeEw7sOEeCkRgU=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a750f4ec-6f8a-4d48-99d2-7f1f211ff307",
+        "name": "document operations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "kltAn/s9Dbnky7xUIjNLOtidSfo=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f2acd384-9d2e-41ab-9add-cab877167a67",
+        "name": "MOC",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  }
+]

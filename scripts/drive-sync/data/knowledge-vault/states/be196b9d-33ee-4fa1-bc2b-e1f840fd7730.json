@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-cf6ed144-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf6ed144-884d-4784-8d50-9f25aa8d4aac",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-eb1b7a3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb1b7a3e-b99b-4d8e-a69c-ed9fe360a538",
+      "targetTitle": "reducer-code-goes-into-setoperationreducer-without-function-headers"
+    },
+    {
+      "id": "lnk-9f165bef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f165bef-3f1d-4405-97ec-4e091d43efae",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-552d28f2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "552d28f2-020c-402f-b6ad-34e986c63373",
+      "targetTitle": "mcp-workflows"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "external imports go in src reducer files not in SET_OPERATION_REDUCER",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4766b8bf-87b4-42ce-9d58-2c4eb57f2755",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4a6ef3fe-f370-4486-b4e4-b6d4def1cdfd",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2415204a-52a1-4553-a230-a46fa733f438",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4c69fb87-996f-47cc-9f80-1bd9619ab5be",
+      "name": "imports",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# external imports go in src reducer files not in SET_OPERATION_REDUCER\n\nThe `SET_OPERATION_REDUCER` MCP action receives only the reducer body \u2014 no imports, no function wrapper. If your reducer needs external utilities:\n\n1. Write the reducer body (without imports) in `SET_OPERATION_REDUCER`\n2. Add the import statements at the top of the actual file in `src/reducers/<module>.ts`\n\nSince [[reducer code goes into SET_OPERATION_REDUCER without function headers]], the MCP action only accepts the body. The src/ file is where the full module lives, including imports.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[gotchas]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:58:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:58:53.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Import statements belong at the top of the actual reducer file in src/; the MCP reducer code should contain no imports",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:33.955Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "authorization-uses-layered-model",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:33.955Z"
+        },
+        "version": 0,
+        "documentId": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:33.955Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "+Q+2GPIkEFaq3oqLDUzDEQq+7no=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reactor authorization uses a layered model: supreme admin bypass, document protection toggle, and per-document READ/WRITE/ADMIN grants with inheritance",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:33.955Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:33.955Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "4Qz1x+5ke/eLhtaegseIlRUcI+0=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:27.000Z",
+        "description": "ADMINS env var bypasses all checks; documents can be protected or unprotected; grants inherit down the tree."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.508Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+        "targetId": "5734cd11-f338-4627-9919-83ab4f6edbe7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.508Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "DOQRGC/XGe2k3sC32qS94ZHNynU=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.533Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+        "targetId": "9b5889f7-82e9-4775-a9da-8eba5c9d0f96",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.533Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "/OdGgKKvIb+1SvGs37mFPp8Q9gc=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Authorization flow: (1) If AUTH_ENABLED=false, all access granted; (2) Validate bearer token, extract ETH address; (3) If address in ADMINS, full access; (4) If document unprotected, anyone reads, authenticated users write; (5) If protected, check explicit grants. Grants support direct user grants, group grants, and inherited grants (drive -> folder -> document). Permission levels: READ (view), WRITE (edit, includes READ), ADMIN (manage permissions, includes WRITE). Configured via env vars (AUTH_ENABLED, ADMINS, DEFAULT_PROTECTION, DOCUMENT_PERMISSIONS_ENABLED) or `powerhouse.config.json`. Env vars override config file values.",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.555Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+        "targetId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.555Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "oX6f8AYq2TzPfaIB03+bX3stCqY=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.574Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+        "targetId": "404f7801-e516-459d-bf1a-8cd63c417d63",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.574Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ZiOM71SFCaqDhGHVKtxA9kftooI=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "00cf8d2a-208d-43f6-b67b-7f6326dbce12",
+        "name": "authorization",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "fm7KgHhYfzSlW5VyEkbLU+4ViSY=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0054acfe-9179-45d0-b532-f6e03580f988",
+        "name": "permissions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "U8Mpw3+BBU00o826DHN/9O6pr1w=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dadc3663-5bd2-466d-af78-0165d00cdb98",
+        "name": "security",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "CUOjKIJsuqGwaPywixYs6bt2pg4=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4198819a-832a-48af-ac42-e9e83ecb9225",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  }
+]

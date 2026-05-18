@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:55.164Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "operations-history-is-event-sourced",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a0b5c51a-dcd9-4493-9e51-ee452d3208d1",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:55.164Z"
+        },
+        "version": 0,
+        "documentId": "a0b5c51a-dcd9-4493-9e51-ee452d3208d1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:55.164Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "DHTCCtNwH3hrwgDb4l3Ho5RjDPE=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Every document modification is an immutable, append-only operation that can be replayed to reconstruct state at any point in time",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:55.164Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a0b5c51a-dcd9-4493-9e51-ee452d3208d1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:55.164Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "7bMydKrEQR6aj5fc7OsrWenh6hw=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:39.000Z",
+        "description": "Documents use event sourcing: state = replay of all operations in sequence. Operations are never overwritten."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:11.270Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a0b5c51a-dcd9-4493-9e51-ee452d3208d1",
+        "targetId": "e803f11b-b047-408f-9a8a-082cd51e349b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:11.270Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "KXCx+pcIfpDZaKcgOcc1GbGvJnY=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:11.292Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a0b5c51a-dcd9-4493-9e51-ee452d3208d1",
+        "targetId": "552d28f2-020c-402f-b6ad-34e986c63373",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:11.292Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "uUmTIAl0Sq1l4OLHTnxanQFg/Cc=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Each edit to a document submits an operation (a CQRS 'command') like `ADD_LINE_ITEM` or `UPDATE_RECIPIENT`. Operations are appended to an immutable history and never overwritten. The current document state is the result of applying all past operations in sequence. Each revision has a unique event ID, state hash, and optional commit message. Operations can be signed, stored on-chain, or synchronized across systems. This enables auditability (inspect every change), transparency (see what others did), versioning (revert to prior state), and interoperability (operations are just data). Branch and merge capabilities are under development.",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:11.311Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a0b5c51a-dcd9-4493-9e51-ee452d3208d1",
+        "targetId": "c2892079-a6f8-4e18-955c-898bf6505c1d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:11.311Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "LF2LKtgxwMYIuUP9I3UhVKZ6WRM=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "7yBxr9MxtdxWibHY7nW1/w5wZL4=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5d778c78-a788-4319-984d-cbdade21106c",
+        "name": "event-sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "2zXYwsSUWl4IyXbgabXy66zWy/s=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b4e1db7e-98f6-4864-803c-5ff219474749",
+        "name": "operations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "61I0SrMDgB0W4+MK1AQnJDjuyFg=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0d948b83-e1e7-47ae-bc19-1d5a9b8ee5e8",
+        "name": "CQRS",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "6aX0TzTVRam6ibzwqmFCjAamqQ8=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8af4fd9a-4d7e-4828-90df-2ba1586c7449",
+        "name": "architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  }
+]

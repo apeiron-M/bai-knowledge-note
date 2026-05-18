@@ -1,0 +1,97 @@
+{
+  "links": [
+    {
+      "id": "lnk-d2161903-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d2161903-d46c-41a4-929f-7f7ef23ed756",
+      "targetTitle": "vetra-studio-is-builder-environment"
+    },
+    {
+      "id": "lnk-552d28f2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "552d28f2-020c-402f-b6ad-34e986c63373",
+      "targetTitle": "mcp-workflows"
+    },
+    {
+      "id": "lnk-8ec2f252-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8ec2f252-ad31-4a1f-b593-23480968c452",
+      "targetTitle": "batch-multiple-actions-in-a-single-addactions-call-to-minimize-round-trips"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-268e41d6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "268e41d6-92b6-4248-932b-77a09244471a",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reactor MCP bridges AI agents with Powerhouse document operations via Model Context Protocol",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1f262d99-5d60-47f3-9061-366ebe056534",
+      "name": "mcp",
+      "topicDocumentId": null
+    },
+    {
+      "id": "38a3de8d-e4fe-46e8-98eb-d7a88d2922a1",
+      "name": "ai-integration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3abe59d4-6f00-46c4-acee-23f1d0d0c708",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "**Reactor-mcp** is a Model Context Protocol (MCP) server that bridges AI agents (like Claude) with Powerhouse document operations. It enables:\n\n- Automatic document model creation from natural language descriptions\n- Smart editor generation based on underlying document models\n- Automatic code generation when documents reach valid state\n- Working with both existing and newly created document models\n\nMCP operations include:\n- **Document**: `createDocument`, `getDocument`, `deleteDocument`, `addActions`\n- **Drive**: `getDrives`, `addDrive`, `getDrive`, `addRemoteDrive`\n- **Document Model**: `getDocumentModels`, `getDocumentModelSchema`\n\nWorkflow: Run `ph vetra --interactive --watch` in one terminal, then start Claude in another. Claude connects to the MCP server and can create document models, implement reducers, build editors, and fix errors through natural language interaction.\n\nBest practices with MCP: work in layers (model first, test, then editor), always review proposals before confirming, provide detailed requirements, and reference operation names when describing editor functionality.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The MCP server at localhost:4001/mcp lets Claude create documents, manage drives, and generate code from natural language.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd87d072-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-7036dd62-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7036dd62-002b-47e1-b8db-ea1083e7b415",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-8918651f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-42273fd3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-a54a9f24-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a54a9f24-04ea-405c-89bd-b6c73d65fbe6",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Live collaboration ships in three milestones: polling MVP, then GSOC real-time, then document-level scope",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-36bc7228-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-36bc7228-2",
+      "name": "build-order",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-36bc7228-3",
+      "name": "roadmap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Build order: three milestones\n\n### Milestone 1 \u2014 MVP (polling, no GSOC)\n\nGoal: two users, one drive, invitation \u2192 accept \u2192 B's edit appears in A's toolbar History within ~5 s (existing poll interval). Proves the full loop on real Bee nodes.\n\nIncludes: types + manifest format, `CollabManager` (create/accept/list/leave), SwarmChannel peer-feed registration with per-source cursors, collab-scoped push path (second ACT upload), Chat UI Collaborate tab, `CollabInviteCard`, toolbar History auto-refresh.\n\n### Milestone 2 \u2014 GSOC real-time upgrade\n\n1. `GsocNotifier.onOpCommitted` \u2014 subscribe to each participant's signer.\n2. Send pings on push \u2014 `op-committed` GSOC message to each other participant after a collab-feed update.\n3. Debounced pull on ping \u2014 SwarmChannel pulls that writer's feed, coalescing bursts with ~300 ms debounce.\n4. Background signer mining \u2014 first collab create/accept kicks off mining without blocking the UI; polling is the fallback until mining completes.\n5. Latency smoke test: peer sees new revision in History within ~1\u20132 s of sender commit.\n\n### Milestone 3 \u2014 Document-level scope\n\n1. Narrow the ACT chain to the doc's feeds only (exclude drive manifest + sibling docs).\n2. Participant join gets just the one doc, not the containing drive.\n3. UI differentiates \"Shared document: X\" from drive-level collabs.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "workflow",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Three milestones: M1 polling MVP end-to-end, M2 adds GSOC sub-second real-time, M3 narrows scope to document-level collaboration.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

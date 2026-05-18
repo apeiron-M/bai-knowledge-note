@@ -1,0 +1,289 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:52.326Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "offline-edits-replay-on-reconnect-via-cursor",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:52.326Z"
+        },
+        "version": 0,
+        "documentId": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:52.326Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "d2j7Y3421ymygeexOVTVq0Y5jm8=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Offline edits accumulate locally and replay to Swarm on reconnect via the outbox cursor.",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:52.326Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:52.326Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ixKNw2U/JXYR9ujvZGI0lZC8etk=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:38.000Z",
+        "description": "When Bee is unreachable the channel goes to error; ops pile up in PGlite; on reconnect the outbox cursor catches up, replaying everything with no data loss."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.414Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e",
+        "targetId": "93272572-c7fe-419f-84de-ed7d87e1ff30",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.414Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "d+7sbdNWYivVzIU28+UV9Mh7ipo=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "workflow",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.438Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e",
+        "targetId": "cd99ab61-e00a-4312-9b47-aa96054f8582",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.438Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "5rHCUJkv4MV+3A1RcwRBftQagm4=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nOffline-edit durability is provided by PGlite + the outbox cursor: the local reactor keeps working, and on reconnect the cursor replays accumulated ops to Swarm.\n\n## Flow\n1. User edits documents while Bee node is unreachable.\n2. Operations accumulate in PGlite (local reactor works fine).\n3. SwarmChannel connection state transitions to `error` \u2192 push is blocked.\n4. User reconnects Bee node \u2192 state becomes `connected`.\n5. Outbox cursor catches up: all accumulated ops are pushed to Swarm.\n6. No data loss \u2014 cursors in PGlite track exactly what was synced.\n\n## Why this is safe\n- The cursor is only advanced after a successful feed write, so a crash mid-push is idempotent.\n- The local reactor is the source of truth; Swarm is purely a mirror.\n- User never loses work due to Bee downtime.\n\n## Source\nSwarm Channel Architecture, \"Flow 4: Offline Edits \u2192 Reconnect\".",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.460Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e",
+        "targetId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.460Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ra0EQghAEfBMvgigO1BOdzI1kLs=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.480Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e",
+        "targetId": "9f165bef-3f1d-4405-97ec-4e091d43efae",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.480Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "8RGgABF/sF22DDCrg7oH5DELoNs=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-44e2d872-1",
+        "name": "offline-first",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.500Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e",
+        "targetId": "34195ec3-e008-423a-8478-0ea7c8f57183",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.500Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "NSNlGlKji+TXQBNf4sRdVC/Byso=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-44e2d872-2",
+        "name": "outbox-cursor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "MjXh56u3jVJQNyQtsvoNyh9g3fc=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-44e2d872-3",
+        "name": "durability",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "n7SVBE1B7XoZmobdyWeXQ+evXxY=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-44e2d872-4",
+        "name": "user-flow",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  }
+]

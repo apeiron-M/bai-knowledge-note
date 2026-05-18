@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-cf6ed144-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf6ed144-884d-4784-8d50-9f25aa8d4aac",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-01631563-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "01631563-4f79-4ac1-83b5-f9197901ae63",
+      "targetTitle": "operation-error-index-must-match-the-number-of-prior-dispatches"
+    },
+    {
+      "id": "lnk-2551d197-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-d8e86a8a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d8e86a8a-9a95-4ef4-8f79-5e205e80d765",
+      "targetTitle": "event-sourcing-guarantees-audit-trails-but-complicates-querying"
+    },
+    {
+      "id": "lnk-4ef47e6a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4ef47e6a-20b9-4687-94c2-5aeffcf8621d",
+      "targetTitle": "editor-hooks-connect-react-to-documents"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The editor dispatch function accepts an optional onErrors callback as its second parameter for handling reducer errors",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "27d1d4e9-766e-4b86-8100-ff902c38bdc1",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbc99cb8-734e-4f38-9f6e-3e896bfd5315",
+      "name": "error-handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5684b23d-45da-45e9-b5e1-b521df3f19d6",
+      "name": "dispatch",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When dispatching actions in an editor, the second argument to `dispatch` is an `onErrors` callback invoked with any errors thrown by reducers processing the actions. This pattern supports displaying error messages to users, logging errors for debugging, and triggering recovery actions. Example: `dispatch(addTodoItem({ text }), (errors) => { alert(errors[0]?.message); });`",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "dispatch(action, (errors) => {...}) lets editors handle errors from reducer execution inline.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

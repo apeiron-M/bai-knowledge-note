@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-004e5e41-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "004e5e41-0706-4c65-8d88-dfe00b40557f",
+      "targetTitle": "The DocumentToolbar className prop merges with defaults via twMerge"
+    },
+    {
+      "id": "lnk-1fd3a24c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1fd3a24c-8a0e-4a79-957e-544a20f1873e",
+      "targetTitle": "Toolbar buttons must be styled via Tailwind arbitrary child selectors since they have no dedicated style props"
+    },
+    {
+      "id": "lnk-4987e6a0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4987e6a0-afc9-4286-8fcb-56263a6c6de6",
+      "targetTitle": "DocumentToolbar has three independent layers of styling control"
+    },
+    {
+      "id": "lnk-7322b3c9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7322b3c9-9a9b-43c4-9993-7de4797c2393",
+      "targetTitle": "editors-use-component-based-architecture"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "DocumentToolbar exposes className, enabledControls, and callback props but no direct child styling",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ebc8363b-88b3-4f78-8a63-452b6e3965c6",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c8e16b5-5f68-4b4e-b9d2-a0d3336b1cbd",
+      "name": "component-api",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a743106-c6c4-4eaf-9e67-d80c252da432",
+      "name": "design-system",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `DocumentToolbar` component accepts these props:\n\n```typescript\ntype DocumentToolbarProps = {\n  className?: string;                          // CSS classes (merged via twMerge)\n  enabledControls?: DocumentToolbarControl[];   // Which buttons to show\n  // Default: [\"undo\", \"redo\", \"export\", \"history\"]\n  // Available: \"undo\" | \"redo\" | \"export\" | \"history\" | \"timeline\"\n  disableRevisionHistory?: boolean;            // Disable history button\n  onExport?: (document: PHDocument) => void;   // Custom export handler\n  onClose?: () => void;                        // Custom close handler\n  onSwitchboardLinkClick?: () => void;         // Custom switchboard handler\n  initialTimelineVisible?: boolean;            // Show timeline on mount\n  defaultTimelineVisible?: boolean;            // Show timeline toggle button\n  document?: PHDocument;                       // Override selected document\n};\n```\n\nNotably absent: any props for styling individual buttons, icons, or the document title. The `className` prop is the only styling entry point, and it applies to the container. Styling children requires the arbitrary child selector pattern (`[&_button]`, `[&_svg]`, etc.) passed through this single prop.\n\nThe `enabledControls` array lets you hide/show buttons but not restyle them individually.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T14:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-03-30T14:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The DocumentToolbar TypeScript API provides control over which buttons appear and their behavior, but styling internals requires the className child selector workaround rather than dedicated props.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

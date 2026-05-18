@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-d508a76d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d508a76d-410b-4192-bb0d-49adec440906",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-cfb81bd5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cfb81bd5-6d7c-4501-8276-f067558734a1",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-a0b5c51a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a0b5c51a-dcd9-4493-9e51-ee452d3208d1",
+      "targetTitle": "operations-history-is-event-sourced"
+    },
+    {
+      "id": "lnk-7cd270db-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7cd270db-0266-4248-be5d-7157ac502465",
+      "targetTitle": "document-models-use-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The revision history timeline lets users navigate document history visually, putting the editor into read-only mode at a selected revision",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "32acfa84-c059-4f5c-a9ed-3111d5e9df00",
+      "name": "timeline",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a6561021-9d14-4639-89e5-c52706f75721",
+      "name": "revision-history",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd2e93a0-a04e-4a4a-b0df-cc19c8876796",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11634a14-f41e-4ebc-8b77-e68d0b5d5010",
+      "name": "read-mode",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "To enable timeline in an editor, the editor module exports the configuration and the Drive-app or default app fetches timeline items via `useTimelineItems(documentId)` from `@powerhousedao/common`. When a user clicks a timeline candle, `getRevisionFromDate(startDate, endDate, operations.global)` resolves the revision number. The editor receives `context.readMode = true` and `context.selectedTimelineRevision`. The editor then calls `getDocumentRevision({ revisions: { global: selectedTimelineRevision } })` to fetch the document at that point in time and disables edit controls. The timeline only activates once a document has some operation history.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Timeline uses useTimelineItems hook and getRevisionFromDate; selecting a candle activates read-only mode.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

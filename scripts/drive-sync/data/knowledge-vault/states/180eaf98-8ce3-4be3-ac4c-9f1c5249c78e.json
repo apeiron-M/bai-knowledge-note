@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-93272572-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "93272572-c7fe-419f-84de-ed7d87e1ff30",
+      "targetTitle": "bee-health-maps-to-channel-connection-state"
+    },
+    {
+      "id": "lnk-cd99ab61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd99ab61-e00a-4312-9b47-aa96054f8582",
+      "targetTitle": "masterchef-accumulator-pattern-enables-per-token-revenue-tracking"
+    },
+    {
+      "id": "lnk-61e7ee9c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-9f165bef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f165bef-3f1d-4405-97ec-4e091d43efae",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-34195ec3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "34195ec3-e008-423a-8478-0ea7c8f57183",
+      "targetTitle": "gsoc-triggered-pull-debounced-with-polling-fallback"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Offline edits accumulate locally and replay to Swarm on reconnect via the outbox cursor.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-44e2d872-1",
+      "name": "offline-first",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-44e2d872-2",
+      "name": "outbox-cursor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-44e2d872-3",
+      "name": "durability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-44e2d872-4",
+      "name": "user-flow",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nOffline-edit durability is provided by PGlite + the outbox cursor: the local reactor keeps working, and on reconnect the cursor replays accumulated ops to Swarm.\n\n## Flow\n1. User edits documents while Bee node is unreachable.\n2. Operations accumulate in PGlite (local reactor works fine).\n3. SwarmChannel connection state transitions to `error` \u2192 push is blocked.\n4. User reconnects Bee node \u2192 state becomes `connected`.\n5. Outbox cursor catches up: all accumulated ops are pushed to Swarm.\n6. No data loss \u2014 cursors in PGlite track exactly what was synced.\n\n## Why this is safe\n- The cursor is only advanced after a successful feed write, so a crash mid-push is idempotent.\n- The local reactor is the source of truth; Swarm is purely a mirror.\n- User never loses work due to Bee downtime.\n\n## Source\nSwarm Channel Architecture, \"Flow 4: Offline Edits \u2192 Reconnect\".",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "workflow",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:19:49.348Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When Bee is unreachable the channel goes to error; ops pile up in PGlite; on reconnect the outbox cursor catches up, replaying everything with no data loss.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

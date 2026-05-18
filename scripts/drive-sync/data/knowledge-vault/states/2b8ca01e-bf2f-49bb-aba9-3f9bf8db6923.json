@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-e59acafe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e59acafe-c649-4fb2-8bfe-e610d44948c1",
+      "targetTitle": "swarm-feed-write-per-topic-lock"
+    },
+    {
+      "id": "lnk-268e41d6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "268e41d6-92b6-4248-932b-77a09244471a",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-52023d2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+      "targetTitle": "swarm-gsoc-many-to-one"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Feed updates have no native WebSocket subscription and require polling or a notification side channel",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7dfdf9d5-d74b-413b-b9fd-80bca0fc2825",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd6f733c-2549-4eb5-b880-fae16ae8c15b",
+      "name": "websocket",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ed933a26-e7dd-4fcd-a0e0-b80d9a4d65dc",
+      "name": "real-time",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8e51c472-9bb5-4bb9-8784-da974b013129",
+      "name": "adapter",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nThe Bee HTTP API exposes WebSocket subscriptions only for PSS, GSOC, and chunk streaming \u2014 **feed updates have no native WS subscription**, so real-time feed watching must be built out of other primitives.\n\n## Evidence\n\nWebSocket endpoints:\n\n| Endpoint                        | Purpose                             |\n|---------------------------------|-------------------------------------|\n| `WS /pss/subscribe/{topic}`     | Stream decrypted PSS messages       |\n| `WS /gsoc/subscribe/{address}`  | Stream GSOC updates                 |\n| `WS /chunks/stream`             | Stream chunk uploads (parallel)     |\n\nOptions for watching feed updates:\n1. **Poll** `GET /feeds/{owner}/{topic}` at intervals (what the adapter does today)\n2. **GSOC notification**: publisher sends a GSOC on update; subscriber polls only on notification\n3. **PSS notification**: same pattern via PSS instead of GSOC\n4. **Advance retrieve requests** (protocol level, not API-exposed): request the next feed index before it exists; the node holds the request until the update arrives \u2014 gives sub-second latency without polling\n\n## Why it matters\n\nExplains why sub-second collaboration latency needs a sidecar notification channel (GSOC or PSS) rather than just a WebSocket on the feed. Also flags \"advance retrieve requests\" as a future path if exposed in bee-js.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:24:54.753Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Bee WS only streams PSS, GSOC, and chunk uploads. Real-time feed watching requires polling, or combining with PSS/GSOC notifications, or advance retrieve requests.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

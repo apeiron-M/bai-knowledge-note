@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:33.011Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "actions-become-operations-after-dispatch-adding-metadata",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1ab70479-2f70-4c38-b2de-c87b4ce81936",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:33.011Z"
+        },
+        "version": 0,
+        "documentId": "1ab70479-2f70-4c38-b2de-c87b4ce81936",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:33.011Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "sy+hIwu/dlkeyQV+FrZx2B9ngt8=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "actions become operations after dispatch adding metadata",
+        "updatedAt": "2026-05-13T13:00:26.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:33.011Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "1ab70479-2f70-4c38-b2de-c87b4ce81936",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:33.011Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "tec0oKCgf8fSveHhxTyd9Wh6m6c=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:26.000Z",
+        "description": "An action is a proposed change (JSON with type and input); an operation adds index, timestamp, hash, and optional error"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.692Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1ab70479-2f70-4c38-b2de-c87b4ce81936",
+        "targetId": "a0b5c51a-dcd9-4493-9e51-ee452d3208d1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.692Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "rxoEZoIdYIXMllD14d0tzIY3rAA=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-05-13T13:00:26.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.715Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1ab70479-2f70-4c38-b2de-c87b4ce81936",
+        "targetId": "67d742e7-24e1-4702-bd19-7282668422ab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.715Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "YVFFahh4bm4FccQ4lvZu+Cq9XV0=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# actions become operations after dispatch adding metadata\n\nThe distinction between actions and operations is fundamental to the Powerhouse document model:\n\n- **Action** \u2014 A proposed change. A JSON object with `type` (action name) and `input` (payload). This is what you dispatch.\n- **Operation** \u2014 A completed change. Contains the original action plus system metadata: `index`, `timestamp`, `hash`, and optional `error`.\n\nActions become operations after dispatch through `addActions`. The system appends metadata that enables event sourcing \u2014 the index provides ordering, the hash enables integrity verification, and the timestamp records when it happened.\n\nSince [[operation errors are recorded on operations not thrown to callers]], even failed actions produce operations (with the error captured in the `error` field).\n\n---\n\nTopics:\n- [[architecture decisions]]\n- [[reducer patterns]]",
+        "updatedAt": "2026-05-13T13:00:26.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.734Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1ab70479-2f70-4c38-b2de-c87b4ce81936",
+        "targetId": "82039075-8b9f-47a2-ab69-d03fee7444c3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.734Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "HgUCfrOXqYb+hXbIrAgTg+QhwDg=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:08:09.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.753Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1ab70479-2f70-4c38-b2de-c87b4ce81936",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.753Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MkQkVp3MO03AuE++wubztsNg4bY=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "234bb357-bc0d-4c88-ae38-ad6eeb68f389",
+        "name": "architecture decisions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "I8PlvV91ZIQt3Tc88QQ46SiYujc=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1a309d50-26d3-48e4-9d38-796c3ea8ff05",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "NMXwGOGHbxxVhH/vrzZ+Ey4G3UM=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "33a5bd4a-51f1-49ac-8921-60fc3cdd84e3",
+        "name": "event sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "NscqC08fxVCXGzfTE/C68kxzaic=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dd3664a7-74f7-4211-863f-c44c159adde9",
+        "name": "document model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  }
+]

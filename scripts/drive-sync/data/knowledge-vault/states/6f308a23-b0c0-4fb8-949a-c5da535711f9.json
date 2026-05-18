@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-08438292-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "08438292-9838-4051-b4ff-7043e0af90a8",
+      "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags"
+    },
+    {
+      "id": "lnk-92485487-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "92485487-e1db-4bea-a4e8-c8794386598d",
+      "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors"
+    },
+    {
+      "id": "lnk-73fedb4c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+      "targetTitle": "model-editor-wiring"
+    },
+    {
+      "id": "lnk-3d61b8cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3d61b8cc-2823-4233-b0e8-cb95e44b0ab0",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-def5bfd1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "def5bfd1-15ed-48bf-8702-1eb93e02ea52",
+      "targetTitle": "document-model-driven-architecture-rad"
+    },
+    {
+      "id": "lnk-7322b3c9-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7322b3c9-9a9b-43c4-9993-7de4797c2393",
+      "targetTitle": "editors-use-component-based-architecture"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "editor components should be modular with separate files",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e7349d43-31ef-410e-8ea7-c9dcedbd7d69",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "85590da7-7c1d-4b6e-99b8-2499e304f2eb",
+      "name": "component architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "73732e8c-d94b-4749-97c9-782fbc72188c",
+      "name": "TypeScript",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cb7df5d9-f7c8-4854-8e7b-64a22912c64d",
+      "name": "modularity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# editor components should be modular with separate files\n\nWhen building document editors:\n\n- Create modular components for UI elements in separate files for maintainability\n- Separate business logic (dispatch, data transformation) from presentation (rendering, layout)\n- Use TypeScript strictly \u2014 avoid `any` and type casting\n- Consider components from `@powerhousedao/design-system` and `@powerhousedao/document-engineering`\n\nThis modularity makes editors easier to test, maintain, and update when the underlying document model evolves.\n\n---\n\nTopics:\n- [[editor patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:02:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:02:24.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Create modular UI components in separate files; separate business logic from presentation; use TypeScript without any or type casting",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

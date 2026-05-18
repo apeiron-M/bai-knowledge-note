@@ -1,0 +1,233 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:32.325Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "account-transactions-model-tracks-financial-transaction-records",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "05d82097-3895-417e-a3d1-9ada75178992",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:32.325Z"
+        },
+        "version": 0,
+        "documentId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:32.325Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "aC3I3NwpNDJ2O0/IVIgbu55o27w=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "account-transactions model tracks financial transaction records",
+        "updatedAt": "2026-05-13T13:00:26.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:32.325Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:32.325Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "7yCeX2L8IWToUm6ziEo71ULKrbE=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:26.000Z",
+        "description": "10 operations \u2014 records individual financial transactions (debits, credits) against accounts for audit trails and reconciliation"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.120Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "targetId": "0e465bb9-9a40-4da6-90c1-6aea3126d60b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.120Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "oMJoK1wzuX/x9/7Gg0DLL0z2m8s=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:26.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.141Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "targetId": "f927cadf-4f92-40d7-9cb5-224ef7740f5c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.141Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "irp3x06WLXCC+ES6fq2uBmnNyJI=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# account-transactions model tracks financial transaction records\n\n`powerhouse/account-transactions` (10 ops) records individual financial transactions. Part of the Finance & Billing domain alongside [[accounts model defines the chart of accounts structure]], [[billing-statement model captures periodic billing summaries]], and [[payment-terms model defines payment conditions and schedules]].\n\n## Position in Ecosystem\n\nSits in the Finance & Billing zone. Likely referenced by billing statements and invoices when itemizing charges.\n\n## Cross-Model References\n\n- Transactions reference accounts from the Accounts model\n- BillingStatement and Invoice models may aggregate transactions\n\nSince [[five models form a hierarchy from facet through template to offering to subscription to instance]], account-transactions operates downstream \u2014 recording the financial outcomes of subscription activity.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+        "updatedAt": "2026-05-13T13:00:26.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:53.160Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "targetId": "69387f36-6a3b-4b2c-9d0e-eaa29402ea96",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:53.160Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "8P3UON1QOL9GbLIxBHRfCOsN1PA=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:40:33.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "2x+ZAJGkZR+VwzuQ/0I0V0oPXwQ=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "647e8254-cd59-45b1-8305-eef7ac143ce4",
+        "name": "account-transactions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "vqOJjkSidgrsjoaybEMY5ozZUF8=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "22841cf9-fc35-44b1-9b7d-f8280437409b",
+        "name": "finance-billing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  }
+]

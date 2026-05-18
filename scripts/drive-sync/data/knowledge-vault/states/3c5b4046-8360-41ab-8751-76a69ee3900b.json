@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-ff49e8ad-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ff49e8ad-cf40-4740-bcf1-6a984f24b8ad",
+      "targetTitle": "error-classes-in-reducers-are-auto-imported-by-name-reference"
+    },
+    {
+      "id": "lnk-98cc2400-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98cc2400-ddf5-4763-a55a-86613fc2cfe3",
+      "targetTitle": "never-import-error-classes-manually-in-reducer-code"
+    },
+    {
+      "id": "lnk-de87617a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de87617a-ac4d-4b5d-9b13-3a1b6bd5ece6",
+      "targetTitle": "operations-use-verb-noun-naming"
+    },
+    {
+      "id": "lnk-18b20746-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "18b20746-83e2-42ba-8bde-464043db804c",
+      "targetTitle": "operation-design-uses-descriptive-names-and-includes-examples-and-errors"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "error names must end with Error and use PascalCase",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6d7f943f-2909-4e44-aede-e19c685a7ea7",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "784a13e2-6d21-40fd-a55d-665178639338",
+      "name": "error handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c34adec-887a-42fc-8e51-30769af7219f",
+      "name": "naming conventions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# error names must end with Error and use PascalCase\n\nWhen defining operation errors via `ADD_OPERATION_ERROR`:\n\n- **`code`**: UPPERCASE_SNAKE_CASE (e.g., `\"MISSING_ID\"`, `\"ENTRY_NOT_FOUND\"`)\n- **`name`**: PascalCase ending with \"Error\" (e.g., `\"MissingIdError\"`, `\"EntryNotFoundError\"`)\n- **`description`**: Human-readable description of the error condition\n\n```json\n{\n  \"code\": \"ENTRY_NOT_FOUND\",\n  \"name\": \"EntryNotFoundError\",\n  \"description\": \"The referenced entry does not exist in the collection\"\n}\n```\n\nThe \"Error\" suffix is required \u2014 the code generator uses it to identify error classes. Error names and IDs must be unique across all operations in the document model.\n\nSince [[error classes in reducers are auto-imported by name reference]], the PascalCase name is what you use in reducer code to throw errors.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:58:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:58:42.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Error definitions require code in UPPERCASE_SNAKE_CASE, name in PascalCase ending with Error, and a human-readable description",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

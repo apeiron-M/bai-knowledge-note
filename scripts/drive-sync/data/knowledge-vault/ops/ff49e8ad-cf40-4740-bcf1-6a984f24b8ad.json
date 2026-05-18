@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:45.639Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "error-classes-in-reducers-are-auto-imported-by-name-reference",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ff49e8ad-cf40-4740-bcf1-6a984f24b8ad",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:45.639Z"
+        },
+        "version": 0,
+        "documentId": "ff49e8ad-cf40-4740-bcf1-6a984f24b8ad",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:45.639Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "cn9EEpiJZHclZEyxoaTvvBlFeYE=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "error classes in reducers are auto-imported by name reference",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:45.639Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ff49e8ad-cf40-4740-bcf1-6a984f24b8ad",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:45.639Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "AJaeXbvMA7AOt4xucymy2gAdcU0=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:34.000Z",
+        "description": "Simply throwing new MissingIdError(\"message\") works because the code generator handles imports automatically"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.782Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ff49e8ad-cf40-4740-bcf1-6a984f24b8ad",
+        "targetId": "cf6ed144-884d-4784-8d50-9f25aa8d4aac",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.782Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "qDpmUVfv0wtooKu7KhSvYKbphy8=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.806Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ff49e8ad-cf40-4740-bcf1-6a984f24b8ad",
+        "targetId": "a4771bb5-35ce-4d28-9488-4f6ce8b9bd14",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.806Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "/oSJG45ZOJB/A+kBBQYz//TDTeA=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# error classes in reducers are auto-imported by name reference\n\nIn reducer code, you reference error classes by name without importing them:\n\n```typescript\n// \u2705 Just reference the error \u2014 auto-imported\nthrow new MissingIdError(\"ID is required\");\nthrow new EntryNotFoundError(\"Entry not found\");\n\n// \u274c Don't manually import\nimport { MissingIdError } from \"../../gen/module-name/error.js\";\nthrow new MissingIdError(\"ID is required\");\n\n// \u274c Don't use nested access patterns\nthrow new errors.ModuleName.MissingIdError(\"message\");\n```\n\nThe code generator scans reducer code for error class references and adds the appropriate imports automatically. Manually importing creates duplicate imports or path mismatches.\n\nSince [[error names must end with Error and use PascalCase]], the generator matches on the PascalCase class name ending in \"Error\".\n\n---\n\nTopics:\n- [[reducer patterns]]",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.825Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ff49e8ad-cf40-4740-bcf1-6a984f24b8ad",
+        "targetId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.825Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "xQxXyG6UWr5e0av29Xc/AiC5PVQ=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:58:32.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "KJ00SdOKA+5vtnEIOopFwqqjR/Y=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8c45e1a7-0de3-4614-ac20-3b03e68b4a5c",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "EQqBgvsKQYFHI0Y0YE6FKBGDmDs=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ecb1e5c2-de8f-42f9-b0d8-4cd7462f33d8",
+        "name": "error handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "AJ2HIXT6JV5QZHSdvgH6Yol4B8k=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e5e1b021-bbb5-4097-b734-13bf535bf149",
+        "name": "code generation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "XZKkFDdpJoOLygjRPI+02FOPo38=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "76d8b936-a2a0-4233-8e42-6ec38fd86d34",
+        "name": "imports",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  }
+]

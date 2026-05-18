@@ -1,0 +1,80 @@
+{
+  "links": [
+    {
+      "id": "lnk-31789818-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "31789818-4f9d-479a-ae72-109f09b72514",
+      "targetTitle": "powa-revenue-distribution-model-captures-epoch-based-token-revenue-sharing"
+    },
+    {
+      "id": "lnk-598070fd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "598070fd-2bf5-4152-8819-1e4700e01996",
+      "targetTitle": "open-source-capitalism-makes-oss-self-sustaining-investable-and-scalable"
+    },
+    {
+      "id": "lnk-cd99ab61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd99ab61-e00a-4312-9b47-aa96054f8582",
+      "targetTitle": "masterchef-accumulator-pattern-enables-per-token-revenue-tracking"
+    },
+    {
+      "id": "lnk-c9b2328d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9b2328d-e39d-472f-9523-373c7d3b2451",
+      "targetTitle": "ecosystem-map"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "powa document model bridges on-chain contracts with off-chain governance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "64f3f583-6924-41d1-a2b7-407ca346fef6",
+      "name": "powa",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8247103-053f-4bd6-8d02-e65dc8246a31",
+      "name": "governance-token",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# powa document model bridges on-chain contracts with off-chain governance\n\n## Context\n\nThe POWA revenue distribution system (NicWickman/powa) exists entirely as Solidity smart contracts. Epoch creation and revenue deposits go straight to chain with no review step. An HTML simulator exists for scenario modeling but state is ephemeral. There's no versioned document, no approval workflow, no audit trail.\n\n## Decision\n\nCreate a Powerhouse document model that captures the *business view* of POWA distribution:\n- Epoch configuration (supplies, weights, status)\n- Revenue allocation (amounts, denomination)\n- Distribution records (actuals, dust, tx hashes)\n- User holding simulations (what-if scenarios)\n\nThe model explicitly does NOT replicate on-chain internals (accRevenuePerShare, rewardDebt, pending). It stores inputs to the contracts and outputs from them.\n\n## Alternatives Considered\n- **Mirror contract storage directly** \u2014 rejected because accumulators and debt tracking are implementation details that change with contract upgrades. The business view (epochs, allocations, claims) is stable.\n- **Keep using the HTML simulator** \u2014 rejected because it provides no versioning, no multi-user collaboration, no governance gates, and no integration with the broader Powerhouse ecosystem.\n\n## Consequences\n- Establishes a **new pattern** for on-chain/off-chain document models in Powerhouse \u2014 any smart contract system that needs governance review before deployment can follow this pattern\n- Adds a 6th functional zone to the ecosystem: **Token Economics / Revenue Distribution**\n- The DRAFT\u2192APPROVED\u2192DEPLOYED lifecycle creates a natural governance checkpoint\n- May require a processor to sync distribution records from blockchain events (vs manual entry)\n\n---\n\nRelevant Notes:\n- [[powa-revenue-distribution model captures epoch-based token revenue sharing]]\n- [[masterchef accumulator pattern enables per-token revenue tracking]]\n- [[epochs distribute revenue proportionally by weighted token supply]]\n\nTopics:\n- [[architecture decisions]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:42:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:42:05.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "POWA document model provides an off-chain governance and simulation layer for on-chain revenue distribution contracts, establishing a new on-chain/off-chain boundary pattern",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

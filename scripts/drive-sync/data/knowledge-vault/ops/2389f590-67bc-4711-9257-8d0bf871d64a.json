@@ -1,0 +1,289 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:51.763Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "new-device-recovery-via-wallet-and-manifest",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2389f590-67bc-4711-9257-8d0bf871d64a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:51.763Z"
+        },
+        "version": 0,
+        "documentId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:51.763Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "GJoKoVI4rgfzp664Xyi2s+aDoWI=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "New-device recovery flows from wallet-derived keys through the Swarm user manifest.",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:51.763Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:51.763Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "1haw5QHaD4mY3eGUzJAOJzuPTUk=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:37.000Z",
+        "description": "On a new device, signing with the wallet derives keys, the plugin reads the user manifest, registers Swarm remotes per drive, and SyncManager rehydrates PGlite."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.948Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "targetId": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.948Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "gEbTxAKNE9vrDBN6ClirPYWpN/I=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "workflow",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.969Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "targetId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.969Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "hObmchO51CVhd0sC93xENVDFxcE=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nA user's drives can be recovered on any device purely from wallet + Swarm \u2014 no server handoff.\n\n## Flow\n1. User opens Connect on a new device (served from Swarm).\n2. Signs in with wallet \u2192 derives encryption keys.\n3. Plugin reads the user manifest from the Swarm feed.\n4. Registers Swarm remotes for each discovered drive.\n5. `SwarmChannel.inbox` pulls all operations from per-document feeds.\n6. SyncManager applies them to the reactor \u2192 drive materializes in PGlite.\n7. Cursor is set; future syncs are incremental.\n\n## Why this works end-to-end\n- The wallet signature is deterministic \u2014 same wallet yields the same keys and same feed topics.\n- The user manifest is the single discovery root; from it the plugin walks drives \u2192 documents \u2192 batches.\n- No centralized account state is needed on any server.\n\n## Source\nSwarm Channel Architecture, \"Flow 3: New Device Recovery (from Swarm)\".",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.993Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "targetId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.993Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "BVusA1Q7PzrDxF7Kx9amw8RC+yI=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.017Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "targetId": "41a470a9-1619-4d1e-9642-5a80570d5cc9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.017Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "2OiZj4JTIoR7acyNQKaAgSXnERc=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-08886e29-1",
+        "name": "device-recovery",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.038Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "targetId": "00740fca-ac91-49b2-8353-cbd0988eaa02",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.038Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "e7KPFxranwN5BDXyaP0L6BH6U9s=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-08886e29-2",
+        "name": "wallet",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "l7nax7VsPuVfEw+ItHUSU9PcPOk=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-08886e29-3",
+        "name": "manifest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "VVtYldLMGXetZoPn2FyRRNqViCs=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-08886e29-4",
+        "name": "user-flow",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  }
+]

@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-17c7be25-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "17c7be25-1709-43fb-a073-c0a87e8c1452",
+      "targetTitle": "swarm-pss-trojan-chunks"
+    },
+    {
+      "id": "lnk-2b8ca01e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2b8ca01e-bf2f-49bb-aba9-3f9bf8db6923",
+      "targetTitle": "swarm-feeds-no-websocket-subscription"
+    },
+    {
+      "id": "lnk-4ed34c88-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4ed34c88-924f-4b59-86dd-887c0fe2a57d",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    },
+    {
+      "id": "lnk-7bcb4292-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7bcb4292-89d1-4647-977a-8c5cdb581a7d",
+      "targetTitle": "gsoc-provides-many-to-one-notifications-with-sub-second-late"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat uses PSS for messages and GSOC for notifications, matching latency to purpose.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "topic-fa045e1e332f",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-c3f2031aabdf",
+      "name": "gsoc-notifications",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-ffcf24bcbee6",
+      "name": "protocol-selection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Decision\n\nConnect's chat/collab stack uses two complementary Swarm protocols, each selected for the traffic it serves:\n\n| Feature | Protocol | Why |\n|---|---|---|\n| Chat messages | **PSS** | End-to-end encrypted, 1-to-1, async delivery acceptable |\n| Typing indicators | **GSOC** | Low latency (<1s), ephemeral |\n| Document share notification | **GSOC** | Instant ping when share bundle is ready |\n| Live collaboration signals | **GSOC** | Sub-second cursor/op-committed |\n| Operation sync | **Feeds + GSOC notify** | Persistent ops via feeds, GSOC triggers pull |\n\n## Rationale\n\n- PSS gives per-message asymmetric encryption for free but costs 2\u201310s of Trojan mining. That's fine for a chat message, fatal for a typing hint.\n- GSOC mines the signer once (~10\u201330s) and then every subsequent send is a normal SOC update \u2014 milliseconds of latency, symmetric encryption via the shared signer.\n- The two protocols compose: PSS carries the message, GSOC pings the recipient's UI to render it immediately instead of waiting for the next PSS poll.\n\n## Consequence\n\nTyping indicators were designed on top of GSOC but ultimately scratched. The GSOC plumbing survives and is being reused for live collaboration.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:26:59.787Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:26:59.787Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PSS's per-message asymmetric encryption fits private 1-to-1 chat; GSOC's sub-second symmetric SOC pings fit ephemeral presence, typing, and doc-update signals.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

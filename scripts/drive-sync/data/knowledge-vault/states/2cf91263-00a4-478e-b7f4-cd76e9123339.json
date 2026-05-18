@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-3d61b8cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3d61b8cc-2823-4233-b0e8-cb95e44b0ab0",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-c7b131a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-a9803a1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    },
+    {
+      "id": "lnk-8c92f8fd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+      "targetTitle": "core-flow-connect-reactor-swarm"
+    },
+    {
+      "id": "lnk-61e7ee9c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The bridge pattern lets a single PGlite serve both Switchboard GQL remotes and Swarm feeds transparently via independent cursors.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "bridge-pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "dual-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "architecture-diagram",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## GQL + Swarm Dual Sync\n\nIn one browser, PGlite acts as the hub between two worlds:\n\n- **Switchboard world**: remote drives pulled in via GQL channels.\n- **Swarm world**: drives and documents mirrored out to encrypted feeds.\n\nEach drive is independent:\n\n- Drive A: pulled from Switchboard (GQL) **and** pushed to Swarm Feed A.\n- Drive B: same dual path.\n- Drive C: locally created by the user, only pushed to Swarm Feed C (no Switchboard counterpart).\n\n### Why it works\n\nBoth channels read from the same `operation_index_operations` table, where every op gets a global ordinal. Each remote has an independent cursor in `sync_cursors`, so progress on one channel never interferes with the other.\n\n`SyncManager` orchestrates both transparently \u2014 it does not know whether a given remote is GQL or Swarm, it just pumps operations through `channel.outbox` / `channel.inbox` / `channel.deadLetter`.\n\nThis is the foundation that lets Connect work decentralized-first while retaining compatibility with Switchboard-hosted drives.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:47:10.583Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operation_index_operations is shared by both channels; each remote tracks its own cursor in sync_cursors so GQL pull and Swarm push run in parallel without interference.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

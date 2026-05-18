@@ -1,0 +1,233 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:33.671Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "analytics-paths-lod-dimension-querying",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f42a7135-f688-40be-bf9b-365f0744a292",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:33.671Z"
+        },
+        "version": 0,
+        "documentId": "f42a7135-f688-40be-bf9b-365f0744a292",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:33.671Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "eFOBN+0EPljppUk3+C+JcPuMb+I=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Analytics dimension paths use slash-delimited hierarchies with LOD parameter controlling aggregation specificity across dimensions",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:33.671Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "f42a7135-f688-40be-bf9b-365f0744a292",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:33.671Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "WgCqdZJgqIW357VS/ZnquD2FgPk=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:27.000Z",
+        "description": "Paths like /atlas/mip40/MIP40c3SP61 determine query scope; LOD 0 groups all results, increasing LOD increases aggregation specificity."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.282Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f42a7135-f688-40be-bf9b-365f0744a292",
+        "targetId": "cff98458-434d-4c99-8311-c477d8b2084c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.282Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "SPiUr/z9G5nxKLXaPkyhaT04BbE=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.306Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f42a7135-f688-40be-bf9b-365f0744a292",
+        "targetId": "c9b2328d-e39d-472f-9523-373c7d3b2451",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.306Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ngM6BVn7DGXpyFO0ls9HmaApQvo=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "In the Analytics Engine, `AnalyticsDimension` objects have a `path` field using `/`-delimited hierarchical strings (like URIs). Querying with path `/atlas/mip40` matches all dimensions starting with that prefix. The LOD (level of detail) parameter controls result aggregation: LOD 0 groups all results into a single value; LOD 1 groups by the first path segment; LOD 2 by the first two segments, etc. LOD greater than the number of path parts appends `/*` wildcards but returns the same results as the highest meaningful level. Best practice: start with general queries (high LOD, broad path) and narrow down to specific paths and lower LODs for particular metrics. There will be thousands/millions of series objects but far fewer dimension objects.",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "v9ml4gAM7b+fSHL6aAsB9wkWRj0=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "KM3iEQ4E7DXBZOXfc+8USVT/PFA=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "76698cbc-10d9-42ba-9319-4cd140274730",
+        "name": "analytics-engine",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "GESUIXQRLJjJBnP1dirATB7uS2I=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "29694a4b-65ad-48e0-b08c-aaca2772f2d0",
+        "name": "dimensions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "C8Qg3aVoPsjn2ikaK2v9C5r5KwA=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "030fc229-5416-4d12-81df-c1b4c6526bc2",
+        "name": "querying",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  }
+]

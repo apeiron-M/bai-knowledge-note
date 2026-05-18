@@ -1,0 +1,281 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.931Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Swarm Connect Architecture Diagrams",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "859ec32e-b693-40af-ade7-e591c0f40a95",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-05-13T12:59:30.931Z"
+        },
+        "version": 0,
+        "documentId": "859ec32e-b693-40af-ade7-e591c0f40a95",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.931Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "LXgKOsNP24NsOAAVVcQU9Y/IZXA=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "title": "Swarm Connect \u2014 Architecture Diagrams",
+        "author": "Liberuum",
+        "content": "# Swarm Connect \u2014 Architecture Diagrams\n\n## The Core Flow\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502                         USER'S BROWSER                              \u2502\n\u2502                                                                     \u2502\n\u2502  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u2502\n\u2502  \u2502                     CONNECT APP                               \u2502  \u2502\n\u2502  \u2502  (React UI \u2014 drive explorer, document editors, settings)      \u2502  \u2502\n\u2502  \u2502                                                               \u2502  \u2502\n\u2502  \u2502  User creates drive \u2192 adds docs \u2192 creates folders \u2192 edits    \u2502  \u2502\n\u2502  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  \u2502\n\u2502                          \u2502                                          \u2502\n\u2502                          \u2502 React dispatches actions                  \u2502\n\u2502                          \u25bc                                          \u2502\n\u2502  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u2502\n\u2502  \u2502                   REACTOR CLIENT                              \u2502  \u2502\n\u2502  \u2502                                                               \u2502  \u2502\n\u2502  \u2502  Receives actions \u2192 creates Jobs \u2192 enqueues to Queue          \u2502  \u2502\n\u2502  \u2502  Job types: create, execute, load, delete                     \u2502  \u2502\n\u2502  \u2502                                                               \u2502  \u2502\n\u2502  \u2502  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510 \u2502  \u2502\n\u2502  \u2502  \u2502              JOB EXECUTOR                                \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502                                                          \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  Processes jobs \u2192 applies actions to documents           \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  CREATE_DOCUMENT \u2192 UPGRADE_DOCUMENT \u2192 SET_DRIVE_NAME    \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  ADD_FILE \u2192 ADD_FOLDER \u2192 MOVE_NODE \u2192 domain actions     \u2502 \u2502  \u2502\n\u2502  \u2502  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518 \u2502  \u2502\n\u2502  \u2502                  \u2502                                            \u2502  \u2502\n\u2502  \u2502                  \u2502 Operations written                         \u2502  \u2502\n\u2502  \u2502                  \u25bc                                            \u2502  \u2502\n\u2502  \u2502  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510 \u2502  \u2502\n\u2502  \u2502  \u2502              PGlite (WASM Postgres)                      \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502                                                          \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  reactor.Document         \u2014 doc registry                 \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  reactor.Operation        \u2014 full operation log           \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  reactor.DocumentSnapshot \u2014 current state per scope      \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  reactor.DocumentRelationship \u2014 drive\u2192doc child links    \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  reactor.operation_index_operations \u2014 global ordinals    \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  reactor.sync_remotes     \u2014 registered sync channels     \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  reactor.sync_cursors     \u2014 per-remote sync position     \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  reactor.sync_dead_letters \u2014 failed sync operations      \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502                                                          \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  Persisted in IndexedDB (survives page reload)           \u2502 \u2502  \u2502\n\u2502  \u2502  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518 \u2502  \u2502\n\u2502  \u2502                  \u2502                                            \u2502  \u2502\n\u2502  \u2502                  \u2502 New ordinals in operation_index_operations  \u2502  \u2502\n\u2502  \u2502                  \u25bc                                            \u2502  \u2502\n\u2502  \u2502  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510 \u2502  \u2502\n\u2502  \u2502  \u2502              SYNC MANAGER                                \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502                                                          \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  Detects new ordinals \u2192 groups by (docId, scope, branch) \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  Creates SyncOperations \u2192 populates channel outboxes     \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  Processes inbox items \u2192 calls reactor.load()            \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  Tracks cursors in sync_cursors (survives reload)        \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  Moves failures to sync_dead_letters                     \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502                                                          \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  \u2502  GQL Channel    \u2502  \u2502  SWARM CHANNEL               \u2502  \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  \u2502  (type: \"gql\")  \u2502  \u2502  (type: \"swarm\")             \u2502  \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  \u2502                 \u2502  \u2502                               \u2502  \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  \u2502  For Switchboard\u2502  \u2502  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510 \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510  \u2502  \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  \u2502  cloud sync     \u2502  \u2502  \u2502 OUTBOX  \u2502 \u2502  INBOX     \u2502  \u2502  \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  \u2502  (remote drives)\u2502  \u2502  \u2502 (push)  \u2502 \u2502  (pull)    \u2502  \u2502  \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  \u2502                 \u2502  \u2502  \u2514\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2518 \u2514\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2518  \u2502  \u2502 \u2502  \u2502\n\u2502  \u2502  \u2502  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  \u2502 \u2502  \u2502\n\u2502  \u2502  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518 \u2502  \u2502\n\u2502  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  \u2502\n\u2502                                      \u2502            \u2502                 \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u253c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                                       \u2502            \u2502\n                    Push: encrypt +    \u2502            \u2502  Pull: read feed +\n                    upload /bytes +    \u2502            \u2502  download /bytes +\n                    write feed         \u2502            \u2502  decrypt\n                                       \u2502            \u2502\n                                       \u25bc            \u2502\n                              \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2534\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                              \u2502        BEE NODE             \u2502\n                              \u2502   (user's local node)       \u2502\n                              \u2502                             \u2502\n                              \u2502  /bytes  \u2014 content storage  \u2502\n                              \u2502  /feeds  \u2014 mutable pointers \u2502\n                              \u2502  /stamps \u2014 postage batches  \u2502\n                              \u2502  /health \u2014 node status      \u2502\n                              \u2502                             \u2502\n                              \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n                                             \u2502\n                                             \u2502 Swarm protocol\n                                             \u2502 (DISC, push-sync, pull-sync)\n                                             \u25bc\n                              \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n                              \u2502      SWARM NETWORK          \u2502\n                              \u2502   (decentralized storage)   \u2502\n                              \u2502                             \u2502\n                              \u2502  Chunks replicated across   \u2502\n                              \u2502  neighborhood nodes         \u2502\n                              \u2502  Content-addressed (hash)   \u2502\n                              \u2502  Encrypted (AES-256-GCM)    \u2502\n                              \u2502                             \u2502\n                              \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n## Push Flow (Create \u2192 Sync to Swarm)\n\n```\nUser creates \"PushPullDrive\" with doc \"push\" + folder \"folder\" + doc \"docs\"\n     \u2502\n     \u25bc\nReactorClient.create() / execute() / createDocumentInDrive()\n     \u2502\n     \u2502  Generates operations:\n     \u2502  Op 0: CREATE_DOCUMENT (drive dbebae62)\n     \u2502  Op 1: UPGRADE_DOCUMENT (name: \"PushPullDrive\")\n     \u2502  Op 2: ADD_FILE (doc 57033542, name: \"push\")\n     \u2502  Op 3: ADD_FOLDER (folder, name: \"folder\")\n     \u2502  Op 4: ADD_FILE (doc d03fd76d, name: \"docs\", parentFolder: folder)\n     \u2502  Op 5: MOVE_NODE (doc d03fd76d \u2192 folder)\n     \u2502\n     \u25bc\nPGlite \u2014 operations stored in reactor.Operation + operation_index_operations\n     \u2502\n     \u2502  New ordinals detected by SyncManager\n     \u25bc\nSyncManager.updateOutbox()\n     \u2502\n     \u2502  Groups ops by (documentId, scope, branch)\n     \u2502  Creates SyncOperation objects\n     \u2502  Adds to SwarmChannel.outbox\n     \u25bc\nSwarmChannel.handleOutboxAdded()\n     \u2502\n     \u251c\u2500\u2500\u2500 For each SyncOperation:\n     \u2502    \u2502\n     \u2502    \u251c\u2500\u2500 1. Serialize OperationWithContext[] \u2192 JSON\n     \u2502    \u251c\u2500\u2500 2. Encrypt with AES-256-GCM (wallet-derived key)\n     \u2502    \u251c\u2500\u2500 3. Upload to /bytes \u2192 get content reference (hash)\n     \u2502    \u251c\u2500\u2500 4. Read document manifest from feed (or create new)\n     \u2502    \u251c\u2500\u2500 5. Append batch reference to manifest\n     \u2502    \u251c\u2500\u2500 6. Write updated manifest to feed (SOC)\n     \u2502    \u2514\u2500\u2500 7. syncOp.executed() \u2192 cursor advances\n     \u2502\n     \u251c\u2500\u2500\u2500 If documentType is \"powerhouse/document-drive\":\n     \u2502    \u2502\n     \u2502    \u251c\u2500\u2500 ManifestManager.updateDriveManifest()\n     \u2502    \u2502   \u2192 Reads drive state from reactor\n     \u2502    \u2502   \u2192 Writes docs + folders index to drive manifest feed\n     \u2502    \u2502\n     \u2502    \u2514\u2500\u2500 ManifestManager.ensureDriveInUserManifest()\n     \u2502        \u2192 Updates user manifest with drive entry\n     \u2502        \u2192 Discovery index for recovery\n     \u2502\n     \u25bc\nSwarm Network \u2014 operations stored as encrypted chunks\n     \u2502\n     \u2502  Feed structure:\n     \u2502  user-manifest (owner feed) \u2192 { drives: { dbebae62: {...} } }\n     \u2502  drive-manifest (drive feed) \u2192 { documents: {...}, folders: {...} }\n     \u2502  doc-manifest (per-doc feed) \u2192 { operationBatches: [{ref, indices}] }\n     \u2502  operation batches (/bytes)  \u2192 encrypted OperationWithContext[]\n```\n\n## Pull Flow (Recovery from Swarm)\n\n```\nFresh PGlite (new device or cleared storage)\n     \u2502\n     \u2502  No local drives exist\n     \u25bc\nRegistration retry loop checks Swarm user manifest\n     \u2502\n     \u2502  readUserManifest(ownerAddress)\n     \u2502  \u2192 Found 1 drive: \"PushPullDrive\" (dbebae62)\n     \u25bc\naddSwarmRemoteForDrive(\"dbebae62\")\n     \u2502\n     \u2502  syncManager.add(\"swarm:dbebae62\", collectionId, { type: \"swarm\" })\n     \u2502  \u2192 Creates SwarmChannel instance\n     \u2502  \u2192 Registers in sync_remotes\n     \u2502  \u2192 Starts inbox poll timer (5s interval)\n     \u25bc\nSwarmChannel.pollInbox()\n     \u2502\n     \u251c\u2500\u2500 1. Read user manifest \u2192 discover drive IDs\n     \u251c\u2500\u2500 2. Read drive manifest \u2192 discover doc IDs + folder structure\n     \u251c\u2500\u2500 3. For each document:\n     \u2502      \u251c\u2500\u2500 Read document manifest \u2192 get operation batch references\n     \u2502      \u251c\u2500\u2500 Download each batch from /bytes\n     \u2502      \u251c\u2500\u2500 Decrypt AES-256-GCM \u2192 OperationWithContext[]\n     \u2502      \u251c\u2500\u2500 Group by scope (document scope first, then global)\n     \u2502      \u2514\u2500\u2500 Create SyncOperation \u2192 inbox.add(syncOp)\n     \u2502\n     \u25bc\nSyncManager.handleInboxAdded()\n     \u2502\n     \u2502  For each SyncOperation:\n     \u2502  \u2502\n     \u2502  \u251c\u2500\u2500 reactor.load(documentId, branch, operations)\n     \u2502  \u2502   \u2502\n     \u2502  \u2502   \u2502  Operations contain CREATE_DOCUMENT with ORIGINAL ID\n     \u2502  \u2502   \u2502  \u2192 Reactor creates document with that exact ID\n     \u2502  \u2502   \u2502  \u2192 No ID mismatch! No mapping needed!\n     \u2502  \u2502   \u2502\n     \u2502  \u2502   \u251c\u2500\u2500 Op 0: CREATE_DOCUMENT \u2192 creates drive dbebae62\n     \u2502  \u2502   \u251c\u2500\u2500 Op 1: UPGRADE_DOCUMENT \u2192 sets name \"PushPullDrive\"\n     \u2502  \u2502   \u251c\u2500\u2500 Op 2: CREATE_DOCUMENT \u2192 creates doc 57033542\n     \u2502  \u2502   \u251c\u2500\u2500 Op 3: CREATE_DOCUMENT \u2192 creates doc d03fd76d\n     \u2502  \u2502   \u251c\u2500\u2500 Op 4+: Domain actions (SET_MODEL_NAME, etc.)\n     \u2502  \u2502   \u2514\u2500\u2500 Op N: ADD_FILE, ADD_FOLDER, MOVE_NODE \u2192 folder structure\n     \u2502  \u2502\n     \u2502  \u2514\u2500\u2500 syncOp.executed() \u2192 inbox cursor advances \u2192 persisted in sync_cursors\n     \u2502\n     \u25bc\nPGlite now contains the full drive with ORIGINAL IDs\n     \u2502\n     \u2502  reactor.Document: dbebae62, 57033542, d03fd76d\n     \u2502  reactor.DocumentSnapshot: full state for each\n     \u2502  reactor.DocumentRelationship: drive \u2192 doc child links\n     \u2502  reactor.Operation: complete operation history\n     \u2502\n     \u25bc\nConnect UI renders the recovered drive\n     \u2502\n     \u2502  PushPullDrive/\n     \u2502    push          (57033542)\n     \u2502    folder/\n     \u2502      docs        (d03fd76d)\n```\n\n## The Bridge Pattern (GQL + Swarm Dual Sync)\n\n```\n  Switchboard World              User's Browser              Swarm World\n  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n\n  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510         \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510         \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n  \u2502  Remote Drive A  \u2502         \u2502                \u2502         \u2502                \u2502\n  \u2502  (Switchboard)   \u2502\u2500\u2500GQL\u2500\u2500\u25b6\u2502    PGlite      \u2502\u2500\u2500Swarm\u2500\u25b6\u2502  Feed A        \u2502\n  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  pull   \u2502   (reactor)    \u2502  push   \u2502  (encrypted)   \u2502\n                               \u2502                \u2502         \u2502                \u2502\n  \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510         \u2502  operation_    \u2502         \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n  \u2502  Remote Drive B  \u2502         \u2502  index_       \u2502         \u2502                \u2502\n  \u2502  (Switchboard)   \u2502\u2500\u2500GQL\u2500\u2500\u25b6\u2502  operations    \u2502\u2500\u2500Swarm\u2500\u25b6\u2502  Feed B        \u2502\n  \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518  pull   \u2502                \u2502  push   \u2502  (encrypted)   \u2502\n                               \u2502  Each op gets  \u2502         \u2502                \u2502\n                               \u2502  a global      \u2502         \u251c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2524\n                               \u2502  ordinal       \u2502         \u2502                \u2502\n  (not connected)              \u2502                \u2502\u2500\u2500Swarm\u2500\u25b6\u2502  Feed C        \u2502\n                               \u2502  Local Drive C \u2502  push   \u2502  (encrypted)   \u2502\n                               \u2502  (user created)\u2502         \u2502                \u2502\n                               \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518         \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n\n  Both channels share the same operation_index_operations table.\n  Each has independent cursors in sync_cursors.\n  SyncManager orchestrates both transparently.\n```\n\n## CompositeChannelFactory \u2014 How Two Channels Coexist\n\n```\ncreateSwarmSyncBuilder(logger, jwtHandler)\n  \u2502\n  \u2502  Returns: { syncBuilder, compositeFactory, registerGqlFactory }\n  \u2502\n  \u2502  1. CompositeChannelFactory created with \"swarm\" registered\n  \u2502  2. SyncBuilder.withChannelFactory(compositeFactory)\n  \u25bc\nReactorBuilder\n  \u2502\n  \u2502  .withSync(syncBuilder)       \u2190 proper builder API\n  \u2502  .withJwtHandler(jwtHandler)\n  \u2502\n  \u2502  buildModule() runs:\n  \u2502  \u2192 Creates queue with document model resolver\n  \u2502  \u2192 SyncManager.startup() recreates persisted remotes\n  \u2502  \u2192 Swarm remotes work immediately (factory registered)\n  \u25bc\nAfter buildModule():\n  \u2502\n  \u2502  registerGqlFactory(reactorModule.queue)\n  \u2502  \u2192 Registers \"gql\" on the CompositeChannelFactory\n  \u2502  \u2192 GQL remotes can now be added via addRemoteDrive()\n  \u25bc\nCompositeChannelFactory\n  \u2502\n  \u2502  .instance(config)\n  \u2502  \u2502\n  \u2502  \u251c\u2500\u2500 config.type === \"gql\"   \u2192 GqlRequestChannelFactory \u2192 GqlRequestChannel\n  \u2502  \u2502                              (for Switchboard remotes)\n  \u2502  \u2502\n  \u2502  \u2514\u2500\u2500 config.type === \"swarm\" \u2192 SwarmChannelFactory \u2192 SwarmChannel\n  \u2502                                 (for Swarm storage)\n  \u2502\n  \u25bc\nSyncManager\n  \u2502\n  \u2502  Treats all remotes the same:\n  \u2502  - Populates outbox from operation_index_operations\n  \u2502  - Processes inbox via reactor.load()\n  \u2502  - Tracks cursors per remote\n  \u2502  - Dead letter handling per remote\n  \u2502\n  \u2502  Doesn't care about channel type \u2014 just calls\n  \u2502  channel.outbox / channel.inbox / channel.deadLetter\n```\n\n## Manifest Structure on Swarm\n\n```\nUser Manifest (one per user, keyed by Ethereum address)\n  \u2502\n  \u2502  Feed topic: keccak256(\"ph:v2:user:\" + ownerAddress)\n  \u2502\n  \u2502  {\n  \u2502    address: \"0xadbA7C2F...\",\n  \u2502    drives: {\n  \u2502      \"dbebae62-...\": {\n  \u2502        name: \"PushPullDrive\",\n  \u2502        preferredEditor: \"GenericDriveExplorer\",\n  \u2502        documentIds: [],\n  \u2502        lastUpdated: \"2026-04-11T18:52:...\"\n  \u2502      }\n  \u2502    },\n  \u2502    documents: { ... },\n  \u2502    stamps: { ... }\n  \u2502  }\n  \u2502\n  \u2514\u2500\u2500\u2500 Drive Manifest (one per drive, keyed by drive ID)\n        \u2502\n        \u2502  Feed topic: keccak256(\"ph:v2:drive:\" + driveId)\n        \u2502\n        \u2502  {\n        \u2502    driveId: \"dbebae62-...\",\n        \u2502    name: \"PushPullDrive\",\n        \u2502    preferredEditor: \"GenericDriveExplorer\",\n        \u2502    documents: {\n        \u2502      \"57033542-...\": { documentType: \"powerhouse/document-model\", name: \"push\" },\n        \u2502      \"d03fd76d-...\": { documentType: \"powerhouse/document-model\", name: \"docs\", parentFolder: \"folder-id\" }\n        \u2502    },\n        \u2502    folders: {\n        \u2502      \"folder-id\": { name: \"folder\", parentFolder: null }\n        \u2502    }\n        \u2502  }\n        \u2502\n        \u2514\u2500\u2500\u2500 Document Manifests (one per document, keyed by doc ID)\n              \u2502\n              \u2502  Feed topic: keccak256(\"ph:v2:doc:\" + docId)\n              \u2502\n              \u2502  {\n              \u2502    documentId: \"57033542-...\",\n              \u2502    documentType: \"powerhouse/document-model\",\n              \u2502    operationBatches: [\n              \u2502      { reference: \"abc123...\", scope: \"document\", startIndex: 0, endIndex: 1 },\n              \u2502      { reference: \"def456...\", scope: \"global\",   startIndex: 0, endIndex: 7 }\n              \u2502    ],\n              \u2502    latestRevision: { document: 2, global: 8 },\n              \u2502    keyframes: []\n              \u2502  }\n              \u2502\n              \u2514\u2500\u2500\u2500 Operation Batches (content-addressed /bytes)\n                    \u2502\n                    \u2502  Reference: content hash of encrypted payload\n                    \u2502\n                    \u2502  Encrypted OperationWithContext[]:\n                    \u2502  [\n                    \u2502    {\n                    \u2502      operation: {\n                    \u2502        id: \"c6401aec-...\",\n                    \u2502        index: 0,\n                    \u2502        skip: 0,\n                    \u2502        timestampUtcMs: \"2026-04-11T18:06:34.210Z\",\n                    \u2502        hash: \"gfgqmD...\",\n                    \u2502        action: {\n                    \u2502          type: \"CREATE_DOCUMENT\",\n                    \u2502          input: { name: \"push\", model: \"powerhouse/document-model\", ... },\n                    \u2502          scope: \"document\",\n                    \u2502          context: { signer: { user: { address: \"0xadbA7C2F...\" } } }\n                    \u2502        }\n                    \u2502      },\n                    \u2502      context: {\n                    \u2502        documentId: \"57033542-...\",\n                    \u2502        documentType: \"powerhouse/document-model\",\n                    \u2502        scope: \"document\",\n                    \u2502        branch: \"main\",\n                    \u2502        ordinal: 5\n                    \u2502      }\n                    \u2502    },\n                    \u2502    ...\n                    \u2502  ]\n```\n\n## Security Model\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502                    ENCRYPTION                         \u2502\n\u2502                                                       \u2502\n\u2502  Wallet Signature (one-time)                          \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u2502  personal_sign(\"Sign to derive Swarm key...\")      \u2502\n\u2502  \u2502  \u2192 keccak256(signature) \u2192 32-byte private key      \u2502\n\u2502  \u2502  \u2192 Cached in IndexedDB (no repeated signing)       \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u25bc                                                    \u2502\n\u2502  AES-256-GCM Encryption                              \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u2502  Every operation batch uploaded to /bytes is        \u2502\n\u2502  \u2502  encrypted before upload and decrypted after        \u2502\n\u2502  \u2502  download. The key is derived from the wallet       \u2502\n\u2502  \u2502  signature \u2014 same wallet = same key = same access.  \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u2502  Format: [SWE prefix (3B)] [IV (12B)] [ciphertext] \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u25bc                                                    \u2502\n\u2502  Feed Authentication                                  \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u2502  Feeds are signed with the Swarm private key        \u2502\n\u2502  \u2502  (derived from wallet). Only the owner can write.   \u2502\n\u2502  \u2502  Anyone with the owner's public key can read.       \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u25bc                                                    \u2502\n\u2502  Cross-User Sharing (ACT)                            \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u2502  Swarm ACT \u2014 Access Control Trie                   \u2502\n\u2502  \u2502  session_key = SHA-256(                            \u2502\n\u2502  \u2502    ECDH(publisher_privkey \u00d7 grantee_pubkey)        \u2502\n\u2502  \u2502    || salt                                         \u2502\n\u2502  \u2502  )                                                 \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u2502  Only the publisher's Bee node has privkey,        \u2502\n\u2502  \u2502  so a third party who knows both public addrs      \u2502\n\u2502  \u2502  cannot derive the key (discrete-log problem).     \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u2502  Upload:   uploadFile({ act: true,                 \u2502\n\u2502  \u2502             actHistoryAddress, skipEncryption })   \u2502\n\u2502  \u2502  Download: downloadFile({ actPublisher,            \u2502\n\u2502  \u2502             actHistoryAddress, skipDecryption })   \u2502\n\u2502  \u2502                                                    \u2502\n\u2502  \u2502  Grantees maintained via createGrantees() /        \u2502\n\u2502  \u2502  patchGrantees(). Used for document sharing,       \u2502\n\u2502  \u2502  chat history feeds, and raw chat attachments.     \u2502\n\u2502                                                       \u2502\n\u2502  Chat Messages (PSS)                                  \u2502\n\u2502  \u2502  Recipient's Bee pubkey encrypts each message.     \u2502\n\u2502  \u2502  Trojan chunks land in recipient's neighborhood.   \u2502\n\u2502                                                       \u2502\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n## Chat Flow (PSS + ACT feed history)\n\n```\nAlice                                   Swarm                                   Bob\n\u2550\u2550\u2550\u2550\u2550                                   \u2550\u2550\u2550\u2550\u2550                                   \u2550\u2550\u2550\n\n1. Open conversation with Bob\n   \u2502\n   \u2502  lookupUser(bobAddr)\n   \u2502  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba  read ph:v2:profile:<bob>\n   \u2502  \u25c4\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500  { beeNodePublicKey, overlayAddress }\n   \u2502\n2. Send \"hi\"\n   \u2502\n   \u2502  PSS send\n   \u2502  topic   = ph:v2:chat:<sorted(alice, bob)>\n   \u2502  target  = first 4 chars of bob.overlay\n   \u2502  payload = encrypted( { text, from, chapter, msgId } )\n   \u2502  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u25ba    Trojan chunk mined (2-10s)\n   \u2502                       Lands in bob's neighborhood\n   \u2502                                              \u25c4\u2500\u2500\u2500\u2500\u2500\u2500   3. pssSubscribe(chatTopic)\n   \u2502                                                         decrypt \u2192 hand to ChatManager\n   \u2502                                                         seenMessageIds guard\n   \u2502                                                         dispatch to UI\n   \u2502\n4. Persist to history feed (debounced, batched pages)\n   \u2502\n   \u2502  ACT upload page  \u2500\u2500\u2500\u2500\u25ba  /bzz  (encrypted by Bee via ECDH)\n   \u2502  write wrapper   \u2500\u2500\u2500\u2500\u25ba  /bytes  (64-byte: actRef || actHist)\n   \u2502  update feed     \u2500\u2500\u2500\u2500\u25ba  ph:v2:chatlog:<sorted(alice, bob)>[:chapter]\n   \u2502                         grantees: { alice.beePub, bob.beePub }\n   \u2502\n   \u2502                                              5. loadPages(peer=alice)\n   \u2502                                                 read feed \u2192 wrapper \u2192 ACT download\n   \u2502                                                 merge with own feed \u2192 render\n   \u2502\n\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n6. Clear all chats (alice side)\n   \u2502\n   \u2502  bumpMyChatChapter()  \u2192 Date.now() (wipe-safe)\n   \u2502  localStorage.setItem(\"swarm:chatMyChapter\", newChapter)\n   \u2502  clearChatPeersInUserManifest()\n   \u2502\n   \u2502  Next PSS message carries `chapter: <newChapter>`\n   \u2502                                              7. Bob records alice's new chapter\n   \u2502                                                 All reads of alice's history\n   \u2502                                                 use the new chapter topic\n```\n\n## Document Share in Chat\n\n```\nAlice picks docs in the composer share-document modal\n   \u2502\n   \u2502  buildDriveShareBundle(driveId, [docIds])\n   \u2502  \u2502\n   \u2502  \u251c\u2500 reactorClient.get(docId) for each        \u2190 local source of truth\n   \u2502  \u251c\u2500 reactorClient.getOperations(...)          \u2190 includes unflushed outbox ops\n   \u2502  \u251c\u2500 fallback to Swarm manifest if doc absent\n   \u2502  \u2514\u2500 preserve action.context.signer.signatures  \u2190 authorship intact\n   \u2502\n   \u2502  Returns: { documents[], folders, docFolders, preferredEditor }\n   \u2502\n   \u25bc\ncreateGrantees([bob.beeNodePubKey])      \u2192 granteeRef, historyRef\nuploadFile(bundle, { act:true, historyRef, skipEncryption:true })\n                                          \u2192 shareRef, actHistoryAddress\n   \u2502\n   \u25bc\nPSS message with attachment = {\n  kind: \"document-share\",\n  driveId, driveName,\n  shareReference, actHistoryAddress,\n  publisherBeeNodePubKey,\n  documents: [{ id, name, documentType }]\n}\n   \u2502\n   \u2502  \u2500\u2500\u2500\u2500\u2500PSS\u2500\u2500\u2500\u2500\u2500\u25ba\n   \u2502                                   Bob receives \u2192 DocumentShareCard renders\n   \u2502                                   [Import] \u2192 downloadFile with ACT\n   \u2502                                           \u2192 applyDocumentBundle()\n   \u2502                                           \u2192 drive + folders + docs materialize\n```\n\n## File Structure (adapter/src/channel/)\n\n```\nadapter/src/channel/\n  \u2502\n  \u251c\u2500\u2500 index.ts                    \u2014 Public exports\n  \u251c\u2500\u2500 composite-factory.ts        \u2014 Routes \"gql\"/\"swarm\" to sub-factories\n  \u251c\u2500\u2500 swarm-channel.ts            \u2014 IChannel: outbox push + inbox pull\n  \u251c\u2500\u2500 swarm-channel-factory.ts    \u2014 Creates SwarmChannel from ChannelConfig\n  \u251c\u2500\u2500 create-composite-factory.ts \u2014 createSwarmSyncBuilder() for ReactorBuilder.withSync()\n  \u251c\u2500\u2500 register-swarm-channel.ts   \u2014 Runtime factory injection utility (legacy/edge cases)\n  \u251c\u2500\u2500 add-swarm-remote.ts         \u2014 Per-drive Swarm remote registration\n  \u2514\u2500\u2500 manifest-manager.ts         \u2014 User + drive manifest writes\n\nadapter/src/ (kept \u2014 infrastructure)\n  \u2502\n  \u251c\u2500\u2500 swarm-client.ts             \u2014 Bee API: /bytes, /bzz, feeds, ACT, PSS, GSOC, node status\n  \u251c\u2500\u2500 swarm-crypto.ts             \u2014 AES-256-GCM encryption\n  \u251c\u2500\u2500 wallet-signer.ts            \u2014 Key derivation from wallet signature\n  \u251c\u2500\u2500 stamp-manager.ts            \u2014 Postage stamp lifecycle + CoinGecko pricing\n  \u251c\u2500\u2500 share-manager.ts            \u2014 Cross-user ACT sharing + public profile I/O\n  \u251c\u2500\u2500 folder-tree.ts              \u2014 Recursive tree builder\n  \u251c\u2500\u2500 types.ts                    \u2014 Manifest types, sharing types (version: 2 ACT), stamp status\n  \u251c\u2500\u2500 swarm-operation-store.ts    \u2014 IOperationStore interface\n  \u251c\u2500\u2500 swarm-keyframe-store.ts     \u2014 IKeyframeStore interface\n  \u2514\u2500\u2500 bytes-utils.ts              \u2014 hex/bytes conversion\n\nadapter/src/chat/\n  \u2502\n  \u251c\u2500\u2500 chat-manager.ts             \u2014 PSS session orchestrator + chapter tracking\n  \u251c\u2500\u2500 chat-history.ts             \u2014 ACT-encrypted feed pages + chapter rotation\n  \u251c\u2500\u2500 pss-messenger.ts            \u2014 PSS send/subscribe + broadcast topic\n  \u251c\u2500\u2500 gsoc-notifier.ts            \u2014 GSOC signer mining + notification send/subscribe\n  \u251c\u2500\u2500 swarm-file.ts               \u2014 ACT-protected file upload + thumbnails\n  \u251c\u2500\u2500 mime-guess.ts               \u2014 MIME detection for attachments\n  \u251c\u2500\u2500 types.ts                    \u2014 ChatMessage, FileAttachment, DocumentShareAttachment\n  \u2514\u2500\u2500 index.ts                    \u2014 Public exports\n\nadapter/src/plugin/\n  \u2502\n  \u251c\u2500\u2500 init.ts         \u2014 Orchestrator: Bee detection, stamps, wallet, ChatManager bootstrap, ph.swarm surface\n  \u251c\u2500\u2500 sharing.ts      \u2014 Cross-user ACT share + import + buildDriveShareBundle\n  \u251c\u2500\u2500 hydration.ts    \u2014 restoreFolderStructure + populateUiCacheFromDrives\n  \u251c\u2500\u2500 state.ts        \u2014 Bee URL, UI cache fields, drive mapping\n  \u251c\u2500\u2500 storage.ts      \u2014 clearSwarmStorage + loadManifestIndex (IndexedDB) + chat-related keys\n  \u2514\u2500\u2500 events.ts       \u2014 Toast event system (onSwarmEvent/emitSwarmEvent)\n```\n",
+        "createdAt": "2026-04-21T13:53:05.527Z",
+        "sourceType": "DOCUMENTATION",
+        "description": "Swarm Connect \u2014 Architecture Diagrams"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.931Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "859ec32e-b693-40af-ade7-e591c0f40a95",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.931Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/Z1Fg4DOPi3WkTuUwDiWwTueBw0=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "7/ssLH2RnMGjsh7QikSk5d5eVQI=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 14,
+        "extractedAt": "2026-04-21T14:48:31.336Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "umdf9I6WAY70DefBGOThi18X2b4=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "8c92f8fd-dd24-4b20-ab66-54bd440e9584"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "vvxuxe+jlOfZpgYHIR9qfi3URSw=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "41a470a9-1619-4d1e-9642-5a80570d5cc9"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "J4++TdBrPxQRmVIEBdzIGOC7SnU=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "f53b143c-0a28-4ba7-9ea9-7e951bfdbde4"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "cqupJaEpzmF7hMKyEFh14Gpb7qg=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "2cf91263-00a4-478e-b7f4-cd76e9123339"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "WPPWSS3/RUjVXayQGH5QMcSkLQk=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "d7e42f09-bb6b-4b97-b4d9-177acd0335e3"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "qL5LIvWDjq6T2T/vf1l2M8SCZnw=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "139dad67-0851-4575-bc96-1276067c618e"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "CdXpHtokEa/15D8KEGUmzTYzsTs=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "23eb8b8f-1c01-4853-a3ba-631dcdfbe160"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "h6nkjboujHArneLd2eFWC/IahcY=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "a5352301-cc42-4c0d-a6d8-e9654a8e9fc8"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "BMyDOYt8jZXQIjtl9Js1yxgZWkI=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "3efc23f3-f6b4-4477-bba9-40c87ad50b0e"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "4VRfuwC+Nn/Xeir85H+jTu8Wf/A=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "c0bd9feb-e618-4353-bef2-9133f48f2e97"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "2ZurWA+QmHDOPV/1bXMm1tRCtmo=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "f2b309e3-39a9-4ace-9f50-102aaa2b7b33"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "9OcQHu9ttOcfBGJtX/qvo1Jak0M=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "84f30b19-e130-4b75-8160-349b7fb4b47e"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "fWDzr39OA3hZlKYJXgT6ADn0E3Q=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "8c201bbe-513a-4003-9069-1762cbdd6f67"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "pukFSq7xwUeUOKWfvMnmww/l428=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "f626ffad-e369-4adb-9435-c9ffd359d390"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  }
+]

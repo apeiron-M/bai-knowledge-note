@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:16.802Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "vetra-remote-drives-enable-collaboration",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5835c229-d9da-4093-b417-ba8f324c50cd",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:16.802Z"
+        },
+        "version": 0,
+        "documentId": "5835c229-d9da-4093-b417-ba8f324c50cd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:16.802Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "yF3T3Laxv7vNI8fCQAuUhphAxSs=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Vetra remote drives enable team collaboration by syncing specifications across developers",
+        "updatedAt": "2026-05-13T13:00:48.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:16.802Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5835c229-d9da-4093-b417-ba8f324c50cd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:16.802Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "mE1tuiwAv45rcZcH1pFicuqTpzY=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:48.000Z",
+        "description": "Teams share a remote Vetra drive via --remote-drive flag. Preview drives let you test locally before syncing to the team."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:22.715Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5835c229-d9da-4093-b417-ba8f324c50cd",
+        "targetId": "704085f0-21b6-41ff-80db-d55a14ed9083",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:22.715Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "DaTJSSxczarBxiWAZbO/zWd0meY=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "WORKFLOW",
+        "updatedAt": "2026-05-13T13:00:48.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:22.739Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5835c229-d9da-4093-b417-ba8f324c50cd",
+        "targetId": "def5bfd1-15ed-48bf-8702-1eb93e02ea52",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:22.739Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "dJa2VZfibgndtFz7RN0mfwOPvac=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Vetra supports collaborative development through remote drives:\n\n- **Without `--remote-drive`**: Creates a local drive in browser local storage (solo development)\n- **With `--remote-drive <url>`**: Connects to a shared remote drive\n\nKey workflows:\n- **Project Owner**: `ph init --remote-drive <url>` -> Create GitHub repo -> Push -> `ph vetra --watch`\n- **Collaborator**: `ph checkout --remote-drive <url>` -> `ph vetra --watch`\n\nThe **preview drive** (created with `--watch` mode) provides a safe testing environment:\n- The main \"Vetra\" drive syncs with the remote and contains stable configuration\n- The \"Vetra Preview\" drive is local-only for testing document models and editors before syncing\n\nRemote drive configuration is stored in `powerhouse.config.json`:\n```json\n\"vetra\": {\n  \"driveId\": \"bai-specifications\",\n  \"driveUrl\": \"https://switchboard.staging.vetra.io/d/bai-specifications\"\n}\n```",
+        "updatedAt": "2026-05-13T13:00:48.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:22.757Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5835c229-d9da-4093-b417-ba8f324c50cd",
+        "targetId": "a8a87055-a271-4599-aa09-eec6e5dd3606",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:22.757Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "GTjCGMaq7fj3eyRd+qgC3x88l2M=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "zLdkCp8qn361rVGn5XRmQld7tnk=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fa1f4819-4c48-4cd4-9fc6-efc59c31b984",
+        "name": "vetra-studio",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "PrX3qn+zd5yEbcZp0lR9lIKWQq0=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f25b753a-5c97-4793-afc3-bc501003021f",
+        "name": "collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "jwfjb0hAKfNvNKXs3iuE94h8u3M=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "63958a09-a88b-4e5f-8f40-0d3c26d1f73d",
+        "name": "remote-drives",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  }
+]

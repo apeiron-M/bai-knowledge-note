@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:40.005Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ddup-content-addressed-dedup",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6213cb97-da8f-48c9-b21b-40b81b601176",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:40.005Z"
+        },
+        "version": 0,
+        "documentId": "6213cb97-da8f-48c9-b21b-40b81b601176",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:40.005Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "3+MOIRw9aCu+K+XqkIbaY+T7DHg=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Swarm /bytes content-addressing means identical uploads dedupe automatically at the network layer",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:40.005Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6213cb97-da8f-48c9-b21b-40b81b601176",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:40.005Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5/JlRfIBMm3c3s2mr/glA7HPsvA=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:31.000Z",
+        "description": "Because /bytes chunks are content-addressed, uploading the same data twice yields the same reference \u2014 the network deduplicates for free, independent of who uploaded it."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.645Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6213cb97-da8f-48c9-b21b-40b81b601176",
+        "targetId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.645Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "uaLUpPpPYeZrBe4K4a+5B/UU+6g=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.668Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6213cb97-da8f-48c9-b21b-40b81b601176",
+        "targetId": "0b548435-7d91-4cca-9beb-9fb14d5fce38",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.668Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "l1ZKLcgssevuSGaUgehxoACZ9cM=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Swarm /bytes chunks are content-addressed: the reference is derived from the chunk's content (BMT hash). Two consequences for duplication analysis:\n\n**1. Same data -> same reference, regardless of uploader.** If Alice and Bob both upload the same encrypted operation batch, they produce identical chunk references. The network stores it once.\n\n**2. Immutability is intrinsic.** Once written, a chunk cannot change \u2014 changing the content would change the reference. This is why /bytes is durable until stamp expiration and why \"versioning\" requires feeds (mutable pointers) layered on top.\n\n**Implications for our duplication picture**:\n- Our encrypted operation batches are per-user (encryption key differs), so cross-user de-dup is limited in practice.\n- But within a user's own writes, re-uploading the same batch (e.g., after a retry) is effectively free \u2014 the network already has the chunk.\n- This is different from PostgreSQL/IndexedDB where \"duplicate\" means \"both rows exist and take up bytes twice.\"\n\n**Terminology care**: when the analysis says \"operations exist in both PGlite and Swarm,\" the Swarm side is the content-addressed chunk \u2014 a single chunk even if uploaded many times. PGlite, by contrast, stores raw rows with no content-addressing.",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ZB+OuV0bBK9lJFPaPuP7uKGe+Kc=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:42:40.589Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "xmz2mS0bSto5ZX3MM4Q+fnKnYUA=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "558236a8-c6f7-477e-9105-378dec31c9d5",
+        "name": "content-addressing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "nMLZit/tvbvlqEwVP2dnD24gyPg=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "76792b57-9eb7-4d13-baac-b5a82f97ca3b",
+        "name": "swarm-bytes",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "28SDbPovQxUnEcHZRIII15xb5PE=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ec9ed60b-c68e-4544-9422-7ebd4dc070f9",
+        "name": "deduplication",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "dp1FW1XZm0O28y2/3kbIBCpjL2s=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dbf170db-a957-4bc5-a82f-4d967d5af7d7",
+        "name": "immutability",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  }
+]

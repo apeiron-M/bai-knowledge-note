@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-61e7ee9c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-3225e987-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+      "targetTitle": "input-types-should-reflect-user-intent-with-simple-specific-fields"
+    },
+    {
+      "id": "lnk-4ed34c88-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4ed34c88-924f-4b59-86dd-887c0fe2a57d",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    },
+    {
+      "id": "lnk-7bcb4292-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7bcb4292-89d1-4647-977a-8c5cdb581a7d",
+      "targetTitle": "gsoc-provides-many-to-one-notifications-with-sub-second-late"
+    },
+    {
+      "id": "lnk-5aba7d9f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5aba7d9f-e7b8-4bea-b898-94ce2dfd7edc",
+      "targetTitle": "bee-reactor-adapter-prerequisites"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat requires both users to run full Bee nodes because light nodes cannot receive PSS or GSOC.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "topic-cf31ed4f845a",
+      "name": "bee-node",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-c0d1d799aabb",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-41701de83d21",
+      "name": "deployment",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Hard requirement\n\nThe Swarm chat/collab feature requires **both users to run full Bee nodes**. This is not a soft recommendation \u2014 light nodes lack the neighborhood-sync capability needed to receive PSS Trojan chunks and GSOC SOC updates.\n\n## Capability matrix\n\n| Feature | Full Node | Light Node | Ultra-Light |\n|---------|-----------|------------|-------------|\n| PSS send | Yes | Yes | No |\n| PSS receive | **Yes** | No | No |\n| GSOC subscribe | **Yes** | No | No |\n| GSOC send | Yes | Yes | No |\n| Feed read/write | Yes | Yes | Read only |\n\n## Minimum viable Bee config\n\n- `full-node: true`\n- `swap-enable: true`\n- A funded **mutable** postage stamp (GSOC requires mutable)\n- Connected to Gnosis Chain RPC\n\n## Dev mode caveat\n\nPSS and GSOC do function in `bee dev` mode, but only within the same node \u2014 there are no peers. Multi-node testing requires either a real Swarm network or a local multi-node setup.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:29:32.951Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:29:32.951Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PSS receive and GSOC subscribe both require full-node capability. Light and ultra-light nodes can send PSS/GSOC but cannot subscribe to incoming messages.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

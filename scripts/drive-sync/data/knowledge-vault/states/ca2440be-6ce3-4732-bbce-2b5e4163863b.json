@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-56a911e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+      "targetTitle": "three-layer-swarm-stack"
+    },
+    {
+      "id": "lnk-1c017164-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c017164-4e15-48db-8f00-94875b825209",
+      "targetTitle": "ddup-four-architecture-options"
+    },
+    {
+      "id": "lnk-dc4d768b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+      "targetTitle": "ddup-copy-distinct-recovery-role"
+    },
+    {
+      "id": "lnk-cfe56b10-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+      "targetTitle": "ddup-reactor-native-sync-2x"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Swarm plugin mirrors the Switchboard duplication pattern, swapping the remote layer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "84320fc6-8e76-4493-a7af-f584b4042a17",
+      "name": "data-duplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d55249c-950f-4b7e-a8c0-85f1eabac1c0",
+      "name": "swarm-plugin",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8444aafc-d5e2-4404-9755-bb9f389659e9",
+      "name": "architecture-comparison",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fff0d19d-6479-4864-b03a-62747eeb5d5f",
+      "name": "sync-channel",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Our Swarm plugin follows the same duplication pattern as the native Switchboard sync, with Swarm substituted for PostgreSQL:\n\n```\nCONNECT (browser)                    SWARM NETWORK\nPGlite (local)                       /bytes (encrypted ops)\n  - operations                         - operation batches (SAME ops)\n  - documents                        Feeds (pointers)\n  - relationships                      - doc/drive/user manifests\n```\n\n**Same 2x duplication pattern** \u2014 operations exist in PGlite AND on Swarm. The structural contract is identical:\n- Local primary (PGlite) for hot reads\n- Durable remote (Swarm instead of PostgreSQL) for recovery and cross-device\n\nWhat changes:\n- **Access control**: API key/auth token -> postage stamp + encryption\n- **Operator**: server-operator-controlled -> decentralized, no single operator\n- **Trust model**: trusted server -> self-sovereign (wallet-based)\n- **Durability model**: row-deletable -> immutable content-addressed chunks\n\nThis is why the Swarm plugin slots into the reactor architecture cleanly \u2014 it preserves the same local+remote shape the SyncManager already expects, just routes traffic through a different channel.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:55.863Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:41:55.863Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect + Swarm plugin has the same 2x duplication as Connect + Switchboard \u2014 operations in PGlite and on Swarm. Swarm replaces PostgreSQL as the durable remote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

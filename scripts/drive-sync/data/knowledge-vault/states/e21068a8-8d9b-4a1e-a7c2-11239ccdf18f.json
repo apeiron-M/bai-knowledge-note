@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-4ed34c88-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4ed34c88-924f-4b59-86dd-887c0fe2a57d",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    },
+    {
+      "id": "lnk-8918651f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-3e9e4444-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3e9e4444-c251-4b9b-9893-c7af3628df2b",
+      "targetTitle": "collab-non-goals-explicit-exclusions"
+    },
+    {
+      "id": "lnk-4ed34c88-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4ed34c88-924f-4b59-86dd-887c0fe2a57d",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Typing indicators were cut because PSS message latency makes the hint pointless.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "topic-d42789cd0fa0",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-320ddc21121e",
+      "name": "gsoc-notifications",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-4a29c82f7e1a",
+      "name": "ux",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Decision (2026-04-18)\n\nThe typing indicator, presence dots, and delivery/read receipts \u2014 all designed to ride on the GSOC notification rail \u2014 were **scratched** before shipping.\n\n## Rationale\n\n- PSS message latency is **2\u201310 seconds**, dominated by Trojan chunk mining.\n- A 'User is typing\u2026' hint is only useful when it arrives faster than the message itself, previewing imminent delivery.\n- With PSS, by the time the hint fires and the user reads it, the message is usually already delivered \u2014 or still 5s away, at which point the hint provides no information.\n- The UX payoff does not justify the complexity of the typing/debounce/stopped-typing state machine.\n\n## What happened to the GSOC plumbing\n\nThe adapter code for GSOC notifications is **shipped and working** \u2014 see `src/chat/gsoc-notifier.ts`. It's being repurposed for live collaboration (Phase 4): doc-update pings, collab-join/leave events, and cursor broadcasts, all of which are what sub-second notifications were really for. The chat-UI-only consumers are parked.\n\n## Lesson\n\nLatency floors dictate which UI hints make sense. Before designing a 'fast signal' feature on top of a slow transport, check whether the signal's utility survives the transport's latency.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:29:18.286Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:29:18.286Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A 'User is typing\u2026' hint only pays off when it arrives faster than the message; PSS delivers on 2\u201310s, slower than any useful typing hint, so the indicator was scratched.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

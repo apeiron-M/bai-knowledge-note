@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-f10dc4e9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f10dc4e9-fe23-4f24-9911-5a4b8aca82ba",
+      "targetTitle": "editors-use-react-hooks-for-document-state"
+    },
+    {
+      "id": "lnk-7ea81389-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-f9a31f86-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9a31f86-7855-465b-87a5-cf74e250acd5",
+      "targetTitle": "node-actions-hook-drive-operations"
+    },
+    {
+      "id": "lnk-ab18706f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab18706f-bc4d-4c54-8dac-b0fb9eff1560",
+      "targetTitle": "useselecteddocument-hook-is-auto-generated-per-document-model"
+    },
+    {
+      "id": "lnk-345dd7d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "345dd7d5-2227-4257-bb2b-d152158c6986",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-73fedb4c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+      "targetTitle": "model-editor-wiring"
+    },
+    {
+      "id": "lnk-e955ceeb-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e955ceeb-c6c0-4449-a8d2-ee1b849ae958",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-b107d1c0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+      "targetTitle": "document-model-three-components"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Generated hooks like useSelectedDocument connect React editors to document state and dispatch",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "13e13970-c68d-4d4f-b970-cb5620f96542",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3086823-9ed8-4fe2-9fe9-373edeeca4ce",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbac14b6-c4e1-4803-b303-f2494310f05c",
+      "name": "state-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When Powerhouse generates code for a document model, it creates React hooks for editor integration. For a `TodoList` model, the generated hook is `useSelectedTodoListDocument`.\n\nUsage pattern:\n```tsx\nconst [selectedTodoList, dispatch] = useSelectedTodoListDocument();\n```\n\nThis provides:\n1. **Document state** (`selectedTodoList`) - The current document including `state.global`, `name`, `operations`, etc.\n2. **Dispatch function** - Send actions to the reducer to modify the document\n\nThe dispatch function works with generated action creators:\n```tsx\nimport { addTodoItem, updateTodoItem, deleteTodoItem } from \"...\";\n\ndispatch(addTodoItem({ text: \"Buy groceries\" }));\ndispatch(updateTodoItem({ id: itemId, checked: true }));\ndispatch(deleteTodoItem({ id: itemId }));\n```\n\nThis follows React's `useReducer` pattern. Any component can use the same hook - you don't need to be in the parent component to dispatch updates. The hook automatically connects to the currently selected document.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The hook returns [documentState, dispatch] following React's useReducer pattern, enabling read and write from components.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,75 @@
+{
+  "links": [
+    {
+      "id": "lnk-217e398b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "217e398b-2e52-4825-9676-d9adb2fdda17",
+      "targetTitle": "light-theme-base-palette"
+    },
+    {
+      "id": "lnk-bed6bac4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bed6bac4-5c07-481e-abeb-7f667935fed1",
+      "targetTitle": "dark-theme-base-palette"
+    },
+    {
+      "id": "lnk-0a3efcff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0a3efcff-c264-42b5-bfdc-553ebd3d2ece",
+      "targetTitle": "moc-design-tokens-and-theming"
+    },
+    {
+      "id": "lnk-67ce34f9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "67ce34f9-bdbc-4ff4-96c9-66bbb2145772",
+      "targetTitle": "document-models-are-the-core-unit-of-powerhouse-architecture"
+    },
+    {
+      "id": "lnk-c72c5803-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c72c5803-1287-47af-af48-ec124e337b8b",
+      "targetTitle": "achra-brand-identity"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Theme System Light and Dark Approach",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [],
+  "content": "The Powerhouse design system implements theming through CSS custom properties with two modes. The :root selector defines light theme values as the default. The .dark class or [data-theme=\"dark\"] attribute selector overrides those values for dark mode. For Achra and Vetra, the primary brand colors persist unchanged across themes: Achra stays #7A3AFF and Vetra stays #04C161 in both light and dark. The Powerhouse parent brand behaves differently -- its primary inverts from #32373B (dark neutral) in light mode to #F3F5F7 (light neutral) in dark mode, with --primary-foreground similarly inverting from #FFFFFF to #0E0E0D. All three brands share the same dark theme values for secondary (#4F596F), muted-foreground (#6C7275), and other non-primary surface tokens, though Powerhouse uses darker background values (#0E0E0D vs #1B1E24). Source: colors.css files at https://github.com/powerhouse-inc/design-systems.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "Wouter Kampmann",
+    "createdAt": "2026-04-05T00:03:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-05T00:03:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Light theme uses :root selector, dark theme uses .dark class or [data-theme=\"dark\"] attribute. Primary colors persist or invert by brand.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

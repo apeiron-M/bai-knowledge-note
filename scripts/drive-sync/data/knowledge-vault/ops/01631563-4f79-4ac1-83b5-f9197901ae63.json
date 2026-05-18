@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:54.113Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "operation-error-index-must-match-the-number-of-prior-dispatches",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "01631563-4f79-4ac1-83b5-f9197901ae63",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:54.113Z"
+        },
+        "version": 0,
+        "documentId": "01631563-4f79-4ac1-83b5-f9197901ae63",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:54.113Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Izyavje9MkzXpBtRXwNZ484/PEs=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "operation error index must match the number of prior dispatches",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:54.113Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "01631563-4f79-4ac1-83b5-f9197901ae63",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:54.113Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "oOjtF4xuQLUICan1oMQIgxq4zoc=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:39.000Z",
+        "description": "The error lives at document.operations.global[N] where N equals prior dispatches; wrong index checks the wrong operation"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.649Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "01631563-4f79-4ac1-83b5-f9197901ae63",
+        "targetId": "e598786c-d2e2-42e1-ad78-cc71fde187d6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.649Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "u3/1Z/lGfmvKlFc+g/cyABZgIhU=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.671Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "01631563-4f79-4ac1-83b5-f9197901ae63",
+        "targetId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.671Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "iATffMMXdsGLOov1VPg7bA7BqH0=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# operation error index must match the number of prior dispatches\n\nWhen testing reducer errors, the operation index matters:\n\n```typescript\n// First operation dispatched \u2192 index [0]\nconst doc1 = reducer(document, addItem({ id: \"1\", name: \"test\" }));\n\n// Second operation dispatched \u2192 index [1]\nconst doc2 = reducer(doc1, addItem({ id: \"1\", name: \"duplicate\" }));\nexpect(doc2.operations.global[1].error).toBe(\"Duplicate ID\");\n\n// \u274c Wrong \u2014 index [0] is the first (successful) operation\nexpect(doc2.operations.global[0].error).toBe(\"Duplicate ID\");\n```\n\nThe index corresponds to the total number of operations dispatched, not the number of errors. Since [[operation errors are recorded on operations not thrown to callers]], every dispatch (successful or failed) produces an operation at the next index.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.692Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "01631563-4f79-4ac1-83b5-f9197901ae63",
+        "targetId": "ab29684d-9bd8-468f-b322-469c892c6624",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.692Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Zcq0za9ev1ul1U+YD8a82LAJiGw=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:00:40.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Wy6NhvCr5YvJzV43ObXPMcRtpm4=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b53dbc92-9c7a-40cb-a641-4f68c4c41824",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Ghtg2Gc1Pw1J+3tM+wxPl2+4wps=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4864ee81-fe7e-4c11-824d-18d08228ebed",
+        "name": "testing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "xy9Q0f6zmdnaZ4SWBk7fE3CE2eE=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "473bec9f-a9fb-468c-855e-1fe5228e4a56",
+        "name": "debugging",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "DJr5AgyU50rb/eOpqkCeXJQijNE=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6ac5c486-bf50-402b-a97d-a4c7be6fb555",
+        "name": "error handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  }
+]

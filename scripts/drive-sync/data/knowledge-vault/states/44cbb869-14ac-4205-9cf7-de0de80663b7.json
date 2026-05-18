@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-9da8405c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9da8405c-a2bd-4927-a1b1-8f599001e545",
+      "targetTitle": "swarm-feed-bottleneck-propagation"
+    },
+    {
+      "id": "lnk-e59acafe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e59acafe-c649-4fb2-8bfe-e610d44948c1",
+      "targetTitle": "swarm-feed-write-per-topic-lock"
+    },
+    {
+      "id": "lnk-bc3b5418-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+      "targetTitle": "live-collaboration-uses-per-user-op-feeds-plus-gsoc-pings-to"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reactor operation-based model handles concurrent edits natively; no CRDT is needed.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "topic-849da5ba364b",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-48f9a862a728",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-c0298c0f8b3c",
+      "name": "conflict-resolution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Decision\n\nConnect's live collaboration does **not** use a CRDT. The reactor's existing operation-based document model already resolves concurrent edits: each user produces an independent stream of ops, and `reactor.load()` applies remote ops with proper ordering via skip/noop/merge semantics.\n\n## Why this works\n\n- Ops are signed and attributed to their author, so provenance is preserved across peers.\n- Each peer's feed is append-only and per-user, so there is no shared write cursor to contest.\n- Reordering and merge semantics live in the document model, not in the transport \u2014 SwarmChannel only has to pull new batches and hand them to the reactor.\n\n## UX consequence\n\nBecause Powerhouse editors are too varied (tables, visual canvases, dashboards, button grids) to support meaningful per-editor cursors, the **only live surface is the document toolbar's History view**: peers' ops appear there in real time, attributed to the correct signer. No per-editor presence, no collaborative cursors.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:28:24.632Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:28:24.632Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each collaborator produces an independent op stream; reactor.load() applies remote ops with proper ordering via skip/noop/merge semantics, so no CRDT layer is required.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:38.977Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "core-flow-connect-reactor-swarm",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:38.977Z"
+        },
+        "version": 0,
+        "documentId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:38.977Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "O2PSwoWd9MQTUdRZML9LKfQOMK8=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Connect core data flow routes UI actions through ReactorClient, PGlite, SyncManager, and out to both GQL and Swarm channels.",
+        "updatedAt": "2026-05-13T13:00:30.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:38.977Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:38.977Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ojEvytE1GOeBoHnyuhqPyBGMSW4=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:30.000Z",
+        "description": "Connect dispatches React actions to ReactorClient, which queues jobs, writes to PGlite (IndexedDB), and triggers SyncManager to fan out via GQL or Swarm channels."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:58.721Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+        "targetId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:58.721Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "YHbtBGvdqkgrEhE4hyF2ZU2QQKg=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:30.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:58.749Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+        "targetId": "5cc3c6a5-e5e3-4aa2-af00-39265af3023f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:58.749Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "VJ/MsS5k5qIf+UzuHzXG3RP066g=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Pipeline\n\nThe end-to-end flow inside the browser:\n\n1. **Connect UI (React)** \u2014 user actions (create drive, add doc, edit).\n2. **ReactorClient** \u2014 turns actions into Jobs, enqueues them.\n3. **Job Executor** \u2014 applies operations (`CREATE_DOCUMENT`, `UPGRADE_DOCUMENT`, `ADD_FILE`, `ADD_FOLDER`, `MOVE_NODE`, domain actions).\n4. **PGlite (WASM Postgres, IndexedDB-backed)** \u2014 stores `reactor.Document`, `reactor.Operation`, `reactor.DocumentSnapshot`, `reactor.DocumentRelationship`, plus `operation_index_operations`, `sync_remotes`, `sync_cursors`, `sync_dead_letters`.\n5. **SyncManager** \u2014 detects new ordinals, groups ops by `(docId, scope, branch)`, pushes to channel outboxes, processes inboxes via `reactor.load()`.\n6. **Channels** \u2014 `GqlRequestChannel` for Switchboard, `SwarmChannel` for Swarm. SyncManager treats both identically.\n\nBeyond the browser: the SwarmChannel talks to the user's **Bee node** (`/bytes`, `/feeds`, `/stamps`, `/health`), which gossips chunks into the **Swarm network** (content-addressed, encrypted, replicated across neighborhoods).\n\nKey architectural insight: PGlite's `operation_index_operations` is the single source for both channels' outbound sync, with independent cursors per remote.",
+        "updatedAt": "2026-05-13T13:00:30.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:58.769Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+        "targetId": "1499ac7f-c5cc-4b36-a48f-257620cb540f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:58.769Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "M/NJtKH76t7Kn84iTz133CLeyk4=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:58.787Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+        "targetId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:58.787Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "a0w80PvLTrOI3IO04tUUTqpLCkw=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "architecture-diagram",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:58.808Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+        "targetId": "3e894e41-ada3-43bc-a3fa-96eb1dde2686",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:58.808Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ocCIsfKREQm2p2LSlJ167i/7YEo=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "data-flow",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "KOZUog+Om1U5yiDgvfhLaN5uLpc=",
+    "timestampUtcMs": "2026-05-13T13:00:30.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "sync-pipeline",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:30.000Z"
+    }
+  }
+]

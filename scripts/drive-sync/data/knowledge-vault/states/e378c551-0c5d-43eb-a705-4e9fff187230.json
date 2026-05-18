@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-47a89c0b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "47a89c0b-cd52-488c-b81c-f18c5aec4820",
+      "targetTitle": "ddup-collab-envelope-overhead"
+    },
+    {
+      "id": "lnk-2d6a278b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2d6a278b-e72f-4922-86bb-a0e0f49d7285",
+      "targetTitle": "chat-document-share-parity-shipped"
+    },
+    {
+      "id": "lnk-8918651f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-8abdf393-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8abdf393-6a17-4036-ad20-492d0aaeb4a5",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-19e3ed6e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "19e3ed6e-0d08-4b98-b1dc-962c5814b6d6",
+      "targetTitle": "operational-hub-is-turnkey-legal-setup-for-builders"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A local op in a collab-shared doc is pushed twice: once to the personal feed, once to the collab feed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-5130f63b-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-5130f63b-2",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-5130f63b-3",
+      "name": "dual-push",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Dual-push: personal feed plus collab feed\n\nFor a drive/doc that is part of a collaboration, the user's reactor still produces ops locally. Those ops need to flow to two places:\n\n- **Their personal drive feeds** \u2014 unchanged. Still wallet-key encrypted. This keeps the user's cross-device recovery working without any migration.\n- **Their collab feeds** \u2014 ACT-protected, so peers can read them.\n\n### Implementation\n\nSwarmChannel gains a `collabTargets` set. For each ordinal it would push to the personal feed, it *also* pushes to the collab feed if the doc is in an active collab. **One read of the op, two pushes.** The second upload reuses the same op-batch payload with `{ act: true }`.\n\n### Why not push-only to the collab feed\n\nDual-push preserves the existing cross-device recovery story: if the user only had the collab-feed copy, losing the collab (or being removed from it) would orphan their own history on that device. The personal feed is their source of truth; the collab feed is the per-collab projection.\n\n### Future optimization\n\nFor docs that exist *only* inside a collab \u2014 e.g., a doc imported via collab accept and never independently owned \u2014 the personal-feed push could be skipped entirely. Out of scope for v1.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Local ops in collab-shared docs are pushed twice \u2014 once to the personal wallet-encrypted feed (for cross-device recovery), once to the ACT-protected collab feed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

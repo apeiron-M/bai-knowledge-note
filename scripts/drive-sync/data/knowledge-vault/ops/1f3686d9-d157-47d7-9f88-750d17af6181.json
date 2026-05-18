@@ -1,0 +1,289 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:45.170Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "encryption-at-bytes-layer-feeds-pointers",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1f3686d9-d157-47d7-9f88-750d17af6181",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:45.170Z"
+        },
+        "version": 0,
+        "documentId": "1f3686d9-d157-47d7-9f88-750d17af6181",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:45.170Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Lez/p9dbO0cjcQkEXamNTdpczGg=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Encryption lives at the /bytes layer while feeds carry only plain-text content references",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:45.170Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "1f3686d9-d157-47d7-9f88-750d17af6181",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:45.170Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "E5DEbDG1itId8THGV2M/IGF1+3w=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:34.000Z",
+        "description": "Feeds store a 64-char hash pointing at encrypted /bytes data; readers need wallet-derived AES key to decrypt \u2014 feed-level optimizations never affect encryption."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.178Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1f3686d9-d157-47d7-9f88-750d17af6181",
+        "targetId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.178Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "le6DHhdU80QE/sECJ8Ij/k4OKpo=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.200Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1f3686d9-d157-47d7-9f88-750d17af6181",
+        "targetId": "a029226e-d12d-4760-aee1-f9b5909cff1e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.200Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "XsD3zN43bt1OVl3XrrDl4ciIKBg=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A load-bearing design rule: encryption lives at the `/bytes` layer, NOT the feed layer. Feeds store plain-text references (content hashes). The data those references point to is what is encrypted.\n\nConsequences:\n\n- Anyone can read the feed and obtain the reference, but without the wallet-derived AES key the `/bytes` payload is opaque.\n- Feed-level optimizations (like `uploadReference` vs `uploadPayload`, or batching multiple feed updates) don't affect encryption \u2014 they only change how the 64-char hash gets packed into the Single Owner Chunk (SOC), not the encrypted data at `/bytes`.\n- The same pattern works for document, drive, and user manifests: serialize JSON, encrypt, upload to `/bytes`, then write only the hash to the feed.\n\nThis separation is also why the feed SOC stays tiny (8-byte timestamp + 64-byte reference = 72 bytes) even when manifests grow large.",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.220Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1f3686d9-d157-47d7-9f88-750d17af6181",
+        "targetId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.220Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "WlUjuVo+lj+8Q7wLyKR205eHSrk=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:10.772Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.242Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1f3686d9-d157-47d7-9f88-750d17af6181",
+        "targetId": "d85dd30b-0a84-4e48-b94b-d4a08bb43a05",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.242Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "attHGtK6V6JKHofdUW0PZcp8g/M=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6e8d777a-41cb-430b-98e5-c6578ccf9f05",
+        "name": "encryption",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.292Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1f3686d9-d157-47d7-9f88-750d17af6181",
+        "targetId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.292Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "IdSLQUpJflCrpLRJ6AIKMHj5WYQ=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3058fe10-839c-4201-856a-bad437e7d1e1",
+        "name": "feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "uPTeoML/BxDkfY9hqxj/oi+w7ms=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "354d63fc-a0de-4245-bb48-642fb3ee1075",
+        "name": "bytes-storage",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "OKuduZc6HWM9M89EFBL1M+0BMzo=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "52227f0a-4ed7-4c36-bca1-be08bc0e344d",
+        "name": "manifest-pattern",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  }
+]

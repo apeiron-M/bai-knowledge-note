@@ -1,0 +1,289 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:01.162Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-client-vs-reactor-interface",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "41f83093-f177-4ec5-be8e-458c8818208f",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:01.162Z"
+        },
+        "version": 0,
+        "documentId": "41f83093-f177-4ec5-be8e-458c8818208f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:01.162Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "EZw8WjM1TlpnXusZCycpM+93qY8=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IReactorClient is a high-level Promise-based wrapper while IReactor provides low-level fire-and-forget job submission",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:01.162Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "41f83093-f177-4ec5-be8e-458c8818208f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:01.162Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "CxWcnmbCKGinBS81Hf4Ch1gpEgw=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:42.000Z",
+        "description": "IReactorClient waits for job completion and returns documents; IReactor returns JobInfo immediately for fire-and-forget patterns."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:14.648Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41f83093-f177-4ec5-be8e-458c8818208f",
+        "targetId": "19cb5185-af57-42cc-ac83-cf27156d86d5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:14.648Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Tr0WEbZu0aofZXKkB//a8GIYNEM=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:14.669Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41f83093-f177-4ec5-be8e-458c8818208f",
+        "targetId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:14.669Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "bM/H/HVR2+ax1yPTq91RvUGrIjc=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `IReactorClient` interface wraps `IReactor` to provide a simpler Promise-based API. Key differences: IReactorClient write methods wait for `READ_READY` status before resolving (returning final documents), while IReactor returns `JobInfo` immediately. IReactorClient manages signing internally and handles consistency tokens automatically; IReactor requires explicit `ISigner` and manual token passing. IReactorClient provides convenience methods like `createEmpty()`, `createDocumentInDrive()`, `rename()`, `moveChildren()`, and `deleteDocuments()`. IReactorClient offers `subscribe(search, callback)` for real-time changes; IReactor requires direct event bus access. Use IReactor when you need fire-and-forget jobs, explicit consistency token control, custom signing, or `executeBatch()` for multi-document atomic operations.",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:14.687Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41f83093-f177-4ec5-be8e-458c8818208f",
+        "targetId": "3e894e41-ada3-43bc-a3fa-96eb1dde2686",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:14.687Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "huQEHqVMZCCeryAbFJaS6Xf6We0=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:14.706Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41f83093-f177-4ec5-be8e-458c8818208f",
+        "targetId": "46a28f33-95d0-4dab-83a7-dc2369e31e32",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:14.706Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "km4ZQYv7clr8WBueeatq34lI6jU=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "65ebd03a-69b6-4e48-ad3a-856054ce89db",
+        "name": "reactor-client",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:14.726Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41f83093-f177-4ec5-be8e-458c8818208f",
+        "targetId": "71234201-777d-40e9-9b5c-71ef0e32b00a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:14.726Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "QR7ZCiLUMnng8jWN19yqDTbMLe0=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ed155298-b883-4d9d-91a1-4ca951291ed0",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:14.748Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41f83093-f177-4ec5-be8e-458c8818208f",
+        "targetId": "268e41d6-92b6-4248-932b-77a09244471a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:14.748Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "SraeFE/HNgadlUfESPecBPFDMG4=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "258eecee-5c82-4744-a899-d6b56a77f54b",
+        "name": "architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  }
+]

@@ -1,0 +1,80 @@
+{
+  "links": [
+    {
+      "id": "lnk-13c5e640-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+      "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-"
+    },
+    {
+      "id": "lnk-c9b2328d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9b2328d-e39d-472f-9523-373c7d3b2451",
+      "targetTitle": "ecosystem-map"
+    },
+    {
+      "id": "lnk-1a9a115a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+      "targetTitle": "object-relations"
+    },
+    {
+      "id": "lnk-56d65b3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56d65b3e-73d0-4d6f-b88f-348b9beaf683",
+      "targetTitle": "adr-002-extract-stamp-share-managers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "resource-instance model tracks provisioned resource lifecycle",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "be7dd484-6a27-4b5e-aacc-e69b410a75d8",
+      "name": "resource-instance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "068f5821-698e-4b4c-9fb9-62359c54b013",
+      "name": "service-pricing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# resource-instance model tracks provisioned resource lifecycle\n\n`powerhouse/resource-instance` represents a provisioned resource for a customer. It has a detailed lifecycle with provisioning, suspension, and termination states.\n\n## State Shape\n\n```graphql\ntype ResourceInstanceState {\n    resourceTemplateId: PHID       # \u2192 ResourceTemplate\n    customerId: PHID               # \u2192 customer identity (external)\n    name: String\n    profile: ResourceProfile       # { id: PHID!, documentType: String! }\n    status: InstanceStatus!        # DRAFT | PROVISIONING | ACTIVE | SUSPENDED | TERMINATED\n    configuration: [InstanceFacet!]!\n    # ... lifecycle timestamps, suspension details\n}\n```\n\n## Modules (2)\n\n| Module | Operations | Purpose |\n|--------|-----------|---------|\n| instance-management | 14 | Initialize, update info, status transitions, provisioning, suspension (non-payment/maintenance), termination |\n| configuration-management | 4 | Set/remove/update instance facets, apply configuration changes |\n\n## Key References\n\n- `resourceTemplateId: PHID` \u2192 ResourceTemplate\n- `customerId: PHID` \u2192 customer identity (external)\n- `profile.id: PHID` \u2192 external profile document\n- SubscriptionInstance.`resource.id` \u2192 references this model\n\n---\n\nTopics:\n- [[schema design]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:42:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:42:28.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "19 operations across 2 modules \u2014 manages instance lifecycle (DRAFT \u2192 PROVISIONING \u2192 ACTIVE \u2192 SUSPENDED \u2192 TERMINATED) with facet configuration",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

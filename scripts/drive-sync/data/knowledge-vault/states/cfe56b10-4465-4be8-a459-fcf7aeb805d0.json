@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-d6c3fc34-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+      "targetTitle": "operations-not-state-log"
+    },
+    {
+      "id": "lnk-dc4d768b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+      "targetTitle": "ddup-copy-distinct-recovery-role"
+    },
+    {
+      "id": "lnk-b74db7b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b74db7b7-367d-4f6d-98d7-1f0e16d125d9",
+      "targetTitle": "docker-images-for-connect-and-switchboard"
+    },
+    {
+      "id": "lnk-d6c3fc34-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+      "targetTitle": "operations-not-state-log"
+    },
+    {
+      "id": "lnk-ee86286c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ee86286c-ed83-495f-8194-cc323ee49eea",
+      "targetTitle": "ddup-four-storage-layers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reactor native sync stores every operation twice: once in PGlite, once in PostgreSQL",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9f5e354f-e611-454d-b098-418426496c55",
+      "name": "data-duplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5de0d98d-c9c9-4e6f-bbf8-c2b88fba9018",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2021328e-e75d-44eb-a5a5-2ead42849f32",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3c03f11d-5723-472d-8cd6-e9dd3cc48cea",
+      "name": "sync-envelope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The current Powerhouse default sync path creates 2x duplication by design:\n\n```\nCONNECT (browser)                    SWITCHBOARD (server)\nPGlite (local)                       PostgreSQL (remote)\n  - operations                         - operations (SAME data)\n  - documents                          - documents\n  - relationships                      - relationships\n\nSyncManager                          SyncManager\n  outbox -> GqlRequestChannel -----> inbox -> reactor.load()\n  inbox  <- GqlRequestChannel <----- outbox\n```\n\n**Every operation exists in BOTH databases.** The SyncManager on each side moves `SyncEnvelope` payloads across the `GqlRequestChannel`, ensuring eventual consistency.\n\nThe Switchboard is the authoritative remote \u2014 a server someone runs. This is the baseline duplication everything else is compared against. It's not a bug or inefficiency; it's the cost of having a multi-device-sync-capable remote copy.\n\nThis 2x pattern is the yardstick: any alternative sync path (Swarm, Swarm+Switchboard, fully decentralized) inherits or exceeds it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:55.863Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:41:55.863Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The default Connect-Switchboard path duplicates every op in both databases. GraphQL moves SyncEnvelopes; Switchboard is the authoritative remote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

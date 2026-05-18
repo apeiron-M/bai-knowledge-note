@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-0da87457-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0da87457-dfb3-4acc-b6cb-6906f7e07a94",
+      "targetTitle": "create-swarm-sync-builder-hook"
+    },
+    {
+      "id": "lnk-a510be45-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CompositeChannelFactory routes IChannel creation by config.type to registered sub-factories.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-ffc93b31-1",
+      "name": "composite-factory",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ffc93b31-2",
+      "name": "channel-factory",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ffc93b31-3",
+      "name": "design-pattern",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n`CompositeChannelFactory` implements `IChannelFactory` but dispatches `instance()` calls to registered sub-factories keyed by `config.type` (e.g., `\"gql\"`, `\"swarm\"`).\n\n## Evidence\nThe source defines a `factories: Map<string, IChannelFactory>` with `register(type, factory)`. On `instance()`, it looks up `config.type` and delegates, throwing if the type is unregistered.\n\n```typescript\nconst factory = this.factories.get(config.type);\nif (!factory) throw new Error(`Unknown channel type \"${config.type}\"...`);\nreturn factory.instance(remoteId, remoteName, config, cursorStorage, collectionId, filter, operationIndex);\n```\n\n## Why this pattern\nThe reactor exposes only one `IChannelFactory` slot per instance. Without the composite, adding Swarm would require monkey-patching or forking the reactor. The composite is a clean strategy/registry pattern that leaves the reactor interface untouched.\n\n## Source\n`adapter/src/channel/composite-factory.ts`; Swarm Channel Architecture, \"CompositeChannelFactory\" section.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:19:49.348Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The reactor accepts one IChannelFactory. A composite implementation dispatches to named sub-factories so GQL and Swarm channels can coexist.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

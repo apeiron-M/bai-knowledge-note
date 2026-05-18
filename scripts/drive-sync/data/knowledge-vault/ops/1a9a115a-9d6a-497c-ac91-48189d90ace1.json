@@ -1,0 +1,345 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:52.187Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "object-relations",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:52.187Z"
+        },
+        "version": 0,
+        "documentId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:52.187Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "lM9oC5P0yfb3PfgyPmpn7xru4eo=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "object relations",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:52.187Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:52.187Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "xcVwbXb8KS3oFW4qlKUKunggNIg=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:38.000Z",
+        "description": "Cross-object references within and across document models -- PHID links between models, OID references within models"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.249Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "targetId": "647e3ae9-3176-4df3-8e82-b6c913f4823e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.249Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "LpHcVqHMMyHU+6Kv5k4Wr7oYXS8=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.271Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "targetId": "5739f1f1-4e1e-49f9-9fca-0a559b466276",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.271Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "krkORnvDrC5WL6fmgs6EGJm/MZw=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# object relations\n\nHow objects relate across the 21 document models in the Powerhouse ecosystem. The primary reference type is PHID for cross-model links and OID for intra-model references. See [[ecosystem map]] for the full model inventory organized by functional zone.\n\n## Cross-Model Hierarchy (Local Project)\n- [[five models form a hierarchy from facet through template to offering to subscription to instance]] \u2014 the core reference graph in this project's 5 models\n\n## Local Models (this project)\n- [[service-offering model defines tiered pricing with option groups and service groups]] \u2014 the central model with the most internal references (tiers \u2194 groups \u2194 services \u2194 options)\n- [[subscription-instance model tracks active customer subscriptions with lifecycle state]] \u2014 mirrors offering structure with billing actuals\n- [[resource-template model defines reusable service catalog blueprints]] \u2014 base catalog structure without pricing\n- [[resource-instance model tracks provisioned resource lifecycle]] \u2014 provisioned resource with facet configuration\n- [[facet model provides configurable classification dimensions]] \u2014 referenced by templates, offerings, and instances\n- [[service-subscription model tracks service-level subscription agreements]] \u2014 agreement-level subscription tracking\n\n## Cross-Zone References\n- [[builder-profile model describes individual contributor identities]] \u2014 SO.operatorId references this (Service & Pricing \u2192 Organization)\n- [[billing-statement model captures periodic billing summaries]] \u2014 SI produces billing statements (Service & Pricing \u2192 Finance)\n- [[invoice model generates formal payment requests]] \u2014 SI charges become invoice line items (Service & Pricing \u2192 Reporting)\n\n## Cross-Model Data Bridges\n- [[mapOfferingToSubscription transforms service offering state into subscription initialization]] \u2014 the primary offering \u2192 subscription bridge\n\n## Key Reference Patterns\n\n**PHID references (cross-model, local):**\n- `ServiceOffering.operatorId` \u2192 [[builder-profile model describes individual contributor identities]]\n- `ServiceOffering.resourceTemplateId` \u2192 ResourceTemplate\n- `SubscriptionInstance.serviceOfferingId` \u2192 ServiceOffering\n- `ResourceInstance.resourceTemplateId` \u2192 ResourceTemplate\n\n**PHID references (cross-zone):**\n- SubscriptionInstance \u2192 [[billing-statement model captures periodic billing summaries]]\n- SubscriptionInstance \u2192 [[invoice model generates formal payment requests]]\n- ScopeOfWork \u2192 [[builder-profile model describes individual contributor identities]] (assignees)\n- ScopeOfWork \u2192 [[invoice model generates formal payment requests]] (milestone billing)\n\n**OID references (intra-model):**\n- `Service.serviceGroupId` \u2192 ServiceGroup\n- `Service.optionGroupId` \u2192 OptionGroup\n- `ServiceGroupTierPricing.tierId` \u2192 Tier\n- `ServiceLevelBinding.serviceId` \u2192 Service\n- `ServiceUsageLimit.serviceId` \u2192 Service\n\n---\n\nTopics:\n- [[index]]",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.294Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "targetId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.294Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "mmODuzk20MBawOTyqVyO9bPMj9U=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:05:31.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.315Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "targetId": "65ef87db-1d1f-4614-8f3a-281454f215f9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.315Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "K7hxQQyKkGfDSWhsgXIechQTwoQ=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "51a9134d-9ec4-4ca8-9591-408a60d5f38c",
+        "name": "object relations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.336Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "targetId": "d39b8d6a-3095-4893-8ec6-5a45d7a11f6c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.336Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "vMoSlWi/rI/rgr33W9sVt/LZmug=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9266360c-b8a8-4e88-8673-51666a347a04",
+        "name": "PHID",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.355Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "targetId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.355Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "fmTZCtGjCoiBdWvaJmxDCDcP9YY=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f65c38b3-5646-42fb-906a-3956f9eab80d",
+        "name": "OID",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.375Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.375Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "J/2gOo5nblvG5yxXOGXNS1/iXpM=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4fa4eb7a-9e42-4b69-b4fd-4420428958ca",
+        "name": "cross-model references",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.394Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1a9a115a-9d6a-497c-ac91-48189d90ace1",
+        "targetId": "0e465bb9-9a40-4da6-90c1-6aea3126d60b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.394Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "iVIDW0sua0+VJj8cuispngqG8Vw=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aa440d4b-724e-4f9a-bcaa-21febe0357cf",
+        "name": "MOC",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  }
+]

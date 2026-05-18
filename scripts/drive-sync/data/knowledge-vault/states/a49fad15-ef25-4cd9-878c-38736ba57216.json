@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-549857ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "549857ac-5ba5-4911-b1a3-0ffb568b2ce4",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    },
+    {
+      "id": "lnk-c2892079-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2892079-a6f8-4e18-955c-898bf6505c1d",
+      "targetTitle": "powerhouse-applies-blockchain-immutability-through-event-sourcing"
+    },
+    {
+      "id": "lnk-3efc23f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3efc23f3-f6b4-4477-bba9-40c87ad50b0e",
+      "targetTitle": "act-cross-user-sharing-ecdh"
+    },
+    {
+      "id": "lnk-56d65b3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56d65b3e-73d0-4d6f-b88f-348b9beaf683",
+      "targetTitle": "adr-002-extract-stamp-share-managers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CQRS separates write commands from read queries so each can scale independently.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4614dfd4-16b0-452e-afff-74da95828eb0",
+      "name": "cqrs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "580d81bf-00de-4c52-8430-c0954a75d941",
+      "name": "commands",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d008c62-db7f-4e6f-89d8-8146376debc9",
+      "name": "queries",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ea95b382-2239-48e5-af56-85919d47f5f1",
+      "name": "scalability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0a6fd569-de8f-442a-a9ad-c62e8654825c",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "CQRS (Command Query Responsibility Segregation) is a key design principle in Powerhouse. Commands handle operations that modify state -- creating or updating documents -- validated and stored as events forming the immutable history. Queries are optimized for retrieval using read models designed for performance, scalability, and flexibility. This separation enables write and read models to scale independently, isolates business logic from query logic for maintainability, and supports multiple read model types (relational databases, full-text search, analytics).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T18:30:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-03-30T18:30:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Commands modify state as validated events; queries use optimized read models for analytics and search.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

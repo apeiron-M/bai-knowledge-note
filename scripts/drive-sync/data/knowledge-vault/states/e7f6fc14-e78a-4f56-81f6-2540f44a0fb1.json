@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-bbb27285-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bbb27285-54e1-4262-906b-305958596c5a",
+      "targetTitle": "swarm-manifest-as-reference-pattern"
+    },
+    {
+      "id": "lnk-092c2b44-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "092c2b44-6ebf-4315-8dc7-45521c4e99b4",
+      "targetTitle": "incremental-experiment-redundancy-rollout"
+    },
+    {
+      "id": "lnk-acfa1e91-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "acfa1e91-3649-4211-a427-bee333272500",
+      "targetTitle": "redundancy-stamp-cost-medium-25pct"
+    },
+    {
+      "id": "lnk-f516f01e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f516f01e-e1e5-4012-9752-f58d63b4d32b",
+      "targetTitle": "swarm-postage-stamps-bucket-mechanics"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Feed-backing stamps should be mutable to avoid bucket exhaustion from frequent updates",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "705df5d6-2054-4b11-ab5d-1f7c179f623d",
+      "name": "postage-stamps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "abb2ab12-50a9-4471-8792-4aff10fe950b",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b125ea3a-28ae-4680-b35e-4d7f616d8eaf",
+      "name": "adapter",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3c3b670d-04c6-4575-90d7-d4c3a3b88b2b",
+      "name": "optimization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nStamps used to back **feed writes** (manifests) should be created **mutable** \u2014 immutable stamps waste one bucket slot per feed update and will exhaust long before the nominal capacity.\n\n## Evidence\n\n- Each feed update is a new SOC \u2192 a new chunk that consumes a bucket slot under immutable semantics\n- With immutable batches, the batch fails when any single bucket fills (non-uniform distribution means this happens well before 2^depth chunks)\n- Mutable batches replace the oldest chunk in an overflowing bucket \u2014 old feed indices are garbage-collected automatically, keeping capacity stable\n\n## How\n\n```js\nbee.createPostageBatch(amount, depth, { immutableFlag: false })\n```\n\n## Why it matters\n\nOur adapter writes frequent manifest updates (every 3-second debounce flush). Running these on immutable stamps is a time-bomb: the batch eventually fails on hot-bucket exhaustion long before its TTL expires. Mutable stamps are the correct primitive for this workload.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:24:54.753Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Immutable stamps waste a new bucket slot on every feed update. Creating stamps with immutableFlag: false reuses slots and prevents exhaustion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

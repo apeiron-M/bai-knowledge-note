@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-41af7645-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+      "targetTitle": "swarm-push-cycle-encrypt-bytes-feed"
+    },
+    {
+      "id": "lnk-c2449b0f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2449b0f-22ef-4145-bc74-b62ef97d69cc",
+      "targetTitle": "swarm-pull-cycle-manifest-to-inbox"
+    },
+    {
+      "id": "lnk-f2882310-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f2882310-e36d-4d16-9f15-161cd9ad16c2",
+      "targetTitle": "swarmchannel-is-transport-only"
+    },
+    {
+      "id": "lnk-9f165bef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f165bef-3f1d-4405-97ec-4e091d43efae",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-61e7ee9c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adapter sync flow: reactor ops encrypted, uploaded to Swarm, replayed on recovery",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "sync-flow",
+      "name": "sync-flow",
+      "topicDocumentId": null
+    },
+    {
+      "id": "swarm-channel",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cross-device-recovery",
+      "name": "cross-device-recovery",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "End-to-end sync flow from document edit to cross-device recovery:\n\n```\nUser edits document in Connect\n       \u2193\nReactor stores operation in local PGlite\n       \u2193\nSyncManager detects new ordinal \u2192 populates SwarmChannel outbox\n       \u2193\nSwarmChannel encrypts ops \u2192 uploads to Swarm /bytes \u2192 updates feed pointer\n       \u2193\nOn new device: wallet signature \u2192 same key \u2192 read feeds \u2192 download ops \u2192 replay \u2192 restored\n```\n\nKey properties:\n- Local writes hit PGlite first, so edits never block on network I/O.\n- The outbox is populated reactively by ordinal, not polled.\n- Encryption happens at the SwarmChannel layer before `/bytes` upload.\n- Feed pointers are the only mutable primitive \u2014 the op blobs themselves are immutable.\n- Cross-device recovery is deterministic from the wallet signature alone, no backup seed phrase or extra credentials needed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:52:46.944Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:52:46.944Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SyncManager detects new ordinals, SwarmChannel encrypts and uploads ops to /bytes and updates feed pointers; a new device replays ops after a wallet signature re-derives the key.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

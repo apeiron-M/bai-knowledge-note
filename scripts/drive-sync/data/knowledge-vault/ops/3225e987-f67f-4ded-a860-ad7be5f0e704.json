@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:48.396Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "input-types-should-reflect-user-intent-with-simple-specific-fields",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:48.396Z"
+        },
+        "version": 0,
+        "documentId": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:48.396Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "lO0UZCPHZyXJDI8ysJyv/uRSclY=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "input types should reflect user intent with simple specific fields",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:48.396Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:48.396Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "UhmKu0I/bxSYYL7fvvaklR+vsUQ=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:36.000Z",
+        "description": "Prefer descriptive input names and simple fields over complex nested types; the system auto-generates OID for new objects"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.808Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+        "targetId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.808Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "zbBu/25oW+a8o+pBaogOCiSDPc4=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.830Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+        "targetId": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.830Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "1Jzb6yzQzSiE9zLr8ohkrdEFV34=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# input types should reflect user intent with simple specific fields\n\nOperation input types should be designed around user intent:\n\n```graphql\n// \u2705 Simple, specific \u2014 reflects what the user provides\ninput AddLineItemInput {\n    id: OID!\n    description: String!\n    quantity: Int!\n    unitPrice: Amount_Money!\n}\n\n// \u274c Complex nested structure \u2014 harder to use and validate\ninput AddLineItemInput {\n    item: LineItemInput!\n    metadata: MetadataInput\n    options: OptionsInput\n}\n```\n\nKeep inputs flat and focused. The system auto-generates `OID` for new objects \u2014 callers provide IDs through the input schema because [[reducer purity requires all dynamic values from action input]].\n\n---\n\nTopics:\n- [[schema design]]",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.849Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.849Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "V7cvUCyxexm0WqTrVLY9hcqWBpA=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:58:10.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.867Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+        "targetId": "004e5e41-0706-4c65-8d88-dfe00b40557f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.867Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "8mytsyXio01/b6O85BcN03YTaDg=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f195f563-d22f-47e7-9186-d42f656b1f8e",
+        "name": "schema design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "kyl2vDxQeQ5VKSDcVc0tvHkCxIQ=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f65f50c7-b0f7-4afd-b18e-fb07877efe5f",
+        "name": "input types",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "oMNqz53EZ8KJwQkFV8X9Xze3vKI=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fa298fa6-d426-41dc-9970-b37838bf1c63",
+        "name": "operation design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "q/LzlTGCURnxKD1y9x3fPOu7+mk=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b26c4f93-62b4-429b-9bef-eb324d1ffc05",
+        "name": "GraphQL",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  }
+]

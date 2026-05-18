@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-ba8862ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba8862ac-5520-41b7-b08d-168a3c6f2319",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-46ab4e1b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "46ab4e1b-9c6e-4d43-8d39-fc1ac066320f",
+      "targetTitle": "reactor-mcp-bridges-ai-agents"
+    },
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-a49fad15-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-77b99fa1-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "77b99fa1-d116-4098-8f13-d287c909a444",
+      "targetTitle": "reactor-is-a-storage-node-supporting-multiple-adapters"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Reactor is the Powerhouse backend service that hosts drives, syncs documents, and provides GraphQL API",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "77380361-e27d-46cc-9648-fef98047c8b2",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "97013c90-b70d-4235-b6c8-c8a982dcec8b",
+      "name": "backend",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2ce488e9-baa2-42b9-8538-262dce43413a",
+      "name": "infrastructure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A **Reactor** is the Powerhouse backend service (node) in the network. When you run `ph vetra --watch`, a local Reactor starts automatically. Reactors provide:\n\n- Document storage and hosting\n- Document synchronization across clients\n- Conflict resolution\n- Operation history verification (by rerunning operations)\n- GraphQL API for data access\n\nReactors can be configured for:\n- Local storage (development/Studio Mode)\n- Centralized cloud storage\n- Decentralized storage networks\n\nThe Reactor exposes several GraphQL subgraphs: system, analytics, document-editor, vetra-package, subgraph-module, processor-module, app-module, and vetra-read-model. It also provides a WebSocket server for subscriptions and an MCP server for AI agent integration.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Reactors are network nodes handling document storage, conflict resolution, operation verification, and structured data access.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

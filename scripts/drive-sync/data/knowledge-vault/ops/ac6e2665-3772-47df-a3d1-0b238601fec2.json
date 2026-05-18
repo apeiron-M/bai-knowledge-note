@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:53.696Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "operation-batch-content-addressed-bytes",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:53.696Z"
+        },
+        "version": 0,
+        "documentId": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:53.696Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "SXpZpIfSMXIm11FgJ6Tk0JgBYdo=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Operation batches are immutable content-addressed /bytes uploads, not feed entries",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:53.696Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:53.696Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "BNlMvyyIEt3tO5tyX+MM4c3rJkk=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:38.000Z",
+        "description": "Operation batches are uploaded to Swarm /bytes (not feeds), immutable and content-addressed, containing an array of operations with id, index, skip, hash, and action fields."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.379Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+        "targetId": "ee86286c-ed83-495f-8194-cc323ee49eea",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.379Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "qeiKl+NE/PArTdtFRrC6cUdVdrk=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.402Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+        "targetId": "ab2f57d0-d99f-4d40-80e1-7a35b8c169e8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.402Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "VjVuY2iGM24o/rBRYTKGYiEZX9Y=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# Operation Batches on /bytes\n\nOperation batches are stored on Swarm `/bytes`, not in a feed. They are immutable and content-addressed \u2014 the batch reference IS the hash of its encrypted contents.\n\n## Why not feeds\n\nFeeds are mutable pointers. Operation data must never change once written, so batches go directly to `/bytes`. The document manifest feed holds the list of batch references in order.\n\n## Schema (decrypted)\n\n```json\n[\n  {\n    \"id\": \"op-aaa\",\n    \"index\": 0,\n    \"skip\": 0,\n    \"timestampUtcMs\": \"1712750460000\",\n    \"hash\": \"abc123...\",\n    \"action\": {\n      \"id\": \"act-001\",\n      \"type\": \"CREATE_BUDGET\",\n      \"input\": { \"name\": \"Q1 Budget\", \"year\": 2026 },\n      \"scope\": \"global\",\n      \"context\": {\n        \"signer\": {\n          \"user\": { \"address\": \"0xAlice\", \"networkId\": \"1\" },\n          \"app\": { \"name\": \"connect\", \"key\": \"...\" }\n        }\n      }\n    }\n  }\n]\n```\n\n## Fields\n\n- `index`: position in the operation log for the scope\n- `skip`: number of operations reshuffled past during conflict resolution\n- `hash`: integrity check on the operation\n- `action.context.signer`: identifies who signed the operation\n",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.422Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.422Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "pHx0ULK+K0PgAXceIs77LzSA3QQ=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:45:54.611Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.440Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+        "targetId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.440Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "1k6NV5ycoAMTr5B7qTQo/rcEisg=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "013d0ee4-67c0-4cc4-a7fb-0ec9a9663692",
+        "name": "operation-batches",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.460Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+        "targetId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.460Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "SZkWMeWKlPxfNdRNBizaC+ILE/A=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a63ae034-d9e4-48f2-a349-7f142eb63b0a",
+        "name": "swarm-bytes",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Qg+xtQdCN0cRRl83QLpkgksbO/Y=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3d16ea3d-64df-48bb-8629-74c895e7d8e0",
+        "name": "content-addressing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  }
+]

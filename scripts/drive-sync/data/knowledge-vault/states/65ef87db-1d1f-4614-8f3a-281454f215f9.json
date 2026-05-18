@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-5739f1f1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5739f1f1-4e1e-49f9-9fca-0a559b466276",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-13c5e640-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+      "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-"
+    },
+    {
+      "id": "lnk-73fedb4c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+      "targetTitle": "model-editor-wiring"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "mapOfferingToSubscription transforms service offering state into subscription initialization",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "46774665-d7b2-4656-9ed3-f35de9d029c0",
+      "name": "service-offering",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7deb93ed-1c14-4d3a-a2d0-ce7dde1e57fd",
+      "name": "subscription-instance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c342a4f7-cc60-4567-a2e4-669c7bac7755",
+      "name": "cross-model-bridge",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# mapOfferingToSubscription transforms service offering state into subscription initialization\n\nLocated at `editors/subscription-instance-editor/components/mapOfferingToSubscription.ts`, this function bridges the ServiceOffering and SubscriptionInstance models.\n\n## What It Does\n\nTakes a ServiceOffering's state plus user selections and produces an `InitializeSubscriptionInput` for the SubscriptionInstance model:\n\n```typescript\ninterface MapOfferingOptions {\n  // ServiceOffering state + user selections \u2192 SubscriptionInstance init\n}\nfunction mapOfferingToSubscription(options: MapOfferingOptions): InitializeSubscriptionInput\n```\n\n## Internal Helpers\n\n- `mapServiceGroups()` \u2014 Maps offering groups to subscription groups with tier pricing\n- `mapGroupServices()` \u2014 Maps services within a group based on tier service levels\n- `mapStandaloneServices()` \u2014 Maps services not assigned to any group\n- `mapUsageLimits()` \u2014 Converts usage limits to metrics with free/paid thresholds\n\n## Used By\n\n- `ImportServiceConfigButton.tsx` in the subscription-instance editor \u2014 the \"import from offering\" action\n\nSince [[five models form a hierarchy from facet through template to offering to subscription to instance]], this function is the primary bridge between the offering definition phase and the subscription activation phase.\n\n---\n\nTopics:\n- [[helper functions]]\n- [[object relations]]\n- [[model-editor wiring]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:56:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:56:42.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The key cross-model bridge \u2014 converts ServiceOffering final config into InitializeSubscriptionInput, mapping groups, services, usage limits, and tier pricing",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

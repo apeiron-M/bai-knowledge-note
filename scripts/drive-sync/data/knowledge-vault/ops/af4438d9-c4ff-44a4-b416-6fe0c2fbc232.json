@@ -1,0 +1,113 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:31.455Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "book-of-powerhouse-part-3-development-approaches",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "af4438d9-c4ff-44a4-b416-6fe0c2fbc232",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-05-13T12:59:31.455Z"
+        },
+        "version": 0,
+        "documentId": "af4438d9-c4ff-44a4-b416-6fe0c2fbc232",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:31.455Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "bZ6KJ+tpj+FiK3s0mf3ICXJYW+M=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "title": "Book of Powerhouse - Part 3: Development Approaches",
+        "author": "Powerhouse",
+        "content": "# Part 3: Development Approaches\n\nPowerhouse\u2019s development approaches are designed to enable efficient, scalable, and innovative solutions for decentralized organizations. By drawing from blockchain principles, adopting Model-Driven Development (MDD), leveraging dynamic document models, and employing a Rapid Application Development (RAD) process, Powerhouse provides a comprehensive framework to address the unique challenges of decentralized systems.\n\nThese methodologies enhance collaboration, streamline workflows, and accelerate iteration cycles, empowering teams to design, implement, and adapt their solutions seamlessly while staying aligned with Powerhouse\u2019s vision for sustainable and decentralized growth.\n\n### Blockchain principles applied to decentralized operations\n\n    - Powerhouse\u2019s development approach draws inspiration from the principles of blockchain technology while adapting them to meet the specific needs of decentralized organizations. These principles heavily influence its architecture, blending blockchain\u2019s strengths with practical adaptations for scalable operations.\n    - Powerhouse shares several core ideas with blockchain:\n        - **Immutability**: Like a blockchain, Powerhouse emphasizes immutable data records. Through event sourcing, every state change is preserved as an append-only event, ensuring transparent, auditable histories.\n        - **Decentralization**: Both systems operate without relying on a centralized authority. Powerhouse\u2019s Document Synchronization Protocol (DocSync) does not rely on a centralized server but can run P2P. It is also storage agnostic, so there is no lock-in. Users have the option to rely on decentralized, centralized or local storage solutions.\n        - **Transparency**: Inspired by the visibility of blockchain transactions, Powerhouse ensures operational workflows and changes are traceable, which makes governance and accountability easier.\n    - While Powerhouse builds on blockchain principles, it diverges in key ways to address operational challenges:\n        - **Local Scalability**: Blockchain\u2019s global consensus can limit speed and scalability. Powerhouse prioritizes local-first workflows, ensuring contributors can operate efficiently without requiring global synchronization.\n        - **Tailored Operations**: Unlike blockchain\u2019s general-purpose design, Powerhouse\u2019s architecture focuses on organizational needs, supporting custom workflows, dynamic governance, and flexible scaling.\n\n### Model-Driven Development & Rapid Application Development (RAD)\n\n    - Powerhouse leverages **Model-Driven Development (MDD)** and **Rapid Application Development (RAD)** to streamline the creation of scalable, decentralized systems.\n    - MDD enables cross-functional collaboration by using **abstract models** as blueprints for workflows, data, and system behaviors\u2014similar to how GraphQL schemas unify API design. These models ensure alignment across teams, enable early validation, and support seamless system evolution. **Meta-models** extend this by automating code generation, documentation, and workflow updates, reducing manual effort and ensuring consistency.\n    - RAD accelerates development by eliminating backend complexity and leveraging **automated code generation**. Pre-built frameworks and reusable components let developers focus on UI/UX without managing backend logic. An **event-driven architecture** handles state and data sync, while document models serve as a **source of truth**, ensuring APIs, data structures, and front-end scaffolding stay in sync. Developers can rapidly iterate on tailored user experiences\u2014akin to \u201cswapping skins\u201d in a game\u2014without disrupting core functionality.\n\n### CQRS (Command Query Responsibility Segregation)\n\n    - CQRS, or Command Query Responsibility Segregation, is a key design principle in Powerhouse\u2019s software architecture. It separates the responsibilities of handling write operations (commands) and read operations (queries) into distinct models, optimizing both for their specific purposes.\n    - In the Powerhouse framework:\n        - **Commands** handle operations that modify the state, such as creating or updating documents. These commands are validated and stored as events, forming the immutable history central to the system\u2019s transparency and auditability.\n        - **Queries** are optimized for retrieving data, leveraging read models designed for performance, scalability, and flexibility. These models aggregate data from events to provide users with tailored insights, whether for analytics, search, or operational tasks.\n    - This separation offers significant advantages:\n        1. **Scalability**: Write and read models can scale independently, allowing Powerhouse to support large decentralized organizations without performance bottlenecks.\n        2. **Maintainability**: By isolating business logic (commands) from query logic, developers can iterate on one without affecting the other, ensuring the system evolves efficiently.\n        3. **Flexibility**: Powerhouse supports multiple types of read models\u2014such as relational databases, full-text search, and analytics\u2014each tailored to specific organizational needs.\n\n### Event-driven Architectures (EDA)\n\n    - Event-Driven Architecture (EDA) is a foundational element of Powerhouse\u2019s software philosophy, designed to create responsive, scalable systems that support asynchronous workflows. In EDA, events represent meaningful changes or actions, such as \u201cDocument Updated\u201d or \u201cContributor Added,\u201d and these events trigger reactions across the system in real time.\n    - EDA enables Powerhouse to design systems that are inherently responsive and scalable. By decoupling components, EDA allows systems to react to events independently, ensuring high availability and performance even as complexity grows. For example, when a document is updated, different processes like validation, notifications, and analytics generation can run in parallel without blocking each other. This architecture makes Powerhouse systems highly efficient in handling distributed operations, as it allows them to scale dynamically by adding or replicating components where needed. It also improves fault tolerance, as failures in one part of the system do not cascade to others due to the loosely coupled design.\n    - **Asynchronous Workflows -** EDA is particularly effective in supporting asynchronous workflows, which are critical for decentralized organizations. In this model, components communicate through events, eliminating the need for direct dependencies. This loose coupling enables workflows to operate flexibly, allowing different tasks to be executed simultaneously without blocking others. For instance, when a contributor submits work, separate processes\u2014like task approval, logging, and analytics\u2014can run independently, ensuring smoother coordination. Additionally, event histories can be replayed to debug workflows or audit past operations, providing transparency and traceability essential to decentralized systems.\n",
+        "createdAt": "2026-03-30T18:00:00.000Z",
+        "sourceType": "DOCUMENTATION",
+        "description": "Blockchain principles, MDD, CQRS, and EDA"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:31.455Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "af4438d9-c4ff-44a4-b416-6fe0c2fbc232",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:31.455Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0lzJocdDul8WegZ4zH2BOVJmQEA=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "/RFekuspjANGWXcvuoVTqU3WAMY=",
+    "timestampUtcMs": "2026-05-13T13:00:26.000Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 7,
+        "extractedAt": "2026-03-30T19:00:00.000Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-05-13T13:00:26.000Z"
+    }
+  }
+]

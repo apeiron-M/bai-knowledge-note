@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:07.850Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "style-imports-must-be-in-styles-css",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "49b502d3-f57d-4e4b-bb65-9c3ef3844807",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:07.850Z"
+        },
+        "version": 0,
+        "documentId": "49b502d3-f57d-4e4b-bb65-9c3ef3844807",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:07.850Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "wqPtGSzCRdrUhTWhAjTj+KvYX/I=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "CSS imports in .tsx files work in dev but are silently dropped in production builds -- all imports must go through styles.css",
+        "updatedAt": "2026-05-13T13:00:44.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:07.850Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "49b502d3-f57d-4e4b-bb65-9c3ef3844807",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:07.850Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "vKor1Mg2RB1FtUG+CWh0547hBbQ=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:44.000Z",
+        "description": "Production builds use tailwindcss/cli which only resolves @import from styles.css, not from .tsx files."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.396Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "49b502d3-f57d-4e4b-bb65-9c3ef3844807",
+        "targetId": "e7a2e637-5a71-418b-a0dc-decf4ced764f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.396Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ixSBVx9HpqK5pJoPD5KZ7YCrh8A=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-05-13T13:00:44.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.421Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "49b502d3-f57d-4e4b-bb65-9c3ef3844807",
+        "targetId": "7322b3c9-9a9b-43c4-9993-7de4797c2393",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.421Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zqlk7d4sRRrvTqRecnHNhNo4b4Q=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "In any Powerhouse package, styles are generated through the `styles.css` file via `tailwindcss/cli`. Importing CSS directly in `.tsx` files works in development mode but will NOT be picked up in static production builds. All style imports must be centralized into `styles.css` using file import syntax (`@import \"...\"` not `@import url(\"...\")`, since `@import url()` is ignored by tailwindcss/cli). When installing a package with `ph install`, package styles are automatically added to styles.css.",
+        "updatedAt": "2026-05-13T13:00:44.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.442Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "49b502d3-f57d-4e4b-bb65-9c3ef3844807",
+        "targetId": "53fffa62-25e4-48e2-9c05-2f6236b1120d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.442Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "zSec8kivfWG4ozuIyxMzkMIewI0=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.469Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "49b502d3-f57d-4e4b-bb65-9c3ef3844807",
+        "targetId": "0b548435-7d91-4cca-9beb-9fb14d5fce38",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.469Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "oktRNGKYc2RQJRyWEWaGnl2THu8=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a6847db3-f53b-4e9a-8fe8-4f559de6e8f3",
+        "name": "css",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8d7eMsMx/b8d7WnnsfJpM6kz5CU=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "71899029-07c6-459a-9c9c-9646746dc356",
+        "name": "build-system",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "4YYB/gAR5vnIZO3n8fZxRWHFFG0=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "820220af-4d00-4fb0-aa43-f1cdb72d539e",
+        "name": "tailwind",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "2pCzY2sPWlTjNdfnaTFdc9irBos=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c6907805-308b-417f-b559-aa87c6d1b06a",
+        "name": "production",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  }
+]

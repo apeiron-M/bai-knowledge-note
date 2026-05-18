@@ -1,0 +1,186 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:29.990Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Bee Reactor Adapter",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ab20f964-c95a-4a10-8157-2c346b7c9a5a",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-05-13T12:59:29.990Z"
+        },
+        "version": 0,
+        "documentId": "ab20f964-c95a-4a10-8157-2c346b7c9a5a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:29.990Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "oMP4JzyZHd3a3zKuRts6BOXp6/w=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "url": "https://github.com/liberuum/bee-reactor-adaptor",
+        "title": "Bee Reactor Adapter",
+        "author": "Liberuum",
+        "content": "# Bee Reactor Adapter\n\nDecentralized storage + encrypted chat for [Powerhouse](https://powerhouse.io)\nConnect using the [Swarm](https://ethswarm.org) network. Encrypt documents\nwith your Ethereum wallet, store them on Swarm, recover on any device with\njust a wallet signature, share drives with other users, and chat directly\npeer-to-peer via PSS + GSOC \u2014 no servers.\n\n## Packages\n\n| Package | npm | Description |\n|---------|-----|-------------|\n| [`packages/adapter`](packages/adapter/) | `@liberuum-org/bee-reactor-adapter` | Core adapter: SwarmClient, SwarmChannel, ACT-encrypted sharing, PSS/GSOC chat, stamps |\n| [`packages/connect`](packages/connect/) | `@liberuum-org/connect` | Fork of Powerhouse Connect with Swarm landing page, settings UI, and chat panel |\n\n## Quick Start\n\n### Use in any Powerhouse project\n\n```json\n{\n  \"dependencies\": {\n    \"@liberuum-org/bee-reactor-adapter\": \"0.23.0\"\n  },\n  \"overrides\": {\n    \"@powerhousedao/connect\": \"npm:@liberuum-org/connect@6.0.0-dev.174-swarm.1\"\n  }\n}\n```\n\nThe adapter integrates as a native reactor `IChannel` via\n`createSwarmSyncBuilder()`. The Connect fork wires it into\n`ReactorBuilder.withSync()` at build time \u2014 Swarm remotes persist in\n`sync_remotes` and survive page reloads natively alongside GQL channels.\n\nThe landing page forces wallet login, the plugin syncs all drives and docs\nto Swarm automatically, and exposes the chat panel from the sidebar.\n\n### Prerequisites\n\n- A running **full Bee node**, reachable from your browser (chat needs\n  full-node PSS + GSOC; light nodes can send but not receive).\n- A funded **mutable postage stamp** (depth 22+ for ~7.7 GB capacity;\n  mutable so feed updates reuse bucket slots).\n- An Ethereum wallet (MetaMask or any Web3 wallet) for Renown login.\n- For peer-to-peer chat, ports `1634` (TCP) and `1635` (WSS) must be open\n  inbound so libp2p WebSocket transport works. The chat panel shows a\n  requirements screen with the exact Bee config keys if chat can't start.\n\n## How It Works\n\n```\nUser edits document in Connect\n       \u2193\nReactor stores operation in local PGlite\n       \u2193\nSyncManager detects new ordinal \u2192 populates SwarmChannel outbox\n       \u2193\nSwarmChannel encrypts ops \u2192 uploads to Swarm /bytes \u2192 updates feed pointer\n       \u2193\nOn new device: wallet signature \u2192 same key \u2192 read feeds \u2192 download ops \u2192 replay \u2192 restored\n```\n\n### Feature highlights\n\n**Storage & recovery**\n- AES-256-GCM encryption at the app layer for operations + manifests\n- Hierarchical feeds: user \u2192 drive \u2192 document\n- Folder topology preserved across sync, recovery, and sharing\n- Manifest compaction \u2014 old op batches merged for fast recovery\n\n**Sharing (ACT-protected)**\n- Encrypted drive bundles between users via Swarm IDs\n- ECDH-based access control through Swarm's native ACT \u2014 no app-layer\n  shared-secret math; the Bee node handles decryption transparently\n\n**Chat (PSS + GSOC)**\n- 1-to-1 encrypted messaging via PSS with offline delivery\n- Discord-style conversation UI with unread badge on the sidebar\n- Persistent history in ACT-encrypted feeds, paginated backwards\n- File sharing: images, GIFs, PDFs, audio, video, text \u2014 all ACT-encrypted\n- External `bzz://<hash>` URL previews for files uploaded outside the chat\n- Drag-and-drop uploads, inline previews, lightbox, 200 MB cap\n- Pre-flight codec check for video so unplayable formats fall back to\n  download cleanly instead of mid-playback failure\n\n**Settings**\n- Live chain-price fetching for stamp top-ups (no hardcoded price drift)\n- Real Bee error surfacing on stamp ops (parses `BeeResponseError.responseBody`\n  so users see the actual on-chain reason instead of \"500\")\n- Bucket-utilization diagnostics with dilute / expand / top-up actions\n\n## Development\n\n```bash\n# Build adapter\ncd packages/adapter && npx tsc\n\n# Build connect\ncd packages/connect && bun run build\n\n# Run tests (requires Bee node)\ncd packages/adapter && pnpm test\n```\n\n### Publishing\n\nEach package publishes independently:\n\n```bash\ncd packages/adapter && npm publish --otp=CODE\ncd packages/connect && npm publish --otp=CODE --tag swarm\n```\n\n## Documentation\n\nAll docs live under [`packages/adapter/docs/`](packages/adapter/docs/):\n\n| Document | Scope |\n|----------|-------|\n| [`architecture.md`](packages/adapter/docs/architecture.md) | Storage / sync architecture deep-dive |\n| [`architecture-diagram.md`](packages/adapter/docs/architecture-diagram.md) | Visual system diagrams |\n| [`build-plan.md`](packages/adapter/docs/build-plan.md) | Build plan & overall roadmap |\n| [`chat-collaboration-design.md`](packages/adapter/docs/chat-collaboration-design.md) | Chat + collaboration design, protocol choices, security model |\n| [`chat-roadmap-next.md`](packages/adapter/docs/chat-roadmap-next.md) | What's shipped vs what's next in chat + live collab |\n| [`live-collaboration-design.md`](packages/adapter/docs/live-collaboration-design.md) | Live collaboration (GSOC-triggered sync, presence, cursors) \u2014 the next track |\n| [`swarm-channel-architecture.md`](packages/adapter/docs/swarm-channel-architecture.md) | How SwarmChannel integrates as a native reactor `IChannel` |\n| [`swarm-protocol-reference.md`](packages/adapter/docs/swarm-protocol-reference.md) | Condensed reference for PSS, GSOC, ACT, feeds, stamps |\n| [`feed-structure-examples.md`](packages/adapter/docs/feed-structure-examples.md) | Concrete feed-layout examples |\n| [`data-duplication-analysis.md`](packages/adapter/docs/data-duplication-analysis.md) | Storage duplication analysis |\n| [`testing.md`](packages/adapter/docs/testing.md) | Testing strategy & running the suite |\n\nSwarm product docs: [docs.ethswarm.org](https://docs.ethswarm.org).\n",
+        "createdAt": "2026-04-21T13:50:23.200Z",
+        "sourceType": "DOCUMENTATION",
+        "description": "Decentralized storage + encrypted chat for [Powerhouse](https://powerhouse.io) Connect using the [Swarm](https://ethswarm.org) network."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:29.990Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "ab20f964-c95a-4a10-8157-2c346b7c9a5a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:29.990Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Ojnn8TtDX+XVmGwpaHihfdFnCZA=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "p66c4gHXulaGpRKkcJ32bK3YWvs=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 6,
+        "extractedAt": "2026-04-21T15:02:31.818Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "kKbpO1IAGjvzc0y+eL1jt/tYV8o=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "c25c8f98-772d-48ed-abc6-93f4b109112f"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "B1XSP/JbkJOPPCU4s+L/dlZwaOc=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "65b6b0c3-c068-4ec6-b36e-71bc00b79aa9"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "+lW52gY3U45/OSdlnphKGS4za/E=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "5aba7d9f-e7b8-4bea-b898-94ce2dfd7edc"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "2HHyWobemPuZcK22lc4Fdkai9SI=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "cf252d29-827e-4ab4-9a53-c11aada60a02"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "CZAHtdLJQsnOReh1v8AwS0K59BY=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1sXoDxEU95aZ9E/h+ZeUhOTwn+o=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "9f165bef-3f1d-4405-97ec-4e091d43efae"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  }
+]

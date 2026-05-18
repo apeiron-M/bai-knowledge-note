@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-01d0a944-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "01d0a944-04ea-4d59-bafc-06354ade581a",
+      "targetTitle": "vetra-package-module-types"
+    },
+    {
+      "id": "lnk-345dd7d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "345dd7d5-2227-4257-bb2b-d152158c6986",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse packages are published to NPM and installed into host apps via ph install",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ba89a2ad-b6d4-4eee-accb-81cd17f24c8b",
+      "name": "packaging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a52337b-8c07-4cc0-b3fb-94e1647d45bb",
+      "name": "npm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4386fa9c-cd07-4003-90e4-6a9e3bc0272b",
+      "name": "distribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse packages follow a standard publishing workflow:\n\n1. **Package naming**: Scoped convention `@your-org-ph/your-package-name` (the `-ph` suffix identifies Powerhouse ecosystem packages)\n2. **manifest.json**: Declares package contents - document models (with document type IDs) and editors (linked to document types)\n3. **Build**: `pnpm build` or `npm run build` compiles to dist/\n4. **Publish**: `npm login` then `npm publish` (with `\"publishConfig\": { \"access\": \"public\" }` for scoped packages)\n5. **Install**: `ph install @your-org-ph/your-package-name` makes document models and editors available in any Powerhouse environment\n\nThe `package.json` `files` array should include: `dist`, `manifest.json`, `document-models`, `editors`.\n\nSemantic versioning is used for package versions. The AGPL-3.0-only license is common in the ecosystem.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "WORKFLOW",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Packages use scoped NPM names (@org-ph/name), include manifest.json, and are installed with `ph install @org/package`.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

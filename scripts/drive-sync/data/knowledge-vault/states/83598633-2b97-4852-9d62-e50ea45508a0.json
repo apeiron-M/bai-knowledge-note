@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-3fef792c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3fef792c-29bb-4501-af77-b2085e84930c",
+      "targetTitle": "pearl-icon-glow-pattern"
+    },
+    {
+      "id": "lnk-56d65b3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56d65b3e-73d0-4d6f-b88f-348b9beaf683",
+      "targetTitle": "adr-002-extract-stamp-share-managers"
+    },
+    {
+      "id": "lnk-c596b25e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c596b25e-f410-4aa3-822a-646ab559c3c7",
+      "targetTitle": "swarm-single-owner-chunks"
+    },
+    {
+      "id": "lnk-84b14875-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+      "targetTitle": "swarm-bytes-vs-feeds"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm feeds are sequences of SOCs at predictable addresses that act as mutable pointers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "5d3d26ea-32d6-4973-ab2e-740e4f10e537",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9a5591ed-8bf0-4326-87fd-0cf111190cc1",
+      "name": "soc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96d2ab95-0efc-4fa9-aeef-398db191cddc",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "570313cf-b54e-42e4-95e3-1108cd3ee154",
+      "name": "mutable-state",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nSwarm **feeds** are mutable pointers built as a sequence of SOCs whose addresses are deterministically derivable from `(owner, topic, index)`.\n\n## Evidence\n\n- Feed address: `Keccak256(Keccak256(topic || index) || owner_address)`\n- Topic is an arbitrary 32-byte identifier (the adapter uses `ph:v2:doc:<docId>`, `ph:v2:drive:<driveId>`, etc.)\n- Only the owner private key can publish updates; anyone knowing `owner + topic` can read\n- Typical feed payload is 8-byte timestamp + 32-byte Swarm reference\n- Two indexing schemes:\n  - **Sequential**: 0, 1, 2, ... \u2014 best for ordered updates and messaging\n  - **Epoch-based**: nested time epochs with binary search \u2014 best for sporadic/irregular updates\n- The adapter uses sequential indexing via bee-js `feedIndexNext` header auto-detection\n\n## Why it matters\n\nFeeds let Swarm support named, mutable resources despite chunks being immutable. They are the transport for every manifest update our adapter writes.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:24:54.753Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Feed address = Keccak256(Keccak256(topic || index) || owner). Sequential or epoch-based indexing; only owner writes. Used for manifests in our adapter.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

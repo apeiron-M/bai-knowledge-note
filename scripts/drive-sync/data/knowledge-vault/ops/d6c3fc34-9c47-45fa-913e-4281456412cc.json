@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:55.325Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "operations-not-state-log",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:55.325Z"
+        },
+        "version": 0,
+        "documentId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:55.325Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "CWGXkgQWxGtMr5zezbOnO8+hMIw=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Powerhouse documents are stored as an append-only operation log, not state snapshots",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:55.325Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:55.325Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "SsKXgNd6xlZHxCI0YtqtoZh8az0=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:39.000Z",
+        "description": "Every edit becomes an Operation (index, timestamp, hash); current state is reconstructed by replaying operations through a pure reducer, enabling deterministic Swarm sync."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:11.329Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "targetId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:11.329Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "q2cz2mE1HYyjnK8rzFxmY6tUO50=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:11.351Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "targetId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:11.351Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "0zDJ+LmZGjQGk+Q7b4VkQgIB5kE=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Powerhouse stores documents as an append-only log of operations rather than as snapshots of state. Each edit (add a row, change a title, move an item) becomes an Operation with an index, timestamp, and hash.\n\nTo get the current document state you replay all operations through the document model's reducer, a pure function. Same operations in the same order always produce the same state.\n\nThis property is what makes Swarm sync possible: uploading the operations is sufficient for any device to reconstruct the full document by replaying them. It also means network transport only needs to carry new ordinals since the last cursor, not re-sync full documents.\n\nEvidence: the write path serializes operation batches with `uploadData(JSON.stringify(ops))`, SyncManager detects new ordinals in `operation_index_operations`, and recovery reconstructs documents by downloading batches and calling `reactor.load()` to replay them.",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:11.372Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "targetId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:11.372Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "qi/6TLvWve9Chp3M6q9QM5yhB5M=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:17:36.098Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "OoYkYYCUgcLXmi5pblzEpvCjMAM=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "eb9bc90d-3285-47a2-894d-1821014f065b",
+        "name": "operations-log",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "V3yFyaRWDIubVMjXYz9akx2TtEg=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "40756e45-157e-41d6-8716-f66f06d9f3e7",
+        "name": "event-sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ifr4G1/xauPixip+2tNeCi9Edtw=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ec82568d-7238-42c9-ab5c-02df67d87258",
+        "name": "reactor-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Im8vWmiHRh8OgWmFcnygJM9rWZk=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd6b2570-7317-4f9b-8816-ac15447d389c",
+        "name": "document-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  }
+]

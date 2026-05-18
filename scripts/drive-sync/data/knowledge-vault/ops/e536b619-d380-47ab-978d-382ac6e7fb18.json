@@ -1,0 +1,293 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.739Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Live Collaboration Design",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e536b619-d380-47ab-978d-382ac6e7fb18",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-05-13T12:59:30.739Z"
+        },
+        "version": 0,
+        "documentId": "e536b619-d380-47ab-978d-382ac6e7fb18",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.739Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "3J/Rv9Q1akNIBs3nS7zPlx4T5BU=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "title": "Live Collaboration Design",
+        "content": "# Live Collaboration \u2014 Design\n\n> Status as of 2026-04-18: **not started**. The only remaining major track.\n> Chat, document sharing, ACT, and the SwarmChannel provide most of the\n> primitives we need.\n\nPaired reading:\n- [`chat-collaboration-design.md`](./chat-collaboration-design.md) \u2014 Phase 4 context\n- [`chat-roadmap-next.md`](./chat-roadmap-next.md) \u2014 prioritized list\n- [`swarm-channel-architecture.md`](./swarm-channel-architecture.md) \u2014 the IChannel surface we'll extend\n- [`swarm-protocol-reference.md`](./swarm-protocol-reference.md) \u2014 PSS vs GSOC, full-node requirements\n\n---\n\n## What live collaboration actually means here\n\nPowerhouse documents are driven by **operations** and **custom editors**.\nEvery document model ships its own editor \u2014 visual canvases, tables, input\nforms, dashboards, button grids, anything. A generic \"cursor overlay\" would\nhave to be implemented per editor and would often be meaningless (what's a\ncursor on a button grid?).\n\nSo we're **not** going to do cursor tracking, caret labels, or per-document\navatar stacks. That was a misread of the goal.\n\nWhat the user wants \u2014 and what the reactor already produces \u2014 is this:\n\n- User A edits a document \u2192 reactor emits ops (`SET_MODEL_NAME`,\n  `SET_AUTHOR_NAME`, etc.).\n- User B has the same document open and clicks the **history** button in\n  the document toolbar.\n- B sees A's new revision appear in the list, stamped with A's signer\n  address \u2014 `Revision 15. SET_MODEL_NAME, 0xadbA7...0BcA4, committed 13:33 UTC`.\n\nThat's the whole experience. The toolbar history view updates in real time,\nsignatures attribute each change to the right author, the reactor replays\nops as usual. The custom editor UI doesn't need to know anything about\ncollaboration.\n\n**Live = the operation-history timeline in the toolbar updates across all\nparticipants within a second or two, regardless of which editor is open.**\n\n## Scope\n\n**In:**\n- Multi-writer collaboration at the **drive level** (preferred starting point\n  \u2014 add/move folders, add/remove docs, plus all the per-doc operations\n  inside it).\n- Multi-writer collaboration at the **document level** (narrower \u2014 grants\n  access to one doc only; other docs in the same drive stay private).\n- ACT-gated read access for participants; each writer signs their own\n  operations with their own Swarm signer.\n- GSOC-triggered pulls so the history view refreshes without waiting for\n  the SwarmChannel poll.\n- A **Collaborate** tab in the existing chat panel to create, accept, and\n  manage collaborations.\n\n**Out:**\n- Cursor tracking, caret overlays, per-editor presence indicators.\n- Typing indicators \u2014 already scratched at the chat level for the same\n  reason (latency beats the signal).\n- Custom CRDTs \u2014 the reactor's operation model is the conflict resolver.\n- Anything server-side \u2014 fully peer-to-peer via Bee nodes.\n\n## Data model\n\nSwarm's feed constraint: **only the owner can write to their own feed**.\nCollaboration therefore can't be \"one shared feed.\" It's a mesh of per-user\nfeeds that everyone reads.\n\n### Collaboration manifest\n\nA new Swarm feed per collaboration target, owned by the initiator:\n\n```\nTopic:  ph:v2:collab:<driveId>         (drive-level)\n        ph:v2:collab:<driveId>:<docId> (doc-level)\nOwner:  the collaboration initiator\n```\n\nPayload (written ACT-protected, grantees = all participants' Bee node pubkeys):\n\n```json\n{\n  \"kind\": \"drive\" | \"document\",\n  \"driveId\": \"\u2026\",\n  \"documentId\": \"\u2026\",\n  \"participants\": [\n    { \"address\": \"0xA\u2026\", \"beeNodePublicKey\": \"02\u2026\", \"joinedAt\": \"\u2026\" },\n    { \"address\": \"0xB\u2026\", \"beeNodePublicKey\": \"02\u2026\", \"joinedAt\": \"\u2026\" }\n  ],\n  \"createdAt\": \"\u2026\",\n  \"version\": 1\n}\n```\n\nA participant joining or leaving is a new manifest revision by the initiator.\n(Future: allow any participant to amend \u2014 needs either a Merkle-log or\nconvention where the initiator is authoritative.)\n\n### Collab-scoped per-user feeds (new)\n\nPersonal drives stay encrypted with the wallet-derived AES key (as today).\n**We don't re-encrypt existing personal feeds.** A collaboration creates a\nparallel set of ACT-protected \"collab\" feeds so only participants can read:\n\n```\nTopic: ph:v2:collab:<collabId>:ops:<driveId>         (drive-level ops)\n       ph:v2:collab:<collabId>:ops:<driveId>:<docId> (doc-level ops)\nOwner: each collaborator owns their own topic(s)\nACT:   grantees = all participants' Bee node pubkeys\n```\n\nEach collaborator appends their own ops here (debounced + batched, same as\nthe existing SwarmChannel push). Batch payloads are ACT-protected /bytes\nuploads; the feed update is a 64-byte wrapper (`actRef || actHistory`),\nsame pattern as chat history.\n\nWhy parallel feeds instead of ACT-wrapping the existing personal feeds:\n\n- **Boundary clarity.** Personal drives stay private even if a drive is\n  later shared. No migration of existing history.\n- **ACT revocation is clean.** Removing a participant only affects the\n  collab chain. The owner's personal feeds stay untouched.\n- **Multi-collab on the same drive.** The same drive can be shared with\n  different participant sets as separate collabs, each with its own ACT\n  scope, without tangling the owner's personal history.\n\n### Initial-state transfer\n\nA participant who accepts an invitation needs the current state, not just\nfuture ops. We reuse the **existing document-share bundle**:\n\n- The invitation message carries a `shareReference` + `actHistoryAddress`\n  pointing to a one-shot drive bundle (built via `buildDriveShareBundle`).\n- On accept, the recipient imports the bundle \u2192 drive + folders + docs\n  materialize locally with the original signatures preserved.\n- After import, the recipient's SwarmChannel registers the peer feeds and\n  starts pulling incremental ops.\n\nThis keeps the snapshot path and the incremental-ops path decoupled.\n\n### Read fanout on each participant\n\nWhen B accepts an invitation, B's SwarmChannel:\n\n1. Imports the initial drive bundle (reuses `importFromUser` path).\n2. Reads the collab manifest \u2192 learns the full participant list.\n3. Registers pull sources for every *other* participant's collab feeds.\n4. Polls each participant's collab feeds (fallback) and subscribes to each\n   participant's GSOC signer for this collab (primary, sub-second).\n5. Pulls new ops \u2192 `reactor.load(docId, branch, ops)` \u2192 history updates.\n\nOps keep the sender's signature (we already preserve\n`action.context.signer.signatures` through imports, per the fix shipped\n2026-04-17), so each revision is attributed to the correct author in the\ntoolbar history.\n\n### Local writes: where do collaborators write?\n\nFor a drive/doc that is part of a collab, the user's reactor still produces\nops locally. Those ops need to flow to two places:\n\n- **Their personal drive feeds** \u2014 unchanged. Still wallet-key encrypted.\n  This keeps the user's cross-device recovery working.\n- **Their collab feeds** \u2014 ACT-protected, so peers can read them.\n\nImplementation: SwarmChannel gains a `collabTargets` set. For each ordinal\nit would push to the personal feed, it *also* pushes to the collab feed if\nthe doc is in an active collab. One read of the op, two pushes.\n\n(A future optimization: push only to the collab feed for docs that exist\n*only* inside a collab \u2014 e.g., a doc imported via collab accept and never\nindependently owned. Out of scope for v1.)\n\n## Phasing: drive-level first, then document-level\n\n### Phase 1: drive-level collaboration\n\n- Simpler mental model: \"I'm collaborating on this whole drive with Alice and Bob.\"\n- Covers the drive ops (ADD_FOLDER, MOVE_NODE, ADD_FILE) and every doc\n  inside it.\n- Single ACT grant per participant covers the drive manifest + all child\n  doc manifests + all op batches.\n- Initial target for the first ship.\n\n### Phase 2: document-level collaboration\n\n- Narrower: \"I'm collaborating on this one doc, but keep the rest of the\n  drive private.\"\n- ACT grantee list is scoped to one doc's manifest + op batches only.\n- The drive manifest itself is **not** shared \u2014 the participants see a\n  free-standing doc, not its parent drive.\n- Useful when the containing drive has confidential material and only one\n  doc is meant for outside eyes.\n\n## Real-time trigger: GSOC\n\nGSOC is sub-second (no Trojan mining; direct SOC sync). Mining a signer\ntargeting a peer's neighborhood is ~10\u201330 s per (peer, collab) pair \u2014 paid\nonce on collab creation/join, never again.\n\n**Protocol:**\n\n- Participant writes a new op \u2192 SwarmChannel pushes to their feed.\n- Immediately after, GSOC ping to each *other* participant's signer:\n\n  ```json\n  {\n    \"type\": \"op-committed\",\n    \"collabId\": \"drive:<driveId>\" | \"doc:<driveId>:<docId>\",\n    \"writerAddress\": \"0xA\u2026\",\n    \"latestIndex\": { \"global\": 42 }\n  }\n  ```\n- Each recipient's SwarmChannel reacts by pulling that writer's feed on\n  demand (debounced ~300 ms so a burst of ops coalesces into one pull).\n- The timer-based poll stays as fallback for participants who were offline\n  when the ping was sent.\n\n## UX: Collaborate tab in the Chat panel\n\n**Why the chat panel?** It already owns: peer address resolution, public\nprofile lookup (Bee pubkey for ACT), multi-user picker patterns (from the\ndocument-share picker), and notification plumbing. Adding Collaborate next\nto the existing conversation list keeps everything multi-peer in one place.\n\n### Layout\n\n```\nChat Panel (left pane)\n  \u251c\u2500\u2500 [Conversations] tab    \u2190 existing\n  \u2514\u2500\u2500 [Collaborate]    tab   \u2190 NEW\n        \u251c\u2500\u2500 \"+ New collaboration\" button\n        \u251c\u2500\u2500 Pending invitations  (I received)\n        \u2514\u2500\u2500 Active collaborations (I'm part of)\n```\n\n### Creating a collaboration\n\n1. Click **+ New collaboration**.\n2. Pick target:\n   - **Drive** (shows drive list from `reactorClient`)\n   - **Document** (drive \u2192 doc picker, same as the existing document-share picker)\n3. Pick participants:\n   - Multi-select from known chat peers.\n   - Or paste a Swarm ID directly.\n4. Optional caption (\"Working on Q1 budget\").\n5. Click **Invite**.\n\nAdapter flow:\n- Create collab manifest via `createGrantees([participantPubKeys\u2026])` then\n  ACT-write manifest referencing the grantee chain.\n- Mine a GSOC signer per participant (background).\n- Publish invitation as a chat message with a new\n  `CollabInviteAttachment`:\n\n  ```typescript\n  {\n    kind: \"collab-invite\",\n    collabId: \"drive:<driveId>\" | \"doc:<driveId>:<docId>\",\n    driveId, driveName,\n    documentId?, documentName?,\n    manifestRef, actHistoryAddress, publisherBeeNodePubKey,\n    participants: [...]\n  }\n  ```\n\n### Accepting an invitation\n\nRecipient sees a **CollabInviteCard** in chat (mirrors `DocumentShareCard`\nbut with a [Join] instead of [Import]).\n\n- [Join] \u2192 adapter downloads manifest via ACT \u2192 registers SwarmChannel\n  sources for each participant's feeds \u2192 kicks off the first pull \u2192\n  drive/doc materializes in the recipient's reactor.\n- [Decline] \u2192 adapter removes the participant from its known-collab list\n  (only a local effect; initiator's manifest still lists them until they\n  update it).\n\n### Active collaboration row\n\n- Drive or document icon + name.\n- Participant avatars (initials \u2014 these we do want; it's a list, not a\n  per-editor overlay).\n- Last activity timestamp.\n- Click \u2192 open drive/doc in Connect.\n- Menu: [Leave collaboration] \u2192 local-only leave (feed writes stop, pulls\n  stop); the initiator can later remove them from the manifest.\n\n### Where live updates are visible\n\n- Document toolbar \u2192 **History** \u2192 revision list shows peers' ops as they\n  arrive, attributed by signer address. This is the *only* live surface.\n- No cursor overlays. No \"X is editing\" banners. No editor-level presence.\n\n## Adapter surface\n\nNew namespace `window.ph.swarm.collab`:\n\n```typescript\ninterface SwarmCollab {\n  /** Create a new collab. Mines GSOC signers in the background and\n   *  returns immediately. */\n  create(input: {\n    target: { driveId: string; documentId?: string };\n    participants: string[];  // Swarm signer addresses\n    caption?: string;\n  }): Promise<CollabSummary>;\n\n  /** Accept an invitation received via chat. */\n  accept(inviteRef: {\n    collabId: string;\n    manifestRef: string;\n    actHistoryAddress: string;\n    publisherBeeNodePubKey: string;\n  }): Promise<CollabSummary>;\n\n  /** Locally stop participating. Future: propagate to initiator. */\n  leave(collabId: string): Promise<void>;\n\n  /** Snapshot of all collaborations the user is part of. */\n  list(): CollabSummary[];\n\n  /** Subscribe to changes (op arrived, participant joined/left). */\n  on(event: \"updated\", handler: (s: CollabSummary) => void): () => void;\n}\n\ntype CollabSummary = {\n  collabId: string;\n  kind: \"drive\" | \"document\";\n  driveId: string;\n  documentId?: string;\n  participants: Array<{ address: string; displayName?: string }>;\n  lastActivityAt: string;\n};\n```\n\n## SwarmChannel integration\n\nExisting SwarmChannel push/pull is per-drive. To support collaboration, each\ncollab registers **additional pull sources** on the SwarmChannel \u2014 one per\nparticipant's feed(s).\n\n```typescript\nclass SwarmChannel implements IChannel {\n  private peerFeeds: Array<{\n    participantAddress: string;\n    driveFeedTopic: string;\n    docFeedTopics: string[];\n    cursor: number;\n  }> = [];\n\n  async registerCollab(collab: CollabSummary) {\n    for (const p of collab.participants) {\n      if (p.address === this.ownerAddress) continue; // skip self\n      this.peerFeeds.push(/* topics derived from driveId/docIds */);\n      await this.subscribePeerGsoc(p);\n    }\n  }\n\n  // GSOC triggers \u2014 bypasses the poll timer\n  private async onPeerOpCommitted(evt: GsocNotification) {\n    await this.pullPeerFeedNow(evt.writerAddress, evt.collabId);\n  }\n}\n```\n\nNothing changes about how the reactor applies ops \u2014 `reactor.load()` is\nalready the entry point, and it already preserves signer signatures.\n\n## Build order\n\n### Milestone 1 \u2014 MVP (polling, no GSOC yet)\n\nGoal: two users, one drive, invitation \u2192 accept \u2192 B's edit appears in A's\ntoolbar History within ~5 s (the existing poll interval). Prove the full\nloop on real Bee nodes.\n\n1. **Types + manifest format** in `adapter/src/chat/types.ts` (or a new\n   `adapter/src/collab/types.ts`): `CollabManifest`, `CollabSummary`,\n   `CollabInviteAttachment`.\n2. **`CollabManager`** (`adapter/src/collab/collab-manager.ts`):\n   - `create({ target, participants, caption })` \u2192 builds initial share\n     bundle, writes collab manifest, sends PSS invitation (chat message +\n     `CollabInviteAttachment`).\n   - `accept(invite)` \u2192 reads manifest, imports initial bundle via\n     existing `importFromUser` path, registers pull sources.\n   - `list()` / `on(\"updated\")` \u2014 local cache of active collabs in\n     localStorage, so sessions survive reload.\n   - `leave(collabId)` \u2014 local-only for now (stop pushing/pulling).\n3. **SwarmChannel peer-feed registration**\n   (`adapter/src/channel/swarm-channel.ts`): add a `peerSources` list;\n   each source has `{ participantAddress, feedTopic, cursor }`. Polling\n   walks `peerSources` as well as the owner's own feeds. Each peer source\n   gets its own cursor row in `sync_cursors`.\n4. **Collab-scoped push path**: when a doc in an active collab flushes, the\n   push pipeline ALSO writes the ACT-protected collab feed update. Reuses\n   the same op-batch payload; second upload with `{ act: true }`.\n5. **Chat UI \u2014 Collaborate tab** (`connect/src/components/chat/`):\n   - New tab next to Conversations.\n   - Empty state, pending invites, active collabs.\n   - New-collab creation flow: drive/doc picker (reuse `DocumentSharePicker`\n     plumbing) + participant multi-select from chat peers.\n6. **`CollabInviteCard`** in the chat message pipeline. Renders inline with\n   [Join] / [Decline]. Join calls `ph.swarm.collab.accept`.\n7. **Toolbar History auto-refresh.** Wire the existing history view to\n   re-query on inbound ops for docs the user has joined via collab. If a\n   straightforward React-state refresh isn't already in place, fire a\n   custom event on `reactor.load` completion and listen for it in the\n   History panel.\n8. **Manual smoke test**: two browsers, two Bee nodes, drive-level collab\n   end-to-end. Landing criteria below.\n\n### Milestone 2 \u2014 GSOC real-time upgrade\n\n1. **`GsocNotifier.onOpCommitted`** \u2014 subscribe to each participant's\n   signer for the collab.\n2. **Send pings on push** \u2014 after a collab-feed update, fire an\n   `op-committed` GSOC message to each other participant.\n3. **Debounced pull on ping** \u2014 SwarmChannel pulls that writer's feeds on\n   receipt, coalescing bursts (~300 ms debounce).\n4. **Background signer mining** \u2014 first collab create/accept kicks off\n   mining without blocking the UI; fall back to polling until mining\n   completes.\n5. **Latency smoke test**: peer sees new revision in History view within\n   ~1\u20132 s of the sender committing.\n\n### Milestone 3 \u2014 Document-level scope\n\n1. Narrow the ACT chain to the doc's feeds only (exclude drive manifest +\n   sibling docs).\n2. Participant join gets just the one doc (not the containing drive).\n3. UI: show \"Shared document: X\" in the active collab row, differentiated\n   from drive-level collabs.\n\n### Landing criteria for Milestone 1\n\n- A invites B to collaborate on a drive \u2192 B receives a chat card with\n  [Join] / [Decline].\n- B clicks Join \u2192 drive materializes in B's reactor within 5 s, all\n  existing docs and folders present with original signatures.\n- B makes a change (edit doc, add folder) \u2192 appears in A's toolbar History\n  within the poll interval, attributed to B's signer.\n- A makes a change \u2192 appears in B's toolbar History the same way.\n- Both users can close and reopen the browser; collab resumes from\n  localStorage + the manifest.\n\n## Testing strategy\n\n- **Unit:** collab-manifest read/write, participant add/remove idempotency,\n  GSOC routing by `collabId` / `writerAddress`.\n- **Integration (two Bee nodes):** A creates drive-level collab with B,\n  verifies B receives invitation via PSS, B joins, both make drive ops and\n  doc ops, verify each sees the other's ops in the operation store within\n  2 s (GSOC path) and within the poll interval (fallback path).\n- **Signature attribution:** every revision arriving on B's side is signed\n  by A's signer, and vice versa, in the toolbar history.\n- **Permission boundary (doc-level collab):** A and B collaborate on doc X\n  only; verify B cannot read other docs in A's drive, and verify B's\n  reactor does not materialize them.\n- **Offline resilience:** A goes offline, B makes 10 ops, A comes back, A\n  pulls all 10 ops from B's feed (no GSOC pings arrived during offline\n  window).\n\n## Risks / unknowns\n\n- **Signer mining time (10\u201330 s).** Background-mine; surface a \"connecting\"\n  hint on the collab row; fall back to polling until mining completes.\n- **Participant manifest ownership.** Only the initiator can rewrite their\n  manifest feed. Adding a participant later requires them to re-write it.\n  Future work: distributed manifest or \"any participant may append\" via a\n  signed log.\n- **ACT revocation.** Removing a participant requires rebuilding the ACT\n  chain. Already supported (`patchGrantees`). Old content stays decryptable\n  by whoever had it pre-revocation \u2014 acceptable for the drive/doc case\n  (you can't unring a bell), documented in UI.\n- **Full-node requirement.** Both sender and receiver need full Bee nodes\n  to use GSOC. Same constraint as chat. UI degrades to polling-only for\n  light nodes (slower but functional).\n- **Mutable stamp requirement.** GSOC requires mutable stamps. Already the\n  default in stamp selection; verify before enabling collab on a target.\n- **Op bursts.** A drag-reorder on a large list could emit dozens of ops in\n  a second. Coalesce GSOC pings per (peer, collab) with a ~300 ms debounce.\n\n## Non-goals (restated)\n\n- No cursor tracking, caret overlays, or per-editor presence.\n- No CRDT. No custom merge logic.\n- No server-side relay.\n- No chat-level presence dots or typing indicators.\n- No \"save point\" or \"version\" layer beyond the existing keyframe/operation model.\n",
+        "createdAt": "2026-04-21T14:06:53.006Z",
+        "createdBy": "knowledge-agent",
+        "sourceType": "DOCUMENTATION",
+        "description": "Next track: live collaboration via GSOC-triggered sync, presence, cursors, typing indicators, and sub-second document updates."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.739Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "e536b619-d380-47ab-978d-382ac6e7fb18",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.739Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "lrsdItgvUzl0Shr0zo4fyJ0ITBA=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "ge60nT8SxmAe0dmmr0z8eBQy1qQ=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 15,
+        "extractedAt": "2026-04-21T14:16:54.676Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "7/yi08lJ5GCi576uHg8Wqto7zFw=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "63c16101-fb23-4642-beb1-6eed1f0ab232"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "nT+YyDxV8dtr8YpuIhD+Qm/+DS4=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "bebb61af-3e25-4bcf-b807-52006bd16c8c"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "WTcz792InlvJu/rQJk9lzR03OjI=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "94c7044d-7fb9-4fa0-bce6-98c77b828784"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "knzYsQHRGnht6tvtzW1xhC3m6/I=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "f4e8483b-54ab-427b-b6e7-1134233e1c82"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "d/rQiFeUCpZgZUPZaBz3c2J7osI=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "a4771bb5-35ce-4d28-9488-4f6ce8b9bd14"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "bbpt6iIpEYFJuNUTBoRJP//6LLk=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "34195ec3-e008-423a-8478-0ea7c8f57183"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "WaM3AzKIDFjzpq07Psf89SAJLXc=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "e8d441f5-5526-4c74-91af-90e1169f423b"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "VOTJ4dO1P9cbigYm7hl8s8DcuHE=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "60ed4add-4e40-4c89-bdf3-3d2de02d9bda"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "76I4x3W+umD3ihFXxwXwHJymPK8=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "97793ed6-3148-48c3-8c38-de02cc65fef5"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Gy+zT86jFn4QeHFQF/vEnrkiJVA=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "e378c551-0c5d-43eb-a705-4e9fff187230"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "AV/hwhqwhR3VH3lawG9w20jLwjM=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "8abdf393-6a17-4036-ad20-492d0aaeb4a5"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "oD7tqDfoHsIrNSXh1diPJ96Z370=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "3e9e4444-c251-4b9b-9893-c7af3628df2b"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "qR+WmtGk/zCOIsH3tEh8e3852Pw=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "a54a9f24-04ea-405c-89bd-b6c73d65fbe6"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "CADco1zEFbbf2CU0+b4Rm/CtZj4=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "12ed66a2-dca5-4fe6-9af2-11d86fc3a751"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "99maSNq+Gvemod1MzWTNlWMo9JY=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "07f86723-a741-4e27-9321-825edbedb6bd"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  }
+]

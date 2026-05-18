@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-47a89c0b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "47a89c0b-cd52-488c-b81c-f18c5aec4820",
+      "targetTitle": "ddup-collab-envelope-overhead"
+    },
+    {
+      "id": "lnk-bd87d072-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-7036dd62-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7036dd62-002b-47e1-b8db-ea1083e7b415",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-8abdf393-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8abdf393-6a17-4036-ad20-492d0aaeb4a5",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-34195ec3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "34195ec3-e008-423a-8478-0ea7c8f57183",
+      "targetTitle": "gsoc-triggered-pull-debounced-with-polling-fallback"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm SOC feeds allow only one writer; collaboration uses N single-writer feeds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d785646e-1be0-46e1-b576-6d0f7b70fa44",
+      "name": "swarm-socs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6516216d-dfe3-4f0f-91b4-43a41a358fc3",
+      "name": "single-writer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b5873333-7588-4236-9967-c8367afa69bc",
+      "name": "feed-ownership",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Single Writer Per Feed\n\nSwarm feeds are backed by Single Owner Chunks (SOCs). A SOC update requires a signature from the owner's private key, so each feed has exactly one writer. This is a protocol-level constraint, not a Powerhouse choice.\n\n## Implications\n\n1. There is no \"shared writable feed\" \u2014 you cannot have Alice and Bob both pushing to one topic\n2. Collaboration must be modeled as N writer feeds, one per participant\n3. The collaboration index feed (itself single-writer by the creator) tells everyone where to subscribe\n4. Each reader fans out across N-1 peer feeds to observe all edits\n\n## Design consequence\n\nThe single-writer rule is why the op-feed layout uses `ph:v2:ops:<address>:<docId>` \u2014 address is part of the topic so each participant owns a distinct feed space for the same document. Without this, two participants would collide on the same topic and only one could actually write.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:45:54.611Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Swarm SOC feeds require the owner's private key to write; no feed is shared-writable. Collaboration composes N single-writer feeds rather than one shared feed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

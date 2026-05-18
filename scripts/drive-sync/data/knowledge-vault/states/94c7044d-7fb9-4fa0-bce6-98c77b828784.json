@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-c7b131a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-a9803a1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    },
+    {
+      "id": "lnk-61e7ee9c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-e378c551-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e378c551-0c5d-43eb-a705-4e9fff187230",
+      "targetTitle": "dual-push-personal-and-collab-feeds"
+    },
+    {
+      "id": "lnk-f4e8483b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4e8483b-54ab-427b-b6e7-1134233e1c82",
+      "targetTitle": "collab-manifest-initiator-owned-feed"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collab uses parallel ACT-protected feeds rather than re-encrypting existing personal feeds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-86f25711-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-86f25711-2",
+      "name": "act-encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-86f25711-3",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Decision: parallel collab feeds, not re-encrypted personal feeds\n\nPersonal drives stay encrypted with the wallet-derived AES key as today. **We don't re-encrypt existing personal feeds.** Instead a collaboration creates a parallel set of ACT-protected \"collab\" feeds so only participants can read them.\n\n### Rationale\n\n- **Boundary clarity.** Personal drives stay private even if a drive is later shared. No migration of existing history is required, and no historical personal data accidentally leaks via a new ACT grant.\n- **ACT revocation is clean.** Removing a participant only affects the collab chain. The owner's personal feeds remain untouched, so kicking someone out doesn't force a rewrite of unrelated private history.\n- **Multi-collab on the same drive.** The same drive can be shared with different participant sets as separate collabs, each with its own ACT scope. No tangling of the owner's personal history with any particular collaboration's grantee list.\n\nEach collaborator writes the same op batches to their personal feed (wallet-key encrypted, for cross-device recovery) and to their collab feed (ACT-protected, so peers can read). One read of the op, two pushes.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Collab uses a parallel set of ACT-protected feeds instead of re-encrypting personal feeds \u2014 keeps boundaries clean, revocation surgical, and multi-collab possible.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

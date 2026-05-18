@@ -1,0 +1,109 @@
+{
+  "links": [
+    {
+      "id": "lnk-5739f1f1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5739f1f1-4e1e-49f9-9fca-0a559b466276",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-13c5e640-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+      "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-"
+    },
+    {
+      "id": "lnk-e10f822f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e10f822f-c625-46fe-808e-ef4ae7998191",
+      "targetTitle": "getuserselectionpricebreakdown-is-the-core-pricing-calculation-engine"
+    },
+    {
+      "id": "lnk-1f3d1312-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1f3d1312-53ff-40e2-9a79-a4784d681317",
+      "targetTitle": "pricing-utils-provides-editor-level-formatting-and-tier-price-calculations"
+    },
+    {
+      "id": "lnk-4e37a31c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e37a31c-5e1d-4eb3-ac80-7133d9bff49d",
+      "targetTitle": "billing-utils-computes-subscription-billing-breakdowns-and-metric-overages"
+    },
+    {
+      "id": "lnk-65ef87db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65ef87db-1d1f-4614-8f3a-281454f215f9",
+      "targetTitle": "mapofferingtosubscription-transforms-service-offering-state-into-subscription-in"
+    },
+    {
+      "id": "lnk-cff98458-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cff98458-434d-4c99-8311-c477d8b2084c",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-67ce34f9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "67ce34f9-bdbc-4ff4-96c9-66bbb2145772",
+      "targetTitle": "document-models-are-the-core-unit-of-powerhouse-architecture"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "helper functions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "24463ea0-cf99-4a84-8db8-0caae4309438",
+      "name": "service-offering",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8432e20b-4683-47f0-8288-ab67b23daad2",
+      "name": "subscription-instance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1fecd08e-b91c-43bc-8220-6f1a182eaeee",
+      "name": "editor-utilities",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# helper functions\n\nHelper functions that live outside reducers but are critical to editor behavior \u2014 pricing calculations, billing breakdowns, cross-model data mapping, and formatting utilities.\n\n## Pricing Calculation (Service Offering)\n- [[getUserSelectionPriceBreakdown is the core pricing calculation engine]] \u2014 the master pricing function in service-offering/src/utils.ts\n- [[pricing-utils provides editor-level formatting and tier price calculations]] \u2014 formatPrice, calculateTierRecurringPrice, calculateEffectiveSetupPrice, detectMajorityCycle\n\n## Billing Calculation (Subscription Instance)\n- [[billing-utils computes subscription billing breakdowns and metric overages]] \u2014 computeBillingBreakdown, formatCurrency, computeMetricOverage\n\n## Cross-Model Bridges\n- [[mapOfferingToSubscription transforms service offering state into subscription initialization]] \u2014 converts offering final config \u2192 subscription init input\n\n## Dependency Graph\n\n```\nservice-offering/src/utils.ts\n  \u2514\u2500 getUserSelectionPriceBreakdown \u2192 TheMatrix.tsx\n\neditors/service-offering-editor/components/pricing-utils.ts\n  \u251c\u2500 re-exports BILLING_CYCLE_MONTHS from model\n  \u2514\u2500 formatPrice, calculateTierRecurringPrice \u2192 ServiceCatalog, TierDefinition, TheMatrix\n\neditors/service-offering-editor/components/resolve-configuration.ts\n  \u2514\u2500 resolveConfiguration \u2192 TheMatrix.tsx (converts PriceBreakdown \u2192 SetFinalConfigurationInput)\n\neditors/subscription-instance-editor/components/billing-utils.ts\n  \u2514\u2500 computeBillingBreakdown \u2192 BillingPanel.tsx\n\neditors/subscription-instance-editor/components/mapOfferingToSubscription.ts\n  \u2514\u2500 mapOfferingToSubscription \u2192 ImportServiceConfigButton.tsx\n```\n\n---\n\nTopics:\n- [[index]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:57:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:57:31.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Utility and calculation functions indexed by what they compute and which editors consume them",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

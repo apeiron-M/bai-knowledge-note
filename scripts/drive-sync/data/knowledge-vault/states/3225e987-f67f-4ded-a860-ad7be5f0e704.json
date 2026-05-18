@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-2818230c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+      "targetTitle": "schema-design"
+    },
+    {
+      "id": "lnk-101aa6f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+      "targetTitle": "one-operation-per-user-intent-keeps-concerns-separated"
+    },
+    {
+      "id": "lnk-7d431931-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d431931-4abb-4545-b427-891f2a5b6478",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-004e5e41-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "004e5e41-0706-4c65-8d88-dfe00b40557f",
+      "targetTitle": "The DocumentToolbar className prop merges with defaults via twMerge"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "input types should reflect user intent with simple specific fields",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f195f563-d22f-47e7-9186-d42f656b1f8e",
+      "name": "schema design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f65f50c7-b0f7-4afd-b18e-fb07877efe5f",
+      "name": "input types",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa298fa6-d426-41dc-9970-b37838bf1c63",
+      "name": "operation design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b26c4f93-62b4-429b-9bef-eb324d1ffc05",
+      "name": "GraphQL",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# input types should reflect user intent with simple specific fields\n\nOperation input types should be designed around user intent:\n\n```graphql\n// \u2705 Simple, specific \u2014 reflects what the user provides\ninput AddLineItemInput {\n    id: OID!\n    description: String!\n    quantity: Int!\n    unitPrice: Amount_Money!\n}\n\n// \u274c Complex nested structure \u2014 harder to use and validate\ninput AddLineItemInput {\n    item: LineItemInput!\n    metadata: MetadataInput\n    options: OptionsInput\n}\n```\n\nKeep inputs flat and focused. The system auto-generates `OID` for new objects \u2014 callers provide IDs through the input schema because [[reducer purity requires all dynamic values from action input]].\n\n---\n\nTopics:\n- [[schema design]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:58:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:58:10.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Prefer descriptive input names and simple fields over complex nested types; the system auto-generates OID for new objects",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

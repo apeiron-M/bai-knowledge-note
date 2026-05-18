@@ -1,0 +1,80 @@
+{
+  "links": [
+    {
+      "id": "lnk-a5923ef0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a5923ef0-8bda-4d0d-b720-07d8c2bd46f8",
+      "targetTitle": "service-subscription-model-tracks-service-level-subscription-agreements"
+    },
+    {
+      "id": "lnk-d39b8d6a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d39b8d6a-3095-4893-8ec6-5a45d7a11f6c",
+      "targetTitle": "builder-profile-model-describes-individual-contributor-identities"
+    },
+    {
+      "id": "lnk-fe317644-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fe317644-e64b-4afd-a682-50eb2a26bacf",
+      "targetTitle": "facet-model-provides-configurable-classification-dimensions"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "service-offering model defines tiered pricing with option groups and service groups",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4fbe001d-f53f-4a7c-9dcf-6439cf13eb92",
+      "name": "service-offering",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d514bd99-4dfc-48f4-b20e-c19277f5fc75",
+      "name": "service-pricing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# service-offering model defines tiered pricing with option groups and service groups\n\n`powerhouse/service-offering` is the central document model in this project. It manages a complete service catalog with tiered pricing.\n\n## State Shape\n\n```graphql\ntype ServiceOfferingState {\n    id: PHID!\n    operatorId: PHID!              # \u2192 BuilderProfile (external)\n    resourceTemplateId: PHID       # \u2192 ResourceTemplate\n    title: String!\n    summary: String!\n    status: ServiceStatus!         # DRAFT | COMING_SOON | ACTIVE | DEPRECATED\n    availableBillingCycles: [BillingCycle!]!\n    targetAudiences: [TargetAudience!]!\n    facetTargets: [FacetTarget!]!\n    facetBindings: [ResourceFacetBinding!]!\n    serviceGroups: [ServiceGroup!]!\n    services: [Service!]!\n    tiers: [ServiceSubscriptionTier!]!\n    optionGroups: [OptionGroup!]!\n    finalConfiguration: FinalConfiguration\n}\n```\n\n## Modules (7)\n\n| Module | Operations | Purpose |\n|--------|-----------|---------|\n| offering | 14 | Core metadata, operator, resource template, audiences, facets, billing cycles |\n| services | 5 | Add/update/delete services, facet bindings |\n| tiers | 12 | Tier CRUD, service levels, usage limits, billing cycle discounts, pricing mode |\n| option-groups | 10 | Option group CRUD, standalone/tier-dependent pricing, discount mode |\n| service-groups | 10 | Service group CRUD, tier pricing, setup costs, recurring price options |\n| configuration | 2 | Set/clear final configuration (resolved pricing snapshot) |\n\n## Key Internal References\n\n- `Service.serviceGroupId: OID` \u2192 ServiceGroup (groups services)\n- `Service.optionGroupId: OID` \u2192 OptionGroup (links service to option group)\n- `ServiceGroupTierPricing.tierId: OID` \u2192 ServiceSubscriptionTier\n- `OptionGroupTierPricing.tierId: OID` \u2192 ServiceSubscriptionTier\n- `ServiceLevelBinding.serviceId: OID` \u2192 Service\n- `ServiceUsageLimit.serviceId: OID` \u2192 Service\n\n## External References\n\n- `operatorId: PHID` \u2192 BuilderProfile (external Powerhouse model)\n- `resourceTemplateId: PHID` \u2192 ResourceTemplate (this project)\n- `facetBindings.facetType: PHID` \u2192 Facet (this project)\n\n---\n\nTopics:\n- [[schema design]]\n- [[object relations]]\n- [[architecture decisions]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:42:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:42:45.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The largest model (51 ops, 7 modules) \u2014 manages tiers, service groups, option groups, billing cycles, discounts, and final configuration for a service catalog",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

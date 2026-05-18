@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-8918651f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-bd87d072-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-7036dd62-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7036dd62-002b-47e1-b8db-ea1083e7b415",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-42273fd3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-a54a9f24-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a54a9f24-04ea-405c-89bd-b6c73d65fbe6",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Live collaboration explicitly excludes cursors, CRDTs, typing indicators, and server-side relays",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-921b0a51-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-921b0a51-2",
+      "name": "non-goals",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-921b0a51-3",
+      "name": "design-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Explicit non-goals\n\nThe design lists what live collaboration will *not* include, to prevent scope creep and clarify the minimum viable loop:\n\n- **No cursor tracking, caret overlays, or per-editor presence.** Custom editors (canvases, tables, button grids) make a generic cursor notion meaningless. It would need per-editor implementation and was a misread of the user's actual goal.\n- **No typing indicators.** Already scratched at the chat level for the same reason \u2014 latency beats the signal, so the indicator is wrong more often than it's right.\n- **No custom CRDTs or merge logic.** The reactor's operation model is the conflict resolver. Adding a CRDT layer on top would duplicate responsibility.\n- **No server-side relay.** Fully peer-to-peer via Bee nodes. No central aggregator, no sync service.\n- **No chat-level presence dots.**\n- **No \"save point\" or \"version\" layer beyond the existing keyframe/operation model.**\n\nNon-goals restated at the end of the doc as a guardrail. The single live surface is the toolbar History view, which updates with each peer's ops attributed by signer address.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Explicit non-goals: no cursor tracking, no CRDTs, no typing indicators, no server-side relay, no save-point layer beyond the reactor's existing operation model.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:09.130Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-feed-bottleneck-propagation",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9da8405c-a2bd-4927-a1b1-8f599001e545",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:09.130Z"
+        },
+        "version": 0,
+        "documentId": "9da8405c-a2bd-4927-a1b1-8f599001e545",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:09.130Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "nWHaJsxANxSI+c9cgGABGkoSAB0=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Feed write throughput is bounded by neighborhood propagation, not upload bandwidth",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:09.130Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9da8405c-a2bd-4927-a1b1-8f599001e545",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:09.130Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fBDuINRwR/0JmUTWttCILXC3Zt0=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:45.000Z",
+        "description": "A SOC must be stored by the responsible neighborhood before the next index is visible, so feed write rate is propagation-limited even on a fast local node."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.936Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9da8405c-a2bd-4927-a1b1-8f599001e545",
+        "targetId": "f468c3d1-a8fe-47e8-9b9e-f6e218378365",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.936Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "D/ZVs/SqsoOHweTW6KCAuHK3og0=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.958Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9da8405c-a2bd-4927-a1b1-8f599001e545",
+        "targetId": "590a66b8-06f7-4736-96f3-b22e7b737fd7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.958Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "oOS4+sd1Xuj2YesMWJ3LZ3kxIEA=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nThe throughput ceiling on a single feed is **network propagation of the SOC through the responsible neighborhood**, not the bandwidth between the client and its Bee node.\n\n## Evidence\n\n- Bee processes feed writes sequentially per topic because SOC index is monotonic\n- A newly-written SOC at index N must be stored by the responsible neighborhood before a reader at any other node will see it \u2014 and therefore before index N+1's causal \"based on\" is reliable\n- The adapter's 3-second debounce already batches rapid edits into single writes, so per-topic write rate is typically well below the propagation limit\n- The throttled flush (max 5 concurrent writes) prevents overloading the node across topics\n- Quoted key insight from source: *\"the bottleneck is not upload speed but feed propagation time (SOC must be stored by the neighborhood before the next write is visible).\"*\n\n## Why it matters\n\nTuning the debounce window smaller than propagation time buys nothing \u2014 you just queue writes behind each other. It reframes performance work: invest in propagation-side strategies (mutable stamps, GSOC notifications, advance retrieve requests) rather than client upload parallelism for single-feed scenarios.\n",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "VUBfYlstl9mcnKdJis6/DtWR/zc=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "5Ad9XflDLsC+2sq//t2tbAHddUc=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "137afead-e3fe-4ebf-9091-195e33075fcf",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "X3X8KUZHOWNmzHPiMfpL6H1fFLw=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7ddc7b13-cd3e-4607-ad3d-30ec5ceb770e",
+        "name": "performance",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "8pa4bLqiN5MVYEMoKNJMYHsax0o=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "97acb321-5e9c-4233-ad42-02694beb1a44",
+        "name": "soc",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "wYqESQHU6pU4OU0XBvDH3Zm2s+Y=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f5279b5-d769-4eeb-9d80-b3d1aad40967",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  }
+]

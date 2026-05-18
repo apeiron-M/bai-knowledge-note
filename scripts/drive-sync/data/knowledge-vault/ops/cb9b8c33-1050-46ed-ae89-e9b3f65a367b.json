@@ -1,0 +1,317 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:47.838Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "helper-functions",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:47.838Z"
+        },
+        "version": 0,
+        "documentId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:47.838Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "WT1GEHkcpXQ7ql+Lq8yTwpn1meg=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "helper functions",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:47.838Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:47.838Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "E1d70YUG5X60w808/oCQLpxZDXU=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:36.000Z",
+        "description": "Utility and calculation functions indexed by what they compute and which editors consume them"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.349Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "targetId": "5739f1f1-4e1e-49f9-9fca-0a559b466276",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.349Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "MZ16dgpeaM7mNYZWFv+fY0cRBl8=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.371Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "targetId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.371Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "sXfM5LW5K7GscsuPa0CJSFwart8=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# helper functions\n\nHelper functions that live outside reducers but are critical to editor behavior \u2014 pricing calculations, billing breakdowns, cross-model data mapping, and formatting utilities.\n\n## Pricing Calculation (Service Offering)\n- [[getUserSelectionPriceBreakdown is the core pricing calculation engine]] \u2014 the master pricing function in service-offering/src/utils.ts\n- [[pricing-utils provides editor-level formatting and tier price calculations]] \u2014 formatPrice, calculateTierRecurringPrice, calculateEffectiveSetupPrice, detectMajorityCycle\n\n## Billing Calculation (Subscription Instance)\n- [[billing-utils computes subscription billing breakdowns and metric overages]] \u2014 computeBillingBreakdown, formatCurrency, computeMetricOverage\n\n## Cross-Model Bridges\n- [[mapOfferingToSubscription transforms service offering state into subscription initialization]] \u2014 converts offering final config \u2192 subscription init input\n\n## Dependency Graph\n\n```\nservice-offering/src/utils.ts\n  \u2514\u2500 getUserSelectionPriceBreakdown \u2192 TheMatrix.tsx\n\neditors/service-offering-editor/components/pricing-utils.ts\n  \u251c\u2500 re-exports BILLING_CYCLE_MONTHS from model\n  \u2514\u2500 formatPrice, calculateTierRecurringPrice \u2192 ServiceCatalog, TierDefinition, TheMatrix\n\neditors/service-offering-editor/components/resolve-configuration.ts\n  \u2514\u2500 resolveConfiguration \u2192 TheMatrix.tsx (converts PriceBreakdown \u2192 SetFinalConfigurationInput)\n\neditors/subscription-instance-editor/components/billing-utils.ts\n  \u2514\u2500 computeBillingBreakdown \u2192 BillingPanel.tsx\n\neditors/subscription-instance-editor/components/mapOfferingToSubscription.ts\n  \u2514\u2500 mapOfferingToSubscription \u2192 ImportServiceConfigButton.tsx\n```\n\n---\n\nTopics:\n- [[index]]",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.391Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "targetId": "e10f822f-c625-46fe-808e-ef4ae7998191",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.391Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "62IuhYyIPm5IVjUPCJsPYoQ1y0g=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:57:31.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.411Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "targetId": "1f3d1312-53ff-40e2-9a79-a4784d681317",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.411Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "U9eWlCN7kbMBCCXxhRAVlr/5ReQ=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "24463ea0-cf99-4a84-8db8-0caae4309438",
+        "name": "service-offering",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.433Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "targetId": "4e37a31c-5e1d-4eb3-ac80-7133d9bff49d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.433Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Ifq+uXOXKKYjZH6uOTXjigJvFQk=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8432e20b-4683-47f0-8288-ab67b23daad2",
+        "name": "subscription-instance",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.461Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "targetId": "65ef87db-1d1f-4614-8f3a-281454f215f9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.461Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "CUJDyUSxYD2h8atimKL8C05f9UI=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1fecd08e-b91c-43bc-8220-6f1a182eaeee",
+        "name": "editor-utilities",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.481Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "targetId": "cff98458-434d-4c99-8311-c477d8b2084c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.481Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.501Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+        "targetId": "67ce34f9-bdbc-4ff4-96c9-66bbb2145772",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.501Z"
+    }
+  }
+]

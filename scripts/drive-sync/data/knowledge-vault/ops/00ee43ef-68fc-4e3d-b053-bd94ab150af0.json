@@ -1,0 +1,185 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:20.467Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "moc-reactor-sync-infrastructure",
+        "slug": "",
+        "model": "bai/moc",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+          "documentType": "bai/moc",
+          "createdAtUtcIso": "2026-05-13T13:00:20.467Z"
+        },
+        "version": 0,
+        "documentId": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:20.467Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "I2WiNkK/0m41uyqCsjsrjMfWjc4=",
+    "timestampUtcMs": "2026-05-13T13:00:49.000Z",
+    "action": {
+      "type": "CREATE_MOC",
+      "input": {
+        "tier": "DOMAIN",
+        "title": "Reactor Sync Infrastructure",
+        "createdAt": "2026-04-21T19:31:46.196Z",
+        "description": "The reactor-side plumbing that makes decentralized channels possible: operation log, IChannel mailboxes, sync tables, and multi-remote support.",
+        "orientation": "This MOC captures the reactor sync primitives that every transport \u2014 GraphQL or Swarm \u2014 composes with. Operations-as-append-only-log is the substrate; IChannel mailboxes (inbox/outbox/deadLetter) are the per-remote seam; SyncManager persists state in PGlite tables (remotes, cursors, dead letters, and the mailbox buffer); and multi-remote-per-collection is the switch that enables the dual-sync strategy. These notes form the backbone needed to reason about the SwarmChannel, debouncing, and recovery."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:49.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:20.467Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/moc",
+        "toVersion": 1,
+        "documentId": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "tier": null,
+            "title": null,
+            "tensions": [],
+            "childRefs": [],
+            "coreIdeas": [],
+            "createdAt": null,
+            "noteCount": 0,
+            "parentRef": null,
+            "updatedAt": null,
+            "agentNotes": [],
+            "description": null,
+            "orientation": null,
+            "openQuestions": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:20.467Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:26.634Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+        "targetId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:26.634Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:26.657Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+        "targetId": "97e5ccbe-58b0-4496-8c20-f90ea5f35d31",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:26.657Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:26.676Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+        "targetId": "1499ac7f-c5cc-4b36-a48f-257620cb540f",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:26.676Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:26.695Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+        "targetId": "5cc3c6a5-e5e3-4aa2-af00-39265af3023f",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:26.695Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:26.713Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+        "targetId": "2a871b9a-b30a-4761-a18e-80019c1e0235",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:26.713Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:26.732Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+        "targetId": "478a428d-a4be-4918-9fda-7ebea63c0d97",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:26.732Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:26.751Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "00ee43ef-68fc-4e3d-b053-bd94ab150af0",
+        "targetId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:26.751Z"
+    }
+  }
+]

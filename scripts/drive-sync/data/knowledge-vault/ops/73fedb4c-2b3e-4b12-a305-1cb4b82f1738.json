@@ -1,0 +1,331 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:50.519Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "model-editor-wiring",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:50.519Z"
+        },
+        "version": 0,
+        "documentId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:50.519Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "7Sv+XdNJU5KedS5LIGjN4k0xbTw=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "model-editor wiring",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:50.519Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:50.519Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5svNjSWwH3dbqhvryvh9GhtPU+Y=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:37.000Z",
+        "description": "Which document model feeds which editor \u2014 hook imports, dispatch targets, state reads, helper dependencies"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.161Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+        "targetId": "5739f1f1-4e1e-49f9-9fca-0a559b466276",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.161Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "gqFaoeUBGmV16AT7gseQT5gieVc=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.182Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+        "targetId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.182Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "NVwRxCbBnr+bkB4T8Iv8OMwyMnY=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# model-editor wiring\n\nThe integration layer between document models and their editors.\n\n## Core Wiring Pattern\n- [[editors use the modern React hooks pattern from reactor-browser]] \u2014 the useSelectedXDocument pattern\n- [[editors import action creators from gen/creators not from model source]] \u2014 correct import path for creators\n- [[generateId from document-model/core provides deterministic IDs for dispatch]] \u2014 ID generation before dispatch\n- [[useSelectedDocument hook is auto-generated per document model]] \u2014 auto-generated hooks per model\n\n## Drive-Level Wiring\n- [[apps use useSelectedDrive to access drive state and filter nodes]] \u2014 drive editors filter nodes by type\n\n## By Editor\n- [[service-offering editor wires four tab views to the service-offering model]] \u2014 ResourceTemplateSelector, ServiceCatalog, TierDefinition, TheMatrix\n- [[subscription-instance editor provides client and operator views with billing]] \u2014 dual-mode with ImportServiceConfigButton bridge to ServiceOffering\n- [[resource-template editor manages template info and facet targeting]] \u2014 simplest editor, two components\n- [[resource-instance editor manages provisioning lifecycle and facet configuration]] \u2014 most action creator imports (17), lifecycle state machine\n\n## By Document Model\n\n| Model | Editor | Hook | Modules Used |\n|-------|--------|------|--------------|\n| service-offering | service-offering-editor | useSelectedServiceOfferingDocument | offering, services, tiers, option-groups, service-groups, configuration |\n| subscription-instance | subscription-instance-editor | useSelectedSubscriptionInstanceDocument | subscription, service, service-group, metrics, customer |\n| resource-template | resource-template-editor | useSelectedResourceTemplateDocument | template-management, facet-targeting |\n| resource-instance | resource-instance-editor | useSelectedResourceInstanceDocument | instance-management, configuration-management |\n| facet | (no dedicated editor) | useFacetDocument | \u2014 |\n\n## Cross-Model Editors\n- [[subscription-instance editor provides client and operator views with billing]] \u2014 imports from ServiceOffering via mapOfferingToSubscription\n\n---\n\nTopics:\n- [[index]]",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.200Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+        "targetId": "83b1af9a-4757-47cb-9925-6ff33d564642",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.200Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "9wtQ6kfxZkQDfwp50N/BgqbDg0w=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:57:20.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.219Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+        "targetId": "4791cd33-4d85-4e68-8c36-73f4ff063295",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.219Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ANd+t2a3ud/+p5G4EVJBlvkXlJg=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "773a957f-5e8f-46f2-ae8f-7aff55af8538",
+        "name": "service-offering",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.240Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+        "targetId": "87e23c2a-8551-4614-a4b4-7331e4069e6a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.240Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "rY0a8JLpt1BqFmJMzCWWMOSsz64=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c00587b4-747b-4b31-8ad8-85c04dd25de0",
+        "name": "subscription-instance",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.261Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+        "targetId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.261Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "V6woxvJyYIi80VZy+UmO9zb/3HM=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b1465032-9942-4c7c-b411-5ea1b8f59dd5",
+        "name": "resource-template",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.281Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+        "targetId": "cfb81bd5-6d7c-4501-8276-f067558734a1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.281Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "fbFcwZjiHa0GlaTZ8cPlvsnMY7w=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3277a46d-0ad9-4652-b071-c591c5163d60",
+        "name": "resource-instance",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "UKTjgvzIl/B27Au1x5xS4n0SCqM=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a6dd6517-fa3f-407f-b9cb-80d64772b2fb",
+        "name": "editor-integration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  }
+]

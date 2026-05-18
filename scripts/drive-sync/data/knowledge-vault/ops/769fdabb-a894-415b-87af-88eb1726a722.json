@@ -1,0 +1,233 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:45.408Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "epoch-feeds-not-viable-on-bee-js-11",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "769fdabb-a894-415b-87af-88eb1726a722",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:45.408Z"
+        },
+        "version": 0,
+        "documentId": "769fdabb-a894-415b-87af-88eb1726a722",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:45.408Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ECWTISH0DLXOii/CsT22AA2ug9k=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Epoch feeds are not viable on bee-js 11 \u2014 SDK support is vestigial",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:45.408Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "769fdabb-a894-415b-87af-88eb1726a722",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:45.408Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "6pASXNFcBE1A2n1kwV0+skybLjk=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:34.000Z",
+        "description": "bee-js 11.1.1 defines the Epoch type but every feed function takes a sequence-FeedIndex, and Bee 2.7.x /feeds HTTP is sequence-only. Defer until native."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.516Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "769fdabb-a894-415b-87af-88eb1726a722",
+        "targetId": "cff98458-434d-4c99-8311-c477d8b2084c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.516Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "dHb+fOZcdXqOYYYtK49kclGry6A=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "observation",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.562Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "769fdabb-a894-415b-87af-88eb1726a722",
+        "targetId": "0b548435-7d91-4cca-9beb-9fb14d5fce38",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.562Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Q6rIJ1CF5CinVy4oBFY0XFFNr4g=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Epoch feeds: SDK gap blocks adoption\n\nSwarm epoch feeds (paper \u00a74.3.4) index SOC feeds by `(time, level)` instead of sequence number, giving a cold reader O(log age) lookup of the latest-as-of-time update \u2014 directly useful for the cross-Bee `publishPublicProfile` staleness we see on 2.7.x (receivers serve pre-update versions for minutes).\n\nBut they are not implementable today:\n\n- **bee-js 11.1.1**: the `Epoch { time, level }` type exists, but `findNextIndex`, `updateFeedWithReference`, and `downloadFeedUpdate` all take a sequence-`FeedIndex`. Epoch support is vestigial.\n- **Bee 2.7.x HTTP**: `/feeds/{owner}/{topic}` is sequence-only.\n- **Custom path**: would require bypassing feed helpers and manipulating SOCs directly \u2014 epoch lookup algorithm, custom chunk address derivation per level, grid traversal reader. Feasible but significant scope.\n\n**Decision:** DEFER. Reconsider when bee-js or Bee exposes epoch lookup natively. Not worth custom chunk-layer work right now.",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "aFzYeJSCWiUEMoJ+s0+TX9aPhCE=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:41.542Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "PaFvmONqazQS0wQad7uylnhAd1I=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9d67b4c2-a162-4c57-83ed-e9cacc5e0be2",
+        "name": "epoch-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ZHckd2PgpqrjRJV9vb5WgNoNNl8=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5a84f717-72fc-4226-b63a-32c9426db23e",
+        "name": "bee-js-sdk",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "xOpbYZjnIcjmqFUHmFRna/SUk3o=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7ba368d2-196a-4cb1-8d71-bdfa326ba150",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  }
+]

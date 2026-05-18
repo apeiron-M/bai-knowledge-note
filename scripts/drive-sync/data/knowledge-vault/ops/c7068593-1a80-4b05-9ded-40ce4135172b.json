@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:45.293Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "env-vars-override-config-json",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c7068593-1a80-4b05-9ded-40ce4135172b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:45.293Z"
+        },
+        "version": 0,
+        "documentId": "c7068593-1a80-4b05-9ded-40ce4135172b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:45.293Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "o77MRmXiElBa7TZvVS6j0T+stbY=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Environment variables always override powerhouse.config.json values, enabling per-environment configuration layering",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:45.293Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c7068593-1a80-4b05-9ded-40ce4135172b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:45.293Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "lNDl2TIqsRJ8I9XLTUrV3tvdB0w=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:34.000Z",
+        "description": "Set defaults in powerhouse.config.json, override for dev/staging/prod via .env file or shell environment."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.406Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c7068593-1a80-4b05-9ded-40ce4135172b",
+        "targetId": "b74db7b7-367d-4f6d-98d7-1f0e16d125d9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.406Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "bZ8XL3wGzZ738dnXD3fx4FkYkZc=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.449Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c7068593-1a80-4b05-9ded-40ce4135172b",
+        "targetId": "d39b8d6a-3095-4893-8ec6-5a45d7a11f6c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.449Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "fxGLJm4JZcWG79VP7QxpR/nJ6ZI=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Powerhouse services accept configuration via two methods: `.env` file (key-value pairs, loaded by `ph service start`) and `powerhouse.config.json` (structured JSON). Environment variables always take precedence over config file values. This enables a layered approach: define defaults in the JSON file, override for specific environments using env vars. Connect has extensive feature flags (PH_CONNECT_DISABLE_ADD_DRIVE, PH_CONNECT_STUDIO_MODE, PH_CONNECT_PUBLIC_DRIVES_ENABLED, etc.) and Renown configuration (PH_CONNECT_RENOWN_URL, RENOWN_CHAIN_ID). Switchboard config includes DATABASE_URL, AUTH_ENABLED, ADMINS, DEFAULT_PROTECTION. Changes require `ph service restart`.",
+        "updatedAt": "2026-05-13T13:00:34.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:04.481Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c7068593-1a80-4b05-9ded-40ce4135172b",
+        "targetId": "010b9a46-8f86-4f5d-8808-9ec0bd97f9dc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:04.481Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Z9gf4B3DfpbPCz7XfRvthuV4vbg=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "jesyfQbop94iS7B6aNiQLXPUOH4=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d0a1dfd8-85f0-4700-9d18-2144ce04b985",
+        "name": "configuration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "aU3ghxjUXLuzJAJzcqLGQ+ZwWOA=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0dc68885-4558-4478-bdd7-a334b287477e",
+        "name": "environment",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Z/nKQEooXy3b+hrWWCmyuyDlE8Y=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "53229b75-9848-435f-bb6e-15185990aa8a",
+        "name": "deployment",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "uYdssU+HAYSldj8X/wHPWw1Sy7o=",
+    "timestampUtcMs": "2026-05-13T13:00:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cb2c8bde-01d8-4eb5-bf66-1354cd39be59",
+        "name": "feature-flags",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:34.000Z"
+    }
+  }
+]

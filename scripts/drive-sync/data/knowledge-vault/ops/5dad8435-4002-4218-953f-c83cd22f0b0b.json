@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:02.142Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-subscriptions-document-changes",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:02.142Z"
+        },
+        "version": 0,
+        "documentId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:02.142Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "KGr+a7/f1iR/V8bNq7gdU4eTpgo=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IReactorClient.subscribe enables real-time document change listening with filter-based event matching returning unsubscribe functions",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:02.142Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:02.142Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "IUa+C5XJpF2wxZjTvuwugUpEt6I=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:42.000Z",
+        "description": "Subscribe to Created/Deleted/Updated/ParentAdded/ChildAdded events filtered by type/parentId/ids/slugs with callback pattern."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.234Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+        "targetId": "549857ac-5ba5-4911-b1a3-0ffb568b2ce4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.234Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9DUdWE1tnqPlI+pjulM1OOeBedY=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.264Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+        "targetId": "a8a87055-a271-4599-aa09-eec6e5dd3606",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.264Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "AVdSYUcdBRPwB8bjHeL5KmVYG3Y=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `IReactorClient.subscribe(search, callback, view?)` method enables real-time document change listening. It accepts a `SearchFilter` (type, parentId, ids, slugs), a callback receiving `DocumentChangeEvent`, and optional `ViewFilter`. DocumentChangeEvent includes `type` (Created/Deleted/Updated/ParentAdded/ParentRemoved/ChildAdded/ChildRemoved), `documents` array, and optional `context` with parentId/childId. Returns an unsubscribe function. For the internal event bus (via ReactorModule), subscribe to `ReactorEventTypes.JOB_READ_READY` for completed jobs or `SyncEventTypes.SYNC_FAILED` for sync failures. In GraphQL, real-time updates use the `documentChanges` subscription.",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.290Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+        "targetId": "19cb5185-af57-42cc-ac83-cf27156d86d5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.290Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "tYS/tqsyv++WTwWy+ZgCLzJz35Y=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.316Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+        "targetId": "945a276b-3a2f-4e65-a3d8-390dbb7c46b5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.316Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "9gphBYyg1hdCOHkVuF+KJegbwaE=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2d609080-9303-4e71-9783-4ba73bb156dc",
+        "name": "subscriptions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.340Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5dad8435-4002-4218-953f-c83cd22f0b0b",
+        "targetId": "268e41d6-92b6-4248-932b-77a09244471a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.340Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "J4OVicY1J1e/LndY5wZ1X0TfjAA=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fe68fd76-89af-4afc-b84b-282d61b0a31b",
+        "name": "reactor-client",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "mhGeZJuN+cyTNTZK+E7gdkR2pJ4=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9803eb6d-b5ed-496f-a9b9-d08bd594d553",
+        "name": "real-time",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  }
+]

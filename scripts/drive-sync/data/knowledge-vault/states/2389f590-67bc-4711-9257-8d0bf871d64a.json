@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a9803a1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    },
+    {
+      "id": "lnk-42273fd3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-afaaa77b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+      "targetTitle": "ddup-both-sync-paths-3x-cost"
+    },
+    {
+      "id": "lnk-41a470a9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "41a470a9-1619-4d1e-9642-5a80570d5cc9",
+      "targetTitle": "push-flow-encrypt-upload-manifest"
+    },
+    {
+      "id": "lnk-00740fca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "00740fca-ac91-49b2-8353-cbd0988eaa02",
+      "targetTitle": "swarm-app-layer-aes-gcm-encryption"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "New-device recovery flows from wallet-derived keys through the Swarm user manifest.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-08886e29-1",
+      "name": "device-recovery",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-08886e29-2",
+      "name": "wallet",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-08886e29-3",
+      "name": "manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-08886e29-4",
+      "name": "user-flow",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nA user's drives can be recovered on any device purely from wallet + Swarm \u2014 no server handoff.\n\n## Flow\n1. User opens Connect on a new device (served from Swarm).\n2. Signs in with wallet \u2192 derives encryption keys.\n3. Plugin reads the user manifest from the Swarm feed.\n4. Registers Swarm remotes for each discovered drive.\n5. `SwarmChannel.inbox` pulls all operations from per-document feeds.\n6. SyncManager applies them to the reactor \u2192 drive materializes in PGlite.\n7. Cursor is set; future syncs are incremental.\n\n## Why this works end-to-end\n- The wallet signature is deterministic \u2014 same wallet yields the same keys and same feed topics.\n- The user manifest is the single discovery root; from it the plugin walks drives \u2192 documents \u2192 batches.\n- No centralized account state is needed on any server.\n\n## Source\nSwarm Channel Architecture, \"Flow 3: New Device Recovery (from Swarm)\".",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "workflow",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:19:49.348Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "On a new device, signing with the wallet derives keys, the plugin reads the user manifest, registers Swarm remotes per drive, and SyncManager rehydrates PGlite.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.369Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-share-chat-bundle-via-act",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f2b309e3-39a9-4ace-9f50-102aaa2b7b33",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:43.369Z"
+        },
+        "version": 0,
+        "documentId": "f2b309e3-39a9-4ace-9f50-102aaa2b7b33",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.369Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "vEuzQco6DwwUPFRdOQNJCo4vVTo=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Sharing documents in chat bundles reactor state plus unflushed outbox ops, uploads via ACT, and delivers the reference through a PSS attachment.",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.369Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "f2b309e3-39a9-4ace-9f50-102aaa2b7b33",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.369Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "8YuM5hO+49gmP/fPN/ahkaRP7fw=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:33.000Z",
+        "description": "buildDriveShareBundle gathers docs via reactorClient, preserves signatures, uploads with createGrantees+ACT, and sends a document-share PSS message for recipient import."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.491Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f2b309e3-39a9-4ace-9f50-102aaa2b7b33",
+        "targetId": "2d6a278b-e72f-4922-86bb-a0e0f49d7285",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.491Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "JKVNaEeRhsodQ+jPmXeZxzeE7Y8=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "workflow",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.517Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f2b309e3-39a9-4ace-9f50-102aaa2b7b33",
+        "targetId": "3efc23f3-f6b4-4477-bba9-40c87ad50b0e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.517Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "+nep+VsXx65XZIieLwcnRWWfEgo=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Document share in chat\n\n### Build bundle (sender side)\n\n`buildDriveShareBundle(driveId, [docIds])`:\n\n- `reactorClient.get(docId)` for each doc \u2014 **local reactor is source of truth**.\n- `reactorClient.getOperations(...)` includes unflushed outbox ops (so the recipient gets the absolute latest state, not just what's on Swarm).\n- Fallback to Swarm manifest if a doc is not in the local reactor.\n- Preserves `action.context.signer.signatures` verbatim, so authorship stays intact on import.\n\nReturns: `{ documents[], folders, docFolders, preferredEditor }`.\n\n### ACT upload\n\n```\ncreateGrantees([bob.beeNodePubKey])  -> granteeRef, historyRef\nuploadFile(bundle, { act:true, historyRef, skipEncryption:true })\n                                      -> shareRef, actHistoryAddress\n```\n\n### PSS delivery\n\nAttachment payload:\n\n```\n{\n  kind: \"document-share\",\n  driveId, driveName,\n  shareReference, actHistoryAddress,\n  publisherBeeNodePubKey,\n  documents: [{ id, name, documentType }]\n}\n```\n\n### Recipient side\n\nBob receives PSS, `DocumentShareCard` renders, user clicks **Import**, `downloadFile` with ACT params, then `applyDocumentBundle()` materializes the drive, folders, and docs in Bob's reactor with original IDs and signatures intact.",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.537Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f2b309e3-39a9-4ace-9f50-102aaa2b7b33",
+        "targetId": "d096e0c3-bdc2-4e4f-91af-01eb3b3a3882",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.537Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "HUu8sBpRJKq0VwRBrtI3n8S8JoA=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "F7LDVvOtkMLh4ud4q1N+ksRv7O0=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "document-share",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "f+TtnwuCbr+9HKKEMa6/vUirXGg=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "chat",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "sGsn4j8EYp5jpCETUMq1rNYrxRU=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "act",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  }
+]

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e7a2e637-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e7a2e637-5a71-418b-a0dc-decf4ced764f",
+      "targetTitle": "css-scoped-via-data-attributes"
+    },
+    {
+      "id": "lnk-7322b3c9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7322b3c9-9a9b-43c4-9993-7de4797c2393",
+      "targetTitle": "editors-use-component-based-architecture"
+    },
+    {
+      "id": "lnk-53fffa62-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "53fffa62-25e4-48e2-9c05-2f6236b1120d",
+      "targetTitle": "builder-platform-transforms-powerhouse-from-platform-to-living-ecosystem"
+    },
+    {
+      "id": "lnk-0b548435-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b548435-7d91-4cca-9beb-9fb14d5fce38",
+      "targetTitle": "bee-node-prerequisites-and-dev-mode"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CSS imports in .tsx files work in dev but are silently dropped in production builds -- all imports must go through styles.css",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a6847db3-f53b-4e9a-8fe8-4f559de6e8f3",
+      "name": "css",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71899029-07c6-459a-9c9c-9646746dc356",
+      "name": "build-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "820220af-4d00-4fb0-aa43-f1cdb72d539e",
+      "name": "tailwind",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6907805-308b-417f-b559-aa87c6d1b06a",
+      "name": "production",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "In any Powerhouse package, styles are generated through the `styles.css` file via `tailwindcss/cli`. Importing CSS directly in `.tsx` files works in development mode but will NOT be picked up in static production builds. All style imports must be centralized into `styles.css` using file import syntax (`@import \"...\"` not `@import url(\"...\")`, since `@import url()` is ignored by tailwindcss/cli). When installing a package with `ph install`, package styles are automatically added to styles.css.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Production builds use tailwindcss/cli which only resolves @import from styles.css, not from .tsx files.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

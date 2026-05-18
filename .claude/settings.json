@@ -326,7 +326,8 @@
       "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ findDocuments\\(search: { type: \\\\\"powerhouse/document-drive\\\\\" }\\) { items { id name slug } } }\"}')",
       "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ system { version gitHash } }\"}')",
       "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ KnowledgeNote { __typename } }\"}')",
-      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ knowledgeGraphStats\\(driveId: \\\\\"20b86b85-3f51-4246-a9ce-129655b4a0c8\\\\\"\\) { nodeCount edgeCount } }\"}')"
+      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ knowledgeGraphStats\\(driveId: \\\\\"20b86b85-3f51-4246-a9ce-129655b4a0c8\\\\\"\\) { nodeCount edgeCount } }\"}')",
+      "Bash(awk '{printf \" %.2f MB %s\\\\n\", $1/1024/1024, $2}')"
     ]
   },
   "enabledPlugins": {

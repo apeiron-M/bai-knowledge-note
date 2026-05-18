@@ -1,0 +1,80 @@
+{
+  "links": [
+    {
+      "id": "lnk-31789818-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "31789818-4f9d-479a-ae72-109f09b72514",
+      "targetTitle": "powa-revenue-distribution-model-captures-epoch-based-token-revenue-sharing"
+    },
+    {
+      "id": "lnk-9540cccd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9540cccd-dc16-4556-bf4b-746d3a374e70",
+      "targetTitle": "epochs-distribute-revenue-proportionally-by-weighted-token-supply"
+    },
+    {
+      "id": "lnk-42273fd3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-c9b2328d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9b2328d-e39d-472f-9523-373c7d3b2451",
+      "targetTitle": "ecosystem-map"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "masterchef accumulator pattern enables per-token revenue tracking",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1b7413c2-b6c4-41a4-8b80-b9a114f13448",
+      "name": "powa-revenue-distribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90eaef15-8407-4bf4-835c-a10a6d826bc3",
+      "name": "on-chain-patterns",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# masterchef accumulator pattern enables per-token revenue tracking\n\nThe POWA contracts use a well-established DeFi pattern (originating from SushiSwap's MasterChef) where a global `accRevenuePerShare` accumulator tracks total revenue accrued per unit of token supply. Each account stores a `rewardDebt` checkpoint \u2014 the accumulator value at last interaction \u2014 and `pending` unclaimed revenue.\n\nWhen revenue is deposited:\n```\naccRevenuePerShare += (revenueAmount * PRECISION) / totalSupply\n```\n\nWhen an account is updated:\n```\naccumulated = balance * accRevenuePerShare / PRECISION\nearned = accumulated - rewardDebt\npending += earned\nrewardDebt = accumulated\n```\n\nThis is an **on-chain implementation detail** that the off-chain document model should NOT replicate. The document model instead captures the business-level view: epoch config, total revenue, per-epoch allocation percentages, and claim events. The accumulator math runs on-chain; the document model stores inputs and outputs.\n\nKey insight for modeling: the document model needs \"Revenue Configuration\" (inputs) and \"Distribution Records\" (outputs) but NOT the accumulator state itself.\n\n---\n\nRelevant Notes:\n- [[powa-revenue-distribution model captures epoch-based token revenue sharing]]\n- [[powa document model bridges on-chain contracts with off-chain governance]]\n\nTopics:\n- [[schema design]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:57:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:57:03.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Revenue-per-share accumulator pattern from DeFi (MasterChef) used by POWA contracts to distribute revenue proportionally to token holders",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

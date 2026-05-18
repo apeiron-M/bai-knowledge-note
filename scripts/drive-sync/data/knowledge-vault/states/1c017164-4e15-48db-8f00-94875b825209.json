@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a510be45-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-dc4d768b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+      "targetTitle": "ddup-copy-distinct-recovery-role"
+    },
+    {
+      "id": "lnk-47a89c0b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "47a89c0b-cd52-488c-b81c-f18c5aec4820",
+      "targetTitle": "ddup-collab-envelope-overhead"
+    },
+    {
+      "id": "lnk-11cbd520-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "11cbd520-483c-4f45-8c2b-ce8cb1c4127d",
+      "targetTitle": "ddup-typical-user-sizing-120kb"
+    },
+    {
+      "id": "lnk-cfe56b10-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+      "targetTitle": "ddup-reactor-native-sync-2x"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Four sync architectures (A-D) trade server dependence against storage duplication",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "83f9607c-d5b5-42b9-aea8-2c1d2aa6ea0d",
+      "name": "architecture-options",
+      "topicDocumentId": null
+    },
+    {
+      "id": "42e624e7-3065-4fdf-ba99-5b9de52457bd",
+      "name": "decision",
+      "topicDocumentId": null
+    },
+    {
+      "id": "27254abf-7899-4302-a6c8-ffd0f46826b9",
+      "name": "decentralization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "706e4872-7a72-4f09-a9e2-ff968c8e78c9",
+      "name": "trade-offs",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Four architecture options lay out the full trade-space:\n\n**A \u2014 Connect + Switchboard (current default)**\n- PGlite <-> Switchboard (PostgreSQL) via GraphQL SyncManager\n- Duplication: 2x\n- Recovery: from Switchboard\n- Requires: running a server\n\n**B \u2014 Connect + Swarm plugin (no Switchboard)**\n- PGlite -> Swarm via plugin\n- Duplication: 2x\n- Recovery: from Swarm (wallet signature)\n- Requires: running a Bee node (local or remote)\n\n**C \u2014 Connect + Switchboard + Swarm (both)**\n- Both sync paths active\n- Duplication: 3x\n- Recovery: from either Switchboard OR Swarm\n- Requires: server + Bee node\n\n**D \u2014 Connect on Swarm (fully decentralized, end goal)**\n- Connect SPA deployed to Swarm via ENS\n- PGlite <-> Swarm via plugin (no Switchboard)\n- Collaboration: SwarmChannel (peer-to-peer via feeds)\n- Duplication: 2x (same as B and A)\n- Recovery: from Swarm (wallet signature)\n- Requires: wallet + local Bee node\n- Servers: ZERO\n\n**Key insight**: the end-goal architecture (D) has **identical 2x duplication** to the current default (A). Going fully decentralized does not cost extra storage \u2014 it just swaps where the remote copy lives (server PostgreSQL -> Swarm network).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:55.863Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:41:55.863Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Architectures A (Switchboard), B (Swarm plugin), C (both), D (fully decentralized Connect-on-Swarm) differ in duplication cost and server requirements.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

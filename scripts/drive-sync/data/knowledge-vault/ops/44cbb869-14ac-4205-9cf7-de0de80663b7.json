@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:01.818Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-operation-based-model-handles-concurrent-edits-nativ",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "44cbb869-14ac-4205-9cf7-de0de80663b7",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:01.818Z"
+        },
+        "version": 0,
+        "documentId": "44cbb869-14ac-4205-9cf7-de0de80663b7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:01.818Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "JEkVLmBhmFb4+X7nZ3QeC2PfcJc=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reactor operation-based model handles concurrent edits natively; no CRDT is needed.",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:01.818Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "44cbb869-14ac-4205-9cf7-de0de80663b7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:01.818Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "mrW4VPkzsZ3FA+igcb9YMfIqpTg=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:42.000Z",
+        "description": "Each collaborator produces an independent op stream; reactor.load() applies remote ops with proper ordering via skip/noop/merge semantics, so no CRDT layer is required."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.053Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "44cbb869-14ac-4205-9cf7-de0de80663b7",
+        "targetId": "9da8405c-a2bd-4927-a1b1-8f599001e545",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.053Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "wD+3nMHhJq1/huz3+nA6UEGImBQ=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "decision",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.076Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "44cbb869-14ac-4205-9cf7-de0de80663b7",
+        "targetId": "e59acafe-c649-4fb2-8bfe-e610d44948c1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.076Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "PruIHRIziqvqQIfnIbdSoHmmIk8=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Decision\n\nConnect's live collaboration does **not** use a CRDT. The reactor's existing operation-based document model already resolves concurrent edits: each user produces an independent stream of ops, and `reactor.load()` applies remote ops with proper ordering via skip/noop/merge semantics.\n\n## Why this works\n\n- Ops are signed and attributed to their author, so provenance is preserved across peers.\n- Each peer's feed is append-only and per-user, so there is no shared write cursor to contest.\n- Reordering and merge semantics live in the document model, not in the transport \u2014 SwarmChannel only has to pull new batches and hand them to the reactor.\n\n## UX consequence\n\nBecause Powerhouse editors are too varied (tables, visual canvases, dashboards, button grids) to support meaningful per-editor cursors, the **only live surface is the document toolbar's History view**: peers' ops appear there in real time, attributed to the correct signer. No per-editor presence, no collaborative cursors.",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.095Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "44cbb869-14ac-4205-9cf7-de0de80663b7",
+        "targetId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.095Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "nLU2BKRE2ob4r4Bcm6Rj2KqZ8BM=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:28:24.632Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "lvhbdmZOfAju/Ikshb6b5sdGU9w=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-849da5ba364b",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "cfeTcF1hGAvjs9WSsCECDEPDBoM=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-48f9a862a728",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "4uSUz6a3wo/oIR8NYS/z7yJWvMg=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-c0298c0f8b3c",
+        "name": "conflict-resolution",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  }
+]

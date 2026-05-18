@@ -1,0 +1,269 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.836Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Swarm Channel Architecture",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "05b99a3a-ae51-4c4e-b568-cad2077a8987",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-05-13T12:59:30.836Z"
+        },
+        "version": 0,
+        "documentId": "05b99a3a-ae51-4c4e-b568-cad2077a8987",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.836Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "jMKzQ4L2oyPgiKF8XXaq8OtTBw0=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "title": "Swarm Channel Architecture",
+        "content": "# Swarm Channel Architecture \u2014 Complete Design Document\n\n> **Status (2026-04-18):** Shipped and in production. The push/pull cycles\n> described below are live. The next evolution is\n> [live collaboration](./live-collaboration-design.md) \u2014 replacing the\n> periodic pull timer with GSOC-triggered pulls for active documents.\n\n## Vision\n\nConnect runs entirely in the browser, served from Swarm itself. No servers.\nThe user loads the app, PGlite initializes the reactor, and the user connects\ntheir Bee node. All data lives on Swarm \u2014 encrypted, decentralized, owned by\nthe user.\n\nConnect becomes a **bridge** between the existing Switchboard ecosystem and the\ndecentralized Swarm network. Any remote drive from Switchboard can be\nautomatically mirrored to Swarm storage.\n\n---\n\n## The Core Insight: Two Channels, One Collection\n\nThe reactor's sync system supports **multiple remotes per collection**. Each\nremote has its own channel, its own cursors, and its own push/pull state.\n\nThis means a single drive can be synced to BOTH Switchboard AND Swarm\nsimultaneously:\n\n```\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502   Switchboard API    \u2502  (existing centralized infrastructure)\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n           \u2502 GQL Channel (pull ops)\n           \u25bc\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502    PGlite (local)    \u2502  (reactor database in browser WASM)\n\u2502                      \u2502\n\u2502  operation_index_    \u2502  \u2190 all ops get a global ordinal here\n\u2502  operations          \u2502\n\u2502                      \u2502\n\u2502  sync_cursors:       \u2502\n\u2502    gql remote: 42    \u2502  \u2190 GQL channel has synced up to ordinal 42\n\u2502    swarm remote: 38  \u2502  \u2190 Swarm channel has pushed up to ordinal 38\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u252c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n           \u2502 Swarm Channel (push ops)\n           \u25bc\n\u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n\u2502   Bee Node \u2192 Swarm   \u2502  (decentralized storage)\n\u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n### How It Works Step by Step\n\n1. **User adds a remote drive** (e.g., Switchboard URL)\n   - SyncManager creates a GQL remote: `{ type: \"gql\", parameters: { url } }`\n   - GQL channel pulls operations from Switchboard into PGlite\n   - Drive, documents, folders all materialize in the local reactor\n\n2. **Swarm channel detects new data**\n   - The same drive's `collection_id` has a Swarm remote registered\n   - Swarm channel's outbox cursor is behind the latest ordinal\n   - SyncManager populates outbox with new ops since last cursor position\n   - SwarmChannel pushes them: encrypt \u2192 upload /bytes \u2192 write to feed\n\n3. **Result**: The remote drive is now stored on Swarm\n   - User can disconnect from Switchboard entirely\n   - On a new device, SwarmChannel pulls the drive back from Swarm\n   - Full round-trip: Switchboard \u2192 PGlite \u2192 Swarm \u2192 PGlite (new device)\n\n### The Bridge Pattern\n\n```\n  Switchboard World              User's Browser              Swarm World\n  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500           \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500          \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n                              \u250c\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2510\n  Remote Drive A  \u2500\u2500GQL\u2500\u2500\u25b6   \u2502                \u2502  \u2500\u2500Swarm\u2500\u2500\u25b6  Feed A\n  Remote Drive B  \u2500\u2500GQL\u2500\u2500\u25b6   \u2502    PGlite      \u2502  \u2500\u2500Swarm\u2500\u2500\u25b6  Feed B\n                              \u2502   (reactor)    \u2502\n  (not connected)             \u2502                \u2502  \u2500\u2500Swarm\u2500\u2500\u25b6  Feed C\n                              \u2502  Local Drive C \u2502\n                              \u2514\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2518\n```\n\n- **Remote drives** (A, B): pulled from Switchboard via GQL, mirrored to Swarm\n- **Local drives** (C): created locally, synced only to Swarm\n- **All drives**: stored encrypted on Swarm, recoverable on any device\n\n---\n\n## Technical Architecture\n\n### The Reactor Sync System\n\nThe reactor has a built-in sync protocol with these components:\n\n```\nReactorBuilder\n  \u2514\u2500 SyncBuilder\n       \u2514\u2500 IChannelFactory (creates channels by type)\n            \u2514\u2500 IChannel (one per remote)\n                 \u251c\u2500 inbox   (IMailbox \u2014 pull ops from remote)\n                 \u251c\u2500 outbox  (IMailbox \u2014 push ops to remote)\n                 \u2514\u2500 deadLetter (IMailbox \u2014 failed ops)\n```\n\n**PGlite Tables:**\n\n| Table | Purpose |\n|---|---|\n| `sync_remotes` | Registered remotes: name, collection_id, channel_type, push/pull state |\n| `sync_cursors` | Per-remote cursor tracking: ordinal position (inbox & outbox) |\n| `sync_dead_letters` | Failed operations with error details |\n| `operation_index_operations` | Global ordinal index across all operations |\n\n**Key Types:**\n\n```typescript\ninterface IChannel {\n  inbox: IMailbox;          // Ops received from remote\n  outbox: IMailbox;         // Ops to send to remote\n  deadLetter: IMailbox;     // Failed ops\n  init(): Promise<void>;\n  shutdown(): Promise<void>;\n  getConnectionState(): ConnectionStateSnapshot;\n  onConnectionStateChange(callback): () => void;\n}\n\ninterface IChannelFactory {\n  instance(\n    remoteId: string,\n    remoteName: string,\n    config: ChannelConfig,         // { type: \"swarm\", parameters: {...} }\n    cursorStorage: ISyncCursorStorage,\n    collectionId: string,\n    filter: RemoteFilter,\n    operationIndex: IOperationIndex,\n  ): IChannel;\n}\n\ntype ChannelConfig = {\n  type: string;                    // \"gql\" | \"swarm\" | any string\n  parameters: Record<string, unknown>;\n};\n```\n\n### CompositeChannelFactory\n\nThe reactor supports ONE `IChannelFactory` per instance. To support both GQL\nand Swarm channels, we create a composite factory that routes by `config.type`:\n\n```typescript\nimport type { IChannel, IChannelFactory } from \"@powerhousedao/reactor\";\nimport type { ChannelConfig, RemoteFilter } from \"@powerhousedao/reactor\";\nimport type { ISyncCursorStorage } from \"@powerhousedao/reactor\";\nimport type { IOperationIndex } from \"@powerhousedao/reactor\";\n\nexport class CompositeChannelFactory implements IChannelFactory {\n  private factories = new Map<string, IChannelFactory>();\n\n  register(type: string, factory: IChannelFactory): void {\n    this.factories.set(type, factory);\n  }\n\n  instance(\n    remoteId: string,\n    remoteName: string,\n    config: ChannelConfig,\n    cursorStorage: ISyncCursorStorage,\n    collectionId: string,\n    filter: RemoteFilter,\n    operationIndex: IOperationIndex,\n  ): IChannel {\n    const factory = this.factories.get(config.type);\n    if (!factory) {\n      throw new Error(\n        `Unknown channel type \"${config.type}\". ` +\n        `Registered types: ${[...this.factories.keys()].join(\", \")}`\n      );\n    }\n    return factory.instance(\n      remoteId, remoteName, config, cursorStorage,\n      collectionId, filter, operationIndex,\n    );\n  }\n}\n```\n\n### Wiring Into createBrowserReactor\n\nOur fork's `createBrowserReactor()` uses the proper reactor builder API:\n\n```typescript\nimport { createSwarmSyncBuilder } from \"../../../adapter/src/channel/create-composite-factory.js\";\n\n// 1. Create SyncBuilder with Swarm channel registered at build time.\n//    GQL is deferred \u2014 needs the queue (with document model resolver)\n//    which is created inside buildModule().\nconst { syncBuilder, registerGqlFactory } = createSwarmSyncBuilder(logger, jwtHandler);\n\n// 2. Wire into ReactorBuilder via withSync() \u2014 no monkey-patching\nconst builder = new ReactorClientBuilder()\n  .withReactorBuilder(\n    new ReactorBuilder()\n      .withSync(syncBuilder)         // \u2190 CompositeChannelFactory with \"swarm\"\n      .withJwtHandler(jwtHandler)    // \u2190 still needed for GQL auth\n      ...\n  );\n\nconst module = await builder.buildModule();\n\n// 3. Register GQL factory after build (needs queue with proper resolver)\nconst queue = module.reactorModule?.queue;\nif (queue) registerGqlFactory(queue);\n```\n\n**Why this works:** The ReactorBuilder has two code paths:\n1. `if (this.channelScheme)` \u2014 auto-creates a single factory type\n2. `else if (this.syncBuilder)` \u2014 uses YOUR factory\n\nBy using path 2, we get full control over which channel types are available.\nSwarm remotes persist in `sync_remotes` and are recreated natively on startup.\nGQL is registered after build because `GqlRequestChannelFactory` needs the\nqueue (for poll timer backpressure), which requires the document model resolver\ncreated inside `buildModule()`.\n\nNo monkey-patching. No SQL hacks. No dynamic re-registration.\n\n---\n\n## SwarmChannel Implementation\n\n### Push Cycle (local \u2192 Swarm)\n\nWhen the reactor writes operations locally, the SyncManager:\n\n1. Detects new ordinals in `operation_index_operations` beyond the outbox cursor\n2. Groups operations by (documentId, scope, branch) into `SyncOperation` objects\n3. Adds them to `SwarmChannel.outbox`\n4. Our `outbox.onAdded` callback fires:\n\n```\nSyncOperation { documentId, operations: OperationWithContext[] }\n  \u2192 serialize to JSON\n  \u2192 encrypt with AES-256-GCM (wallet-derived key)\n  \u2192 upload to /bytes endpoint on Bee node\n  \u2192 write reference to document's feed (SOC)\n  \u2192 update drive manifest feed\n  \u2192 syncOp.executed()  // tells SyncManager we're done\n  \u2192 cursor advances in sync_cursors\n```\n\n### Pull Cycle (Swarm \u2192 local)\n\nOn a new device or after reconnect:\n\n1. SwarmChannel polls the user's feed at configured interval\n2. Reads the user manifest \u2192 discovers drives and documents\n3. For each document, reads the document manifest \u2192 discovers operation batches\n4. Downloads batches from /bytes, decrypts, deserializes\n5. Converts to `SyncOperation` objects\n6. Adds to `SwarmChannel.inbox`\n7. SyncManager applies them to local reactor via `reactor.load()`\n8. Cursor advances \u2014 subsequent polls only fetch new operations\n\n```\nSwarm feed (document manifest)\n  \u2192 read operation batch references\n  \u2192 download from /bytes\n  \u2192 decrypt AES-256-GCM\n  \u2192 deserialize to OperationWithContext[]\n  \u2192 wrap in SyncOperation\n  \u2192 inbox.add(syncOp)\n  \u2192 SyncManager applies to reactor\n  \u2192 cursor advances in sync_cursors\n```\n\n### Connection State\n\nMaps Bee node health to the channel's connection state:\n\n| Bee Status | Channel State |\n|---|---|\n| /health returns 200 | `connected` |\n| /health fails | `reconnecting` |\n| Multiple failures | `error` |\n| Bee URL changed | `connecting` |\n| Channel shutdown | `disconnected` |\n\n### Swarm Channel Config\n\n```typescript\nsyncManager.add(\"swarm:\" + driveId, collectionId, {\n  type: \"swarm\",\n  parameters: {\n    beeUrl: \"https://bee-node.example:1633\",\n    batchId: \"60c067db7ec0...\",\n    feedTopicPrefix: \"ph:v2\",\n    ownerAddress: \"0xadbA7C2F...\",\n    pollIntervalMs: 5000,\n    encryptionEnabled: true,\n  }\n});\n```\n\n---\n\n## User Flows\n\n### Flow 1: Local Drive \u2192 Swarm\n\n1. User creates a drive in Connect\n2. Plugin auto-registers Swarm remote for the drive's collection\n3. Operations flow: reactor \u2192 outbox \u2192 encrypt \u2192 Bee \u2192 Swarm\n4. Cursor tracks position \u2014 survives page reload\n\n### Flow 2: Remote Drive (Switchboard) \u2192 Local \u2192 Swarm\n\n1. User clicks \"Add Remote Drive\" and pastes Switchboard URL\n2. SyncManager creates GQL remote \u2192 pulls drive from Switchboard\n3. Operations land in PGlite with global ordinals\n4. Plugin detects new drive \u2192 registers Swarm remote for same collection\n5. Swarm outbox cursor picks up all operations \u2192 pushes to Swarm\n6. Drive is now on BOTH Switchboard AND Swarm\n\n### Flow 3: New Device Recovery (from Swarm)\n\n1. User opens Connect on new device (served from Swarm)\n2. Signs in with wallet \u2192 derives encryption keys\n3. Plugin reads user manifest from Swarm feed\n4. Registers Swarm remotes for each discovered drive\n5. SwarmChannel.inbox pulls all operations from feeds\n6. SyncManager applies to reactor \u2192 drive materializes in PGlite\n7. Cursor is set \u2192 future syncs are incremental\n\n### Flow 4: Offline Edits \u2192 Reconnect\n\n1. User edits documents while Bee node is unreachable\n2. Operations accumulate in PGlite (local reactor works fine)\n3. SwarmChannel connection state: `error` \u2192 push blocked\n4. User reconnects Bee node \u2192 state: `connected`\n5. Outbox cursor catches up: all accumulated ops pushed to Swarm\n6. No data loss \u2014 cursors in PGlite track exactly what was synced\n\n---\n\n## Key Source Files\n\n| File | Purpose |\n|---|---|\n| `adapter/src/channel/swarm-channel.ts` | IChannel implementation: outbox push + inbox pull |\n| `adapter/src/channel/swarm-channel-factory.ts` | IChannelFactory \u2014 creates SwarmChannel from ChannelConfig |\n| `adapter/src/channel/composite-factory.ts` | Routes \"gql\"/\"swarm\" to sub-factories |\n| `adapter/src/channel/create-composite-factory.ts` | createSwarmSyncBuilder() for ReactorBuilder.withSync() |\n| `adapter/src/channel/manifest-manager.ts` | User + drive manifest writes |\n| `adapter/src/channel/add-swarm-remote.ts` | Per-drive Swarm remote registration |\n| `adapter/src/swarm-client.ts` | Bee API: upload, download, feeds, encrypt |\n| `adapter/src/swarm-crypto.ts` | AES-256-GCM encryption |\n| `adapter/src/wallet-signer.ts` | Key derivation from wallet signature |\n| `adapter/src/stamp-manager.ts` | Postage stamp lifecycle |\n| `connect/src/utils/reactor.ts` | Wires CompositeChannelFactory into createBrowserReactor |\n",
+        "createdAt": "2026-04-21T14:06:12.384Z",
+        "createdBy": "knowledge-agent",
+        "sourceType": "DOCUMENTATION",
+        "description": "Complete design document for SwarmChannel \u2014 native IChannel integration, push/pull cycles, reactor sync."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.836Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "05b99a3a-ae51-4c4e-b568-cad2077a8987",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.836Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Rc1wgQIIBr/uTAVXcdx1NK4+Yqg=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "hKS19t8DT+tL1dmhpuPa9+o99+o=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 13,
+        "extractedAt": "2026-04-21T14:20:44.717Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "+PmJpdEcg1czycKoPvp0xiDzOkY=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "7e44e40b-9f24-468f-8cd7-8defa313ada0"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "DbL5Xi+BReB2pBPs2wPg5t7bz/I=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "db78322a-9553-4dca-b1da-d88f98149429"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "o6x8TOgNLAvEa2muUSqS2gq/pwE=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "2a871b9a-b30a-4761-a18e-80019c1e0235"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "9JtWNXeo7SkngJQcrKL4dmeaYGQ=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "457895f1-afc0-4b9b-a79d-9dc713361d6b"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "WAvqMiXESwH95vKddzejeuCvK6U=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "10a819ed-206a-47dd-bbdf-9470c41d7517"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "IpkTF3HF3CQbIFO63/EWmPM0cJo=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "d83fda1a-6a31-41ac-aa54-e24033e3d3c6"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "zCWWUbfuRs/+mbN30ktLVVqBtQM=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "41af7645-65c9-43a0-ae10-b7e1d9f37f14"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "/INlI93GAvNOUzIxeExFuSVr2lI=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "c2449b0f-22ef-4145-bc74-b62ef97d69cc"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Kl9YzM7+bdtsRuKQ4JRV/6b0Yi8=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "93272572-c7fe-419f-84de-ed7d87e1ff30"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "MOA1zFumHsrjorBU+aX2hLuDOC8=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "2389f590-67bc-4711-9257-8d0bf871d64a"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "iKecr2Sc1ZtcTnOFSFTpeAQ+qSE=",
+    "timestampUtcMs": "2026-05-13T13:00:51.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:51.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "S1xjB2R3Db4sXzxiqqdBgzF0Xlg=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "97e5ccbe-58b0-4496-8c20-f90ea5f35d31"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "KsMtd3LyHytGTyrvxgp48krsmZs=",
+    "timestampUtcMs": "2026-05-13T13:00:52.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "5cc3c6a5-e5e3-4aa2-af00-39265af3023f"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:52.000Z"
+    }
+  }
+]

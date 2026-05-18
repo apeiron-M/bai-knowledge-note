@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-2551d197-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-6cc71c47-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6cc71c47-35eb-40f0-b9f0-791ba606aee6",
+      "targetTitle": "delete-nodes-with-deletenode-not-deletefile"
+    },
+    {
+      "id": "lnk-88b6d830-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+      "targetTitle": "document-models-must-be-added-to-the-vetra-drive-by-default"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "batch multiple actions in a single addActions call to minimize round trips",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d10f0aef-1351-4b5f-8fd6-de58886fdab4",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4cccdf0-00c9-4ec9-a743-6512f3d1e1eb",
+      "name": "performance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f4836fa-bc1a-4f0c-99c8-17a868320b37",
+      "name": "batch operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# batch multiple actions in a single addActions call to minimize round trips\n\nThe `addActions` MCP tool accepts an array of actions. Instead of making separate calls for each operation, batch them:\n\n```typescript\n// \u2705 One call with multiple actions\naddActions({\n  documentId: \"...\",\n  actions: [\n    { type: \"SET_MODEL_NAME\", scope: \"global\", input: { name: \"Invoice\" } },\n    { type: \"SET_MODEL_DESCRIPTION\", scope: \"global\", input: { description: \"...\" } },\n    { type: \"ADD_MODULE\", scope: \"global\", input: { id: \"...\", name: \"header\" } },\n  ]\n});\n\n// \u274c Three separate calls \u2014 slower and more failure-prone\n```\n\nBatching reduces network overhead and ensures related changes are applied atomically. If one action in a batch fails, the error is visible without having lost context from intermediate calls.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:00:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:00:55.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each addActions call has overhead; combining related operations into one call is faster and reduces partial failure risk",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

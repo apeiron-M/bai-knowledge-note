@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.027Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-models-must-be-added-to-the-vetra-drive-by-default",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:43.027Z"
+        },
+        "version": 0,
+        "documentId": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.027Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "iHwZWPLeBOcGGoJAKE0l7jkY2y4=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "document models must be added to the vetra drive by default",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.027Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.027Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "PdpE3FyfHeUfK9ncwU64WplDrGY=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:33.000Z",
+        "description": "New document model documents go to the vetra drive unless the user specifies otherwise; this is the development drive"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.138Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+        "targetId": "9b39b015-0035-40bd-8510-c3f34985a105",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.138Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "i8gkUXKp6A0vowGRhk7s7yqfpqs=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.159Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+        "targetId": "ffcac490-8486-4419-a8f6-ee274f11dd10",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.159Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "S3hRPfYlLHa2NJb+UkaiVl8AoiA=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# document models must be added to the vetra drive by default\n\nAfter creating a document model via `createDocument`, it must be added to the vetra drive using `addActions` with an `ADD_FILE` action:\n\n```typescript\naddActions({\n  documentId: \"vetra-{hash}\",  // the vetra drive ID\n  actions: [{\n    type: \"ADD_FILE\",\n    scope: \"global\",\n    input: { id: documentId, ... }\n  }]\n});\n```\n\nSince [[vetra drive holds source documents while preview drive holds instances]], document models (source/definition documents) always go to the vetra drive. Only actual document instances go to the preview drive.\n\n---\n\nTopics:\n- [[mcp workflows]]\n- [[architecture decisions]]",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.177Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+        "targetId": "d508a76d-410b-4192-bb0d-49adec440906",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.177Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Ctee0lyaMRiYja+VbcEsc1NTSBw=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:03:52.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.195Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+        "targetId": "004e5e41-0706-4c65-8d88-dfe00b40557f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.195Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "6D5OPbHHhah97BS264ZlY/AQegw=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "695abfe7-2915-484d-808c-e22de639f073",
+        "name": "MCP workflows",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "PqGT/xA+Q7FEmz0KPldkrfaUgkk=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e1064496-0d8c-4784-bde4-4971531791a6",
+        "name": "architecture decisions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "/9EKdZdo6B8dm4iQ6RrgXIjypVE=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "64aea602-c4a8-40de-91b4-0db4d19ac220",
+        "name": "drive operations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "+ajUVmeuRBCw7HR9fUrHrqum+WA=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "206f560a-ee13-437e-b60d-45dee87ada5c",
+        "name": "document creation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  }
+]

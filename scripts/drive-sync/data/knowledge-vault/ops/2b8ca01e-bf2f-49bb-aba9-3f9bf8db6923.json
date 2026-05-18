@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:09.798Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-feeds-no-websocket-subscription",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2b8ca01e-bf2f-49bb-aba9-3f9bf8db6923",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:09.798Z"
+        },
+        "version": 0,
+        "documentId": "2b8ca01e-bf2f-49bb-aba9-3f9bf8db6923",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:09.798Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "wp7YV3rrHAAleClCLw2Wh5GetCA=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Feed updates have no native WebSocket subscription and require polling or a notification side channel",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:09.798Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2b8ca01e-bf2f-49bb-aba9-3f9bf8db6923",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:09.798Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Fqhr50H1sKFdCD6ukRywh7JtGIw=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:45.000Z",
+        "description": "Bee WS only streams PSS, GSOC, and chunk uploads. Real-time feed watching requires polling, or combining with PSS/GSOC notifications, or advance retrieve requests."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.178Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2b8ca01e-bf2f-49bb-aba9-3f9bf8db6923",
+        "targetId": "e59acafe-c649-4fb2-8bfe-e610d44948c1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.178Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "2IyPR8OC+U8H7Hg5L5nmEpD2H9Y=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.199Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2b8ca01e-bf2f-49bb-aba9-3f9bf8db6923",
+        "targetId": "268e41d6-92b6-4248-932b-77a09244471a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.199Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "6+ozru7jd3JNMvBWiTjcDA2u3U0=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nThe Bee HTTP API exposes WebSocket subscriptions only for PSS, GSOC, and chunk streaming \u2014 **feed updates have no native WS subscription**, so real-time feed watching must be built out of other primitives.\n\n## Evidence\n\nWebSocket endpoints:\n\n| Endpoint                        | Purpose                             |\n|---------------------------------|-------------------------------------|\n| `WS /pss/subscribe/{topic}`     | Stream decrypted PSS messages       |\n| `WS /gsoc/subscribe/{address}`  | Stream GSOC updates                 |\n| `WS /chunks/stream`             | Stream chunk uploads (parallel)     |\n\nOptions for watching feed updates:\n1. **Poll** `GET /feeds/{owner}/{topic}` at intervals (what the adapter does today)\n2. **GSOC notification**: publisher sends a GSOC on update; subscriber polls only on notification\n3. **PSS notification**: same pattern via PSS instead of GSOC\n4. **Advance retrieve requests** (protocol level, not API-exposed): request the next feed index before it exists; the node holds the request until the update arrives \u2014 gives sub-second latency without polling\n\n## Why it matters\n\nExplains why sub-second collaboration latency needs a sidecar notification channel (GSOC or PSS) rather than just a WebSocket on the feed. Also flags \"advance retrieve requests\" as a future path if exposed in bee-js.\n",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.217Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2b8ca01e-bf2f-49bb-aba9-3f9bf8db6923",
+        "targetId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.217Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "UMgQYxxPrxcLJQfPZO3G6ap8FNU=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "/11QIoHncKrKNAiT8EvNFzjmAvs=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7dfdf9d5-d74b-413b-b9fd-80bca0fc2825",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "U0df6F1RRpKm+AE7iMepmXF+Sfo=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd6f733c-2549-4eb5-b880-fae16ae8c15b",
+        "name": "websocket",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "N6M4u60hVrIwjLb/Ip/BDal+tsU=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ed933a26-e7dd-4fcd-a0e0-b80d9a4d65dc",
+        "name": "real-time",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "QJH0ZCUp6zw7159eFcMiLlQLCYs=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8e51c472-9bb5-4bb9-8784-da974b013129",
+        "name": "adapter",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  }
+]

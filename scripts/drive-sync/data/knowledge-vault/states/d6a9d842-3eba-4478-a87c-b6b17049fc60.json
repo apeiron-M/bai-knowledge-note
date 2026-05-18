@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a85bd0e7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a85bd0e7-4a9a-4bcb-bdd9-e4d4871a8b99",
+      "targetTitle": "powerhouse-design-system-graphql-scalars"
+    },
+    {
+      "id": "lnk-fd167b94-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fd167b94-3fef-4b2c-82ed-9132388efe81",
+      "targetTitle": "custom-scalars-graphql-zod-validation"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-598070fd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "598070fd-2bf5-4152-8819-1e4700e01996",
+      "targetTitle": "open-source-capitalism-makes-oss-self-sustaining-investable-and-scalable"
+    },
+    {
+      "id": "lnk-2656f583-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2656f583-0350-4c5b-bd0a-c707646e8807",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse provides the OID custom scalar type for unique identifiers generated via generateId()",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "85cd7d95-364e-4bed-b0cd-406a74f14562",
+      "name": "oid",
+      "topicDocumentId": null
+    },
+    {
+      "id": "637ebf63-abdf-461c-9df6-198cf72fa062",
+      "name": "scalars",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a40ee169-1a15-407b-95fb-16a4af298489",
+      "name": "id-generation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8b49d8c1-daf1-4275-b941-2e2b2b8a4408",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse provides the `OID` (Object ID) custom scalar type for unique identifiers in document models. Key patterns:\n\n- Objects in arrays must have an `id: OID!` field\n- IDs are generated in the **reducer** using `generateId()` from `document-model/core`, never passed from the UI\n- The `AddTodoItemInput` only requires `text`, not `id` - the reducer generates the ID\n- Update and delete operations require `id: OID!` to identify the target\n\n```typescript\nimport { generateId } from \"document-model/core\";\n\naddTodoItemOperation(state, action) {\n  const id = generateId();\n  state.items.push({ ...action.input, id, checked: false });\n}\n```\n\nThis pattern ensures unique, consistent IDs across all operations and keeps the operation input minimal.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "OID is a custom GraphQL scalar for object IDs. Use generateId() from document-model/core in reducers, never in inputs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:42.372Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-model-three-components",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:42.372Z"
+        },
+        "version": 0,
+        "documentId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:42.372Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "bN6L1WYrt7FeyhCKMxoxqZKvg9U=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A document model consists of a state schema, document operations, and event history",
+        "updatedAt": "2026-05-13T13:00:32.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:42.372Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:42.372Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "GdvGHXxjryBjQFhmj9/RSciGyao=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:32.000Z",
+        "description": "The three structural components define what data exists, how it can change, and the record of all changes."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:01.680Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+        "targetId": "2656f583-0350-4c5b-bd0a-c707646e8807",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:01.680Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "+48uwND2UwtTTHMiSKLF1oelOHs=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-05-13T13:00:32.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:01.702Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+        "targetId": "010b9a46-8f86-4f5d-8808-9ec0bd97f9dc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:01.702Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "SXb5aAXnD/HJiumy83Q5sayhYCQ=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Each document model has three key components:\n\n1. **State Schema** - Defines the structure of the document using GraphQL SDL (types, fields, scalars). This is the blueprint for data storage and validation.\n2. **Document Operations** - Defines how the document can be modified. Operations are specified as GraphQL `input` types and represent valid state transitions (e.g., `AddTodoItemInput`, `UpdateTodoItemInput`).\n3. **Event History** - An append-only log storing every operation applied to the document as a timestamped event.\n\nThe state schema acts as a template for document instances, operations act as commands, and the event history provides the complete audit trail.",
+        "updatedAt": "2026-05-13T13:00:32.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:01.724Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:01.724Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "xs3urpcFWgF9zJNbUrnVSeieRco=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:01.743Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+        "targetId": "8c201bbe-513a-4003-9069-1762cbdd6f67",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:01.743Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "1huFeb+9+8mYNp5b3fMGG9vMBjM=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "737fa639-f314-4e18-ac68-609e82613234",
+        "name": "document-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:01.762Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+        "targetId": "67ce34f9-bdbc-4ff4-96c9-66bbb2145772",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:01.762Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "i2wxp59nTaCDLd8JpKLsaijj6lw=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6d1a71a1-9f1e-48db-afd7-cb8c0ada6e59",
+        "name": "architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "fMotbunFcn0hNV6OvNE4ErVMam0=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "073ed0a1-e882-4e1b-994b-0da7a1a5784e",
+        "name": "schema",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  }
+]

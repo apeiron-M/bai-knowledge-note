@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-4ed34c88-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4ed34c88-924f-4b59-86dd-887c0fe2a57d",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    },
+    {
+      "id": "lnk-c0bd9feb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0bd9feb-e618-4353-bef2-9133f48f2e97",
+      "targetTitle": "chat-pss-trojan-plus-act-history"
+    },
+    {
+      "id": "lnk-61e7ee9c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-4ed34c88-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4ed34c88-924f-4b59-86dd-887c0fe2a57d",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Public profile feed publishes the beeNodePublicKey and overlayAddress that PSS and ACT need.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "topic-aeea4cb859ed",
+      "name": "public-profile",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-a5871dd6728b",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-906a37deec4b",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Schema\n\nEach user publishes a public profile at feed `ph:v2:profile:<address>`:\n\n```typescript\n{\n  address: \"0xadbA7C2F...\",       // Swarm signer address\n  ethAddress: \"0x...\",            // Original ETH wallet (optional)\n  beeNodePublicKey: \"02abc...\",   // Compressed secp256k1 \u2014 for PSS targeting\n  swarmPublicKey: \"03def...\",     // Wallet-derived \u2014 for ECDH key agreement\n  overlayAddress: \"abc123...\",    // Bee overlay \u2014 for PSS/GSOC addressing\n  updatedAt: \"2026-04-15T...\"\n}\n```\n\n## Role in chat/collab\n\n- `beeNodePublicKey` is the PSS recipient key. It is also the ACT grantee pubkey.\n- `overlayAddress` is the PSS target and the GSOC-signer mining target.\n- `swarmPublicKey` is the ECDH partner for wallet-level key agreement.\n- `ethAddress` enables ENS \u2192 profile lookup (ENS resolves to ETH address, and profile indexes by ETH address).\n\n## Why unencrypted\n\nThe profile feed is intentionally **unencrypted** \u2014 it serves as a user-discovery directory. Discovery without some public rendezvous point is impossible; the data here is deliberately non-sensitive (public keys and overlay addresses, not wallet private keys or personal content).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:30:20.417Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:30:20.417Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Feed ph:v2:profile:<address> exposes beeNodePublicKey for PSS encryption targeting and overlayAddress for PSS/GSOC neighborhood routing \u2014 the per-user directory for chat.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

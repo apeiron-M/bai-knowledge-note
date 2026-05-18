@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-3058e945-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3058e945-8ca6-46c4-a44b-7ab8bd3728d6",
+      "targetTitle": "adapter-key-source-files"
+    },
+    {
+      "id": "lnk-d8e86a8a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d8e86a8a-9a95-4ef4-8f79-5e205e80d765",
+      "targetTitle": "event-sourcing-guarantees-audit-trails-but-complicates-querying"
+    },
+    {
+      "id": "lnk-ea6e9f1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ea6e9f1e-4ea6-48f8-a76a-0bc255e48de1",
+      "targetTitle": "never-use-fallback-values-with-non-deterministic-functions-in-reducers"
+    },
+    {
+      "id": "lnk-ac6e2665-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+      "targetTitle": "operation-batch-content-addressed-bytes"
+    },
+    {
+      "id": "lnk-2389f590-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+      "targetTitle": "new-device-recovery-via-wallet-and-manifest"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Skip field records how many ops were reshuffled past during deterministic conflict resolution",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "44d8d82e-738c-4e9d-b45c-22419a318765",
+      "name": "conflict-resolution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71e84b47-c52a-4030-bfd2-246ae02f4bdb",
+      "name": "skip-field",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90a155dd-b5db-401c-a639-903c1ac1ea40",
+      "name": "operation-ordering",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Skip Field and Deterministic Conflict Resolution\n\nWhen Alice and Bob edit the same cell concurrently, both ops get written to their respective op feeds with `skip: 0`. When each reactor receives the other's op, the SyncManager runs deterministic conflict resolution.\n\n## Algorithm\n\n1. Detect conflict: same document, overlapping timestamps\n2. Reshuffle operations by sorting on `(timestamp, operationId)` for total order\n3. Assign new global indices and update `skip` values\n4. Replay through the document model reducer\n\n## Example outcome\n\n```\nIndex  Skip  Action             Origin\n  6     0    SET_CELL(A1,100)   Alice\n  7     1    SET_CELL(A1,200)   Bob\n```\n\n`skip=1` on Bob's op means: \"this op was reshuffled past 1 other op.\"\n\n## Convergence guarantee\n\nSame ops + same ordering rule = same final state on every device. No CRDTs required \u2014 the document model reducer plus deterministic replay is sufficient.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:46:52.016Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:46:52.016Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operations have a skip field that counts how many operations were reshuffled past during deterministic conflict resolution; ensures same ops + same order = same state on every device.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

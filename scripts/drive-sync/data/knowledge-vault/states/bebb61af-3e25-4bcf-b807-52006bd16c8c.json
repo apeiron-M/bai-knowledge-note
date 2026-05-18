@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd87d072-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-7036dd62-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7036dd62-002b-47e1-b8db-ea1083e7b415",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-8918651f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-42273fd3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-a54a9f24-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a54a9f24-04ea-405c-89bd-b6c73d65fbe6",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collaboration uses a mesh of per-user owner-only feeds because only the feed owner can write to their own Swarm feed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-e5cd2108-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-e5cd2108-2",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-e5cd2108-3",
+      "name": "data-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Why a mesh of per-user feeds is the only option\n\nSwarm enforces a hard constraint at the protocol level: **only the owner can write to their own feed**. There is no shared multi-writer feed primitive. This rules out the naive \"one collaborative feed everyone appends to\" data model.\n\nCollaboration therefore must be structured as a **mesh of per-user feeds that everyone reads**. Each collaborator owns and writes their own set of topics; every other collaborator subscribes to and pulls from those peer-owned feeds.\n\nConcretely, each collaborator gets their own ACT-protected feeds:\n\n```\nTopic: ph:v2:collab:<collabId>:ops:<driveId>         (drive-level ops)\n       ph:v2:collab:<collabId>:ops:<driveId>:<docId> (doc-level ops)\nOwner: each collaborator owns their own topic(s)\nACT:   grantees = all participants' Bee node pubkeys\n```\n\nEach collaborator appends their own ops to their own feeds (debounced + batched, same pipeline as the existing SwarmChannel push). On the read side, every participant registers pull sources for every *other* participant's collab feeds. This mesh topology is a direct consequence of the owner-only-write rule and shapes the rest of the design (GSOC pings per peer, cursor-per-peer-source, etc.).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Swarm's feed rule (only owner can write to own feed) forces collab to be a mesh of per-user feeds that everyone reads, not a single shared feed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

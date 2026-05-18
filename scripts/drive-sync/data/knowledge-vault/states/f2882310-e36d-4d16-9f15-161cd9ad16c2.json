@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-56a911e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+      "targetTitle": "three-layer-swarm-stack"
+    },
+    {
+      "id": "lnk-65b6b0c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65b6b0c3-c068-4ec6-b36e-71bc00b79aa9",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-84f30b19-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "84f30b19-e130-4b75-8160-349b7fb4b47e",
+      "targetTitle": "channel-directory-file-layout"
+    },
+    {
+      "id": "lnk-a510be45-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SwarmChannel is pure transport; ordering, conflict resolution, and state computation stay in the reactor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b691481c-d569-455c-859c-8eb8afc34bb1",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ad94c96a-4a02-4a76-903a-3dbced1f0bf4",
+      "name": "transport",
+      "topicDocumentId": null
+    },
+    {
+      "id": "24fbc777-3a5a-4b99-975e-81e3ba0a0759",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# SwarmChannel Is Transport Only\n\nThe SwarmChannel abstraction is deliberately thin. It does not interpret operation semantics or resolve conflicts.\n\n## What SwarmChannel does\n\n- Uploads `SyncEnvelope` payloads to `/bytes`\n- Appends feed index pointers to the outbox feed\n- Polls peer feeds for new entries\n- Downloads referenced `/bytes` payloads into the inbox\n- Routes undeliverable or malformed messages to a deadLetter queue\n\n## What SwarmChannel does NOT do\n\n- Determine final operation order\n- Merge conflicting edits\n- Deduplicate operations\n- Compute document state\n\nAll of those responsibilities stay with the reactor's existing `SyncManager` and document model reducer \u2014 the same components that already handle sync in other transports (GraphQL, local storage, etc.).\n\n## Why this matters\n\nBecause ordering/conflict/dedup logic lives in the reactor, adding Swarm as a transport does not require bespoke merge code. Any channel that can move `SyncEnvelope` data satisfies the contract.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:45:54.611Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SwarmChannel does not perform conflict resolution or ordering; it is pure transport moving SyncEnvelope data between feeds and reactor mailboxes (inbox/outbox/deadLetter).",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

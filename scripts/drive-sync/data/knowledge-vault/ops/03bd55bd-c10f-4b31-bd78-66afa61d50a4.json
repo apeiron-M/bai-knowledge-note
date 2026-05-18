@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:44.073Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "drive-manifest-feed-structure",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "03bd55bd-c10f-4b31-bd78-66afa61d50a4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:44.073Z"
+        },
+        "version": 0,
+        "documentId": "03bd55bd-c10f-4b31-bd78-66afa61d50a4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:44.073Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8kBextALmrmfL0ztTOQGqUe7dJs=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Drive manifest feed indexes drive's documents (with parentFolder) and folder tree",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:44.073Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "03bd55bd-c10f-4b31-bd78-66afa61d50a4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:44.073Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "8dr/tI5B8coPe7lOvkQbotwBdbM=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:33.000Z",
+        "description": "Drive manifest feed at ph:v2:drive:<driveId> holds per-drive documents map (with documentType, name, parentFolder) and folders map as encrypted JSON."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:03.058Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "03bd55bd-c10f-4b31-bd78-66afa61d50a4",
+        "targetId": "60ed4add-4e40-4c89-bdf3-3d2de02d9bda",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:03.058Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "0EFC6ctfZZhYKcEYzJPYBuFhnY4=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:03.081Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "03bd55bd-c10f-4b31-bd78-66afa61d50a4",
+        "targetId": "3d61b8cc-2823-4233-b0e8-cb95e44b0ab0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:03.081Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "LkYsROj5kzayizxYXa40JuUwuaw=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# Drive Manifest Feed Structure\n\nThe drive manifest feed lives at topic `ph:v2:drive:<driveId>` and is owned by the drive creator's signer. Each feed index resolves to encrypted JSON on `/bytes`.\n\n## Schema\n\n```json\n{\n  \"driveId\": \"drive-abc\",\n  \"name\": \"Finance Drive\",\n  \"documents\": {\n    \"doc-001\": {\n      \"documentType\": \"powerhouse/budget-statement\",\n      \"name\": \"Q1 Budget\",\n      \"parentFolder\": \"folder-reports\",\n      \"lastUpdated\": \"2026-04-10T12:01:00Z\"\n    }\n  },\n  \"folders\": {\n    \"folder-reports\": { \"name\": \"Reports\" }\n  },\n  \"updatedAt\": \"2026-04-10T12:02:00Z\"\n}\n```\n\n## Role\n\n- Indexes every document the drive contains and the folder tree\n- `parentFolder` on a document lets clients reconstruct the folder hierarchy\n- One drive manifest feed per drive, one feed index per update\n",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:03.103Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "03bd55bd-c10f-4b31-bd78-66afa61d50a4",
+        "targetId": "139dad67-0851-4575-bc96-1276067c618e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:03.103Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "HQQYltxQI0BviLNESFYKBlD0vH0=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:45:54.611Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "yRnhI0Ysyok56RHhZmNWjvxrMUU=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6bd07484-ab57-4f37-a347-faa2468b39fc",
+        "name": "drive-manifest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "KUa/aiChEQbYWnSL3wWJ2xtVQEs=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a85f2000-418e-4f2e-9231-c3dd9990fd67",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "k56qtOF+OYxLukO7oyKi1VYkvFw=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "58d16f7d-9536-42e1-841c-cc593598f5cf",
+        "name": "feed-structure",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  }
+]

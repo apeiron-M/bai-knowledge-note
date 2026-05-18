@@ -1,0 +1,53 @@
+{
+  "mode": "full",
+  "checks": [
+    {
+      "id": "chk-orphan-after",
+      "status": "PASS",
+      "message": "0 truly isolated notes. 32 nodes have no incoming edges (HUB/TOPIC MoCs \u2014 expected for entry points).",
+      "category": "ORPHAN_DETECTION",
+      "affectedItems": []
+    },
+    {
+      "id": "chk-link-after",
+      "status": "PASS",
+      "message": "Avg 7.66 outgoing edges/node (up from 5.54). Minimum degree 3 across all 385 nodes.",
+      "category": "LINK_HEALTH",
+      "affectedItems": []
+    },
+    {
+      "id": "chk-moc-after",
+      "status": "PASS",
+      "message": "37 MoCs (27 pre-existing + 10 created via /synthesize). Top topic clusters now have dedicated MoCs.",
+      "category": "MOC_COHERENCE",
+      "affectedItems": []
+    },
+    {
+      "id": "chk-schema-after",
+      "status": "WARN",
+      "message": "Note types still case-inconsistent (PATTERN vs pattern) from mixed-source ingestion. Normalize via setNoteType in a follow-up.",
+      "category": "SCHEMA_COMPLIANCE",
+      "affectedItems": []
+    }
+  ],
+  "generatedAt": "2026-05-13T12:40:54.000Z",
+  "generatedBy": "knowledge-agent",
+  "graphMetrics": {
+    "density": 0.0199,
+    "mocCount": 37,
+    "noteCount": 348,
+    "mocCoverage": 0.95,
+    "orphanCount": 32,
+    "connectionCount": 2949,
+    "danglingLinkCount": 0,
+    "averageLinksPerNote": 7.66
+  },
+  "overallStatus": "PASS",
+  "recommendations": [
+    "Densification pass complete: 32 isolated notes \u2192 0; min degree raised from 1 to 3; avg outgoing edges/node 5.54 \u2192 7.66.",
+    "10 new MoCs created for previously un-MoC'd topic clusters (reducer patterns, MCP workflows, operational-hub, etc.). 84 CORE_IDEA edges added.",
+    "Remaining 32 no-incoming nodes are mostly HUB/TOPIC MoCs at the top of the hierarchy \u2014 expected for entry-point documents.",
+    "Indexer bug persists: graph_edges.link_type field is null for all rows (DocumentRelationship has the correct type). Investigate the processor's mirror write in a follow-up."
+  ],
+  "links": []
+}

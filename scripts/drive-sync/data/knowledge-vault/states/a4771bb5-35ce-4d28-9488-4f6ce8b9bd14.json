@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-3535d1e9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3535d1e9-8efc-4efd-a7fe-4616748301d6",
+      "targetTitle": "live-collaboration-s-only-ui-surface-is-the-document-toolbar"
+    },
+    {
+      "id": "lnk-bd87d072-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-52023d2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+      "targetTitle": "swarm-gsoc-many-to-one"
+    },
+    {
+      "id": "lnk-8abdf393-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8abdf393-6a17-4036-ad20-492d0aaeb4a5",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-60ed4add-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "60ed4add-4e40-4c89-bdf3-3d2de02d9bda",
+      "targetTitle": "collaborate-tab-in-chat-panel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Initial-state transfer for a new participant reuses the existing document-share bundle path",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-da589971-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-da589971-2",
+      "name": "initial-state-transfer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-da589971-3",
+      "name": "share-bundle",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Initial-state transfer pattern\n\nA participant who accepts an invitation needs the current state, not just future ops. Rather than inventing a new snapshot protocol, the design **reuses the existing document-share bundle**:\n\n- The invitation message carries a `shareReference` plus `actHistoryAddress` pointing to a one-shot drive bundle built via `buildDriveShareBundle`.\n- On accept, the recipient imports the bundle. Drive, folders, and docs materialize locally with the original signatures preserved.\n- After import, the recipient's SwarmChannel registers the peer feeds and starts pulling incremental ops.\n\nThis keeps the **snapshot path and the incremental-ops path decoupled**. The snapshot path is the same battle-tested import flow used by one-off document sharing; collab adds only the peer-feed subscription on top.\n\nBecause `action.context.signer.signatures` is preserved through imports (per the 2026-04-17 fix), the imported history already shows correct per-author attribution. New ops arriving through peer feeds continue the same signed chain.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A new participant joining a collab gets initial state through the existing document-share bundle \u2014 invitation carries shareReference + actHistoryAddress.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd87d072-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-7036dd62-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7036dd62-002b-47e1-b8db-ea1083e7b415",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-8918651f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-a54a9f24-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a54a9f24-04ea-405c-89bd-b6c73d65fbe6",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    },
+    {
+      "id": "lnk-60ed4add-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "60ed4add-4e40-4c89-bdf3-3d2de02d9bda",
+      "targetTitle": "collaborate-tab-in-chat-panel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Live collaboration means the toolbar operation-history updates across participants, not cursor overlays",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-e06d0653-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-e06d0653-2",
+      "name": "toolbar-history",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-e06d0653-3",
+      "name": "design-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The actual live-collaboration experience\n\nPowerhouse documents are driven by operations and custom editors \u2014 visual canvases, tables, forms, button grids. A generic cursor overlay would need per-editor implementation and would often be meaningless (what's a cursor on a button grid?). So the design explicitly rejects cursor tracking, caret labels, and per-document avatar stacks as a misread of the goal.\n\nWhat \"live\" means here:\n\n- User A edits a document \u2192 reactor emits ops (`SET_MODEL_NAME`, `SET_AUTHOR_NAME`, etc.).\n- User B has the same document open and clicks the **history** button in the toolbar.\n- B sees A's new revision appear, stamped with A's signer address \u2014 e.g. `Revision 15. SET_MODEL_NAME, 0xadbA7...0BcA4, committed 13:33 UTC`.\n\nThat's the whole experience. The toolbar history view updates in real time, signatures attribute each change to its author, and the reactor replays ops as usual. Custom editor UIs don't need to know anything about collaboration.\n\n**Definition:** Live = the operation-history timeline in the toolbar updates across all participants within a second or two, regardless of which editor is open.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Live collab scope is the toolbar operation-history timeline updating across participants within 1-2 seconds; cursor overlays are explicitly out of scope.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

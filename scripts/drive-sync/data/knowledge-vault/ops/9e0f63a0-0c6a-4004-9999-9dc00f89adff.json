@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:04.948Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "revision-history-timeline-in-editors",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9e0f63a0-0c6a-4004-9999-9dc00f89adff",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:04.948Z"
+        },
+        "version": 0,
+        "documentId": "9e0f63a0-0c6a-4004-9999-9dc00f89adff",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:04.948Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "reN0Xr/fccNHoOxPCkgj2XtmF9E=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The revision history timeline lets users navigate document history visually, putting the editor into read-only mode at a selected revision",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:04.948Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9e0f63a0-0c6a-4004-9999-9dc00f89adff",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:04.948Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "4GqbsWlG98NzmyIpDKVYQ7SBeeE=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:43.000Z",
+        "description": "Timeline uses useTimelineItems hook and getRevisionFromDate; selecting a candle activates read-only mode."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.795Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9e0f63a0-0c6a-4004-9999-9dc00f89adff",
+        "targetId": "d508a76d-410b-4192-bb0d-49adec440906",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.795Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "4Rfs3q+Ifh+XmUpRVCDsTkClDwU=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.817Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9e0f63a0-0c6a-4004-9999-9dc00f89adff",
+        "targetId": "cfb81bd5-6d7c-4501-8276-f067558734a1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.817Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "A8Wa3DyBBlv9Yy6IgZmdLlQNUmo=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "To enable timeline in an editor, the editor module exports the configuration and the Drive-app or default app fetches timeline items via `useTimelineItems(documentId)` from `@powerhousedao/common`. When a user clicks a timeline candle, `getRevisionFromDate(startDate, endDate, operations.global)` resolves the revision number. The editor receives `context.readMode = true` and `context.selectedTimelineRevision`. The editor then calls `getDocumentRevision({ revisions: { global: selectedTimelineRevision } })` to fetch the document at that point in time and disables edit controls. The timeline only activates once a document has some operation history.",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.837Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9e0f63a0-0c6a-4004-9999-9dc00f89adff",
+        "targetId": "a0b5c51a-dcd9-4493-9e51-ee452d3208d1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.837Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "hXL5xr4tG6Llrcr3FHLCnxkz8oI=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.857Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9e0f63a0-0c6a-4004-9999-9dc00f89adff",
+        "targetId": "7cd270db-0266-4248-be5d-7157ac502465",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.857Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "FFt3g/WcAgwN7/76k5hJqvNcXp8=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "32acfa84-c059-4f5c-a9ed-3111d5e9df00",
+        "name": "timeline",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "khdC1YyxmHM/W+0mJf+YRv1hNsY=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a6561021-9d14-4639-89e5-c52706f75721",
+        "name": "revision-history",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "1/e5U2qPUPl12fmrsJgl/l7iD2w=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd2e93a0-a04e-4a4a-b0df-cc19c8876796",
+        "name": "editors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "z45UCo3u7WAymiZ8F++W8q4Abm8=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "11634a14-f41e-4ebc-8b77-e68d0b5d5010",
+        "name": "read-mode",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  }
+]

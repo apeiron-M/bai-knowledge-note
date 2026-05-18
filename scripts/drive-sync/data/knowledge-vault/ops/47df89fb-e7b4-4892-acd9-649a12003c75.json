@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:48.560Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "inspector-modal-for-debugging-sync",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "47df89fb-e7b4-4892-acd9-649a12003c75",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:48.560Z"
+        },
+        "version": 0,
+        "documentId": "47df89fb-e7b4-4892-acd9-649a12003c75",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:48.560Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "5YwxGlqIfujEXgYpWvcEuhK6+Sg=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Inspector Modal exposes the local PGlite database and sync remote channel states (inbox, outbox, dead letter) for debugging",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:48.560Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "47df89fb-e7b4-4892-acd9-649a12003c75",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:48.560Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ueM/j9Pu9/otOxseeVNU0puUYXo=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:36.000Z",
+        "description": "Enable via FEATURE_INSPECTOR_ENABLED=true; shows DB tables, remote sync status, and allows DB export/import."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.889Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "47df89fb-e7b4-4892-acd9-649a12003c75",
+        "targetId": "9e0f63a0-0c6a-4004-9999-9dc00f89adff",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.889Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "V6gNvad/sIhhsk9fwh/Hk+CSLSU=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.913Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "47df89fb-e7b4-4892-acd9-649a12003c75",
+        "targetId": "a8a87055-a271-4599-aa09-eec6e5dd3606",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.913Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "MTJp317sBpKGLPyITtiJKCUxkoc=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The Inspector Modal is a Connect development tool with two tabs: Database (explore local PGlite tables with schema tree, pagination, sorting, and export/import) and Remotes (view sync remotes and their channel states). Each remote has Inbox (received operations), Outbox (pending send), and Dead Letter (failed sync with error info). Operations have statuses: Pending, Applied, or Error. Enable via URL parameter `?FEATURE_INSPECTOR_ENABLED=true` or environment variable `PH_CONNECT_INSPECTOR_ENABLED=true`. The Inspector button appears in the Connect sidebar footer.",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.933Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "47df89fb-e7b4-4892-acd9-649a12003c75",
+        "targetId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.933Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "47mw0AooTzdHYtq4P9gt1N6xsw4=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:06.953Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "47df89fb-e7b4-4892-acd9-649a12003c75",
+        "targetId": "d8e86a8a-9a95-4ef4-8f79-5e205e80d765",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:06.953Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "oxqLjqe+1WaQ43yzrjfIlYsQZAQ=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d04c6ede-35d1-4c06-bc1f-0f60f9ebf188",
+        "name": "debugging",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "mdg1U1QFtd3/gdGMfM15eBZnZc8=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bcdc79f5-5c43-4119-b689-584a9fdfc977",
+        "name": "inspector",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "qmnYfAEkeVpznMfw/dBd7bWFFTQ=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "be84d0a5-1cb5-42b5-b244-3a77bd0dc447",
+        "name": "sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "B+0ew+iio7LRp+M270yUb1FDkQo=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "537fceaa-12dc-4df6-aa30-27cb1fc89713",
+        "name": "connect",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  }
+]

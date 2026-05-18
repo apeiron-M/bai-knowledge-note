@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-a49fad15-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-268e41d6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "268e41d6-92b6-4248-932b-77a09244471a",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-77b99fa1-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "77b99fa1-d116-4098-8f13-d287c909a444",
+      "targetTitle": "reactor-is-a-storage-node-supporting-multiple-adapters"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A drive is itself a document of type powerhouse/document-drive containing a list of child documents, hosted by a reactor node",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "25ef7297-0924-4bf8-8182-3e92c65648b5",
+      "name": "drives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9980a209-8ca3-4928-a2ae-abfd0f65ea5f",
+      "name": "reactors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e603e904-4309-408e-992c-bdcce66a1074",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0b8ae9e-2a4f-442f-92ac-ca654d4fa7ad",
+      "name": "storage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Drives are containers for documents that are technically documents themselves. Reactors are the network nodes that store and synchronize documents/drives, resolve conflicts, and rerun operations to verify event histories. Reactors can use local storage, cloud storage, or decentralized storage (Ceramic, IPFS). A reactor hosts multiple drives with different organizational purposes, users, and access rights. Drives can be created via Connect UI (with options for Local, Cloud, or Public location) or programmatically via GraphQL mutation `DocumentDrive { createDocument(name, slug) }`. Drive URLs follow the format `domain/d/<driveId>` or `domain/d/<driveSlug>`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Drives are documents; reactors store drives, resolve conflicts, verify event histories, and sync across nodes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

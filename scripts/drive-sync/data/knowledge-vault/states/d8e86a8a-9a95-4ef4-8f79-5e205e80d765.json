@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-1ab70479-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1ab70479-2f70-4c38-b2de-c87b4ce81936",
+      "targetTitle": "actions-become-operations-after-dispatch-adding-metadata"
+    },
+    {
+      "id": "lnk-5f8ab7c6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5f8ab7c6-61b9-4267-a478-cbd63ad9b7de",
+      "targetTitle": "never-use-crypto-randomuuid-or-math-random-in-reducers"
+    },
+    {
+      "id": "lnk-cf6ed144-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf6ed144-884d-4784-8d50-9f25aa8d4aac",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-7cd270db-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7cd270db-0266-4248-be5d-7157ac502465",
+      "targetTitle": "document-models-use-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "event sourcing guarantees audit trails but complicates querying",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c5bd5268-78cd-49c4-a310-1cee84961c05",
+      "name": "event sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e8ce939b-53a1-44f0-8510-48ecdaab82af",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aec5fdb6-d5a5-478e-b287-e10d8e8f98ff",
+      "name": "audit trails",
+      "topicDocumentId": null
+    },
+    {
+      "id": "345a0a58-edf5-4a65-8f41-277a1ed8920a",
+      "name": "trade-offs",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# event sourcing guarantees audit trails but complicates querying\n\nEvent sourcing stores every state change as an immutable event, which means the complete history of any entity is always available for audit, replay, or debugging. This is the core trade-off: write-path simplicity (just append) exchanges for read-path complexity (must project or materialize views to answer queries efficiently).\n\nSince [[actions become operations after dispatch adding metadata]], the Powerhouse ecosystem follows this pattern \u2014 every document change is an operation with index, timestamp, and hash, enabling deterministic replay across nodes.\n\n---\n\nRelevant Notes:\n- [[pure functions enable deterministic replay across distributed nodes]] -- explains why purity matters in an event-sourced system\n\nTopics:\n- [[index]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:04:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:04:03.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Append-only event logs provide complete history and replayability at the cost of read-path complexity requiring projections",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-5aba7d9f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5aba7d9f-e7b8-4bea-b898-94ce2dfd7edc",
+      "targetTitle": "bee-reactor-adapter-prerequisites"
+    },
+    {
+      "id": "lnk-0b85684c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b85684c-aab1-4509-bf52-9b9d772552bf",
+      "targetTitle": "host-applications-are-empty-shells-gaining-functionality-through-plugins"
+    },
+    {
+      "id": "lnk-404f7801-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "404f7801-e516-459d-bf1a-8cd63c417d63",
+      "targetTitle": "renown-creates-did-from-ethereum-wallet"
+    },
+    {
+      "id": "lnk-a5352301-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a5352301-cc42-4c0d-a6d8-e9654a8e9fc8",
+      "targetTitle": "wallet-derived-aes256-encryption"
+    },
+    {
+      "id": "lnk-550bc7dd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "550bc7dd-5298-4ac2-a3c3-fed86ad98d2d",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Storage layers differ in mutability, lifespan, control, and authentication requirements",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "000a7e81-23cb-4352-9aec-8bddbe7ba779",
+      "name": "storage-semantics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d030619-dcc7-410c-a580-80dc1904a07a",
+      "name": "immutability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0351435c-31a4-4ea7-9016-5a5d80ee8541",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "842d2402-16d4-40c0-87f2-e947d0938b4b",
+      "name": "reference",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The four storage layers differ on four independent axes. Knowing which axis a property sits on prevents mis-comparisons:\n\n| | PGlite | PostgreSQL | Swarm /bytes | Swarm feeds |\n|---|---|---|---|---|\n| **Lifespan** | Ephemeral (browser) | Persistent (server) | Until stamp expires | Until stamp expires |\n| **Mutability** | Mutable (can clear DB) | Mutable (can delete rows) | IMMUTABLE (content-addressed) | Append-only (each index write-once) |\n| **Who controls it** | User's browser | Server operator | Nobody (decentralized) | Feed owner (private key) |\n| **Auth required** | None (local) | API key / auth token | Postage stamp | Private key signature |\n\n**Axes summarized**:\n- **Ephemerality**: PGlite stands alone here. Everything else survives beyond a session.\n- **Mutability**: only local and server layers are truly mutable. Swarm is immutable at the chunk level; feeds add append-only mutability via indices.\n- **Control**: Swarm /bytes is the only layer nobody controls. Feeds are controlled by whoever holds the private key.\n- **Auth**: the auth story ranges from none (local) to server-gated (API key) to stamp-gated (network resource) to signature-gated (write capability).\n\n**Why this matters**: a statement like \"operations are duplicated to Swarm\" hides that the Swarm copy is immutable and no-operator-controlled \u2014 properties PostgreSQL cannot offer. Comparing copies on volume alone misses the whole point of the different layers.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:42:40.589Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:42:40.589Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PGlite is mutable/ephemeral/user-local; PostgreSQL is mutable/persistent/server-controlled; Swarm /bytes is immutable/stamp-lifetime/nobody-controls-it; feeds are append-only/key-signed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,289 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:40.625Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ddup-reactor-native-sync-2x",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:40.625Z"
+        },
+        "version": 0,
+        "documentId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:40.625Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8gXdNTQb5Del1BpMfMjUKQw1W4E=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reactor native sync stores every operation twice: once in PGlite, once in PostgreSQL",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:40.625Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:40.625Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "bcnJtXwIkt8Qsp3Vdca9iztf4og=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:31.000Z",
+        "description": "The default Connect-Switchboard path duplicates every op in both databases. GraphQL moves SyncEnvelopes; Switchboard is the authoritative remote."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.171Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+        "targetId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.171Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9dmsgah666pGleQdRMBMOtwGYiQ=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.197Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+        "targetId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.197Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "9a1vB2X06srB7gjSrfNM/AUfK1c=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The current Powerhouse default sync path creates 2x duplication by design:\n\n```\nCONNECT (browser)                    SWITCHBOARD (server)\nPGlite (local)                       PostgreSQL (remote)\n  - operations                         - operations (SAME data)\n  - documents                          - documents\n  - relationships                      - relationships\n\nSyncManager                          SyncManager\n  outbox -> GqlRequestChannel -----> inbox -> reactor.load()\n  inbox  <- GqlRequestChannel <----- outbox\n```\n\n**Every operation exists in BOTH databases.** The SyncManager on each side moves `SyncEnvelope` payloads across the `GqlRequestChannel`, ensuring eventual consistency.\n\nThe Switchboard is the authoritative remote \u2014 a server someone runs. This is the baseline duplication everything else is compared against. It's not a bug or inefficiency; it's the cost of having a multi-device-sync-capable remote copy.\n\nThis 2x pattern is the yardstick: any alternative sync path (Swarm, Swarm+Switchboard, fully decentralized) inherits or exceeds it.",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.219Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+        "targetId": "b74db7b7-367d-4f6d-98d7-1f0e16d125d9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.219Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ZtdppLjFbkXN/9lDGar0GuXU/5o=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:55.863Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.243Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+        "targetId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.243Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "JzwmXAgzs8OQLCYrVjZBghYn0UM=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f5e354f-e611-454d-b098-418426496c55",
+        "name": "data-duplication",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.263Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+        "targetId": "ee86286c-ed83-495f-8194-cc323ee49eea",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.263Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ZDEMz5XCwpmVztrxOKWp6iD1kNI=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5de0d98d-c9c9-4e6f-bbf8-c2b88fba9018",
+        "name": "reactor-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "grohDiRYN5FshrLTtv0gcfBFUcE=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2021328e-e75d-44eb-a5a5-2ead42849f32",
+        "name": "switchboard",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "6I8Ou2+4AksEoeAHzIlsSKeOtiQ=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3c03f11d-5723-472d-8cd6-e9dd3cc48cea",
+        "name": "sync-envelope",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  }
+]

@@ -1,0 +1,331 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:11.772Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-push-cycle-encrypt-bytes-feed",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:11.772Z"
+        },
+        "version": 0,
+        "documentId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:11.772Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "g5cPaW5CZku7MKx8IQuM0IyXcEk=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Swarm push cycle serializes, AES-256-GCM encrypts, uploads to /bytes, then writes a feed SOC.",
+        "updatedAt": "2026-05-13T13:00:46.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:11.772Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:11.772Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "eItwmKJRxxvTfcDGBzFJ4i0Qo9g=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:46.000Z",
+        "description": "SyncManager groups new ops into SyncOperation batches, SwarmChannel encrypts, uploads to the Bee /bytes endpoint, writes a feed SOC, and advances the outbox cursor."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.022Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "targetId": "c2449b0f-22ef-4145-bc74-b62ef97d69cc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.022Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "kqgmU/ygpikrthc7DEzAk/nZ8ss=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "procedure",
+        "updatedAt": "2026-05-13T13:00:46.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.044Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "targetId": "5cc3c6a5-e5e3-4aa2-af00-39265af3023f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.044Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "husHfYkGe9wOocHiMyZNgRHL/fs=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nOn every new ordinal beyond the outbox cursor, SwarmChannel pushes operations via: serialize \u2192 encrypt \u2192 /bytes upload \u2192 feed write \u2192 manifest update \u2192 cursor advance.\n\n## Step-by-step\n1. SyncManager detects new ordinals in `operation_index_operations` beyond the outbox cursor.\n2. Ops are grouped by `(documentId, scope, branch)` into `SyncOperation` objects.\n3. Each `SyncOperation` is added to `SwarmChannel.outbox`.\n4. `outbox.onAdded` fires, running:\n   - serialize to JSON\n   - encrypt with AES-256-GCM (wallet-derived key)\n   - upload to `/bytes` endpoint on the Bee node\n   - write the reference to the document's feed (SOC)\n   - update the drive manifest feed\n   - call `syncOp.executed()` \u2014 SyncManager advances the cursor in `sync_cursors`.\n\n## Why this ordering matters\nThe cursor only advances after the feed write succeeds, so a mid-push failure leaves the outbox ready to retry the same batch on next cycle \u2014 no data loss, no duplicates.\n\n## Source\nSwarm Channel Architecture, \"Push Cycle (local \u2192 Swarm)\"; `adapter/src/channel/swarm-channel.ts`.",
+        "updatedAt": "2026-05-13T13:00:46.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.064Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "targetId": "41a470a9-1619-4d1e-9642-5a80570d5cc9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.064Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "65WwxEQ04EVjnXbQ9tPwOeH8oUw=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.084Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "targetId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.084Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "IjZY200wbOsm2VFu/mHSZnKgcc4=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-88ec1460-1",
+        "name": "push-cycle",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.103Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "targetId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.103Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "1F5gf95ztL+amJuSgOLqNazJjwM=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-88ec1460-2",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.123Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "targetId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.123Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "IZdNhIsV2deCxuE/U04n4r2diZM=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-88ec1460-3",
+        "name": "encryption",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.147Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "targetId": "478a428d-a4be-4918-9fda-7ebea63c0d97",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.147Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "vvJAhdA02yAoD07oHckZx5HJbmU=",
+    "timestampUtcMs": "2026-05-13T13:00:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-88ec1460-4",
+        "name": "feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:46.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.165Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "targetId": "a5352301-cc42-4c0d-a6d8-e9654a8e9fc8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.165Z"
+    }
+  }
+]

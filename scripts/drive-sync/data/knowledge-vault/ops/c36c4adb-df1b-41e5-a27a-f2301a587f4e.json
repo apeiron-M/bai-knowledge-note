@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.602Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-state-has-global-and-local-scopes",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:43.602Z"
+        },
+        "version": 0,
+        "documentId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.602Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "H03wm0qL7zGEfL4i/Dt0yefPiQE=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Document state is organized into global and local scopes for sync control",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.602Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.602Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "EiKebViyzmvEuXCmN/hIMxfWbsY=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:33.000Z",
+        "description": "Global scope (state.global) syncs to Reactors; local scope (state.local) stays on the local device only."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.636Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "targetId": "a8a87055-a271-4599-aa09-eec6e5dd3606",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.636Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Aia2V/RULr6wolbXVck+ii6qn5I=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.662Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "targetId": "3d61b8cc-2823-4233-b0e8-cb95e44b0ab0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.662Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "2d0Y9OCgGPLeiqog0BqSRVsqmtk=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Document state in Powerhouse is organized into scopes:\n\n- **Global scope** (`state.global`): Synchronized data that lives on a Reactor or remote server. This is where your document's main content belongs. Most use cases work exclusively with `state.global`.\n- **Local scope** (`state.local`): For edge cases where data should only exist on the local device and not sync.\n\nA future **authorization scope** is planned for permission-controlled data.\n\nWhen accessing document state in editors, you use `selectedDocument.state.global.items` (for example). Operations are also scoped - `document.operations.global` contains the operation history for the global scope.",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.681Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "targetId": "d508a76d-410b-4192-bb0d-49adec440906",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.681Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "X6yowHVR+hh5tNVsgBxXkMT60Og=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.700Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "targetId": "cfb81bd5-6d7c-4501-8276-f067558734a1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.700Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "AQNLyauHqapA/+EFJtJLP6KOrUY=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9df6da94-9f80-4097-935d-3f24c222ce96",
+        "name": "document-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.719Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "targetId": "b107d1c0-f133-47dc-9b14-39770bdadf93",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.719Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "/KXdPlz4/Fbaqxft8eqaqARPS7k=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f43d9574-3411-409e-911c-f5386ba5247c",
+        "name": "state-management",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "VcMaygZvFapf7WN/Q2tUHbbpjZc=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "863a17c2-fa60-4a1f-b74f-df559ae05d4f",
+        "name": "synchronization",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  }
+]

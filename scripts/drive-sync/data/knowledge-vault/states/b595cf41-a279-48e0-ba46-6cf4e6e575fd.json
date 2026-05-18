@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-c41e76e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+      "targetTitle": "nullable-input-types-require-explicit-coalescing-to-match-state-types"
+    },
+    {
+      "id": "lnk-055a25fa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "055a25fa-4a15-4dc8-bbd1-3a366c7040be",
+      "targetTitle": "billing-statement-model-captures-periodic-billing-summaries"
+    },
+    {
+      "id": "lnk-96d2584d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "96d2584d-af04-4557-8e79-b1f43312d8ca",
+      "targetTitle": "workstream-model-organizes-ongoing-work-streams"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "truthy checks are safer than undefined checks for optional state assignment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6134ae8c-60a8-4c51-b6de-dd78de1d6965",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2490d534-72b0-4fef-b6f0-b827317762d2",
+      "name": "TypeScript",
+      "topicDocumentId": null
+    },
+    {
+      "id": "114977a7-8997-462c-b631-6bfe019582c0",
+      "name": "state assignment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d4520e4-722b-4a85-9a29-2ab030624929",
+      "name": "null handling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# truthy checks are safer than undefined checks for optional state assignment\n\nWhen conditionally assigning optional input values to state:\n\n```typescript\n// \u274c Type error \u2014 'string | null' is not assignable to 'string'\nif (action.input.field !== undefined) entry.field = action.input.field;\n\n// \u2705 Truthy check handles both null and undefined\nif (action.input.field) state.field = action.input.field;\n\n// \u2705 For booleans, use explicit null/undefined checks\nif (action.input.field !== undefined && action.input.field !== null)\n  state.field = action.input.field;\n```\n\nThe truthy check works because both `null` and `undefined` are falsy. For boolean fields, you cannot use truthy checks since `false` is also falsy \u2014 use explicit null/undefined guards instead.\n\nSince [[nullable input types require explicit coalescing to match state types]], this pattern complements the `|| null` coalescing approach for different assignment scenarios.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:57:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:57:43.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Using if (action.input.field) avoids type errors from !== undefined when the field type is string | null; booleans need explicit checks",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

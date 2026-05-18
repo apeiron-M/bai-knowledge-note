@@ -1,0 +1,81 @@
+{
+  "tier": "TOPIC",
+  "title": "Data Duplication Analysis",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-ee86286c",
+      "noteRef": "ee86286c-ed83-495f-8194-cc323ee49eea",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-05-13T14:33:18.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-cfe56b10",
+      "noteRef": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-05-13T14:33:18.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-1cf845a2",
+      "noteRef": "1cf845a2-3197-4b2f-867f-c5d3fc34bef6",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-05-13T14:33:18.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-ca2440be",
+      "noteRef": "ca2440be-6ce3-4732-bbce-2b5e4163863b",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-05-13T14:33:18.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-afaaa77b",
+      "noteRef": "afaaa77b-1854-4ed8-a65f-940e24b36245",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-05-13T14:33:18.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-dc4d768b",
+      "noteRef": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-05-13T14:33:18.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-47a89c0b",
+      "noteRef": "47a89c0b-cd52-488c-b81c-f18c5aec4820",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-05-13T14:33:18.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-11cbd520",
+      "noteRef": "11cbd520-483c-4f45-8c2b-ce8cb1c4127d",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-05-13T14:33:18.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:32:39.228Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-04-21T19:32:39.228Z",
+  "agentNotes": [],
+  "description": "Where Connect's bytes live: the four storage layers, native 2x duplication (PGlite+Postgres), 3x when Switchboard+Swarm run together.",
+  "orientation": "Running Connect over multiple transports has a real storage cost. This MOC consolidates the duplication analysis: operations live in up to four layers (PGlite, Postgres via Switchboard, Swarm /bytes, per-user op feeds), each with distinct durability and read characteristics. The native dual-store already puts every op in PGlite and Postgres; adding Swarm mirrors the same pattern at the remote layer, raising total cost to 3x. Collaboration adds SyncEnvelope wrappers and per-user feeds but does not re-duplicate raw ops. A typical small user totals ~120 KB \u2014 the order-of-magnitude baseline for capacity discussions.",
+  "openQuestions": [],
+  "links": []
+}

@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:55.779Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "packages-publish-to-npm-install-via-ph",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "473c1ad3-3b73-4a0f-bd92-35c066056ade",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:55.779Z"
+        },
+        "version": 0,
+        "documentId": "473c1ad3-3b73-4a0f-bd92-35c066056ade",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:55.779Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "abA2HtMfAJHmtytRB+WbLemn9EU=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Powerhouse packages are published to NPM and installed into host apps via ph install",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:55.779Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "473c1ad3-3b73-4a0f-bd92-35c066056ade",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:55.779Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Tw4QPLoSyBQR/qcYIYyV5+ZTaMQ=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:39.000Z",
+        "description": "Packages use scoped NPM names (@org-ph/name), include manifest.json, and are installed with `ph install @org/package`."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:11.542Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "473c1ad3-3b73-4a0f-bd92-35c066056ade",
+        "targetId": "01d0a944-04ea-4d59-bafc-06354ade581a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:11.542Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "4fbgnxgdWG4uf3W8CxvIovhLVj4=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "WORKFLOW",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:11.563Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "473c1ad3-3b73-4a0f-bd92-35c066056ade",
+        "targetId": "345dd7d5-2227-4257-bb2b-d152158c6986",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:11.563Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "juuGqueNRPB1BVkF3NlNonoTgSo=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Powerhouse packages follow a standard publishing workflow:\n\n1. **Package naming**: Scoped convention `@your-org-ph/your-package-name` (the `-ph` suffix identifies Powerhouse ecosystem packages)\n2. **manifest.json**: Declares package contents - document models (with document type IDs) and editors (linked to document types)\n3. **Build**: `pnpm build` or `npm run build` compiles to dist/\n4. **Publish**: `npm login` then `npm publish` (with `\"publishConfig\": { \"access\": \"public\" }` for scoped packages)\n5. **Install**: `ph install @your-org-ph/your-package-name` makes document models and editors available in any Powerhouse environment\n\nThe `package.json` `files` array should include: `dist`, `manifest.json`, `document-models`, `editors`.\n\nSemantic versioning is used for package versions. The AGPL-3.0-only license is common in the ecosystem.",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:11.581Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "473c1ad3-3b73-4a0f-bd92-35c066056ade",
+        "targetId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:11.581Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "XDm5O2eF2qKGhFFyGtXzPh7P6nQ=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Q4WQY9ggTWrNLBsaWtrw5J6NeZ8=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ba89a2ad-b6d4-4eee-accb-81cd17f24c8b",
+        "name": "packaging",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "seBJtnVi2Rwsd25h4J3HBvCNhcc=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2a52337b-8c07-4cc0-b3fb-94e1647d45bb",
+        "name": "npm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "yCWcFavrOHyjuDcfpqPd592uVVg=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4386fa9c-cd07-4003-90e4-6a9e3bc0272b",
+        "name": "distribution",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  }
+]

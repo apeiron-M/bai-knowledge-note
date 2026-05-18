@@ -1,0 +1,73 @@
+{
+  "tier": "TOPIC",
+  "title": "Live Collaboration Track",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-41652474",
+      "noteRef": "41652474-fe03-4b76-a673-e60050229ca4",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-bc3b5418",
+      "noteRef": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d0559247",
+      "noteRef": "d0559247-b7b5-48e1-8f69-2e16f51ba1fd",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-44cbb869",
+      "noteRef": "44cbb869-14ac-4205-9cf7-de0de80663b7",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-3535d1e9",
+      "noteRef": "3535d1e9-8efc-4efd-a7fe-4616748301d6",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-8a0beb71",
+      "noteRef": "8a0beb71-d659-4db7-9331-bc6e9a7e497b",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-bd87d072",
+      "noteRef": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-05-13T14:33:12.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:32:25.350Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-04-21T19:32:25.350Z",
+  "agentNotes": [],
+  "description": "Next-track design for live collaboration on Swarm: per-user op feeds, ACT-gated collab manifest, GSOC-triggered debounced pulls, no CRDT.",
+  "orientation": "Live collaboration is the next major feature track after chat. This MOC consolidates the design notes: per-user operation feeds (not a shared feed, to avoid SOC write contention), ACT-gated collab manifests for participant discovery, and GSOC pings as the sub-second wake-up signal that triggers debounced pulls. The reactor's operation-based model handles concurrent edits natively, so no CRDT is needed. UX-wise the only surface is the document toolbar's History view \u2014 not per-editor presence \u2014 scoping the track tightly to what the primitives support.",
+  "openQuestions": [],
+  "links": []
+}

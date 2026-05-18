@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:36.324Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "chat-pss-plus-chatlog-feed",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "4d07705c-2973-40e8-a112-3d2b476c291a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:36.323Z"
+        },
+        "version": 0,
+        "documentId": "4d07705c-2973-40e8-a112-3d2b476c291a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:36.324Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "wz1Lm3gkaLj4PT2Hq66wiwyrveE=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Chat uses PSS for live 1-to-1 messages and an ACT-protected chatlog feed for persistence with chapter rotation",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:36.324Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "4d07705c-2973-40e8-a112-3d2b476c291a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:36.324Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0eAPCxX97N+EzhiwZg2kP8kMb+I=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:29.000Z",
+        "description": "Live messages ride mined Trojan PSS chunks on ph:v2:chat:<sorted(A,B)>; history persists on ph:v2:chatlog:<...>[:chapter] as ACT feed where each update carries actRef || actHistoryAddress."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:56.300Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4d07705c-2973-40e8-a112-3d2b476c291a",
+        "targetId": "7e44e40b-9f24-468f-8cd7-8defa313ada0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:56.300Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "oaYzXWR3s744FJH1upjmdnHzDKo=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:56.327Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4d07705c-2973-40e8-a112-3d2b476c291a",
+        "targetId": "1499ac7f-c5cc-4b36-a48f-257620cb540f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:56.327Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "eCdfpEctHIfWu+kyzlw/osTlcnY=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Chat separates live transport from durable history:\n\n- **Live 1-to-1 messaging** uses PSS (Postal Service over Swarm) on topic `ph:v2:chat:<sorted(A,B)>`. Mined Trojan chunks carry the live stream with 2\u201310s latency.\n- **Chat history** persists on `ph:v2:chatlog:<sorted(A,B)>[:chapter]` as an ACT-protected feed. Each feed update points to a small wrapper chunk containing `actRef || actHistoryAddress` \u2014 self-contained so both parties can decode without side-channel state.\n- **Chapter rotation** on Clear-All-Chats: the chapter value (a `Date.now()` millisecond, stored in localStorage but reconstructable from its strictly increasing property) is appended to the feed topic. Clearing bumps the chapter, making the new feed a genuinely new namespace. Peers learn the new chapter from the first PSS message after clear.\n- **Session recovery** reads `chatPeers[]` from the user manifest, so a fresh browser rehydrates all known conversations from wallet + Bee alone.\n- **Attachments**: raw files via ACT-protected `/bzz` (grantees = recipient's Bee pubkey); document shares reuse the sharing flow.\n- **GSOC notifications** (typing, presence, delivery, doc-updated) exist on the adapter and are the transport for upcoming live-collab work.",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:56.349Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4d07705c-2973-40e8-a112-3d2b476c291a",
+        "targetId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:56.349Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "IJoE6ocrYcOhWLsjl9HIGhcWd/w=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:29.454Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:56.369Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "4d07705c-2973-40e8-a112-3d2b476c291a",
+        "targetId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:56.369Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "oK6p682eamqZL/EduL8l7fx1y/A=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3e7fbe1e-f9f7-4360-8fe6-156bf1212b50",
+        "name": "chat",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ATrJiSQtfM4ZY80ZJ1sKR2yQVF4=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7a97d7c1-8f7a-47a8-8178-1b3297d2099f",
+        "name": "pss-messaging",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Z67EooJXGnRzFXOO6LNDuODRd14=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "32bca81e-523e-4046-96a5-ebc38ee20a7a",
+        "name": "chatlog-feed",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "xO3gX90azQ1M9WtqbUEl96MZD5k=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0ad4646a-3e05-485b-b33d-adfeff258b9e",
+        "name": "chapter-rotation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  }
+]

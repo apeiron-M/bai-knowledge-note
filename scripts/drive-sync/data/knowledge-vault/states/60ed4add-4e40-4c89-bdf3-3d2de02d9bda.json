@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-078c83af-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "078c83af-db2d-44c3-bad4-0b88d12af054",
+      "targetTitle": "decentralized-operations-platform-is-the-programmable-coordination-engine"
+    },
+    {
+      "id": "lnk-bd87d072-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-7036dd62-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7036dd62-002b-47e1-b8db-ea1083e7b415",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-8abdf393-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8abdf393-6a17-4036-ad20-492d0aaeb4a5",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-def5bfd1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "def5bfd1-15ed-48bf-8702-1eb93e02ea52",
+      "targetTitle": "document-model-driven-architecture-rad"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collaboration management lives in a new Collaborate tab inside the existing chat panel",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-ccbd016f-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ccbd016f-2",
+      "name": "ux-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ccbd016f-3",
+      "name": "chat-panel",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## UX: Collaborate tab inside the Chat panel\n\n### Why the chat panel?\n\nThe chat panel already owns everything collab needs:\n\n- Peer address resolution.\n- Public profile lookup (Bee pubkey for ACT).\n- Multi-user picker patterns (from the existing document-share picker).\n- Notification plumbing.\n\nAdding Collaborate next to the existing conversation list keeps everything multi-peer in one place rather than scattering peer-oriented UI across the app.\n\n### Layout\n\n```\nChat Panel (left pane)\n  \u251c\u2500\u2500 [Conversations] tab    \u2190 existing\n  \u2514\u2500\u2500 [Collaborate]    tab   \u2190 NEW\n        \u251c\u2500\u2500 \"+ New collaboration\" button\n        \u251c\u2500\u2500 Pending invitations  (I received)\n        \u2514\u2500\u2500 Active collaborations (I'm part of)\n```\n\n### Key flows\n\n- **Create:** pick target (Drive or Document), pick participants (multi-select from known chat peers or paste a Swarm ID), optional caption, click Invite.\n- **Accept:** recipient sees a `CollabInviteCard` in chat \u2014 mirrors `DocumentShareCard` but with `[Join]` instead of `[Import]`.\n- **Active row:** drive/doc name, participant avatars (initials \u2014 allowed as a list, not a per-editor overlay), last activity timestamp. Click opens the drive/doc in Connect.\n- **Leave:** local-only stop (feed writes/pulls stop); initiator can later remove from manifest.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Collaborate tab is added to the existing chat panel \u2014 reuses peer resolution, public-profile lookup, multi-user picker, and notification plumbing already built for chat.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

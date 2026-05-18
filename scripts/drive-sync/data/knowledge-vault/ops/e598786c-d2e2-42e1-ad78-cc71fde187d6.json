@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:54.254Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "operation-errors-are-recorded-on-operations-not-thrown-to-callers",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e598786c-d2e2-42e1-ad78-cc71fde187d6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:54.254Z"
+        },
+        "version": 0,
+        "documentId": "e598786c-d2e2-42e1-ad78-cc71fde187d6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:54.254Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "nL0ouGkRv54Gr8ibSKLs+t/Acg8=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "operation errors are recorded on operations not thrown to callers",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:54.254Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e598786c-d2e2-42e1-ad78-cc71fde187d6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:54.254Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "gIkJuKZQ6jsUQzlMVP9dh5qI4/U=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:39.000Z",
+        "description": "When a reducer throws, the operation is still added with an .error property; state remains unmutated; tests must check operation.error"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.713Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e598786c-d2e2-42e1-ad78-cc71fde187d6",
+        "targetId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.713Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "zHoHo7sEAfcYbGxwIa5EKdBX38s=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.735Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e598786c-d2e2-42e1-ad78-cc71fde187d6",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.735Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "p+VebUpqi5/RiAvWb6T2Td72L1M=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# operation errors are recorded on operations not thrown to callers\n\nPowerhouse handles reducer errors differently from typical throw/catch patterns. When a reducer throws an error:\n\n1. The operation is **still recorded** in `document.operations.global` (or `.local`)\n2. The error message is stored in `operation.error` as a string\n3. The **state is NOT mutated** \u2014 it remains as it was before the operation\n\nThis means error testing looks different:\n\n```typescript\n// \u2705 Correct \u2014 check the operation's error property\nconst updated = reducer(document, setName({ name: \"invalid\" }));\nexpect(updated.operations.global[0].error).toBe(\"Name is not allowed\");\nexpect(updated.state.global.name).toBe(initialState);\n\n// \u274c Wrong \u2014 errors are not propagated to the caller\nexpect(() => reducer(document, setName({ name: \"invalid\" }))).toThrow();\n```\n\nSince [[operation error index must match the number of prior dispatches]], the index into `operations.global` depends on how many operations were dispatched before this one.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+        "updatedAt": "2026-05-13T13:00:39.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.754Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e598786c-d2e2-42e1-ad78-cc71fde187d6",
+        "targetId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.754Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "BZPS4+Esw5osE0tJsV2oAFgBki4=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:00:45.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "EDvPk6ZoPKrFeh9gwfZRGxFCFyk=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dcef0a90-b51c-4254-8653-fc7c926a0dc2",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ueJa7GxTUW93vWUMhTPV06bjBt0=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "79cddac4-57c6-4048-86b3-2fa4744a201f",
+        "name": "error handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "tV83j/Kg3FNtPmmiIrvu/pSkJBY=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f17863a5-da61-4560-8fd8-0ea86e1fb70e",
+        "name": "event sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "N5EARMq6oIQJ4Lk2YUhormKqQsA=",
+    "timestampUtcMs": "2026-05-13T13:00:39.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f826c0df-302c-4ce1-90a0-0e860da68f36",
+        "name": "testing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:39.000Z"
+    }
+  }
+]

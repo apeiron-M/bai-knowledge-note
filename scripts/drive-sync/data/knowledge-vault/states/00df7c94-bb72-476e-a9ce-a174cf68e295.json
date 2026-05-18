@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-d4e8b27f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4e8b27f-e4d5-40b2-a9ca-71c81722f923",
+      "targetTitle": "apps-use-useselecteddrive-to-access-drive-state-and-filter-nodes"
+    },
+    {
+      "id": "lnk-ffcac490-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ffcac490-8486-4419-a8f6-ee274f11dd10",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-caaac56f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "caaac56f-7b4b-4506-a70a-04731f180f21",
+      "targetTitle": "oh-includes-ai-agent-services-for-automation"
+    },
+    {
+      "id": "lnk-9b39b015-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b39b015-0035-40bd-8510-c3f34985a105",
+      "targetTitle": "vetra-auto-generates-code-on-spec-change"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SET_APP_STATUS with CONFIRMED triggers code generation for apps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ecfce10e-66af-4167-86d4-f71603d9e909",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d162386-9da8-4644-8229-7cd821122faf",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00892606-26d1-4199-a2cb-269f210069ed",
+      "name": "code generation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "006dfece-3c72-46b6-9634-0afdd5949529",
+      "name": "app creation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# SET_APP_STATUS with CONFIRMED triggers code generation for apps\n\nThe app creation flow has a specific trigger point. After configuring the app document (name, document types, drag-and-drop settings), setting the status to `CONFIRMED` kicks off code generation:\n\n```typescript\naddActions({\n  documentId: appDocId,\n  actions: [{\n    type: \"SET_APP_STATUS\",\n    scope: \"global\",\n    input: { status: \"CONFIRMED\" }\n  }]\n});\n```\n\nThis creates:\n- Editor scaffolding in `editors/<app-name>/`\n- Updated `powerhouse.manifest.json` with the app entry\n\nOnly after this step can you work on the generated `editor.tsx` to customize the UI.\n\n---\n\nTopics:\n- [[mcp workflows]]\n- [[editor patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:01:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:01:51.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Setting app status to CONFIRMED triggers the code generator to create editor scaffolding and update powerhouse.manifest.json",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

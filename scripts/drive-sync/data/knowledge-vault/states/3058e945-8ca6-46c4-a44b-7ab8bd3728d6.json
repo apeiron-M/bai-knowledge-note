@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-56a911e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+      "targetTitle": "three-layer-swarm-stack"
+    },
+    {
+      "id": "lnk-65b6b0c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65b6b0c3-c068-4ec6-b36e-71bc00b79aa9",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-0da87457-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0da87457-dfb3-4acc-b6cb-6906f7e07a94",
+      "targetTitle": "create-swarm-sync-builder-hook"
+    },
+    {
+      "id": "lnk-90e469cc-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "90e469cc-ca78-4f68-998b-9c54e080fab1",
+      "targetTitle": "adapter-monorepo-two-packages"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adapter package organizes Swarm integration into src/channel/, src/swarm-client.ts, src/swarm-crypto.ts, and src/plugin/",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "cce3c0e6-180e-44a4-b240-614e5a65dc13",
+      "name": "adapter-package",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aedd08c9-f6eb-4326-a860-e0ac4eb22905",
+      "name": "source-layout",
+      "topicDocumentId": null
+    },
+    {
+      "id": "16821d39-1d2f-4755-b483-ef1928672a7b",
+      "name": "key-files",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Adapter Package Key Source Files\n\nThe `packages/adapter/` package is organized around a small set of responsibility-specific source files that anchor the codebase:\n\n| File | Purpose |\n|------|---------|\n| `src/channel/swarm-channel.ts` | Native `IChannel` implementation \u2014 outbox push + inbox pull via Swarm |\n| `src/channel/composite-factory.ts` | Routes `\"gql\"` / `\"swarm\"` config types to sub-factories |\n| `src/channel/create-composite-factory.ts` | `createSwarmSyncBuilder()` \u2014 wires into `ReactorBuilder` |\n| `src/channel/add-swarm-remote.ts` | Per-drive Swarm remote registration |\n| `src/channel/manifest-manager.ts` | User + drive manifest writes on Swarm |\n| `src/swarm-client.ts` | Bee SDK wrapper: upload, download, feeds, encryption, stamps |\n| `src/swarm-crypto.ts` | AES-256-GCM encrypt/decrypt with SWE prefix detection |\n| `src/wallet-signer.ts` | Deterministic key derivation from wallet signature |\n| `src/plugin/init.ts` | Browser plugin: Bee detection, stamps, wallet, events |\n| `src/plugin/sharing.ts` | Cross-user encrypted sharing + import |\n\nThe `src/channel/` directory concentrates all reactor-integration code, while `src/plugin/` contains browser/Connect-specific wiring.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:57:41.685Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:57:41.685Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Adapter source is partitioned: src/channel/ holds reactor sync integration, swarm-client.ts wraps the Bee SDK, swarm-crypto.ts handles AES-GCM, and src/plugin/ wires the browser plugin.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

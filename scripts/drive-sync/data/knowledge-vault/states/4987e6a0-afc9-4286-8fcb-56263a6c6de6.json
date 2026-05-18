@@ -1,0 +1,86 @@
+{
+  "links": [
+    {
+      "id": "lnk-7322b3c9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7322b3c9-9a9b-43c4-9993-7de4797c2393",
+      "targetTitle": "editors-use-component-based-architecture"
+    },
+    {
+      "id": "lnk-3efc23f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3efc23f3-f6b4-4477-bba9-40c87ad50b0e",
+      "targetTitle": "act-cross-user-sharing-ecdh"
+    },
+    {
+      "id": "lnk-004e5e41-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "004e5e41-0706-4c65-8d88-dfe00b40557f",
+      "targetTitle": "The DocumentToolbar className prop merges with defaults via twMerge"
+    },
+    {
+      "id": "lnk-1fd3a24c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1fd3a24c-8a0e-4a79-957e-544a20f1873e",
+      "targetTitle": "Toolbar buttons must be styled via Tailwind arbitrary child selectors since they have no dedicated style props"
+    },
+    {
+      "id": "lnk-cfb81bd5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "cfb81bd5-6d7c-4501-8276-f067558734a1",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "DocumentToolbar has three independent layers of styling control",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "82d9d3ff-09f1-4312-bfdf-2742f54e2cce",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9e9ca5f-3884-41a9-9b58-a1a674becf75",
+      "name": "editor-styling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `DocumentToolbar` component provides a layered styling architecture with clear separation of concerns:\n\n## Layer 1: Container\nThe toolbar's outer container (background, border, rounding) is controlled via the `className` prop, which uses `twMerge` to merge custom classes with defaults. Default classes: `flex h-12 w-full items-center justify-between rounded-xl border border-gray-200 bg-slate-50 px-4`.\n\n## Layer 2: Buttons\nInternal buttons (undo, redo, export, history, close) use hardcoded Tailwind classes and don't expose their own style props. Customization requires Tailwind arbitrary child selectors passed through the parent `className` prop.\n\n## Layer 3: Revision History Panel\nThe revision history panel is rendered by Connect outside the editor component tree. It lives inside `#document-editor-context` in the DOM and can only be styled via scoped CSS in `style.css`.\n\nThis three-layer architecture means theming a toolbar requires understanding which technique applies at each level \u2014 direct className for the container, child selectors for buttons, and external CSS for the history panel.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T14:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-03-30T14:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "DocumentToolbar styling has three layers: container via className with twMerge, buttons via CSS child selectors, and Revision History via scoped CSS.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

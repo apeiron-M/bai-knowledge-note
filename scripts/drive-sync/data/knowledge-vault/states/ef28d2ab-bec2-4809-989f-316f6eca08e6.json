@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-47a89c0b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "47a89c0b-cd52-488c-b81c-f18c5aec4820",
+      "targetTitle": "ddup-collab-envelope-overhead"
+    },
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-2d6a278b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2d6a278b-e72f-4922-86bb-a0e0f49d7285",
+      "targetTitle": "chat-document-share-parity-shipped"
+    },
+    {
+      "id": "lnk-2cf91263-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2cf91263-00a4-478e-b7f4-cd76e9123339",
+      "targetTitle": "bridge-pattern-gql-swarm-dual-sync"
+    },
+    {
+      "id": "lnk-a49fad15-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Feed count scales linearly with drives and documents; op-feed reads fan out across N-1 peers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "5623152c-4aa2-4db0-8e62-0a923e89ca37",
+      "name": "scaling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9880fedd-b824-400d-a9cd-708d0ec1850c",
+      "name": "feed-count",
+      "topicDocumentId": null
+    },
+    {
+      "id": "24159945-63e8-4115-a28a-9bb084b035e1",
+      "name": "collaboration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Feed and Upload Counts\n\n## Single-user totals (for 1 drive + 2 docs)\n\n- 1 user manifest feed\n- 1 drive manifest feed (per drive)\n- 1 document manifest feed (per document)\n- Total: `1 + 1 + 2 = 4 feeds`\n\n## /bytes uploads\n\n- 1 per feed index update (the manifest JSON)\n- 1 per operation batch\n- Example: `4 manifest uploads + 2 op batch uploads = 6 /bytes refs`\n\n## Collaboration scaling (N users)\n\n- Each user writes to exactly 1 op feed per collaborative document\n- Each user reads N-1 op feeds per collaborative document\n- With GSOC/PSS push notifications, reads happen only on actual edits \u2014 bandwidth scales with edit frequency, not user count\n- Without push, every reader polls every peer feed \u2014 O(N) polling load\n\n## Design consequence\n\nFeed count grows linearly with documents, not sub-linearly \u2014 there is no \"one big feed\" compression. This is acceptable because feed creation is cheap; the expensive operation is `/bytes` uploads (stamp cost).\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "observation",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:45:54.611Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A user's feed count is 1 user manifest + 1 per drive + 1 per document; for N collaborators each reads N-1 op feeds and writes to 1, so read fanout grows with participants.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

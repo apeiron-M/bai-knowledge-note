@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.512Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "relational-db-processor-base-class",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ace588c7-efdc-483b-baa6-7a280bef8731",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:03.512Z"
+        },
+        "version": 0,
+        "documentId": "ace588c7-efdc-483b-baa6-7a280bef8731",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.512Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "X23evjmV+GXgK97NlCu4XKeHw2w=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "RelationalDbProcessor provides a type-safe base class with per-drive namespace isolation and lifecycle migration hooks",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.512Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ace588c7-efdc-483b-baa6-7a280bef8731",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.512Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "OHrJm2vyrQg9ckknyFpBpbGlHtY=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:43.000Z",
+        "description": "Extend RelationalDbProcessor<DB> for built-in this.relationalDb access, getNamespace(driveId) isolation, and initAndUpgrade()."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.135Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ace588c7-efdc-483b-baa6-7a280bef8731",
+        "targetId": "264f9723-8c03-42b0-8ed2-1064ee7e40fc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.135Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "L2/P5C7zqsX9oexP83P7Q8A5rds=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.161Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ace588c7-efdc-483b-baa6-7a280bef8731",
+        "targetId": "a54a9f24-04ea-405c-89bd-b6c73d65fbe6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.161Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "WPLxb3zbKI2yh9kSvjhvTCvPNNw=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The v6 Reactor provides `RelationalDbProcessor<DB>` as a base class for processors that need database access. Key features: `getNamespace(driveId)` static method creates per-drive database isolation preventing data collisions; `initAndUpgrade()` lifecycle hook runs migrations on startup; `this.relationalDb` provides a typed Kysely instance; `query(driveId, relationalDb)` static method enables querying from subgraphs. The factory creates namespaced stores via `module.relationalDb.createNamespace<T>(namespace)`. Scaffolding is generated with `ph generate --processor <name> --processor-type relationalDb --document-types <type>`.",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.180Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ace588c7-efdc-483b-baa6-7a280bef8731",
+        "targetId": "7774c794-c29f-420f-b8bf-d3fdc6ca1c9a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.180Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "rhkrdST8J05jQphm6yJ+Em1mamk=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.199Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ace588c7-efdc-483b-baa6-7a280bef8731",
+        "targetId": "c8b0d149-1e69-413c-9319-1afcaeb64bef",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.199Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "QQP47fatRBoxdMr1pJTdeL5/ggg=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6ec7fc81-bf97-4791-98a4-116413f39f10",
+        "name": "relational-db",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ZsXXql4lhTltLaXlzfXRzfeAU5o=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a154a49a-7a1d-4ea1-b0c9-fdfe9e9c08fd",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Gcg2AAAI+w19oVtzus0FWB/LOJw=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0aee4021-f9d9-4c6d-abc2-7314ab9e7530",
+        "name": "pattern",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  }
+]

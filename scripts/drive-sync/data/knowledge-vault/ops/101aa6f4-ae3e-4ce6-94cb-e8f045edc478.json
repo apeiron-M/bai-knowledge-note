@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:53.305Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "one-operation-per-user-intent-keeps-concerns-separated",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:53.305Z"
+        },
+        "version": 0,
+        "documentId": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:53.305Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xeCsvhcgiQ+OHAoI1aXPWVLqLME=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "one operation per user intent keeps concerns separated",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:53.305Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:53.305Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9sa6Vsyd16OsjFyAeTROuIUpiqQ=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:38.000Z",
+        "description": "Operations should map to distinct user actions like ADD_LINE_ITEM rather than batching multiple intents into one operation"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.127Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+        "targetId": "18b20746-83e2-42ba-8bde-464043db804c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.127Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "M5US7MM8K5kzacGpXLuW3otjoVM=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.148Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.148Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "1GagZ7/bk8nAjiIuh7PUrEtMKF0=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# one operation per user intent keeps concerns separated\n\nEach operation should correspond to a single user action. This keeps operations atomic, testable, and replayable:\n\n```\n\u2705 ADD_LINE_ITEM \u2014 adds one line item\n\u2705 UPDATE_RECIPIENT \u2014 changes the recipient\n\u2705 SET_DUE_DATE \u2014 sets the due date\n\n\u274c UPDATE_INVOICE \u2014 changes recipient, adds items, and sets date in one operation\n```\n\nDescriptive operation names (e.g., `ADD_LINE_ITEM`, `UPDATE_RECIPIENT`) communicate intent better than generic names (e.g., `UPDATE_DATA`).\n\nSince [[operation design uses descriptive names and includes examples and errors]], each operation should also define error types and include examples in the document model.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[schema design]]",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:10.169Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+        "targetId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:10.169Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "I7GnnR4lfF9rN4AJ5BqojtqaNmM=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:00:02.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Wwv1EoQB/Q3ACxebhU2jF39J/bk=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7dc60f18-a4b5-48c1-891b-2e06177d973b",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "xe7Rcpjx0SANPlWle4X0lwtZy+w=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "84a8b562-90ab-4783-ae24-3f02ddc68fb8",
+        "name": "schema design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "DNVbQgpLWWzFdbnAQUC4HxDZJzo=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a0244260-26d6-40cb-9f6f-58649d03ae3b",
+        "name": "operation design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "dZpWWxxttPgjsU0qMWb/7kf17KU=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8151ad1a-a41a-4c4d-8597-904a6c1780bc",
+        "name": "separation of concerns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  }
+]

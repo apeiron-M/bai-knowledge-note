@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-87e23c2a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87e23c2a-8551-4614-a4b4-7331e4069e6a",
+      "targetTitle": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser"
+    },
+    {
+      "id": "lnk-ba8862ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba8862ac-5520-41b7-b08d-168a3c6f2319",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-00df7c94-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "00df7c94-bb72-476e-a9ce-a174cf68e295",
+      "targetTitle": "setappstatus-with-confirmed-triggers-code-generation-for-apps"
+    },
+    {
+      "id": "lnk-ffcac490-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ffcac490-8486-4419-a8f6-ee274f11dd10",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-73fedb4c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "73fedb4c-2b3e-4b12-a305-1cb4b82f1738",
+      "targetTitle": "model-editor-wiring"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "apps use useSelectedDrive to access drive state and filter nodes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "995ddd2a-75b4-462d-aa76-564615486997",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3d6d064-e04f-4582-988c-e93a2c554eb8",
+      "name": "model-editor wiring",
+      "topicDocumentId": null
+    },
+    {
+      "id": "631ba27b-5c26-4c56-a752-16e0f8c170f8",
+      "name": "React hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb997cb5-e05e-423f-811b-f019432f1897",
+      "name": "drive operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# apps use useSelectedDrive to access drive state and filter nodes\n\nApps (drive editors) use the `useSelectedDrive()` hook to access the drive document, then filter nodes to display specific document types:\n\n```typescript\nconst [document] = useSelectedDrive();\n\n// Get file nodes from the drive\nconst fileNodes = document?.state.global.nodes.filter(\n  (node) => node.kind === \"file\"\n) || [];\n\n// Filter by document type\nconst documentModels = fileNodes.filter(\n  (node) => node.documentType === \"powerhouse/document-model\"\n);\n```\n\nReference implementation: `packages/vetra/editors/vetra-drive-app/`.\n\nSince [[document model vs document editor vs app serves different purposes]], apps manage collections while editors handle individual documents.\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[model-editor wiring]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:01:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:01:56.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Drive editors filter document.state.global.nodes by kind and documentType to display documents within a drive",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

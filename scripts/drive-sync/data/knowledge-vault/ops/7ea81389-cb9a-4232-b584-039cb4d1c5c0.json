@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:41.448Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "dispatch-accepts-onerrors-callback",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:41.448Z"
+        },
+        "version": 0,
+        "documentId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:41.448Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "lxo72zFWTkSaoxsldKI5jTeZZ8A=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The editor dispatch function accepts an optional onErrors callback as its second parameter for handling reducer errors",
+        "updatedAt": "2026-05-13T13:00:32.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:41.448Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:41.448Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "4t3NrqLokkf4MqjzHqImjTIb8WE=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:32.000Z",
+        "description": "dispatch(action, (errors) => {...}) lets editors handle errors from reducer execution inline."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.960Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+        "targetId": "cf6ed144-884d-4784-8d50-9f25aa8d4aac",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.960Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9CkPSThbl8pl2OszaMd6Bwe/0PI=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:32.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.982Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+        "targetId": "01631563-4f79-4ac1-83b5-f9197901ae63",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.982Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "PrxqG/ykrGybgJxJQo2MAbf6+H8=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "When dispatching actions in an editor, the second argument to `dispatch` is an `onErrors` callback invoked with any errors thrown by reducers processing the actions. This pattern supports displaying error messages to users, logging errors for debugging, and triggering recovery actions. Example: `dispatch(addTodoItem({ text }), (errors) => { alert(errors[0]?.message); });`",
+        "updatedAt": "2026-05-13T13:00:32.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:01.001Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+        "targetId": "2551d197-24db-4a9a-85e8-2c658b6e20df",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:01.001Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "fbR2lqaxwmVqYnkKnlHcspGTzm0=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:01.020Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+        "targetId": "d8e86a8a-9a95-4ef4-8f79-5e205e80d765",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:01.020Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "boaxKWrZqrQ1PpPPKk4C54TaNUQ=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "27d1d4e9-766e-4b86-8100-ff902c38bdc1",
+        "name": "editors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:01.039Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7ea81389-cb9a-4232-b584-039cb4d1c5c0",
+        "targetId": "4ef47e6a-20b9-4687-94c2-5aeffcf8621d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:01.039Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ngFw/ABEuL9xm++AKR5uXuDuul8=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fbc99cb8-734e-4f38-9f6e-3e896bfd5315",
+        "name": "error-handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "voUm4oCmWCnoh7k8TDWQfnfs/l0=",
+    "timestampUtcMs": "2026-05-13T13:00:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5684b23d-45da-45e9-b5e1-b521df3f19d6",
+        "name": "dispatch",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:32.000Z"
+    }
+  }
+]

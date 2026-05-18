@@ -1,0 +1,87 @@
+{
+  "links": [
+    {
+      "id": "lnk-f98801fb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f98801fb-35b5-4bc9-9541-5c28eef106e2",
+      "targetTitle": "achra-color-token-definitions"
+    },
+    {
+      "id": "lnk-3887071a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3887071a-3c69-4b70-b66b-58d055b32d2e",
+      "targetTitle": "vetra-color-token-definitions"
+    },
+    {
+      "id": "lnk-905b9f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "905b9f98-b040-4aaf-a4ed-d7dfb0874eaa",
+      "targetTitle": "powerhouse-color-token-definitions"
+    },
+    {
+      "id": "lnk-5e2d9054-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5e2d9054-6035-4e27-928f-4718336e0e91",
+      "targetTitle": "shared-status-and-extra-colors"
+    },
+    {
+      "id": "lnk-0a3efcff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0a3efcff-c264-42b5-bfdc-553ebd3d2ece",
+      "targetTitle": "moc-design-tokens-and-theming"
+    },
+    {
+      "id": "lnk-473c1ad3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "473c1ad3-3b73-4a0f-bd92-35c066056ade",
+      "targetTitle": "packages-publish-to-npm-install-via-ph"
+    },
+    {
+      "id": "lnk-d9496ef1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d9496ef1-612d-4d63-aa42-02bc9e6873ba",
+      "targetTitle": "packages-published-to-npm-installed-with-ph"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Color Token Naming Convention",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [],
+  "content": "All three Powerhouse brand design systems (Achra, Vetra, Powerhouse) use a consistent CSS custom property naming convention for color tokens. The pattern is: --name for the base color, --name-foreground for the contrasting text color suitable for use on that surface, and --name-30 for a 30% opacity variant (using rgba). For example, --primary: #7A3AFF, --primary-foreground: #F3F5F7, --primary-30: rgba(122, 58, 255, 0.3). The :root selector defines light theme values (the default), while .dark class or [data-theme=\"dark\"] attribute selectors define dark theme overrides. Additional opacity variants exist at 50 and 70 levels for foreground colors (e.g., --foreground-70, --foreground-50). This convention is documented in CLAUDE.md and implemented across all colors.css files in the repository at https://github.com/powerhouse-inc/design-systems.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "Wouter Kampmann",
+    "createdAt": "2026-04-05T00:03:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-05T00:03:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "All Powerhouse brands use CSS custom properties following --name, --name-foreground, and --name-30 opacity variant patterns.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

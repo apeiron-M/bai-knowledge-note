@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-97e5ccbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "97e5ccbe-58b0-4496-8c20-f90ea5f35d31",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model"
+    },
+    {
+      "id": "lnk-d7e42f09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d7e42f09-bb6b-4b97-b4d9-177acd0335e3",
+      "targetTitle": "composite-channel-factory-routing"
+    },
+    {
+      "id": "lnk-2cf91263-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2cf91263-00a4-478e-b7f4-cd76e9123339",
+      "targetTitle": "bridge-pattern-gql-swarm-dual-sync"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sync state is persisted in three PGlite tables owned by SyncManager: remotes, cursors, and dead letters",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e517f2c1-06f7-4c80-bd46-647517cef452",
+      "name": "pglite-schema",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5b1aef8-641d-45cb-baca-6282a5a22603",
+      "name": "sync-cursors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "38a48bf4-18da-489b-9adf-ad11a3fbccdc",
+      "name": "dead-letters",
+      "topicDocumentId": null
+    },
+    {
+      "id": "de741a65-773c-4763-af6c-b421d9712eba",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The reactor's SyncManager persists sync state in PGlite (local Postgres-in-WASM) rather than ad-hoc plugin storage. Three tables cover the surface:\n\n| Table | Purpose |\n|-------|---------|\n| `sync_remotes` | Registered remotes with channel_type, push/pull state, failure counts |\n| `sync_cursors` | Per-remote ordinal-based cursor tracking for inbox and outbox |\n| `sync_dead_letters` | Failed operations with error details for retry |\n\nBecause these are durable reactor tables, channel implementations like SwarmChannel don't need their own persistence layer \u2014 cursors survive page reloads and failed ops remain queryable.\n\nThe plugin layer's own `plugin/state.ts` is kept minimal by comparison: it holds only UI-related state (Bee URL, UI cache fields, and drive mapping for the settings panel). This lets the channel evolve without leaking implementation state into the plugin.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:23.460Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:21:23.460Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "sync_remotes holds registered channels with failure counts; sync_cursors tracks per-remote ordinal cursors for inbox and outbox; sync_dead_letters persists failed ops with error detail for retry.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

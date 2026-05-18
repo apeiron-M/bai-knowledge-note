@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:08.968Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-chunks-4kb-content-addressing",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b16e0f9a-a6f7-4bc8-ba71-df6aac10ed2f",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:08.968Z"
+        },
+        "version": 0,
+        "documentId": "b16e0f9a-a6f7-4bc8-ba71-df6aac10ed2f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:08.968Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "0wPyL8Pi+X42gpzGjE+P4FxNCC0=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Swarm stores all data as 4KB content-addressed chunks in a Merkle hash tree",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:08.968Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b16e0f9a-a6f7-4bc8-ba71-df6aac10ed2f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:08.968Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "fZivwLPvsXcR1ZffEw42MPUu+ro=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:45.000Z",
+        "description": "Every Swarm upload is split into 4KB chunks whose addresses are Keccak256(span || BMT_root). Files >4KB form a Merkle tree rooted at a single reference hash."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.895Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b16e0f9a-a6f7-4bc8-ba71-df6aac10ed2f",
+        "targetId": "8c92f8fd-dd24-4b20-ab66-54bd440e9584",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.895Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "DM1MK2sT459F72N4RKdUVV0aFf8=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:18.915Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b16e0f9a-a6f7-4bc8-ba71-df6aac10ed2f",
+        "targetId": "47a89c0b-cd52-488c-b81c-f18c5aec4820",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:18.915Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "9CGFSn4OHO+bar4bZhO5Swsei0g=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nSwarm's unit of storage is a **4KB content-addressed chunk (CAC)**. All data, regardless of size, is split into these chunks and reassembled via a Merkle hash tree.\n\n## Evidence\n\n- Max payload per chunk: 4096 bytes\n- Chunk address = `Keccak256(span || BMT_root(payload))` where span is an 8-byte total-length prefix\n- Self-verifying: any peer can recompute the address from the bytes\n- Files larger than 4KB form a **hash tree**: leaf chunks hold data, intermediate chunks hold 128 child references (32 bytes each)\n- The root chunk's address is the file's reference (32 bytes)\n- Encrypted files drop branching factor to 64 because each ref becomes 64 bytes (32-byte address + 32-byte decryption key)\n\n## Why it matters\n\nThe adapter uploads encrypted JSON via `POST /bytes`; the Bee node handles chunking automatically. We never touch raw chunks directly, but understanding this layer explains why reference sizes differ between plain and encrypted uploads.\n",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "7H2UgmIWZSHalkHFOxU6xv5U65Q=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "7xohktAmRkmS2HnIiNyS9GNrsxE=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f6fc1b10-6cd5-497f-b8dd-20b4b55c6749",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ryHNM2Leuy8uzHxZ4a+kWpciJbU=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4b653359-c4fa-4f64-9612-a650ce5db880",
+        "name": "chunks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "mDgsmGMo7kS/URnDObSxFJmP//A=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "66ff3b68-6562-4068-92fa-c57ad6ea2a85",
+        "name": "content-addressing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "4rrDzP8a55DhvN5NGTaeXOHocnY=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ee9e3c5c-5157-4d5a-b603-694f1ec68de6",
+        "name": "merkle-tree",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  }
+]

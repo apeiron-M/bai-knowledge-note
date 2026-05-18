@@ -1,0 +1,120 @@
+{
+  "links": [
+    {
+      "id": "lnk-8d0275db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d0275db-ded4-4a33-a165-979379ca372d",
+      "targetTitle": "most-state-schema-fields-should-be-optional-to-support-empty-documents"
+    },
+    {
+      "id": "lnk-82039075-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "82039075-8b9f-47a2-ab69-d03fee7444c3",
+      "targetTitle": "arrays-in-state-schemas-must-use-mandatory-notation"
+    },
+    {
+      "id": "lnk-3225e987-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+      "targetTitle": "input-types-should-reflect-user-intent-with-simple-specific-fields"
+    },
+    {
+      "id": "lnk-a7bba825-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a7bba825-90a1-4b90-8698-5b9fc7fe589b",
+      "targetTitle": "state-type-names-use-xstate-not-xglobalstate"
+    },
+    {
+      "id": "lnk-c41e76e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+      "targetTitle": "nullable-input-types-require-explicit-coalescing-to-match-state-types"
+    },
+    {
+      "id": "lnk-101aa6f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+      "targetTitle": "one-operation-per-user-intent-keeps-concerns-separated"
+    },
+    {
+      "id": "lnk-18b20746-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "18b20746-83e2-42ba-8bde-464043db804c",
+      "targetTitle": "operation-design-uses-descriptive-names-and-includes-examples-and-errors"
+    },
+    {
+      "id": "lnk-7d431931-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d431931-4abb-4545-b427-891f2a5b6478",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-010b9a46-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "010b9a46-8f86-4f5d-8808-9ec0bd97f9dc",
+      "targetTitle": "document-model-structure-has-metadata-specifications-and-modules"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "schema design",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4d601a90-284a-4170-b26b-eb9fe2e1903f",
+      "name": "schema design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "98263127-bd9a-490c-91b5-7a8467c23387",
+      "name": "GraphQL",
+      "topicDocumentId": null
+    },
+    {
+      "id": "032ff920-c3c7-4df5-a910-f186ecd6d59b",
+      "name": "document model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8d4da641-bf76-4eee-a3d8-84d7bcc73cf1",
+      "name": "MOC",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# schema design\n\nPatterns and conventions for designing document model state schemas in the Powerhouse ecosystem.\n\n## Type Naming\n- [[state type names use XState not XGlobalState]] \u2014 the code generator expects `<Name>State`, not `<Name>GlobalState`\n\n## Arrays and Objects\n- [[arrays in state schemas must use mandatory notation]] \u2014 `[ObjectType!]!` with `OID!` fields for array items\n\n## Required vs Optional Fields\n- [[most state schema fields should be optional to support empty documents]] \u2014 documents start empty; use `!` sparingly\n\n## Input Design\n- [[input types should reflect user intent with simple specific fields]] \u2014 flat, descriptive inputs over nested structures\n- [[operation design uses descriptive names and includes examples and errors]] \u2014 naming and documentation standards\n\n## Scope\n- [[global scope shares state among all users while local scope is private]] \u2014 when to use each scope\n\n## Operation Design\n- [[one operation per user intent keeps concerns separated]] \u2014 one user action = one operation\n\n## Document Model Structure\n- [[document model structure has metadata specifications and modules]] \u2014 the three layers of a model\n- [[document models have 37 available operations across 7 categories]] \u2014 full operation taxonomy\n\n---\n\nTopics:\n- [[index]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:04:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:04:53.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Conventions for GraphQL state schemas -- type naming, scalars, arrays, required vs optional fields",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

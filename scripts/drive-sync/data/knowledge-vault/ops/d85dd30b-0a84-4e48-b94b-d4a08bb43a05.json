@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:49.870Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "manifest-as-reference-feed-pattern",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d85dd30b-0a84-4e48-b94b-d4a08bb43a05",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:49.870Z"
+        },
+        "version": 0,
+        "documentId": "d85dd30b-0a84-4e48-b94b-d4a08bb43a05",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:49.870Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "JDQXL6VafM9msZVMkMMYkRzxgHA=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Manifests are uploaded encrypted to /bytes and only the 64-char hash is written to the feed",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:49.870Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d85dd30b-0a84-4e48-b94b-d4a08bb43a05",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:49.870Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "u253h73vszHbdVuBKKCo45dFViY=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:37.000Z",
+        "description": "The regenerate-and-publish pattern keeps feed SOCs tiny (8-byte timestamp + 64-byte reference = 72 bytes) and moves manifest size/latency to /bytes where it belongs."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.675Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d85dd30b-0a84-4e48-b94b-d4a08bb43a05",
+        "targetId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.675Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "TQhlbp+0tNOyJk7Z+VdhCS/fMSA=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.700Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d85dd30b-0a84-4e48-b94b-d4a08bb43a05",
+        "targetId": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.700Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "XfhB9IzDUOAZqBNY+pq10PaOVH4=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Rather than inlining large manifest JSON into a feed chunk, Connect uses a regenerate-and-publish pattern:\n\n1. Serialize the manifest to a JSON string.\n2. Encrypt it with AES-256-GCM \u2192 encrypted bytes.\n3. Upload to `/bytes` \u2192 receive a 64-char content hash.\n4. Write ONLY the hash to the feed \u2192 a 72-byte SOC (8-byte timestamp + 64-byte reference).\n\nReading reverses the flow: read the feed to get the hash, download the encrypted bytes from `/bytes`, decrypt, and parse JSON.\n\nThis pattern keeps feed writes fast (tiny SOC payloads) and is why feeds are a cheap mutable index over large, otherwise-immutable data. It applies uniformly to document, drive, and user manifests.\n\nThe `SwarmClient` also auto-detects legacy feeds: a feed that contains inline JSON instead of a 64-char hex reference is read with the legacy path for backward compatibility.",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.720Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d85dd30b-0a84-4e48-b94b-d4a08bb43a05",
+        "targetId": "bbb27285-54e1-4262-906b-305958596c5a",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.720Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Sont3MzafkevX7hy01Q5j0cdqyI=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:20.005Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "VSfBKozmiSCETg1x3bnTYgq26zU=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "164fbe4d-037b-4b2b-891a-d4713245efcf",
+        "name": "manifest-pattern",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "g6SBWVLROJUMclV4VfnmS9zIsmI=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a4762aae-8802-4ee1-8872-05894d310640",
+        "name": "feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "oHILDERJ9aX4As3X5AzBN3my9Yc=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "df2b28a4-2821-49c7-9a9e-8ac36960d2d3",
+        "name": "bytes-storage",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Fs1tlHNjP9mC0Nw2jRLZlN45tGA=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a499b2a0-6236-404d-8660-242d7962ff26",
+        "name": "regenerate-publish",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  }
+]

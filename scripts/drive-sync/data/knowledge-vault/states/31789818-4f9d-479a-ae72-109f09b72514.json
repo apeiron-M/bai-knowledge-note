@@ -1,0 +1,80 @@
+{
+  "links": [
+    {
+      "id": "lnk-cd99ab61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd99ab61-e00a-4312-9b47-aa96054f8582",
+      "targetTitle": "masterchef-accumulator-pattern-enables-per-token-revenue-tracking"
+    },
+    {
+      "id": "lnk-2d6a278b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2d6a278b-e72f-4922-86bb-a0e0f49d7285",
+      "targetTitle": "chat-document-share-parity-shipped"
+    },
+    {
+      "id": "lnk-f516f01e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f516f01e-e1e5-4012-9752-f58d63b4d32b",
+      "targetTitle": "swarm-postage-stamps-bucket-mechanics"
+    },
+    {
+      "id": "lnk-ad215bd1-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ad215bd1-74af-4a08-bdee-be8f5f51ed07",
+      "targetTitle": "powa-document-model-bridges-on-chain-contracts-with-off-chain-governance"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "powa-revenue-distribution model captures epoch-based token revenue sharing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d7762413-d0f4-42da-a4a9-0e2194a78e02",
+      "name": "powa-revenue-distribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a2ea7788-295f-4757-9094-698a7f9c4af8",
+      "name": "governance-token",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# powa-revenue-distribution model captures epoch-based token revenue sharing\n\n## Purpose\n\nModels a revenue distribution system where revenue is split proportionally across multiple epochs, each containing investor tokens (iPOWA) and contributor tokens (cPOWA). Each epoch has a weight factor that determines its share of total revenue. The document model provides an off-chain configuration, simulation, and audit layer for what ultimately deploys as Solidity smart contracts.\n\nSource: [NicWickman/powa](https://github.com/NicWickman/powa)\n\n## State Schema\n\n**Core entities (from requirements, not yet architected):**\n\n- **Epoch** \u2014 index, iPOWA supply, cPOWA supply, weight factor, status (DRAFT/APPROVED/DEPLOYED/RETIRED), on-chain addresses (post-deploy), label\n- **Revenue Configuration** \u2014 total amount, revenue token identifier, distribution date\n- **Distribution Record** \u2014 epoch reference, deposited amount, iPOWA/cPOWA distributed amounts, dust, tx hash, timestamp\n- **User Holding** (simulation, likely local scope) \u2014 iPOWA/cPOWA balances per epoch, computed claimable\n- **Claim Target** \u2014 account address, target contract address, target type\n\nGlobal scope: epochs, revenue config, distribution records\nLocal scope (candidate): user holding simulations\n\n## Modules\n\nProposed module split (deferred to Architect):\n\n1. **EpochManagement** \u2014 create, edit, reorder epochs; status lifecycle transitions\n2. **RevenueConfiguration** \u2014 set total revenue, denomination, schedule\n3. **DistributionTracking** \u2014 record deposits, per-epoch actuals, dust, claim events\n4. **HolderSimulation** \u2014 define user holdings, compute claimable amounts\n5. **TargetConfiguration** \u2014 register claim destinations per account\n\n## Key Design Decisions\n\n- Off-chain model represents the *business view* (epoch config, allocations, claims), not Solidity internals (accumulators, rewardDebt)\n- Status lifecycle (DRAFT\u2192APPROVED\u2192DEPLOYED\u2192RETIRED) provides a governance gate before irreversible on-chain deployment\n- Computed fields (weighted supply, revenue share, claimable) may be derived at render time rather than stored \u2014 Architect decides\n- This is a **new functional zone** (Token Economics / Revenue Distribution) \u2014 does not extend any existing Powerhouse model\n- Maximum 20 epochs per document (mirrors on-chain gas limit policy)\n\n---\n\nRelevant Notes:\n- [[epochs distribute revenue proportionally by weighted token supply]]\n- [[masterchef accumulator pattern enables per-token revenue tracking]]\n- [[powa document model bridges on-chain contracts with off-chain governance]]\n\nTopics:\n- [[ecosystem map]]\n- [[schema design]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:42:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:42:12.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Document model for configuring and tracking POWA multi-epoch revenue distribution across iPOWA (investor) and cPOWA (contributor) token holders",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

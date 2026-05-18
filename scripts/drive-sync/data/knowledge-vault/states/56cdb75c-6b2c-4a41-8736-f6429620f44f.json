@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a49fad15-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-2818230c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+      "targetTitle": "schema-design"
+    },
+    {
+      "id": "lnk-055a25fa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "055a25fa-4a15-4dc8-bbd1-3a366c7040be",
+      "targetTitle": "billing-statement-model-captures-periodic-billing-summaries"
+    },
+    {
+      "id": "lnk-4e37a31c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4e37a31c-5e1d-4eb3-ac80-7133d9bff49d",
+      "targetTitle": "billing-utils-computes-subscription-billing-breakdowns-and-metric-overages"
+    },
+    {
+      "id": "lnk-2656f583-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2656f583-0350-4c5b-bd0a-c707646e8807",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse uses GraphQL schemas as a lingua franca between stakeholders and pairs naturally with CQRS separating queries, mutations, and subscriptions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2f08bcf3-e166-4e47-8193-fb85ac9df932",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a860c59c-e52c-45bc-bf65-c5a94dd2d616",
+      "name": "cqrs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a3e5ba9-0363-4d12-8b20-a088672a72c1",
+      "name": "design-philosophy",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00d32f0e-2245-48d7-b0df-01485ac93a08",
+      "name": "typescript",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse chose GraphQL schemas as the common language (lingua franca) bridging designers, developers, and non-technical stakeholders. Schemas provide a structured representation of data types, relationships, and operations accessible as a single source of truth. For non-technical contributors, schemas offer a readable map of data flows; for developers, they serve as implementation contracts. GraphQL pairs naturally with CQRS (Command Query Responsibility Segregation): queries retrieve data, mutations handle modifications, subscriptions enable real-time updates. Combined with TypeScript, auto-generated types ensure consistency between client and server, eliminating runtime errors. This approach enables Rapid Application Development (RAD) by allowing front-end developers to plug into any document model without managing backend or state management.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GraphQL schemas serve as single source of truth readable by both technical and non-technical stakeholders, aligning with CQRS patterns.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:09.972Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-gsoc-many-to-one",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:09.972Z"
+        },
+        "version": 0,
+        "documentId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:09.972Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "lW8kDjmceiPBrIB6092FS4mP9YE=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "GSOC inverts feeds into a many-to-one mailbox where anyone with the mined key can write to one node",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:09.972Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:09.972Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5NOWvt5fDUIiSYhoj+gCxPudWqI=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:45.000Z",
+        "description": "A private key is mined so its SOC address falls in the target node's neighborhood. Multiple writers share the key; target node subscribes via WebSocket."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.236Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+        "targetId": "905b9f98-b040-4aaf-a4ed-d7dfb0874eaa",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.236Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "aQzdg0IJzjKpoj9OUzjDVqo1Bwo=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.258Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+        "targetId": "04a9c333-aded-4144-b662-b17a0f350dad",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.258Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "+kTvYll2cb/4OT9YKxWmCqnx9m0=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\n**GSOC (Graffiti SOC)** is a many-to-one notification system that inverts the feed model \u2014 a shared mined private key lets multiple writers publish SOC updates that a single target node receives in real time.\n\n## Evidence\n\nMechanics:\n- A private key is mined so that its derived SOC address falls in the target node's neighborhood\n- Anyone with access to that private key can sign SOC updates\n- The target node subscribes via `WS /gsoc/subscribe/{address}` and receives updates as they arrive\n- Conceptually a \"mailbox\" anyone with the key can drop messages into\n\nComparison to feeds:\n\n|           | Feeds                 | GSOC                              |\n|-----------|-----------------------|-----------------------------------|\n| Writers   | Single (owner)        | Multiple (anyone with the key)    |\n| Readers   | Anyone                | Single target node                |\n| Direction | One-to-many broadcast | Many-to-one collection            |\n\nbee-js: `bee.gsocMine(targetOverlay, identifier, proximity?)`, `bee.gsocSend(stamp, signer, identifier, data)`, `bee.gsocSubscribe(address, identifier, handler)`.\n\n## Why it matters\n\nGSOC is the correct primitive for collaboration coordination: collaborators push notifications to a coordinator node without the coordinator needing to poll each participant's feed.\n",
+        "updatedAt": "2026-05-13T13:00:45.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.278Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+        "targetId": "c596b25e-f410-4aa3-822a-646ab559c3c7",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.278Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "47n/IBL35l4+4+ckedtfgrgQfB0=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:19.298Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+        "targetId": "83598633-2b97-4852-9d62-e50ea45508a0",
+        "relationshipType": "CONTRADICTS"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:19.298Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "qcqAzKsLAnSvnqZUAGFO8K3zgrU=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3e0b9d2c-d8a7-4141-a7e1-9c388ecbcd48",
+        "name": "gsoc",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "G8MKRd1aK30m4bLQ3kFiyNL3LR0=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8fef6576-6a5a-4e27-9c5b-cbddc2d296a8",
+        "name": "soc",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "FKJT8+PVt9L7yq/0ymOkwfru6ew=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5cac3290-2d63-4cd1-a58a-1f817b1af9b6",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Vs/oayJmEJW4iIAP+XD+It0dq9U=",
+    "timestampUtcMs": "2026-05-13T13:00:45.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d8672c8e-cda5-4aa9-a81b-643c8a78d3ad",
+        "name": "messaging",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:45.000Z"
+    }
+  }
+]

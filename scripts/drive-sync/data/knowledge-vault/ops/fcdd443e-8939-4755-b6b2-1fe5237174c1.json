@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:14.849Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "user-manifest-feed-structure",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "fcdd443e-8939-4755-b6b2-1fe5237174c1",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:14.849Z"
+        },
+        "version": 0,
+        "documentId": "fcdd443e-8939-4755-b6b2-1fe5237174c1",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:14.849Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "bY+R8KLr8oQSdHgKgOn7GH5Tf1o=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "User manifest feed stores drive index, stamps, and standalone documents",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:14.849Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "fcdd443e-8939-4755-b6b2-1fe5237174c1",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:14.849Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "D47LDpF9cF0YQfF9TIO7NrSpK9Q=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:47.000Z",
+        "description": "User manifest feed at ph:v2:user:<address> stores drives map, stamps, documents, and updatedAt as encrypted JSON on /bytes, referenced by feed index."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.819Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "fcdd443e-8939-4755-b6b2-1fe5237174c1",
+        "targetId": "60ed4add-4e40-4c89-bdf3-3d2de02d9bda",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.819Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "7rzTeY2sksKHf0L2J/rfCEaJNAU=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.848Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "fcdd443e-8939-4755-b6b2-1fe5237174c1",
+        "targetId": "3d61b8cc-2823-4233-b0e8-cb95e44b0ab0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.848Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "wfbFa7W3ZDPU0/YwP5RRMm2zLvo=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# User Manifest Feed Structure\n\nThe user manifest feed lives at topic `ph:v2:user:<address>` and is owned by the user's signer address. Each feed index points to a `/bytes` upload containing encrypted JSON.\n\n## Schema\n\n```json\n{\n  \"address\": \"0xAlice\",\n  \"drives\": {\n    \"drive-abc\": {\n      \"name\": \"Finance Drive\",\n      \"documentIds\": [],\n      \"lastUpdated\": \"2026-04-10T12:00:00Z\"\n    }\n  },\n  \"stamps\": {},\n  \"documents\": {},\n  \"updatedAt\": \"2026-04-10T12:00:00Z\"\n}\n```\n\n## Role\n\n- Serves as the top-level index into a user's data on Swarm\n- Points to drives (each with its own manifest feed)\n- Tracks postage stamps and standalone documents\n- Recovery starts here: read the user manifest, then descend into drive manifests, then document manifests\n",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.870Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "fcdd443e-8939-4755-b6b2-1fe5237174c1",
+        "targetId": "139dad67-0851-4575-bc96-1276067c618e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.870Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "7TfiX+S6dsXjbLHsVyUaHldEBao=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:45:54.611Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "oZicwdp+ZmNuiuHYyq260nhjE1g=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c42b9329-1e31-4c31-8226-139e4bd39232",
+        "name": "user-manifest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "wTimIaO4Y2pn35E59jrssWJeVuE=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2b8bef92-1e16-44ed-b777-0557e054da31",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "WIc3152Bb2JiWYrLZeLimOMJxYg=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1a615cdb-33da-4f25-a11b-122c4157060a",
+        "name": "feed-structure",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  }
+]

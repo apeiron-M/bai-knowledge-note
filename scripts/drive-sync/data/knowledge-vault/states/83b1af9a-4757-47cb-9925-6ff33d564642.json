@@ -1,0 +1,74 @@
+{
+  "links": [
+    {
+      "id": "lnk-5739f1f1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5739f1f1-4e1e-49f9-9fca-0a559b466276",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-c9b2328d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9b2328d-e39d-472f-9523-373c7d3b2451",
+      "targetTitle": "ecosystem-map"
+    },
+    {
+      "id": "lnk-4791cd33-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4791cd33-4d85-4e68-8c36-73f4ff063295",
+      "targetTitle": "resource-instance-model-tracks-provisioned-resource-lifecycle"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "resource-template model defines reusable service catalog blueprints",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "260ff216-b675-4f52-8128-c523e6d96d04",
+      "name": "resource-template",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ca79961-24ec-43b6-ada5-1dab766914bd",
+      "name": "service-pricing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# resource-template model defines reusable service catalog blueprints\n\n`powerhouse/resource-template` defines the base configuration that ServiceOfferings build on. Templates provide the service catalog structure without pricing.\n\n## State Shape\n\n```graphql\ntype ResourceTemplateState {\n    id: PHID!\n    operatorId: PHID!              # \u2192 BuilderProfile (external)\n    title: String!\n    summary: String!\n    status: TemplateStatus!        # DRAFT | COMING_SOON | ACTIVE | DEPRECATED\n    targetAudiences: [TargetAudience!]!\n    setupServices: [String!]!\n    recurringServices: [String!]!\n    facetTargets: [FacetTarget!]!\n    services: [Service!]!\n    optionGroups: [OptionGroup!]!\n    faqFields: [FaqField!]\n    contentSections: [ContentSection!]!\n}\n```\n\n## Modules (7)\n\n| Module | Operations | Purpose |\n|--------|-----------|---------|\n| template-management | 4 | Info, status, operator, ID |\n| audience-management | 2 | Add/remove target audiences |\n| facet-targeting | 4 | Set/remove facet targets, add/remove options |\n| service-category-management | 2 | Set setup/recurring service lists |\n| service-management | 5 | Service CRUD, facet bindings |\n| option-group-management | 3 | Option group CRUD |\n| content-section-management | 3+3 | Content sections + FAQ CRUD |\n\n## Key References\n\n- `operatorId: PHID` \u2192 BuilderProfile (external)\n- `Service.parentServiceId: OID` \u2192 Service (self-referencing hierarchy)\n- `Service.optionGroupId: OID` \u2192 OptionGroup\n- `facetBindings.facetType: PHID` \u2192 Facet (this project)\n- ServiceOffering.`resourceTemplateId` \u2192 references this model\n\n---\n\nTopics:\n- [[schema design]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:42:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:42:35.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "28 operations across 7 modules \u2014 defines base configuration for resources including services, option groups, facet targeting, FAQs, and content sections",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

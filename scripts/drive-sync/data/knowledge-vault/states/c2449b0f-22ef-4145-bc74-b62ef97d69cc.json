@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-5cc3c6a5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5cc3c6a5-e5e3-4aa2-af00-39265af3023f",
+      "targetTitle": "pglite-sync-tables-persist-remote-state"
+    },
+    {
+      "id": "lnk-a9803a1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    },
+    {
+      "id": "lnk-c7b131a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-a510be45-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-84b14875-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+      "targetTitle": "swarm-bytes-vs-feeds"
+    },
+    {
+      "id": "lnk-478a428d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "478a428d-a4be-4918-9fda-7ebea63c0d97",
+      "targetTitle": "swarmchannel-push-pull-flow"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Swarm pull cycle polls user and document manifests then decrypts batches into the inbox.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-c634a118-1",
+      "name": "pull-cycle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-c634a118-2",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-c634a118-3",
+      "name": "manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-c634a118-4",
+      "name": "feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nPull is manifest-driven: poll user feed \u2192 read user manifest \u2192 per-document manifests \u2192 batch references \u2192 /bytes downloads \u2192 decrypt \u2192 inbox.\n\n## Step-by-step\n1. SwarmChannel polls the user's feed at the configured interval (`pollIntervalMs`).\n2. Reads the user manifest \u2192 discovers drives and documents.\n3. For each document, reads its manifest \u2192 discovers operation batches.\n4. Downloads each batch from `/bytes`, decrypts with AES-256-GCM, deserializes.\n5. Converts to `SyncOperation` objects and adds to `SwarmChannel.inbox`.\n6. SyncManager applies them to the local reactor via `reactor.load()`.\n7. Cursor advances in `sync_cursors`; subsequent polls only fetch new operations.\n\n## Implications\n- First load on a new device walks the full manifest tree but only applies each batch once.\n- Steady-state pulls are cheap \u2014 only new manifest entries trigger downloads.\n- The manifest tree is the discovery index; without it, the pull cannot proceed.\n\n## Source\nSwarm Channel Architecture, \"Pull Cycle (Swarm \u2192 local)\".",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "procedure",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:19:49.348Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SwarmChannel polls the user feed, walks manifests to discover documents and batches, downloads + decrypts via /bytes, and hands SyncOperations to SyncManager.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

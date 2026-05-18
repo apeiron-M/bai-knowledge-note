@@ -1,0 +1,126 @@
+{
+  "links": [
+    {
+      "id": "lnk-de87617a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de87617a-ac4d-4b5d-9b13-3a1b6bd5ece6",
+      "targetTitle": "operations-use-verb-noun-naming"
+    },
+    {
+      "id": "lnk-1cd824c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1cd824c0-68e6-4ff1-ae69-20cb67afc378",
+      "targetTitle": "testing-uses-vitest-and-generatemock"
+    },
+    {
+      "id": "lnk-a7bba825-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a7bba825-90a1-4b90-8698-5b9fc7fe589b",
+      "targetTitle": "state-type-names-use-xstate-not-xglobalstate"
+    },
+    {
+      "id": "lnk-b595cf41-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b595cf41-a279-48e0-ba46-6cf4e6e575fd",
+      "targetTitle": "truthy-checks-are-safer-than-undefined-checks-for-optional-state-assignment"
+    },
+    {
+      "id": "lnk-1c3536c6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c3536c6-3fdd-4421-ad4e-1a99364896b4",
+      "targetTitle": "never-use-tothrow-when-testing-reducer-errors"
+    },
+    {
+      "id": "lnk-3c5b4046-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c5b4046-8360-41ab-8751-76a69ee3900b",
+      "targetTitle": "error-names-must-end-with-error-and-use-pascalcase"
+    },
+    {
+      "id": "lnk-98cc2400-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98cc2400-ddf5-4763-a55a-86613fc2cfe3",
+      "targetTitle": "never-import-error-classes-manually-in-reducer-code"
+    },
+    {
+      "id": "lnk-cff98458-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cff98458-434d-4c99-8311-c477d8b2084c",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-cb9b8c33-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cb9b8c33-1050-46ed-ae89-e9b3f65a367b",
+      "targetTitle": "helper-functions"
+    },
+    {
+      "id": "lnk-7cd270db-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7cd270db-0266-4248-be5d-7157ac502465",
+      "targetTitle": "document-models-use-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reducers must be pure functions, but Powerhouse uses Immer.js to allow mutation-style syntax",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e25d25b7-96c4-4392-87be-386bf129734f",
+      "name": "reducers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f6b5b094-f2ce-456f-b9c5-66d6c94185a1",
+      "name": "immer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6d300c7-69eb-448f-864c-a88a605c1dcb",
+      "name": "immutability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "15fdf7bf-0a84-4b62-ac27-5c6f249eaec8",
+      "name": "pure-functions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Reducers are the core logic units implementing state transitions. They follow the pattern `(currentState, action) => newState` and must obey strict rules:\n\n- **Deterministic**: Same state + action always produces the same result\n- **No side effects**: No API calls, no `Math.random()`, no `Date.now()`, no DOM manipulation\n- **Immutable**: Never mutate the input state directly\n\nHowever, Powerhouse uses **Immer.js** under the hood. This means you can write code that *looks* like direct mutation (e.g., `state.items.push(...)`) but Immer ensures it produces an immutable update. This gives readable code while maintaining the immutability guarantees required for event sourcing.\n\nPurity ensures replaying the same sequence of events always yields the same final state. Immutability ensures each event defines a discrete state transition for the audit trail.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Reducers follow (state, action) => newState pattern. Immer.js lets you write mutable-looking code that produces immutable updates.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

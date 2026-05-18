@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-c7b131a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-a029226e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a029226e-d12d-4760-aee1-f9b5909cff1e",
+      "targetTitle": "public-profile-feed-publishes-the-beenodepublickey-and-overl"
+    },
+    {
+      "id": "lnk-84b14875-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+      "targetTitle": "swarm-bytes-vs-feeds"
+    },
+    {
+      "id": "lnk-d85dd30b-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d85dd30b-0a84-4e48-b94b-d4a08bb43a05",
+      "targetTitle": "manifest-as-reference-feed-pattern"
+    },
+    {
+      "id": "lnk-41af7645-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+      "targetTitle": "swarm-push-cycle-encrypt-bytes-feed"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Encryption lives at the /bytes layer while feeds carry only plain-text content references",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6e8d777a-41cb-430b-98e5-c6578ccf9f05",
+      "name": "encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3058fe10-839c-4201-856a-bad437e7d1e1",
+      "name": "feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "354d63fc-a0de-4245-bb48-642fb3ee1075",
+      "name": "bytes-storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "52227f0a-4ed7-4c36-bca1-be08bc0e344d",
+      "name": "manifest-pattern",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A load-bearing design rule: encryption lives at the `/bytes` layer, NOT the feed layer. Feeds store plain-text references (content hashes). The data those references point to is what is encrypted.\n\nConsequences:\n\n- Anyone can read the feed and obtain the reference, but without the wallet-derived AES key the `/bytes` payload is opaque.\n- Feed-level optimizations (like `uploadReference` vs `uploadPayload`, or batching multiple feed updates) don't affect encryption \u2014 they only change how the 64-char hash gets packed into the Single Owner Chunk (SOC), not the encrypted data at `/bytes`.\n- The same pattern works for document, drive, and user manifests: serialize JSON, encrypt, upload to `/bytes`, then write only the hash to the feed.\n\nThis separation is also why the feed SOC stays tiny (8-byte timestamp + 64-byte reference = 72 bytes) even when manifests grow large.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:10.772Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:21:10.772Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Feeds store a 64-char hash pointing at encrypted /bytes data; readers need wallet-derived AES key to decrypt \u2014 feed-level optimizations never affect encryption.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

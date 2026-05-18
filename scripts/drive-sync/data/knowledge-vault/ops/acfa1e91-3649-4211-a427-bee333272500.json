@@ -1,0 +1,247 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.202Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "redundancy-stamp-cost-medium-25pct",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "acfa1e91-3649-4211-a427-bee333272500",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:03.202Z"
+        },
+        "version": 0,
+        "documentId": "acfa1e91-3649-4211-a427-bee333272500",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.202Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "lzYzKKDJmqDkqn/VBWGzVPZNxX0=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "RedundancyLevel MEDIUM adds ~25% stamp cost via parity chunks",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.202Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "acfa1e91-3649-4211-a427-bee333272500",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.202Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/AINmv9+JDLdvH4f4BXDY7fNr5M=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:43.000Z",
+        "description": "MEDIUM adds roughly 1 parity chunk per 4 data chunks. Must thread the redundancy arg into calculateRemainingSize/calculateSize so stamp-utilization logic sees the real cost."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.992Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "acfa1e91-3649-4211-a427-bee333272500",
+        "targetId": "2d6a278b-e72f-4922-86bb-a0e0f49d7285",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.992Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "nIe2H8ZBFeyIzFJW3Dob3n01Hd4=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "observation",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.015Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "acfa1e91-3649-4211-a427-bee333272500",
+        "targetId": "dd790977-aed8-4b73-a39b-c9dcec51af7c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.015Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "aFUriDSDlQjatLXBGr/FUJEczKA=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Stamp-cost accounting for `RedundancyLevel.MEDIUM`\n\nThe tradeoff is write-side, not read-side:\n\n- **Stamp usage per write goes up ~25%**: MEDIUM adds ~1 parity chunk per 4 data chunks.\n- **Op-batches (~1KB) still fit in one SOC**, so the overhead is negligible for `collab-ops-feed.ts:138`.\n- **Larger chunks** (drive share bundle, manifest snapshots) see meaningful additional stamp consumption.\n- **Reader side: zero runtime cost** if chunks arrive \u2014 redundancy is only consulted on miss/timeout.\n\n**Required code change:** our existing stamp-utilization logic calls `calculateSize` / `calculateRemainingSize(encryption, ...)`. To report honest headroom, we must thread the `redundancyLevel` parameter through these calls: `calculateRemainingSize(true, MEDIUM)` rather than just `calculateRemainingSize(true)`.\n\n**Rollback rule from the experiment plan:** if stamp-utilization chirps warn of exhaustion, back off to `OFF` for ops and keep `MEDIUM` only for long-lived bundles.",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.035Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "acfa1e91-3649-4211-a427-bee333272500",
+        "targetId": "88943e41-9dd1-44c4-9734-989c3f45e794",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.035Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "xTfwIxIjb7hqLAqN6AsgoVkNmqQ=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:42:03.432Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "egpC68bx5oGa1Lf8Wk06cMF7UqI=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d09a3f01-fcad-46ee-998c-48c0f67f5c9c",
+        "name": "stamp-utilization",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "/Xu3ZXYLts8iTiGTGgN48tcTtR8=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a629ff22-3ac4-457e-bc2e-0a590f330134",
+        "name": "redundancy-level",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "5gAU3aUSx9peK9GHHLyeSjmhZE0=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "30a40aa4-64e4-4cff-a6c3-35fd2aecbba5",
+        "name": "parity-chunks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  }
+]

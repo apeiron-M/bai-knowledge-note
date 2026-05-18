@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-4987e6a0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4987e6a0-afc9-4286-8fcb-56263a6c6de6",
+      "targetTitle": "DocumentToolbar has three independent layers of styling control"
+    },
+    {
+      "id": "lnk-d508a76d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d508a76d-410b-4192-bb0d-49adec440906",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-8abdf393-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8abdf393-6a17-4036-ad20-492d0aaeb4a5",
+      "targetTitle": "collab-three-milestone-build-order"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4f2c439d-61a1-44d8-9204-988ff8c24121",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a6e62a71-08b4-497b-bb2e-f9443ec9a863",
+      "name": "editor-styling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49b1a311-9e6a-4f90-9822-e70dd215b6d6",
+      "name": "connect-app",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The revision history panel is rendered by Connect (not the editor) when the user clicks the history button. It lives inside `#document-editor-context` in the DOM, which means the editor component has no React-level control over its appearance.\n\nTo style it, use CSS in the project's `style.css` scoped to the document type:\n\n```css\n#document-editor-context[data-document-type=\"your/document-type\"] {\n  background-color: #1e1e2e;\n  color: #cdd6f4;\n}\n```\n\nKey CSS targets inside the revision history panel:\n\n- `.bg-slate-50` / `[class*=\"bg-gray-50\"]` \u2014 header pills (DOC ID, BRANCH, scope)\n- `article` \u2014 revision cards\n- `.rounded-md.bg-slate-50` \u2014 timeline content area\n- `.border-slate-100` \u2014 timeline left border\n- `h2.bg-slate-50` \u2014 day separator headers\n- `.text-gray-900`, `.text-stone-300`, `.text-gray-600` \u2014 text colors\n- `.border-gray-200`, `.bg-white` \u2014 borders and backgrounds\n\nAll overrides require `!important` since they compete with Connect's own Tailwind utility classes.\n\nThe `data-document-type` attribute selector is critical \u2014 it scopes your styles to only your editor type, preventing them from leaking into other editors in the same Connect instance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T14:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-03-30T14:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The revision history panel is rendered by Connect outside the editor tree. It lives in #document-editor-context and can only be themed via scoped CSS using data-document-type attribute selectors.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

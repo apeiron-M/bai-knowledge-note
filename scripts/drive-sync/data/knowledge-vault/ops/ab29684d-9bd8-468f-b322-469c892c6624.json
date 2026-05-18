@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:01.983Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-read-models-pre-ready-phase",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ab29684d-9bd8-468f-b322-469c892c6624",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:01.983Z"
+        },
+        "version": 0,
+        "documentId": "ab29684d-9bd8-468f-b322-469c892c6624",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:01.983Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Vtq09saI5tt64tLi/WGeSOkqW3k=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Custom read models registered via withReadModel run in pre-ready phase before JOB_READ_READY fires while processors run post-ready",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:01.983Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ab29684d-9bd8-468f-b322-469c892c6624",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:01.983Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "zCNzLDXmSHj7PNYr0N2mAqOnDZI=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:42.000Z",
+        "description": "Read models implement IReadModel.indexOperations() and complete before job is marked ready; processors run after via ProcessorManager."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.123Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ab29684d-9bd8-468f-b322-469c892c6624",
+        "targetId": "945a276b-3a2f-4e65-a3d8-390dbb7c46b5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.123Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "USl3nWBfP0eieo0Njmf/md7XrDc=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.149Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ab29684d-9bd8-468f-b322-469c892c6624",
+        "targetId": "d7e42f09-bb6b-4b97-b4d9-177acd0335e3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.149Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "C9Sov4O40Dmm6BsSbyEyPjFmeiE=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The reactor distinguishes between read models and processors by execution phase. Read models registered via `ReactorBuilder.withReadModel()` implement `IReadModel` with `indexOperations(operations: OperationWithContext[])` and run in the pre-ready phase -- they complete before `JOB_READ_READY` fires. This ensures derived views are consistent before reads. Processors registered via `ProcessorManager` run in the post-ready phase, after the job is marked complete. The reactor's internal components include `readModelCoordinator` (dispatches operations to all read models), `processorManager` (routes operations to user-defined processors), `documentView` (maintains document snapshots for reads), and `documentIndexer` (tracks parent/child relationships).",
+        "updatedAt": "2026-05-13T13:00:42.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.173Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ab29684d-9bd8-468f-b322-469c892c6624",
+        "targetId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.173Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "tYNng8pdPuHJ1FYqLSCAs5ekPho=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:15.199Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ab29684d-9bd8-468f-b322-469c892c6624",
+        "targetId": "37f3acba-44dc-4cb7-b575-1a967a7144f3",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:15.199Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "rDP40Y8HwrJFiqSP3M+Hm5CbNzY=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4db03786-3451-42c4-a20b-6ef6656bb475",
+        "name": "read-models",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "1NFE8pvG5xQ4EGEZsi4yVGVzi+c=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "58d59370-6799-4e12-8b17-6ec7e6ca5975",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "6x6jNAol1uD1xfAVuH4fWcDybQg=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b5f2e377-1e1e-4500-9882-04fafaba2507",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "yWg6RW/X6ckEEsCU99CaqK7SBTs=",
+    "timestampUtcMs": "2026-05-13T13:00:42.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cd2d01a0-f229-493f-b386-408293c1bf0e",
+        "name": "architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:42.000Z"
+    }
+  }
+]

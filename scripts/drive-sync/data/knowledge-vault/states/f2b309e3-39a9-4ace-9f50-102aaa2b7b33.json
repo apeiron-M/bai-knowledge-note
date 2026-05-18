@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-2d6a278b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2d6a278b-e72f-4922-86bb-a0e0f49d7285",
+      "targetTitle": "chat-document-share-parity-shipped"
+    },
+    {
+      "id": "lnk-3efc23f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3efc23f3-f6b4-4477-bba9-40c87ad50b0e",
+      "targetTitle": "act-cross-user-sharing-ecdh"
+    },
+    {
+      "id": "lnk-d096e0c3-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d096e0c3-bdc2-4e4f-91af-01eb3b3a3882",
+      "targetTitle": "share-bundle-three-object-layout"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sharing documents in chat bundles reactor state plus unflushed outbox ops, uploads via ACT, and delivers the reference through a PSS attachment.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "document-share",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "act",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Document share in chat\n\n### Build bundle (sender side)\n\n`buildDriveShareBundle(driveId, [docIds])`:\n\n- `reactorClient.get(docId)` for each doc \u2014 **local reactor is source of truth**.\n- `reactorClient.getOperations(...)` includes unflushed outbox ops (so the recipient gets the absolute latest state, not just what's on Swarm).\n- Fallback to Swarm manifest if a doc is not in the local reactor.\n- Preserves `action.context.signer.signatures` verbatim, so authorship stays intact on import.\n\nReturns: `{ documents[], folders, docFolders, preferredEditor }`.\n\n### ACT upload\n\n```\ncreateGrantees([bob.beeNodePubKey])  -> granteeRef, historyRef\nuploadFile(bundle, { act:true, historyRef, skipEncryption:true })\n                                      -> shareRef, actHistoryAddress\n```\n\n### PSS delivery\n\nAttachment payload:\n\n```\n{\n  kind: \"document-share\",\n  driveId, driveName,\n  shareReference, actHistoryAddress,\n  publisherBeeNodePubKey,\n  documents: [{ id, name, documentType }]\n}\n```\n\n### Recipient side\n\nBob receives PSS, `DocumentShareCard` renders, user clicks **Import**, `downloadFile` with ACT params, then `applyDocumentBundle()` materializes the drive, folders, and docs in Bob's reactor with original IDs and signatures intact.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "workflow",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:47:10.583Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "buildDriveShareBundle gathers docs via reactorClient, preserves signatures, uploads with createGrantees+ACT, and sends a document-share PSS message for recipient import.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

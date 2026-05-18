@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-9f165bef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f165bef-3f1d-4405-97ec-4e091d43efae",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-65b6b0c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65b6b0c3-c068-4ec6-b36e-71bc00b79aa9",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-0da87457-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0da87457-dfb3-4acc-b6cb-6906f7e07a94",
+      "targetTitle": "create-swarm-sync-builder-hook"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "src/plugin/init.ts exposes Swarm runtime status to Connect settings UI via the window.ph.swarm global",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3d19070d-7cf4-4316-9a68-4753c344ba57",
+      "name": "browser-plugin",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69843227-144c-47fa-ba6e-8de125675384",
+      "name": "settings-ui",
+      "topicDocumentId": null
+    },
+    {
+      "id": "895a4bde-67d2-4943-b410-674ace1d4088",
+      "name": "window-ph-swarm",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# window.ph.swarm Plugin Surface\n\nThe browser plugin in `src/plugin/init.ts` exposes Swarm runtime status to the Connect settings UI via the global `window.ph.swarm` object. This is the contract between the adapter core and the Connect-side settings UI components.\n\nThe plugin is responsible for:\n\n- **Bee detection** \u2014 probing the configured Bee endpoint (default `localhost:1633`) and surfacing connectivity state\n- **Stamp management** \u2014 status queries, top-up, expand, and create operations over the `/stamps` HTTP API\n- **Wallet integration** \u2014 triggering `personal_sign` for deterministic key derivation via `wallet-signer.ts`\n- **Event emission** \u2014 sync progress, stamp expiry warnings, and connection state changes\n\nA companion module `src/plugin/sharing.ts` implements cross-user encrypted sharing and import flows (drive bundles between sender and recipient addresses via share-manifest feeds).\n\nSettings UI components read from `window.ph.swarm` to render stamp health, storage stats, sync badges, folder trees, and USD-denominated pricing.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "integration",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:57:41.685Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:57:41.685Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The browser plugin publishes Bee detection, stamp management, wallet personal_sign, and event state on window.ph.swarm \u2014 the contract the Connect settings UI reads from.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

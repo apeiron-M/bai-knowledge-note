@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-cff98458-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cff98458-434d-4c99-8311-c477d8b2084c",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-c9b2328d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9b2328d-e39d-472f-9523-373c7d3b2451",
+      "targetTitle": "ecosystem-map"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Analytics dimension paths use slash-delimited hierarchies with LOD parameter controlling aggregation specificity across dimensions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "76698cbc-10d9-42ba-9319-4cd140274730",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29694a4b-65ad-48e0-b08c-aaca2772f2d0",
+      "name": "dimensions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "030fc229-5416-4d12-81df-c1b4c6526bc2",
+      "name": "querying",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "In the Analytics Engine, `AnalyticsDimension` objects have a `path` field using `/`-delimited hierarchical strings (like URIs). Querying with path `/atlas/mip40` matches all dimensions starting with that prefix. The LOD (level of detail) parameter controls result aggregation: LOD 0 groups all results into a single value; LOD 1 groups by the first path segment; LOD 2 by the first two segments, etc. LOD greater than the number of path parts appends `/*` wildcards but returns the same results as the highest meaningful level. Best practice: start with general queries (high LOD, broad path) and narrow down to specific paths and lower LODs for particular metrics. There will be thousands/millions of series objects but far fewer dimension objects.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Paths like /atlas/mip40/MIP40c3SP61 determine query scope; LOD 0 groups all results, increasing LOD increases aggregation specificity.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

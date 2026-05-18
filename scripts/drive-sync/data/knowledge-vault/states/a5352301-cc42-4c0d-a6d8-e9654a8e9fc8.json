@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-3058e945-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3058e945-8ca6-46c4-a44b-7ab8bd3728d6",
+      "targetTitle": "adapter-key-source-files"
+    },
+    {
+      "id": "lnk-2389f590-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+      "targetTitle": "new-device-recovery-via-wallet-and-manifest"
+    },
+    {
+      "id": "lnk-00740fca-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "00740fca-ac91-49b2-8353-cbd0988eaa02",
+      "targetTitle": "swarm-app-layer-aes-gcm-encryption"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect derives a deterministic AES-256-GCM key from a one-time wallet signature, caches it, and encrypts every operation batch before Swarm upload.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "security-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "wallet-signer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Key derivation (one-time)\n\n```\npersonal_sign(\"Sign to derive Swarm key...\")\n  -> keccak256(signature)\n  -> 32-byte private key\n  -> cached in IndexedDB  (no repeated signing)\n```\n\nBecause `personal_sign` is deterministic per message, **same wallet = same key = same access**. Recovery on a new device only needs the wallet.\n\n## Operation batch encryption\n\nEvery batch uploaded to `/bytes` is AES-256-GCM encrypted before upload and decrypted after download. Payload format:\n\n```\n[SWE prefix (3B)] [IV (12B)] [ciphertext]\n```\n\nThe SWE prefix is a magic-byte marker that lets the client reject any payload it accidentally reads that was not produced by this pipeline.\n\n## Feed authentication\n\nFeeds are signed with the same wallet-derived Swarm private key \u2014 only the owner can write, but anyone with the owner's public key (i.e. anyone who knows the Ethereum address) can read.\n\n## Where it lives\n\n- `adapter/src/swarm-crypto.ts` \u2014 AES-256-GCM encrypt/decrypt.\n- `adapter/src/wallet-signer.ts` \u2014 wallet signature to key derivation.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:47:10.583Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "personal_sign with a fixed message yields a keccak256 key cached in IndexedDB; every /bytes upload is AES-256-GCM with format SWE-prefix || IV(12) || ciphertext.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

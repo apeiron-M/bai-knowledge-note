@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e7f6fc14-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e7f6fc14-e78a-4f56-81f6-2540f44a0fb1",
+      "targetTitle": "swarm-mutable-stamps-for-feeds"
+    },
+    {
+      "id": "lnk-0b548435-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b548435-7d91-4cca-9beb-9fb14d5fce38",
+      "targetTitle": "bee-node-prerequisites-and-dev-mode"
+    },
+    {
+      "id": "lnk-590a66b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "590a66b8-06f7-4736-96f3-b22e7b737fd7",
+      "targetTitle": "chat-requires-both-users-to-run-full-bee-nodes-because-light"
+    },
+    {
+      "id": "lnk-5aba7d9f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5aba7d9f-e7b8-4bea-b898-94ce2dfd7edc",
+      "targetTitle": "bee-reactor-adapter-prerequisites"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "GSOC subscriptions only work on full Bee nodes and require mutable stamps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e53f1ef3-d710-4680-bffd-8914b77ff10d",
+      "name": "gsoc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "28d0c913-521b-4f30-9a11-6d838754f6b0",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b3f32a9f-1d64-4184-aea7-7654adb409f6",
+      "name": "bee-node",
+      "topicDocumentId": null
+    },
+    {
+      "id": "62e387b9-dfe7-4c1f-a8db-b61829c110b6",
+      "name": "postage-stamps",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nGSOC notifications have two hard constraints: the receiving node must be a **full node** (light nodes do not sync neighborhood chunks) and writers must use **mutable stamps** (to avoid bucket exhaustion on frequent signals).\n\n## Evidence\n\n- Light nodes do not store neighborhood chunks \u2014 they cannot see incoming SOC updates addressed to their neighborhood, so GSOC subscription is a full-node-only feature\n- Each GSOC send is a new SOC = a new chunk consuming a bucket slot. With immutable stamps, frequent notifications hot-spot a bucket and fail the batch well before TTL\n- Mutable stamps replace the oldest chunk in the overflowing bucket, so the notification channel self-garbage-collects\n\n## Why it matters\n\nAny architecture that uses GSOC for collaboration coordination (e.g. \"Connect instances register with a switchboard via GSOC\") has two environmental preconditions that affect deployment: the receiving instance must run a full node, and the stamp provisioning flow must request `immutableFlag: false`. Both are easy to get wrong silently.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:24:54.753Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Light nodes do not sync neighborhood chunks, so they cannot receive GSOC updates. Writers must use mutable stamps to avoid bucket exhaustion from frequent signals.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,353 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:23.628Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "moc-swarm-data-model",
+        "slug": "",
+        "model": "bai/moc",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+          "documentType": "bai/moc",
+          "createdAtUtcIso": "2026-05-13T13:00:23.628Z"
+        },
+        "version": 0,
+        "documentId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:23.628Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "6gFquwY5ofU5rl5EtsiS1h3t34w=",
+    "timestampUtcMs": "2026-05-13T13:00:49.000Z",
+    "action": {
+      "type": "CREATE_MOC",
+      "input": {
+        "tier": "DOMAIN",
+        "title": "Swarm Data Model",
+        "createdAt": "2026-04-21T19:32:02.603Z",
+        "description": "How Connect encodes its state on Swarm: feeds, manifests, SOCs, content-addressed chunks, and the topic namespace that ties them together.",
+        "orientation": "This MOC groups the primitives and shapes that form Connect's on-Swarm data model. At the lowest layer Swarm exposes two primitives \u2014 immutable /bytes and mutable owner-signed feeds built on Single Owner Chunks. Above that Connect layers a three-tier manifest hierarchy (user \u2192 drive \u2192 document), a versioned ph:v2 topic namespace, and specialized feeds (public profile, collab index, chat history). Notes here also cover operational realities \u2014 per-topic write locks, feed-backing stamp choices, the death of epoch feeds on bee-js 11, and why manifests are uploaded encrypted to /bytes with only their hashes inlined into feeds."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:49.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:23.628Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/moc",
+        "toVersion": 1,
+        "documentId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "tier": null,
+            "title": null,
+            "tensions": [],
+            "childRefs": [],
+            "coreIdeas": [],
+            "createdAt": null,
+            "noteCount": 0,
+            "parentRef": null,
+            "updatedAt": null,
+            "agentNotes": [],
+            "description": null,
+            "orientation": null,
+            "openQuestions": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:23.628Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.417Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "84b14875-3b71-431e-8b4b-fd7f651ef8b0",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.417Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.440Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "c596b25e-f410-4aa3-822a-646ab559c3c7",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.440Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.462Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "83598633-2b97-4852-9d62-e50ea45508a0",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.462Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.480Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "b16e0f9a-a6f7-4bc8-ba71-df6aac10ed2f",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.480Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.499Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "658449cc-d8be-48d0-ad33-39d25a934b74",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.499Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.518Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "139dad67-0851-4575-bc96-1276067c618e",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.518Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.536Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "fcdd443e-8939-4755-b6b2-1fe5237174c1",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.536Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.554Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "03bd55bd-c10f-4b31-bd78-66afa61d50a4",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.554Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.576Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "e803f11b-b047-408f-9a8a-082cd51e349b",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.576Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.597Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "be3c74ae-2cf9-40c8-862f-53332b9feee9",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.597Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.617Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "603050d9-7af9-4457-9a20-0fc7650a15d7",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.617Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.635Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "15a77113-4a91-40b3-b7ff-03e72f5b9272",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.635Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.653Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.653Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.673Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "9362a1a3-1359-4e74-ab8f-5db4a8f2fa97",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.673Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.692Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "d85dd30b-0a84-4e48-b94b-d4a08bb43a05",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.692Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.712Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "1f3686d9-d157-47d7-9f88-750d17af6181",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.712Z"
+    }
+  },
+  {
+    "index": 18,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.732Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "769fdabb-a894-415b-87af-88eb1726a722",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.732Z"
+    }
+  },
+  {
+    "index": 19,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.751Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "e59acafe-c649-4fb2-8bfe-e610d44948c1",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.751Z"
+    }
+  },
+  {
+    "index": 20,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:30.769Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "eccbbd60-a559-48ee-989c-27ed2a9e02b5",
+        "targetId": "9da8405c-a2bd-4927-a1b1-8f599001e545",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:30.769Z"
+    }
+  }
+]

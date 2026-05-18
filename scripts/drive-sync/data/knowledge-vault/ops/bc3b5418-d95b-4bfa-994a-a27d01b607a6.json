@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:49.626Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "live-collaboration-uses-per-user-op-feeds-plus-gsoc-pings-to",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:49.626Z"
+        },
+        "version": 0,
+        "documentId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:49.626Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "UZMOsbvqQCnh23YbWHmB7f5rocI=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Live collaboration uses per-user op feeds plus GSOC pings to trigger debounced pulls.",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:49.626Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:49.626Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "JJZEfFuYGabfg/HsGtswRDsdexk=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:36.000Z",
+        "description": "Each collaborator writes ops to their own feed; peers subscribe. GSOC sends doc-updated pings on op-committed, which trigger debounced reactor.load() pulls."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.505Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+        "targetId": "d0559247-b7b5-48e1-8f69-2e16f51ba1fd",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.505Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "TDVuNw0EytEbGktYrytwBM9RUbQ=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.529Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+        "targetId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.529Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "GRxL1QXEUbS9bEyxclCLlDKm+G0=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Model\n\nLive collaboration on a drive or document is **multi-writer**: each collaborator writes their own ops to their own feed, and everyone reads everyone else's. ACT gates read access (drive-level first, narrowed to doc-level later).\n\n## Flow\n\n1. Each peer mines a GSOC signer for the other's overlay (one-time, ~10\u201330s).\n2. Signers are exchanged via PSS (trusted channel, one-to-one).\n3. On op-committed, SwarmChannel pushes the op batch to the author's feed and sends a GSOC `doc-updated` ping to each other collaborator.\n4. Receivers pull new batches from the author's feed via `reactor.load()`.\n5. A timer-based poll remains as fallback when GSOC pings are missed.\n\n## GSOC notification payload\n\n```typescript\n{\n  type: \"doc-updated\",\n  documentId: \"b9e4fe2e-...\",\n  driveId: \"96ffdf26-...\",\n  fromAddress: \"0xadbA7C2F...\",\n  latestIndex: { document: 5, global: 12 },\n  timestamp: \"2026-04-15T18:30:05Z\"\n}\n```\n\nThe payload is small (<4KB) and only tells the receiver's SwarmChannel to pull; the actual ops travel via the feed.\n\n## Debouncing\n\nGSOC-triggered pulls are debounced so a flurry of ops (e.g. rapid typing) coalesces into a single pull.",
+        "updatedAt": "2026-05-13T13:00:36.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.550Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+        "targetId": "3b6e268e-c28a-4052-a935-7e58720494e8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.550Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "5tWsM0qizH1ruJLdqRu+q6SHVJY=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:28:00.483Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.570Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+        "targetId": "7bcb4292-89d1-4647-977a-8c5cdb581a7d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.570Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "GTNVJ/XXFqj+WikDbo8sBvPPwH0=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-9fdfe7adf8f9",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:07.589Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+        "targetId": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:07.589Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "abi88lLL8NZhx/ArRZiUpLoscUs=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-e59fc130b566",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "xzoDIc4VIgbeFXo8ctn1euICZ5Y=",
+    "timestampUtcMs": "2026-05-13T13:00:36.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-87ab3644041e",
+        "name": "gsoc-notifications",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:36.000Z"
+    }
+  }
+]

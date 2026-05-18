@@ -1,0 +1,185 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.480Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Epoch Feeds and Dispersed Replicas Analysis",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "32782a39-34c4-4533-8227-627f7cd39c12",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-05-13T12:59:30.480Z"
+        },
+        "version": 0,
+        "documentId": "32782a39-34c4-4533-8227-627f7cd39c12",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.480Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "tuGRod6rD0awFyViUS7oxMMMO4w=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "title": "Epoch Feeds and Dispersed Replicas Analysis",
+        "content": "# Epoch Feeds + Dispersed Replicas \u2014 Impact Analysis\n\nAssessment: should we adopt these Swarm features to reduce the 10s collab\nlatency floor and the \"stale profile read\" cross-Bee propagation issues\nwe hit on 2.7.x?\n\nBaseline (do-not-break): commit `1e95c27` on `main`.\n\n---\n\n## 1. Epoch feeds \u2014 NOT VIABLE TODAY\n\n**What it is (paper \u00a74.3.4):** A SOC feed can be indexed by sequence\nnumber OR by `(time, level)` epoch. Epoch indexing lets a cold reader\nlocate the latest-as-of-time update in `O(log age)` instead of the\nsequential probe our current feed reads do.\n\n**Why it'd help us:** Cross-Bee propagation of `publishPublicProfile`\nwrites is unreliable on 2.7.x; receivers sometimes serve a pre-update\nversion for minutes. Epoch-indexed profile feeds would sidestep the\nindex-scan logic entirely.\n\n**Why we can't use it:**\n\n- `bee-js@11.1.1` defines the `Epoch { time, level }` type but every\n  feed function (`findNextIndex`, `updateFeedWithReference`,\n  `downloadFeedUpdate`) takes a sequence-`FeedIndex`. Epoch support\n  is vestigial in the SDK.\n- Bee 2.7.x's HTTP `/feeds/{owner}/{topic}` endpoint is\n  sequence-only.\n- Implementing it would mean bypassing feed helpers and manipulating\n  SOCs directly \u2014 feasible but significant scope (epoch lookup algo,\n  custom chunk address derivation per level, grid traversal reader).\n\n**Recommendation:** DEFER. Reconsider when bee-js or Bee exposes it\nnatively. Not worth custom chunk-layer work right now.\n\n---\n\n## 2. Dispersed replicas (via `RedundancyLevel`) \u2014 VIABLE, LOW RISK\n\n**What bee-js gives us:**\n\n```ts\nenum RedundancyLevel { OFF=0, MEDIUM=1, STRONG=2, INSANE=3, PARANOID=4 }\nenum RedundancyStrategy { NONE, DATA, PROX, RACE }\n```\n\nUpload with `{ redundancyLevel: MEDIUM }` \u2192 Bee erasure-codes the\nchunk(s) across the neighbourhood so downloaders can RACE-fetch with\nbounded tail latency. Default download fallback cascade is\n`NONE \u2192 DATA \u2192 PROX \u2192 RACE`, so readers transparently benefit.\n\n**This is NOT the paper's literal balanced-SOC-replica pattern** (paper\n\u00a75.1.3) but it achieves the same outcome through RS coding \u2014 and it's\na one-field opt-in with zero protocol changes.\n\n### Where it applies\n\nRanked by frequency-of-read \u00d7 impact-of-tail-latency:\n\n| Hot path | Current call | Read frequency | Impact if added |\n|---|---|---|---|\n| Collab ops batch | `collab-ops-feed.ts:138` (`uploadFile act:true`) | Every peer ping + every /bzz fetch on ping-miss | **HIGH** \u2014 directly on the 10s critical path |\n| Drive share bundle | `lifecycle.ts:169` (`uploadFile act:true`) | Once per accept (cold, urgent) | HIGH \u2014 currently retries with 0-2-5s backoff because bundle often isn't available on first fetch |\n| Collab manifest snapshot | `collab-manifest-feed.ts:106` | On accept + every member add/revoke | MEDIUM |\n| Drive manifest snapshot | `swarm-client.ts:503` | On recovery + push merges | MEDIUM |\n| Chat history page | `chat-history.ts:215` | On open + pagination | LOW \u2014 user-driven, tolerant |\n| Public profile feed | `share-manager.ts:29` | Sporadic peer lookups | LOW-MEDIUM \u2014 but what we actually care about (profile lookup latency) is the feed HEAD, not the payload chunk; redundancy only helps the payload |\n\n### Code surface (minimal path: just the HIGH row)\n\nThe change is purely additive \u2014 one field per upload site \u2014 IF we're\nhappy to pay the stamp cost for redundancy.\n\nFiles touched:\n\n- `swarm-client.ts:212` \u2014 `uploadFile()`. Add `redundancyLevel` to the\n  options forwarded to `bee.uploadFile(...)`.\n- `swarm-client.ts:225-260` \u2014 `uploadData()`. Same addition.\n- `collab-ops-feed.ts:138` \u2014 pass `redundancyLevel: MEDIUM` to\n  `uploadFile` call.\n- `lifecycle.ts:169` \u2014 same, for the drive-bundle upload.\n\nNo schema changes. No wire-protocol changes. No feed-shape changes.\nExisting readers need no modification \u2014 RACE fallback is already the\nSDK default once redundancy exists on the chunk. ACT layering is\nunaffected (redundancy operates on chunks, ACT on their contents).\n\n### Cost\n\n- **Stamp usage per write goes up.** `MEDIUM` adds ~1 parity chunk per\n  4 data chunks (~25%). For a ~1KB op-batch that's still one SOC\n  total (batches fit in one chunk); for larger chunks (drive bundle,\n  manifest snapshot) it's meaningful. Must check remaining\n  `calculateRemainingSize(encryption, redundancyLevel)` on the batch\n  at session start \u2014 our existing stamp-utilization logic already\n  calls `calculateSize`, just needs the extra parameter threaded.\n- **No runtime cost on reader side** if chunks arrive (redundancy is\n  only consulted on miss/timeout).\n\n### What it does NOT fix\n\n- Bee push-sync latency from sender to target neighborhood. That's the\n  actual dominant component of our 10s GSOC-ping floor. Redundancy\n  helps READ tail latency, not WRITE propagation latency.\n- Feed-head discoverability (the \"receiver serves stale profile\"\n  problem). Redundancy applies to the chunk pointed to by the feed\n  update, not to feed-index lookup itself.\n\n### Experiment design\n\n1. Add `redundancyLevel: MEDIUM` to `collab-ops-feed.ts:138` only.\n   Rebuild. Test the existing two-Bee setup end-to-end.\n2. Compare observed op apply-latency to baseline (which is ~10s).\n3. If neutral or improved: roll to `lifecycle.ts:169` and the manifest\n   feeds.\n4. If stamp-utilization chirps warn of exhaustion: back off to\n   `OFF` for ops, keep `MEDIUM` only for long-lived bundles.\n\n### Impact on the Stable Baseline\n\nZero behavioural change if `RedundancyLevel.OFF` (default). All\nadditions are opt-in flags. Rolling back = revert the 2-3 line flag\nadditions. No data-shape changes, no migration.\n\n---\n\n## Decision\n\n- **Epoch feeds:** skip. Not implementable on bee-js 11 without large\n  custom chunk work. Re-evaluate when the SDK exposes it.\n- **Dispersed replicas via `RedundancyLevel`:** pursue. Small diff,\n  additive-only, reversible, and touches the exact hot paths where\n  Bee push-sync latency dominates.\n\nStart with: `collab-ops-feed.ts` only. Measure. Expand or roll back\nbased on observed effect.\n\n### Step-by-step build plan\n\n1. Thread `redundancyLevel` option through `SwarmClient.uploadFile`\n   and `uploadData`.\n2. Expose a single shared constant `COLLAB_OPS_REDUNDANCY` set to\n   `RedundancyLevel.MEDIUM`.\n3. Use it in `collab-ops-feed.ts:138` and the drive-bundle upload.\n4. Verify `calculateRemainingSize(true, MEDIUM)` in stamp-utilization\n   logs still shows headroom.\n5. Test in browser with the existing two-Bee pair.\n6. If Awaiting\u2192joined still fires within ~5s of accept AND op latency\n   is \u2264 baseline, commit. Otherwise revert and keep the baseline.\n",
+        "createdAt": "2026-04-21T14:06:56.684Z",
+        "createdBy": "knowledge-agent",
+        "sourceType": "DOCUMENTATION",
+        "description": "Analysis of Swarm epoch feeds and dispersed replicas \u2014 collab sync reliability, reconciliation, and mantaray timestamp races."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.480Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "32782a39-34c4-4533-8227-627f7cd39c12",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.480Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "dRtGNaJ70/2UWNcgGYyldr0gJ20=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "BpnYkcqiCVc0dyJZweL1U5Usc/8=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 6,
+        "extractedAt": "2026-04-21T14:44:09.293Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "FP07G0Vq9OAurpK/dbVjY3LVf8Q=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "769fdabb-a894-415b-87af-88eb1726a722"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "EzOYhvcv+HUVPTMzy/Qv+5DeLOY=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "88943e41-9dd1-44c4-9734-989c3f45e794"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "5+UDPKxNOmEfut1OTgy6esAVUoQ=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "f468c3d1-a8fe-47e8-9b9e-f6e218378365"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "kLDKy8wZ//AEz05u9RNOibdTV6c=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "0a4fcc2c-7b86-450b-8768-d7dc7c15453e"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "xEDrk9hFS0VUhywM0kfiX8Uhsfw=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "acfa1e91-3649-4211-a427-bee333272500"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "cLK8dZCiNtsO+nd+wIXUyG3IWAA=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "092c2b44-6ebf-4315-8dc7-45521c4e99b4"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  }
+]

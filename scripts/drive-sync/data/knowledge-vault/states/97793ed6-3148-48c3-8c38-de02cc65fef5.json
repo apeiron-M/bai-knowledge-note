@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-84f30b19-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "84f30b19-e130-4b75-8160-349b7fb4b47e",
+      "targetTitle": "channel-directory-file-layout"
+    },
+    {
+      "id": "lnk-d7e42f09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d7e42f09-bb6b-4b97-b4d9-177acd0335e3",
+      "targetTitle": "composite-channel-factory-routing"
+    },
+    {
+      "id": "lnk-65b6b0c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65b6b0c3-c068-4ec6-b36e-71bc00b79aa9",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-a4771bb5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4771bb5-35ce-4d28-9488-4f6ce8b9bd14",
+      "targetTitle": "collab-initial-state-via-share-bundle"
+    },
+    {
+      "id": "lnk-2389f590-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+      "targetTitle": "new-device-recovery-via-wallet-and-manifest"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SwarmChannel extends to register peer feeds as additional pull sources per collab",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-b0298458-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-b0298458-2",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-b0298458-3",
+      "name": "sync-cursors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Extending SwarmChannel with peer pull sources\n\nExisting SwarmChannel push/pull is per-drive and per-owner. To support collaboration, each collab registers **additional pull sources** on the SwarmChannel \u2014 one per participant's feed(s).\n\n```typescript\nclass SwarmChannel implements IChannel {\n  private peerFeeds: Array<{\n    participantAddress: string;\n    driveFeedTopic: string;\n    docFeedTopics: string[];\n    cursor: number;\n  }> = [];\n\n  async registerCollab(collab: CollabSummary) {\n    for (const p of collab.participants) {\n      if (p.address === this.ownerAddress) continue; // skip self\n      this.peerFeeds.push(/* topics derived from driveId/docIds */);\n      await this.subscribePeerGsoc(p);\n    }\n  }\n\n  // GSOC triggers \u2014 bypasses the poll timer\n  private async onPeerOpCommitted(evt: GsocNotification) {\n    await this.pullPeerFeedNow(evt.writerAddress, evt.collabId);\n  }\n}\n```\n\nEach peer source has its own cursor row in `sync_cursors`, so pulls are incremental and idempotent across reloads. The polling walker iterates `peerSources` alongside the owner's own feeds. Nothing changes about how the reactor applies ops \u2014 `reactor.load()` remains the entry point and already preserves signer signatures.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SwarmChannel registers additional per-peer pull sources for each collab, each with its own cursor row, and subscribes to each peer's GSOC signer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

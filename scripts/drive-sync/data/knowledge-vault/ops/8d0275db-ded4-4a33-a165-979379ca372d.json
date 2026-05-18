@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:50.642Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "most-state-schema-fields-should-be-optional-to-support-empty-documents",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "8d0275db-ded4-4a33-a165-979379ca372d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:50.642Z"
+        },
+        "version": 0,
+        "documentId": "8d0275db-ded4-4a33-a165-979379ca372d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:50.642Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "bRdhp0MIZRlcfm7a8YKS2EWZbhM=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "most state schema fields should be optional to support empty documents",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:50.642Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "8d0275db-ded4-4a33-a165-979379ca372d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:50.642Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "1BcpBOfKLz/rzNKVA4jDTx82iYQ=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:37.000Z",
+        "description": "Required fields (!) should be used sparingly since documents start empty; defaults are handled by operations, not the schema"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.301Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8d0275db-ded4-4a33-a165-979379ca372d",
+        "targetId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.301Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "z5lfkxS3yLTwETDiMSNkisI185Y=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.324Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8d0275db-ded4-4a33-a165-979379ca372d",
+        "targetId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.324Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "cUcu1ylr1wvaoF6atyS3+W+4EgI=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# most state schema fields should be optional to support empty documents\n\nDocuments are created empty and populated through operations. If the state schema requires fields that are not set at creation time, the initial state will violate the schema.\n\n```graphql\n// \u2705 Optional fields \u2014 document can be created empty\ntype InvoiceState {\n    recipient: String\n    amount: Amount_Money\n    dueDate: Date\n}\n\n// \u274c Too many required fields \u2014 empty document fails validation\ntype InvoiceState {\n    recipient: String!\n    amount: Amount_Money!\n    dueDate: Date!\n}\n```\n\nUse `!` only for fields that genuinely cannot be absent, like arrays (since [[arrays in state schemas must use mandatory notation]]) or fields set at document creation time.\n\n---\n\nTopics:\n- [[schema design]]",
+        "updatedAt": "2026-05-13T13:00:37.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:08.343Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8d0275db-ded4-4a33-a165-979379ca372d",
+        "targetId": "3b6e268e-c28a-4052-a935-7e58720494e8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:08.343Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "kaio6yLtSUi7xISrw2uY8UYCLAk=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:02:56.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "THHl/t+G0gqKmQbVV5hlYcxMMIY=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e1c0f9bf-6cdd-405e-988f-babec5f909a1",
+        "name": "schema design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "SLY9ZyQVbafc6KTS3HTbVHpUylU=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0b149844-179c-4c6b-b42e-1b78f680af0a",
+        "name": "GraphQL",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "L0KBjPElkgyaYYWTKYlUCVXXnOE=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c61d8852-765e-4c48-8c59-90fa7785d808",
+        "name": "state management",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "nkZmPwopN8OlQQrgAqeMi2+b5ME=",
+    "timestampUtcMs": "2026-05-13T13:00:37.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "922feb8d-75b3-41f0-8064-8e883271f362",
+        "name": "document creation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:37.000Z"
+    }
+  }
+]

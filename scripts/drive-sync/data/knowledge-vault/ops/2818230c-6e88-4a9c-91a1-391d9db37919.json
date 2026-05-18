@@ -1,0 +1,345 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:05.106Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "schema-design",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2818230c-6e88-4a9c-91a1-391d9db37919",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:05.106Z"
+        },
+        "version": 0,
+        "documentId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:05.106Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "rGXIJ6Ibh0oAuN7nV/WIHW4HCuw=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "schema design",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:05.106Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:05.106Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "20+q5Dc23mlRiBmH0u8cpIi6Oqg=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:43.000Z",
+        "description": "Conventions for GraphQL state schemas -- type naming, scalars, arrays, required vs optional fields"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.879Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "targetId": "8d0275db-ded4-4a33-a165-979379ca372d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.879Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "b2jdhFyPEREWpv/ouz2SV6MmXMg=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.901Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "targetId": "82039075-8b9f-47a2-ab69-d03fee7444c3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.901Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "diQj/bjCLeHB1BigbvPWbxmmaro=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# schema design\n\nPatterns and conventions for designing document model state schemas in the Powerhouse ecosystem.\n\n## Type Naming\n- [[state type names use XState not XGlobalState]] \u2014 the code generator expects `<Name>State`, not `<Name>GlobalState`\n\n## Arrays and Objects\n- [[arrays in state schemas must use mandatory notation]] \u2014 `[ObjectType!]!` with `OID!` fields for array items\n\n## Required vs Optional Fields\n- [[most state schema fields should be optional to support empty documents]] \u2014 documents start empty; use `!` sparingly\n\n## Input Design\n- [[input types should reflect user intent with simple specific fields]] \u2014 flat, descriptive inputs over nested structures\n- [[operation design uses descriptive names and includes examples and errors]] \u2014 naming and documentation standards\n\n## Scope\n- [[global scope shares state among all users while local scope is private]] \u2014 when to use each scope\n\n## Operation Design\n- [[one operation per user intent keeps concerns separated]] \u2014 one user action = one operation\n\n## Document Model Structure\n- [[document model structure has metadata specifications and modules]] \u2014 the three layers of a model\n- [[document models have 37 available operations across 7 categories]] \u2014 full operation taxonomy\n\n---\n\nTopics:\n- [[index]]",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.920Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "targetId": "3225e987-f67f-4ded-a860-ad7be5f0e704",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.920Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "xQcea7hNIUVaREBt4BjbFOR/J6U=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:04:53.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.939Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "targetId": "a7bba825-90a1-4b90-8698-5b9fc7fe589b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.939Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "kTZGrbr8AHNvqdSMiS9b7rRBYRo=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4d601a90-284a-4170-b26b-eb9fe2e1903f",
+        "name": "schema design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.957Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "targetId": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.957Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "6/LNTGsv6u0ElrHGbRSfETvo80s=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "98263127-bd9a-490c-91b5-7a8467c23387",
+        "name": "GraphQL",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.976Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "targetId": "101aa6f4-ae3e-4ce6-94cb-e8f045edc478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.976Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "su66ONIW/aT+C1IOMMS1G6aBi6o=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "032ff920-c3c7-4df5-a910-f186ecd6d59b",
+        "name": "document model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.996Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "targetId": "18b20746-83e2-42ba-8bde-464043db804c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.996Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ys35X6fOUDG1HQ1bvJZ4kCjRR+w=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8d4da641-bf76-4eee-a3d8-84d7bcc73cf1",
+        "name": "MOC",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:17.018Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:17.018Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:17.037Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "targetId": "010b9a46-8f86-4f5d-8808-9ec0bd97f9dc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:17.037Z"
+    }
+  }
+]

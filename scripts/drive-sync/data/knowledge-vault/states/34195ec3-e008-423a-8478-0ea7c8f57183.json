@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-bc3b5418-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+      "targetTitle": "live-collaboration-uses-per-user-op-feeds-plus-gsoc-pings-to"
+    },
+    {
+      "id": "lnk-8918651f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-41652474-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "41652474-fe03-4b76-a673-e60050229ca4",
+      "targetTitle": "live-collab-next-major-track"
+    },
+    {
+      "id": "lnk-8abdf393-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8abdf393-6a17-4036-ad20-492d0aaeb4a5",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-8a0beb71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a0beb71-d659-4db7-9331-bc6e9a7e497b",
+      "targetTitle": "collaborate-tab-ux-entry-point"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "GSOC op-committed pings trigger sub-second pulls with ~300ms debounce, polling stays as fallback",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-9cb75620-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-9cb75620-2",
+      "name": "gsoc-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-9cb75620-3",
+      "name": "debouncing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Real-time trigger: GSOC with polling fallback\n\nGSOC is sub-second \u2014 direct SOC sync with no Trojan mining on the hot path. Mining a signer targeting a peer's neighborhood costs roughly 10\u201330 s per (peer, collab) pair, but that cost is paid **once on collab creation/join** and never again.\n\n### Protocol\n\n1. Participant writes a new op \u2192 SwarmChannel pushes to their feed.\n2. Immediately after, a GSOC ping goes to each *other* participant's signer:\n\n```json\n{\n  \"type\": \"op-committed\",\n  \"collabId\": \"drive:<driveId>\" | \"doc:<driveId>:<docId>\",\n  \"writerAddress\": \"0xA\u2026\",\n  \"latestIndex\": { \"global\": 42 }\n}\n```\n\n3. Each recipient's SwarmChannel reacts by pulling that writer's feed on demand, **debounced ~300 ms** so a burst of ops coalesces into a single pull. This prevents a drag-reorder on a large list from triggering dozens of overlapping fetches.\n4. The timer-based poll remains as a **fallback** for participants who were offline when the ping was sent. When they come back, the next poll catches up any ops whose pings they missed.\n\nResult: sub-second live updates when everyone is online, eventual consistency otherwise.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:16:54.676Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GSOC op-committed pings trigger on-demand pulls of the writer's feeds with ~300ms debounce; periodic polling remains as a fallback for offline participants.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

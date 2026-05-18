@@ -1,0 +1,113 @@
+{
+  "tier": "TOPIC",
+  "title": "ACT Encryption and Sharing",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-a5352301",
+      "noteRef": "a5352301-cc42-4c0d-a6d8-e9654a8e9fc8",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-00740fca",
+      "noteRef": "00740fca-ac91-49b2-8353-cbd0988eaa02",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-1f3686d9",
+      "noteRef": "1f3686d9-d157-47d7-9f88-750d17af6181",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-41af7645",
+      "noteRef": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-4f0dfdaa",
+      "noteRef": "4f0dfdaa-dccc-49b2-b7c4-aa8328d4af34",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-3efc23f3",
+      "noteRef": "3efc23f3-f6b4-4477-bba9-40c87ad50b0e",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-c7b131a8",
+      "noteRef": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-9ca80593",
+      "noteRef": "9ca80593-b1fa-41df-b83e-47f8b179d270",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-a9803a1e",
+      "noteRef": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01",
+      "contextPhrase": "",
+      "sortOrder": 8,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d096e0c3",
+      "noteRef": "d096e0c3-bdc2-4e4f-91af-01eb3b3a3882",
+      "contextPhrase": "",
+      "sortOrder": 9,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-dd790977",
+      "noteRef": "dd790977-aed8-4b73-a39b-c9dcec51af7c",
+      "contextPhrase": "",
+      "sortOrder": 10,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-f2b309e3",
+      "noteRef": "f2b309e3-39a9-4ace-9f50-102aaa2b7b33",
+      "contextPhrase": "",
+      "sortOrder": 11,
+      "addedAt": "2026-05-13T14:33:09.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:32:16.008Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-04-21T19:32:16.008Z",
+  "agentNotes": [],
+  "description": "How Connect encrypts data at the Swarm /bytes layer with AES-256-GCM and uses ACT+ECDH for cross-user sharing without leaking the wallet key.",
+  "orientation": "Connect's privacy story has two layers. At rest, every payload uploaded to /bytes is AES-256-GCM encrypted with a deterministic key derived from a one-time wallet signature so any device with the wallet can recover state. For sharing across users, Connect uses Swarm's ACT with ECDH-derived per-session keys and per-grantee manifests \u2014 replacing the older deriveShareKey approach that leaked through publicly derivable SHA-256. This MOC collects the notes that define the encryption layer, the ACT model, and the concrete flows (chat sharing, raw-file sharing, session keys) that depend on them.",
+  "openQuestions": [],
+  "links": []
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-3e894e41-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3e894e41-ada3-43bc-a3fa-96eb1dde2686",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    },
+    {
+      "id": "lnk-46bc2d0b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+      "targetTitle": "authorization-uses-layered-model"
+    },
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-9b5889f7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b5889f7-82e9-4775-a9da-8eba5c9d0f96",
+      "targetTitle": "cli-identity-did-key-ethereum-delegation"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse uses header signing (document ID = cryptographic signature of creator) and action signing (every mutation signed with ECDSA P-256)",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4f432524-bb1f-4b65-9b71-abf90ba8965a",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e15a19a-4505-4b27-bea6-c6e912c9c962",
+      "name": "cryptography",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c150e804-dd48-40c8-a017-30c10ce8f39b",
+      "name": "ECDSA",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a68c5451-66da-443a-87af-a6f5c984f0ed",
+      "name": "document-identity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Header signing: when a document is created, `documentType + createdAtUtcIso + nonce` is signed with the creator's private key and the resulting signature becomes the document's `id`. The header embeds the public key (JWK) for self-contained verification via `validateHeader()`. Action signing: each dispatched action produces a 5-element Signature tuple `[timestamp, signerKey, actionHash, hashField, signatureHex]`. The `actionHash` is SHA-1 of `documentId + scope + actionType + JSON(input)`. The signed message uses prefix `\\x19Signed Operation:\\n{length}` matching Ethereum-style signing. Both use ECDSA with P-256 curve and SHA-256 via Web Crypto API.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Document ID is the creator's signature over header fields; each action gets a 5-tuple Signature with did:key.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

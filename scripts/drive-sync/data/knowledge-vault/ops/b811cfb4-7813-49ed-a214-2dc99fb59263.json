@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:17.305Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "wallet-derived-aes-key",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b811cfb4-7813-49ed-a214-2dc99fb59263",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:17.305Z"
+        },
+        "version": 0,
+        "documentId": "b811cfb4-7813-49ed-a214-2dc99fb59263",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:17.305Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8SvhWJpM7KzRtM6tC5CcKN1BmgM=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The AES-256 sync key is deterministically derived from a MetaMask signature so any device rehydrates the same key",
+        "updatedAt": "2026-05-13T13:00:48.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:17.305Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b811cfb4-7813-49ed-a214-2dc99fb59263",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:17.305Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "FNPgRu9Yb4E4MjicSHoJNHS1V4Q=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:48.000Z",
+        "description": "personal_sign over a domain message yields a signature; keccak256 of it gives a secp256k1 key; SHA-256 of that gives the AES-256 key \u2014 same wallet, same key, no server."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:23.004Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b811cfb4-7813-49ed-a214-2dc99fb59263",
+        "targetId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:23.004Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "J0Y0coakT/8kKKpKCMX4ZoJi3b4=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:48.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:23.028Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b811cfb4-7813-49ed-a214-2dc99fb59263",
+        "targetId": "83598633-2b97-4852-9d62-e50ea45508a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:23.028Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "2BjKrLLXv2lVF0wPWGsuQG7B/c0=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "All sync data is encrypted with AES-256-GCM in the browser before it leaves the machine; the Bee node never sees plaintext. The encryption key is derived deterministically from the user's wallet so the same user on any device recovers the same key without a server.\n\nDerivation steps:\n\n1. User connects MetaMask.\n2. User signs a domain-specific message via `personal_sign`.\n3. `keccak256(signature)` produces a 32-byte secp256k1 private key.\n4. `SHA-256(private_key)` produces the 32-byte AES-256 encryption key.\n\nThe ciphertext format is `[SWE prefix (3 bytes)] [IV (12 bytes)] [AES-256-GCM ciphertext + auth tag]`. The 3-byte prefix `0x535745` marks encrypted payloads; older unencrypted data is detected by its absence, which keeps the reader backward compatible.\n\nBecause the key is deterministic from the wallet signature, recovery on a new device only needs the wallet \u2014 no cloud key store.",
+        "updatedAt": "2026-05-13T13:00:48.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:23.050Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b811cfb4-7813-49ed-a214-2dc99fb59263",
+        "targetId": "a5352301-cc42-4c0d-a6d8-e9654a8e9fc8",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:23.050Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "2uV94TLDme7Y15ipJRNHTHnG+Nk=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:09.098Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "QKnVKpLmDnLULtVxcfmNryj790U=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e502e901-5a96-4fb0-a847-a8db7c2f9025",
+        "name": "aes-encryption",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "yXwlExuQL0Fqsybu0v1DjgtTnGo=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bc930bfa-c529-4538-8021-fa9e152f0736",
+        "name": "key-derivation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "P853aKUhDb7XZC+0QyDSwYVJ0ec=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "af225f42-f6d0-47bf-9c86-e46fe19b06cc",
+        "name": "wallet-signature",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "W1Ng4QL9g4AtpKtLOnC8DK+TFco=",
+    "timestampUtcMs": "2026-05-13T13:00:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "01283031-4c7f-482a-8463-c98cacf57d5f",
+        "name": "recovery",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:48.000Z"
+    }
+  }
+]

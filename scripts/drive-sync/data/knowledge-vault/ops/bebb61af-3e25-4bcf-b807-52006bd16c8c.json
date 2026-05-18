@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:37.318Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "collab-per-user-feeds-mesh",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "bebb61af-3e25-4bcf-b807-52006bd16c8c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:37.318Z"
+        },
+        "version": 0,
+        "documentId": "bebb61af-3e25-4bcf-b807-52006bd16c8c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:37.318Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "H4mHZL2Wg1qKgNzdk9ugu81n5S4=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Collaboration uses a mesh of per-user owner-only feeds because only the feed owner can write to their own Swarm feed",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:37.318Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "bebb61af-3e25-4bcf-b807-52006bd16c8c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:37.318Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "FwTiNn/DSy70TPKYBmXLhd0+ICQ=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:29.000Z",
+        "description": "Swarm's feed rule (only owner can write to own feed) forces collab to be a mesh of per-user feeds that everyone reads, not a single shared feed."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.278Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bebb61af-3e25-4bcf-b807-52006bd16c8c",
+        "targetId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.278Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "zQMerzbrHWAlC7axD1fbDxkC9SU=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.300Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bebb61af-3e25-4bcf-b807-52006bd16c8c",
+        "targetId": "7036dd62-002b-47e1-b8db-ea1083e7b415",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.300Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zpigrcle7yweOvlHd7oU5ajfa0A=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Why a mesh of per-user feeds is the only option\n\nSwarm enforces a hard constraint at the protocol level: **only the owner can write to their own feed**. There is no shared multi-writer feed primitive. This rules out the naive \"one collaborative feed everyone appends to\" data model.\n\nCollaboration therefore must be structured as a **mesh of per-user feeds that everyone reads**. Each collaborator owns and writes their own set of topics; every other collaborator subscribes to and pulls from those peer-owned feeds.\n\nConcretely, each collaborator gets their own ACT-protected feeds:\n\n```\nTopic: ph:v2:collab:<collabId>:ops:<driveId>         (drive-level ops)\n       ph:v2:collab:<collabId>:ops:<driveId>:<docId> (doc-level ops)\nOwner: each collaborator owns their own topic(s)\nACT:   grantees = all participants' Bee node pubkeys\n```\n\nEach collaborator appends their own ops to their own feeds (debounced + batched, same pipeline as the existing SwarmChannel push). On the read side, every participant registers pull sources for every *other* participant's collab feeds. This mesh topology is a direct consequence of the owner-only-write rule and shapes the rest of the design (GSOC pings per peer, cursor-per-peer-source, etc.).",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.318Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bebb61af-3e25-4bcf-b807-52006bd16c8c",
+        "targetId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.318Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "sKx31X9EvAys/11LrlkCSBacIoo=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.337Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bebb61af-3e25-4bcf-b807-52006bd16c8c",
+        "targetId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.337Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "z3/0Wj3FNrXL9V9OQQhJ6dIyKOc=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-e5cd2108-1",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.356Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bebb61af-3e25-4bcf-b807-52006bd16c8c",
+        "targetId": "a54a9f24-04ea-405c-89bd-b6c73d65fbe6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.356Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ETtU2CsjEMI6S3AfNoB3YrlKc+M=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-e5cd2108-2",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "rLp1oIKkG+bfGq8etxMWFYAi5xM=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-e5cd2108-3",
+        "name": "data-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  }
+]

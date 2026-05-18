@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-7d431931-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d431931-4abb-4545-b427-891f2a5b6478",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-c7b131a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-0e465bb9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0e465bb9-9a40-4da6-90c1-6aea3126d60b",
+      "targetTitle": "accounts-model-defines-the-chart-of-accounts-structure"
+    },
+    {
+      "id": "lnk-8c201bbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8c201bbe-513a-4003-9069-1762cbdd6f67",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Per-user op feed carries type=operations payloads wrapping operation + context per entry",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "08ba4902-3d7a-4c42-b64b-9cb6befab33c",
+      "name": "per-user-ops-feed",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c8f77d4-580e-4a93-8c27-39acb345585a",
+      "name": "collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e0094dc-cf44-4f2a-96bb-9ef379aa2507",
+      "name": "sync-envelope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Per-User Operation Feed\n\nIn collaborative mode, each user writes their own operations to `ph:v2:ops:<address>:<docId>`, owned by that user's signer. Peers read each other's op feeds.\n\n## Schema\n\n```json\n{\n  \"type\": \"operations\",\n  \"channelMeta\": { \"source\": \"0xAlice_signer\" },\n  \"operations\": [\n    {\n      \"operation\": {\n        \"id\": \"op-aaa\",\n        \"index\": 0,\n        \"skip\": 0,\n        \"timestampUtcMs\": \"1712750460000\",\n        \"hash\": \"abc123...\",\n        \"action\": { \"id\": \"act-001\", \"type\": \"ADD_LINE_ITEM\", \"scope\": \"global\" }\n      },\n      \"context\": {\n        \"documentId\": \"doc-001\",\n        \"documentType\": \"powerhouse/budget-statement\",\n        \"scope\": \"global\",\n        \"branch\": \"main\",\n        \"ordinal\": 1\n      }\n    }\n  ]\n}\n```\n\n## Key points\n\n- Each feed index is one batch, debounced\n- `channelMeta.source` identifies the writer for downstream validation\n- `context.ordinal` is the writer-local sequence number \u2014 NOT the globally-resolved index\n- Final global index/skip is assigned by each reader's reactor during conflict resolution\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:45:54.611Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Per-user op feed at ph:v2:ops:<address>:<docId> carries type=operations payloads with channelMeta and an operations array where each entry wraps operation + context.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

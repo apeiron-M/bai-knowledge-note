@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-6f308a23-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6f308a23-b0c0-4fb8-949a-c5da535711f9",
+      "targetTitle": "editor-components-should-be-modular-with-separate-files"
+    },
+    {
+      "id": "lnk-cfb81bd5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cfb81bd5-6d7c-4501-8276-f067558734a1",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-e7a2e637-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e7a2e637-5a71-418b-a0dc-decf4ced764f",
+      "targetTitle": "css-scoped-via-data-attributes"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "style editors with tailwind classes or scoped style tags",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "46ef6fc1-0149-4587-81e6-7db8b9769ba3",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "02f45194-21a7-465c-9f68-1d3351d0ec17",
+      "name": "CSS",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39c64e71-1830-4618-b7d4-a9d9bb4c7d9a",
+      "name": "Tailwind",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c93f6616-4d4b-4276-9351-2e1328934543",
+      "name": "styling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# style editors with tailwind classes or scoped style tags\n\nTwo styling approaches for editors:\n\n1. **Tailwind classes** \u2014 Preferred. Apply utility classes directly to elements.\n2. **Scoped style tags** \u2014 When Tailwind is insufficient. Make selectors specific to the editor component to prevent global CSS leakage.\n\n```tsx\n// \u2705 Tailwind\n<div className=\"flex gap-4 p-6 rounded-lg border\">\n\n// \u2705 Scoped style tag\n<style>{`\n  .my-editor-name .custom-table { border-collapse: collapse; }\n  .my-editor-name .custom-table td { padding: 8px; }\n`}</style>\n\n// \u274c Unscoped \u2014 will affect the entire app\n<style>{`\n  table { border-collapse: collapse; }\n  td { padding: 8px; }\n`}</style>\n```\n\n---\n\nTopics:\n- [[editor patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:02:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:02:50.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When using style tags in editors, selectors must be scoped to the editor component to avoid global CSS conflicts",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

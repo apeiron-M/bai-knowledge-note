@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-3c5b4046-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c5b4046-8360-41ab-8751-76a69ee3900b",
+      "targetTitle": "error-names-must-end-with-error-and-use-pascalcase"
+    },
+    {
+      "id": "lnk-01631563-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "01631563-4f79-4ac1-83b5-f9197901ae63",
+      "targetTitle": "operation-error-index-must-match-the-number-of-prior-dispatches"
+    },
+    {
+      "id": "lnk-e598786c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e598786c-d2e2-42e1-ad78-cc71fde187d6",
+      "targetTitle": "operation-errors-are-recorded-on-operations-not-thrown-to-callers"
+    },
+    {
+      "id": "lnk-590a66b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "590a66b8-06f7-4736-96f3-b22e7b737fd7",
+      "targetTitle": "chat-requires-both-users-to-run-full-bee-nodes-because-light"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "never use toThrow when testing reducer errors",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "278d2f3e-81d9-4ba6-98fd-fd13421d5e9c",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "839b1ffd-7009-4aae-8036-220f6bc95b5b",
+      "name": "testing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b6f471ba-c331-4e70-b38e-fe0f68bbfe97",
+      "name": "error handling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# never use toThrow when testing reducer errors\n\nThe most common testing mistake with Powerhouse reducers:\n\n```typescript\n// \u274c WRONG \u2014 this will always pass (no error is thrown to the caller)\nexpect(() => reducer(document, setName({ name: \"invalid\" }))).toThrow();\n\n// \u2705 CORRECT \u2014 check the operation's error property\nconst updated = reducer(document, setName({ name: \"invalid\" }));\nexpect(updated.operations.global[0].error).toBe(\"Name is not allowed\");\nexpect(updated.state.global.name).toBe(initialState); // state unchanged\n```\n\nSince [[operation errors are recorded on operations not thrown to callers]], the error is captured silently on the operation object. The reducer call itself never throws \u2014 it always returns a document. The error lives in `operations.global[N].error`.\n\nSince [[operation error index must match the number of prior dispatches]], make sure you check the right index.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:59:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:59:47.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Reducer errors are captured on the operation object rather than propagated; expect(() => ...).toThrow() will never catch them",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

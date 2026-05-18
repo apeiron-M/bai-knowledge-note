@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.359Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "relational-db-live-queries-pglite",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "264f9723-8c03-42b0-8ed2-1064ee7e40fc",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:03.359Z"
+        },
+        "version": 0,
+        "documentId": "264f9723-8c03-42b0-8ed2-1064ee7e40fc",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.359Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "82OZmef17RlYZ/IUep9WiVq/z5M=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Powerhouse relational database hooks provide type-safe live queries backed by PGlite with automatic re-rendering on data changes",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:03.359Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "264f9723-8c03-42b0-8ed2-1064ee7e40fc",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:03.359Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9Zjfrwaj+ikRCX/hBb5bWVkur3g=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:43.000Z",
+        "description": "createProcessorQuery() creates typed hooks that return live-updating results with automatic parameter memoization via deep comparison."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.054Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "264f9723-8c03-42b0-8ed2-1064ee7e40fc",
+        "targetId": "47df89fb-e7b4-4892-acd9-649a12003c75",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.054Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "6CoNU7x+/oI7FNA/qmzE2OeVbYE=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.077Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "264f9723-8c03-42b0-8ed2-1064ee7e40fc",
+        "targetId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.077Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "MAqweKsDVtNr8GwM2ppZ76EYsxA=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `@powerhousedao/reactor-browser/relational` package provides three main hooks: `createProcessorQuery(ProcessorClass)` creates a typed query hook factory returning `{ isLoading, error, result: LiveQueryResults<T> }` with automatic retry logic and deep-comparison parameter memoization; `useRelationalDb<Schema>()` provides direct access to the enhanced Kysely database instance; `useRelationalQuery<Schema, T, TParams>()` is a lower-level hook for manual query control. Queries can use either Kysely query builder (with `.compile()`) or raw SQL with `{ sql, parameters }` objects. All queries are live and update automatically when underlying data changes, backed by PGlite integration.",
+        "updatedAt": "2026-05-13T13:00:43.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.096Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "264f9723-8c03-42b0-8ed2-1064ee7e40fc",
+        "targetId": "a49fad15-ef25-4cd9-878c-38736ba57216",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.096Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ZA0gpEQd7npYEIohxXMN1RC+IE8=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:16.115Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "264f9723-8c03-42b0-8ed2-1064ee7e40fc",
+        "targetId": "ace588c7-efdc-483b-baa6-7a280bef8731",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:16.115Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "oDSznrCq5FwHrzroF/PTlQfkztU=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d4f16e9b-a69d-457c-8202-3ed2545c71d1",
+        "name": "relational-db",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "o5NRl3ZwpLqDuis2sIYBe/OhnJA=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "98071082-f4e4-48ff-a315-0005a3c782fa",
+        "name": "react-hooks",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Cvsh0rsN4uM2vRWJjphDmD1haH4=",
+    "timestampUtcMs": "2026-05-13T13:00:43.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1d9578a1-1452-4324-b3d0-c2299fd882c0",
+        "name": "pglite",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:43.000Z"
+    }
+  }
+]

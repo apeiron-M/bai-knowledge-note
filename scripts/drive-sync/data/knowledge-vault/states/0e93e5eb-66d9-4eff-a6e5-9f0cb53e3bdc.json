@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-33501323-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "33501323-1633-4ae7-9776-774dc159a957",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    },
+    {
+      "id": "lnk-3d61b8cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3d61b8cc-2823-4233-b0e8-cb95e44b0ab0",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-658449cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "658449cc-d8be-48d0-ad33-39d25a934b74",
+      "targetTitle": "swarm-mantaray-manifests"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Powerhouse project has four main directories: document-models, editors, processors, and subgraphs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2c5549ce-9d14-4fa2-8e93-45984147f187",
+      "name": "project-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "899610bb-1ce2-4913-b7c0-704d8e6c7a32",
+      "name": "scaffolding",
+      "topicDocumentId": null
+    },
+    {
+      "id": "88304dd0-1a89-4f98-9b6e-cd9f1e30300b",
+      "name": "packaging",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A Powerhouse project initialized with `ph init` creates this structure:\n\n- `document-models/` - Document model implementations (schema, gen/, src/reducers, src/tests)\n- `editors/` - React editor components for document types\n- `processors/` - Event-driven components reacting to document changes\n- `subgraphs/` - Modular GraphQL services for structured data access\n\nConfiguration files:\n- `powerhouse.config.json` - Project and Vetra drive configuration\n- `powerhouse.manifest.json` - Package manifest describing contents\n- `package.json` - NPM package metadata (scoped naming: `@org-ph/package-name`)\n- `tsconfig.json` - TypeScript configuration\n- `vite.config.ts` - Build configuration\n- `vitest.config.ts` - Test configuration\n\nFor publishing, the manifest.json declares document models, editors, and their relationships (which editor serves which document type).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ph init scaffolds document-models/, editors/, processors/, subgraphs/ plus config files for a complete package structure.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

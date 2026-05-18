@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-8d8fcd0f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d8fcd0f-b334-4f16-8476-0ebe1b6074e1",
+      "targetTitle": "ph-service-setup-configures-nginx-pm2-ssl"
+    },
+    {
+      "id": "lnk-8d5d3b0e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d5d3b0e-6fa4-4cab-9dea-0bf3c1279b55",
+      "targetTitle": "connect-is-host-application"
+    },
+    {
+      "id": "lnk-268e41d6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "268e41d6-92b6-4248-932b-77a09244471a",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-65b6b0c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65b6b0c3-c068-4ec6-b36e-71bc00b79aa9",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-d508a76d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d508a76d-410b-4192-bb0d-49adec440906",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse publishes official Docker images for Connect (frontend + Nginx) and Switchboard (backend API) to ghcr.io",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a82cb3eb-e236-4bf5-a8d7-4178b9525ee7",
+      "name": "docker",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f4a4d51-1aa5-440e-923b-620dab2d3a21",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "108be46c-9036-4630-8a3f-ed38e20ae7b4",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a114f86-0ab7-4ef4-bf0b-5b18facd7962",
+      "name": "switchboard",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three official images on `ghcr.io/powerhouse-inc/powerhouse/`: connect (Alpine + Node + Nginx with Brotli), switchboard (Node 24 + Prisma), academy (docs). Tags: latest, dev, staging, vX.Y.Z. Docker Compose stack: connect + switchboard + postgres:16.1. Connect startup: install PH_PACKAGES, `ph connect build`, configure/start Nginx. Switchboard startup: install PH_PACKAGES, run Prisma migrations, `ph switchboard`. Custom packages via `PH_PACKAGES` env var (comma-separated). Production: use specific version tags, persist postgres with volumes, bind to 127.0.0.1 behind a reverse proxy for SSL termination. Both require `DATABASE_URL` pointing to PostgreSQL.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect image builds frontend and serves via Nginx; Switchboard runs Prisma migrations then starts the API server.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

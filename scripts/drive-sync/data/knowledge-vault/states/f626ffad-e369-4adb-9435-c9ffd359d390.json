@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-4d07705c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4d07705c-2973-40e8-a112-3d2b476c291a",
+      "targetTitle": "chat-pss-plus-chatlog-feed"
+    },
+    {
+      "id": "lnk-d2161903-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d2161903-d46c-41a4-929f-7f7ef23ed756",
+      "targetTitle": "vetra-studio-is-builder-environment"
+    },
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "adapter/src/chat/ and adapter/src/plugin/ house the PSS chat runtime and the orchestration layer that bootstraps Connect's ph.swarm surface.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "file-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "plugin-init",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## `adapter/src/chat/`\n\n```\nchat-manager.ts     - PSS session orchestrator + chapter tracking\nchat-history.ts     - ACT-encrypted feed pages + chapter rotation\npss-messenger.ts    - PSS send/subscribe + broadcast topic\ngsoc-notifier.ts    - GSOC signer mining + notification send/subscribe\nswarm-file.ts       - ACT-protected file upload + thumbnails\nmime-guess.ts       - MIME detection for attachments\ntypes.ts            - ChatMessage, FileAttachment, DocumentShareAttachment\nindex.ts            - Public exports\n```\n\n`chat-manager.ts` is the coordination surface: it owns the live PSS subscription, the chapter-rotation state, the `seenMessageIds` guard, and debounced flushes into `chat-history.ts`.\n\n## `adapter/src/plugin/`\n\n```\ninit.ts       - Orchestrator: Bee detection, stamps, wallet, ChatManager bootstrap, ph.swarm surface\nsharing.ts    - Cross-user ACT share + import + buildDriveShareBundle\nhydration.ts  - restoreFolderStructure + populateUiCacheFromDrives\nstate.ts      - Bee URL, UI cache fields, drive mapping\nstorage.ts    - clearSwarmStorage + loadManifestIndex (IndexedDB) + chat-related keys\nevents.ts     - Toast event system (onSwarmEvent/emitSwarmEvent)\n```\n\n`init.ts` is the bootstrap sequence: detect Bee node, verify stamps, ensure wallet signature, spin up `ChatManager`, and expose `ph.swarm` on the window for Connect UI code.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:47:10.583Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "chat/: chat-manager, chat-history, pss-messenger, gsoc-notifier, swarm-file. plugin/: init, sharing, hydration, state, storage, events.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

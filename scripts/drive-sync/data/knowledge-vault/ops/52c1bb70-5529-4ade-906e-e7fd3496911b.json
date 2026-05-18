@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.480Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-sharing-in-chat-reuses-the-existing-act-share-bundl",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "52c1bb70-5529-4ade-906e-e7fd3496911b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:43.480Z"
+        },
+        "version": 0,
+        "documentId": "52c1bb70-5529-4ade-906e-e7fd3496911b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.480Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "AOAZOWB+/dkUSkVIsIDNM4NPQmg=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Document sharing in chat reuses the existing ACT share bundle plus a chat message and GSOC ping.",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:43.480Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "52c1bb70-5529-4ade-906e-e7fd3496911b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:43.480Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "e2bSSeKe5XRug46IaXJu3F135BQ=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:33.000Z",
+        "description": "A chat share sends three things: the existing shareDocuments() bundle, a PSS message of type share referencing it, and a GSOC notification so the recipient's UI reacts instantly."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.555Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52c1bb70-5529-4ade-906e-e7fd3496911b",
+        "targetId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.555Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "eeawnauMMJh3htz5Hls9Go7hWzA=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.577Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52c1bb70-5529-4ade-906e-e7fd3496911b",
+        "targetId": "3efc23f3-f6b4-4477-bba9-40c87ad50b0e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.577Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "+WFIIFB2N5ga5Mx/qzWMVFcm6P4=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Pattern\n\nSharing a document through chat composes three existing primitives \u2014 no new protocol:\n\n1. **Share bundle** \u2014 the existing `shareDocuments(docIds, recipientAddress)` creates the ACT-protected bundle on Swarm.\n2. **Chat message** \u2014 a PSS message of type `share` carries a `DocumentShareAttachment` with the bundle's Swarm reference + a human-readable document list.\n3. **GSOC notification** \u2014 a ping to the recipient's notify signer so their UI refreshes immediately rather than on next poll.\n\n## Payload shape\n\n```typescript\n{\n  type: \"share\",\n  text: \"Check out this invoice\",\n  timestamp: \"2026-04-15T18:30:00Z\",\n  attachment: {\n    kind: \"document-share\",\n    driveId: \"96ffdf26-...\",\n    driveName: \"Q1 Invoices\",\n    shareReference: \"abc123...\",\n    documents: [\n      { id: \"b9e4fe2e-...\", name: \"Invoice #42\", type: \"powerhouse/document-model\" }\n    ]\n  }\n}\n```\n\n## Adapter surface\n\nThe unified `buildDriveShareBundle()` in `plugin/sharing.ts` is shared between the Settings share panel and the chat share picker (`document-share-picker.tsx`). Both produce the same bundle shape and preserve sender signatures on every op \u2014 full parity with the Settings path.",
+        "updatedAt": "2026-05-13T13:00:33.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.597Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52c1bb70-5529-4ade-906e-e7fd3496911b",
+        "targetId": "8c201bbe-513a-4003-9069-1762cbdd6f67",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.597Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Ii2LOCCWfOGE7TsgSDFE8NByU6E=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:27:40.700Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:02.616Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52c1bb70-5529-4ade-906e-e7fd3496911b",
+        "targetId": "7bcb4292-89d1-4647-977a-8c5cdb581a7d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:02.616Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MD/+ukOPSTY6MhCOFFFVmXOQgUI=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-ad1b9f0bd2f0",
+        "name": "document-sharing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "JkpbjsYJ7h4gKQVwnhCHGMlYnXM=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-a3848fe3330c",
+        "name": "pss-chat",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "+ptBweD429oWAFLRMhKsDkw7qFM=",
+    "timestampUtcMs": "2026-05-13T13:00:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "topic-b45fe5d620ea",
+        "name": "gsoc-notifications",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:33.000Z"
+    }
+  }
+]

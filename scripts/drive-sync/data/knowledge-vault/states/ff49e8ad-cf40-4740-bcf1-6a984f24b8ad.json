@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-cf6ed144-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf6ed144-884d-4784-8d50-9f25aa8d4aac",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-a4771bb5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4771bb5-35ce-4d28-9488-4f6ce8b9bd14",
+      "targetTitle": "collab-initial-state-via-share-bundle"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "error classes in reducers are auto-imported by name reference",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8c45e1a7-0de3-4614-ac20-3b03e68b4a5c",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ecb1e5c2-de8f-42f9-b0d8-4cd7462f33d8",
+      "name": "error handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e5e1b021-bbb5-4097-b734-13bf535bf149",
+      "name": "code generation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "76d8b936-a2a0-4233-8e42-6ec38fd86d34",
+      "name": "imports",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# error classes in reducers are auto-imported by name reference\n\nIn reducer code, you reference error classes by name without importing them:\n\n```typescript\n// \u2705 Just reference the error \u2014 auto-imported\nthrow new MissingIdError(\"ID is required\");\nthrow new EntryNotFoundError(\"Entry not found\");\n\n// \u274c Don't manually import\nimport { MissingIdError } from \"../../gen/module-name/error.js\";\nthrow new MissingIdError(\"ID is required\");\n\n// \u274c Don't use nested access patterns\nthrow new errors.ModuleName.MissingIdError(\"message\");\n```\n\nThe code generator scans reducer code for error class references and adds the appropriate imports automatically. Manually importing creates duplicate imports or path mismatches.\n\nSince [[error names must end with Error and use PascalCase]], the generator matches on the PascalCase class name ending in \"Error\".\n\n---\n\nTopics:\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:58:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:58:32.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Simply throwing new MissingIdError(\"message\") works because the code generator handles imports automatically",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:06.586Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "skip-field-records-reshuffle-distance",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "36c4b48d-2f80-408f-81de-2b104981418c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:06.586Z"
+        },
+        "version": 0,
+        "documentId": "36c4b48d-2f80-408f-81de-2b104981418c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:06.586Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "HVhHngb4/1XvYzN88TRBkqNby7g=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Skip field records how many ops were reshuffled past during deterministic conflict resolution",
+        "updatedAt": "2026-05-13T13:00:44.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:06.586Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "36c4b48d-2f80-408f-81de-2b104981418c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:06.586Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Xi6nEHrI61+xZbUhnNOVlL57QeI=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:44.000Z",
+        "description": "Operations have a skip field that counts how many operations were reshuffled past during deterministic conflict resolution; ensures same ops + same order = same state on every device."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:17.663Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "36c4b48d-2f80-408f-81de-2b104981418c",
+        "targetId": "3058e945-8ca6-46c4-a44b-7ab8bd3728d6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:17.663Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "332AKVcFrgGObvpXNcTIkm5NQio=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-05-13T13:00:44.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:17.683Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "36c4b48d-2f80-408f-81de-2b104981418c",
+        "targetId": "d8e86a8a-9a95-4ef4-8f79-5e205e80d765",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:17.683Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "roIjJC0MAn27no2nJFoJiDrYfis=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# Skip Field and Deterministic Conflict Resolution\n\nWhen Alice and Bob edit the same cell concurrently, both ops get written to their respective op feeds with `skip: 0`. When each reactor receives the other's op, the SyncManager runs deterministic conflict resolution.\n\n## Algorithm\n\n1. Detect conflict: same document, overlapping timestamps\n2. Reshuffle operations by sorting on `(timestamp, operationId)` for total order\n3. Assign new global indices and update `skip` values\n4. Replay through the document model reducer\n\n## Example outcome\n\n```\nIndex  Skip  Action             Origin\n  6     0    SET_CELL(A1,100)   Alice\n  7     1    SET_CELL(A1,200)   Bob\n```\n\n`skip=1` on Bob's op means: \"this op was reshuffled past 1 other op.\"\n\n## Convergence guarantee\n\nSame ops + same ordering rule = same final state on every device. No CRDTs required \u2014 the document model reducer plus deterministic replay is sufficient.\n",
+        "updatedAt": "2026-05-13T13:00:44.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:17.710Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "36c4b48d-2f80-408f-81de-2b104981418c",
+        "targetId": "ea6e9f1e-4ea6-48f8-a76a-0bc255e48de1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:17.710Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "xGU6ulJUvgMkRDW7o6wSUvWpwbc=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:46:52.016Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:17.734Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "36c4b48d-2f80-408f-81de-2b104981418c",
+        "targetId": "ac6e2665-3772-47df-a3d1-0b238601fec2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:17.734Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "j666qf/p5zM9lEjbSzjjtiHoCP0=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "44d8d82e-738c-4e9d-b45c-22419a318765",
+        "name": "conflict-resolution",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:17.757Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "36c4b48d-2f80-408f-81de-2b104981418c",
+        "targetId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:17.757Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8v1RiQyZ+9EZyrbm9ntF45sk4zs=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "71e84b47-c52a-4030-bfd2-246ae02f4bdb",
+        "name": "skip-field",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "AdefRpueJs/S4wAiF0W5oQESOVg=",
+    "timestampUtcMs": "2026-05-13T13:00:44.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "90a155dd-b5db-401c-a639-903c1ac1ea40",
+        "name": "operation-ordering",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:44.000Z"
+    }
+  }
+]

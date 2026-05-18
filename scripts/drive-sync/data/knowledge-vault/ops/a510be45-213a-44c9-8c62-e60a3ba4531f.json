@@ -1,0 +1,303 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:40.724Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ddup-swarm-channel-replaces-gql",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:40.724Z"
+        },
+        "version": 0,
+        "documentId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:40.724Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "VYDMb9XOtS2zdzPQPCG1seHXCvE=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "SwarmChannel implements IChannel so the reactor SyncManager is transport-agnostic",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:40.724Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:40.724Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "k3Q3PGyCYR8io2Ujvr+8/m5uV6U=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:31.000Z",
+        "description": "In Architecture D, SwarmChannel implements IChannel (inbox/outbox/deadLetter) and replaces GqlRequestChannel \u2014 the SyncManager doesn't know the transport changed."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.285Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "targetId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.285Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "fj2JGcR3idatAKcpgvEFLMvIWUc=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.310Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "targetId": "84f30b19-e130-4b75-8160-349b7fb4b47e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.310Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "QHjKioRgfYclPeoA4yeprLqw5vs=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The fully-decentralized architecture (D) works by treating Swarm as a native channel rather than a special-case plugin:\n\n**Architecture**: `SwarmChannel` implements the `IChannel` interface (inbox / outbox / deadLetter) and plugs into the reactor's existing `SyncManager`. It replaces the `GqlRequestChannel` that normally talks to a Switchboard server.\n\n**Why this works**: the SyncManager is already designed against an abstract channel. It moves `SyncEnvelope` payloads through whatever channel it's given. It does not know or care whether those envelopes end up going over GraphQL HTTP or over Swarm feeds.\n\n**Result**: \"Swarm IS the Switchboard\" \u2014 from the SyncManager's perspective, the remote is still a remote; only the transport changed.\n\n**Practical implications**:\n- No special-case reactor code paths for Swarm\n- Collaboration uses the same sync primitives, just delivered over feeds/PSS\n- The existing operation semantics (ordering, idempotence, keyframes) carry over\n- Migration between architectures is largely a channel-factory swap\n\nThis is the foundation for `CompositeChannelFactory` as well \u2014 both GQL and Swarm channels can be active for dual-sync (Architecture C).",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.333Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "targetId": "2389f590-67bc-4711-9257-8d0bf871d64a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.333Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Q30N/SRSm54DL6VTHi+CQtIhmoc=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:42:40.589Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.353Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "targetId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.353Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "eJr7xhIw1R3DSmkZJ8A7IzODOjw=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd4e2a64-0f44-4183-8164-6879219fac5b",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.373Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "targetId": "97e5ccbe-58b0-4496-8c20-f90ea5f35d31",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.373Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "nM996vl3xrW7Hc0EFRz9Ouv7fH8=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aef7ca96-eb3f-4056-93ee-3038fa674dfd",
+        "name": "ichannel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:00.394Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "targetId": "f2882310-e36d-4d16-9f15-161cd9ad16c2",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:00.394Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Cv3+NipE9dLUiQu+pyX2RsjU+WM=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c749aa04-8809-48f8-866c-3efe83fd1574",
+        "name": "sync-manager",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ccOR60MLicps4rE1R60087mdraU=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c5027391-a5f1-4528-82b0-2d4e79930b93",
+        "name": "transport-abstraction",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  }
+]

@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:37.508Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "collab-testing-strategy-two-bee-nodes",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "07f86723-a741-4e27-9321-825edbedb6bd",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:37.508Z"
+        },
+        "version": 0,
+        "documentId": "07f86723-a741-4e27-9321-825edbedb6bd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:37.508Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "S8Xg07WyYkDqgTaVkmFREELQphg=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Collab testing requires two Bee nodes and covers signature attribution, permission boundary, and offline resilience",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:37.508Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "07f86723-a741-4e27-9321-825edbedb6bd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:37.508Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "eWmjpRgvu1EQ5+M9XhR33FKl1D4=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:29.000Z",
+        "description": "Collab testing requires two Bee nodes and covers unit tests, integration, signature attribution, permission-boundary at doc scope, and offline resilience."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.473Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "07f86723-a741-4e27-9321-825edbedb6bd",
+        "targetId": "41652474-fe03-4b76-a673-e60050229ca4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.473Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "cIN7bWp1Vxvrm/IiU1R7wd8nnEQ=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "procedure",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.495Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "07f86723-a741-4e27-9321-825edbedb6bd",
+        "targetId": "5734cd11-f338-4627-9919-83ab4f6edbe7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.495Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zGxkzD3JcIcsUkVV7j/GAxYLM6I=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Testing strategy: two Bee nodes, five dimensions\n\nCollab cannot be faithfully unit-tested alone \u2014 the mesh, ACT, and GSOC paths require real Bee infrastructure. The strategy pairs targeted unit tests with integration runs on **two live Bee nodes**.\n\n### Test dimensions\n\n- **Unit.** Collab-manifest read/write, participant add/remove idempotency, GSOC routing by `collabId` / `writerAddress`.\n- **Integration (two Bee nodes).** A creates drive-level collab with B; verify B receives invitation via PSS; B joins; both users make drive ops and doc ops; verify each sees the other's ops in the operation store within **2 s (GSOC path)** and within the **poll interval (fallback path)**.\n- **Signature attribution.** Every revision arriving on B's side is signed by A's signer, and vice versa, in the toolbar history. No unsigned or mis-attributed ops.\n- **Permission boundary (doc-level collab).** A and B collaborate on doc X only; verify B cannot read other docs in A's drive, and verify B's reactor does not materialize them locally.\n- **Offline resilience.** A goes offline, B makes 10 ops, A comes back, A pulls all 10 ops from B's feed. (No GSOC pings arrived during the offline window, so the poll fallback is doing the work.)\n\nThe two-Bee-node requirement is non-negotiable: a single-node test cannot exercise the cross-peer GSOC path or ACT grantee boundary.",
+        "updatedAt": "2026-05-13T13:00:29.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.517Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "07f86723-a741-4e27-9321-825edbedb6bd",
+        "targetId": "c36c4adb-df1b-41e5-a27a-f2301a587f4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.517Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "NnBUz2iU1tfIN2WFIHhgJVhvfO0=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.536Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "07f86723-a741-4e27-9321-825edbedb6bd",
+        "targetId": "a4771bb5-35ce-4d28-9488-4f6ce8b9bd14",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.536Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "f6Qa+NGGUPTkPvlNOu4yaWDuuD8=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-ef9c32c4-1",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:57.555Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "07f86723-a741-4e27-9321-825edbedb6bd",
+        "targetId": "46bc2d0b-7a07-4ceb-9d49-3cfa2b5f57d7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:57.555Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "WVG3dMng55O1HX57O6yQIIF8aro=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-ef9c32c4-2",
+        "name": "testing-strategy",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "/bJl6JO0bkd4lTybqadtzUO3cBs=",
+    "timestampUtcMs": "2026-05-13T13:00:29.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-ef9c32c4-3",
+        "name": "bee-nodes",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:29.000Z"
+    }
+  }
+]

@@ -1,0 +1,233 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:34.917Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "billing-statement-model-captures-periodic-billing-summaries",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "055a25fa-4a15-4dc8-bbd1-3a366c7040be",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:34.917Z"
+        },
+        "version": 0,
+        "documentId": "055a25fa-4a15-4dc8-bbd1-3a366c7040be",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:34.917Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "6WO3oJeUc2NA30JBgFHR1bjiwh0=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "billing-statement model captures periodic billing summaries",
+        "updatedAt": "2026-05-13T13:00:28.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:34.917Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "055a25fa-4a15-4dc8-bbd1-3a366c7040be",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:34.917Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pdbDgSZSbkzbJdyZcEIMdAdM8Gk=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:28.000Z",
+        "description": "7 operations \u2014 aggregates billing data into periodic statements; referenced from subscription-instance for billing cycle outputs"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:55.281Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "055a25fa-4a15-4dc8-bbd1-3a366c7040be",
+        "targetId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:55.281Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "tsvFmPnUmZV8M8JmAOCFR9OZ6qY=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-05-13T13:00:28.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:55.305Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "055a25fa-4a15-4dc8-bbd1-3a366c7040be",
+        "targetId": "05d82097-3895-417e-a3d1-9ada75178992",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:55.305Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "lttDuUd8dnY/lhrILKqXmpshmv8=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# billing-statement model captures periodic billing summaries\n\n`powerhouse/billing-statement` (7 ops) produces periodic billing summaries. Since [[subscription-instance model tracks active customer subscriptions with lifecycle state]], billing statements likely aggregate subscription charges per billing cycle.\n\n## Cross-Model References\n\n- SubscriptionInstance \u2192 BillingStatement (billing cycle outputs)\n- May reference [[accounts model defines the chart of accounts structure]] for account assignment\n- May feed into [[invoice model generates formal payment requests]]\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+        "updatedAt": "2026-05-13T13:00:28.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:55.325Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "055a25fa-4a15-4dc8-bbd1-3a366c7040be",
+        "targetId": "c9b2328d-e39d-472f-9523-373c7d3b2451",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:55.325Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "FGK6nLKo0m5tFxbSkR0UxaeMeZw=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:40:58.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "t6cTe1EuY9JAdCPMgN4ogI67UBU=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "732868c4-1566-467f-a47b-7867fc0cce17",
+        "name": "billing-statement",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "utFbQV9H9lZLT1WUK7eom9Kjooo=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2f885dc5-377b-4c41-a1da-d0661733f224",
+        "name": "finance-billing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  }
+]

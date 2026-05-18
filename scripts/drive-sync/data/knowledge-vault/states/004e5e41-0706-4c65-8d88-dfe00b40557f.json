@@ -1,0 +1,74 @@
+{
+  "links": [
+    {
+      "id": "lnk-1fd3a24c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1fd3a24c-8a0e-4a79-957e-544a20f1873e",
+      "targetTitle": "Toolbar buttons must be styled via Tailwind arbitrary child selectors since they have no dedicated style props"
+    },
+    {
+      "id": "lnk-7322b3c9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7322b3c9-9a9b-43c4-9993-7de4797c2393",
+      "targetTitle": "editors-use-component-based-architecture"
+    },
+    {
+      "id": "lnk-08438292-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "08438292-9838-4051-b4ff-7043e0af90a8",
+      "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The DocumentToolbar className prop merges with defaults via twMerge requiring ! prefix for overrides",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1d002827-b550-42aa-95ce-f29b1d8fb05b",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4270ef18-3803-4f6b-bc3d-4bdf40e20ea9",
+      "name": "tailwind-css",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `DocumentToolbar` accepts a `className` prop that is merged with the component's default Tailwind classes using `twMerge`. The defaults are:\n\n```\nflex h-12 w-full items-center justify-between rounded-xl border border-gray-200 bg-slate-50 px-4\n```\n\nTo override these defaults, you must use the `!` (important) prefix on your custom classes:\n\n```tsx\n<DocumentToolbar className=\"!bg-[#181825] !border-white/10\" />\n```\n\nWithout the `!` prefix, `twMerge` may resolve conflicts in favor of the defaults depending on specificity rules. The `!` prefix forces your values to take precedence.\n\nThis is a standard pattern when working with component libraries that use `twMerge` \u2014 the library controls base styling and consumers override specific properties via important modifiers.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T14:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-03-30T14:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When customizing the toolbar container, classes pass through twMerge which resolves conflicts. The ! (important) prefix is needed to guarantee custom values win over the built-in defaults.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

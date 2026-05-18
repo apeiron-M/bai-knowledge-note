@@ -1,0 +1,257 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.298Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "Data Duplication Analysis",
+        "slug": "",
+        "model": "bai/source",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e60f9b34-9e88-4e60-9c32-0f3a0639e53f",
+          "documentType": "bai/source",
+          "createdAtUtcIso": "2026-05-13T12:59:30.298Z"
+        },
+        "version": 0,
+        "documentId": "e60f9b34-9e88-4e60-9c32-0f3a0639e53f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.298Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "shM3/mSJ2gR6xG5J/Icy/7saFlU=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "INGEST_SOURCE",
+      "input": {
+        "title": "Data Duplication Analysis",
+        "content": "# Data Duplication Analysis: Swarm vs Switchboard\n\nComparing what data is stored where, what's duplicated, and the different\narchitecture options.\n\n> This doc covers the document-sync data path. Chat messages and file\n> attachments follow a parallel pattern: PSS for live delivery, ACT-protected\n> feeds (`ph:v2:chatlog:<sorted(A,B)>[:chapter]`) for persistent history.\n> See [`architecture.md`](./architecture.md) and\n> [`chat-collaboration-design.md`](./chat-collaboration-design.md) for the chat data path.\n\n---\n\n## Data Layers\n\n```\nLAYER 1: PGlite (browser, ephemeral)\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n- Operations table: every operation for every document\n- Documents table: document headers, current state snapshots\n- Relationships: drive \u2192 document mappings\n- Keyframes: periodic state snapshots\n\nSURVIVES: page refresh (IndexedDB-backed PGlite)\nLOST ON:  \"Clear site data\", new device, new browser\n\n\nLAYER 2: Swarm /bytes (immutable, permanent until stamp expires)\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n- Operation batches: encrypted JSON arrays of operations\n- Manifest payloads: encrypted JSON (doc/drive/user manifests)\n\nThese are CONTENT-ADDRESSED. Once uploaded, they never change.\nThe same data uploaded twice = same reference (deduped by the network).\n\nSURVIVES: everything (decentralized, replicated across neighborhood)\nLOST ON:  stamp expiration (chunks evicted from reserves)\n\n\nLAYER 3: Swarm feeds (mutable pointers, one per topic)\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n- Feed updates: 64-char hex references pointing to /bytes data\n- Each feed index is WRITE-ONCE (append-only sequence)\n\nThese are MUTABLE in the sense that you can write index 0, then 1, then 2...\nBut each individual index is immutable once written.\n\nSURVIVES: everything (same as /bytes)\nLOST ON:  stamp expiration\n\n\nLAYER 4: IndexedDB caches (browser, ephemeral helpers)\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n- Manifest index: docId \u2192 latest /bytes reference (for bee dev mode)\n- Pending ops: buffered ops not yet flushed to Swarm\n- Swarm key cache: wallet-derived signer key\n\nSURVIVES: page refresh\nLOST ON:  \"Clear site data\"\n```\n\n---\n\n## What's Duplicated vs Unique\n\n```\n                        PGlite    Swarm /bytes   Swarm feeds   IndexedDB\n                        \u2550\u2550\u2550\u2550\u2550\u2550    \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550   \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550   \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nOperations (raw data)     \u2713           \u2713                           \u25b3\n                        PRIMARY    BACKUP                    (pending only)\n\nDocument state            \u2713\n(computed from ops)     DERIVED\n                       (not on Swarm)\n\nDoc manifest                          \u2713              \u2713\n(list of batch refs)               PAYLOAD         POINTER\n\nDrive manifest                        \u2713              \u2713\n(doc list + folders)               PAYLOAD         POINTER\n\nUser manifest                         \u2713              \u2713\n(drive index)                      PAYLOAD         POINTER\n\nSigner key                                                       \u2713\n                                                              CACHE ONLY\n                                                          (re-derivable from wallet)\n\nPending ops buffer                                               \u2713\n                                                            TEMPORARY\n                                                        (cleared after flush)\n```\n\n---\n\n## The Reactor's Native Sync (Connect \u2194 Switchboard)\n\n```\nCONNECT (browser)                    SWITCHBOARD (server)\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550                     \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\nPGlite (local)                       PostgreSQL (remote)\n  - operations                         - operations (SAME data)\n  - documents                          - documents\n  - relationships                      - relationships\n\nSyncManager                          SyncManager\n  outbox \u2192 GqlRequestChannel \u2500\u2500\u2500\u2500\u2500\u2500\u2192 inbox \u2192 reactor.load()\n  inbox  \u2190 GqlRequestChannel \u2190\u2500\u2500\u2500\u2500\u2500\u2500 outbox\n\nEvery operation exists in BOTH databases.\nThe SyncManager ensures eventual consistency.\n```\n\nIn the native flow, **every operation is stored twice**: once in PGlite (browser), once in PostgreSQL (Switchboard). The GraphQL channel moves `SyncEnvelope` payloads between them. The Switchboard is the authoritative remote \u2014 it's a server someone runs.\n\n---\n\n## Our Swarm Plugin (Current, Single-User)\n\n```\nCONNECT (browser)                    SWARM NETWORK\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550                     \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\nPGlite (local)                       /bytes (encrypted ops)\n  - operations                         - operation batches (SAME ops)\n  - documents                        Feeds (pointers)\n  - relationships                      - doc/drive/user manifests\n```\n\n**Same duplication pattern** \u2014 operations exist in PGlite AND on Swarm. Swarm replaces the Switchboard's PostgreSQL as the durable remote copy.\n\n---\n\n## Running Both Simultaneously\n\nIf Connect has the native SyncManager syncing to a Switchboard AND our plugin syncing to Swarm:\n\n```\nCONNECT (browser)          SWITCHBOARD (server)       SWARM NETWORK\n\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550           \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550        \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\n\nPGlite                     PostgreSQL                  /bytes + feeds\n  - operations \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2192 - operations\n              \u2190\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n                                                       - operation batches\n  - operations \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2192 - manifests\n\n\nOperations stored 3x:\n  1. PGlite (browser)\n  2. PostgreSQL (Switchboard)\n  3. Swarm /bytes (encrypted)\n```\n\n**Three copies of every operation.** That's the duplication cost of running both sync paths simultaneously.\n\n---\n\n## What Each Copy Is For\n\n| Copy | Where | Purpose | Can recover from it alone? |\n|------|-------|---------|:---:|\n| PGlite | Browser | Fast local reads, UI rendering | No (ephemeral) |\n| PostgreSQL | Switchboard | Multi-device sync, team collaboration, server-side processing | Yes (authoritative) |\n| Swarm /bytes | Decentralized network | Censorship-resistant backup, serverless recovery, wallet-based access | Yes (self-sovereign) |\n\n---\n\n## The 4 Architecture Options\n\n### Architecture A: Connect + Switchboard (current Powerhouse default)\n\n```\nPGlite \u2190\u2192 Switchboard (PostgreSQL) via GraphQL SyncManager\n\nDuplication: 2x (PGlite + PostgreSQL)\nRecovery:    from Switchboard\nRequires:    running a server\n```\n\n### Architecture B: Connect + Swarm (our plugin, no Switchboard)\n\n```\nPGlite \u2192 Swarm via plugin\n\nDuplication: 2x (PGlite + Swarm)\nRecovery:    from Swarm (wallet signature)\nRequires:    running a Bee node (local or remote)\n```\n\n### Architecture C: Connect + Switchboard + Swarm (both)\n\n```\nPGlite \u2190\u2192 Switchboard via GraphQL SyncManager\nPGlite \u2192 Swarm via plugin\n\nDuplication: 3x (PGlite + PostgreSQL + Swarm)\nRecovery:    from either Switchboard OR Swarm\nRequires:    server + Bee node\n```\n\n### Architecture D: Connect on Swarm (fully decentralized \u2014 end goal)\n\n```\nConnect SPA deployed to Swarm via ENS\nPGlite \u2190\u2192 Swarm via plugin (no Switchboard at all)\nCollaboration: SwarmChannel (peer-to-peer via feeds)\n\nDuplication: 2x (PGlite + Swarm) \u2014 same as Architecture B\nRecovery:    from Swarm (wallet signature)\nRequires:    wallet + local Bee node\nServers:     ZERO\n```\n\nIn this architecture, Swarm IS the Switchboard. The `SwarmChannel` implements `IChannel` (inbox/outbox/deadLetter) and plugs into the reactor's existing SyncManager \u2014 replacing the `GqlRequestChannel` that talks to a server. The SyncManager doesn't know or care that the transport changed from GraphQL to Swarm feeds. It just moves `SyncEnvelope` data through the channel.\n\n**The duplication is identical to the current Switchboard model** \u2014 2x (local + remote). We're just swapping WHERE the remote copy lives: server PostgreSQL \u2192 decentralized Swarm network.\n\n---\n\n## What's Immutable vs Ephemeral\n\n```\n                    PGlite    PostgreSQL    Swarm /bytes    Swarm feeds\n                    \u2550\u2550\u2550\u2550\u2550\u2550    \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550    \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550    \u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\u2550\nLifespan          Ephemeral   Persistent    Until stamp     Until stamp\n                  (browser)   (server)      expires         expires\n\nMutability        Mutable     Mutable       IMMUTABLE       Append-only\n                  (can delete (can delete   (content-       (each index\n                   clear DB)   rows)         addressed)      write-once)\n\nWho controls it   User's      Server        Nobody          Feed owner\n                  browser     operator      (decentralized)  (private key)\n\nAuth required     None        API key /     Postage stamp   Private key\n                  (local)     auth token                     signature\n```\n\n---\n\n## Size Analysis for a Typical User\n\n```\nAlice has 1 drive, 5 documents, ~100 operations total:\n\nPGlite:\n  Operations:     ~100 rows \u00d7 ~500 bytes each \u2248 50 KB\n  Documents:      ~5 rows \u00d7 ~2 KB each \u2248 10 KB\n  Relationships:  ~5 rows \u00d7 ~100 bytes \u2248 0.5 KB\n  Total PGlite:   ~60 KB\n\nSwarm /bytes (encrypted):\n  Operation batches: ~100 ops in ~5 batches \u00d7 ~10 KB \u2248 50 KB\n  Doc manifests:     5 \u00d7 ~1 KB \u2248 5 KB\n  Drive manifest:    1 \u00d7 ~2 KB \u2248 2 KB\n  User manifest:     1 \u00d7 ~1 KB \u2248 1 KB\n  Total /bytes:      ~58 KB\n\nSwarm feeds:\n  User feed:         1 index \u00d7 64 bytes = 64 bytes\n  Drive feed:        1 index \u00d7 64 bytes = 64 bytes\n  Doc feeds:         5 \u00d7 ~2 indices \u00d7 64 bytes = 640 bytes\n  Total feeds:       ~768 bytes (< 1 KB)\n\nIndexedDB:\n  Manifest index:    ~5 entries \u00d7 100 bytes = 500 bytes\n  Pending ops:       0 (all flushed)\n  Signer key:        ~200 bytes\n  Total IndexedDB:   ~700 bytes\n\nGRAND TOTAL:\n  PGlite:      ~60 KB  (ephemeral, recoverable)\n  Swarm:       ~59 KB  (permanent, encrypted)\n  IndexedDB:   ~1 KB   (ephemeral, cache)\n  \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\n  Total:       ~120 KB\n  Duplication: ~50 KB (operations stored in both PGlite and Swarm)\n  Overhead:    ~10 KB (manifests, feeds, caches \u2014 not duplication, metadata)\n```\n\n---\n\n## Collaboration Adds Minimal Overhead\n\n```\nCollaboration adds per-user op feeds. The duplication picture:\n\nEXISTING (same as single user):\n  PGlite:           all operations (local + remote)\n  Swarm /bytes:     operation batches (per user)\n  Single-user feeds: doc/drive/user manifests (personal backup)\n\nNEW:\n  Collab index feed:  1 per shared document (~1 KB)\n  Per-user op feeds:  1 per user per document\n    Content: SyncEnvelopes wrapping the SAME operations\n    that are already in the single-user /bytes batches\n\nCollaboration adds:\n  - Feed pointers (~64 bytes per update per user)\n  - SyncEnvelope wrappers around operations\n    (same ops but with OperationContext metadata)\n\nThe actual operation data is the same \u2014 it's just also wrapped\nin SyncEnvelope format for the reactor's SyncManager. This adds\n~20% overhead per op (the context metadata) but the core action\ndata is not duplicated again.\n```\n\n---\n\n## Bottom Line\n\nThe only real duplication is **operations existing in both PGlite and Swarm** \u2014 and that's the same pattern as the current Switchboard model (PGlite + PostgreSQL = 2 copies). We're just replacing the server with a decentralized network.\n\nThe end-goal architecture (D) has **the same 2x duplication as the current Powerhouse default** \u2014 we just don't need a server anymore.\n",
+        "createdAt": "2026-04-21T14:06:54.133Z",
+        "createdBy": "knowledge-agent",
+        "sourceType": "DOCUMENTATION",
+        "description": "Storage duplication analysis \u2014 what gets written where on Swarm, redundancy trade-offs, and de-duplication opportunities."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:30.298Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/source",
+        "toVersion": 1,
+        "documentId": "e60f9b34-9e88-4e60-9c32-0f3a0639e53f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "title": null,
+            "status": "INBOX",
+            "content": null,
+            "createdAt": null,
+            "createdBy": null,
+            "provenance": null,
+            "sourceType": null,
+            "description": null,
+            "extractedClaims": [],
+            "extractionStats": null
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:30.298Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "w5yF4fHPXVVtOrJp5o/VOvmzTRw=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "SET_SOURCE_STATUS",
+      "input": {
+        "status": "EXTRACTED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "HwhxwpNHnu9rrrCSOboFr+jQTns=",
+    "timestampUtcMs": "2026-05-13T13:00:25.000Z",
+    "action": {
+      "type": "RECORD_EXTRACTION_STATS",
+      "input": {
+        "skipRate": 0,
+        "claimCount": 12,
+        "extractedAt": "2026-04-21T14:50:26.833Z",
+        "extractedBy": "knowledge-agent",
+        "skippedCount": 0
+      },
+      "timestampUtcMs": "2026-05-13T13:00:25.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "NZM4dty1wn1WztwSEX9/+Cw4WdE=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ee86286c-ed83-495f-8194-cc323ee49eea"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "QP85qEhyL/ykhcTONqTihWKwzo8=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "1cf845a2-3197-4b2f-867f-c5d3fc34bef6"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "EK4+jtEie2FISbhPQvkEPqC6uXA=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "cfe56b10-4465-4be8-a459-fcf7aeb805d0"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "2nKmRSvYb/VMpflSNqt5zDG5O+8=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "ca2440be-6ce3-4732-bbce-2b5e4163863b"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "fbuHvUwjo3ZCTPYNMkVrdQ//vmk=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "afaaa77b-1854-4ed8-a65f-940e24b36245"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "yBA3nEIALvMIBCcrohISLkGsc24=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "1c017164-4e15-48db-8f00-94875b825209"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "KkJHK+l0CIHnG+uz9uGbuNk329Q=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "a510be45-213a-44c9-8c62-e60a3ba4531f"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "96UGMUc+EBVx85vGqzli8pesDIw=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "6213cb97-da8f-48c9-b21b-40b81b601176"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "M6h7Wtu9P3h3XGZ9XmHGxrg6IZw=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "11cbd520-483c-4f45-8c2b-ce8cb1c4127d"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "brN3aWcXMRQJ5mZT/pa3mff8Mdo=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "47a89c0b-cd52-488c-b81c-f18c5aec4820"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "ufQMLQYcvXiVquRWA1O/SWCFulU=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "278jYjzU9/FHBa9WecI5d690n0Q=",
+    "timestampUtcMs": "2026-05-13T13:00:50.000Z",
+    "action": {
+      "type": "ADD_EXTRACTED_CLAIM",
+      "input": {
+        "claimRef": "3257d754-368f-4102-8cb2-4a4421fb4b90"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:50.000Z"
+    }
+  }
+]

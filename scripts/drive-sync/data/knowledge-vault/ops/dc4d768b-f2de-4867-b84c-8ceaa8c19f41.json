@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:40.116Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ddup-copy-distinct-recovery-role",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:40.116Z"
+        },
+        "version": 0,
+        "documentId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:40.116Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "+8WvNHPoY5+C6ywVurX2DDR1Fxo=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Each storage copy serves a distinct role: local reads, multi-device sync, or self-sovereign recovery",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:40.116Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:40.116Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "QazX671Kk6tuclJ/oHmWWtqpg5A=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:31.000Z",
+        "description": "PGlite (fast reads, not recoverable alone), PostgreSQL (multi-device, server-side), Swarm /bytes (censorship-resistant, wallet-based) \u2014 each copy has its own recovery role."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.689Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+        "targetId": "5cc3c6a5-e5e3-4aa2-af00-39265af3023f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.689Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Z8gVn2WawekR3x4fjSvf53+su7g=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.710Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+        "targetId": "6d57cc63-2c2b-4de8-bc32-f33d31e4db04",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.710Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "41MrNCyuuxlyPa98SZJOBgh29a4=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Not every copy of the data plays the same role. Evaluating duplication requires understanding what each copy is for:\n\n| Copy | Where | Purpose | Can recover from it alone? |\n|---|---|---|:---:|\n| PGlite | Browser | Fast local reads, UI rendering | No (ephemeral) |\n| PostgreSQL | Switchboard | Multi-device sync, team collaboration, server-side processing | Yes (authoritative) |\n| Swarm /bytes | Decentralized network | Censorship-resistant backup, serverless recovery, wallet-based access | Yes (self-sovereign) |\n\n**Key points**:\n- PGlite is **not** a recovery store \u2014 it's a performance layer. Losing it is annoying but not catastrophic as long as a remote exists.\n- PostgreSQL and Swarm are both recovery-complete, but with different trust models: PostgreSQL requires a server operator, Swarm requires only a wallet signature.\n- Switchboard supports server-side processing (document models, auth, etc.); Swarm alone does not.\n- Swarm is censorship-resistant in ways PostgreSQL cannot be.\n\n**Consequence**: \"duplicate\" is the wrong frame for comparing Switchboard and Swarm. They are **alternative recovery stores** with different trust and capability profiles. Only when both run simultaneously (Architecture C) does the word \"duplicate\" genuinely apply \u2014 and even then the motivation is redundancy, not waste.",
+        "updatedAt": "2026-05-13T13:00:31.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.728Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+        "targetId": "11cbd520-483c-4f45-8c2b-ce8cb1c4127d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.728Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "tA3Bipx4brIvkzd/wKYmU2lR/Fs=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:42:40.589Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:59.751Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "dc4d768b-f2de-4867-b84c-8ceaa8c19f41",
+        "targetId": "ee86286c-ed83-495f-8194-cc323ee49eea",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:59.751Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "lxZhIrjuMQt6hYsH0YaKKSfR9fA=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e72df2ea-c001-4101-a14e-942469f8500c",
+        "name": "recovery-roles",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "AAIz9n3/mhgN2e9lcUOniNWhYU8=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "437f5a9a-90c3-4ea3-8ca3-995bf714c729",
+        "name": "trust-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Pex8D6EyzkxxcV7P3z/VUtFDlnQ=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e7e909ee-42f7-48c3-98c9-f69bcbd487f4",
+        "name": "data-duplication",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "cHyCq0FgDdZK42XYZDTb7Io4XAY=",
+    "timestampUtcMs": "2026-05-13T13:00:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c55a91f2-ab47-4f9b-994e-8098cd75e11b",
+        "name": "self-sovereignty",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:31.000Z"
+    }
+  }
+]

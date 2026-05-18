@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-42273fd3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42273fd3-31ea-435c-b973-706fa8e1710e",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-8918651f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8918651f-cf72-489a-a5db-a7da10ee95f1",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-3e9e4444-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3e9e4444-c251-4b9b-9893-c7af3628df2b",
+      "targetTitle": "collab-non-goals-explicit-exclusions"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Typing indicators and presence dots scratched due to PSS latency",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0a28739a-db5c-42b4-9893-f0e59acc804c",
+      "name": "chat-roadmap",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d94cece8-4db0-4643-b7fe-65329fb01552",
+      "name": "scratched-work",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa597b9d-4440-43e7-b179-a3500e4bd0ad",
+      "name": "pss-latency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Decision (2026-04-18)\n\nThe typing-indicator UI (formerly \"Track A\") is **not shipping**.\n\n## Rationale\n\nPSS message latency is 2-10 seconds because of Trojan chunk mining and push-sync. A \"User is typing...\" hint doesn't pay off when the message itself arrives on a longer timescale than the hint would cover. The signal would flicker or misfire more often than it would help.\n\n## Scope of the decision\n\n- **No UI indicator** for typing in chat.\n- **Presence dots** (green-dot + \"Last seen ...\") are **parked**, not deleted. Low payoff relative to live collaboration, which is what users actually want next.\n- **Adapter hooks stay.** `sendTyping`, `sendStoppedTyping`, `sendPresence`, `onNotification` remain in the GSOC notifier because they are useful primitives for presence and live collab.\n\n## Consequence\n\nEngineering attention redirects from ephemeral status indicators toward the live-collaboration track, where the latency profile is tolerable and the payoff is concrete.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:38:00.466Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:38:00.466Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "2026-04-18 decision: no typing-indicator UI will ship. PSS 2-10s latency makes the hint useless. Presence dots also parked; adapter hooks kept for live collab.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

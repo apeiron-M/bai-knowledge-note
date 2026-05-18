@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-c7b131a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-a9803a1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9803a1e-23bf-4f66-abb7-9ff35c7f5c01",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    },
+    {
+      "id": "lnk-3efc23f3-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3efc23f3-f6b4-4477-bba9-40c87ad50b0e",
+      "targetTitle": "act-cross-user-sharing-ecdh"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A cross-user share is three Swarm objects: public profile, share manifest, and ACT-protected share bundle",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8ac67341-aa5b-4e4b-bf30-1f343632854b",
+      "name": "act-sharing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "237c4fa1-b1f4-458d-a323-991a5d0b43ee",
+      "name": "share-manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2efe303e-c3b9-43e6-8251-e41f88cc24eb",
+      "name": "public-profile",
+      "topicDocumentId": null
+    },
+    {
+      "id": "76415d52-1bb0-4925-8a45-c2d764e4e2e2",
+      "name": "sharing-flow",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Sharing documents with another Swarm user goes through three Swarm objects:\n\n1. **Public profile** at `ph:v2:profile:<address>` \u2014 unencrypted. Lists the user's Bee node public key and overlay address. Needed so senders can find the recipient's PSS target and ACT grantee pubkey.\n2. **Share manifest** at `ph:v2:share:<sender>:<recipient>` \u2014 unencrypted index listing each shared drive's ACT reference, grantee ref, and history address. New writes carry `version: 2`; `version: 1` manifests (SHA-256-derived key) remain read-only for legacy shares.\n3. **Share bundle** at a content-addressed `/bzz` reference \u2014 ACT-protected. Contains `{ documents, folders, docFolders, preferredEditor }`. The Bee node encrypts it with `ECDH(publisher_privkey \u00d7 recipient_bee_pubkey)`.\n\nThe bundle is built by `buildDriveShareBundle()` in `plugin/sharing.ts`. It reads operations from the local reactor (including unflushed outbox ops) and falls back to Swarm manifests only when a document isn't present locally. Imported operations keep the sender's signer intact so authorship is preserved on the recipient.\n\nThe same helper powers both the Settings share panel and the in-chat document share picker \u2014 single source of truth.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:27.864Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:21:27.864Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Profile at ph:v2:profile:<address> (unencrypted); share manifest at ph:v2:share:<sender>:<recipient> (unencrypted index, version 2); share bundle at /bzz (ACT-protected contents).",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:34.823Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "bee-reactor-adapter-sync-flow",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "cf252d29-827e-4ab4-9a53-c11aada60a02",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:34.823Z"
+        },
+        "version": 0,
+        "documentId": "cf252d29-827e-4ab4-9a53-c11aada60a02",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:34.823Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "3e/o3nv8+iUJ0g/NJ8FfBUZyRXY=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Adapter sync flow: reactor ops encrypted, uploaded to Swarm, replayed on recovery",
+        "updatedAt": "2026-05-13T13:00:28.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:34.823Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "cf252d29-827e-4ab4-9a53-c11aada60a02",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:34.823Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "srCtLE2gifgDXcJZ5NkxAkjx3ZU=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:28.000Z",
+        "description": "SyncManager detects new ordinals, SwarmChannel encrypts and uploads ops to /bytes and updates feed pointers; a new device replays ops after a wallet signature re-derives the key."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:55.180Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cf252d29-827e-4ab4-9a53-c11aada60a02",
+        "targetId": "41af7645-65c9-43a0-ae10-b7e1d9f37f14",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:55.180Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "M++Y9RkHE0UyX7CwLI0FivUCiOw=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:28.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:55.203Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cf252d29-827e-4ab4-9a53-c11aada60a02",
+        "targetId": "c2449b0f-22ef-4145-bc74-b62ef97d69cc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:55.203Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jv5F3+CJCTNn2A489IZWJ0WpseQ=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "End-to-end sync flow from document edit to cross-device recovery:\n\n```\nUser edits document in Connect\n       \u2193\nReactor stores operation in local PGlite\n       \u2193\nSyncManager detects new ordinal \u2192 populates SwarmChannel outbox\n       \u2193\nSwarmChannel encrypts ops \u2192 uploads to Swarm /bytes \u2192 updates feed pointer\n       \u2193\nOn new device: wallet signature \u2192 same key \u2192 read feeds \u2192 download ops \u2192 replay \u2192 restored\n```\n\nKey properties:\n- Local writes hit PGlite first, so edits never block on network I/O.\n- The outbox is populated reactively by ordinal, not polled.\n- Encryption happens at the SwarmChannel layer before `/bytes` upload.\n- Feed pointers are the only mutable primitive \u2014 the op blobs themselves are immutable.\n- Cross-device recovery is deterministic from the wallet signature alone, no backup seed phrase or extra credentials needed.",
+        "updatedAt": "2026-05-13T13:00:28.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:55.222Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cf252d29-827e-4ab4-9a53-c11aada60a02",
+        "targetId": "f2882310-e36d-4d16-9f15-161cd9ad16c2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:55.222Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "LlvPjr8V7FTO6RpOnp7MNyw0zus=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:52:46.944Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:55.242Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cf252d29-827e-4ab4-9a53-c11aada60a02",
+        "targetId": "9f165bef-3f1d-4405-97ec-4e091d43efae",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:55.242Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "A2kHweHLKC/DBtSg8VFOaJiBezE=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "sync-flow",
+        "name": "sync-flow",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:55.260Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "cf252d29-827e-4ab4-9a53-c11aada60a02",
+        "targetId": "61e7ee9c-e4d6-4079-8746-d2326d12c1da",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:55.260Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "dQJGluLpgmOMSIgu69vn+TRm8w4=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "swarm-channel",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "dRJpN7jri//T47lWvTNvspBMb5Q=",
+    "timestampUtcMs": "2026-05-13T13:00:28.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "cross-device-recovery",
+        "name": "cross-device-recovery",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:28.000Z"
+    }
+  }
+]

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-590a66b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "590a66b8-06f7-4736-96f3-b22e7b737fd7",
+      "targetTitle": "chat-requires-both-users-to-run-full-bee-nodes-because-light"
+    },
+    {
+      "id": "lnk-83598633-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83598633-2b97-4852-9d62-e50ea45508a0",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    },
+    {
+      "id": "lnk-a54a9f24-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a54a9f24-04ea-405c-89bd-b6c73d65fbe6",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    },
+    {
+      "id": "lnk-52023d2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "52023d2d-8462-4acb-9e90-3a3562bf9342",
+      "targetTitle": "swarm-gsoc-many-to-one"
+    },
+    {
+      "id": "lnk-4ed34c88-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4ed34c88-924f-4b59-86dd-887c0fe2a57d",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat topics are derived from sorted participant addresses so both peers compute the same topic.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "topic-5c5ce24c7858",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-d2d68e6884e3",
+      "name": "topic-convention",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-b1dbf6c65e84",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Pattern\n\nChat, collab, and chat-history topics are all derived by concatenating the two participants' Swarm signer addresses in **sorted** order. Sorting guarantees both parties compute the same topic string regardless of who initiates the conversation.\n\n## Topic conventions\n\n```\nChat topic:    ph:v2:chat:<sorted(alice, bob)>\nGSOC notify:   ph:v2:notify:<targetAddress>\nCollab topic:  ph:v2:collab:<documentId>:<sorted(alice, bob)>\nChat history:  ph:v2:chatlog:<sorted(alice, bob)>    // feed, append-only\n```\n\n## Why sorting\n\nWithout sorting, Alice would compute `chat:alice:bob` while Bob would compute `chat:bob:alice`, and PSS subscriptions would never meet. Sorting collapses the asymmetry.\n\n## Namespace versioning\n\nThe `ph:v2:` prefix (vs v1) signals the current Swarm protocol revision. Bumping the prefix is how the app will roll out breaking changes to topic shape or payload schema in the future without colliding with old clients.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:27:13.426Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:27:13.426Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Topics like ph:v2:chat:<sorted(alice,bob)> sort the two addresses alphabetically, ensuring symmetric derivation regardless of who initiates.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

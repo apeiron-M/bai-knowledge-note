@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-ffcac490-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ffcac490-8486-4419-a8f6-ee274f11dd10",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-3fc5d011-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3fc5d011-6359-4eb3-aa44-62d5f689f043",
+      "targetTitle": "powerhouse-design-system-architecture"
+    },
+    {
+      "id": "lnk-cf6ed144-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cf6ed144-884d-4784-8d50-9f25aa8d4aac",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "present document model proposals to user before implementing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ba80e132-889a-43f5-92f4-70b2dee6bd04",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b0d5b98-b8b4-4eb5-adab-fa36baf6d0ab",
+      "name": "planning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "885b9c89-821d-4a43-9090-445f0ab5d88e",
+      "name": "document model design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# present document model proposals to user before implementing\n\nBefore creating any document model, present the full proposal:\n- State schema (global and local if applicable)\n- Modules and their operations\n- Error types for each operation\n- Any architectural decisions (scope choices, object relationships)\n\nWait for explicit user approval before implementing. This prevents wasted work on wrong assumptions and gives the user a chance to refine the design.\n\nSince [[one operation per user intent keeps concerns separated]], the proposal should show how each user action maps to a specific operation.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:01:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:01:17.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Never proceed with document model implementation without explicit user approval of the proposed structure, operations, and modules",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

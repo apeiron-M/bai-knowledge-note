@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-97e5ccbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "97e5ccbe-58b0-4496-8c20-f90ea5f35d31",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model"
+    },
+    {
+      "id": "lnk-7d431931-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d431931-4abb-4545-b427-891f2a5b6478",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-c7b131a8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7b131a8-dd25-4c37-bd70-c467ab5c6641",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-1499ac7f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1499ac7f-c5cc-4b36-a48f-257620cb540f",
+      "targetTitle": "sync-state-pglite-tables"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reactor persists sync state in four PGlite tables: remotes, cursors, dead letters, and operation index.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "t-c767e2c9-1",
+      "name": "pglite",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-c767e2c9-2",
+      "name": "sync-state",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-c767e2c9-3",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-c767e2c9-4",
+      "name": "persistence",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nReactor sync state is durable across sessions because it lives in four dedicated PGlite tables.\n\n## Tables (from source)\n| Table | Purpose |\n|---|---|\n| `sync_remotes` | Registered remotes: name, collection_id, channel_type, push/pull state |\n| `sync_cursors` | Per-remote cursor tracking: ordinal position (inbox & outbox) |\n| `sync_dead_letters` | Failed operations with error details |\n| `operation_index_operations` | Global ordinal index across all operations |\n\n## Why this matters\n- Swarm remotes registered via `syncManager.add(...)` persist in `sync_remotes` and are recreated natively on startup \u2014 no re-registration code needed after reload.\n- Cursors in `sync_cursors` provide exactly-once push semantics: the outbox cursor advances only after a successful remote write.\n- `operation_index_operations` is the shared global ordinal space that lets multiple remotes coexist without stepping on each other.\n\n## Source\nSwarm Channel Architecture, \"PGlite Tables\" table.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:19:49.348Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "sync_remotes, sync_cursors, sync_dead_letters, and operation_index_operations together let channels be recreated natively on startup.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

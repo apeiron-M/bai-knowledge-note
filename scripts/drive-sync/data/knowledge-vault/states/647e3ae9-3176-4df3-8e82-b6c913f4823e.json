@@ -1,0 +1,98 @@
+{
+  "links": [
+    {
+      "id": "lnk-fe317644-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fe317644-e64b-4afd-a682-50eb2a26bacf",
+      "targetTitle": "facet-model-provides-configurable-classification-dimensions"
+    },
+    {
+      "id": "lnk-83b1af9a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83b1af9a-4757-47cb-9925-6ff33d564642",
+      "targetTitle": "resource-template-model-defines-reusable-service-catalog-blueprints"
+    },
+    {
+      "id": "lnk-5739f1f1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5739f1f1-4e1e-49f9-9fca-0a559b466276",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-13c5e640-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+      "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-"
+    },
+    {
+      "id": "lnk-4791cd33-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4791cd33-4d85-4e68-8c36-73f4ff063295",
+      "targetTitle": "resource-instance-model-tracks-provisioned-resource-lifecycle"
+    },
+    {
+      "id": "lnk-05d82097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "05d82097-3895-417e-a3d1-9ada75178992",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-65ef87db-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65ef87db-1d1f-4614-8f3a-281454f215f9",
+      "targetTitle": "mapofferingtosubscription-transforms-service-offering-state-into-subscription-in"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "five models form a hierarchy from facet through template to offering to subscription to instance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7beb2306-17b3-4fc9-91c3-aa877537493a",
+      "name": "facet",
+      "topicDocumentId": null
+    },
+    {
+      "id": "948606d6-7384-4742-8afc-ce2fc137aef1",
+      "name": "service-pricing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# five models form a hierarchy from facet through template to offering to subscription to instance\n\nThe five document models in this project form a directed graph:\n\n```\nFacet \u2500\u2500referenced-by\u2500\u2500\u2192 ResourceTemplate \u2500\u2500referenced-by\u2500\u2500\u2192 ServiceOffering\n                                                                    \u2502\n                                                          (mapOfferingToSubscription)\n                                                                    \u2193\n                                                         SubscriptionInstance\n                                                                    \u2502\n                                                           resource.id PHID\n                                                                    \u2193\n                                                          ResourceInstance\n```\n\n## Cross-Model PHID References\n\n| From | Field | To | Relationship |\n|------|-------|----|-------------|\n| ServiceOffering | `resourceTemplateId` | ResourceTemplate | \"built from this template\" |\n| ServiceOffering | `operatorId` | BuilderProfile (external) | \"offered by\" |\n| ServiceOffering | `facetBindings.facetType` | Facet | \"uses this classification\" |\n| SubscriptionInstance | `serviceOfferingId` | ServiceOffering | \"subscribed to\" |\n| SubscriptionInstance | `operatorId` | BuilderProfile (external) | \"operated by\" |\n| SubscriptionInstance | `customerId` | External | \"purchased by\" |\n| SubscriptionInstance | `resource.id` | ResourceInstance | \"has this resource\" |\n| ResourceInstance | `resourceTemplateId` | ResourceTemplate | \"based on template\" |\n| ResourceInstance | `customerId` | External | \"owned by\" |\n| ResourceTemplate | `operatorId` | BuilderProfile (external) | \"created by\" |\n| ResourceTemplate | `facetBindings.facetType` | Facet | \"uses this classification\" |\n\n## Data Flow Direction\n\n1. **Facet** defines classification options\n2. **ResourceTemplate** references Facets and defines base service catalog\n3. **ServiceOffering** references a template and adds pricing (tiers, discounts, billing cycles)\n4. **SubscriptionInstance** is initialized from an offering's final configuration via mapOfferingToSubscription\n5. **ResourceInstance** is provisioned per subscription and tracks lifecycle\n\n## Broader Ecosystem Context\n\nThese 5 local models are part of a 21-model ecosystem (see [[ecosystem map]]). Key cross-zone dependencies:\n\n- `operatorId` fields reference [[builder-profile model describes individual contributor identities]] (Organization & Identity zone)\n- SubscriptionInstance feeds into [[billing-statement model captures periodic billing summaries]] and [[invoice model generates formal payment requests]] (Finance & Reporting zones)\n- [[service-subscription model tracks service-level subscription agreements]] sits between ServiceOffering and SubscriptionInstance as the agreement layer\n\n---\n\nTopics:\n- [[object relations]]\n- [[architecture decisions]]\n- [[ecosystem map]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "RELATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:41:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:41:30.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Facet \u2192 ResourceTemplate \u2192 ServiceOffering \u2192 SubscriptionInstance \u2192 ResourceInstance forms the primary data flow; PHID references link across model boundaries",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

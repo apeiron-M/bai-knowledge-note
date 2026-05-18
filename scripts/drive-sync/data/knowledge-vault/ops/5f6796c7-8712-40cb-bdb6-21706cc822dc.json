@@ -1,0 +1,185 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:22.004Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "moc-live-collaboration",
+        "slug": "",
+        "model": "bai/moc",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+          "documentType": "bai/moc",
+          "createdAtUtcIso": "2026-05-13T13:00:22.004Z"
+        },
+        "version": 0,
+        "documentId": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:22.004Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "rb+scXPGjSrnZ3F8oLXrkvM0G94=",
+    "timestampUtcMs": "2026-05-13T13:00:49.000Z",
+    "action": {
+      "type": "CREATE_MOC",
+      "input": {
+        "tier": "TOPIC",
+        "title": "Live Collaboration Track",
+        "createdAt": "2026-04-21T19:32:25.350Z",
+        "description": "Next-track design for live collaboration on Swarm: per-user op feeds, ACT-gated collab manifest, GSOC-triggered debounced pulls, no CRDT.",
+        "orientation": "Live collaboration is the next major feature track after chat. This MOC consolidates the design notes: per-user operation feeds (not a shared feed, to avoid SOC write contention), ACT-gated collab manifests for participant discovery, and GSOC pings as the sub-second wake-up signal that triggers debounced pulls. The reactor's operation-based model handles concurrent edits natively, so no CRDT is needed. UX-wise the only surface is the document toolbar's History view \u2014 not per-editor presence \u2014 scoping the track tightly to what the primitives support."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:49.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:22.004Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/moc",
+        "toVersion": 1,
+        "documentId": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {},
+          "global": {
+            "tier": null,
+            "title": null,
+            "tensions": [],
+            "childRefs": [],
+            "coreIdeas": [],
+            "createdAt": null,
+            "noteCount": 0,
+            "parentRef": null,
+            "updatedAt": null,
+            "agentNotes": [],
+            "description": null,
+            "orientation": null,
+            "openQuestions": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:22.004Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:27.925Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+        "targetId": "41652474-fe03-4b76-a673-e60050229ca4",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:27.925Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:27.948Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+        "targetId": "bc3b5418-d95b-4bfa-994a-a27d01b607a6",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:27.948Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:27.967Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+        "targetId": "d0559247-b7b5-48e1-8f69-2e16f51ba1fd",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:27.967Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:27.986Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+        "targetId": "44cbb869-14ac-4205-9cf7-de0de80663b7",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:27.986Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:28.003Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+        "targetId": "3535d1e9-8efc-4efd-a7fe-4616748301d6",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:28.003Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:28.023Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+        "targetId": "8a0beb71-d659-4db7-9331-bc6e9a7e497b",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:28.023Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:28.046Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5f6796c7-8712-40cb-bdb6-21706cc822dc",
+        "targetId": "bd87d072-7c29-4a28-b7b6-e5d5d0ed1e49",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:28.046Z"
+    }
+  }
+]

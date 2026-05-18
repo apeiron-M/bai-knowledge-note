@@ -1,0 +1,275 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:13.540Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "three-layer-swarm-stack",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:13.540Z"
+        },
+        "version": 0,
+        "documentId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:13.540Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "+RwbyPTpEeS4Iy5HeQ25lXSoFuw=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Connect's Swarm integration is split into three layers: bee-reactor-adapter, SwarmChannel, and Connect UI",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:13.540Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:13.540Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "f2RirERXzdyqPpme22bCm1hwraI=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:47.000Z",
+        "description": "SwarmClient wraps the Bee SDK (CRUD + ACT + PSS + GSOC); SwarmChannel implements IChannel for reactor sync; swarm-settings and chat panels expose state and controls in Connect UI."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.200Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+        "targetId": "db78322a-9553-4dca-b1da-d88f98149429",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.200Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "zVxCe/ngoJQFEFzueHR6sl4XHKY=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.221Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+        "targetId": "65b6b0c3-c068-4ec6-b36e-71bc00b79aa9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.221Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "uzi1hF7SHpKFVlUwBRY/sq4wzSg=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The integration decomposes into three layers with clear seams:\n\n**Layer 1 \u2014 `bee-reactor-adapter` (npm)**: the `SwarmClient` class wraps the Bee SDK. It exposes `uploadData`/`downloadData` for encrypted `/bytes`, `uploadFile`/`downloadFile` for ACT-protected `/bzz`, `createGrantees`/`patchGrantees` for ACT grantee lists, `pssSend`/`pssSubscribe` for 1-to-1 messaging, `gsocSend`/`gsocSubscribe` for sub-second notifications, and manifest helpers (`updateManifest`, `readManifest`, `updateDriveManifest`, `updateUserManifest`). It also handles per-topic write locks, 3-retry backoff on feed writes, and auto-detects reference vs inline feed format.\n\n**Layer 2 \u2014 SwarmChannel**: a native `IChannel` implementation wired via `ReactorBuilder.withSync()` and a `CompositeChannelFactory` that routes `\"swarm\"` and `\"gql\"` config types to the right sub-factory. Owns push (outbox) and pull (inbox), cursor tracking via `sync_cursors`, and dead letters via `sync_dead_letters`.\n\n**Layer 3 \u2014 Connect UI**: the `swarm-settings/` panel shows connection status, stamp health, doc tree with sync badges, and share/import controls; the `components/chat/` panel ships the chat UI.\n\nThe plugin layer still owns Bee detection, stamp selection, wallet key derivation, and UI event emission.",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.242Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+        "targetId": "84f30b19-e130-4b75-8160-349b7fb4b47e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.242Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "NXCwzosbNwu1Rs5hzmR8oLs5MJ4=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:12.396Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:21.261Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+        "targetId": "a510be45-213a-44c9-8c62-e60a3ba4531f",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:21.261Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Kjex0RF7iUQ9/f3FqeZdr/vTF5M=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd74c7e5-b525-4655-9a0f-b48b06ba751d",
+        "name": "architecture-layers",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "mobLpx0NyhUSNKYZBt6Lvy+oKYM=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c8fc7f31-d9ee-42cc-8464-12145fa4e8a7",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "9Lnti2vOEqyY7cmIgUnqy0JHmww=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1fb976e0-caff-4d1d-8fe9-e19493b1a71a",
+        "name": "bee-adapter",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "4KDacg32ryQ00PqQ0Rjg9fTH0eg=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "13f9fb0d-1e92-4e95-99d0-9f9a12dbd7a9",
+        "name": "connect-ui",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  }
+]

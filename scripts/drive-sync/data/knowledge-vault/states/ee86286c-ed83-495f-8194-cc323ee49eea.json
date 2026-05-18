@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-ffcac490-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ffcac490-8486-4419-a8f6-ee274f11dd10",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-180eaf98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "180eaf98-8ce3-4be3-ac4c-9f1c5249c78e",
+      "targetTitle": "offline-edits-replay-on-reconnect-via-cursor"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect-on-Swarm data spans four distinct storage layers with different durability",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "54b4b56c-c994-4f46-a002-0ab05c0fcf23",
+      "name": "data-duplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "749a8a34-9f1a-424b-b3e8-8f9455fcc151",
+      "name": "storage-layers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d688d524-f065-4849-a4db-854033eafa63",
+      "name": "swarm-architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d3c2ac1-93b5-4021-a36f-c308f1dddf9b",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Connect-on-Swarm data is distributed across four layers with distinct durability properties:\n\n**Layer 1 \u2014 PGlite (browser, ephemeral)**: Operations, documents, relationships, keyframes. Survives page refresh via IndexedDB, lost on \"Clear site data\", new device, or new browser.\n\n**Layer 2 \u2014 Swarm /bytes (immutable, permanent until stamp expires)**: Encrypted operation batches and manifest payloads. Content-addressed (uploading the same data twice produces the same reference), replicated across the neighborhood. Lost only when stamps expire and chunks are evicted from reserves.\n\n**Layer 3 \u2014 Swarm feeds (mutable pointers)**: 64-char hex references pointing to /bytes data. Each feed index is write-once; the feed as a whole is append-only. One feed per topic. Same durability as /bytes.\n\n**Layer 4 \u2014 IndexedDB caches (browser, ephemeral helpers)**: Manifest index (docId -> latest /bytes ref, for bee dev mode), pending ops buffer, wallet-derived signer key cache. Survives page refresh, lost on \"Clear site data\".\n\nEach layer has a specific role: PGlite is the hot read path, /bytes is the durable payload store, feeds are the mutable lookup, and IndexedDB accelerates repeated lookups.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:42.307Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:41:42.307Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Data lives in four layers: PGlite (ephemeral), Swarm /bytes (immutable), Swarm feeds (append-only pointers), and IndexedDB caches \u2014 each with different loss conditions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

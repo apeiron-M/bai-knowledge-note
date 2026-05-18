@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-d508a76d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d508a76d-410b-4192-bb0d-49adec440906",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-cfb81bd5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cfb81bd5-6d7c-4501-8276-f067558734a1",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-5aba7d9f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5aba7d9f-e7b8-4bea-b898-94ce2dfd7edc",
+      "targetTitle": "bee-reactor-adapter-prerequisites"
+    },
+    {
+      "id": "lnk-f516f01e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f516f01e-e1e5-4012-9752-f58d63b4d32b",
+      "targetTitle": "swarm-postage-stamps-bucket-mechanics"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adapter requires Bee v2.7.1+ with a depth-22+ stamp; bee dev lacks SOC/feeds so the adapter falls back to /bytes mode",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8cefa838-a860-4e4e-8995-ba3afd97e462",
+      "name": "bee-node",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ec3a3d4-4001-4539-9823-fb1efd691ac4",
+      "name": "bee-dev-mode",
+      "topicDocumentId": null
+    },
+    {
+      "id": "60941159-a161-4195-9ec3-49c85d407be1",
+      "name": "postage-stamps",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Bee Node Prerequisites and Dev Mode Constraints\n\nThe adapter requires a running Bee node (v2.7.1+ recommended), a funded postage stamp of depth 22+ (~7.7 GB capacity), and an Ethereum wallet for key derivation.\n\nTests run against `bee dev` \u2014 a memory-only Bee node with no blockchain and no real tokens:\n\n- Full HTTP API on port 1633\n- Postage stamps work but are free\n- Data is stored in memory only (lost on restart)\n- **SOC/Feeds are not supported in dev mode** \u2014 the adapter automatically falls back to `/bytes` mode when it detects dev\n\nThis dev-mode `/bytes`-only fallback is a meaningful behavioral branch: the mutable-feed pointer pattern that powers production recovery does not actually exercise in dev tests; only the immutable upload path is covered.\n\nA test stamp can be minted with:\n\n```bash\ncurl -s -X POST http://localhost:1633/stamps/10000000/24 | jq .batchID\n```\n\nThe 12 E2E tests live in the adapter package and require `bee dev` running in a separate terminal before `pnpm test`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:57:41.685Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-21T14:57:41.685Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Adapter requires Bee v2.7.1+ with a depth-22+ stamp; bee dev lacks SOC/feeds so it falls back to /bytes mode only.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

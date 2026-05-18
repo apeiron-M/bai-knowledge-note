@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-4b35a0b3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4b35a0b3-abfd-42fe-b71f-b18f64f5e96a",
+      "targetTitle": "vetra-remote-drive-collaborative-dev"
+    },
+    {
+      "id": "lnk-88b6d830-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "88b6d830-73ef-4792-a2e1-abd6950d89ab",
+      "targetTitle": "document-models-must-be-added-to-the-vetra-drive-by-default"
+    },
+    {
+      "id": "lnk-c25c8f98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c25c8f98-772d-48ed-abc6-93f4b109112f",
+      "targetTitle": "bee-reactor-adapter-overview"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "vetra drive holds source documents while preview drive holds instances",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "dac5cc5a-c0c2-4f69-a5e1-1af5f345cb87",
+      "name": "architecture decisions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "711a59d7-9575-472c-9e1d-bcc0ff3540d7",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "332343f1-300c-401c-b665-c0e0eaadb16a",
+      "name": "drive architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# vetra drive holds source documents while preview drive holds instances\n\nThe system has two drives with distinct purposes:\n\n1. **Vetra Drive** (`vetra-{hash}`) \u2014 Contains source documents: document models, document editors, and apps. This is the development drive where you define and build things.\n\n2. **Preview Drive** (`preview-{hash}`, named \"Vetra Preview\") \u2014 Contains demo and preview documents (actual document instances). Used for showcasing and testing document models in action.\n\nThe separation ensures development artifacts (models, editors) stay separate from test data (document instances). Since [[document models must be added to the vetra drive by default]], new models always go to vetra, not preview.\n\n---\n\nTopics:\n- [[architecture decisions]]\n- [[mcp workflows]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:04:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T14:04:26.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The vetra drive contains document models and editors for development; the preview drive contains demo document instances",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

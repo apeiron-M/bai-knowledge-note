@@ -1,0 +1,73 @@
+{
+  "tier": "DOMAIN",
+  "title": "Reactor Sync Infrastructure",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-d6c3fc34",
+      "noteRef": "d6c3fc34-9c47-45fa-913e-4281456412cc",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-05-13T14:33:06.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-97e5ccbe",
+      "noteRef": "97e5ccbe-58b0-4496-8c20-f90ea5f35d31",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-05-13T14:33:06.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-1499ac7f",
+      "noteRef": "1499ac7f-c5cc-4b36-a48f-257620cb540f",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-05-13T14:33:06.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-5cc3c6a5",
+      "noteRef": "5cc3c6a5-e5e3-4aa2-af00-39265af3023f",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-05-13T14:33:06.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-2a871b9a",
+      "noteRef": "2a871b9a-b30a-4761-a18e-80019c1e0235",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-05-13T14:33:06.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-478a428d",
+      "noteRef": "478a428d-a4be-4918-9fda-7ebea63c0d97",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-05-13T14:33:06.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-cfe56b10",
+      "noteRef": "cfe56b10-4465-4be8-a459-fcf7aeb805d0",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-05-13T14:33:06.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-21T19:31:46.196Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-04-21T19:31:46.196Z",
+  "agentNotes": [],
+  "description": "The reactor-side plumbing that makes decentralized channels possible: operation log, IChannel mailboxes, sync tables, and multi-remote support.",
+  "orientation": "This MOC captures the reactor sync primitives that every transport \u2014 GraphQL or Swarm \u2014 composes with. Operations-as-append-only-log is the substrate; IChannel mailboxes (inbox/outbox/deadLetter) are the per-remote seam; SyncManager persists state in PGlite tables (remotes, cursors, dead letters, and the mailbox buffer); and multi-remote-per-collection is the switch that enables the dual-sync strategy. These notes form the backbone needed to reason about the SwarmChannel, debouncing, and recovery.",
+  "openQuestions": [],
+  "links": []
+}

@@ -1,0 +1,74 @@
+{
+  "links": [
+    {
+      "id": "lnk-13c5e640-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "13c5e640-cf07-4451-9033-d6c6045a8adc",
+      "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-"
+    },
+    {
+      "id": "lnk-c9b2328d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9b2328d-e39d-472f-9523-373c7d3b2451",
+      "targetTitle": "ecosystem-map"
+    },
+    {
+      "id": "lnk-647e3ae9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "647e3ae9-3176-4df3-8e82-b6c913f4823e",
+      "targetTitle": "five-models-form-a-hierarchy-from-facet-through-template-to-offering-to-subscrip"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "service-subscription model tracks service-level subscription agreements",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2c00f0b3-696a-4317-b55e-547ffdebb3e5",
+      "name": "service-subscription",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b729910-1eac-487e-a85c-55a1c2725838",
+      "name": "service-pricing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# service-subscription model tracks service-level subscription agreements\n\n`powerhouse/service-subscription` (12 ops) manages subscription agreements at the service level. Distinct from [[subscription-instance model tracks active customer subscriptions with lifecycle state]] which tracks individual customer instances.\n\n## Cross-Model References\n\n- ServiceOffering \u2192 ServiceSubscription (offering defines what can be subscribed to)\n- May bridge between [[service-offering model defines tiered pricing with option groups and service groups]] and [[subscription-instance model tracks active customer subscriptions with lifecycle state]]\n\n## Position in Ecosystem\n\nService & Pricing zone. Sits between the offering definition and the individual subscription instance \u2014 the agreement layer.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:42:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-03T13:42:53.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "12 operations \u2014 tracks service-level subscription agreements, distinct from instance-level tracking in SubscriptionInstance",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

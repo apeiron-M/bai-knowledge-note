@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:34.146Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "bee-health-maps-to-channel-connection-state",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "93272572-c7fe-419f-84de-ed7d87e1ff30",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:34.146Z"
+        },
+        "version": 0,
+        "documentId": "93272572-c7fe-419f-84de-ed7d87e1ff30",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:34.146Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "++cElyDo3Nqs7Dd4S7Kb/q2IhVo=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Swarm channel connection state is derived from the Bee node's /health endpoint.",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:34.146Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "93272572-c7fe-419f-84de-ed7d87e1ff30",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:34.146Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "wg8fnqMA5egxfcnDKSbIfYz1nJQ=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:27.000Z",
+        "description": "Bee /health 200 maps to connected; failures map to reconnecting; repeated failures to error; URL change to connecting; shutdown to disconnected."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.657Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "93272572-c7fe-419f-84de-ed7d87e1ff30",
+        "targetId": "f2882310-e36d-4d16-9f15-161cd9ad16c2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.657Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "wAbrkWvXPRrfPDCgzhP40WQug0M=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.681Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "93272572-c7fe-419f-84de-ed7d87e1ff30",
+        "targetId": "56a911e1-d7af-40ae-b27a-3cf5353b4e47",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.681Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "q8zkd7DDuLlYAtl7vUrgnKyMnx4=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nThe Swarm channel's `ConnectionState` is a direct projection of Bee node health probes.\n\n## Mapping (from source)\n| Bee Status | Channel State |\n|---|---|\n| `/health` returns 200 | `connected` |\n| `/health` fails | `reconnecting` |\n| Multiple failures | `error` |\n| Bee URL changed | `connecting` |\n| Channel shutdown | `disconnected` |\n\n## Why this is useful\n- UI components subscribing to `onConnectionStateChange` can render status without custom Bee-health logic.\n- Push is gated on `connected`; in `error` state, operations accumulate in PGlite safely.\n- Reconnect flow (`error \u2192 connected`) triggers catch-up push automatically.\n\n## Source\nSwarm Channel Architecture, \"Connection State\" table; `adapter/src/channel/swarm-channel.ts`.",
+        "updatedAt": "2026-05-13T13:00:27.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.703Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "93272572-c7fe-419f-84de-ed7d87e1ff30",
+        "targetId": "6b616042-d1b8-4f92-b08c-ec61a1ff27b6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.703Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "BaqFdSlw9SfFD+t7dvdfwvFsQko=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:54.723Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "93272572-c7fe-419f-84de-ed7d87e1ff30",
+        "targetId": "8d8fcd0f-b334-4f16-8476-0ebe1b6074e1",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:54.723Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "IXmjFB2WzDb/GxC76fCPmMXlSvI=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-70e46151-1",
+        "name": "connection-state",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "FIIhZZiEonvfNhq1i9Zd3RYiN64=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-70e46151-2",
+        "name": "bee-health",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "6zeNC0z0vqmbzdMRxd0+fejjbnk=",
+    "timestampUtcMs": "2026-05-13T13:00:27.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-70e46151-3",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:27.000Z"
+    }
+  }
+]

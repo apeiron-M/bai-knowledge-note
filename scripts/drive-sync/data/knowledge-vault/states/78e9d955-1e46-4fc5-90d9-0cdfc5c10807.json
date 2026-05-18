@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-ee53899a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee53899a-f049-4ab1-9fe8-4342219bfe52",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-d508a76d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d508a76d-410b-4192-bb0d-49adec440906",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-8af9ab7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8af9ab7b-9dd7-4ab7-b99a-dc391ff0e42a",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    },
+    {
+      "id": "lnk-3d61b8cc-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3d61b8cc-2823-4233-b0e8-cb95e44b0ab0",
+      "targetTitle": "document-model-versioning-system"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "PHDocument v4.0.0 consolidated all metadata into a header field with signature support and per-scope revision tracking",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "feb0b819-deda-4ac2-a83a-d706bffa39ab",
+      "name": "phdocument",
+      "topicDocumentId": null
+    },
+    {
+      "id": "04bac4ef-0e8c-456e-a84e-282db52c42c1",
+      "name": "migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "56029f4e-9d19-422c-8aa7-f74138520b9c",
+      "name": "versioning",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse v4.0.0 introduced a breaking refactor of `PHDocument` structure. All metadata moved from root-level to `document.header`: `id`, `name`, `slug`, `documentType`, `branch`, `meta`. Key renames: `created` -> `createdAtUtcIso`, `lastModified` -> `lastModifiedAtUtcIso`. The `revision` field changed from a number to an object with scope keys: `{ global: 5, local: 0 }`. A new `sig` field was added with `nonce` and `publicKey` for cryptographic document verification. The `id` field now supports Ed25519 signatures for signed documents. The GraphQL API maintains backward compatibility through response transformation, but application code must use the new header structure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-04-02T12:00:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Previously scattered root-level properties moved under document.header, revision became an object with scope keys, timestamps renamed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

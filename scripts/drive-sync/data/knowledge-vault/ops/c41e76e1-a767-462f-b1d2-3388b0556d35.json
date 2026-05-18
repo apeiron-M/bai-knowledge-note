@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:52.044Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "nullable-input-types-require-explicit-coalescing-to-match-state-types",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T12:59:52.044Z"
+        },
+        "version": 0,
+        "documentId": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:52.044Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xr+LJy2sxctqGvRQWdKvN9HOQRI=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "nullable input types require explicit coalescing to match state types",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T12:59:52.044Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T12:59:52.044Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pn/TOWwcrXvGSwrMVVnW69txQ4c=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:38.000Z",
+        "description": "InputMaybe<T> allows null | undefined | T but state uses Maybe<T> = T | null, so coalesce with || null or || [] to satisfy TypeScript"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.189Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+        "targetId": "2818230c-6e88-4a9c-91a1-391d9db37919",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.189Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "KNfmdPuQ4nLTBVoDbg78yfpc47Y=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.210Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+        "targetId": "8abdf393-6a17-4036-ad20-492d0aaeb4a5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.210Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "G2BmtrKcGeoQuodVqix9i1N6QZc=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# nullable input types require explicit coalescing to match state types\n\nOptional input types and optional state types have different nullability:\n\n- **Input**: `InputMaybe<T>` = `null | undefined | T`\n- **State**: `Maybe<T>` = `T | null`\n\nTypeScript won't accept `undefined` where `null` is expected, so you must coalesce:\n\n```typescript\n// \u274c Type error \u2014 undefined not assignable to T | null\namount: action.input.amount,\nnotes: action.input.notes,\n\n// \u2705 Correct \u2014 coalesce to match Maybe<T>\namount: action.input.amount || null,\nnotes: action.input.notes || [],\n```\n\nSince [[truthy checks are safer than undefined checks for optional state assignment]], prefer `if (action.input.field)` over `if (action.input.field !== undefined)` for conditional updates.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[gotchas]]",
+        "updatedAt": "2026-05-13T13:00:38.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:09.230Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c41e76e1-a767-462f-b1d2-3388b0556d35",
+        "targetId": "7d431931-4abb-4545-b427-891f2a5b6478",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:09.230Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "HyQjcyTRyqEMQpOEE4d3hLkEmg0=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:58:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "9OxMal1Bh1Khb2CWjOt7SAjlpOk=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9d97444b-95e3-468e-9cfd-e756fbbd2dfe",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "dUGLi9W89M5JcZT7PgLbZlfY5zk=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "20a94cde-7170-4799-8c38-ae5bd5cf95f4",
+        "name": "gotchas",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "i9RcFznkSjmwB8MSstw8jmDDJQE=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c5dc3b72-f4f4-4a84-9114-1b515a3e17e0",
+        "name": "TypeScript",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "+AeVL31EGMuaVDv0XVhgt2TnBnw=",
+    "timestampUtcMs": "2026-05-13T13:00:38.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "69fe1a8e-df34-4fe7-b5a3-7079ef70bc50",
+        "name": "null coalescing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:38.000Z"
+    }
+  }
+]

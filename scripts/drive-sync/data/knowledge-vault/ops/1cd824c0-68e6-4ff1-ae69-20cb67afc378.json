@@ -1,0 +1,261 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:13.049Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "testing-uses-vitest-and-generatemock",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1cd824c0-68e6-4ff1-ae69-20cb67afc378",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-05-13T13:00:13.049Z"
+        },
+        "version": 0,
+        "documentId": "1cd824c0-68e6-4ff1-ae69-20cb67afc378",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:13.049Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "QhUsC9HS0D7+6hZfl7MbWD8uoOY=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Document model tests use Vitest with generateMock for schema-aware test data generation",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:00:13.049Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "1cd824c0-68e6-4ff1-ae69-20cb67afc378",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {},
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 0
+          }
+        }
+      },
+      "timestampUtcMs": "2026-05-13T13:00:13.049Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ymBvAf7zGFhzOd80dnVmP4wCnbc=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-05-13T13:00:47.000Z",
+        "description": "Tests create documents with utils.createDocument(), generate typed mocks from schemas, apply reducers, and verify state changes."
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.885Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1cd824c0-68e6-4ff1-ae69-20cb67afc378",
+        "targetId": "08fb292d-0342-4e7f-bc8a-1746df34e2b2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.885Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "+RgWWwTfXKHtYCPwLHLyo49UY6Q=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.908Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1cd824c0-68e6-4ff1-ae69-20cb67afc378",
+        "targetId": "fd167b94-3fef-4b2c-82ed-9132388efe81",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.908Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "vTy/iaxIEOjsBC+W2ELxvaN0Y5A=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Powerhouse document model testing follows a structured pattern using Vitest:\n\n1. **Create a document**: `utils.createDocument()` or `utils.createDocument({ global: { items: [mockItem] } })` with initial state\n2. **Generate typed mocks**: `generateMock(AddTodoItemInputSchema())` creates objects with random values matching the schema\n3. **Apply operations**: `const updated = reducer(document, addTodoItem(input))`\n4. **Validate**: `expect(isTodoListDocument(updated)).toBe(true)` for schema validation\n5. **Assert state**: Check `updated.state.global.items` for correct data\n6. **Assert operations**: Check `updated.operations.global[0].action.type` for correct operation recording\n\nKey testing utilities come from the generated code:\n- `reducer` - The document reducer function\n- `utils.createDocument()` - Creates empty or pre-populated documents\n- `isTodoListDocument()` - Schema validation predicate\n- `generateMock()` from `@powerhousedao/codegen` - Schema-aware mock generation\n- `*Schema()` functions - Schema definitions for mock generation\n\nBest practice: Follow AAA pattern (Arrange, Act, Assert). Test immutability, edge cases, and cover both state changes and operation recording.",
+        "updatedAt": "2026-05-13T13:00:47.000Z"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.929Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1cd824c0-68e6-4ff1-ae69-20cb67afc378",
+        "targetId": "de1d3746-cf2f-4166-b955-fa74d1825c80",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.929Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "eYFzuxh7t5lWz4xqfUtfZqyMd6M=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-05-13T13:01:20.949Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1cd824c0-68e6-4ff1-ae69-20cb67afc378",
+        "targetId": "cf6ed144-884d-4784-8d50-9f25aa8d4aac",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-05-13T13:01:20.949Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ebD+W80g9gzlKitafEtyBtmPWZg=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a29cd43c-aa57-485b-88a0-fec680269abf",
+        "name": "testing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "+mo1YddkLAZnEjrcut/l2eEoBHE=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5f1049d3-6817-4889-9140-7bad4db0cd48",
+        "name": "vitest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "d7lzrouVroabx+TFbz7srhqei9g=",
+    "timestampUtcMs": "2026-05-13T13:00:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "355a301c-d1da-4c65-9e69-92f7d6917699",
+        "name": "mock-generation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-05-13T13:00:47.000Z"
+    }
+  }
+]
