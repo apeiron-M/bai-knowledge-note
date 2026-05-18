@@ -1,10 +1,10 @@
 # dev.244 `splitTrailingSameTimestampRun` fix is incomplete — same-timestamp CREATE/UPGRADE pairs still split across envelopes when a docId-sort moves the boundary off the trailing edge
 
 **Affected package:** `@powerhousedao/reactor`
-**Observed version:** 6.0.0-dev.244 (fix `fix(reactor): sync batch system needs no split envelopes across operations that share a timestamp` is present but does not cover this case)
+**Observed versions:** 6.0.0-dev.244 through **6.0.0-dev.253** (still reproducing on the latest dev release as of 2026-05-18). The `splitTrailingSameTimestampRun` fix and the dev.247+ `lastJobByDoc` work do not cover this case.
 **Related upstream commit:** `chore: added a failing test case for split CREATE/UPDATE delivery`
 **Original bug report:** [reactor-browser-skip1-create-document-sync-race.md](./reactor-browser-skip1-create-document-sync-race.md) — describes the client-side symptom (`RevisionMismatchError: expected 1, got 0` + dead-letter)
-**Reactor / Switchboard / Connect:** all on dev.244, run locally via `ph vetra`
+**Reactor / Switchboard / Connect:** observed on both local (`ph vetra`) and remote (`eager-hen-55`); all on the same dev.X version each time
 
 ---
 
@@ -214,6 +214,61 @@ When `emitBatches` doesn't have an in-memory `lastJobByDoc` entry, fall back to 
 
 Of these, (D) is the cleanest: it preserves the existing per-call logic and just lifts the scope of one piece of state, with minimal API churn.
 
+## Confirmation that this still reproduces on dev.253 (2026-05-18)
+
+After upgrading the whole stack to `6.0.0-dev.253` and re-uploading the same 407-doc vault to the remote (`eager-hen-55`), opening Connect against that drive surfaces the same dead-letter pattern at startup. Sample console output from a fresh browser session loading the remote:
+
+```
+[reactor] Error writing {... type:"CREATE_DOCUMENT", index:0, skip:1,
+   action.input.documentId: "bc0f0757-0b5f-4aa8-bf72-8fc643cb0c4a",
+   action.input.name: "operational-collateral-fund-makes-oss-investable",
+   timestampUtcMs: "2026-05-18T10:13:22.330Z"
+} to IOperationStore: {"name":"RevisionMismatchError"}
+```
+
+Followed by `loadDeadLetters` surfacing the persisted IDs from the channel:
+
+```
+[reactor] Dead letter added for document f3c4a3ae-9c81-4091-83ac-66cc4696c5f8 on channel eb77da1b-…
+[reactor] Dead letter added for document f3830ec4-fd46-44f0-91dd-f809d775c53f on channel eb77da1b-…
+[reactor] Dead letter added for document 173a6cbb-619c-48be-a67a-33523d459786 on channel eb77da1b-…
+[reactor] Dead letter added for document 7f010d75-2ccd-4176-897f-455616b605b8 on channel eb77da1b-…
+[reactor] Dead letter added for document bc0f0757-0b5f-4aa8-bf72-8fc643cb0c4a on channel eb77da1b-…
+[reactor] Dead letter added for document 20fc0c40-831b-4d2f-a846-21bcb0cda754 on channel eb77da1b-…
+[reactor] Dead letter added for document 8d7fb34e-200c-4c40-9db1-c438c3c90602 on channel eb77da1b-…
+```
+
+7+ docs out of 407 dead-lettered on this run (~1.7%) — consistent with the dev.244 observation of ~1.3–1.7%. The synthesised payload (`index:0, skip:1, type:"CREATE_DOCUMENT"`) is identical, indicating the same root cause described in this report.
+
+**Bundle hash:** `dist-CF4j225r.js?v=7eb4dcab`, `reactor-DFuRedvV-hKa5kZ7k.js?v=7eb4dcab` (whatever Connect is serving as of 2026-05-18 11:21 BST).
+
+### Full dead-letter payload from a dev.253 session
+
+One of the 7 dead-letters (`f3c4a3ae-9c81-4091-83ac-66cc4696c5f8`), pulled from Connect's DB inspector, showing **both** root causes (split envelope + empty deps) firing together:
+
+| Op type | Index | Ordinal | timestampUtcMs |
+|---|---|---|---|
+| `UPGRADE_DOCUMENT` | 1 | **395** | 2026-05-18T10:12:45.352Z |
+| `ADD_RELATIONSHIP` | 2 | 5358 | 2026-05-18T10:15:41.195Z |
+| `ADD_RELATIONSHIP` | 3 | 5359 | 2026-05-18T10:15:41.490Z |
+| `ADD_RELATIONSHIP` | 4 | 5360 | 2026-05-18T10:15:41.552Z |
+| `ADD_RELATIONSHIP` | 5 | 5361 | 2026-05-18T10:15:41.587Z |
+| `ADD_RELATIONSHIP` | 6 | 5362 | 2026-05-18T10:15:41.612Z |
+
+The `CREATE_DOCUMENT` at server index 0 has ordinal **394** with the same timestamp `2026-05-18T10:12:45.352Z` — adjacent to UPGRADE and sharing the timestamp, so `splitTrailingSameTimestampRun` should have kept them in the same envelope. It didn't — same shape as the dev.244 examples earlier in this report.
+
+Critically, the failing job has:
+
+```
+jobDependencies: []
+```
+
+Empty deps confirms the **second** flaw (the `lastJobByDoc` reset across `updateOutbox` calls — see the section above). Both root causes are independently firing in dev.253, so either fix on its own would not eliminate this case; both fixes are needed.
+
+**dev.247–.253 changelog:** zero commits touching `outbox`, `lastJobByDoc`, `splitTrailingSameTimestampRun`, or `RevisionMismatch`. The fix is still pending.
+
+This bug is **strictly upstream**; nothing in the consuming app can prevent it. We can recover after the fact by deleting + recreating the affected server docs (we have a planned `--repair` flag in the upload script for this) but new uploads will keep producing fresh dead-letters until either fix (D) or fix (E/F) lands.
+
 ## Impact on our project
 
 Same impact as the original report: ~1.3% (5/397) of documents become unreachable in Connect on each fresh upload. The drive-override migration (memory drop from 869 MB → 94 MB stable) is unaffected; only these specific docs require a manual workaround.
@@ -225,15 +280,15 @@ We have a local-side workaround that silently skips edges referencing missing ta
 - OS: Linux 6.6.87.2-microsoft-standard-WSL2
 - Browser: Chromium-based (Vivaldi/Chrome/Edge)
 - Node: 20+
-- All packages pinned to `6.0.0-dev.244`
+- Originally observed on `6.0.0-dev.244`; still reproducing on `6.0.0-dev.253` (2026-05-18) with the same shape.
 
 ```
-@powerhousedao/reactor@6.0.0-dev.244
-@powerhousedao/reactor-api@6.0.0-dev.244
-@powerhousedao/reactor-browser@6.0.0-dev.244
-@powerhousedao/connect@6.0.0-dev.244
-@powerhousedao/shared@6.0.0-dev.244
-document-model@6.0.0-dev.244
+@powerhousedao/reactor@6.0.0-dev.253
+@powerhousedao/reactor-api@6.0.0-dev.253
+@powerhousedao/reactor-browser@6.0.0-dev.253
+@powerhousedao/connect@6.0.0-dev.253
+@powerhousedao/shared@6.0.0-dev.253
+document-model@6.0.0-dev.253
 ```
 
 Happy to share the upload script and a minimal repro repo.
