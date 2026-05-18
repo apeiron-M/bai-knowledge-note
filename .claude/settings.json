@@ -311,7 +311,22 @@
       "Bash(curl -s -m 5 http://localhost:4001/graphql -H 'content-type: application/json' -d '{\"query\":\"{ __type\\(name: \\\\\"DocumentDriveMutations\\\\\"\\) { fields { name args { name } } } }\"}')",
       "Bash(curl -s -o /dev/null -w 'HTTP %{http_code} time %{time_total}s\\\\n' -m 5 http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __typename }\"}')",
       "Bash(tee /tmp/upload-retry.log)",
-      "Bash(curl -s -o /dev/null -w '  HTTP %{http_code} %{time_total}s\\\\n' -m 3 http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __typename }\"}')"
+      "Bash(curl -s -o /dev/null -w '  HTTP %{http_code} %{time_total}s\\\\n' -m 3 http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __typename }\"}')",
+      "Bash(curl -s -o /dev/null -w '  HTTP %{http_code} %{time_total}s\\\\n' -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __typename }\"}')",
+      "Bash(curl -s -m 10 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __schema { queryType { fields { name } } } }\"}')",
+      "Bash(curl -s -m 10 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ system { installedPackages { id version } } }\"}')",
+      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __type\\(name: \\\\\"PackagesQueries\\\\\"\\) { fields { name args { name type { name kind ofType { name } } } } } }\"}')",
+      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ system { version gitHash gitUrl } }\"}')",
+      "Bash(curl -s -m 10 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ Packages { installedPackages { id version description } } }\"}')",
+      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __type\\(name: \\\\\"InstalledPackage\\\\\"\\) { fields { name } } }\"}')",
+      "Bash(curl -s -m 10 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ Packages { installedPackages { name version documentTypes installedAt } } }\"}')",
+      "Bash(curl -s -m 10 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ __schema { mutationType { fields { name args { name type { name kind ofType { name } } } } } } }\"}')",
+      "Bash(curl -s -m 5 https://registry.npmjs.org/@powerhousedao/knowledge-note)",
+      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ Packages { installedPackages { name version installedAt } } }\"}')",
+      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ findDocuments\\(search: { type: \\\\\"powerhouse/document-drive\\\\\" }\\) { items { id name slug } } }\"}')",
+      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ system { version gitHash } }\"}')",
+      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ KnowledgeNote { __typename } }\"}')",
+      "Bash(curl -s -m 5 https://switchboard.eager-hen-55.vetra.io/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{ knowledgeGraphStats\\(driveId: \\\\\"20b86b85-3f51-4246-a9ce-129655b4a0c8\\\\\"\\) { nodeCount edgeCount } }\"}')"
     ]
   },
   "enabledPlugins": {
