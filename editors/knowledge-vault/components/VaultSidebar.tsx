@@ -48,7 +48,11 @@ export function VaultSidebar({ notes, mocs }: VaultSidebarProps) {
   // File nodes only — no doc state fetch. `useDocumentsInSelectedDrive`
   // would suspend-and-throw on any orphan id missing from the cache,
   // freezing the whole drive editor in retry-loops.
-  const allNodes = useNodesInSelectedDrive();
+  //
+  // `useNodesInSelectedDrive()` returns `any` in dev.253; cast to `Node[]`
+  // so the type predicate below can narrow correctly. Without the cast,
+  // every downstream filter/map callback infers `any` for its parameter.
+  const allNodes = useNodesInSelectedDrive() as Node[] | undefined;
   const fileNodes = useMemo(
     () =>
       (allNodes ?? []).filter(

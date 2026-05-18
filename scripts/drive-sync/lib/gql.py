@@ -244,14 +244,18 @@ def add_relationship(
 def create_drive(name: str, preferred_editor: str = "knowledge-vault") -> tuple[str, str]:
     """Create a new drive via the DocumentDrive subgraph. Returns
     (drive_id, drive_slug).
+
+    Note: dev.246+ dropped the `meta: JSONObject` argument and exposed
+    `preferredEditor` directly. Previously this was nested as
+    `meta: { preferredEditor }`.
     """
     query = (
-        "mutation($name: String!, $meta: JSONObject) "
-        "{ DocumentDrive { createDocument(name: $name, meta: $meta) { id slug } } }"
+        "mutation($name: String!, $preferredEditor: String) "
+        "{ DocumentDrive { createDocument(name: $name, preferredEditor: $preferredEditor) { id slug } } }"
     )
     data = post(
         query,
-        {"name": name, "meta": {"preferredEditor": preferred_editor}},
+        {"name": name, "preferredEditor": preferred_editor},
         endpoint=SUPERGRAPH_ENDPOINT,
     )
     info = (data.get("DocumentDrive") or {}).get("createDocument") or {}
