@@ -20,9 +20,14 @@ export class InvalidTaskStatusError extends Error implements ReducerError {
 
 export const errors = {
   AssignTask: { TaskNotFoundError },
+
   AdvancePhase: { TaskNotFoundError },
+
   CompleteTask: { TaskNotFoundError },
+
   FailTask: { TaskNotFoundError },
+
   BlockTask: { TaskNotFoundError },
+
   UnblockTask: { TaskNotFoundError, InvalidTaskStatusError },
 };

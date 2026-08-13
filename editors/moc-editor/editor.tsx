@@ -81,6 +81,18 @@ export default function Editor() {
               >
                 {state.noteCount ?? 0} notes
               </span>
+              {state.version ? (
+                <span
+                  className="rounded-full border px-2 py-0.5 font-mono text-[10px]"
+                  style={{
+                    color: "var(--bai-text-muted)",
+                    borderColor: "var(--bai-border)",
+                  }}
+                  title="Powerhouse stack release this MoC's knowledge is registered against"
+                >
+                  {state.version}
+                </span>
+              ) : null}
             </div>
             <h1
               className="text-2xl font-bold"

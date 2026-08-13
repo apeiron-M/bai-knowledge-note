@@ -1,4 +1,5 @@
 import type { FeatureExtractionPipeline } from "@huggingface/transformers";
+import type * as TransformersModule from "@huggingface/transformers";
 
 let extractor: FeatureExtractionPipeline | null = null;
 let loading: Promise<FeatureExtractionPipeline> | null = null;
@@ -72,7 +73,7 @@ export async function getExtractor(): Promise<FeatureExtractionPipeline> {
         configurable: true,
         writable: true,
       });
-      let transformers: typeof import("@huggingface/transformers");
+      let transformers: typeof TransformersModule;
       try {
         transformers = await import("@huggingface/transformers");
       } finally {

@@ -15,6 +15,7 @@ import type {
   RemoveOpenQuestionAction,
   RemoveTensionAction,
   ReorderCoreIdeasAction,
+  SetMetadataFieldAction,
   UpdateCoreIdeaAction,
   UpdateDescriptionAction,
   UpdateOrientationAction,
@@ -84,6 +85,11 @@ export interface MocMocManagementOperations {
   removeChildMocOperation: (
     state: MocGlobalState,
     action: RemoveChildMocAction,
+    dispatch?: SignalDispatch,
+  ) => void;
+  setMetadataFieldOperation: (
+    state: MocGlobalState,
+    action: SetMetadataFieldAction,
     dispatch?: SignalDispatch,
   ) => void;
 }

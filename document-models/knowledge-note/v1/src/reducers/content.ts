@@ -68,14 +68,15 @@ export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
       "errorMessage",
       "rootCause",
       "correctPattern",
-    ];
+    ] as const;
     const { field, value } = action.input;
-    if (!STRING_METADATA_FIELDS.includes(field)) {
+    const stringField = STRING_METADATA_FIELDS.find((f) => f === field);
+    if (!stringField) {
       throw new InvalidMetadataFieldError(
         `"${field}" is not a recognized string metadata field`,
       );
     }
-    (state as any)[field] = value || null;
+    state[stringField] = value || null;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }
@@ -91,14 +92,15 @@ export const knowledgeNoteContentOperations: KnowledgeNoteContentOperations = {
       "consumedBy",
       "alternatives",
       "consequences",
-    ];
+    ] as const;
     const { field, values } = action.input;
-    if (!LIST_METADATA_FIELDS.includes(field)) {
+    const listField = LIST_METADATA_FIELDS.find((f) => f === field);
+    if (!listField) {
       throw new InvalidMetadataListFieldError(
         `"${field}" is not a recognized list metadata field`,
       );
     }
-    (state as any)[field] = values;
+    state[listField] = values;
     if (state.provenance) {
       state.provenance.updatedAt = action.input.updatedAt;
     }

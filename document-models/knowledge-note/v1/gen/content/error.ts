@@ -41,7 +41,10 @@ export class InvalidMetadataListFieldError
 
 export const errors = {
   SetDescription: { DescriptionTooLongError },
+
   PatchContent: { PatchOutOfBoundsError },
+
   SetMetadataField: { InvalidMetadataFieldError },
+
   SetMetadataListField: { InvalidMetadataListFieldError },
 };

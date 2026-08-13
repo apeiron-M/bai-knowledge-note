@@ -86,13 +86,11 @@ export function createPipelineQueueDocument(
   }>,
 ): PipelineQueueDocument {
   const document = utils.createDocument(
-    state
-      ? createState(
-          createBaseState(state.auth, state.document),
-          state.global,
-          state.local,
-        )
-      : undefined,
+    createState(
+      createBaseState(state?.auth, { version: 1, ...state?.document }),
+      state?.global,
+      state?.local,
+    ),
   );
 
   return document;

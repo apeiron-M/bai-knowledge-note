@@ -2,7 +2,8 @@ export type ErrorCode =
   | "DuplicateCoreIdeaError"
   | "CoreIdeaNotFoundError"
   | "TensionNotFoundError"
-  | "DuplicateChildMocError";
+  | "DuplicateChildMocError"
+  | "InvalidMetadataFieldError";
 
 export interface ReducerError {
   errorCode: ErrorCode;
@@ -36,10 +37,23 @@ export class DuplicateChildMocError extends Error implements ReducerError {
   }
 }
 
+export class InvalidMetadataFieldError extends Error implements ReducerError {
+  errorCode = "InvalidMetadataFieldError" as ErrorCode;
+  constructor(message = "InvalidMetadataFieldError") {
+    super(message);
+  }
+}
+
 export const errors = {
   AddCoreIdea: { DuplicateCoreIdeaError },
+
   UpdateCoreIdea: { CoreIdeaNotFoundError },
+
   RemoveCoreIdea: { CoreIdeaNotFoundError },
+
   RemoveTension: { TensionNotFoundError },
+
   AddChildMoc: { DuplicateChildMocError },
+
+  SetMetadataField: { InvalidMetadataFieldError },
 };

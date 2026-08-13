@@ -2,6 +2,7 @@ import { describe, it, expect, beforeAll, afterAll } from "vitest";
 import { Kysely } from "kysely";
 import { PGlite } from "@electric-sql/pglite";
 import { PGliteDialect } from "kysely-pglite-dialect";
+import type { IRelationalDb } from "@powerhousedao/shared/processors";
 import type { DB } from "../../processors/graph-indexer/schema.js";
 import { up, down } from "../../processors/graph-indexer/migrations.js";
 
@@ -10,11 +11,11 @@ let db: Kysely<DB>;
 beforeAll(async () => {
   const pglite = new PGlite();
   db = new Kysely<DB>({ dialect: new PGliteDialect(pglite) });
-  await up(db as any);
+  await up(db as unknown as IRelationalDb<DB>);
 });
 
 afterAll(async () => {
-  await down(db as any);
+  await down(db as unknown as IRelationalDb<DB>);
   await db.destroy();
 });
 

@@ -14,6 +14,7 @@ import {
   RemoveOpenQuestionInputSchema,
   RemoveTensionInputSchema,
   ReorderCoreIdeasInputSchema,
+  SetMetadataFieldInputSchema,
   UpdateCoreIdeaInputSchema,
   UpdateDescriptionInputSchema,
   UpdateOrientationInputSchema,
@@ -29,6 +30,7 @@ import type {
   RemoveOpenQuestionInput,
   RemoveTensionInput,
   ReorderCoreIdeasInput,
+  SetMetadataFieldInput,
   UpdateCoreIdeaInput,
   UpdateDescriptionInput,
   UpdateOrientationInput,
@@ -44,6 +46,7 @@ import type {
   RemoveOpenQuestionAction,
   RemoveTensionAction,
   ReorderCoreIdeasAction,
+  SetMetadataFieldAction,
   UpdateCoreIdeaAction,
   UpdateDescriptionAction,
   UpdateOrientationAction,
@@ -163,5 +166,14 @@ export const removeChildMoc = (input: RemoveChildMocInput) =>
     { ...input },
     undefined,
     RemoveChildMocInputSchema,
+    "global",
+  );
+
+export const setMetadataField = (input: SetMetadataFieldInput) =>
+  createAction<SetMetadataFieldAction>(
+    "SET_METADATA_FIELD",
+    { ...input },
+    undefined,
+    SetMetadataFieldInputSchema,
     "global",
   );

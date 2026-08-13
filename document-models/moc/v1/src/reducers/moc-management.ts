@@ -3,6 +3,7 @@ import {
   CoreIdeaNotFoundError,
   DuplicateChildMocError,
   DuplicateCoreIdeaError,
+  InvalidMetadataFieldError,
   TensionNotFoundError,
 } from "../../gen/moc-management/error.js";
 
@@ -102,5 +103,17 @@ export const mocMocManagementOperations: MocMocManagementOperations = {
     state.childRefs = state.childRefs.filter(
       (r) => r !== action.input.childRef,
     );
+  },
+  setMetadataFieldOperation(state, action) {
+    const STRING_METADATA_FIELDS = ["version"] as const;
+    const { field, value } = action.input;
+    const stringField = STRING_METADATA_FIELDS.find((f) => f === field);
+    if (!stringField) {
+      throw new InvalidMetadataFieldError(
+        `"${field}" is not a recognized string metadata field`,
+      );
+    }
+    state[stringField] = value || null;
+    state.updatedAt = action.input.updatedAt;
   },
 };

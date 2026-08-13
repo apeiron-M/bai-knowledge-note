@@ -2,14 +2,14 @@
  * WARNING: DO NOT EDIT
  * This file is auto-generated and updated by codegen
  */
-import type { DocumentModelUtils } from "document-model";
+import type { DocumentModelUtils, PHBaseState, Reducer } from "document-model";
 import {
   baseCreateDocument,
-  baseLoadFromInput,
+  baseLoadFromInputVersioned,
   baseSaveToFileHandle,
-  defaultBaseState,
-  generateId,
+  createBaseState,
 } from "document-model";
+import { mocUpgradeManifest } from "../../upgrades/upgrade-manifest.js";
 import {
   assertIsMocDocument,
   assertIsMocState,
@@ -34,6 +34,7 @@ export const initialGlobalState: MocGlobalState = {
   noteCount: 0,
   createdAt: null,
   updatedAt: null,
+  version: null,
 };
 export const initialLocalState: MocLocalState = {};
 
@@ -41,26 +42,22 @@ export const utils: DocumentModelUtils<MocPHState> = {
   fileExtension: "",
   createState(state) {
     return {
-      ...defaultBaseState(),
+      ...createBaseState(state?.auth, { version: 1, ...state?.document }),
       global: { ...initialGlobalState, ...state?.global },
       local: { ...initialLocalState, ...state?.local },
     };
   },
   createDocument(state) {
-    const document = baseCreateDocument(utils.createState, state);
-
-    document.header.documentType = mocDocumentType;
-
-    // for backwards compatibility, but this is NOT a valid signed document id
-    document.header.id = generateId();
-
-    return document;
+    return baseCreateDocument(utils.createState, state, mocDocumentType);
   },
   saveToFileHandle(document, input) {
     return baseSaveToFileHandle(document, input);
   },
   loadFromInput(input) {
-    return baseLoadFromInput(input, reducer);
+    return baseLoadFromInputVersioned(input, {
+      reducers: { 1: reducer as unknown as Reducer<PHBaseState> },
+      upgradeManifest: mocUpgradeManifest,
+    });
   },
   isStateOfType(state) {
     return isMocState(state);

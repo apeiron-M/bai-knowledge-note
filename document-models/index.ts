@@ -7,4 +7,5 @@ export { PipelineQueue as PipelineQueueV1 } from "./pipeline-queue/v1/module.js"
 export { ResearchClaim as ResearchClaimV1 } from "./research-claim/v1/module.js";
 export { Source as SourceV1 } from "./source/v1/module.js";
 export { Tension as TensionV1 } from "./tension/v1/module.js";
+export { upgradeManifests } from "./upgrade-manifests.js";
 export { VaultConfig as VaultConfigV1 } from "./vault-config/v1/module.js";

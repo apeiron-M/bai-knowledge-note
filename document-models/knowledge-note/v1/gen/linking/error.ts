@@ -38,8 +38,12 @@ export class TopicNotFoundError extends Error implements ReducerError {
 
 export const errors = {
   AddLink: { DuplicateLinkIdError },
+
   RemoveLink: { LinkNotFoundError },
+
   UpdateLinkType: { LinkNotFoundError },
+
   AddTopic: { DuplicateTopicError },
+
   RemoveTopic: { TopicNotFoundError },
 };

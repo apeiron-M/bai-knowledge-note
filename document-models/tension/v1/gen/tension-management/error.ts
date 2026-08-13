@@ -13,5 +13,6 @@ export class TensionAlreadyResolvedError extends Error implements ReducerError {
 
 export const errors = {
   ResolveTension: { TensionAlreadyResolvedError },
+
   DissolveTension: { TensionAlreadyResolvedError },
 };

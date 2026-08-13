@@ -17,6 +17,7 @@ import {
   RemoveOpenQuestionInputSchema,
   RemoveTensionInputSchema,
   ReorderCoreIdeasInputSchema,
+  SetMetadataFieldInputSchema,
   UpdateCoreIdeaInputSchema,
   UpdateDescriptionInputSchema,
   UpdateOrientationInputSchema,
@@ -175,6 +176,18 @@ const stateReducer: StateReducer<MocPHState> = (state, action, dispatch) => {
       RemoveChildMocInputSchema().parse(action.input);
 
       mocMocManagementOperations.removeChildMocOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+
+      break;
+    }
+
+    case "SET_METADATA_FIELD": {
+      SetMetadataFieldInputSchema().parse(action.input);
+
+      mocMocManagementOperations.setMetadataFieldOperation(
         (state as any)[action.scope],
         action as any,
         dispatch,

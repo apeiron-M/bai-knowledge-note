@@ -23,8 +23,12 @@ export class SelfApprovalError extends Error implements ReducerError {
 
 export const errors = {
   SubmitForReview: { InvalidStatusTransitionError },
+
   ApproveNote: { InvalidStatusTransitionError, SelfApprovalError },
+
   RejectNote: { InvalidStatusTransitionError },
+
   ArchiveNote: { InvalidStatusTransitionError },
+
   RestoreNote: { InvalidStatusTransitionError },
 };

@@ -14,6 +14,7 @@ import type {
   RemoveOpenQuestionInput,
   RemoveTensionInput,
   ReorderCoreIdeasInput,
+  SetMetadataFieldInput,
   UpdateCoreIdeaInput,
   UpdateDescriptionInput,
   UpdateOrientationInput,
@@ -71,6 +72,10 @@ export type RemoveChildMocAction = Action & {
   type: "REMOVE_CHILD_MOC";
   input: RemoveChildMocInput;
 };
+export type SetMetadataFieldAction = Action & {
+  type: "SET_METADATA_FIELD";
+  input: SetMetadataFieldInput;
+};
 
 export type MocMocManagementAction =
   | CreateMocAction
@@ -85,4 +90,5 @@ export type MocMocManagementAction =
   | AddOpenQuestionAction
   | RemoveOpenQuestionAction
   | AddChildMocAction
-  | RemoveChildMocAction;
+  | RemoveChildMocAction
+  | SetMetadataFieldAction;

@@ -56,6 +56,68 @@ export default function Editor() {
     return noteMap.get(document.header.id)?.links ?? [];
   }, [noteMap, document]);
 
+  // Read state optionally here so the callbacks below can be declared
+  // unconditionally (rules-of-hooks) even while the doc is still loading.
+  const globalState = document?.state.global;
+  const stateTitle = globalState?.title;
+  const stateDescription = globalState?.description;
+
+  const handleSetTitle = useCallback(
+    (title: string) => {
+      if (title && title !== stateTitle) {
+        dispatch?.(actions.setTitle({ title, updatedAt: timestamp() }));
+      }
+    },
+    [dispatch, stateTitle],
+  );
+
+  const handleSetDescription = useCallback(
+    (description: string) => {
+      if (description !== (stateDescription ?? "")) {
+        dispatch?.(
+          actions.setDescription({ description, updatedAt: timestamp() }),
+        );
+      }
+    },
+    [dispatch, stateDescription],
+  );
+
+  const handleSetNoteType = useCallback(
+    (noteType: string) => {
+      dispatch?.(actions.setNoteType({ noteType, updatedAt: timestamp() }));
+    },
+    [dispatch],
+  );
+
+  const handleSetContent = useCallback(
+    (content: string) => {
+      dispatch?.(actions.setContent({ content, updatedAt: timestamp() }));
+    },
+    [dispatch],
+  );
+
+  const handleSetMetadataField = useCallback(
+    (field: string, value: string | null) => {
+      dispatch?.(
+        actions.setMetadataField({
+          field,
+          value: value ?? undefined,
+          updatedAt: timestamp(),
+        }),
+      );
+    },
+    [dispatch],
+  );
+
+  const handleSetMetadataListField = useCallback(
+    (field: string, values: string[]) => {
+      dispatch?.(
+        actions.setMetadataListField({ field, values, updatedAt: timestamp() }),
+      );
+    },
+    [dispatch],
+  );
+
   // Guard: useSelectedDocumentSafe returns undefined when Connect's
   // local cache doesn't yet have this doc. Show a loading state
   // instead of crashing the render with the error boundary.
@@ -77,62 +139,6 @@ export default function Editor() {
   }
 
   const state = document.state.global;
-
-  const handleSetTitle = useCallback(
-    (title: string) => {
-      if (title && title !== state.title) {
-        dispatch(actions.setTitle({ title, updatedAt: timestamp() }));
-      }
-    },
-    [dispatch, state.title],
-  );
-
-  const handleSetDescription = useCallback(
-    (description: string) => {
-      if (description !== (state.description ?? "")) {
-        dispatch(
-          actions.setDescription({ description, updatedAt: timestamp() }),
-        );
-      }
-    },
-    [dispatch, state.description],
-  );
-
-  const handleSetNoteType = useCallback(
-    (noteType: string) => {
-      dispatch(actions.setNoteType({ noteType, updatedAt: timestamp() }));
-    },
-    [dispatch],
-  );
-
-  const handleSetContent = useCallback(
-    (content: string) => {
-      dispatch(actions.setContent({ content, updatedAt: timestamp() }));
-    },
-    [dispatch],
-  );
-
-  const handleSetMetadataField = useCallback(
-    (field: string, value: string | null) => {
-      dispatch(
-        actions.setMetadataField({
-          field,
-          value: value ?? undefined,
-          updatedAt: timestamp(),
-        }),
-      );
-    },
-    [dispatch],
-  );
-
-  const handleSetMetadataListField = useCallback(
-    (field: string, values: string[]) => {
-      dispatch(
-        actions.setMetadataListField({ field, values, updatedAt: timestamp() }),
-      );
-    },
-    [dispatch],
-  );
 
   return (
     <div

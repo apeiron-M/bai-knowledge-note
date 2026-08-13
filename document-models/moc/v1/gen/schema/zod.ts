@@ -16,6 +16,7 @@ import type {
   RemoveOpenQuestionInput,
   RemoveTensionInput,
   ReorderCoreIdeasInput,
+  SetMetadataFieldInput,
   UpdateCoreIdeaInput,
   UpdateDescriptionInput,
   UpdateOrientationInput,
@@ -117,6 +118,7 @@ export function MocStateSchema(): z.ZodObject<Properties<MocState>> {
     tier: MocTierSchema.nullish(),
     title: z.string().nullish(),
     updatedAt: z.iso.datetime().nullish(),
+    version: z.string().nullish(),
   });
 }
 
@@ -169,6 +171,16 @@ export function ReorderCoreIdeasInputSchema(): z.ZodObject<
 > {
   return z.object({
     ids: z.array(z.string()),
+  });
+}
+
+export function SetMetadataFieldInputSchema(): z.ZodObject<
+  Properties<SetMetadataFieldInput>
+> {
+  return z.object({
+    field: z.string(),
+    updatedAt: z.iso.datetime(),
+    value: z.string().nullish(),
   });
 }
 

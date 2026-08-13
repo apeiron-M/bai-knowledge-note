@@ -19,9 +19,19 @@ export const vaultConfigConfigManagementOperations: VaultConfigConfigManagementO
           schema: { value: 3, confidence: 0.5, rationale: null },
           automation: { value: 3, confidence: 0.5, rationale: null },
         };
-      const dim = action.input.dimension;
-      if (dim in state.dimensions) {
-        (state.dimensions as any)[dim] = {
+      const DIMENSION_KEYS = [
+        "granularity",
+        "organization",
+        "linking",
+        "processing",
+        "navigation",
+        "maintenance",
+        "schema",
+        "automation",
+      ] as const;
+      const dim = DIMENSION_KEYS.find((k) => k === action.input.dimension);
+      if (dim) {
+        state.dimensions[dim] = {
           value: action.input.value,
           confidence: action.input.confidence,
           rationale: action.input.rationale || null,
@@ -42,8 +52,20 @@ export const vaultConfigConfigManagementOperations: VaultConfigConfigManagementO
           topicMap: "topic map",
           description: "description",
         };
-      if (action.input.key in state.vocabulary) {
-        (state.vocabulary as any)[action.input.key] = action.input.value;
+      const VOCABULARY_KEYS = [
+        "notes",
+        "inbox",
+        "reduce",
+        "reflect",
+        "reweave",
+        "verify",
+        "rethink",
+        "topicMap",
+        "description",
+      ] as const;
+      const key = VOCABULARY_KEYS.find((k) => k === action.input.key);
+      if (key) {
+        state.vocabulary[key] = action.input.value;
       }
       state.updatedAt = action.input.updatedAt;
     },
@@ -79,9 +101,20 @@ export const vaultConfigConfigManagementOperations: VaultConfigConfigManagementO
           mocOversize: 40,
           staleNoteDays: 30,
         };
-      if (action.input.condition in state.maintenance) {
-        (state.maintenance as any)[action.input.condition] =
-          action.input.threshold;
+      const MAINTENANCE_KEYS = [
+        "orphanThreshold",
+        "danglingThreshold",
+        "inboxPressure",
+        "observationAccumulation",
+        "tensionAccumulation",
+        "mocOversize",
+        "staleNoteDays",
+      ] as const;
+      const condition = MAINTENANCE_KEYS.find(
+        (k) => k === action.input.condition,
+      );
+      if (condition) {
+        state.maintenance[condition] = action.input.threshold;
       }
       state.updatedAt = action.input.updatedAt;
     },

@@ -73,7 +73,7 @@ async function pMap<T, U>(
   limit: number,
   worker: (item: T) => Promise<U>,
 ): Promise<U[]> {
-  const results: U[] = new Array(items.length);
+  const results: U[] = new Array<U>(items.length);
   let next = 0;
   await Promise.all(
     Array.from({ length: Math.min(limit, items.length) }, async () => {

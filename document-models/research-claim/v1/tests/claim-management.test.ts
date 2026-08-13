@@ -82,4 +82,86 @@ describe("ClaimManagementOperations", () => {
     );
     expect(updatedDocument.operations.global[0].index).toEqual(0);
   });
+
+  it("should handle a full claim lifecycle: create, connect, remove, update", () => {
+    const document = utils.createDocument();
+
+    let updatedDocument = reducer(
+      document,
+      createClaim({
+        title: "Spaced repetition improves retention",
+        description: "A claim about learning",
+        content: "Spaced repetition improves long-term retention.",
+        kind: "insight",
+        methodology: ["literature-review"],
+        sources: ["source-1"],
+        topics: ["learning"],
+      }),
+    );
+
+    expect(updatedDocument.state.global.title).toBe(
+      "Spaced repetition improves retention",
+    );
+    expect(updatedDocument.state.global.description).toBe(
+      "A claim about learning",
+    );
+    expect(updatedDocument.state.global.content).toBe(
+      "Spaced repetition improves long-term retention.",
+    );
+    expect(updatedDocument.state.global.kind).toBe("insight");
+    expect(updatedDocument.state.global.methodology).toStrictEqual([
+      "literature-review",
+    ]);
+    expect(updatedDocument.state.global.sources).toStrictEqual(["source-1"]);
+    expect(updatedDocument.state.global.topics).toStrictEqual(["learning"]);
+
+    updatedDocument = reducer(
+      updatedDocument,
+      addResearchConnection({
+        id: "conn-1",
+        targetRef: "claim-a",
+        contextPhrase: "builds on",
+      }),
+    );
+    updatedDocument = reducer(
+      updatedDocument,
+      addResearchConnection({
+        id: "conn-2",
+        targetRef: "claim-b",
+        contextPhrase: "contradicts",
+      }),
+    );
+
+    expect(updatedDocument.state.global.connections).toHaveLength(2);
+    expect(updatedDocument.state.global.connections[0]).toStrictEqual({
+      id: "conn-1",
+      targetRef: "claim-a",
+      contextPhrase: "builds on",
+    });
+
+    updatedDocument = reducer(
+      updatedDocument,
+      removeResearchConnection({ id: "conn-1" }),
+    );
+
+    expect(updatedDocument.state.global.connections).toHaveLength(1);
+    expect(updatedDocument.state.global.connections[0].id).toBe("conn-2");
+
+    // Removing an unknown id leaves the remaining connections untouched
+    updatedDocument = reducer(
+      updatedDocument,
+      removeResearchConnection({ id: "missing-id" }),
+    );
+
+    expect(updatedDocument.state.global.connections).toHaveLength(1);
+    expect(updatedDocument.state.global.connections[0].id).toBe("conn-2");
+
+    updatedDocument = reducer(
+      updatedDocument,
+      updateClaimContent({ content: "Refined claim content." }),
+    );
+
+    expect(updatedDocument.state.global.content).toBe("Refined claim content.");
+    expect(updatedDocument.operations.global).toHaveLength(6);
+  });
 });

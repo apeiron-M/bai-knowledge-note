@@ -45,7 +45,10 @@ export type Scalars = {
   Amount_Money: { input: number; output: number };
   Amount_Percentage: { input: number; output: number };
   Amount_Tokens: { input: number; output: number };
-  Attachment: { input: string; output: string };
+  AttachmentRef: {
+    input: `attachment://v${number}:${string}`;
+    output: `attachment://v${number}:${string}`;
+  };
   Currency: { input: string; output: string };
   Date: { input: string; output: string };
   DateTime: { input: string; output: string };
@@ -115,6 +118,7 @@ export type MocState = {
   tier: Maybe<MocTier>;
   title: Maybe<Scalars["String"]["output"]>;
   updatedAt: Maybe<Scalars["DateTime"]["output"]>;
+  version: Maybe<Scalars["String"]["output"]>;
 };
 
 export type MocTensionEntry = {
@@ -144,6 +148,12 @@ export type RemoveTensionInput = {
 
 export type ReorderCoreIdeasInput = {
   ids: Array<Scalars["OID"]["input"]>;
+};
+
+export type SetMetadataFieldInput = {
+  field: Scalars["String"]["input"];
+  updatedAt: Scalars["DateTime"]["input"];
+  value?: InputMaybe<Scalars["String"]["input"]>;
 };
 
 export type UpdateCoreIdeaInput = {
