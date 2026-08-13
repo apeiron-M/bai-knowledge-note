@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-aa462073-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa462073-1b66-4422-8008-349b70dec86f",
+      "targetTitle": "powerhouse-design-system-graphql-scalars"
+    },
+    {
+      "id": "lnk-0f4ed3f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0f4ed3f3-8131-475d-afc5-d6fec8b70fd8",
+      "targetTitle": "custom-scalars-graphql-zod-validation"
+    },
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-3ac66d63-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3ac66d63-e907-447c-bb02-cd81e698867d",
+      "targetTitle": "open-source-capitalism-makes-oss-self-sustaining-investable-and-scalable"
+    },
+    {
+      "id": "lnk-5dce4e61-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5dce4e61-3a7c-4243-b26a-ce1e45ad09f9",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse provides the OID custom scalar type for unique identifiers passed in through the action input",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "85cd7d95-364e-4bed-b0cd-406a74f14562",
+      "name": "oid",
+      "topicDocumentId": null
+    },
+    {
+      "id": "637ebf63-abdf-461c-9df6-198cf72fa062",
+      "name": "scalars",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a40ee169-1a15-407b-95fb-16a4af298489",
+      "name": "id-generation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8b49d8c1-daf1-4275-b941-2e2b2b8a4408",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse provides the `OID` (Object ID) custom scalar type for unique identifiers in document models. Key patterns:\n\n- Objects in arrays must have an `id: OID!` field\n- IDs are non-deterministic, so they must be generated **before `dispatch`** with `generateId()` and passed in through the action input \u2014 never generated inside the reducer\n- `AddTodoItemInput` therefore carries `id: OID!` alongside `text`, and the reducer reads `action.input.id`\n- Update and delete operations require `id: OID!` to identify the target\n\n```typescript\n// In the editor - generate the ID before dispatching\nimport { generateId } from \"document-model\";\n\ndispatch(addTodoItem({ id: generateId(), text: input.text }));\n```\n\n```typescript\n// In the reducer - read the ID from the input\naddTodoItemOperation(state, action) {\n  state.items.push({ id: action.input.id, text: action.input.text, checked: false });\n}\n```\n\n`generateId()` is `crypto.randomUUID()` under the hood, so calling it inside a reducer breaks replay determinism \u2014 two peers replaying the same operation log would produce different IDs. Generating at the dispatch site gives you unique, consistent IDs *and* a reducer that stays a pure function of `(state, action)`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "OID is a custom GraphQL scalar for object IDs. Call generateId() before dispatch and pass the id in the action input, never inside the reducer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a340c3ca-2873-4501-8c1d-b43b54d4cfa1",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:04.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2469abad-3a44-4823-aee8-2c6a6fc71847",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

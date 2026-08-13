@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-abf010f8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "abf010f8-1c17-4714-824f-7d822003379a",
+      "targetTitle": "subgraphs-extend-document-models-via-graphql"
+    },
+    {
+      "id": "lnk-ee900e65-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ee900e65-175e-4152-9ad5-18db168c583c",
+      "targetTitle": "v6-reactor-subgraph-replaces-legacy-endpoints"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Document-model subgraphs expose namespaced mutations taking docId plus a <Model>_<Operation>Input",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a3427f24-dd6e-4de4-a815-71ecc22ba1f8",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b1f6e915-a824-417f-89b2-e255f4225e05",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9aa65626-1697-42e7-9213-59c86264cbf1",
+      "name": "switchboard",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The generated shape\n\nYou do not write the GraphQL API for a document model. Switchboard generates it from the model's operations, and the naming is fully mechanical: every operation with a valid schema becomes a mutation nested under the model's namespace, taking exactly two arguments.\n\n```graphql\nmutation AddTodoItem($docId: PHID!, $input: ToDoList_AddTodoItemInput!) {\n  ToDoList {\n    addTodoItem(docId: $docId, input: $input) {\n      id\n      name\n      revisionsList {\n        scope\n        revision\n      }\n    }\n  }\n}\n```\n\n```json\n{\n  \"docId\": \"03eb6780-f1d7-438c-84a0-6d93dfb8f6af\",\n  \"input\": { \"text\": \"My new to-do from GraphQL\", \"id\": \"1\" }\n}\n```\n\nThe transformation rules, straight from the schema generator:\n\n- Operation `ADD_TODO_ITEM` \u2192 field `addTodoItem` (camelCase of the operation name).\n- Input type \u2192 `<ModelName>_<OperationName>Input`, PascalCased and prefixed with the model \u2014 `ToDoList_AddTodoItemInput`.\n- `docId` is a `PHID!`, always the first argument.\n- Return type is `<ModelName>MutationResult!`, which carries the updated document and its `revisionsList`.\n\n## The Async twin\n\nEach operation produces **two** mutations, not one. Alongside `addTodoItem` there is `addTodoItemAsync(docId: PHID!, input: ...): String!`. The sync form waits for the write and returns the updated document; the async form submits the job and returns its **id as a string**, leaving you to poll job status. Reach for the async form when the caller does not need the resulting state and you would rather not hold the request open.\n\nQueries are generated on the same pattern under `ToDoList { document, documents, findDocuments, ... }`, so the model namespace is the single entry point for both reading and writing that type.\n\n_Source: apps/academy/docs/academy/03-Build/04-WorkWithData/02-UsingTheAPI.mdx, packages/reactor-api/src/utils/create-schema.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ADD_TODO_ITEM surfaces as ToDoList { addTodoItem(docId: PHID!, input: ToDoList_AddTodoItemInput!) }, plus an addTodoItemAsync twin that returns a job id instead of the document.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cb6d794c-e030-48db-9b93-da5dda707cae",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d82573c8-07db-4d88-aa9d-56789d1ee4d6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

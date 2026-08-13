@@ -1,0 +1,304 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:29.711Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "signatures-list-is-not-proof-of-client-signing",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "599828ff-29ef-400d-8bc0-d3140b10a4f6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:29.711Z"
+        },
+        "version": 0,
+        "documentId": "599828ff-29ef-400d-8bc0-d3140b10a4f6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.711Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "4p+CckG7iHqbc1FqjhlSiM2QPjM=",
+    "timestampUtcMs": "2026-08-13T14:33:29.907Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "A non-empty signatures list is not proof of client-side signing \u2014 check context.signer.user.address",
+        "updatedAt": "2026-08-13T14:33:29.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.907Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:29.711Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "599828ff-29ef-400d-8bc0-d3140b10a4f6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.711Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "RbjHfjj/S7g0ips1QetiI4EyNCs=",
+    "timestampUtcMs": "2026-08-13T14:33:29.907Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:29.000Z",
+        "description": "The Switchboard signs unsigned actions with its own did:key, and the server does not validate prevOpHash, so a wrong hash is silently accepted."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.907Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:31.479Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "599828ff-29ef-400d-8bc0-d3140b10a4f6",
+        "targetId": "5694a8da-b036-4b8a-a16d-bca12de03af9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:31.479Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "EuJ1j5ssHPH9N62Pwkr2PsT7c+E=",
+    "timestampUtcMs": "2026-08-13T14:33:29.907Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-13T14:33:29.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.907Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:31.503Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "599828ff-29ef-400d-8bc0-d3140b10a4f6",
+        "targetId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:31.503Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "sB+banA52k/dLn30F2AwHqgsibQ=",
+    "timestampUtcMs": "2026-08-13T14:33:29.907Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Two traps when verifying signatures\n\n**1. The Switchboard signs unsigned actions itself.** When an action arrives with no signature, the Switchboard signs it with its own `did:key`. The resulting operation therefore has a **non-empty `signatures` list** \u2014 which means the presence of signatures is *not* evidence that the client signed anything. A test or audit that asserts `signatures.length > 0` passes just as happily for a server-signed action as for a user-signed one.\n\nThe field to check is `context.signer.user.address`. That is what tells you *whose* identity is attached, and it is the only way to distinguish a user-attributed operation from a server-attributed one.\n\n**2. The server does not validate `prevOpHash`.** A wrong hash is accepted and the write succeeds. So conformance with the stamping contract cannot be inferred from a mutation returning successfully \u2014 it has to be asserted directly in tests, by reading the operation back and comparing `prevOpHash` against the hash you expect for that scope and revision.\n\n## Why this matters beyond tests\n\nTogether these two facts mean a write path can look fully signed and hash-chained while being neither. The failure is silent in both directions: the server fills in the signature you did not produce, and it accepts the hash you got wrong. Any claim that \"operations in this deployment are user-signed\" needs to be backed by checking the signer identity on real operations, not by the write path not erroring.\n\nThe practical check, on an operation read back from the Switchboard:\n\n```typescript\nconst signer = operation.action.context?.signer;\nconst wasClientSigned = Boolean(signer?.user?.address);\n```\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:29.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.907Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "B3mYSeCIfzC9hAFkThdVRbwvX9A=",
+    "timestampUtcMs": "2026-08-13T14:33:29.907Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "19e164f2-886f-44d9-af26-ad8e28a606c2",
+        "name": "signing"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.907Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "OhfY8JkQKhQPR2MoMcVW0n0KD7c=",
+    "timestampUtcMs": "2026-08-13T14:33:29.907Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1ce06deb-bd08-4945-8ae2-b95f4b601945",
+        "name": "switchboard"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.907Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "IGRU8Ci02VAAy+LhBNFsYu37Veg=",
+    "timestampUtcMs": "2026-08-13T14:33:29.907Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "64dff100-576f-4d87-8d16-2420c25b8d44",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.907Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "QxQ9P4/PrRDXYPQHlbUOx15D5V0=",
+    "timestampUtcMs": "2026-08-13T14:33:29.907Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a37d541a-ed58-454d-8ea3-c37b65a75d47",
+        "name": "verification"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.907Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "5V+U46F4U/rGhJwrXydF43Yesow=",
+    "timestampUtcMs": "2026-08-13T14:33:31.435Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:29.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:31.435Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "anaDo0QR+DSTVClyhHvYrkzBwOs=",
+    "timestampUtcMs": "2026-08-13T15:54:33.470Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:54:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:33.470Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "wRKmRbgtzBWr1APidfYoE1KTT1s=",
+    "timestampUtcMs": "2026-08-13T15:54:33.470Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5eeea0b5-9b79-4398-8b4a-c83eca45a6f2",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:54:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:33.470Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "IR1y6QK2Avl5vkJtyFAY88dosdI=",
+    "timestampUtcMs": "2026-08-13T15:54:33.470Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9cbbc0ad-2bf6-4b36-874e-6356b77507ad",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:54:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:33.470Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "RopRWo8USfVU1CemWTpbzd7fXOg=",
+    "timestampUtcMs": "2026-08-13T16:52:08.059Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:52:08.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:52:08.059Z"
+    }
+  }
+]

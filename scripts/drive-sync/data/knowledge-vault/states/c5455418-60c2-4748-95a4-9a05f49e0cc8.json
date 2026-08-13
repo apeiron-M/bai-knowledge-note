@@ -1,0 +1,136 @@
+{
+  "links": [
+    {
+      "id": "lnk-60b28fe8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "60b28fe8-68cf-4478-96d5-d45346be19d6",
+      "targetTitle": "five-models-form-a-hierarchy-from-facet-through-template-to-offering-to-subscrip"
+    },
+    {
+      "id": "lnk-688b0550-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "688b0550-36f2-4b89-83ae-9d32502eb40e",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-0646fae1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0646fae1-7c4c-4606-8e9e-d2a6b2458c8d",
+      "targetTitle": "subscription-instance-model-tracks-active-customer-subscriptions-with-lifecycle-"
+    },
+    {
+      "id": "lnk-7e15ba50-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7e15ba50-2f7c-4ac3-8d6a-396fafc3da98",
+      "targetTitle": "mapofferingtosubscription-transforms-service-offering-state-into-subscription-in"
+    },
+    {
+      "id": "lnk-3f1a98b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f1a98b4-c18c-4286-aaed-9700d79cf48c",
+      "targetTitle": "builder-profile-model-describes-individual-contributor-identities"
+    },
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-cd9fb0ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-67bcb93e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "67bcb93e-c4f7-4573-ab75-efaddf88c13f",
+      "targetTitle": "accounts-model-defines-the-chart-of-accounts-structure"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "object relations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "51a9134d-9ec4-4ca8-9591-408a60d5f38c",
+      "name": "object relations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9266360c-b8a8-4e88-8673-51666a347a04",
+      "name": "PHID",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f65c38b3-5646-42fb-906a-3956f9eab80d",
+      "name": "OID",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4fa4eb7a-9e42-4b69-b4fd-4420428958ca",
+      "name": "cross-model references",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aa440d4b-724e-4f9a-bcaa-21febe0357cf",
+      "name": "MOC",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# object relations\n\nHow objects relate across the 21 document models in the Powerhouse ecosystem. The primary reference type is PHID for cross-model links and OID for intra-model references. See [[ecosystem map]] for the full model inventory organized by functional zone.\n\n## Cross-Model Hierarchy (Local Project)\n- [[five models form a hierarchy from facet through template to offering to subscription to instance]] \u2014 the core reference graph in this project's 5 models\n\n## Local Models (this project)\n- [[service-offering model defines tiered pricing with option groups and service groups]] \u2014 the central model with the most internal references (tiers \u2194 groups \u2194 services \u2194 options)\n- [[subscription-instance model tracks active customer subscriptions with lifecycle state]] \u2014 mirrors offering structure with billing actuals\n- [[resource-template model defines reusable service catalog blueprints]] \u2014 base catalog structure without pricing\n- [[resource-instance model tracks provisioned resource lifecycle]] \u2014 provisioned resource with facet configuration\n- [[facet model provides configurable classification dimensions]] \u2014 referenced by templates, offerings, and instances\n- [[service-subscription model tracks service-level subscription agreements]] \u2014 agreement-level subscription tracking\n\n## Cross-Zone References\n- [[builder-profile model describes individual contributor identities]] \u2014 SO.operatorId references this (Service & Pricing \u2192 Organization)\n- [[billing-statement model captures periodic billing summaries]] \u2014 SI produces billing statements (Service & Pricing \u2192 Finance)\n- [[invoice model generates formal payment requests]] \u2014 SI charges become invoice line items (Service & Pricing \u2192 Reporting)\n\n## Cross-Model Data Bridges\n- [[mapOfferingToSubscription transforms service offering state into subscription initialization]] \u2014 the primary offering \u2192 subscription bridge\n\n## Key Reference Patterns\n\n**PHID references (cross-model, local):**\n- `ServiceOffering.operatorId` \u2192 [[builder-profile model describes individual contributor identities]]\n- `ServiceOffering.resourceTemplateId` \u2192 ResourceTemplate\n- `SubscriptionInstance.serviceOfferingId` \u2192 ServiceOffering\n- `ResourceInstance.resourceTemplateId` \u2192 ResourceTemplate\n\n**PHID references (cross-zone):**\n- SubscriptionInstance \u2192 [[billing-statement model captures periodic billing summaries]]\n- SubscriptionInstance \u2192 [[invoice model generates formal payment requests]]\n- ScopeOfWork \u2192 [[builder-profile model describes individual contributor identities]] (assignees)\n- ScopeOfWork \u2192 [[invoice model generates formal payment requests]] (milestone billing)\n\n**OID references (intra-model):**\n- `Service.serviceGroupId` \u2192 ServiceGroup\n- `Service.optionGroupId` \u2192 OptionGroup\n- `ServiceGroupTierPricing.tierId` \u2192 Tier\n- `ServiceLevelBinding.serviceId` \u2192 Service\n- `ServiceUsageLimit.serviceId` \u2192 Service\n\n---\n\nTopics:\n- [[index]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:05:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:31.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Cross-object references within and across document models -- PHID links between models, OID references within models",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c6ed9eca-de9c-4516-994d-7543b0b804f4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:16.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "90a92f77-1d3d-46c1-80f3-f3751ba8a9a6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:16.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

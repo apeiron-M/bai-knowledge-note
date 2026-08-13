@@ -1,0 +1,294 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:51.587Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-abort-signal-cancellation",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "063e8261-4095-4cdf-83dd-3fa6c05f07a3",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:51.587Z"
+        },
+        "version": 0,
+        "documentId": "063e8261-4095-4cdf-83dd-3fa6c05f07a3",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:51.587Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "fXQUu2D4cxIKz499Jm51yOLD+4U=",
+    "timestampUtcMs": "2026-08-13T13:23:22.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IReactorClient methods accept AbortSignal for cancelling in-flight requests without stopping server-side processing",
+        "updatedAt": "2026-08-13T13:23:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:22.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:51.587Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "063e8261-4095-4cdf-83dd-3fa6c05f07a3",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:51.587Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "BjL2NvTSfTOBWcO1z/FHUxVhU/c=",
+    "timestampUtcMs": "2026-08-13T13:23:22.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:22.000Z",
+        "description": "Aborting cancels the client-side wait only; the underlying reactor job may still complete on the server side."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:22.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:09.958Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "063e8261-4095-4cdf-83dd-3fa6c05f07a3",
+        "targetId": "d065b560-9609-4b9b-9603-ebd73e35276c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:09.958Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "5mm7EP+5aZ/7czZfKUWJVb6u6KI=",
+    "timestampUtcMs": "2026-08-13T13:23:22.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T13:23:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:22.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:09.983Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "063e8261-4095-4cdf-83dd-3fa6c05f07a3",
+        "targetId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:09.983Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "P5lGr4ZJPdvjRqMJvkQJcodPuCQ=",
+    "timestampUtcMs": "2026-08-13T13:23:22.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Most `IReactorClient` methods accept an optional `AbortSignal` parameter for cancellation. Use cases: cancel on React component unmount via `useEffect` cleanup with `AbortController`, cancel with timeout via `AbortSignal.timeout(5000)`, and cancel long-running writes where `execute()` waits for `READ_READY`. When aborted, methods throw `AbortError`. Important: aborting only cancels the client-side wait, not the server-side processing -- the underlying reactor job may still complete. Write methods like `execute()` wait for `READ_READY` status; `executeAsync()` returns immediately with a `PENDING` JobInfo, and `waitForJob()` can be used separately for tracking.",
+        "updatedAt": "2026-08-13T13:23:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:22.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ye9p9+UHkPyyYjp31ZZDqbvLwqg=",
+    "timestampUtcMs": "2026-08-13T13:23:22.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:22.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "LEUW1S7zU+JkrxDJxe+YFHpb6vY=",
+    "timestampUtcMs": "2026-08-13T13:23:22.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c4cd3ed6-fe99-4266-81ef-5495eef855dd",
+        "name": "abort-signal",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:22.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "K2t88S85IsqCOwXT0kjcXODo+tk=",
+    "timestampUtcMs": "2026-08-13T13:23:22.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "127d4710-4a4d-4891-bfb7-41537173fe10",
+        "name": "reactor-client",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:22.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "MrY/XQVn4/EHZ4EwGxS4v7K2q7w=",
+    "timestampUtcMs": "2026-08-13T13:23:22.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "24f36a05-b607-47dc-ad48-a3be6933161e",
+        "name": "pattern",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:22.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "5qu0RHRQJYquBar1/TbhDjA3QQM=",
+    "timestampUtcMs": "2026-08-13T15:51:30.816Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:51:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:30.816Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "YRclVxpr/tP1cW4f0FNI3wHbOAw=",
+    "timestampUtcMs": "2026-08-13T15:51:30.816Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "c0b63f34-9850-4605-b1ee-d5525c6213d0",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:51:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:30.816Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "E5RZX+sK2a8w6K70tWtNWcHbWf0=",
+    "timestampUtcMs": "2026-08-13T15:51:30.816Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d71c489c-9a29-4784-bd3a-e85ce48fa578",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:51:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:30.816Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "i/FXQLFRuO96iDEJgG/USQws+6E=",
+    "timestampUtcMs": "2026-08-13T16:48:21.273Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:48:21.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:48:21.273Z"
+    }
+  }
+]

@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-cbb06ab4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-f330b4b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f330b4b8-5345-4649-9bdf-7903cb92e827",
+      "targetTitle": "relational-db-processor-for-sql-projections"
+    },
+    {
+      "id": "lnk-07376a9b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "07376a9b-020f-4645-8ea6-dc9b911edf50",
+      "targetTitle": "push-flow-encrypt-upload-manifest"
+    },
+    {
+      "id": "lnk-6350a53a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6350a53a-26de-4f51-bb52-def8f797b47f",
+      "targetTitle": "swarm-manifest-three-tier-hierarchy"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "V6 processors receive a flat OperationWithContext list via onOperations instead of grouped strands via onStrands",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d350c950-3171-4994-ac26-ece8f3b73e64",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d41d369-b468-4747-af62-41d7ab614c35",
+      "name": "migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8537e9e9-b931-4787-b390-e0fc0ed72168",
+      "name": "v6-reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The v6 Reactor replaced `onStrands(strands: InternalTransmitterUpdate[])` with `onOperations(operations: OperationWithContext[])`. Each OperationWithContext destructures as `{ operation, context }` where context has `documentId`, `documentType`, `scope`, `branch`, `ordinal` (global monotonic counter for cross-document ordering), and optional `resultingState` (JSON string). Operation access changed: `operation.type` -> `operation.action.type`, `operation.input` -> `operation.action.input`, `operation.timestamp` -> `operation.action.timestampUtcMs`. Steady-state live routing delivers each matching operation once, in global-ordinal order, but delivery is not exactly-once overall: backfill and replay are an explicit part of the processor contract, so idempotence guards (`clearSource` / `index === 0` rebuilds) are still recommended. The manager pages through history via `operationIndex.getSinceOrdinal(lastOrdinal)` when a factory registers against a drive that already has history, after a restart to replay the gap missed while the reactor was down, and when `tracked.retry()` re-activates an errored processor and re-runs backfill. Cursors persist in the `ProcessorCursor` table keyed by `processorId`, and on startup the manager rehydrates them and catch-up replays the gap. Factory signature changed from `(driveId: string)` to `(driveHeader: PHDocumentHeader, processorApp?: ProcessorApp)` with outer parameter changing from direct dependencies to `IProcessorHostModule`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The IProcessor interface simplified from strand-based to flat operation-based with per-operation context including global ordinal.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1e918883-9646-49b1-a9d5-800192283b56",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:06.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "555aa0fb-1e11-4fee-9371-ca582af496ad",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:06.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

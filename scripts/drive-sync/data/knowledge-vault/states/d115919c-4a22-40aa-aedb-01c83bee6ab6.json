@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-3f8ca25d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    },
+    {
+      "id": "lnk-6159609c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6159609c-0a13-4d16-845f-0afd965d73e2",
+      "targetTitle": "moc-authorization-and-identity"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "GraphQLReactorClient is a light Switchboard-only client that fills the document slots of window.ph",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "491c9223-9e02-4b13-8500-88e8ff6c6577",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6526441e-37ab-48a5-9937-aa27f86f7994",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f06eaf7e-78e0-41d8-9c6b-b7bfdc1b3f2e",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7b0523fd-8e3e-4c52-a713-4461ced597b6",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Two implementations, one hook surface\n\n`GraphQLReactorClient` is a light client for the `@powerhousedao/reactor-browser` hooks. It talks plain GraphQL to a Switchboard and fills the same document slots of `window.ph` that the full in-browser reactor fills, so `useDocument`, `useDispatch` and `useReactorClient` work in a plain web app with **no reactor, no PGLite and no job queue in the bundle**.\n\nConnect and Vetra Studio run the full reactor client; a web app runs this one. Both satisfy `IReactorBrowserClient`, so a component that reads and writes documents moves between them unchanged.\n\n```tsx\nimport { GraphQLReactorProvider } from \"@powerhousedao/reactor-browser/graphql-client\";\n\n<GraphQLReactorProvider url=\"http://localhost:4001/graphql\">\n  <TodoDemo />\n</GraphQLReactorProvider>\n```\n\nOne provider is the whole integration: it builds the client, publishes it into `window.ph.reactorClient` with a `DocumentCache` over it in `window.ph.documentCache`, and registers the `window.ph` event handlers the hooks read through.\n\n## What it deliberately does not fill\n\n`window.ph.reactorClientModule` always stays empty, so the editor-module hooks find nothing below the provider \u2014 `useEditorModules` and `useEditorModuleById` return empty or `undefined`, and `loadFile`, `addDocument`, `addFileWithProgress` and `copyNode` throw or no-op. Render editor components the app imports itself.\n\n`window.ph.vetraPackageManager` is filled **only** when the optional `documentModels` prop is given, via a fixed `StaticPackageManager`, which makes `useDocumentModelModules` and `useDocumentModelModuleById` work. Passing no modules is equally supported: actions are plain data and the Switchboard runs the reducer either way.\n\n> Caveat: the academy Overview page and the Limitations table both state flatly that the provider fills \"the document slots and no others\" and publishes neither slot. That is stale \u2014 the provider's own source and the `GraphQLReactorProvider` prop section describe the `documentModels` path above.\n\nEverything is remote-first: a dispatch is a round trip, and there is no offline queue.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/01-OverviewAndQuickstart.md and 02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Talks plain GraphQL to a Switchboard so useDocument, useDispatch and useReactorClient work with no reactor, no PGLite and no job queue in the bundle.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ad7b49f8-99f4-4531-a587-66a6820342c9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "60f9b538-0f51-44b7-884e-2b01fab84375",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

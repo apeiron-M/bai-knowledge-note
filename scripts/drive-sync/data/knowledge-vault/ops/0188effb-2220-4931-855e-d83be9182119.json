@@ -1,0 +1,278 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:25.104Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ph-generate-is-a-subcommand-group",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0188effb-2220-4931-855e-d83be9182119",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:37:25.104Z"
+        },
+        "version": 0,
+        "documentId": "0188effb-2220-4931-855e-d83be9182119",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:37:25.104Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "7lGqovzazxUDHsiCg00pwKVutyk=",
+    "timestampUtcMs": "2026-08-13T14:37:25.779Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ph generate is a subcommand group with seven subcommands, not a flag-driven command",
+        "updatedAt": "2026-08-13T14:37:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:25.779Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:25.104Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0188effb-2220-4931-855e-d83be9182119",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:37:25.104Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "LAZxyDKAJ42srQMREsV+GuiHmiQ=",
+    "timestampUtcMs": "2026-08-13T14:37:25.779Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:37:24.000Z",
+        "description": "cmds are all, document-model, editor, app, processor, subgraph, migration-file. The app subcommand replaced the old --drive-editor generator."
+      },
+      "timestampUtcMs": "2026-08-13T14:37:25.779Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:26.934Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0188effb-2220-4931-855e-d83be9182119",
+        "targetId": "f158a1f4-eab3-43f6-ba19-00c0608e62e7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:26.934Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "wA8HWDoDs71q03/0v3C8oXQB4KU=",
+    "timestampUtcMs": "2026-08-13T14:37:25.779Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:37:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:25.779Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:26.959Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0188effb-2220-4931-855e-d83be9182119",
+        "targetId": "98beacc1-57c0-4e63-8fd7-596ff6600010",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:26.959Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "2Z8Dvu/SCZWMO2XkFu06pSvgybc=",
+    "timestampUtcMs": "2026-08-13T14:37:25.779Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The canonical shape\n\n`generate` is built with cmd-ts `subcommands({ name: \"generate\", cmds: { ... } })`. Seven subcommands, exactly:\n\n`all` \u00b7 `document-model` \u00b7 `editor` \u00b7 `app` \u00b7 `processor` \u00b7 `subgraph` \u00b7 `migration-file`\n\nThere is **no flag-driven form**. `ph generate --editor`, `--processor`, `--subgraph`, `--drive-editor`, and `ph generate <file>.phd` are all dead; `app` is the replacement for the retired `--drive-editor` generator. Verified live forms:\n\n```bash\nph generate all\nph generate document-model --document TodoList.phd      # -d; .phd or .json\nph generate editor        --name MyEditor --document-type my-org/todo\nph generate app           --name MyApp --document-types my-org/todo,my-org/note\nph generate processor     --name Stats --type analytics --document-types my-org/todo\nph generate subgraph      --name mySubgraph\nph generate migration-file --path ./migrations/001.ts\n```\n\n## Flag details that bite\n\n`editor` takes **singular `--document-type` / `-t`**; `app` and `processor` take **plural `--document-types` / `-t=`** (repeatable or comma-separated). Getting the plurality wrong is the most common failure.\n\n`processor` also takes `--type` (default `analytics`) and `--apps` (default `switchboard,connect` \u2014 whether the processor runs in Node, the browser, or both). `app` has `--disable-drag-and-drop` (default `false`).\n\n`migration-file` is the odd one out: no `--name`, and `--path` is **required**, with `--schema-file` defaulting to `./schema.ts`.\n\n## Three axes per subcommand\n\nEvery module subcommand supports the same triple:\n\n- **Create new** \u2014 `--name` plus type flags, or `--document <spec.phd|.json>` to drive codegen from a Vetra spec document.\n- **Re-generate existing** \u2014 `--dir <dir>` for one module, `--all` / `-a` for every module of that kind.\n- **Extract** \u2014 `--extract` / `-x` inverts the command: instead of generating code it writes a spec document for each existing module into `specs/<kind>/`.\n\n`generate all` carries only `--extract`; it otherwise re-generates every module in the project.\n\n_Source: `clis/ph-cli/src/commands/generate.ts` plus the seven `generate-*.ts` siblings, mirrored in `apps/academy/docs/academy/04-Reference/07-CLITooling/00-PowerhouseCLI.md`, Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-13T14:37:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:25.779Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Bhx/Qri6k7YCDsLyYgV4PP0imzg=",
+    "timestampUtcMs": "2026-08-13T14:37:25.779Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "676afa24-0e58-4503-a04f-10b7c7f41c33",
+        "name": "cli"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:25.779Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "pbFFunCsg1+64mMkuHrALuF4RGE=",
+    "timestampUtcMs": "2026-08-13T14:37:25.779Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aabbb787-31e2-4cad-a7cb-f7a55f0bed44",
+        "name": "code-generation"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:25.779Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "A2RBxPU++aO62u6lR+CWm6VOkBU=",
+    "timestampUtcMs": "2026-08-13T14:37:26.890Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:37:24.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:26.890Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "EqWD+J7Xc44+OKI7QGf1GFS3N/g=",
+    "timestampUtcMs": "2026-08-13T15:51:20.044Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:51:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:20.044Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "6Nfu1JrNz7bAzw75AVWR38Nv4AI=",
+    "timestampUtcMs": "2026-08-13T15:51:20.044Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d6d79e7c-6274-4092-936d-26c612236794",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:51:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:20.044Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Z3dG2ZGL/+aPIaGdqJbhAr2nMiA=",
+    "timestampUtcMs": "2026-08-13T15:51:20.044Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ce16a6f8-1d52-4960-a9e9-728dccc7f333",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:51:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:20.044Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "fHqrObO9tZKeVmaB43mykAwA6hI=",
+    "timestampUtcMs": "2026-08-13T16:48:09.066Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:48:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:48:09.066Z"
+    }
+  }
+]

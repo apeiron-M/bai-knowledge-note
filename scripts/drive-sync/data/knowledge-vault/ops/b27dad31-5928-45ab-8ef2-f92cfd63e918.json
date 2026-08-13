@@ -1,0 +1,304 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:47.527Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "semantic-search-pglite-vector-content-hash-skip",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b27dad31-5928-45ab-8ef2-f92cfd63e918",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:39:47.527Z"
+        },
+        "version": 0,
+        "documentId": "b27dad31-5928-45ab-8ef2-f92cfd63e918",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:39:47.527Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "hB1Dd/9Bl4qN0FhQohvwsr8Y7Z0=",
+    "timestampUtcMs": "2026-08-13T14:39:48.185Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Semantic search over documents runs on PGlite's vector extension with content-hash re-embed skipping",
+        "updatedAt": "2026-08-13T14:39:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:48.185Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:47.527Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b27dad31-5928-45ab-8ef2-f92cfd63e918",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:39:47.527Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "KKKCABHzqtDGzzQ/wYY0rBdooeA=",
+    "timestampUtcMs": "2026-08-13T14:39:48.185Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:39:47.000Z",
+        "description": "The Cookbook recipe stores 384-dim embeddings in a PGlite vector column with an HNSW cosine index and skips re-embedding when a document's content hash is unchanged."
+      },
+      "timestampUtcMs": "2026-08-13T14:39:48.185Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:49.358Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b27dad31-5928-45ab-8ef2-f92cfd63e918",
+        "targetId": "c11dcad5-69d6-4730-a59c-fa2820e8c0a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:49.358Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "JfWbNX0xMHnzeSuV0JyDEzoeLzI=",
+    "timestampUtcMs": "2026-08-13T14:39:48.185Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:39:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:48.185Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:49.383Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b27dad31-5928-45ab-8ef2-f92cfd63e918",
+        "targetId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:49.383Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "G22uG6I6tR2zudIshCTDXa3AR8Q=",
+    "timestampUtcMs": "2026-08-13T14:39:48.185Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "An `IProcessor` that embeds document content in-process with Transformers.js (`all-MiniLM-L6-v2` via ONNX) into PGlite's `vector` extension, answering cosine-similarity queries. No external API, no key, no server \u2014 pgvector runs inside PGlite.\n\nThe pipeline per batch:\n\n1. Collect the **last operation per document** \u2014 earlier states are superseded, so intermediate revisions are never embedded.\n2. Flatten the resulting document state into one string and truncate to the model's effective window.\n3. **Hash the text and skip re-embedding when the hash is unchanged** \u2014 embedding is by far the most expensive step, and a processor that gets re-delivered history on backfill or restart would otherwise pay for it repeatedly.\n4. Embed to a 384-dim vector and upsert into `semantic_index` (`embedding vector(384)`, HNSW index, cosine ops).\n5. Handle `DELETE_DOCUMENT` by removing the row.\n\nQueries go through `searchSimilar(text, k)`: embed the query with the same model, then `ORDER BY embedding <=> $1 LIMIT k`. With normalized embeddings, `similarity = 1 - cosine distance`.\n\n```ts\nconst pglite = new KyselyPGlite({ extensions: { vector } });  // vector ext is required\nconst db = new Kysely<SemanticSearchDB>({ dialect: pglite.dialect });\nawait up(db);\n\nconst processor = new SemanticSearchProcessor(db, embed);\nconst query = createSimilarityQuery(db, embed);\nconst results = await query.searchSimilar(\"budget allocation\", 10);\n```\n\nThree pitfalls the recipe names: the embedding dimension is **baked into the column type**, and the processor asserts `embedding.length === 384` before insert so a model swap fails loudly rather than corrupting the index; long content is **truncated, not chunked** (cut at 2,000 characters \u2014 production systems should chunk into multiple rows); and HNSW defaults (`m=16`, `ef_construction=64`) are fine until many thousands of vectors.\n\n**Directly self-relevant:** the recipe names [`@powerhousedao/knowledge-note`](https://www.npmjs.com/package/@powerhousedao/knowledge-note) \u2014 the package this vault runs on \u2014 as \"**the production proof of this stack**\", and records one production-only divergence: knowledge-note **lazily `import()`s PGlite** so its processor and subgraph still register on deployments where transitive runtime deps are not installed. A Node-only recipe can use a plain import; a deployed package cannot count on that.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Semantic Search Processor recipe (auto-generated from `github.com/powerhouse-inc/recipes/tree/main/semantic-search`), academy 6.2.2-dev.45.",
+        "updatedAt": "2026-08-13T14:39:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:48.185Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "mRmMh3HQnVeRN/hSgyB3sEpOlUA=",
+    "timestampUtcMs": "2026-08-13T14:39:48.185Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dc030869-e121-4910-b81b-b7d80c41a8a1",
+        "name": "semantic-search"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:48.185Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "hrsVJmyN6i0uI514inaayL7HsKw=",
+    "timestampUtcMs": "2026-08-13T14:39:48.185Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "adc23652-27e4-4d20-8707-bbfcb0208256",
+        "name": "embeddings"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:48.185Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "mZVmv7f/YPZJNy8tSTAZfR8xy1w=",
+    "timestampUtcMs": "2026-08-13T14:39:48.185Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ff56b785-9ea6-494d-b8d1-cc2abb98ad3a",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:48.185Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "7RZcVz0TR1rvsq3Ii6vPgwohtUE=",
+    "timestampUtcMs": "2026-08-13T14:39:48.185Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "94b2469f-d496-4b42-8ff7-323c481545eb",
+        "name": "pglite"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:48.185Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "cUFnF4BdOibNn3QWKjEhBcrRnv0=",
+    "timestampUtcMs": "2026-08-13T14:39:49.310Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:39:47.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:49.310Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "zRuhYu+HEDPy8zyjtsOrkCiouK4=",
+    "timestampUtcMs": "2026-08-13T15:57:39.432Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:39.432Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "zaDQ5Ya0lXcqplq1IWcNXEuq1GY=",
+    "timestampUtcMs": "2026-08-13T15:57:39.432Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ceefa470-9edd-485f-b579-9a50be6cc0d3",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:39.432Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "MpKOWFwz86l/i/e7mRVpuMXI+pI=",
+    "timestampUtcMs": "2026-08-13T15:57:39.432Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "1c70efe1-cc97-43f9-af7a-fe6d156c6816",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:39.432Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "YP1pSx59gBAfRzP2LFLrubclwCs=",
+    "timestampUtcMs": "2026-08-13T16:55:50.378Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:55:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:55:50.378Z"
+    }
+  }
+]

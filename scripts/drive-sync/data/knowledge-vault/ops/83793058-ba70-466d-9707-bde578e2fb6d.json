@@ -1,0 +1,406 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:00.724Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "schema-design",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "83793058-ba70-466d-9707-bde578e2fb6d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:22:00.723Z"
+        },
+        "version": 0,
+        "documentId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:00.724Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "rGXIJ6Ibh0oAuN7nV/WIHW4HCuw=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "schema design",
+        "updatedAt": "2026-08-13T13:23:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:00.724Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:00.724Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "20+q5Dc23mlRiBmH0u8cpIi6Oqg=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:26.000Z",
+        "description": "Conventions for GraphQL state schemas -- type naming, scalars, arrays, required vs optional fields"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.351Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "targetId": "e56f291c-3155-4c38-8523-c6273ab87308",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.351Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "b2jdhFyPEREWpv/ouz2SV6MmXMg=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T13:23:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.591Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "targetId": "95cd8d5f-f715-4ae0-9c2f-45e033701d1b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.591Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "diQj/bjCLeHB1BigbvPWbxmmaro=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# schema design\n\nPatterns and conventions for designing document model state schemas in the Powerhouse ecosystem.\n\n## Type Naming\n- [[state type names use XState not XGlobalState]] \u2014 the code generator expects `<Name>State`, not `<Name>GlobalState`\n\n## Arrays and Objects\n- [[arrays in state schemas must use mandatory notation]] \u2014 `[ObjectType!]!` with `OID!` fields for array items\n\n## Required vs Optional Fields\n- [[most state schema fields should be optional to support empty documents]] \u2014 documents start empty; use `!` sparingly\n\n## Input Design\n- [[input types should reflect user intent with simple specific fields]] \u2014 flat, descriptive inputs over nested structures\n- [[operation design uses descriptive names and includes examples and errors]] \u2014 naming and documentation standards\n\n## Scope\n- [[global scope shares state among all users while local scope is private]] \u2014 when to use each scope\n\n## Operation Design\n- [[one operation per user intent keeps concerns separated]] \u2014 one user action = one operation\n\n## Document Model Structure\n- [[document model structure has metadata specifications and modules]] \u2014 the three layers of a model\n- [[document models have 37 available operations across 7 categories]] \u2014 full operation taxonomy\n\n---\n\nTopics:\n- [[index]]",
+        "updatedAt": "2026-08-13T13:23:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.619Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "targetId": "d9294d65-3bbd-4b90-9187-c970a8de7a7a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.619Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "xQcea7hNIUVaREBt4BjbFOR/J6U=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:04:53.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.710Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "targetId": "ba09f958-a741-42f0-90f1-9573134154b3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.710Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "kTZGrbr8AHNvqdSMiS9b7rRBYRo=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4d601a90-284a-4170-b26b-eb9fe2e1903f",
+        "name": "schema design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.783Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "targetId": "c6e482a2-e603-4955-8943-6e3d07d96051",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.783Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "6/LNTGsv6u0ElrHGbRSfETvo80s=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "98263127-bd9a-490c-91b5-7a8467c23387",
+        "name": "GraphQL",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.809Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "targetId": "a191821c-029f-44da-a14f-830cd285be38",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.809Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "su66ONIW/aT+C1IOMMS1G6aBi6o=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "032ff920-c3c7-4df5-a910-f186ecd6d59b",
+        "name": "document model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.833Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "targetId": "b529f3df-e0ed-428d-b3ac-cbb87b67710f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.833Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "ys35X6fOUDG1HQ1bvJZ4kCjRR+w=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8d4da641-bf76-4eee-a3d8-84d7bcc73cf1",
+        "name": "MOC",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:20.125Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "targetId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:20.125Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "GDeAbc8Qolux4E/Zd41rhHODPPM=",
+    "timestampUtcMs": "2026-08-13T15:56:07.512Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:07.512Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:20.161Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "targetId": "f8ba011f-a1ed-4965-a8ea-47359dfabd98",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:20.161Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "r9geoAp1i1tcYyYYajFh6GpbmF0=",
+    "timestampUtcMs": "2026-08-13T15:56:07.512Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b8d4209e-095e-4f8b-8b0b-1c97ffc32e87",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:07.512Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "GIFz0C4IrI2WpqkvIqJ4vt0dQsY=",
+    "timestampUtcMs": "2026-08-13T15:56:07.512Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "1f4183d2-3419-44bb-9512-f9cdcc49e89e",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:07.512Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "MPHmB3ZOuFS/lIifHAbNIadsroo=",
+    "timestampUtcMs": "2026-08-13T16:53:58.792Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:53:58.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:53:58.792Z"
+    }
+  }
+]

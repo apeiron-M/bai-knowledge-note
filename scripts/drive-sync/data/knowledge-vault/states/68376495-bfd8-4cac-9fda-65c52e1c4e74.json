@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-83d37fbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+      "targetTitle": "three-layer-swarm-stack"
+    },
+    {
+      "id": "lnk-2a079433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2a079433-e571-4d78-b20a-3fabbccbe075",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-c5c2a2ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c5c2a2ea-e76d-4a1f-b98c-a18b41f50423",
+      "targetTitle": "create-swarm-sync-builder-hook"
+    },
+    {
+      "id": "lnk-946f2a49-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "946f2a49-d15b-4915-94ff-7066966c43f5",
+      "targetTitle": "adapter-monorepo-two-packages"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adapter package organizes Swarm integration into src/channel/, src/swarm-client.ts, src/swarm-crypto.ts, and src/plugin/",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cce3c0e6-180e-44a4-b240-614e5a65dc13",
+      "name": "adapter-package",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aedd08c9-f6eb-4326-a860-e0ac4eb22905",
+      "name": "source-layout",
+      "topicDocumentId": null
+    },
+    {
+      "id": "16821d39-1d2f-4755-b483-ef1928672a7b",
+      "name": "key-files",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Adapter Package Key Source Files\n\nThe `packages/adapter/` package is organized around a small set of responsibility-specific source files that anchor the codebase:\n\n| File | Purpose |\n|------|---------|\n| `src/channel/swarm-channel.ts` | Native `IChannel` implementation \u2014 outbox push + inbox pull via Swarm |\n| `src/channel/composite-factory.ts` | Routes `\"gql\"` / `\"swarm\"` config types to sub-factories |\n| `src/channel/create-composite-factory.ts` | `createSwarmSyncBuilder()` \u2014 wires into `ReactorBuilder` |\n| `src/channel/add-swarm-remote.ts` | Per-drive Swarm remote registration |\n| `src/channel/manifest-manager.ts` | User + drive manifest writes on Swarm |\n| `src/swarm-client.ts` | Bee SDK wrapper: upload, download, feeds, encryption, stamps |\n| `src/swarm-crypto.ts` | AES-256-GCM encrypt/decrypt with SWE prefix detection |\n| `src/wallet-signer.ts` | Deterministic key derivation from wallet signature |\n| `src/plugin/init.ts` | Browser plugin: Bee detection, stamps, wallet, events |\n| `src/plugin/sharing.ts` | Cross-user encrypted sharing + import |\n\nThe `src/channel/` directory concentrates all reactor-integration code, while `src/plugin/` contains browser/Connect-specific wiring.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:57:41.685Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Adapter source is partitioned: src/channel/ holds reactor sync integration, swarm-client.ts wraps the Bee SDK, swarm-crypto.ts handles AES-GCM, and src/plugin/ wires the browser plugin.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3affb399-e827-44f0-b841-e9b6405c83f7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "56666835-edb5-40b7-9b4b-3afd15d2bed6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

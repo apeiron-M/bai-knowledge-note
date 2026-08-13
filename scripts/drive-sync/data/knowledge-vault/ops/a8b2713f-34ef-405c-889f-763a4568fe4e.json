@@ -1,0 +1,349 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:49.260Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "processors-receive-operations-with-context",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:49.260Z"
+        },
+        "version": 0,
+        "documentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:49.260Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "TxCnFSni792eFAgiDhvPf6uNPOg=",
+    "timestampUtcMs": "2026-08-13T13:23:21.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Processors implement IProcessor with onOperations receiving OperationWithContext items filtered by document type, scope, branch, and document ID",
+        "updatedAt": "2026-08-13T13:23:21.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:21.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:49.260Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:49.260Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "hhGn8uOWX5EkNQJlhuLl2ilLjmg=",
+    "timestampUtcMs": "2026-08-13T13:23:21.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:21.000Z",
+        "description": "ProcessorFilter determines which ops a processor receives; factory creates instances per drive with configurable filters."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:21.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:07.623Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "targetId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:07.623Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "u7hlN8f91GrmB+zGqzLvBjfHZbI=",
+    "timestampUtcMs": "2026-08-13T13:23:21.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T13:23:21.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:21.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:07.662Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "targetId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:07.662Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "FMS3graDp29zlzKwMtAYpHruQtM=",
+    "timestampUtcMs": "2026-08-13T13:23:21.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A processor implements `IProcessor` with `onOperations(operations: OperationWithContext[])` and `onDisconnect()`. Each `OperationWithContext` pairs an `Operation` (action type, input, index, hash, timestamp) with `OperationContext` (documentId, documentType, scope, branch, ordinal for cross-document ordering, resultingState as JSON). `ProcessorFilter` has optional arrays: `documentType`, `scope`, `branch`, `documentId` (use `[\"*\"]` for all). The factory pattern: outer function receives `IProcessorHostModule` (shared resources), inner function receives `driveHeader` per drive, returns `ProcessorRecord[]`. By default processors replay all history; set `startFrom: \"current\"` to skip historical operations.",
+        "updatedAt": "2026-08-13T13:23:21.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:21.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:07.753Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "targetId": "07376a9b-020f-4645-8ea6-dc9b911edf50",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:07.753Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "BHCSbbNJo1ex2HYph89gfG2988E=",
+    "timestampUtcMs": "2026-08-13T13:23:21.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:21.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:07.827Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "targetId": "77fad8c4-a3f5-4678-a0d1-15b6c434a0de",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:07.827Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "3iqmbrOItsFxWGTJqotfZftDrC8=",
+    "timestampUtcMs": "2026-08-13T13:23:21.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "411e65dd-7231-44e7-898c-941743f5171e",
+        "name": "processors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:21.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "OFG+b1+a09aYPubuniJDxzJx/jc=",
+    "timestampUtcMs": "2026-08-13T13:23:21.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d1033059-2c24-4372-9448-79e7c6c23653",
+        "name": "operations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:21.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "HR9OD05rkviSk+DtYeWnWN9OZl8=",
+    "timestampUtcMs": "2026-08-13T13:23:21.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4468e921-6a96-4687-a2d2-fa6e1aa56125",
+        "name": "factory-pattern",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:21.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Pza1NxlOsI2lYYiC6rrJnOrIj50=",
+    "timestampUtcMs": "2026-08-13T13:23:21.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aa65c3be-396b-48d8-b3d1-51c9409cb940",
+        "name": "CQRS",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:21.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "u7tRYWixZsuRVnJ25YUb/PE/Kro=",
+    "timestampUtcMs": "2026-08-13T14:31:27.702Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A processor implements `IProcessor` with `onOperations(operations: OperationWithContext[])` and `onDisconnect()`. Each `OperationWithContext` pairs an `Operation` (action type, input, index, hash, timestamp) with `OperationContext` (documentId, documentType, scope, branch, ordinal for cross-document ordering, resultingState as JSON). `ProcessorFilter` has optional arrays: `documentType`, `scope`, `branch`, `documentId`. A field that is `undefined` or `[]` matches everything; a field with values matches when the operation's context value is in the array; all present fields must match. The `\"*\"` wildcard is honored **only in `documentId`** \u2014 in `documentType`, `scope`, and `branch` a literal `\"*\"` matches only an operation whose value is the string `\"*\"`, i.e. nothing real. To match all scopes, omit `scope` or set it to `[]`; never write `scope: [\"*\"]` (the codegen analytics template emits exactly that, and it silently matches no operations). The factory pattern: outer function receives `IProcessorHostModule` (shared resources), inner function receives `driveHeader` per drive, returns `ProcessorRecord[]`. By default processors replay all history; set `startFrom: \"current\"` to skip historical operations.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-13T14:31:27.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:31:27.702Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "gBM/75VZcIqWp3vRfu15JY+Rhz0=",
+    "timestampUtcMs": "2026-08-13T15:57:24.355Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:24.355Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "KFUmQo9ghC0RKQnACAhtdQ/fCVE=",
+    "timestampUtcMs": "2026-08-13T15:57:24.355Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "7c2911ec-ed00-41bb-a772-9f14b37ebc20",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:24.355Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "0HmCc5N2++9oD4PLTablc9X6TeU=",
+    "timestampUtcMs": "2026-08-13T15:57:24.355Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "81403e22-1601-4974-ba27-0ae0c5afdf65",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:24.355Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "RcNTd7tO5dZ3iGYd9cfZ98W9I+w=",
+    "timestampUtcMs": "2026-08-13T16:55:29.085Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:55:29.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:55:29.085Z"
+    }
+  }
+]

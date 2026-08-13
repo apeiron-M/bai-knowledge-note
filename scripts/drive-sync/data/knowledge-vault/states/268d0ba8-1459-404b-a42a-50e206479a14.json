@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-021185cf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "021185cf-9b33-4a9f-a7d0-8c6dabe2dfa6",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    },
+    {
+      "id": "lnk-4324b1ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-37b131a5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "37b131a5-e4fc-4b62-89d0-f7bcaec4a88c",
+      "targetTitle": "swarm-bytes-vs-feeds"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Single Owner Chunks give each Ethereum account a virtual namespace of writable slots",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "31df80d5-ed37-420a-b205-d5493aef44a1",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c92ec02f-01c5-4ac6-a4d3-5a3b741a2086",
+      "name": "soc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e348e011-f188-482e-9f53-43d5089f8ac3",
+      "name": "chunks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "28eaa4a1-a7c2-4d0f-ab60-6443dbe8e061",
+      "name": "identity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nA **Single Owner Chunk (SOC)** is a chunk whose address is derived from an identifier and an owner Ethereum address, giving every account a private virtual namespace of writable chunk slots.\n\n## Evidence\n\n- Address formula: `Keccak256(identifier || owner_address)` \u2014 deterministic from a 32-byte identifier and the owner's Ethereum address\n- Content layout: 32-byte identifier + 65-byte signature (r, s, v) + span + payload\n- Only the private-key holder can sign updates; anyone can read\n- A SOC can **wrap** a CAC \u2014 the SOC payload becomes the CAC's span + data\n- The addressing scheme means each account controls what lives at each identifier \u2014 the primitive underneath feeds and GSOC\n\n## Why it matters\n\nSOCs are the primitive that turns Swarm from immutable content storage into a system that supports mutable, signed state. Feeds and GSOC are both built on top of SOCs.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SOC address = Keccak256(identifier || owner_address). Only the owner's private key can write; anyone can read. Basis for feeds and GSOC.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "259f90bd-8f9f-4320-a78f-980bb6330829",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6d6b9dae-e11d-4613-97ac-993e969e6b7c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

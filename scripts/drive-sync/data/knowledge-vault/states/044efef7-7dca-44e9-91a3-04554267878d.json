@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-95cd8d5f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "95cd8d5f-f715-4ae0-9c2f-45e033701d1b",
+      "targetTitle": "arrays-in-state-schemas-must-use-mandatory-notation"
+    },
+    {
+      "id": "lnk-cdfc327e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cdfc327e-2c36-4bc7-868f-74ec57af002a",
+      "targetTitle": "useselecteddocument-hook-is-auto-generated-per-document-model"
+    },
+    {
+      "id": "lnk-584cc17c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "584cc17c-0c35-4ba8-b755-2735fee58676",
+      "targetTitle": "document-model-three-components"
+    },
+    {
+      "id": "lnk-5dce4e61-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5dce4e61-3a7c-4243-b26a-ce1e45ad09f9",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Document operations follow VERB_NOUN naming convention with corresponding Input types",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "591cc21d-2653-4400-b10d-93a834ae507a",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f46addf-77dd-4ac1-88d9-b00c61e29f76",
+      "name": "naming-conventions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d334e0bd-76e7-4010-89cf-774b2e1ebc22",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Document operations in Powerhouse follow specific naming conventions:\n\n- **Operation names**: `VERB_NOUN` or `VERB_NOUN_SUBJECT` in SCREAMING_SNAKE_CASE (e.g., `ADD_TODO_ITEM`, `UPDATE_USER_PROFILE`)\n- **Input types**: PascalCase with `Input` suffix (e.g., `AddTodoItemInput`)\n- **Reducer functions**: camelCase with `Operation` suffix (e.g., `addTodoItemOperation`)\n\nWhen adding operations in Vetra Studio, you only provide the operation name (e.g., `ADD_TODO_ITEM`) and the `Input` suffix is generated automatically.\n\nOperations are organized into **modules** (e.g., a `todos` module containing ADD_TODO_ITEM, UPDATE_TODO_ITEM, DELETE_TODO_ITEM). This modular organization helps manage complexity as document models grow.\n\nDesign principles for operations:\n- Should be granular enough to represent distinct user intentions\n- Input types should contain all necessary info and nothing more\n- Use optional fields for partial updates (e.g., `text: String` without `!` in UpdateTodoItemInput)",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operations are named like ADD_TODO_ITEM with a matching GraphQL input type AddTodoItemInput defining the payload.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3f33e6c6-433f-4d41-9b64-1f6aff7061a8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:24.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b6bc8b4e-437e-4f08-9301-96f11f271c9f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:24.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

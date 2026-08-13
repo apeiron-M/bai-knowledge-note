@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-8a102b2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a102b2d-09d8-4f96-b31d-018c0950ce75",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-cd9fb0ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "operation errors are recorded on operations not thrown to callers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "dcef0a90-b51c-4254-8653-fc7c926a0dc2",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79cddac4-57c6-4048-86b3-2fa4744a201f",
+      "name": "error handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f17863a5-da61-4560-8fd8-0ea86e1fb70e",
+      "name": "event sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f826c0df-302c-4ce1-90a0-0e860da68f36",
+      "name": "testing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# operation errors are recorded on operations not thrown to callers\n\nPowerhouse handles reducer errors differently from typical throw/catch patterns. When a reducer throws an error:\n\n1. The operation is **still recorded** in `document.operations.global` (or `.local`)\n2. The error message is stored in `operation.error` as a string\n3. The **state is NOT mutated** \u2014 it remains as it was before the operation\n\nThis means error testing looks different:\n\n```typescript\n// \u2705 Correct \u2014 check the operation's error property\nconst updated = reducer(document, setName({ name: \"invalid\" }));\nexpect(updated.operations.global[0].error).toBe(\"Name is not allowed\");\nexpect(updated.state.global.name).toBe(initialState);\n\n// \u274c Wrong \u2014 errors are not propagated to the caller\nexpect(() => reducer(document, setName({ name: \"invalid\" }))).toThrow();\n```\n\nSince [[operation error index must match the number of prior dispatches]], the index into `operations.global` depends on how many operations were dispatched before this one.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:00:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:52.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When a reducer throws, the operation is still added with an .error property; state remains unmutated; tests must check operation.error",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0d8d64fb-723b-457a-b59e-27e41c797071",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:12.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f4dcbc5f-ebef-482c-a414-17476d85fd63",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:12.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

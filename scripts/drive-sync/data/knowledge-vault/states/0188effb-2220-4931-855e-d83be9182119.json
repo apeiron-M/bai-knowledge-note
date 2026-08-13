@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-f158a1f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f158a1f4-eab3-43f6-ba19-00c0608e62e7",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    },
+    {
+      "id": "lnk-98beacc1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98beacc1-57c0-4e63-8fd7-596ff6600010",
+      "targetTitle": "vetra-studio-auto-generates-from-specs"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ph generate is a subcommand group with seven subcommands, not a flag-driven command",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "676afa24-0e58-4503-a04f-10b7c7f41c33",
+      "name": "cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aabbb787-31e2-4cad-a7cb-f7a55f0bed44",
+      "name": "code-generation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The canonical shape\n\n`generate` is built with cmd-ts `subcommands({ name: \"generate\", cmds: { ... } })`. Seven subcommands, exactly:\n\n`all` \u00b7 `document-model` \u00b7 `editor` \u00b7 `app` \u00b7 `processor` \u00b7 `subgraph` \u00b7 `migration-file`\n\nThere is **no flag-driven form**. `ph generate --editor`, `--processor`, `--subgraph`, `--drive-editor`, and `ph generate <file>.phd` are all dead; `app` is the replacement for the retired `--drive-editor` generator. Verified live forms:\n\n```bash\nph generate all\nph generate document-model --document TodoList.phd      # -d; .phd or .json\nph generate editor        --name MyEditor --document-type my-org/todo\nph generate app           --name MyApp --document-types my-org/todo,my-org/note\nph generate processor     --name Stats --type analytics --document-types my-org/todo\nph generate subgraph      --name mySubgraph\nph generate migration-file --path ./migrations/001.ts\n```\n\n## Flag details that bite\n\n`editor` takes **singular `--document-type` / `-t`**; `app` and `processor` take **plural `--document-types` / `-t=`** (repeatable or comma-separated). Getting the plurality wrong is the most common failure.\n\n`processor` also takes `--type` (default `analytics`) and `--apps` (default `switchboard,connect` \u2014 whether the processor runs in Node, the browser, or both). `app` has `--disable-drag-and-drop` (default `false`).\n\n`migration-file` is the odd one out: no `--name`, and `--path` is **required**, with `--schema-file` defaulting to `./schema.ts`.\n\n## Three axes per subcommand\n\nEvery module subcommand supports the same triple:\n\n- **Create new** \u2014 `--name` plus type flags, or `--document <spec.phd|.json>` to drive codegen from a Vetra spec document.\n- **Re-generate existing** \u2014 `--dir <dir>` for one module, `--all` / `-a` for every module of that kind.\n- **Extract** \u2014 `--extract` / `-x` inverts the command: instead of generating code it writes a spec document for each existing module into `specs/<kind>/`.\n\n`generate all` carries only `--extract`; it otherwise re-generates every module in the project.\n\n_Source: `clis/ph-cli/src/commands/generate.ts` plus the seven `generate-*.ts` siblings, mirrored in `apps/academy/docs/academy/04-Reference/07-CLITooling/00-PowerhouseCLI.md`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "cmds are all, document-model, editor, app, processor, subgraph, migration-file. The app subcommand replaced the old --drive-editor generator.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d6d79e7c-6274-4092-936d-26c612236794",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ce16a6f8-1d52-4960-a9e9-728dccc7f333",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,119 @@
+{
+  "links": [
+    {
+      "id": "lnk-ca235eee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ca235eee-0fee-42d8-b9a7-8eb21f351a2f",
+      "targetTitle": "ddup-swarm-plugin-mirrors-switchboard"
+    },
+    {
+      "id": "lnk-1c842c07-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-df9a1dac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df9a1dac-a0dc-4c4b-a372-fc1696671e4b",
+      "targetTitle": "ddup-copy-distinct-recovery-role"
+    },
+    {
+      "id": "lnk-3be76a06-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3be76a06-11b8-4f6b-9f34-05c6621ed713",
+      "targetTitle": "bridge-pattern-gql-swarm-dual-sync"
+    },
+    {
+      "id": "lnk-ca235eee-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ca235eee-0fee-42d8-b9a7-8eb21f351a2f",
+      "targetTitle": "ddup-swarm-plugin-mirrors-switchboard"
+    },
+    {
+      "id": "lnk-a506e6e4-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a506e6e4-0e6e-4f7e-bd2e-6eef32477155",
+      "targetTitle": "ddup-reactor-native-sync-2x"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Running Switchboard and Swarm sync simultaneously triples operation storage to 3x",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "de3261a5-ffce-4c8c-ac5c-90398703b6c8",
+      "name": "data-duplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1b114dd-1fc5-4246-acfb-dbfd9be42c9a",
+      "name": "architecture-options",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c8dea8b-b440-4e43-ac54-a82ac2391641",
+      "name": "triple-replication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b09a99f8-69de-4525-8018-7634f600cf27",
+      "name": "migration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When Connect runs the native SyncManager against a Switchboard AND the Swarm plugin at the same time, every operation is stored in three places:\n\n```\nCONNECT (browser)          SWITCHBOARD (server)       SWARM NETWORK\nPGlite                     PostgreSQL                  /bytes + feeds\n  - operations ----------> - operations\n              <----------\n                                                       - operation batches\n  - operations ----------------------------------------> - manifests\n```\n\n**Storage cost**: 3x per operation (PGlite + PostgreSQL + Swarm).\n\n**The upside is optional resilience**:\n- Can recover from either Switchboard OR Swarm\n- Team collaboration continues working via Switchboard\n- Censorship-resistant backup via Swarm\n- Useful during migration or for high-value data\n\n**The cost is real**:\n- Triple bandwidth for writes\n- Triple stamp/storage cost for operations on Swarm\n- Two sync paths to reason about for conflicts\n\nThis is Architecture C \u2014 not a target state but a useful interim for users who want both properties simultaneously, or while migrating off a Switchboard.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "observation",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:55.863Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Architecture C (Connect + Switchboard + Swarm) stores every operation three times: PGlite, PostgreSQL, and Swarm /bytes \u2014 enabling recovery from either remote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "24f1759e-0628-425e-aaf1-7b82faa2b256",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:04.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f3292b55-0ab9-4b6e-8fe0-8e5f5887a31a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

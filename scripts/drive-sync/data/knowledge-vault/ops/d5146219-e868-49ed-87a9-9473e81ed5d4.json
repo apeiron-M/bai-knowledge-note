@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:54.896Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "useselecteddocument-throws-safe-variant-does-not",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d5146219-e868-49ed-87a9-9473e81ed5d4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:37:54.896Z"
+        },
+        "version": 0,
+        "documentId": "d5146219-e868-49ed-87a9-9473e81ed5d4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:37:54.896Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "A5mxoRFcIq5J42oFsbW5e5ca5GA=",
+    "timestampUtcMs": "2026-08-13T14:37:55.101Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "useSelectedDocument throws NoSelectedDocumentError while useSelectedDocumentSafe returns undefined",
+        "updatedAt": "2026-08-13T14:37:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:55.101Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:54.896Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d5146219-e868-49ed-87a9-9473e81ed5d4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:37:54.896Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "KQr1TwcDR2qybRzRjAtdF9xiQW0=",
+    "timestampUtcMs": "2026-08-13T14:37:55.101Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:37:54.000Z",
+        "description": "Pick the Safe variant when \"no document selected\" is a legitimate state. useSelectedDocumentOfType additionally throws DocumentTypeMismatchError on a type mismatch."
+      },
+      "timestampUtcMs": "2026-08-13T14:37:55.101Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:56.727Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d5146219-e868-49ed-87a9-9473e81ed5d4",
+        "targetId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:56.727Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Gyk4b0vG/8cr609OgY2Br0aO6a8=",
+    "timestampUtcMs": "2026-08-13T14:37:55.101Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:37:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:55.101Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:56.750Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d5146219-e868-49ed-87a9-9473e81ed5d4",
+        "targetId": "ed65d30e-61b0-431d-8162-183dc8c530d3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:56.750Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "onZtvsN7gOwh6F9ZGetr5jCHr2E=",
+    "timestampUtcMs": "2026-08-13T14:37:55.101Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Three hooks read the selected document, and they differ only in how they handle absence.\n\n`useSelectedDocument()` resolves the selected node id, calls `useDocumentById`, and throws if nothing came back:\n\n```ts\nconst [document, dispatch] = useDocumentById(selectedDocumentId);\nif (!document) throw new NoSelectedDocumentError();\nreturn [document, dispatch] as const;\n```\n\nThe error message is self-documenting: *\"There is no selected document. Did you mean to call 'useSelectedDocumentSafe' instead?\"* Because it throws, `document` is non-nullable in the returned tuple \u2014 that is the whole point of the variant, and it means an `if (!document)` guard after the call is dead code.\n\n`useSelectedDocumentSafe()` is the same lookup with the throw removed \u2014 it is literally `return useDocumentById(selectedDocumentId)` \u2014 so it yields `[PHDocument | undefined, dispatch]`. Reach for it whenever \"no document selected\" is a state your component should render, not an invariant violation. Note that `undefined` is also what you get while a real document is still loading, so the Safe variant cannot distinguish \"nothing selected\" from \"not here yet\".\n\n`useSelectedDocumentOfType(documentType)` layers a type check on top. It throws `NoSelectedDocumentError` when no document is selected and `DocumentTypeMismatchError` when the selected document is a different type. It has one quirk: passing a `null`/`undefined` `documentType` returns an empty array (`never[]`) rather than throwing, so the hook can be called conditionally on a type that is not known yet.\n\n**Documentation caveat:** the React Hooks reference page attaches a copy-pasted *\"Throws: NoSelectedDocumentError\"* block to the `useSelectedDocumentSafe` section, and its example calls the non-Safe hook. That contradicts both the same section's own prose and the source. The Safe variant does not throw.\n\n_Source: packages/reactor-browser/src/hooks/selected-document.ts and src/errors.ts, cross-checked against apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:37:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:55.101Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "OgcM4xOceEji6HTiYovYsX2huBo=",
+    "timestampUtcMs": "2026-08-13T14:37:55.101Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3e80f793-5b3e-409b-8f3d-3518c6bf28b4",
+        "name": "react-hooks"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:55.101Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "5H3lV8iVQAxq69xfWGcHhiAXSQI=",
+    "timestampUtcMs": "2026-08-13T14:37:55.101Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "db08fde7-1858-4543-a7e3-138f46c0be9f",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:55.101Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "hyK2JT0XnID9XaZxMSquuSrFbHU=",
+    "timestampUtcMs": "2026-08-13T14:37:55.101Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6b5fe2d1-a237-4b3e-9405-5a85190e08c6",
+        "name": "error-handling"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:55.101Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "lPe/KL9q4GLzIxeRic12MSUgAlk=",
+    "timestampUtcMs": "2026-08-13T14:37:56.684Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:37:54.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:56.684Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "s68JD5xMo5787hu3xdDslWlgTo4=",
+    "timestampUtcMs": "2026-08-13T15:58:52.769Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:58:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:52.769Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "+G/fyL4hfd4PnnJKT/dt6H+eXU8=",
+    "timestampUtcMs": "2026-08-13T15:58:52.769Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b5375262-4137-48a1-825a-db4ad20f67fe",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:58:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:52.769Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "DPqfxCKU6oyH5Bg0h2Dbb8whVIA=",
+    "timestampUtcMs": "2026-08-13T15:58:52.769Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "0e87243b-26e0-4841-950f-61bf7717fcad",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:58:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:52.769Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "NSox3V6Wm6eI5Z+AmnbWwzvIK58=",
+    "timestampUtcMs": "2026-08-13T16:57:17.532Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:57:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:57:17.532Z"
+    }
+  }
+]

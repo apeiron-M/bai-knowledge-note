@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:55.447Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "recovery-flow-from-wallet",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "56e371f7-6367-4105-83a1-39037ed17125",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:55.446Z"
+        },
+        "version": 0,
+        "documentId": "56e371f7-6367-4105-83a1-39037ed17125",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:55.447Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "uR24Ig2mlgZt2wXT9EsGWITAVWs=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Recovery rehydrates Connect from wallet-only using user \u2192 drive \u2192 document manifest traversal",
+        "updatedAt": "2026-08-13T13:23:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:55.447Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "56e371f7-6367-4105-83a1-39037ed17125",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:55.447Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "FPe2CqIwcNxDiZWmfZPidZxSy/8=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:24.000Z",
+        "description": "MetaMask personal_sign rederives the same AES key; pollInbox reads user manifest, then drive manifests, then each doc manifest, downloads batches, and applies with original IDs via reactor.load()."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:14.009Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "56e371f7-6367-4105-83a1-39037ed17125",
+        "targetId": "a412e1ab-b5c4-43f0-b261-850254287b40",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:14.009Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "HIZsKcz8KhLVecSOm2kaa09vbQw=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "workflow",
+        "updatedAt": "2026-08-13T13:23:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:14.034Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "56e371f7-6367-4105-83a1-39037ed17125",
+        "targetId": "5ff83781-5455-4e49-a342-67a420f85460",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:14.034Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "PBZICdXaBFA6ebsvRMoZwVJuMto=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "When a user opens Connect on a new device or after clearing browser data, recovery proceeds from wallet-only state:\n\n1. User connects MetaMask.\n2. Plugin requests `personal_sign`, which re-derives the SAME Swarm key as before.\n3. `SwarmChannel.pollInbox()` reads the user manifest from feed `ph:v2:user:<address>`.\n4. For each drive listed, read the drive manifest at `ph:v2:drive:<driveId>`.\n5. For each document not present locally: read its manifest at `ph:v2:doc:<docId>`, download each operation batch from `/bytes` (auto-decrypted), create SyncOperations, and enqueue in the inbox.\n6. SyncManager applies via `reactor.load()` using the ORIGINAL document IDs, so links and cross-doc references survive.\n7. The cursor advances in `sync_cursors`, the drive materializes in PGlite with correct folder structure, and future polls are incremental.\n\nKey properties: cursor-based so nothing re-downloads; no race conditions because SyncManager processes inbox before outbox, preventing re-upload of just-recovered ops; failed operations flow to `sync_dead_letters` for retry.",
+        "updatedAt": "2026-08-13T13:23:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:14.056Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "56e371f7-6367-4105-83a1-39037ed17125",
+        "targetId": "542c441b-c6c6-40cd-9179-a7596912065d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:14.056Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "IQriAt3UCcRrGhXpfRKg9S8jaPM=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:21.809Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:14.151Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "56e371f7-6367-4105-83a1-39037ed17125",
+        "targetId": "adfa3802-a906-4bba-b33f-f36219737003",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:14.151Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "NDfsIgnjIb+kmYcSqTJMzWxlK8M=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "da85fc25-7c22-4f2f-88e6-cfee8e08d3c9",
+        "name": "recovery",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "0LcVZvISwvd+xxEIxcKDHxNZh14=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ff200206-d64d-45ba-9198-3a4e937d6afe",
+        "name": "wallet-signature",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "cM5963Vg0roIwDymNGxfxSyoAXE=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ae916b2e-7746-4f7f-8686-8dcf2cccd012",
+        "name": "sync-cursors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "KcrBdDJisvNltDKrZOhfSr5Oo7Y=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "078dc1f0-da65-4bd2-93e9-15a38c9d7169",
+        "name": "reactor-load",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "273k7jyYlWvK/d07X022wDHyfVk=",
+    "timestampUtcMs": "2026-08-13T15:54:19.475Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:54:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:19.475Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "NPG85q8qnfdrIkcDCqJF7JlRWp4=",
+    "timestampUtcMs": "2026-08-13T15:54:19.475Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d3c338cd-eb31-4d6a-8dfc-2a5996f68481",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:54:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:19.475Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ivqi1HAxZuuhR56F15OTAIIF6yI=",
+    "timestampUtcMs": "2026-08-13T15:54:19.475Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "eebf4c84-de56-4056-927d-b41fabe8d0b6",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:54:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:19.475Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "6Y9E98RqLBqZLpN3mf+A8y1s4iE=",
+    "timestampUtcMs": "2026-08-13T16:51:48.385Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:51:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:51:48.385Z"
+    }
+  }
+]

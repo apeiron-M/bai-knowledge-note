@@ -1,0 +1,111 @@
+{
+  "links": [
+    {
+      "id": "lnk-ca861ddc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ca861ddc-efc0-4475-a7b2-0d324f5ce820",
+      "targetTitle": "moc-powerhouse-ecosystem"
+    },
+    {
+      "id": "lnk-6e19f4e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6e19f4e1-184b-4bcd-a3e1-b47585ecd724",
+      "targetTitle": "moc-powerhouse-architecture"
+    },
+    {
+      "id": "lnk-85bd1fa1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "85bd1fa1-2fba-4209-8fc0-8ad09e867a76",
+      "targetTitle": "corpus-baseline-v6-0-0-dev-254"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Powerhouse stack offers a local-first event-sourced engine with browser and server hosts, generated APIs, and pluggable read models",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fce5ae4a-3dc4-4049-9443-8f09109d1828",
+      "name": "powerhouse-stack",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac269e51-ab14-4ff4-a43d-98fd4bea7e8f",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "347a3652-f43a-41d9-9f87-3842d280b859",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "054e2c65-1584-4561-b4a4-60ba9df2c920",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4260f675-db34-47c5-ad71-7f0566d01c25",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aadb26c7-5c4c-4de2-8d76-a6f108e5eaea",
+      "name": "vetra",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## One engine, two faces, one package\n\nThe Powerhouse stack is a **local-first, event-sourced application platform**. Everything below is built on one idea: state is never written directly \u2014 it is derived by replaying an immutable log of typed operations.\n\n## Core engine\n\n- **Reactor** \u2014 runs reducers, appends operations to storage, drives processors, and syncs with peer Reactors over the DocSync protocol. Storage-agnostic and modular; loads document models at runtime.\n- **Operation sync, not state sync** \u2014 offline edits replay on the remote Reactor, so both ends converge without last-write-wins or manual merges.\n- **Pluggable operation stores** \u2014 including a Hypercore-backed store (`reactor-hypercore`) alongside the default.\n\n## Host applications\n\n- **Connect** \u2014 browser collaboration workspace embedding a Reactor, so it works offline and syncs on reconnect. Renders your editors and drive-apps.\n- **Switchboard** \u2014 server host exposing the Reactor over **GraphQL** and **MCP**. Runs processors and maintains read models.\n- **Vetra** \u2014 the agent-first builder platform and local dev environment (Vetra Studio + Vetra Switchboard), spec-driven and AI-native.\n- **Fusion** and **Renown** round out the four host applications.\n\n## What builders ship\n\nA single **package** bundles document models (schemas + reducers), editors, processors, and subgraphs, and plugs into all three layers at once: the Reactor runs the reducers, Connect renders the editors, Switchboard runs the processors.\n\n## Feature surface by area\n\n| Area | What the stack offers |\n|---|---|\n| Modelling | GraphQL-defined document models with typed operations, scoped state (global/local), and versioning/migration support |\n| Codegen | `codegen` generates TypeScript types, reducers, and editor scaffolding from the GraphQL spec |\n| API | `reactor-api` auto-generates a GraphQL subgraph per document model, plus the core reactor subgraph |\n| Read models | Processors fold the operation stream into queryable projections; relational processors are backed by PGlite |\n| Analytics | `analytics-engine` for time-series/dimensional analysis over document data |\n| Client | `reactor-browser` provides React hooks and `IReactorClient` for editors and drive-apps |\n| Identity | `renown` \u2014 wallet-based authentication and identity; document permissions, signing, and subgraph-level authorization |\n| Attachments | `reactor-attachments` \u2014 content-addressed storage that keeps large binaries out of the action pipeline |\n| Groups | `reactor-group` \u2014 group membership referenced by `{ group }` principals in the auth scope |\n| AI integration | `reactor-mcp` exposes document model operations and drive management to AI coding agents over MCP |\n| Design system | `design-system` / document-engineering \u2014 GraphQL scalar UI components |\n| Tooling | `ph-cli` / `ph-cmd`, `builder-tools` (Vite + TS config, dev server), `registry` for package dependency resolution |\n\n## Version context\n\nDescribes the stack at **v6.2.2-dev.45** (2026-08-13). Most other Powerhouse knowledge in this vault is baselined at v6.0.0-dev.254 \u2014 see the corpus baseline note.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T13:59:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Feature-surface overview of the Powerhouse stack at v6.2.2-dev.45: Reactor engine, Connect/Switchboard/Vetra hosts, codegen, processors, analytics, identity, attachments, and MCP.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6649f52b-4d46-4c2f-a3b5-44b4c9a0c0b7",
+      "actor": "claude",
+      "comment": "Stack feature surface overview",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T13:59:43.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eb0a3cbb-966c-4c2d-b734-03d579b4ce1f",
+      "actor": "liberuum",
+      "comment": "Requested overview note",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T13:59:43.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

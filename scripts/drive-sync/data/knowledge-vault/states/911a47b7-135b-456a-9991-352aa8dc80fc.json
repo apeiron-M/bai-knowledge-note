@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-868cf8ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+      "targetTitle": "pglite-sync-tables-persist-remote-state"
+    },
+    {
+      "id": "lnk-e5fd24ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5fd24ec-8f92-4f9d-b3c6-0b675a1f367d",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-1c842c07-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-de11636d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reactor's support for multiple remotes per collection is what enables dual GQL + Swarm sync.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-a52fcb27-1",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-a52fcb27-2",
+      "name": "sync-cursors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-a52fcb27-3",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nThe core architectural insight enabling the Swarm channel is that the reactor's sync system supports multiple remotes per collection \u2014 each with its own channel, cursors, and push/pull state.\n\n## Evidence\nFrom the source: \"The reactor's sync system supports multiple remotes per collection. Each remote has its own channel, its own cursors, and its own push/pull state. This means a single drive can be synced to BOTH Switchboard AND Swarm simultaneously.\"\n\nIn `sync_cursors`, a single collection tracks independent ordinals per remote (e.g., gql remote at ordinal 42, swarm remote at ordinal 38).\n\n## Why it matters\nWithout this property, we would need a custom fan-out layer or a single combined channel. Instead, GQL and Swarm are peers, and either can be added or removed without affecting the other.\n\n## Source\nSwarm Channel Architecture, \"The Core Insight: Two Channels, One Collection\".",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A single drive can sync to both Switchboard and Swarm because each remote owns its own channel, cursors, and push/pull state.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "feefa346-663c-449b-91fc-a3fda5dfbb5e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:38.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b532d1ca-fb58-4ec0-9bba-1fdcc7ad7e40",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:38.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

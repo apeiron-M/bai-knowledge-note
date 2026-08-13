@@ -1,0 +1,119 @@
+{
+  "links": [
+    {
+      "id": "lnk-1d8c7fcf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1d8c7fcf-ca5f-4c25-8dae-9c78b4b86763",
+      "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags"
+    },
+    {
+      "id": "lnk-428c5cfe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "428c5cfe-6a37-4cb5-ad7f-f31762408a4a",
+      "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors"
+    },
+    {
+      "id": "lnk-2ceda563-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+      "targetTitle": "model-editor-wiring"
+    },
+    {
+      "id": "lnk-ce0ee124-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-c1b2c7da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c1b2c7da-f7a0-47f7-85a7-ff9f5cfebdc3",
+      "targetTitle": "document-model-driven-architecture-rad"
+    },
+    {
+      "id": "lnk-e210f325-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e210f325-64f3-447e-a289-f198a8e5df00",
+      "targetTitle": "editors-use-component-based-architecture"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "editor components should be modular with separate files",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e7349d43-31ef-410e-8ea7-c9dcedbd7d69",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "85590da7-7c1d-4b6e-99b8-2499e304f2eb",
+      "name": "component architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "73732e8c-d94b-4749-97c9-782fbc72188c",
+      "name": "TypeScript",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cb7df5d9-f7c8-4854-8e7b-64a22912c64d",
+      "name": "modularity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# editor components should be modular with separate files\n\nWhen building document editors:\n\n- Create modular components for UI elements in separate files for maintainability\n- Separate business logic (dispatch, data transformation) from presentation (rendering, layout)\n- Use TypeScript strictly \u2014 avoid `any` and type casting\n- Consider components from `@powerhousedao/design-system` and `@powerhousedao/document-engineering`\n\nThis modularity makes editors easier to test, maintain, and update when the underlying document model evolves.\n\n---\n\nTopics:\n- [[editor patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:02:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:14.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Create modular UI components in separate files; separate business logic from presentation; use TypeScript without any or type casting",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e3beac20-ec62-47a3-8a59-39975ffc440f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:14.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2be31d5f-b6c1-41b2-ad48-aaf6344e7c28",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:14.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

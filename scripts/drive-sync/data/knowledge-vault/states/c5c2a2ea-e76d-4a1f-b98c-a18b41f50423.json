@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-83d37fbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+      "targetTitle": "three-layer-swarm-stack"
+    },
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-6b41319d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6b41319d-507a-4af0-a563-7fd882ab3581",
+      "targetTitle": "composite-channel-factory-routing"
+    },
+    {
+      "id": "lnk-1c842c07-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "createSwarmSyncBuilder() is the sanctioned ReactorBuilder hook that installs CompositeChannelFactory routing gql and swarm by config.type",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cad13291-9601-48fc-ae1d-a56cd42fe183",
+      "name": "reactor-builder",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e1eb9811-a29f-4ba9-a971-39ce87d2fdf7",
+      "name": "composite-factory",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc65e229-d4d8-499c-a7cd-dde8c2db39df",
+      "name": "api-surface",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# createSwarmSyncBuilder Integration Hook\n\nThe adapter exposes `createSwarmSyncBuilder()` from `src/channel/create-composite-factory.ts` as the single sanctioned entry point for integrating Swarm sync into a Reactor host via the official `ReactorBuilder` API.\n\nThis replaces an earlier monkey-patching approach. The builder installs a `CompositeChannelFactory` that routes sync channels by their `config.type` discriminator:\n\n- `\"gql\"` \u2192 `GqlRequestChannel` (Switchboard cloud sync)\n- `\"swarm\"` \u2192 `SwarmChannel` (Swarm decentralized sync)\n\nThis lets a single Reactor instance run GraphQL-based Switchboard sync and Swarm-based decentralized sync side-by-side, per-drive, without either sync path interfering with the other. Per-drive registration happens through `add-swarm-remote.ts`.\n\nThe builder pattern is the stable public surface for adapter consumers \u2014 downstream apps should wire Swarm sync via `createSwarmSyncBuilder()` rather than constructing `SwarmChannel` directly.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "integration",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:57:41.685Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "createSwarmSyncBuilder() is the sanctioned ReactorBuilder hook that installs CompositeChannelFactory routing gql and swarm by config.type.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "87500c97-8493-4f66-9188-fcf06400645d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "413d74f5-dd38-40d6-b797-cf4cfdb2955e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

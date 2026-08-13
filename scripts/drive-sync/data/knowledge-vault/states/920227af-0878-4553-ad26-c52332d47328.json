@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-f187f3e8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f187f3e8-006e-4157-aea4-fb813391a039",
+      "targetTitle": "collaborate-tab-in-chat-panel"
+    },
+    {
+      "id": "lnk-ce0ee124-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-6350a53a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "6350a53a-26de-4f51-bb52-def8f797b47f",
+      "targetTitle": "swarm-manifest-three-tier-hierarchy"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Drive manifest feed indexes drive's documents (with parentFolder) and folder tree",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6bd07484-ab57-4f37-a347-faa2468b39fc",
+      "name": "drive-manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a85f2000-418e-4f2e-9231-c3dd9990fd67",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "58d16f7d-9536-42e1-841c-cc593598f5cf",
+      "name": "feed-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Drive Manifest Feed Structure\n\nThe drive manifest feed lives at topic `ph:v2:drive:<driveId>` and is owned by the drive creator's signer. Each feed index resolves to encrypted JSON on `/bytes`.\n\n## Schema\n\n```json\n{\n  \"driveId\": \"drive-abc\",\n  \"name\": \"Finance Drive\",\n  \"documents\": {\n    \"doc-001\": {\n      \"documentType\": \"powerhouse/budget-statement\",\n      \"name\": \"Q1 Budget\",\n      \"parentFolder\": \"folder-reports\",\n      \"lastUpdated\": \"2026-04-10T12:01:00Z\"\n    }\n  },\n  \"folders\": {\n    \"folder-reports\": { \"name\": \"Reports\" }\n  },\n  \"updatedAt\": \"2026-04-10T12:02:00Z\"\n}\n```\n\n## Role\n\n- Indexes every document the drive contains and the folder tree\n- `parentFolder` on a document lets clients reconstruct the folder hierarchy\n- One drive manifest feed per drive, one feed index per update\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Drive manifest feed at ph:v2:drive:<driveId> holds per-drive documents map (with documentType, name, parentFolder) and folders map as encrypted JSON.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f5f80e61-a1b9-40ee-a457-2a803baaf21c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "36277967-1843-4132-ac15-08dcf8da6485",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

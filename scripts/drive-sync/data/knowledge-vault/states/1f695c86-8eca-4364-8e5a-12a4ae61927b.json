@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-f8ba011f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f8ba011f-a1ed-4965-a8ea-47359dfabd98",
+      "targetTitle": "document-model-structure-has-metadata-specifications-and-modules"
+    },
+    {
+      "id": "lnk-0b606bae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b606bae-5e64-4a98-bdd7-1a7915800db6",
+      "targetTitle": "document-models-have-37-available-operations-across-7-categories"
+    },
+    {
+      "id": "lnk-1dab89e3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1dab89e3-c323-4a8f-afca-45ac947c2e62",
+      "targetTitle": "color-token-naming-convention"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "versioning operations on document models are not implemented",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ac7f7641-c145-4c66-9cf5-aff61574f4c3",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "19440507-35ee-4abc-a76e-61c3d68ce9b7",
+      "name": "architecture decisions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a29a6051-fbea-4059-b53a-2034ef5014e2",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eacffa43-3aa4-440d-b104-57849d570d3a",
+      "name": "known limitations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# versioning operations on document models are not implemented\n\nThe document model operation taxonomy includes a \"Versioning\" category, but it is explicitly marked as not implemented. Do not use any versioning-related operations \u2014 they will fail or produce undefined behavior.\n\nThis is a known gap in these particular operations: in `packages/document-model/schemas/document-model/versioning.graphql` the four change-log inputs are declared as `type ...Input` rather than `input ...Input`, so no operations are generated from them at all.\n\nDocument-model versioning itself is *not* unsolved, though \u2014 it has first-class support through the document model registry's **upgrade manifests**, not git. Register them at build time with `ReactorBuilder.withUpgradeManifests(manifests)` or at runtime with `registerUpgradeManifests()`, then read them back with `getUpgradeManifest(documentType)`, `computeUpgradePath(documentType, from, to)`, and `getUpgradeReducer(documentType, from, from + 1)`. The registry keys modules by document type *and* version so multiple versions coexist, and each manifest describes the migration between consecutive versions.\n\n---\n\nTopics:\n- [[gotchas]]\n- [[architecture decisions]]\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:04:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:20.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The versioning category exists in the document model operation taxonomy but is explicitly marked DO NOT USE",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e7ab9915-8377-48f8-8ad0-3a03d7e61b6a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a4f6a667-91ba-413d-a762-c032f88ce226",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:19.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

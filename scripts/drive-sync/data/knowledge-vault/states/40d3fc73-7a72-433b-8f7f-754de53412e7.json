@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-1adbb770-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbb770-4b64-4070-b6fc-8e57fcce92d8",
+      "targetTitle": "project-structure-four-directories"
+    },
+    {
+      "id": "lnk-7fa1d6f7-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7fa1d6f7-1495-4e28-baef-ecbe25a9e6d0",
+      "targetTitle": "packages-published-to-npm-installed-with-ph"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A package's runtime shape is DocumentModelLib with manifest, documentModels, editors, and optional subgraphs, upgradeManifests, and a single processorFactory",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "21cf58e6-200c-4cb9-80cb-8eff633850a6",
+      "name": "vetra-package",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5b43dd68-ab9d-43de-a85a-5a157deee191",
+      "name": "modules",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f7f948f1-5174-4787-902b-3a0a4662d3f6",
+      "name": "distribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A Powerhouse package's **runtime** shape is `DocumentModelLib` (`packages/shared/document-model/types.ts:1703`), not a `VetraPackage` with a `modules` wrapper:\n\n```typescript\ntype DocumentModelLib = {\n  manifest: Manifest;\n  documentModels: readonly DocumentModelModule[];\n  editors: readonly EditorModule[];\n  subgraphs?: readonly SubgraphModule[];\n  upgradeManifests?: readonly UpgradeManifest<readonly number[]>[];\n  processorFactory?: ProcessorFactoryBuilder;\n};\n```\n\nTwo things to note: `processorFactory` is a **single builder, not an array**, and `upgradeManifests` is a first-class member.\n\nThe **manifest** shape is `ManifestSchema` (`packages/shared/document-model/schemas.ts:908`): `name`, optional `description` / `category` / `image` / `publisher`, then `documentModels`, `apps`, `editors`, `processors`, `subgraphs`, plus optional `config` and `pwa`. Note `apps` \u2014 drive apps are a first-class manifest section.\n\nConnect reads packages via `useVetraPackages()`, which returns `DocumentModelLib[]`. The setter is `setVetraPackageManager(packageManager)` (`packages/reactor-browser/src/hooks/vetra-packages.ts:31`).\n\n**Names that do not exist in code.** `subgraphModules`, `importScriptModules` and `processorModules` all return zero hits, as does `setVetraPackages()` \u2014 the latter survives only in `apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md`, which documents an API the code does not have.\n\nThe registry ambition around packages \u2014 publish, discover, fork, extend, monetize, with authors sharing in value generated downstream \u2014 is unchanged.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Not a VetraPackage with a modules wrapper. processorFactory is one builder, not an array. Connect reads via useVetraPackages; the setter is setVetraPackageManager.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "181f6ed7-2f1e-44ff-a6c7-80d60af9b56c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "33c0ee8c-3cb0-43a5-8f19-6d5ff51d607c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

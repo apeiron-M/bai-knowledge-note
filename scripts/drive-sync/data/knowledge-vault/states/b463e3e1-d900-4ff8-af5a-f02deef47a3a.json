@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-2a079433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2a079433-e571-4d78-b20a-3fabbccbe075",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-4d98df7d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4d98df7d-a81e-461c-aa76-f59378303502",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse React hooks from @powerhousedao/reactor-browser derive all data from the Reactor and return document-dispatch tuples for mutation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c0bbadcd-98b7-488a-89dc-58b4e6943d20",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5b948c35-7929-4bdd-85c6-09f8431284eb",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9bcbb0e1-372a-49d2-9d0b-1dcdc065ad21",
+      "name": "api-reference",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `@powerhousedao/reactor-browser` package provides dozens of React hooks organized into categories: selected document, document by ID, document cache, drives, nodes/folders, items in drive/folder, node actions, modals, revision history, timeline, and config. The core pattern is a `[document, dispatch]` tuple where dispatch has the signature `(actionOrActions: Action | Action[] | undefined, onErrors?: (errors: Error[]) => void) => void`. All hook data ultimately derives from the Reactor, which manages asynchronous eventually-consistent state of drives and documents. Suspense-aware variants like `useDocument` suspend rendering while loading, while `useGetDocumentAsync` returns status/data/error without suspending.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Hooks like useSelectedDocument return [document, dispatch] tuples where dispatch accepts actions or action arrays with optional error callbacks.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d12bb09a-2a40-420b-8ab2-19cfefcb8e4f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:42.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cfd2dad6-e66f-4e49-b44a-bec9aab6db5c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:42.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

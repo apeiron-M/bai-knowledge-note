@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-dd78af2a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dd78af2a-d570-4a14-8b99-4a40dfe10510",
+      "targetTitle": "relational-db-live-queries-pglite"
+    },
+    {
+      "id": "lnk-021185cf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "021185cf-9b33-4a9f-a7d0-8c6dabe2dfa6",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    },
+    {
+      "id": "lnk-4324b1ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-f330b4b8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f330b4b8-5345-4649-9bdf-7903cb92e827",
+      "targetTitle": "relational-db-processor-for-sql-projections"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RelationalDbProcessor provides a type-safe base class with per-drive namespace isolation and lifecycle migration hooks",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6ec7fc81-bf97-4791-98a4-116413f39f10",
+      "name": "relational-db",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a154a49a-7a1d-4ea1-b0c9-fdfe9e9c08fd",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0aee4021-f9d9-4c6d-abc2-7314ab9e7530",
+      "name": "pattern",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The v6 Reactor provides `RelationalDbProcessor<DB>` as a base class for processors that need database access. Key features: `getNamespace(driveId)` static method creates per-drive database isolation preventing data collisions; `initAndUpgrade()` lifecycle hook runs migrations on startup; `this.relationalDb` provides a typed Kysely instance; `query(driveId, relationalDb)` static method enables querying from subgraphs. The factory creates namespaced stores via `module.relationalDb.createNamespace<T>(namespace)`. Scaffolding is generated with `ph generate processor --name <name> --type relationalDb --document-types <type>`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Extend RelationalDbProcessor<DB> for built-in this.relationalDb access, getNamespace(driveId) isolation, and initAndUpgrade().",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "23132670-8963-4b5f-8950-1fbb62a58d0f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:04.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d9a0b4eb-70df-4c9c-a2ea-20cd994c945a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

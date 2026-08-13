@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Analytics Engine uses luxon DateTime everywhere because a JS Date cannot report whether it was constructed in UTC",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2d32a384-efdb-4576-bf9a-1acca68ea31e",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9aa1c083-941f-4bf6-b7ca-04062a8d64c9",
+      "name": "api-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54f9fa0c-aaa8-4017-8758-67fec8995e21",
+      "name": "time",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "This is one of the few places the Powerhouse docs record the reasoning behind an API choice rather than just the choice.\n\nThe team started with the built-in `Date`. The problem is not that `Date` cannot represent UTC \u2014 `new Date('2024-12-25T14:46:22.001Z')` parses UTC fine \u2014 it is that the resulting object is a local-time object with **no way to ask whether it was constructed from a UTC timestamp**. You can call the constructor and end up with a different instant than the one you thought you passed in, and nothing in the type or the object tells you. `toISO()` will happily emit a UTC string either way.\n\nStrings were considered and rejected: they carry their own class of problems and are only checkable at runtime.\n\nluxon's `DateTime` carries time, date, and timezone in one object, and the docs' summary of why it won is characteristically blunt: it is \"difficult (but not impossible) to create a luxon `DateTime` object with a timezone you weren't intending to use.\" For a time-series analytics system, where a silent timezone shift moves numbers into the wrong bucket rather than producing an error, that difficulty is the feature.\n\nThe consequence is that luxon appears on both sides of the API: `AnalyticsSeriesInput.start`/`end` and `AnalyticsQuery.start`/`end` are `DateTime`, and `GroupedPeriodResult.start`/`end` come back as `DateTime`. Series insertion in the shipped processors uses `DateTime.fromISO(operation.timestampUtcMs)`, so the operation log's own UTC timestamp is the input rather than any local clock reading \u2014 which also keeps analytics writes deterministic under replay.\n\nProvenance: draft `03-Build/04-WorkWithData/_06-Analytics Engine/typescript/index.md` (\"A note about times\"); luxon imports confirmed across `packages/analytics-engine/{core,browser,knex}/src/` and `packages/shared/processors/drive-analytics/` at 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Series bounds and query windows are luxon DateTime objects. The stated design goal is making a timezone mistake hard to make silently in a time-series system.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4909042e-248a-4074-8a0b-e87ac3f52a54",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a10b4cc8-0c25-479e-9a48-4fd6bbfba785",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

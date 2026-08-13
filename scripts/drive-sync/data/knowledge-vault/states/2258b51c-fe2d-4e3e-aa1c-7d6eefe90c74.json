@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-cbcbb6cb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbcbb6cb-4db5-4ac6-8d8e-4149e0d6cff8",
+      "targetTitle": "ph-service-setup-configures-nginx-pm2-ssl"
+    },
+    {
+      "id": "lnk-44526c84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44526c84-c188-45ed-9472-51e84e11bfd0",
+      "targetTitle": "connect-is-host-application"
+    },
+    {
+      "id": "lnk-4d98df7d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4d98df7d-a81e-461c-aa76-f59378303502",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-2a079433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2a079433-e571-4d78-b20a-3fabbccbe075",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-831770e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "831770e6-9bf6-4b23-9fc2-dc0fdac17a5d",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse publishes official Docker images for Connect (frontend + Nginx) and Switchboard (backend API) to ghcr.io",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a82cb3eb-e236-4bf5-a8d7-4178b9525ee7",
+      "name": "docker",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f4a4d51-1aa5-440e-923b-620dab2d3a21",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "108be46c-9036-4630-8a3f-ed38e20ae7b4",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a114f86-0ab7-4ef4-bf0b-5b18facd7962",
+      "name": "switchboard",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three official images on `ghcr.io/powerhouse-inc/powerhouse/`: connect (Alpine + Node + Nginx with Brotli), switchboard (Node 24 + Prisma), academy (docs). Tags: latest, dev, staging, vX.Y.Z. Docker Compose stack: connect + switchboard + postgres:16.1. Connect startup: load packages from `PH_REGISTRY_PACKAGES`, `ph connect build`, configure/start Nginx. Switchboard startup: install packages from `PH_PACKAGES`, run Prisma migrations (only if `PH_REACTOR_DATABASE_URL` is set), start the server. Custom packages use a different env var per service: Connect reads `PH_REGISTRY_PACKAGES` (comma-separated, written to a registry config at startup), Switchboard reads `PH_PACKAGES` (comma-separated). Production: use specific version tags, persist postgres with volumes, bind to 127.0.0.1 behind a reverse proxy for SSL termination. `DATABASE_URL` is Switchboard-only -- Connect never uses it -- and it accepts a PostgreSQL *or* SQLite connection string (default `\"dev.db\"`).\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect image builds the frontend and serves via Nginx; Switchboard optionally runs Prisma migrations, then starts the API server.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6363a324-bfeb-4a7a-9f7d-d8468fa40f99",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:25.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fe48db5b-c4f3-46e1-bdbd-13c90bd24ab4",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:25.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

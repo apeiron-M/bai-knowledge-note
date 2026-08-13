@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-a8b2713f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-3f8ca25d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Idempotent external ingestion stores the dedup set and the watermark in document state, not in worker memory",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d0d2d4c5-095c-4bb6-ad67-95882360dbe2",
+      "name": "integrations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "334495d5-86be-4823-800d-e7ed61eabbf8",
+      "name": "idempotency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0c42a11-8ee4-49e5-b409-bdb09a8bb7cc",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `external-feed-ingest` recipe states its thesis as one line: **the document is the checkpoint store.** Both the dedup set and the high-watermark live in document state, and the worker rebuilds them from state at startup via `seedFromState()`. An in-memory-only checkpoint is the bug the recipe exists to prevent \u2014 crash the worker mid-stream and it re-ingests everything since the last flush.\n\nThe subtler half is *which* value is the dedup key. It is `(source, externalId)`, **not** the watermark:\n\n> The watermark is only a fetch optimization (\"don't re-read the whole feed\"). It is not the dedup mechanism, because real feeds redeliver: the same `externalId` can reappear at a *later* cursor, sailing straight past a watermark filter.\n\nSo the two do different jobs. The watermark tracks the feed's monotonic *delivery cursor* and bounds how much you re-read; the id-set answers the authoritative question \"have I already recorded this?\" On restart the id-set is what saves you.\n\nThe state schema keeps both in the document:\n\n```graphql\ntype FeedLedgerState {\n  source: String!\n  watermark: Int!\n  entries: [LedgerEntry!]!\n}\n```\n\nWatermark advancement is folded into the domain operations (`max(watermark, sequence)`, so an out-of-order delivery cannot regress it) rather than living in a separate `setWatermark` op. And the reducer enforces uniqueness too, throwing `DuplicateEntry` \u2014 defence in depth against racing redeliveries that both pass the worker's in-memory check.\n\nCorrections are modelled as explicit operations, never mutations: `markSuperseded` flips the old entry's status, sets `supersededBy`, and appends the corrected value as a *new* `RECORDED` entry. The original payload is never touched.\n\nThe same pattern appears in `inbound-webhook-bridge` for the push direction, where provider `event.id` values accumulate in the document's `processedEventIds`. Notably the recipe argues the crash-safety property is independent of where the loop lives \u2014 a long-running script or an `IProcessor` both work, because the guarantee comes from seeding state from the document.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, External Feed Ingest recipe (\"The one idea worth taking away\", \"Why externalId is the dedup key\"), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Seeding the dedup id-set from document state at startup makes a worker restart a no-op; an in-memory-only checkpoint re-ingests everything since the last flush.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9c4271d9-fabc-4bbe-b327-f43f48771aff",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:26.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "560cda5d-c109-4eec-8853-7c3e4145976c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:26.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

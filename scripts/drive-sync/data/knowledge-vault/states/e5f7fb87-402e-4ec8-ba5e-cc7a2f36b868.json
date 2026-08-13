@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-9601a3c5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9601a3c5-9b83-4776-8aa1-afd429b2db6a",
+      "targetTitle": "swarm-mutable-stamps-for-feeds"
+    },
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-68376495-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68376495-bfd8-4cac-9fda-65c52e1c4e74",
+      "targetTitle": "adapter-key-source-files"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The adapter encrypts at the app layer with AES-256-GCM derived from the user's wallet signature",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "29f26367-0439-4027-ac1d-d900e2c3f0fb",
+      "name": "encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be4ed560-3782-4d97-b35c-1a30d720acd2",
+      "name": "adapter",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ef8411b-e467-4c8c-84d7-276c63500ac2",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4832fec4-e4e3-45b5-aebc-138356ace55c",
+      "name": "key-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nThe Bee Reactor Adapter performs **app-layer AES-256-GCM encryption before upload** rather than relying on Swarm-native encryption, to control keys and keep references 32 bytes.\n\n## Evidence\n\nKey derivation chain:\n```\nwallet.personal_sign(msg) -> keccak256 -> secp256k1 private key\n  -> SHA-256 -> AES-256 symmetric key\n```\n\nCiphertext format:\n```\n[SWE prefix (3 bytes)] [IV (12 bytes)] [ciphertext + GCM auth tag]\n```\n\nAdvantages over Swarm-native (`Swarm-Encrypt: true`):\n- Full control over key management\n- Reference stays 32 bytes (no embedded 32-byte decryption key)\n- Compatible with any storage backend, not just Swarm\n- Deterministic: same wallet = same key on any device\n\nSharing today uses `SHA-256(sender_address:recipient_address)` \u2014 both parties derive the same key independently (but this is non-revocable; ACT is the planned replacement).\n\n## Why it matters\n\nApp-layer encryption decouples the document-level security story from the Swarm transport. The deterministic wallet-derived key enables cross-device recovery without any server-side key escrow.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Wallet personal_sign -> keccak256 -> secp256k1 private key -> SHA-256 -> AES-256 key. Format: [SWE prefix][IV][ciphertext+GCM tag]. Keeps references 32 bytes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "acbebf2a-c1d9-4493-ba0c-bdf353af8115",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:30.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bfedce24-248a-4dfd-aea1-f3e87360ca95",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:30.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

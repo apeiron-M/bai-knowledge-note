@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-39df9a3c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "39df9a3c-c28b-413c-87fe-93748fe86a0e",
+      "targetTitle": "moc-reactor-and-drives"
+    },
+    {
+      "id": "lnk-e700aec6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e700aec6-e8bc-4c24-b50a-a589fcab80de",
+      "targetTitle": "ddup-layer-mutability-lifespan"
+    },
+    {
+      "id": "lnk-52f876b5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+      "targetTitle": "document-models-use-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Attachments keep binaries out of the operation log: state holds an opaque attachment://v1:<sha256> ref",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e0040c0f-14bd-4156-933d-3c6c41ce78c7",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "04c83565-bfe5-495d-8482-415d5ba47236",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2b6ed3a5-f3c8-418e-a19a-f52c28c5968d",
+      "name": "storage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/reactor-attachments` exists to keep large binaries out of the action and operation pipeline. Instead of a base64 `data` string riding inside an action \u2014 and therefore inside the immutable operation log, and therefore across every sync channel forever \u2014 document state holds an opaque ref of the form `attachment://v1:<sha256>`, while the bytes flow through a separate `IAttachmentService`. Storage is content-addressed, so identical uploads dedupe to the same ref.\n\nThe integration surface with document models is a **single GraphQL scalar**, `AttachmentRef`:\n\n```graphql\nscalar AttachmentRef\n\ninput SetAgentImageInput { attachment: AttachmentRef! }\ntype AgentInfo { attachment: AttachmentRef }\n```\n\nCodegen emits a branded TypeScript string type (`` `attachment://v${number}:${string}` ``) plus a Zod validator enforcing the ref protocol. The reducer stores the value verbatim \u2014 there are no special \"attach\" actions and no attachment-aware reducer logic:\n\n```typescript\nsetAgentImageOperation(state, action) {\n  state.agent.attachment = action.input.attachment; // AttachmentRef\n}\n```\n\nThis is the architectural payoff: the document model never sees storage configuration, credentials, or transfer mechanics. The same model works whether Switchboard proxies bytes from the filesystem backend or the S3 backend transfers them directly via presigned URLs.\n\nReach for it whenever a field would otherwise be a base64 string or a long data URI \u2014 editor file/image uploads, avatars, any binary that must round-trip through sync or GraphQL. Keep small, fixed-length, non-binary values (short strings, numbers, JSON blobs) inline.\n\nTwo behaviors worth knowing before you rely on refs. `get(ref)` succeeds for any ref whose bytes are available and transparently re-fetches through the transport if they were evicted from local storage. But a hash-first ref can be **pending** \u2014 reserved, with state already referencing it, bytes not yet uploaded. In that window `get()` throws `AttachmentPending` while `stat()` succeeds and returns `status: \"pending\"` with the declared `sizeBytes` and `expiresAtUtc`. `AttachmentPending` is deliberately not a subclass of `AttachmentNotFound`: pending means \"retry later\", not \"unknown\".\n\nRefs should be treated as opaque outside the service; `parseRef`/`createRef` are exported but are for tests and debugging tooling.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "reactor-attachments stores bytes content-addressed, so identical uploads dedupe. Declare fields with the AttachmentRef GraphQL scalar.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a78bdb57-f9b9-47d0-a6d2-2f46f1f59aa8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "50808c6d-8a4d-4fc3-9430-0561a0d16074",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

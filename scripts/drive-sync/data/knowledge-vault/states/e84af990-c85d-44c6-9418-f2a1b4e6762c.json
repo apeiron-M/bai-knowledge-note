@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a039d9b3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a039d9b3-9608-4584-acfd-f231a2296186",
+      "targetTitle": "gsoc-triggered-pull-debounced-with-polling-fallback"
+    },
+    {
+      "id": "lnk-6018c73a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6018c73a-1c34-4bf5-8502-d1fcb80bb653",
+      "targetTitle": "chat-requires-both-users-to-run-full-bee-nodes-because-light"
+    },
+    {
+      "id": "lnk-4f75be2a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4f75be2a-9733-46f8-9f67-550464c835c7",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat messages travel as PSS trojan chunks to the recipient's neighborhood and are separately persisted in debounced ACT-encrypted feed pages.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "pss",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "act-feed",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Chat message flow\n\n### 1. Lookup\n\n`lookupUser(bobAddr)` reads `ph:v2:profile:<bob>` to get `{ beeNodePublicKey, overlayAddress }`.\n\n### 2. Live send (PSS)\n\n```\ntopic   = ph:v2:chat:<sorted(alice, bob)>\ntarget  = first 4 chars of bob.overlay\npayload = encrypted({ text, from, chapter, msgId })\n```\n\nA trojan chunk is mined (2-10 s) and lands in Bob's neighborhood. Bob's `pssSubscribe(chatTopic)` decrypts, hands to `ChatManager`, `seenMessageIds` guards duplicates, and the UI updates.\n\n### 3. History persist (debounced, batched pages)\n\n- ACT `uploadFile(page)` to `/bzz` (Bee encrypts via ECDH).\n- Wrapper (64 bytes: `actRef || actHist`) to `/bytes`.\n- Feed update at `ph:v2:chatlog:<sorted(alice, bob)>[:chapter]`.\n- Grantees: `{ alice.beePub, bob.beePub }`.\n\nBob later calls `loadPages(peer=alice)` \u2014 reads feed, fetches wrapper, ACT downloads, merges with his own feed, renders.\n\n### 4. Chapter rotation (clear chat)\n\n`bumpMyChatChapter()` writes `Date.now()` to `swarm:chatMyChapter` in localStorage and clears peer entries in the user manifest. All subsequent PSS messages carry `chapter: <newChapter>`, and peers record and use the new chapter topic for history reads \u2014 a wipe-safe rotation.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "workflow",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:07.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Live delivery: PSS topic ph:v2:chat:<sorted(a,b)>, target = first 4 chars of overlay. History: ACT wrapper at /bytes, feed ph:v2:chatlog:<peer>[:chapter].",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7ace5f85-8802-4f1d-9765-137bf0ca0fb9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d8b34a04-1213-412a-afc4-0fef72d68cf6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

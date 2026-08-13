@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-a412e1ab-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a412e1ab-b5c4-43f0-b261-850254287b40",
+      "targetTitle": "new-device-recovery-via-wallet-and-manifest"
+    },
+    {
+      "id": "lnk-5ff83781-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5ff83781-5455-4e49-a342-67a420f85460",
+      "targetTitle": "chat-pss-plus-chatlog-feed"
+    },
+    {
+      "id": "lnk-542c441b-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "542c441b-c6c6-40cd-9179-a7596912065d",
+      "targetTitle": "pull-flow-recovery-preserves-ids"
+    },
+    {
+      "id": "lnk-adfa3802-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "adfa3802-a906-4bba-b33f-f36219737003",
+      "targetTitle": "wallet-derived-aes-key"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Recovery rehydrates Connect from wallet-only using user \u2192 drive \u2192 document manifest traversal",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "da85fc25-7c22-4f2f-88e6-cfee8e08d3c9",
+      "name": "recovery",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ff200206-d64d-45ba-9198-3a4e937d6afe",
+      "name": "wallet-signature",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ae916b2e-7746-4f7f-8686-8dcf2cccd012",
+      "name": "sync-cursors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "078dc1f0-da65-4bd2-93e9-15a38c9d7169",
+      "name": "reactor-load",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When a user opens Connect on a new device or after clearing browser data, recovery proceeds from wallet-only state:\n\n1. User connects MetaMask.\n2. Plugin requests `personal_sign`, which re-derives the SAME Swarm key as before.\n3. `SwarmChannel.pollInbox()` reads the user manifest from feed `ph:v2:user:<address>`.\n4. For each drive listed, read the drive manifest at `ph:v2:drive:<driveId>`.\n5. For each document not present locally: read its manifest at `ph:v2:doc:<docId>`, download each operation batch from `/bytes` (auto-decrypted), create SyncOperations, and enqueue in the inbox.\n6. SyncManager applies via `reactor.load()` using the ORIGINAL document IDs, so links and cross-doc references survive.\n7. The cursor advances in `sync_cursors`, the drive materializes in PGlite with correct folder structure, and future polls are incremental.\n\nKey properties: cursor-based so nothing re-downloads; no race conditions because SyncManager processes inbox before outbox, preventing re-upload of just-recovered ops; failed operations flow to `sync_dead_letters` for retry.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "workflow",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:21.809Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "MetaMask personal_sign rederives the same AES key; pollInbox reads user manifest, then drive manifests, then each doc manifest, downloads batches, and applies with original IDs via reactor.load().",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d3c338cd-eb31-4d6a-8dfc-2a5996f68481",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eebf4c84-de56-4056-927d-b41fabe8d0b6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:19.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

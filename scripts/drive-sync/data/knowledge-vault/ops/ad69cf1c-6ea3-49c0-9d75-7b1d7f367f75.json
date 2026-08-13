@@ -1,0 +1,216 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:27.046Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "moc-reactor-sync-infrastructure",
+        "slug": "",
+        "model": "bai/moc",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+          "documentType": "bai/moc",
+          "createdAtUtcIso": "2026-08-13T13:22:27.046Z"
+        },
+        "version": 0,
+        "documentId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:27.046Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "I2WiNkK/0m41uyqCsjsrjMfWjc4=",
+    "timestampUtcMs": "2026-08-13T13:23:37.000Z",
+    "action": {
+      "type": "CREATE_MOC",
+      "input": {
+        "tier": "DOMAIN",
+        "title": "Reactor Sync Infrastructure",
+        "createdAt": "2026-04-21T19:31:46.196Z",
+        "description": "The reactor-side plumbing that makes decentralized channels possible: operation log, IChannel mailboxes, sync tables, and multi-remote support.",
+        "orientation": "This MOC captures the reactor sync primitives that every transport \u2014 GraphQL or Swarm \u2014 composes with. Operations-as-append-only-log is the substrate; IChannel mailboxes (inbox/outbox/deadLetter) are the per-remote seam; SyncManager persists state in PGlite tables (remotes, cursors, dead letters, and the mailbox buffer); and multi-remote-per-collection is the switch that enables the dual-sync strategy. These notes form the backbone needed to reason about the SwarmChannel, debouncing, and recovery."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:37.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:27.046Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/moc",
+        "toVersion": 1,
+        "documentId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "tier": null,
+            "title": null,
+            "tensions": [],
+            "childRefs": [],
+            "coreIdeas": [],
+            "createdAt": null,
+            "noteCount": 0,
+            "parentRef": null,
+            "updatedAt": null,
+            "agentNotes": [],
+            "description": null,
+            "orientation": null,
+            "openQuestions": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:27.046Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "tsJuvTmwKklr2OLIpVr+pj3RyuA=",
+    "timestampUtcMs": "2026-08-13T16:29:09.089Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T16:28:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:29:09.089Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:44.467Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "targetId": "9b97a142-2322-40a7-a680-c2f822b0abec",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:44.467Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "6Si5TQzxrhuw36mEql+P4OFBjNQ=",
+    "timestampUtcMs": "2026-08-13T16:55:44.033Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:55:44.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:55:44.033Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:44.532Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "targetId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:44.532Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:44.796Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "targetId": "ea2bc239-c265-44fb-b8a6-7c0f9fad1bf2",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:44.796Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:44.819Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "targetId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:44.819Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:44.978Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "targetId": "911a47b7-135b-456a-9991-352aa8dc80fc",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:44.978Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:45.009Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "targetId": "23d9e53f-4704-48d2-948d-20106512437d",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:45.009Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:45.032Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "targetId": "a506e6e4-0e6e-4f7e-bd2e-6eef32477155",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:45.032Z"
+    }
+  }
+]

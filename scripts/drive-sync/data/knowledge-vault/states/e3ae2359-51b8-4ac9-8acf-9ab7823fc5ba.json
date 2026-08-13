@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-74b417fd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "74b417fd-3e07-482e-a486-7a01154360c5",
+      "targetTitle": "swarm-pss-trojan-chunks"
+    },
+    {
+      "id": "lnk-77fad8c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "77fad8c4-a3f5-4678-a0d1-15b6c434a0de",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    },
+    {
+      "id": "lnk-03bacaf7-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "03bacaf7-d91f-4a3c-9536-5078930c8df8",
+      "targetTitle": "swarm-gsoc-many-to-one"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "GSOC provides many-to-one notifications with sub-second latency via symmetric shared-key SOCs.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-29fb4a131b66",
+      "name": "gsoc-notifications",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-7968fddd6ad2",
+      "name": "swarm-protocols",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-35f71f307ffc",
+      "name": "realtime",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Argument\n\nGSOC (Graffiti Single Owner Chunks) is a many-to-one notification primitive on Swarm. A signer key is mined offline so that its SOC address falls in the reader's neighborhood; that signer is then shared with all writers. Writers create SOC updates, and the chunks sync via ordinary neighborhood replication \u2014 no Trojan mining per message.\n\n## Key properties\n\n- **Direction:** many-to-one (multiple writers \u2192 one reader)\n- **Encryption:** symmetric (shared signer key)\n- **Latency:** **milliseconds** (no per-message mining)\n- **Offline delivery:** yes \u2014 SOC persists in the neighborhood\n- **Setup cost:** one-time signer mining (~10\u201330s per peer)\n- **Receiver node:** full node only\n- **Stamp type:** must be mutable\n\n## API\n\n```typescript\nconst signer = bee.gsocMine(targetOverlay, identifier, proximity)\nawait bee.gsocSend(batchId, signer, identifier, data)\nconst sub = bee.gsocSubscribe(address, identifier, { onMessage, onError, onClose })\n```\n\n## Role in Connect\n\nGSOC is the low-latency rail for presence, doc-update pings, and collaboration signals \u2014 everything where the 2\u201310s PSS latency is unacceptable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:26:44.087Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GSOC uses a mined signer whose SOC address lands in the reader's neighborhood; multiple writers update that SOC, syncing via neighborhood replication in under a second.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "598c6ef2-e826-470d-a1b3-1d4ce8288ade",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "83063415-205c-4dda-bb6d-c8b7851abcb3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

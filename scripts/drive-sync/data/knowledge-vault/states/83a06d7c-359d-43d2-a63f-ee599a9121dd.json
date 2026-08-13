@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-de11636d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model"
+    },
+    {
+      "id": "lnk-fe57b669-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fe57b669-898b-4381-8c5c-60ca981ef900",
+      "targetTitle": "Error Handling"
+    },
+    {
+      "id": "lnk-ea2bc239-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ea2bc239-c265-44fb-b8a6-7c0f9fad1bf2",
+      "targetTitle": "sync-state-pglite-tables"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A dead letter quarantines the single document, not the drive, so one poisoned document cannot stall sync",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5d5ac6ae-7a8f-458c-a2d5-1f1bbfd35484",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "470d9f6d-2a17-4892-9ca4-0743564a18ca",
+      "name": "resilience",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A dead letter is a sync operation that failed and **cannot be retried** \u2014 a bad signature, a hash mismatch, an unrecoverable transport error. It is the terminal category, distinct from the transient failures that the channel retries with exponential backoff.\n\nWhen a channel routes an operation to its dead-letter mailbox the sync manager does four things: logs it, quarantines the document, persists a record to dead-letter storage, and emits `DEAD_LETTER_ADDED` (20004).\n\n```typescript\ntype DeadLetterAddedEvent = {\n  id: string;\n  jobId: string;\n  remoteName: string;\n  documentId: string;\n  errorSource: ChannelErrorSource; // none | channel | inbox | outbox\n};\n```\n\nThe design decision worth internalizing is the **granularity of the quarantine: per document, not per drive.** Once a document is quarantined, its inbound operations are dropped and its outbound operations are filtered out of the outbox \u2014 but every other document on the same remote keeps syncing normally. A single corrupt or unverifiable document therefore degrades to a hole in the replica rather than a stalled drive. Without this, one bad operation would head-of-line block an entire collection.\n\nThe flip side is that quarantine is silent unless you watch for it. Nothing retries automatically and nothing surfaces in the drive's own status, so `DEAD_LETTER_ADDED` is the event to subscribe to for anything that needs manual intervention. The `errorSource` tag tells you which stage produced it (`inbox`, `outbox`, or the `channel` itself), which is usually enough to separate \"the remote sent us something bad\" from \"we produced something the remote rejected\".\n\nRetention is bounded: each remote keeps at most `maxDeadLettersPerRemote` dead letters, default `100`, configurable via `SyncBuilder.withMaxDeadLettersPerRemote(limit)`. Past that the oldest are evicted \u2014 so dead-letter storage is a recent-failures buffer for diagnostics, not a durable audit log. If you need the full record, capture the events as they fire.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Inbound ops for a quarantined document are dropped and outbound ops filtered out. Each remote retains at most maxDeadLettersPerRemote (default 100).",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "837e113d-eec3-4688-bc6e-702806d7f0e9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eb789fd5-d7ab-42e9-baa8-723c1736fc58",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:09.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

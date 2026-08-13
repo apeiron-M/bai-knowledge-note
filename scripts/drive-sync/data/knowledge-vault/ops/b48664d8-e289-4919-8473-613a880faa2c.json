@@ -1,0 +1,335 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:16.514Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "testing-uses-vitest-and-generatemock",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b48664d8-e289-4919-8473-613a880faa2c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:22:16.514Z"
+        },
+        "version": 0,
+        "documentId": "b48664d8-e289-4919-8473-613a880faa2c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:16.514Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "QhUsC9HS0D7+6hZfl7MbWD8uoOY=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Document model tests use Vitest with generateMock for schema-aware test data generation",
+        "updatedAt": "2026-08-13T13:23:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:16.514Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b48664d8-e289-4919-8473-613a880faa2c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:16.514Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ymBvAf7zGFhzOd80dnVmP4wCnbc=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:33.000Z",
+        "description": "Tests create documents with utils.createDocument(), generate typed mocks from schemas, apply reducers, and verify state changes."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:35.599Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b48664d8-e289-4919-8473-613a880faa2c",
+        "targetId": "866c7ee8-bdb4-4c15-86a1-f26aca7deb52",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:35.599Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "+RgWWwTfXKHtYCPwLHLyo49UY6Q=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T13:23:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:35.624Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b48664d8-e289-4919-8473-613a880faa2c",
+        "targetId": "0f4ed3f3-8131-475d-afc5-d6fec8b70fd8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:35.624Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "vTy/iaxIEOjsBC+W2ELxvaN0Y5A=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Powerhouse document model testing follows a structured pattern using Vitest:\n\n1. **Create a document**: `utils.createDocument()` or `utils.createDocument({ global: { items: [mockItem] } })` with initial state\n2. **Generate typed mocks**: `generateMock(AddTodoItemInputSchema())` creates objects with random values matching the schema\n3. **Apply operations**: `const updated = reducer(document, addTodoItem(input))`\n4. **Validate**: `expect(isTodoListDocument(updated)).toBe(true)` for schema validation\n5. **Assert state**: Check `updated.state.global.items` for correct data\n6. **Assert operations**: Check `updated.operations.global[0].action.type` for correct operation recording\n\nKey testing utilities come from the generated code:\n- `reducer` - The document reducer function\n- `utils.createDocument()` - Creates empty or pre-populated documents\n- `isTodoListDocument()` - Schema validation predicate\n- `generateMock()` from `@powerhousedao/codegen` - Schema-aware mock generation\n- `*Schema()` functions - Schema definitions for mock generation\n\nBest practice: Follow AAA pattern (Arrange, Act, Assert). Test immutability, edge cases, and cover both state changes and operation recording.",
+        "updatedAt": "2026-08-13T13:23:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:35.646Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b48664d8-e289-4919-8473-613a880faa2c",
+        "targetId": "0ba40e3e-168b-49b8-a39d-e24b8265a412",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:35.646Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "eYFzuxh7t5lWz4xqfUtfZqyMd6M=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:35.973Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b48664d8-e289-4919-8473-613a880faa2c",
+        "targetId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:35.973Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ebD+W80g9gzlKitafEtyBtmPWZg=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a29cd43c-aa57-485b-88a0-fec680269abf",
+        "name": "testing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "+mo1YddkLAZnEjrcut/l2eEoBHE=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5f1049d3-6817-4889-9140-7bad4db0cd48",
+        "name": "vitest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "d7lzrouVroabx+TFbz7srhqei9g=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "355a301c-d1da-4c65-9e69-92f7d6917699",
+        "name": "mock-generation",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Jq2mhE6GqFd6vhSNCn7jxHwBvks=",
+    "timestampUtcMs": "2026-08-13T14:14:02.062Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Powerhouse document model testing follows a structured pattern using Vitest:\n\n1. **Create a document**: `utils.createDocument()` or `utils.createDocument({ global: { items: [mockItem] } })` with initial state\n2. **Generate typed mocks**: `generateMock(AddTodoItemInputSchema())` creates objects with random values matching the schema\n3. **Apply operations**: `const updated = reducer(document, addTodoItem(input))`\n4. **Validate**: `expect(isTodoListDocument(updated)).toBe(true)` for schema validation\n5. **Assert state**: Check `updated.state.global.items` for correct data\n6. **Assert operations**: Check `updated.operations.global[0].action.type` for correct operation recording\n\nKey testing utilities come from the generated code:\n- `reducer` - The document reducer function\n- `utils.createDocument()` - Creates empty or pre-populated documents\n- `isTodoListDocument()` - Schema validation predicate\n- `generateMock()` from `document-model` (re-exported via `@powerhousedao/shared/document-model`) - Schema-aware mock generation\n- `*Schema()` functions - Schema definitions for mock generation\n\nBest practice: Follow AAA pattern (Arrange, Act, Assert). Test immutability, edge cases, and cover both state changes and operation recording.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-13T14:13:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:14:02.062Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "sWUJ9VkIum3AzHgoF5IXhUAR9Yo=",
+    "timestampUtcMs": "2026-08-13T15:57:43.725Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:43.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:43.725Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "CN553KSS1cLonLLam2+7PVDcnuY=",
+    "timestampUtcMs": "2026-08-13T15:57:43.725Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5e72488d-6285-467d-8e29-b14b1c2f8d1d",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:43.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:43.725Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "18hz1BA5UZQmLllYKIuSJYf7Jyg=",
+    "timestampUtcMs": "2026-08-13T15:57:43.725Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9ea4419a-0669-400d-9b13-9d9c39dba4f7",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:43.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:43.725Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "qF5GqrzGueU4jURzdT3WZpev+V4=",
+    "timestampUtcMs": "2026-08-13T16:55:56.521Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:55:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:55:56.521Z"
+    }
+  }
+]

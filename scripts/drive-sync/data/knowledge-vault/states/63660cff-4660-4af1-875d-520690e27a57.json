@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-10d4751c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "10d4751c-4117-4a5f-86b0-576194f6f853",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-4ee19a4a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4ee19a4a-7d11-444f-a6fa-63b807ed6cae",
+      "targetTitle": "delete-nodes-with-deletenode-not-deletefile"
+    },
+    {
+      "id": "lnk-75be6bcc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75be6bcc-b469-4024-90d6-3270bbefd4e6",
+      "targetTitle": "document-models-must-be-added-to-the-vetra-drive-by-default"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "batch multiple actions in a single addActions call to minimize round trips",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d10f0aef-1351-4b5f-8fd6-de58886fdab4",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4cccdf0-00c9-4ec9-a743-6512f3d1e1eb",
+      "name": "performance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f4836fa-bc1a-4f0c-99c8-17a868320b37",
+      "name": "batch operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# batch multiple actions in a single addActions call to minimize round trips\n\nThe `addActions` MCP tool accepts an array of actions. Instead of making separate calls for each operation, batch them:\n\n```typescript\n// \u2705 One call with multiple actions\naddActions({\n  documentId: \"...\",\n  actions: [\n    { type: \"SET_MODEL_NAME\", scope: \"global\", input: { name: \"Invoice\" } },\n    { type: \"SET_MODEL_DESCRIPTION\", scope: \"global\", input: { description: \"...\" } },\n    { type: \"ADD_MODULE\", scope: \"global\", input: { id: \"...\", name: \"header\" } },\n  ]\n});\n\n// \u274c Three separate calls \u2014 slower and more failure-prone\n```\n\nBatching reduces network overhead and ensures related changes are applied atomically. If one action in a batch fails, the error is visible without having lost context from intermediate calls.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:00:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:39.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each addActions call has overhead; combining related operations into one call is faster and reduces partial failure risk",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d1095062-04bb-4b0b-933a-af71b2cdba45",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "155b729c-5969-49db-8b8f-adedb8b7224b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

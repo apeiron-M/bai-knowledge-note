@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-3f8ca25d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    },
+    {
+      "id": "lnk-39df9a3c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "39df9a3c-c28b-413c-87fe-93748fe86a0e",
+      "targetTitle": "moc-reactor-and-drives"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "client.drives is the drive-aware namespace, and addFile is the only correct way to create a document in a drive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4b448149-e477-4c6b-b95b-283d5159135d",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7a56f879-554e-49ab-9e26-a3cfd7a63a45",
+      "name": "drives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2bd36889-bf81-449c-b0de-4f719dba283a",
+      "name": "api",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`IReactorClient` has two surfaces, and picking the wrong one leaves a drive internally inconsistent. The flat methods (`get`, `find`, `execute`, `create`, `createEmpty`) are document-level and know nothing about drives. `client.drives` is a `readonly` `IDriveClient` namespace whose methods orchestrate the multi-action, multi-document work needed to keep a drive's `state.global.nodes` array consistent with the relationship index and with the underlying documents.\n\nTo create a document inside a drive, use `client.drives.addFile`:\n\n```typescript\naddFile<TDocument extends PHDocument = PHDocument>(\n  driveIdentifier: string,\n  document: PHDocument,\n  parentFolder?: string,\n  signal?: AbortSignal,\n): Promise<TDocument>\n```\n\nA single `addFile` call issues four actions as one **dependent batch**: `CREATE_DOCUMENT`, `UPGRADE_DOCUMENT`, and `ADD_RELATIONSHIP` on the new document, plus `ADD_FILE` on the drive itself. Reaching for `client.createEmpty()` instead gets you a document that exists but is not a member of any drive \u2014 no node entry, no parent relationship \u2014 and nothing in the drive UI will show it.\n\nThe rest of the namespace follows the same principle of keeping node state and document state in step:\n\n- `create(input)` \u2014 create a new drive document.\n- `addFolder(driveId, name, parentFolder?)` \u2014 add a folder node.\n- `removeNode(driveId, nodeId)` \u2014 folder nodes **cascade**: descendant file documents are deleted first, then the folder node entry.\n- `renameNode(driveId, nodeId, name)` \u2014 updates both the underlying document header and the drive's node entry.\n- `moveNode` / `copyNode` \u2014 pass `undefined` as `targetParentFolderId` to target the drive root; each copied file gets a new id and a duplicated document.\n- `setPreferredEditorOnNode(nodeId, preferredEditor)` \u2014 `null` clears it.\n\nEvery method takes a trailing optional `signal?: AbortSignal`. The rule of thumb: if an operation has to touch both a drive's node list and a document, it belongs to `client.drives`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/02-ReactorClient.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "It issues CREATE_DOCUMENT, UPGRADE_DOCUMENT, ADD_RELATIONSHIP and ADD_FILE as one dependent batch. Flat client methods are not drive-aware.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9758c30e-056a-4de1-b5b2-568061915901",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "55d61df0-3142-4532-be03-d39eb7f5129a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-428c5cfe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "428c5cfe-6a37-4cb5-ad7f-f31762408a4a",
+      "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors"
+    },
+    {
+      "id": "lnk-1d8c7fcf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1d8c7fcf-ca5f-4c25-8dae-9c78b4b86763",
+      "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags"
+    },
+    {
+      "id": "lnk-10d4751c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "10d4751c-4117-4a5f-86b0-576194f6f853",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-8a102b2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a102b2d-09d8-4f96-b31d-018c0950ce75",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-021f70cc-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "021f70cc-31a1-401f-b067-330c4ac5af9a",
+      "targetTitle": "editors-use-react-hooks-for-document-state"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "editors use the modern React hooks pattern from reactor-browser",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6f3402a2-d7db-4dfe-90fb-5577a737d182",
+      "name": "editor patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e01eebb8-6a13-42a7-94dd-584ce1affd34",
+      "name": "model-editor wiring",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64e9c8f2-2469-40fc-b40a-03a54e60b103",
+      "name": "React hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a9071bd-f4a9-485b-8b2b-19fd761cb5f1",
+      "name": "code generation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# editors use the modern React hooks pattern from reactor-browser\n\nDocument editors follow a consistent pattern using auto-generated hooks from `@powerhousedao/reactor-browser`:\n\n```typescript\nimport { generateId } from \"document-model/core\";\nimport { useSelectedTodoDocument } from \"todo-app/document-models/todo\";\nimport { addTodo } from \"todo-app/document-models/todo\";\n\nexport default function Editor() {\n  const [document, dispatch] = useSelectedTodoDocument();\n\n  function handleAddTodo(values: { title: string }) {\n    if (values.title) {\n      dispatch(addTodo({ id: generateId(), title: values.title }));\n    }\n  }\n}\n```\n\nKey points:\n- `useSelectedXDocument` is auto-generated per document model \u2014 since [[useSelectedDocument hook is auto-generated per document model]], never implement it manually\n- The hook **and** the action creators both come from the same document-model barrel (`todo-app/document-models/todo`) \u2014 not from a deep `gen/creators.js` path, and not from an `editors/hooks/` folder\n- Since `generateId()` from `document-model` is non-deterministic (it returns `globalThis.crypto.randomUUID()`), IDs must be generated in the editor **before** dispatch and passed through the action input -- never inside the reducer, which must stay replay-deterministic\n\n---\n\nTopics:\n- [[editor patterns]]\n- [[model-editor wiring]]\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:02:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:20.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The useSelectedXDocument hook is auto-generated and returns [document, dispatch]; the hook and action creators both come from the document-model barrel",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c2003896-dbd4-4d2f-bdd2-35398734fa1a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:16.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "78563873-4b50-4890-bb49-f8ddc4c9a55f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:16.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

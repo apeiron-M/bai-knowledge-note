@@ -1,0 +1,484 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:56.107Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reducers-are-pure-functions-with-immer",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e50150d7-fd15-416a-975f-3871a1d8025d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:56.107Z"
+        },
+        "version": 0,
+        "documentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:56.107Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xavNaIUbaQMO9GkJApOjlaEvt0E=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reducers must be pure functions, but Powerhouse uses Immer.js to allow mutation-style syntax",
+        "updatedAt": "2026-08-13T13:23:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:56.107Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:56.107Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "OHaf0W3hGLgu1jFpYyZJmLIhoRc=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:24.000Z",
+        "description": "Reducers follow (state, action) => newState pattern. Immer.js lets you write mutable-looking code that produces immutable updates."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:14.590Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "044efef7-7dca-44e9-91a3-04554267878d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:14.590Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "/PBSZZCS/vIhC0GUD9sgEraf4Dc=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T13:23:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:14.624Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "b48664d8-e289-4919-8473-613a880faa2c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:14.624Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "8otGYQZ+5ewy1+uKF7cuHnWg8nI=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Reducers are the core logic units implementing state transitions. They follow the pattern `(currentState, action) => newState` and must obey strict rules:\n\n- **Deterministic**: Same state + action always produces the same result\n- **No side effects**: No API calls, no `Math.random()`, no `Date.now()`, no DOM manipulation\n- **Immutable**: Never mutate the input state directly\n\nHowever, Powerhouse uses **Immer.js** under the hood. This means you can write code that *looks* like direct mutation (e.g., `state.items.push(...)`) but Immer ensures it produces an immutable update. This gives readable code while maintaining the immutability guarantees required for event sourcing.\n\nPurity ensures replaying the same sequence of events always yields the same final state. Immutability ensures each event defines a discrete state transition for the audit trail.",
+        "updatedAt": "2026-08-13T13:23:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:14.879Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "ba09f958-a741-42f0-90f1-9573134154b3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:14.879Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "PNOti6WNIA6QUgm3kYiSt8CyXo0=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:14.992Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "06d31542-10e9-4d55-b50e-5b393074a2b4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:14.992Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "LFFneKsPxA2OP1co/Jjt+WaKfr4=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e25d25b7-96c4-4392-87be-386bf129734f",
+        "name": "reducers",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:15.073Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:15.073Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "QbB8n9RS4RhWyZ9bTmsERmC7oaA=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f6b5b094-f2ce-456f-b9c5-66d6c94185a1",
+        "name": "immer",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:15.098Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "2489ac27-cc0c-47ef-bede-20deee16186e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:15.098Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "z43iUAWsAHAv8gZrMyMGcYIr4v4=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c6d300c7-69eb-448f-864c-a88a605c1dcb",
+        "name": "immutability",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:15.120Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "3304f425-2dbf-4867-909a-75eaba19fdb9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:15.120Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "oS5lg4/enCo/BGQ91C9VH8IqhME=",
+    "timestampUtcMs": "2026-08-13T13:23:24.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "15fdf7bf-0a84-4b62-ac27-5c6f249eaec8",
+        "name": "pure-functions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:24.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:15.445Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:15.445Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "8KVQ03VkHJU2hkBe5n6FGJJ1EBw=",
+    "timestampUtcMs": "2026-08-13T14:14:04.192Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reducers must be pure functions, but Powerhouse uses Mutative to allow mutation-style syntax",
+        "updatedAt": "2026-08-13T14:13:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:14:04.192Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:15.518Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:15.518Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "eFX3MHk1/+BUXid/stKaV41cNAM=",
+    "timestampUtcMs": "2026-08-13T14:14:04.192Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:13:14.000Z",
+        "description": "Reducers follow (state, action) => newState pattern. Mutative lets you write mutable-looking code that produces immutable updates."
+      },
+      "timestampUtcMs": "2026-08-13T14:14:04.192Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:15.554Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "targetId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:15.554Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "yErDc6dkC8j/Oy/5qpZ7B9LcHBM=",
+    "timestampUtcMs": "2026-08-13T14:14:04.192Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Reducers are the core logic units implementing state transitions. They follow the pattern `(currentState, action) => newState` and must obey strict rules:\n\n- **Deterministic**: Same state + action always produces the same result\n- **No side effects**: No API calls, no `Math.random()`, no `Date.now()`, no DOM manipulation\n- **Immutable**: Never mutate the input state directly\n\nHowever, Powerhouse wraps reducers in **[Mutative](https://mutative.js.org/)** under the hood. This means you can write code that *looks* like direct mutation (e.g., `state.items.push(...)`) but Mutative ensures it produces an immutable update. This gives readable code while maintaining the immutability guarantees required for event sourcing.\n\nPurity ensures replaying the same sequence of events always yields the same final state. Immutability ensures each event defines a discrete state transition for the audit trail.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-13T14:13:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:14:04.192Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "wl4Ipzj8QmBoRUvnLce1eXmyzyg=",
+    "timestampUtcMs": "2026-08-13T14:14:04.192Z",
+    "action": {
+      "type": "REMOVE_TOPIC",
+      "input": {
+        "id": "f6b5b094-f2ce-456f-b9c5-66d6c94185a1"
+      },
+      "timestampUtcMs": "2026-08-13T14:14:04.192Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "8iXZPP4mW/Z6eOO0zoZAcPu7oM0=",
+    "timestampUtcMs": "2026-08-13T14:14:04.192Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7c7b8056-0726-4b53-8a00-5cdfc9888d33",
+        "name": "mutative"
+      },
+      "timestampUtcMs": "2026-08-13T14:14:04.192Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "NOpueKg3j3g4bytcx+fvmqsi8HI=",
+    "timestampUtcMs": "2026-08-13T15:59:25.417Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:59:25.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:25.417Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "sDXkjR06uzTYXqLLd8iH24s0eTc=",
+    "timestampUtcMs": "2026-08-13T15:59:25.417Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "88793d45-a186-49ef-b32e-20b87e57cc44",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:59:25.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:25.417Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "1va4TEt4GxPq9m5utgutqZGOR64=",
+    "timestampUtcMs": "2026-08-13T15:59:25.417Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "6f24f65e-194a-4d79-881d-42f4929cf904",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:59:25.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:25.417Z"
+    }
+  },
+  {
+    "index": 17,
+    "hash": "R46v8l2PzP8EkeKJd37X1+mvzDM=",
+    "timestampUtcMs": "2026-08-13T16:57:55.833Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:57:55.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:57:55.833Z"
+    }
+  }
+]

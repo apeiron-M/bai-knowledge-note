@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-5067c7ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-5694a8da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5694a8da-b036-4b8a-a16d-bca12de03af9",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Inbound webhook HMAC must be verified against the raw request bytes before parsing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "88083b75-0a2f-4f2b-a5f5-91701fb61bf4",
+      "name": "integrations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "640a54d9-3b68-4f4c-ad62-f9aab79e876f",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1dfedd48-a4c6-42bb-97e5-bdfab621af3d",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The headline rule from the `inbound-webhook-bridge` recipe:\n\n> **`JSON.parse(body)` \u2192 `JSON.stringify(parsed)` breaks HMAC.** The signature is computed over the exact bytes the provider sent. Re-serializing changes key order, whitespace, and number formatting, so the MAC no longer matches.\n\nAlways verify the raw body string, *then* parse it. This has an architectural consequence: a GraphQL or JSON mutation resolver parses the body **before your code runs**, so raw bytes are already gone by the time you could check them. The recipe uses a dedicated `node:http` listener precisely so it controls the bytes, and recommends the same whenever raw-body access is awkward in your framework.\n\nThe signature scheme is modelled on Stripe. The `x-webhook-signature` header is `t=<unixSeconds>,v1=<hmacHex>`, and the signed payload is `` `${t}.${rawBody}` ``:\n\n```ts\nconst header  = signWebhook(secret, rawBody, Math.floor(Date.now() / 1000));\nconst verdict = verifyWebhook({ secret, rawBody, signatureHeader: header, nowSeconds });\n// { ok: true, timestampSeconds } | { ok: false, reason }\n```\n\nFolding the timestamp **into** the MAC is what makes the replay-window check trustworthy \u2014 it cannot be altered independently of the signature. Verification rejects missing or malformed headers, signature mismatch (wrong secret *or* tampered/re-serialized body), and timestamps outside the tolerance window, default 5 minutes. Comparison uses `crypto.timingSafeEqual`.\n\nThe verified-then-parsed pipeline is ordered: read raw bytes with no parse \u2192 `verifyWebhook()` \u2192 `JSON.parse` the verified bytes \u2192 resolve to a document \u2192 dedup against persisted `processedEventIds` \u2192 map event type to a typed action \u2192 `reactor.execute`.\n\nThe signing secret is server-only and must never be bundled for the browser. The recipe declares it through the package manifest `config` block as a `secret`-typed required entry (`WEBHOOK_SIGNING_SECRET`), the way production packages document required secrets, and loads it from the environment server-side.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Inbound Webhook Bridge recipe (\"The headline rule: verify the raw bytes\"), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "JSON.parse then JSON.stringify changes key order, whitespace and number formatting, breaking the MAC. Verify the raw body, then parse, and fold the timestamp into the signed payload.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8cdc6f25-4964-4a52-9b60-81d7e8b38a49",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:24.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3dd6e792-8161-4b49-9697-2c33a49dfbcd",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:24.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-42c550c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42c550c3-df9c-4cbc-9ab4-3a88b9312230",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-6612f7f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6612f7f3-6368-4b57-bc80-4bca5da742b4",
+      "targetTitle": "powa-revenue-distribution-model-captures-epoch-based-token-revenue-sharing"
+    },
+    {
+      "id": "lnk-bfa544b8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "bfa544b8-e5ec-42c8-9949-1c82b8b1a264",
+      "targetTitle": "swarm-act-access-control-trie"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Cross-user sharing rides Swarm ACT with an ECDH-derived per-session key instead of the wallet AES key",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3c676881-3c2e-4c89-8712-b13e1137e02c",
+      "name": "act-sharing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a85fb38d-71b9-428d-aefd-188b83ceb0b6",
+      "name": "ecdh",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fdad3e1b-be2e-453b-8cf7-10449c104b93",
+      "name": "grantees",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b866ec11-ef67-49c5-9786-d8109d0f487d",
+      "name": "swarm-primitives",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Sharing with other users does NOT use the per-wallet AES key. Cross-user shares and chat history instead ride Swarm's Access Control Trie (ACT):\n\n- The publisher's Bee node computes `ECDH(publisher_privkey \u00d7 grantee_pubkey)` to derive a per-session key.\n- A third party that only knows public addresses cannot derive the key (classic discrete-log problem).\n- The Bee node handles encrypt/decrypt transparently; the app calls `uploadFile({ act: true, actHistoryAddress, skipEncryption: true })` on send and `downloadFile({ actPublisher, actHistoryAddress, skipDecryption: true })` on receive.\n\nShare manifests and public profiles themselves stay unencrypted \u2014 they serve as discovery indexes so recipients can find what's shared with them. The data those indexes point to is ACT-protected.\n\nThis split matters for threat modeling: a grantee can decrypt what was shared with them, but revoking access means rotating ACT state, not rotating the wallet-derived sync key used for the owner's own operations.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:25.261Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Bee node computes ECDH(publisher_privkey \u00d7 grantee_pubkey) to encrypt shared content; third parties cannot derive it from public addresses alone (discrete-log problem).",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c8f9459d-3ce6-47c5-9fa1-fe37b29f6efc",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ab91d5d3-458e-410b-8dd0-b2a5170b96d5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,350 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:34.107Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "new-device-recovery-via-wallet-and-manifest",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a412e1ab-b5c4-43f0-b261-850254287b40",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:34.107Z"
+        },
+        "version": 0,
+        "documentId": "a412e1ab-b5c4-43f0-b261-850254287b40",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:34.107Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "GJoKoVI4rgfzp664Xyi2s+aDoWI=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "New-device recovery flows from wallet-derived keys through the Swarm user manifest.",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:34.107Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a412e1ab-b5c4-43f0-b261-850254287b40",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:34.107Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "1haw5QHaD4mY3eGUzJAOJzuPTUk=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:12.000Z",
+        "description": "On a new device, signing with the wallet derives keys, the plugin reads the user manifest, registers Swarm remotes per drive, and SyncManager rehydrates PGlite."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:48.136Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a412e1ab-b5c4-43f0-b261-850254287b40",
+        "targetId": "f71d5a21-6516-4fbd-9bec-85dfc0fafeaf",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:48.136Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "gEbTxAKNE9vrDBN6ClirPYWpN/I=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "workflow",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:48.163Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a412e1ab-b5c4-43f0-b261-850254287b40",
+        "targetId": "a79b6048-eb4d-447a-8c16-74dde36b9304",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:48.163Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "hObmchO51CVhd0sC93xENVDFxcE=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nA user's drives can be recovered on any device purely from wallet + Swarm \u2014 no server handoff.\n\n## Flow\n1. User opens Connect on a new device (served from Swarm).\n2. Signs in with wallet \u2192 derives encryption keys.\n3. Plugin reads the user manifest from the Swarm feed.\n4. Registers Swarm remotes for each discovered drive.\n5. `SwarmChannel.inbox` pulls all operations from per-document feeds.\n6. SyncManager applies them to the reactor \u2192 drive materializes in PGlite.\n7. Cursor is set; future syncs are incremental.\n\n## Why this works end-to-end\n- The wallet signature is deterministic \u2014 same wallet yields the same keys and same feed topics.\n- The user manifest is the single discovery root; from it the plugin walks drives \u2192 documents \u2192 batches.\n- No centralized account state is needed on any server.\n\n## Source\nSwarm Channel Architecture, \"Flow 3: New Device Recovery (from Swarm)\".",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:48.186Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a412e1ab-b5c4-43f0-b261-850254287b40",
+        "targetId": "81d22859-8832-4bad-bb8e-87fe2194729d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:48.186Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "BVusA1Q7PzrDxF7Kx9amw8RC+yI=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:48.278Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a412e1ab-b5c4-43f0-b261-850254287b40",
+        "targetId": "07376a9b-020f-4645-8ea6-dc9b911edf50",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:48.278Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "2OiZj4JTIoR7acyNQKaAgSXnERc=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-08886e29-1",
+        "name": "device-recovery",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:48.349Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a412e1ab-b5c4-43f0-b261-850254287b40",
+        "targetId": "e5f7fb87-402e-4ec8-ba5e-cc7a2f36b868",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:48.349Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "e7KPFxranwN5BDXyaP0L6BH6U9s=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-08886e29-2",
+        "name": "wallet",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "l7nax7VsPuVfEw+ItHUSU9PcPOk=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-08886e29-3",
+        "name": "manifest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "VVtYldLMGXetZoPn2FyRRNqViCs=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-08886e29-4",
+        "name": "user-flow",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "XsxDk2gjzLnE5eZeUFBDCncSl0Q=",
+    "timestampUtcMs": "2026-08-13T15:57:14.628Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:14.628Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "TZEowMuQPfDKb2phbRYHkzwc4Bs=",
+    "timestampUtcMs": "2026-08-13T15:57:14.628Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "b6c9791c-23e7-4efc-a4c5-98ef320c2875",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:14.628Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "OMotFFfcnnHU1bCxqi0h+ujw2Wc=",
+    "timestampUtcMs": "2026-08-13T15:57:14.628Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a38eed7a-4631-4b97-a252-434a74e82e50",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:14.628Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "buvzrpYc9DqjCt9bauvXCshiqXw=",
+    "timestampUtcMs": "2026-08-13T16:55:18.537Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:55:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:55:18.537Z"
+    }
+  }
+]

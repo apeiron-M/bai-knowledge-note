@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-9b97a142-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b97a142-2322-40a7-a680-c2f822b0abec",
+      "targetTitle": "operations-not-state-log"
+    },
+    {
+      "id": "lnk-ebe264ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ebe264ee-37c2-4ae1-ae5a-20c5dca62e15",
+      "targetTitle": "event-sourcing-guarantees-audit-trails-but-complicates-querying"
+    },
+    {
+      "id": "lnk-52f876b5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+      "targetTitle": "document-models-use-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Undo and time travel come free from the operation log because state is a fold over it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "73eee986-d75f-4791-902b-f42f7075145e",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "488106a7-4795-450d-ad31-e73bccdfeb39",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a1a3276a-754a-4e96-8fbf-1788cdb4d646",
+      "name": "undo",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Undo is normally a feature you budget for: a command stack, a memento per step, a decision about what is coarse enough to be one \"step.\" In an operation log you get it for free, because the log already *is* the command stack. State is a fold over the operations, so anything expressible as \"fold differently\" needs no new bookkeeping.\n\n## Two routes, worth keeping distinct\n\n**Time travel is a read.** Fold up to index 30 and you have the document exactly as it stood at index 30. This is what makes replay-based debugging cheap \u2014 reconstruct a bug by replaying the operations the user actually produced, and inspect any intermediate state along the way. Nothing is modified.\n\n**Undo is a write.** The Academy's foundations lesson describes undo as \"pop (or invert) the last operation,\" and the deep-dive on reducers commits to the invert branch as the pattern you should actually build: pair each action with an inverse, and dispatch it. `ADD_TODO` pairs with `removeTodo`, `COMPLETE_TODO` with `uncompleteTodo`. Dispatching the inverse produces a *new* operation in the log \u2014 the effect is undone and the history is kept. Nothing about the log is rewritten.\n\nPrefer the invert reading when the two seem to conflict. Popping would rewrite history, which is exactly the property the log exists to protect, and it does not survive sync \u2014 a peer that already received the operation has no reason to un-receive it. Inverting is append-only, so it converges like any other edit.\n\n## What else falls out of the same fold\n\nAudit trails, because every change is addressable by index and hash. Derived read models, because a processor folds the same stream into a search index or a counter. Replays, because the operations are the complete record of what happened.\n\n## The mental model\n\nDo not ask \"how do I add undo?\" Ask \"what fold do I want?\" \u2014 a shorter prefix to look at the past, an appended inverse to change the present.\n\n_Source: apps/academy/docs/academy/02-Learn/01-foundations/02-thinking-in-operations.mdx and apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Fold to any index to see the document as it was; dispatch an inverse action to undo. Neither needs extra bookkeeping, and the invert route never rewrites history.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ebaf4617-e5d7-4bb5-b139-2f6caaae3351",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c30aa325-1614-432c-8045-2977093378e5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:19.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-0f4ed3f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0f4ed3f3-8131-475d-afc5-d6fec8b70fd8",
+      "targetTitle": "custom-scalars-graphql-zod-validation"
+    },
+    {
+      "id": "lnk-30d2b54e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "30d2b54e-fe6a-4486-a728-2b2faf02ac1e",
+      "targetTitle": "component-library-from-graphql-scalars"
+    },
+    {
+      "id": "lnk-19e69eb8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "19e69eb8-38d6-4696-8cc8-d93449c25f46",
+      "targetTitle": "oid-scalar-for-unique-identifiers"
+    },
+    {
+      "id": "lnk-3f1a98b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f1a98b4-c18c-4286-aaed-9700d79cf48c",
+      "targetTitle": "builder-profile-model-describes-individual-contributor-identities"
+    },
+    {
+      "id": "lnk-ed65d30e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed65d30e-61b0-431d-8162-183dc8c530d3",
+      "targetTitle": "editor-hooks-connect-react-to-documents"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Powerhouse Design System provides reusable UI components based on GraphQL scalars including web3 types",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7cfda303-f52a-4e6d-ba6b-2ec2407338d3",
+      "name": "design-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c833e2fe-1a3e-49bf-8d8b-79d153518541",
+      "name": "scalars",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6c6f80db-b50a-45b0-a907-849912e59853",
+      "name": "components",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7c057944-b867-4e0c-a6fe-a82bafb9704c",
+      "name": "web3",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Powerhouse Design System is a collection of reusable front-end components based on GraphQL scalars. It provides:\n\n- Consistent UI components across Powerhouse applications\n- Automatic inclusion as a dependency in new projects\n- Customization via CSS variables\n- Custom scalar types tailored for the web3 ecosystem\n\nBuilt-in GraphQL scalars: `String`, `Int`, `Float`, `Boolean`, `ID`\nPowerhouse custom scalars: `OID` (Object ID), `Currency`, `DateTime`, and other web3-specific types\n\nThese scalars are more than just type definitions - they are linked to reusable front-end components from the `@powerhousedao/document-engineering` package. When you use a custom scalar in your schema, corresponding UI components are available for rendering and editing that data type.\n\n## Precision on naming and location\n\n\"Design System\" is loose here: `@powerhousedao/design-system` and `@powerhousedao/document-engineering` are **two different packages** \u2014 the former lives in the powerhouse monorepo (`packages/design-system`), the latter is an independently versioned external repo. The scalar-backed components described above come from document-engineering.\n\nThe scalar definitions live in `src/scalars/graphql/` of that repo, one file per scalar. `OID.ts`, `Currency.ts` and `DateTime.ts` are all present, alongside `Amount`, `AmountCrypto`, `AmountCurrency`, `AmountFiat`, `AmountMoney`, `AmountPercentage`, `AmountTokens`, `Date`, `EmailAddress`, `EthereumAddress`, `OLabel`, `PHID`, `URL` and `File`. Their UI counterparts split across three subpaths: `/scalars` (form fields), `/ui` (layout) and `/table`.\n\n_Source-verified 2026-08-13 against the document-engineering repo at v1.40.5 (`/home/p/Powerhouse/document-engineering`), a separate repo from the powerhouse monorepo._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Custom scalars like OID, Currency, and DateTime are linked to reusable front-end components in the design system.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "024444b1-acbe-4718-b450-48f7bd0e4eb2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "59dd92db-de89-4e9e-86d9-ec173ed34b36",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:27.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-df46f166-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df46f166-7894-4656-bec7-1095919e7950",
+      "targetTitle": "packages-publish-to-npm-install-via-ph"
+    },
+    {
+      "id": "lnk-2aa55f5b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2aa55f5b-f3a3-4195-88de-3452a82c2dd2",
+      "targetTitle": "cli-identity-did-key-ethereum-delegation"
+    },
+    {
+      "id": "lnk-44526c84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44526c84-c188-45ed-9472-51e84e11bfd0",
+      "targetTitle": "connect-is-host-application"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse packages are published to NPM with @org-ph scope convention and installed into any environment via ph install",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "30264b4b-4288-4775-91a0-ec40fbb86a93",
+      "name": "packages",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b56203ca-669c-4fb5-ae1c-3685fa3bbfe7",
+      "name": "npm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "10f1c25e-6a4d-463f-9212-ecf58b4b5b09",
+      "name": "publishing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "382b4f78-9827-456d-a8b0-a81defd2e8b7",
+      "name": "deployment",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A Powerhouse package bundles document models, editors, processors, and scripts. The NPM org naming convention is `@yourorganization-ph` (the `-ph` suffix identifies Powerhouse ecosystem packages). Workflow: `ph init` creates project, `ph vetra --interactive --watch` for development, `pnpm build` to verify, `pnpm version patch|minor|major` for semver, `pnpm publish --access public` to NPM. Installation: `ph install @org-ph/package-name` makes document models and editors available. `ph install` defaults to the **Powerhouse registry**: it only registers the package in `powerhouse.config.json` with provider `\"registry\"`, and Connect loads it from the registry CDN at runtime -- it does NOT install into `node_modules` by default. Use `--local` to also install into `node_modules` (provider `\"local\"`) so `ph connect build` bundles it and the preview works without the registry being reachable. Registry URL resolution order: `--registry` flag > `PH_REGISTRY_URL` env > `powerhouse.config.json` > default. The `powerhouse.manifest.json` file declares all modules (documentModels, editors, apps, subgraphs, importScripts). `ph install` also automatically adds package styles to `styles.css`.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "WORKFLOW",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Organizations use @org-ph NPM scope; ph install adds document models, editors, and processors to an instance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d996eb5c-bf4b-432b-81e0-f87238d112f8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:58.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9a846b7e-411a-499c-a11d-52a15a3bed36",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

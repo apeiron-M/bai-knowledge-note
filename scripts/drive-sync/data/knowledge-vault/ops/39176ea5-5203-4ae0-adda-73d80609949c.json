@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:06.670Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "core-flow-connect-reactor-swarm",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "39176ea5-5203-4ae0-adda-73d80609949c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:06.670Z"
+        },
+        "version": 0,
+        "documentId": "39176ea5-5203-4ae0-adda-73d80609949c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:06.670Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "O2PSwoWd9MQTUdRZML9LKfQOMK8=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Connect core data flow routes UI actions through ReactorClient, PGlite, SyncManager, and out to both GQL and Swarm channels.",
+        "updatedAt": "2026-08-13T13:22:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:06.670Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "39176ea5-5203-4ae0-adda-73d80609949c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:06.670Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ojEvytE1GOeBoHnyuhqPyBGMSW4=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:22:54.000Z",
+        "description": "Connect dispatches React actions to ReactorClient, which queues jobs, writes to PGlite (IndexedDB), and triggers SyncManager to fan out via GQL or Swarm channels."
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:09.892Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "39176ea5-5203-4ae0-adda-73d80609949c",
+        "targetId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:09.892Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "YHbtBGvdqkgrEhE4hyF2ZU2QQKg=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-13T13:22:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:09.918Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "39176ea5-5203-4ae0-adda-73d80609949c",
+        "targetId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:09.918Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "VJ/MsS5k5qIf+UzuHzXG3RP066g=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Pipeline\n\nThe end-to-end flow inside the browser:\n\n1. **Connect UI (React)** \u2014 user actions (create drive, add doc, edit).\n2. **ReactorClient** \u2014 turns actions into Jobs, enqueues them.\n3. **Job Executor** \u2014 applies operations (`CREATE_DOCUMENT`, `UPGRADE_DOCUMENT`, `ADD_FILE`, `ADD_FOLDER`, `MOVE_NODE`, domain actions).\n4. **PGlite (WASM Postgres, IndexedDB-backed)** \u2014 stores `reactor.Document`, `reactor.Operation`, `reactor.DocumentSnapshot`, `reactor.DocumentRelationship`, plus `operation_index_operations`, `sync_remotes`, `sync_cursors`, `sync_dead_letters`.\n5. **SyncManager** \u2014 detects new ordinals, groups ops by `(docId, scope, branch)`, pushes to channel outboxes, processes inboxes via `reactor.load()`.\n6. **Channels** \u2014 `GqlRequestChannel` for Switchboard, `SwarmChannel` for Swarm. SyncManager treats both identically.\n\nBeyond the browser: the SwarmChannel talks to the user's **Bee node** (`/bytes`, `/feeds`, `/stamps`, `/health`), which gossips chunks into the **Swarm network** (content-addressed, encrypted, replicated across neighborhoods).\n\nKey architectural insight: PGlite's `operation_index_operations` is the single source for both channels' outbound sync, with independent cursors per remote.",
+        "updatedAt": "2026-08-13T13:22:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:09.941Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "39176ea5-5203-4ae0-adda-73d80609949c",
+        "targetId": "ea2bc239-c265-44fb-b8a6-7c0f9fad1bf2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:09.941Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "M/NJtKH76t7Kn84iTz133CLeyk4=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:09.964Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "39176ea5-5203-4ae0-adda-73d80609949c",
+        "targetId": "3b5e33c2-a8db-4c96-957b-edf84d9bcd9d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:09.964Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "a0w80PvLTrOI3IO04tUUTqpLCkw=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "architecture-diagram",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:09.991Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "39176ea5-5203-4ae0-adda-73d80609949c",
+        "targetId": "5694a8da-b036-4b8a-a16d-bca12de03af9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:09.991Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "ocCIsfKREQm2p2LSlJ167i/7YEo=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "data-flow",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "KOZUog+Om1U5yiDgvfhLaN5uLpc=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "sync-pipeline",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "GrnaM+IukxI4SZlqrRlZBPhwX2k=",
+    "timestampUtcMs": "2026-08-13T15:53:21.438Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:53:21.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:21.438Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "9gKMABS4RtDgf/X0HkI4lcltVSA=",
+    "timestampUtcMs": "2026-08-13T15:53:21.438Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "235068fb-5b5e-495b-bf42-14e384542dcf",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:53:21.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:21.438Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "yaJMx0K/XTsdkl05r/L40ArdpsU=",
+    "timestampUtcMs": "2026-08-13T15:53:21.438Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9cc0a836-bfbf-42a1-94a8-158c03a9f8ca",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:53:21.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:21.438Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "/Z9IiIrvVLgE9Sx9cBvEu9Pb62A=",
+    "timestampUtcMs": "2026-08-13T16:50:37.192Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:50:37.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:50:37.192Z"
+    }
+  }
+]

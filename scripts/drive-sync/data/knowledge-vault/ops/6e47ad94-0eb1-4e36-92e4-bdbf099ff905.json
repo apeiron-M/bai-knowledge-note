@@ -1,0 +1,305 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:16.351Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "undo-and-time-travel-are-folds-over-the-operation-log",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6e47ad94-0eb1-4e36-92e4-bdbf099ff905",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:35:16.351Z"
+        },
+        "version": 0,
+        "documentId": "6e47ad94-0eb1-4e36-92e4-bdbf099ff905",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:35:16.351Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ZYXPtpnGoOoAQ7DqAwfOFOsMNR0=",
+    "timestampUtcMs": "2026-08-13T14:35:17.078Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Undo and time travel come free from the operation log because state is a fold over it",
+        "updatedAt": "2026-08-13T14:35:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:17.078Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:16.351Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6e47ad94-0eb1-4e36-92e4-bdbf099ff905",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:35:16.351Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "PRvy0xISCzrle4BsBmWYePAa9kE=",
+    "timestampUtcMs": "2026-08-13T14:35:17.078Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:35:16.000Z",
+        "description": "Fold to any index to see the document as it was; dispatch an inverse action to undo. Neither needs extra bookkeeping, and the invert route never rewrites history."
+      },
+      "timestampUtcMs": "2026-08-13T14:35:17.078Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:18.915Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6e47ad94-0eb1-4e36-92e4-bdbf099ff905",
+        "targetId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:18.915Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "TacBoUURYe3TO5+zrZlPW4nIlmY=",
+    "timestampUtcMs": "2026-08-13T14:35:17.078Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-13T14:35:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:17.078Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:18.949Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6e47ad94-0eb1-4e36-92e4-bdbf099ff905",
+        "targetId": "9b97a142-2322-40a7-a680-c2f822b0abec",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:18.949Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Qfqo87RajOlXF8VCRAhB2P5FxAY=",
+    "timestampUtcMs": "2026-08-13T14:35:17.078Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Undo is normally a feature you budget for: a command stack, a memento per step, a decision about what is coarse enough to be one \"step.\" In an operation log you get it for free, because the log already *is* the command stack. State is a fold over the operations, so anything expressible as \"fold differently\" needs no new bookkeeping.\n\n## Two routes, worth keeping distinct\n\n**Time travel is a read.** Fold up to index 30 and you have the document exactly as it stood at index 30. This is what makes replay-based debugging cheap \u2014 reconstruct a bug by replaying the operations the user actually produced, and inspect any intermediate state along the way. Nothing is modified.\n\n**Undo is a write.** The Academy's foundations lesson describes undo as \"pop (or invert) the last operation,\" and the deep-dive on reducers commits to the invert branch as the pattern you should actually build: pair each action with an inverse, and dispatch it. `ADD_TODO` pairs with `removeTodo`, `COMPLETE_TODO` with `uncompleteTodo`. Dispatching the inverse produces a *new* operation in the log \u2014 the effect is undone and the history is kept. Nothing about the log is rewritten.\n\nPrefer the invert reading when the two seem to conflict. Popping would rewrite history, which is exactly the property the log exists to protect, and it does not survive sync \u2014 a peer that already received the operation has no reason to un-receive it. Inverting is append-only, so it converges like any other edit.\n\n## What else falls out of the same fold\n\nAudit trails, because every change is addressable by index and hash. Derived read models, because a processor folds the same stream into a search index or a counter. Replays, because the operations are the complete record of what happened.\n\n## The mental model\n\nDo not ask \"how do I add undo?\" Ask \"what fold do I want?\" \u2014 a shorter prefix to look at the past, an appended inverse to change the present.\n\n_Source: apps/academy/docs/academy/02-Learn/01-foundations/02-thinking-in-operations.mdx and apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:35:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:17.078Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:18.984Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6e47ad94-0eb1-4e36-92e4-bdbf099ff905",
+        "targetId": "ebe264ee-37c2-4ae1-ae5a-20c5dca62e15",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:18.984Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "U23mv2W0Z3tc6DDpVAShZ4+z178=",
+    "timestampUtcMs": "2026-08-13T14:35:17.078Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "73eee986-d75f-4791-902b-f42f7075145e",
+        "name": "operations"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:17.078Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "bA59jX0wE1Q09gz8PPvLNUAhQXk=",
+    "timestampUtcMs": "2026-08-13T14:35:17.078Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "488106a7-4795-450d-ad31-e73bccdfeb39",
+        "name": "event-sourcing"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:17.078Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "IqfqWOhG9yvsMZ9NalGcQefsS14=",
+    "timestampUtcMs": "2026-08-13T14:35:17.078Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a1a3276a-754a-4e96-8fbf-1788cdb4d646",
+        "name": "undo"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:17.078Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "jcqgMoPQUtMSUT7BIQryuHxEon8=",
+    "timestampUtcMs": "2026-08-13T14:35:18.390Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:35:16.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:18.390Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "J4tL4BNvDLNGzulQ78QiUvJLF8s=",
+    "timestampUtcMs": "2026-08-13T15:55:19.215Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:55:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:19.215Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "4HrDbRZ2mZWaA9ljmY0bolVaMgU=",
+    "timestampUtcMs": "2026-08-13T15:55:19.215Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ebaf4617-e5d7-4bb5-b139-2f6caaae3351",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:55:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:19.215Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "GzryYKDkp0enLlztyw+oswoxZ4U=",
+    "timestampUtcMs": "2026-08-13T15:55:19.215Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "c30aa325-1614-432c-8045-2977093378e5",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:55:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:19.215Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "nGcfheJhtgE0fWVOONZwotxuT6o=",
+    "timestampUtcMs": "2026-08-13T16:53:01.815Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:53:01.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:53:01.815Z"
+    }
+  }
+]

@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce0ee124-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+      "targetTitle": "document-model-versioning-system"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "UpgradeManifest keys its upgrades as v2, v3 and never v1",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9adbcb05-b747-400e-a320-30b5bb217b8d",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9f634c07-2580-4791-a33a-00915eb3cdfb",
+      "name": "schema-evolution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c73a3520-2323-4f60-befd-986981a28dc3",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The upgrade manifest is the declaration that ties a document type's versions together. Its shape, from `packages/shared/document-model/upgrades.ts`:\n\n```ts\nexport type UpgradeManifest<TVersions extends readonly number[]> = {\n  documentType: string;\n  latestVersion: TupleMember<TVersions>;   // e.g. 1 | 2 | 3 for [1, 2, 3]\n  supportedVersions: TVersions;            // the tuple itself, [1, 2, 3]\n  upgrades: {\n    // keys: \"v2\" | \"v3\" | ...  (no \"v1\")\n    [V in Exclude<TupleMember<TVersions>, 1> as `v${V}`]: UpgradeTransition;\n  };\n};\n\nexport type UpgradeTransition = {\n  toVersion: number;\n  upgradeReducer: UpgradeReducer<any, any>;\n  description?: string;\n};\n```\n\nThe `Exclude<..., 1>` in the mapped type is the load-bearing part: **v1 is structurally unrepresentable as an upgrade key**, because there is no version to upgrade from. A manifest is written `upgrades: { v2 }`, then `{ v2, v3 }`, and TypeScript rejects a `v1` entry outright. Each transition names only its *target* (`toVersion`); the source is implied by position in the chain, so multi-step upgrades compose by walking v1\u2192v2\u2192v3 rather than declaring every pair.\n\nOne source behaviour worth internalising alongside this: `normalizeDocumentModelVersion` treats a document stamped `0` or nothing at all as version **1**, not as \"latest\". Documents predating versioning are legacy v1 documents and get the v1 reducer. Resolving them to latest instead would re-pin an old document's whole history onto whichever module happens to be newest \u2014 the exact corruption versioning exists to prevent.\n\nThe generated `upgrades/` folder mirrors this: `versions.ts` exports the tuple and `latestVersion`, one file per transition (`v2.ts`), and `upgrade-manifest.ts` assembles them.\n\n_Source: apps/academy/docs/academy/03-Build/02-DocumentModelCreation/08-DocumentModelVersioning.md, confirmed against packages/shared/document-model/upgrades.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Shape is documentType, latestVersion, supportedVersions, upgrades. Each UpgradeTransition is toVersion, upgradeReducer, description. v1 has nothing to upgrade from.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3bfe486e-71a2-4831-9078-786f03fe5aac",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:14.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "db9bc24e-fc9b-4408-ad40-5948c3f395c2",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:14.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

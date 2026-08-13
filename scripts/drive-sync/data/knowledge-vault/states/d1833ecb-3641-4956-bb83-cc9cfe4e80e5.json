@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e50150d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-81a70a88-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "81a70a88-36d0-4317-8506-eaa9cff2069c",
+      "targetTitle": "never-use-fallback-values-with-non-deterministic-functions-in-reducers"
+    },
+    {
+      "id": "lnk-8a102b2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a102b2d-09d8-4f96-b31d-018c0950ce75",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-ce0ee124-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+      "targetTitle": "document-model-versioning-system"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "never use crypto randomUUID or Math random in reducers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "88933a6b-dceb-4e55-bd8e-7b87aed2c74c",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "978760f5-50e0-486c-b7dc-e76d11babd92",
+      "name": "determinism",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4eaf1af6-10aa-46d7-9911-a2ef8d4627e0",
+      "name": "event sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f8fc0c67-7f24-40df-88ce-448811a6b63f",
+      "name": "reducer purity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# never use crypto randomUUID or Math random in reducers\n\nForbidden in reducer code:\n- `crypto.randomUUID()`\n- `Math.random()`\n- `Date.now()`\n- `new Date()`\n- Any external API calls or side effects\n- Any async functions\n\nThese are all non-deterministic. Since [[reducer purity requires all dynamic values from action input]], every value that could vary between executions must come from the operation's input schema.\n\nThe event-sourcing model replays operations to reconstruct state. If a reducer generates different values on replay, the resulting state diverges from the original, and document hashes no longer match.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:59:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:11.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Non-deterministic calls produce different operation hashes across replays, breaking event-sourcing guarantees",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "00d9bc45-aa98-45e8-9cfc-87c16b0168e1",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f485e80c-b77f-4a18-acdb-c29330523088",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:47.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

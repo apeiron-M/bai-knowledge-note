@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-5b53542e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5b53542e-9ee8-43bf-9078-a9f481077ca1",
+      "targetTitle": "public-profile-feed-publishes-the-beenodepublickey-and-overl"
+    },
+    {
+      "id": "lnk-37b131a5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "37b131a5-e4fc-4b62-89d0-f7bcaec4a88c",
+      "targetTitle": "swarm-bytes-vs-feeds"
+    },
+    {
+      "id": "lnk-e1aaf7f5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e1aaf7f5-9add-401a-b2db-bcc7b3353df2",
+      "targetTitle": "manifest-as-reference-feed-pattern"
+    },
+    {
+      "id": "lnk-7b7e1f27-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "7b7e1f27-3ae1-4032-95e1-364b0f5de6c4",
+      "targetTitle": "swarm-push-cycle-encrypt-bytes-feed"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Encryption lives at the /bytes layer while feeds carry only plain-text content references",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6e8d777a-41cb-430b-98e5-c6578ccf9f05",
+      "name": "encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3058fe10-839c-4201-856a-bad437e7d1e1",
+      "name": "feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "354d63fc-a0de-4245-bb48-642fb3ee1075",
+      "name": "bytes-storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "52227f0a-4ed7-4c36-bca1-be08bc0e344d",
+      "name": "manifest-pattern",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A load-bearing design rule: encryption lives at the `/bytes` layer, NOT the feed layer. Feeds store plain-text references (content hashes). The data those references point to is what is encrypted.\n\nConsequences:\n\n- Anyone can read the feed and obtain the reference, but without the wallet-derived AES key the `/bytes` payload is opaque.\n- Feed-level optimizations (like `uploadReference` vs `uploadPayload`, or batching multiple feed updates) don't affect encryption \u2014 they only change how the 64-char hash gets packed into the Single Owner Chunk (SOC), not the encrypted data at `/bytes`.\n- The same pattern works for document, drive, and user manifests: serialize JSON, encrypt, upload to `/bytes`, then write only the hash to the feed.\n\nThis separation is also why the feed SOC stays tiny (8-byte timestamp + 64-byte reference = 72 bytes) even when manifests grow large.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:10.772Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Feeds store a 64-char hash pointing at encrypted /bytes data; readers need wallet-derived AES key to decrypt \u2014 feed-level optimizations never affect encryption.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "726db7b2-8a69-4013-bf08-7670be1568dc",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:53.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "85c97b26-03a4-4de6-b64b-9949eae28e07",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:53.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,277 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:20.042Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ireactorbrowserclient-pick-of-six-members",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9674c440-2a3c-4600-9f45-f050d54e79a5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:20.042Z"
+        },
+        "version": 0,
+        "documentId": "9674c440-2a3c-4600-9f45-f050d54e79a5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:20.042Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "h+k6YrfhQHwk6WrW//7R5hXs2gs=",
+    "timestampUtcMs": "2026-08-13T14:33:20.264Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IReactorBrowserClient is a Pick of exactly six IReactorClient members",
+        "updatedAt": "2026-08-13T14:33:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:20.264Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:20.042Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9674c440-2a3c-4600-9f45-f050d54e79a5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:20.042Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "/Ddozm8+U3WJsZ3o1+CrIH1s/vk=",
+    "timestampUtcMs": "2026-08-13T14:33:20.264Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:19.000Z",
+        "description": "get, subscribe, execute, getOperations, create and deleteDocument. Drives, find, relationships, jobs, executeAsync and the module getters are deliberately excluded."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:20.264Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:21.825Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9674c440-2a3c-4600-9f45-f050d54e79a5",
+        "targetId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:21.825Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "PxIOIkok86YYkMxayv/Uy8ml4hA=",
+    "timestampUtcMs": "2026-08-13T14:33:20.264Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:33:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:20.264Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "XLipfVoTEMgG/+mZchxiBUwMRVc=",
+    "timestampUtcMs": "2026-08-13T14:33:20.264Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The contract\n\n`IReactorBrowserClient` is the contract the reactor-browser hooks depend on. It is declared as a `Pick` of the reactor's own `IReactorClient`, so the six member signatures **cannot drift** from the reactor's:\n\n```typescript\nexport interface IReactorBrowserClient extends Pick<\n  IReactorClient,\n  | \"get\"\n  | \"subscribe\"\n  | \"execute\"\n  | \"getOperations\"\n  | \"create\"\n  | \"deleteDocument\"\n> {}\n```\n\nTwo implementations satisfy it: the full in-browser reactor client, which gets it for free by implementing `IReactorClient`, and `GraphQLReactorClient`.\n\n## What is excluded, and why that is the point\n\nEverything outside those six is deliberately absent: `drives`, `find`, `resolveIdOrSlug`, relationships, `executeAsync`, `executeBatch`, jobs, `createEmpty`, `rename`, and the document-model module getters. `create(document, parentIdentifier?)` is the only parenting there is \u2014 there is no drive concept on this interface at all.\n\n## Light-client behaviour of the six\n\n| Method | On the light client |\n| --- | --- |\n| `get(identifier, view?, signal?)` | Reads by id or slug. A `view.revision` **throws** \u2014 no point-in-time reads |\n| `getOperations(...)` | Paged; `next()` follows the cursor, default page `{ cursor: \"0\", limit: 100 }` |\n| `create(document, parentIdentifier?, signal?)` | Creates and emits `Created` |\n| `execute(identifier, branch, actions, signal?)` | Reads, stamps and signs a single action, pushes, emits `Updated` \u2014 **two round trips** |\n| `deleteDocument(identifier, propagate?, signal?)` | Deletes and emits `Deleted` carrying the identifier it was called with |\n| `subscribe(search, callback, view?)` | Registers a subscriber, returns unsubscribe. `view` is accepted and ignored |\n\n`execute` returns the updated document with this call's operations appended, which is how `useDispatch` reports per-action errors: it scans the returned operations for the action it sent and reads its `error` field.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:20.264Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "E/gjDyLFPiuSrX9t17RUWqsmH6g=",
+    "timestampUtcMs": "2026-08-13T14:33:20.264Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6f1ca0a7-b8e4-424f-bd64-a61ae7e68af1",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:20.264Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "MCJQDONQDp182fhouCpJyUxaJAs=",
+    "timestampUtcMs": "2026-08-13T14:33:20.264Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "39ffc72a-32ef-4820-9a1b-65335c591056",
+        "name": "reactor-client"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:20.264Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8yC7DY9xkjDUIjsSOC1SWoSdByI=",
+    "timestampUtcMs": "2026-08-13T14:33:20.264Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "babd2626-a657-45ad-8b46-577bad71f2c0",
+        "name": "api"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:20.264Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "pP2N7yORp+2acZdU/1qrYMFOpkU=",
+    "timestampUtcMs": "2026-08-13T14:33:21.782Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:19.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:21.782Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "K5omzAMreKUhdPBnS+l+MknBLv4=",
+    "timestampUtcMs": "2026-08-13T15:56:48.482Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:48.482Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "YWcB+mzxg4ivGy555Rjfgp/oW1M=",
+    "timestampUtcMs": "2026-08-13T15:56:48.482Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "1b108636-f832-4a8e-a81f-3d5d16b0cb4c",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:48.482Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "++6uz5PQf2IHBDcXSXeWhcnx1Ls=",
+    "timestampUtcMs": "2026-08-13T15:56:48.482Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "42bfc39c-1a00-46a6-8f5f-33fab1c95996",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:48.482Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "XIlb4befRm8pvfzTSib6l8w/cQE=",
+    "timestampUtcMs": "2026-08-13T16:54:43.692Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:43.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:43.692Z"
+    }
+  }
+]

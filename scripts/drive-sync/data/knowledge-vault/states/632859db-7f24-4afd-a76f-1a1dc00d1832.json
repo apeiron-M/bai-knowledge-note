@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-d4792033-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4792033-cd60-4178-85a0-80687e05718b",
+      "targetTitle": "ddup-four-storage-layers"
+    },
+    {
+      "id": "lnk-7765f4d8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7765f4d8-e2a0-40be-a2ab-56150407238c",
+      "targetTitle": "swarm-gsoc-requires-full-nodes"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "payment-terms model defines payment conditions and schedules",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c9b42d31-f8ac-4878-a436-4564adcab848",
+      "name": "payment-terms",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45215926-fe20-4a7e-bcc2-04bfa98540de",
+      "name": "finance-billing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# payment-terms model defines payment conditions and schedules\n\n`powerhouse/payment-terms` (16 ops) configures the conditions under which payments are expected \u2014 net terms, early payment discounts, late penalties. Applied to invoices and billing statements.\n\n## Position in Ecosystem\n\nFinance & Billing zone. Provides payment configuration that [[invoice model generates formal payment requests]] and [[billing-statement model captures periodic billing summaries]] consume.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:41:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:35.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "16 operations \u2014 defines payment schedules, due dates, discount terms, and penalties applied to invoices and billing statements",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c685a2b4-7717-4709-8d4e-21bef444cf60",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:56.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d3603cc5-1e31-4c3b-ba67-88875b6ef68a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

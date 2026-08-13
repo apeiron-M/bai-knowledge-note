@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-0c751904-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0c751904-3dbc-4136-a078-83cd812c75f7",
+      "targetTitle": "ddup-content-addressed-dedup"
+    },
+    {
+      "id": "lnk-39df9a3c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "39df9a3c-c28b-413c-87fe-93748fe86a0e",
+      "targetTitle": "moc-reactor-and-drives"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Attachment uploads have two equal modes: upload-first learns the ref after send(), hash-first knows it at reserve time",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b0638e05-aef9-4c87-a028-6ffd081b8498",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b24f413e-2f34-490c-9745-8990d428e5b1",
+      "name": "upload",
+      "topicDocumentId": null
+    },
+    {
+      "id": "56c38787-224c-460b-8b7e-ab7cff8b078b",
+      "name": "hash-first",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every attachment interaction is three steps \u2014 reserve a slot, send the bytes, later read them back by ref \u2014 and there are two reservation modes. The docs are explicit that they are **equivalent in capability; neither is preferred.** Pick by what the caller can supply.\n\n**Upload-first.** Reserve with just `{ mimeType, fileName }`. The content hash, and therefore the final ref, is known only *after* `send()` resolves. `IAttachmentUpload.ref` is `null` until then.\n\n```typescript\nconst upload = await attachments.reserve({ mimeType: \"image/png\", fileName: \"avatar.png\" });\nconst { ref } = await upload.send(stream);   // ref known here\n```\n\nSimplest when you can stream bytes straight through and do not need the ref until the upload finishes.\n\n**Hash-first.** Hash the content up front and reserve with `{ clientHash, sizeBytes, ... }`. The ref is known at reservation time, which buys two things: you can write it into document state *before or in parallel with* the upload, and dedup can short-circuit before any bytes are sent. The cost is reading the whole file to hash it.\n\n`IAttachmentClient.preprocess(file)` does that hashing, returning `{ ref, hash, sizeBytes, options, data, stream }`. Because it must read the entire file, it is async and buffers in memory \u2014 `file` is a `Blob`, not a stream.\n\n```typescript\nconst results = await attachments.preprocess(file);\n\nawait client.execute(documentId, \"main\", [attachInvoice({ scan: results.ref })]);\nawait attachments.reserve(results.options, (handle) => handle.send(results.stream()));\n```\n\nTwo details that bite. Pass `results.stream()` \u2014 a factory returning a **fresh** `ReadableStream` each call \u2014 rather than the single-use `results.data`, if the upload might be retried. And the execute and the reserve are awaited **separately on purpose**: a failed upload does not roll back the action, and a failed action does not strand an upload. Wrap them in `Promise.all` only if you do not need that separation.\n\nHash-first is also where the verification errors live: `HashMismatch` if uploaded bytes do not match the claimed `clientHash`, `SizeMismatch` if the byte count differs from the declared `sizeBytes`, and `AttachmentAlreadyExists` when the hash is already stored \u2014 which the *client's* `reserve()` catches internally and turns into the existing ref. In React, `useAttachmentUpload()` wraps the whole flow with `status` (`None | Hashing | Uploading | Done | Error`), `progress`, and `error`; progress is stage-based because the remote transport buffers then issues a single PUT.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Hash-first lets you write the ref into document state before the bytes exist, and short-circuits dedup. IAttachmentClient.preprocess() does the hashing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c6f0bc48-dceb-4f13-8a35-a494bf17b06f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "00edc452-2031-40fa-9b51-d5dd0525eba6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

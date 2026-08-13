@@ -1,0 +1,308 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:06.223Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "consistency-tokens-read-after-write",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d065b560-9609-4b9b-9603-ebd73e35276c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:06.223Z"
+        },
+        "version": 0,
+        "documentId": "d065b560-9609-4b9b-9603-ebd73e35276c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:06.223Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8P5Tiv042CMV6Jo/ManZvpBBZhM=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Consistency tokens in the reactor guarantee read-after-write correctness by capturing operation coordinates from writes",
+        "updatedAt": "2026-08-13T13:22:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:06.223Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d065b560-9609-4b9b-9603-ebd73e35276c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:06.223Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "xwcIbyAm8sgZdA4qCvLWdgWAlh0=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:22:54.000Z",
+        "description": "Every write returns a ConsistencyToken with document/scope/branch/operationIndex coordinates for subsequent reads."
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:09.416Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d065b560-9609-4b9b-9603-ebd73e35276c",
+        "targetId": "a039d9b3-9608-4584-acfd-f231a2296186",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:09.416Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "TwHhuqwe9HIcM2XJJ7AOdfyVJgY=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-13T13:22:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:09.507Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d065b560-9609-4b9b-9603-ebd73e35276c",
+        "targetId": "231dfe10-26e1-4fe2-a353-3fff8725cbe5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:09.507Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "StHhFvwX1pu32rqlrxpOBna6mJs=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every reactor write operation returns a `JobInfo` containing a `ConsistencyToken` with `version`, `createdAtUtcIso`, and `coordinates` (array of `{ documentId, scope, branch, operationIndex }`). Passing this token to subsequent reads guarantees you see the effects of the write: `await reactor.get(docId, undefined, token)`. Without a consistency token, reads may return stale data if read models haven't indexed the latest operations. `IReactorClient` handles this automatically by waiting for `READ_READY` before returning, but `IReactor` requires explicit token management.",
+        "updatedAt": "2026-08-13T13:22:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:09.531Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d065b560-9609-4b9b-9603-ebd73e35276c",
+        "targetId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:09.531Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Bp77eDLNuCSzZEo6ANiQcnFeC6s=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "cuw+VGkiyJ3/bhduWbJ44TsiYkk=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b6efcdd9-1222-449b-8306-3ed0763bdb30",
+        "name": "consistency",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "q9bn4E/djssXAxqhVdwW1DfDzQs=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "71dac70f-3ce2-4d00-b3cb-d71b8c7b662e",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "jkKpUz3iQEKBTCAdwXKUM/kFsDI=",
+    "timestampUtcMs": "2026-08-13T13:22:54.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c520df8e-7c06-40f0-959c-45749f2851f1",
+        "name": "architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:54.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "8e0oo3s1A5c9/+x5vEKcVckAlvY=",
+    "timestampUtcMs": "2026-08-13T15:58:45.262Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:58:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:45.262Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Sa6dU4sVZEpQre+4Q5zq2g0F1W0=",
+    "timestampUtcMs": "2026-08-13T15:58:45.262Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d46a01ac-d0f2-45d7-ab19-bc7a5f85ab0d",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:58:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:45.262Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "b86SJQruUMVaK61jUfrLYa5aJys=",
+    "timestampUtcMs": "2026-08-13T15:58:45.262Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "65d954ea-cade-45d8-83e5-d3c3f7eef360",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:58:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:45.262Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "vKYIHTjbH+EQcq/y2CmlGgsDNyk=",
+    "timestampUtcMs": "2026-08-13T16:57:07.792Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:57:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:57:07.792Z"
+    }
+  }
+]

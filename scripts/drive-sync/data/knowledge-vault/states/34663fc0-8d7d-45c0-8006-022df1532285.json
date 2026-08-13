@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a8b2713f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-1af57e9d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    },
+    {
+      "id": "lnk-c11dcad5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c11dcad5-69d6-4730-a59c-fa2820e8c0a0",
+      "targetTitle": "relational-db-processor-base-class"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Processors run only on the in-process reactor path \u2014 the SharedWorker path silently skips every factory",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4041a679-2d7e-4f65-91b3-530dc72d1981",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f659f818-e0d0-4c62-b407-ef02d32facb3",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b0e72ce8-b467-47c8-8852-3515242b811f",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The processor documentation carries an explicit \"Not stable yet\" warning that is easy to miss and expensive to discover empirically: **processors run only on the in-process reactor path.** On the SharedWorker reactor path, processor registration is not bridged \u2014 Connect logs a warning and skips every factory (`apps/connect/src/store/reactor.ts`). Worker-hosted reactors do not run processors today.\n\nThe failure mode is the worst kind: silent and total. Nothing throws. Your factory builder is never called, `onOperations` never fires, your relational tables stay empty, and the only signal is a console warning. Anything that depends on a processor \u2014 a search index, an analytics rollup, a webhook, a follow-up dispatch \u2014 simply does not happen.\n\nThis also explains the shape of the registration API. The processor manager is deliberately **not** a method on `IReactor`; it lives on the in-process reactor module as `processorManager`. Reaching it requires narrowing on the module kind, which is the code-level expression of the same constraint:\n\n```typescript\nconst reactorModule =\n  reactorClientModule.kind === \"browser\"\n    ? reactorClientModule.reactorModule\n    : undefined;\n\nawait reactorModule?.processorManager.registerFactory(id, factory);\n```\n\nNote the optional chaining. If the reactor is not on the browser in-process path, `reactorModule` is `undefined` and the `registerFactory` call evaporates without complaint.\n\nPractical consequences while this is unstable:\n\n- Verify which path a host actually booted before debugging a processor that \"does not run\" \u2014 check the module kind, not the processor code.\n- Treat processor-mediated behavior as unavailable in worker-hosted topologies, and do not build UI that assumes a read model will be populated.\n- When you do register, use the package name as the `identifier`; re-registering the same identifier unregisters the prior factory first, so registration is idempotent.\n\nRelated but separate: a factory that *throws* is caught, logged as `Factory '<id>' failed for drive '<driveId>'`, and skipped for that drive \u2014 registration does not crash.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect logs a warning and skips registration on the worker path, so worker-hosted reactors run no processors today.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "03cf964f-1b2e-4087-9ed0-22292db28e42",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:11.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e3c807cb-eb7e-4414-af4a-8e3a2d139e89",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:11.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

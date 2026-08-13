@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-ed65d30e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed65d30e-61b0-431d-8162-183dc8c530d3",
+      "targetTitle": "editor-hooks-connect-react-to-documents"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "useDocumentSafe surfaces error and loading as values instead of throwing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e602afc1-8a23-4853-9b2d-dd2fbacb37b0",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a592262-0603-4c42-bd54-56e8ba44f02c",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "44265aff-4c15-4601-83e6-847bcebb17f9",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`useDocumentSafe` was added in v6.0.0 to make the loading and failure states of a document read into ordinary render-time values:\n\n```typescript\nimport { useDocumentSafe } from \"@powerhousedao/reactor-browser\";\n\nfunction MyEditor({ documentId }: { documentId: string }) {\n  const { document, error, isLoading } = useDocumentSafe(documentId);\n  if (isLoading) return <Spinner />;\n  if (error) return <ErrorBanner error={error} />;\n  return <Editor document={document} />;\n}\n```\n\nThe release notes describe it as replacing \"the pattern of calling `useDocument` and catching thrown errors \u2014 now surfaces error and loading state as first-class values.\"\n\nThe reason the old pattern was bad is specific to React rather than to Powerhouse: a hook that throws cannot be caught by a `try/catch` around the call, because the throw happens during render. Handling it meant an error boundary, and an error boundary is a poor fit for \"this document is still loading\" or \"this document id doesn't resolve\" \u2014 those are expected states of a working editor, not crashes. Returning a discriminated result puts the branch back where the component can express it.\n\nThis is the same design distinction that runs through the rest of the hook surface: throwing variants for cases where absence is a programming error, `Safe` variants for cases where absence is legitimate. Reach for the `Safe` variant whenever \"no document yet\" is a state your UI should be able to render.\n\nProvenance: academy `ReleaseNotes/v6.0.0.md` (\"useDocumentSafe Hook\"), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "From @powerhousedao/reactor-browser it returns document, error and isLoading, replacing the v6 pattern of calling useDocument and catching thrown errors.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b4dcac06-8e45-4aeb-8fe3-af2cb82b8d62",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7b1bbe68-1da7-4b1d-9fa3-ae59bebd8fb0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

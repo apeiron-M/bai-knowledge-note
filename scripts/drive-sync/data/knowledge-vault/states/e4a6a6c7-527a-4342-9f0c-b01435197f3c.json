@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-5067c7ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-1ff211ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1ff211ec-a668-4efb-b55c-799a5bc4e8be",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    },
+    {
+      "id": "lnk-ff6a1433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ff6a1433-a4d6-4b53-a147-daefe1c8f0f5",
+      "targetTitle": "host-applications-are-empty-shells-gaining-functionality-through-plugins"
+    },
+    {
+      "id": "lnk-b7dae0d0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7dae0d0-5ec8-425d-87cf-830a7b010888",
+      "targetTitle": "wallet-derived-aes256-encryption"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Renown authentication creates a Decentralized Identifier (DID) from the user's Ethereum wallet, enabling pseudonymous but verifiable identity",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "15c849ab-f922-4bfd-8c47-4c6dac0cba64",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e4af37d-fb2d-415d-a74e-745e7f4b7dd6",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5b028dce-1884-4c81-99ad-f86e7c7b02b5",
+      "name": "DID",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6c6bdeb3-1c60-493f-980c-e9f21b567a8f",
+      "name": "identity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Renown login flow: (1) User signs a message with their Ethereum wallet; (2) A DID (`did:example:123456789abcdefghijk`) is created from the ETH key; (3) A credential is generated and stored on a Powerhouse-hosted identity node; (4) Connect uses the DID to sign operations; (5) Switchboard verifies the DID's credential and signature. Renown addresses trust in DAOs where contributors are pseudonymous -- it lets them build reputation and share cryptographic resumes across organizations without revealing real-world identity. Powerhouse plans to decentralize the identity reactor over time.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Users sign with their ETH wallet to create a DID; credentials are stored on a Powerhouse identity node.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "772cf30f-a417-450b-a5dc-7c35625831bb",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:23.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "409074ee-32f4-4983-bd37-c557b0808489",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:23.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

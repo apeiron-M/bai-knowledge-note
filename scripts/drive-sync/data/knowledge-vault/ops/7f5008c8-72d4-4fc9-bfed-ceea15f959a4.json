@@ -1,0 +1,277 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:22.451Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "graphqlreactorprovider-props-read-once",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7f5008c8-72d4-4fc9-bfed-ceea15f959a4",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:22.451Z"
+        },
+        "version": 0,
+        "documentId": "7f5008c8-72d4-4fc9-bfed-ceea15f959a4",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:22.451Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "LhmoyMWngvaAgGAriEb7mxotQ88=",
+    "timestampUtcMs": "2026-08-13T14:33:22.902Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "GraphQLReactorProvider reads url and tokenProvider once and never rebuilds \u2014 remount to change them",
+        "updatedAt": "2026-08-13T14:33:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:22.902Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:22.451Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "7f5008c8-72d4-4fc9-bfed-ceea15f959a4",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:22.451Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "co13BbYTNWI8AuQh5UhyWZ/9mvw=",
+    "timestampUtcMs": "2026-08-13T14:33:22.902Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:22.000Z",
+        "description": "Both props are read in the useState initialiser. Only attachmentService and documentModels publish from their own effects and can therefore be passed in later."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:22.902Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:24.212Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7f5008c8-72d4-4fc9-bfed-ceea15f959a4",
+        "targetId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:24.212Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "z/Gwxc9VVkNXa+cnZsa/mJfAT5M=",
+    "timestampUtcMs": "2026-08-13T14:33:22.902Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:33:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:22.902Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "cEfZw0gd6CYxBIWlbHhIH73fBnE=",
+    "timestampUtcMs": "2026-08-13T14:33:22.902Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The gotcha\n\n`GraphQLReactorProvider`'s props are read **once, in the `useState` initialiser**. Changing `url` or `tokenProvider` after mount does not rebuild the client \u2014 the old client keeps serving the old endpoint and the old token resolver, silently. If the endpoint has to change, **remount the provider** (a `key` on it is the usual mechanism).\n\nThe same applies to `subscriptionsUrl` and `realtime`, which the client reads at construction time.\n\n## The two exceptions\n\n`attachmentService` and `documentModels` are each published from their **own effect**, keyed on the prop, so passing them in later does not throw away every open document or rebuild the document cache. That matters for an app that builds its attachment service asynchronously, or that code-splits its generated document models.\n\n## Prop reference\n\n| Prop | Default | Effect |\n| --- | --- | --- |\n| `url` | required | Switchboard GraphQL endpoint |\n| `tokenProvider` | the logged-in Renown user | Resolves the bearer token per request; `undefined` sends anonymously |\n| `subscriptionsUrl` | derived from `url` | Websocket endpoint |\n| `realtime` | `true` | Whether server-pushed changes reach subscribers |\n| `attachmentService` | none | Published into the slot the editors read |\n| `documentModels` | none | Generated modules, published so the document-model hooks work |\n\nOn mount the provider registers the `window.ph` event handlers once per page and publishes the client plus a `DocumentCache` built over it. On unmount it disposes both but **leaves the slots populated**, matching how Connect never unsets them.\n\nNote that `dispose()` is not final: a `subscribe` after a dispose opens a new socket. React remounts a tree by running an effect's cleanup then the effect again on the same client \u2014 `StrictMode` does it on every mount \u2014 and a terminal dispose would leave those pages with no realtime at all and nothing logged.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:22.902Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Pl7OhafpJXYZvVGRSlpe05C+mdg=",
+    "timestampUtcMs": "2026-08-13T14:33:22.902Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8e497395-5323-419b-ac2d-4bf7f37139af",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:22.902Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "rDX0gA1ZUnzH/GlMItk7p2kQnrQ=",
+    "timestampUtcMs": "2026-08-13T14:33:22.902Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e12c9b33-107d-4b7d-9bcd-30468827f194",
+        "name": "react"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:22.902Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "UuUAN1ea2WeCa8hGLcfdkwY37og=",
+    "timestampUtcMs": "2026-08-13T14:33:22.902Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2073aedd-6662-4c15-8b93-e56b784f81cd",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:22.902Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "qwU3nbgNXjE4fHf9O3MMCtgYuHM=",
+    "timestampUtcMs": "2026-08-13T14:33:24.170Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:22.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:24.170Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "jULgwAPspC1vMuNgsRO4R9C2g7U=",
+    "timestampUtcMs": "2026-08-13T15:55:57.846Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:55:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:57.846Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "PpIZEoeeCJ69mUDFEeWnll6yEEo=",
+    "timestampUtcMs": "2026-08-13T15:55:57.846Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "9cb98315-4837-41e1-89c4-166cf0f5526f",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:55:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:57.846Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "rE3WhOSASEDQnOFPJaIvBVcYzow=",
+    "timestampUtcMs": "2026-08-13T15:55:57.846Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "78ff4004-40b5-4512-941c-b25a3b41b156",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:55:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:57.846Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "DYhxONdxHhhhgjg5023UwIaEpPY=",
+    "timestampUtcMs": "2026-08-13T16:53:47.298Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:53:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:53:47.298Z"
+    }
+  }
+]

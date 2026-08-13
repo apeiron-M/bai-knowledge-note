@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-a8b2713f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-fe57b669-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fe57b669-898b-4381-8c5c-60ca981ef900",
+      "targetTitle": "Error Handling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A throwing processor is isolated and never retried automatically \u2014 it goes to errored and its cursor freezes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b415333e-5ece-4c80-ab66-9b6244729480",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "af21700b-be8e-4a7e-bb49-46eea06c34ec",
+      "name": "error-handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "995afd39-4a5a-4720-bef1-64b50bc0dbf3",
+      "name": "resilience",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Processors run in parallel, each wrapped in its own try/catch. When `onOperations` throws, the manager does three things and then stops:\n\n1. The processor moves to `status: \"errored\"`.\n2. `lastError` and `lastErrorTimestamp` are recorded on its `TrackedProcessor`.\n3. **Its cursor stops advancing.**\n\nOther processors are unaffected \u2014 a failure is contained to one processor on one drive, not the batch and not the reactor. The frozen cursor is the deliberate half of the design: because `lastOrdinal` does not move past the failing batch, no operations are lost. Once the processor is revived it resumes from exactly where it broke.\n\nThe part that surprises people is that **there is no automatic retry.** An errored processor stays errored and is skipped on every later batch, indefinitely. Recovery is explicitly triggered, by one of:\n\n- `tracked.retry()` \u2014 re-activates the processor and re-runs backfill from its frozen cursor.\n- Re-registering its factory \u2014 registering the same `identifier` unregisters the prior factory first, so this is idempotent.\n\nNothing about this is visible unless you look. Inspect via the manager: `get(processorId)` for one, `getAll()` for every tracked processor across all drives.\n\n```typescript\ntype TrackedProcessor = {\n  processorId: string;       // `${factoryId}:${driveId}:${index}`\n  factoryId: string;\n  driveId: string;\n  processorIndex: number;\n  record: ProcessorRecord;\n  lastOrdinal: number;\n  status: ProcessorStatus;   // \"active\" | \"errored\"\n  lastError: string | undefined;\n  lastErrorTimestamp: Date | undefined;\n  retry: () => Promise<void>;\n};\n```\n\nPractically, this means any production processor needs a health check that walks `getAll()` looking for `status: \"errored\"` \u2014 otherwise a read model quietly stops updating and the only symptom is stale data. Note that `onDisconnect` is treated differently: a throw there is caught and logged, never propagated, and does not error the processor.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:34.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Other processors are unaffected. Recovery requires tracked.retry() or re-registering the factory. Inspect via getAll().",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "848f0c59-b7f9-4c48-9f08-8638d217f918",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:51.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "66662081-2ab9-429d-9874-9b72a4aa7a2d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:51.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

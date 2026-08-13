@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce0ee124-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-f71d5a21-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f71d5a21-6516-4fbd-9bec-85dfc0fafeaf",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    },
+    {
+      "id": "lnk-39176ea5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "39176ea5-5203-4ae0-adda-73d80609949c",
+      "targetTitle": "core-flow-connect-reactor-swarm"
+    },
+    {
+      "id": "lnk-a159e0d3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a159e0d3-627b-482f-96af-8fb2abe8faba",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The bridge pattern lets a single PGlite serve both Switchboard GQL remotes and Swarm feeds transparently via independent cursors.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "bridge-pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "dual-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "architecture-diagram",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## GQL + Swarm Dual Sync\n\nIn one browser, PGlite acts as the hub between two worlds:\n\n- **Switchboard world**: remote drives pulled in via GQL channels.\n- **Swarm world**: drives and documents mirrored out to encrypted feeds.\n\nEach drive is independent:\n\n- Drive A: pulled from Switchboard (GQL) **and** pushed to Swarm Feed A.\n- Drive B: same dual path.\n- Drive C: locally created by the user, only pushed to Swarm Feed C (no Switchboard counterpart).\n\n### Why it works\n\nBoth channels read from the same `operation_index_operations` table, where every op gets a global ordinal. Each remote has an independent cursor in `sync_cursors`, so progress on one channel never interferes with the other.\n\n`SyncManager` orchestrates both transparently \u2014 it does not know whether a given remote is GQL or Swarm, it just pumps operations through `channel.outbox` / `channel.inbox` / `channel.deadLetter`.\n\nThis is the foundation that lets Connect work decentralized-first while retaining compatibility with Switchboard-hosted drives.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operation_index_operations is shared by both channels; each remote tracks its own cursor in sync_cursors so GQL pull and Swarm push run in parallel without interference.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ffe4cfc6-9a90-4b2b-b0da-25d7f2daab88",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "105c08b1-d572-4efb-8208-c77bdb04222e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:28.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-39176ea5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "39176ea5-5203-4ae0-adda-73d80609949c",
+      "targetTitle": "core-flow-connect-reactor-swarm"
+    },
+    {
+      "id": "lnk-55cc00de-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+      "targetTitle": "ddup-collab-envelope-overhead"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm stores all data as 4KB content-addressed chunks in a Merkle hash tree",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f6fc1b10-6cd5-497f-b8dd-20b4b55c6749",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b653359-c4fa-4f64-9612-a650ce5db880",
+      "name": "chunks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "66ff3b68-6562-4068-92fa-c57ad6ea2a85",
+      "name": "content-addressing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ee9e3c5c-5157-4d5a-b603-694f1ec68de6",
+      "name": "merkle-tree",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nSwarm's unit of storage is a **4KB content-addressed chunk (CAC)**. All data, regardless of size, is split into these chunks and reassembled via a Merkle hash tree.\n\n## Evidence\n\n- Max payload per chunk: 4096 bytes\n- Chunk address = `Keccak256(span || BMT_root(payload))` where span is an 8-byte total-length prefix\n- Self-verifying: any peer can recompute the address from the bytes\n- Files larger than 4KB form a **hash tree**: leaf chunks hold data, intermediate chunks hold 128 child references (32 bytes each)\n- The root chunk's address is the file's reference (32 bytes)\n- Encrypted files drop branching factor to 64 because each ref becomes 64 bytes (32-byte address + 32-byte decryption key)\n\n## Why it matters\n\nThe adapter uploads encrypted JSON via `POST /bytes`; the Bee node handles chunking automatically. We never touch raw chunks directly, but understanding this layer explains why reference sizes differ between plain and encrypted uploads.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every Swarm upload is split into 4KB chunks whose addresses are Keccak256(span || BMT_root). Files >4KB form a Merkle tree rooted at a single reference hash.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "aa233199-9e90-4188-9f34-8233c68b6b3f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6c675d41-1f41-4b62-964d-973d3ac5c7e5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

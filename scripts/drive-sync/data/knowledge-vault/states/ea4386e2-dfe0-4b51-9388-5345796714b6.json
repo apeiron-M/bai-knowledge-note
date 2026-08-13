@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-1bd8cea5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1bd8cea5-efef-4028-b116-9d63e17711e2",
+      "targetTitle": "powerhouse-stack-feature-surface"
+    },
+    {
+      "id": "lnk-cad7d23d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cad7d23d-3a7b-442a-84b8-3570c0e6c8e2",
+      "targetTitle": "powerhouse-three-layer-architecture"
+    },
+    {
+      "id": "lnk-44526c84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44526c84-c188-45ed-9472-51e84e11bfd0",
+      "targetTitle": "connect-is-host-application"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Switchboard and Connect are the same Reactor with different outward surfaces",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d6a8df4b-aa75-4549-bc98-b3896dec2643",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e568818-3cf5-410d-8c82-43f4e0167433",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc6503ed-66f2-495d-a696-9b423f5203cd",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## One engine, two faces\n\nSwitchboard runs the same Reactor library as Connect \u2014 on a Node server instead of in a browser. It loads the same packages, the same document models, the same reducers. The only thing that differs is what each host turns outward:\n\n- **Connect** renders editors. It gives *people* a UI.\n- **Switchboard** exposes GraphQL and MCP endpoints. It gives *code* an API.\n\nBecause both hosts run the same engine over the same operation log, writes converge without a reconciliation layer. An operation authored in Connect arrives in Switchboard through sync; a mutation dispatched over GraphQL shows up in Connect. There is no \"API model\" separate from the \"UI model\" \u2014 there is one document model, and two ways to reach it.\n\nSwitchboard serves both protocols at once:\n\n- **GraphQL** \u2014 composed from subgraphs, one per installed package. Web apps, mobile clients, and integrations query documents and dispatch actions here.\n- **MCP** (Model Context Protocol) \u2014 the same Reactor surfaced as tools an AI agent can call.\n\nLocally, `ph vetra` starts a Switchboard alongside Connect, hot-reloading subgraphs as you edit them:\n\n```bash\nph vetra\n# Reactor booted\n# Subgraphs composed \u2014 GraphQL at http://localhost:4001/graphql\n# MCP at http://localhost:4001/mcp\n```\n\nIn production Switchboard ships as a Docker container with a persistent Reactor store, and scales out behind a load balancer.\n\n## The design consequence\n\nChoosing between Connect and Switchboard is never a data-modelling decision \u2014 it is a question of who the consumer is. Browser drag-and-drop belongs in Connect, because Switchboard has no UI layer. A query endpoint for a mobile client belongs in a Switchboard subgraph, because Connect is not an API. Neither choice touches the document model.\n\n_Source: apps/academy/docs/academy/02-Learn/06-switchboard/01-what-is-switchboard.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect renders editors for people; Switchboard exposes GraphQL and MCP for code. Both host the same Reactor and the same document models, so writes on either side converge.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f1c58cf1-3843-4d49-965a-2d7bbc1720b8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d98dcaf0-0c64-4811-b944-2954e2dabbc5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

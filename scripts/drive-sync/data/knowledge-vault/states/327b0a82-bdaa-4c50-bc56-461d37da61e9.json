@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-e50150d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-3ffe9cae-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3ffe9cae-7925-4e7e-ac90-3a1198b1a6b3",
+      "targetTitle": "document-state-has-global-and-local-scopes"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The state argument a reducer receives is already the scoped state",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "27bc79b3-3d47-4a0f-8f93-7717db4a04a2",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e2415070-ffb1-4d20-b030-7b75e55db113",
+      "name": "state-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Reducer operations receive the state of **their own scope**, already unwrapped. Inside the reducer you write `state.items`. From outside, the same data is `doc.state.global.items`.\n\n```ts\n// document-models/todo/src/reducers/todos.ts\naddTodoOperation(state, action) {\n  state.items.push({ id: action.input.id, title: action.input.title, done: false });\n}\n```\n\n```ts\n// from a test or an editor\nexpect(doc.state.global.items).toHaveLength(1);\n```\n\nThe mistake this prevents is writing `state.global.items` inside the reducer. Under `strict` TypeScript that fails to compile, which is the good case \u2014 but when the state type is loose or the value is threaded through an `unknown`, you instead get a runtime `undefined` and a reducer that silently does nothing while the operation still lands in the log.\n\nThe corollary matters as much as the rule: a reducer **cannot** see or touch the other scope. A global-scope operation has no access to local state and vice versa. If a transition genuinely needs to read both, that is a signal the data is in the wrong scope, or that the work belongs in the editor (which can read both) before dispatch.\n\nThe scoping is not inferred at call time \u2014 it is bound when the operation is specified and baked into the generated action creator, which passes `\"global\"` or `\"local\"` to `createAction`. The reducer signature is simply the other half of that contract.\n\nVerified in generated project code: reducers in `document-models/<name>/v1/src/reducers/*.ts` assign directly to `state.<field>` with no scope hop.\n\n_Source: apps/academy/docs/academy/02-Learn/03-document-models/04-your-first-document-model.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Inside a reducer you write state.items; from outside the same data is doc.state.global.items. The reducer never sees the other scope.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2f5d02bf-ec09-4247-8679-7f4f37132988",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:07.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "dec0bfed-7855-4af9-bd88-e0b4ac3c2684",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:07.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

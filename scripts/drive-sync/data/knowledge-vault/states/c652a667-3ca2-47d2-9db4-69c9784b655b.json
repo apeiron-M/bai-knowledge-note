@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-67bcb93e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "67bcb93e-c4f7-4573-ab75-efaddf88c13f",
+      "targetTitle": "accounts-model-defines-the-chart-of-accounts-structure"
+    },
+    {
+      "id": "lnk-2684ab8a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2684ab8a-e397-4dac-a0e7-69744af3f4c3",
+      "targetTitle": "invoice-model-generates-formal-payment-requests"
+    },
+    {
+      "id": "lnk-c2d636bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2d636bb-7093-4e4b-a11c-1a0f17233f7c",
+      "targetTitle": "oh-offers-crypto-banking-aml-compliance-add-ons"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "account-transactions model tracks financial transaction records",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "647e8254-cd59-45b1-8305-eef7ac143ce4",
+      "name": "account-transactions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "22841cf9-fc35-44b1-9b7d-f8280437409b",
+      "name": "finance-billing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# account-transactions model tracks financial transaction records\n\n`powerhouse/account-transactions` (10 ops) records individual financial transactions. Part of the Finance & Billing domain alongside [[accounts model defines the chart of accounts structure]], [[billing-statement model captures periodic billing summaries]], and [[payment-terms model defines payment conditions and schedules]].\n\n## Position in Ecosystem\n\nSits in the Finance & Billing zone. Likely referenced by billing statements and invoices when itemizing charges.\n\n## Cross-Model References\n\n- Transactions reference accounts from the Accounts model\n- BillingStatement and Invoice models may aggregate transactions\n\nSince [[five models form a hierarchy from facet through template to offering to subscription to instance]], account-transactions operates downstream \u2014 recording the financial outcomes of subscription activity.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:40:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:35.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "10 operations \u2014 records individual financial transactions (debits, credits) against accounts for audit trails and reconciliation",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e645b94e-2396-44f6-bf93-5f5e99afb504",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9ad454ce-d7eb-4b5d-aaa1-8555ca74ab52",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:19.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

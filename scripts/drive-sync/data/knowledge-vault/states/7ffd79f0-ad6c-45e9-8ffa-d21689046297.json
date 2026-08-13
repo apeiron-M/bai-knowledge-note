@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-6018c73a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6018c73a-1c34-4bf5-8502-d1fcb80bb653",
+      "targetTitle": "chat-requires-both-users-to-run-full-bee-nodes-because-light"
+    },
+    {
+      "id": "lnk-2642b21e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2642b21e-fc0d-413e-a421-2affae6d6164",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    },
+    {
+      "id": "lnk-021185cf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "021185cf-9b33-4a9f-a7d0-8c6dabe2dfa6",
+      "targetTitle": "collab-adapter-surface-window-ph-swarm-collab"
+    },
+    {
+      "id": "lnk-03bacaf7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "03bacaf7-d91f-4a3c-9536-5078930c8df8",
+      "targetTitle": "swarm-gsoc-many-to-one"
+    },
+    {
+      "id": "lnk-4f75be2a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4f75be2a-9733-46f8-9f67-550464c835c7",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat topics are derived from sorted participant addresses so both peers compute the same topic.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-5c5ce24c7858",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-d2d68e6884e3",
+      "name": "topic-convention",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-b1dbf6c65e84",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Pattern\n\nChat, collab, and chat-history topics are all derived by concatenating the two participants' Swarm signer addresses in **sorted** order. Sorting guarantees both parties compute the same topic string regardless of who initiates the conversation.\n\n## Topic conventions\n\n```\nChat topic:    ph:v2:chat:<sorted(alice, bob)>\nGSOC notify:   ph:v2:notify:<targetAddress>\nCollab topic:  ph:v2:collab:<documentId>:<sorted(alice, bob)>\nChat history:  ph:v2:chatlog:<sorted(alice, bob)>    // feed, append-only\n```\n\n## Why sorting\n\nWithout sorting, Alice would compute `chat:alice:bob` while Bob would compute `chat:bob:alice`, and PSS subscriptions would never meet. Sorting collapses the asymmetry.\n\n## Namespace versioning\n\nThe `ph:v2:` prefix (vs v1) signals the current Swarm protocol revision. Bumping the prefix is how the app will roll out breaking changes to topic shape or payload schema in the future without colliding with old clients.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:27:13.426Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Topics like ph:v2:chat:<sorted(alice,bob)> sort the two addresses alphabetically, ensuring symmetric derivation regardless of who initiates.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "11d5b669-6379-408d-ad20-846409022201",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "812b255d-cb78-4eac-b742-4d0d9e6af199",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

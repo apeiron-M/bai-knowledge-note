@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-8636b83a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8636b83a-d96a-4dfe-ba64-07f112282fb0",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-c7f73a29-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7f73a29-d8df-42c3-832b-7dfdeedbcf55",
+      "targetTitle": "reactor-is-a-storage-node-supporting-multiple-adapters"
+    },
+    {
+      "id": "lnk-68376495-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "68376495-bfd8-4cac-9fda-65c52e1c4e74",
+      "targetTitle": "adapter-key-source-files"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "adapter/src/ infrastructure modules wrap Bee APIs, wallet-derived crypto, stamps, ACT sharing, and low-level store interfaces for the channel layer.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "file-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "infrastructure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "codebase-map",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## `adapter/src/` root (infrastructure kept from previous plugin)\n\n```\nadapter/src/\n  swarm-client.ts           - Bee API: /bytes, /bzz, feeds, ACT, PSS, GSOC, node status\n  swarm-crypto.ts           - AES-256-GCM encryption\n  wallet-signer.ts          - Key derivation from wallet signature\n  stamp-manager.ts          - Postage stamp lifecycle + CoinGecko pricing\n  share-manager.ts          - Cross-user ACT sharing + public profile I/O\n  folder-tree.ts            - Recursive tree builder\n  types.ts                  - Manifest, sharing (ACT v2), stamp status\n  swarm-operation-store.ts  - IOperationStore interface\n  swarm-keyframe-store.ts   - IKeyframeStore interface\n  bytes-utils.ts            - hex/bytes conversion\n```\n\n### Role\n\nThese modules are **infrastructure** \u2014 they pre-date the channel-based sync architecture but are still used underneath it.\n\n- `swarm-client.ts` is the single Bee wrapper; everything above it goes through this client.\n- `stamp-manager.ts` handles postage stamp purchase, top-up, and USD pricing.\n- `share-manager.ts` abstracts ACT grantee management for the chat and document-share flows.\n- `swarm-operation-store.ts` and `swarm-keyframe-store.ts` expose `IOperationStore` / `IKeyframeStore` interfaces \u2014 the contract between the channel layer and persistent Swarm storage.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "swarm-client, swarm-crypto, wallet-signer, stamp-manager, share-manager, folder-tree, types, swarm-operation-store, swarm-keyframe-store, bytes-utils together.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6d7d2e2e-20b9-4910-9641-324a889dffab",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "478499ff-7cfd-4728-b135-186cc2452c30",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

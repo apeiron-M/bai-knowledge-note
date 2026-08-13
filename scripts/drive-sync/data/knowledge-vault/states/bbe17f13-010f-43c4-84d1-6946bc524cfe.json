@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-cbb06ab4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-fe57b669-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fe57b669-898b-4381-8c5c-60ca981ef900",
+      "targetTitle": "Error Handling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reactor events use a 10000-range namespace and sync events a 20000-range one, and the two JOB_FAILED shapes differ",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "67a60447-ad92-4954-9504-ab5960da2d8b",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "428dcc2b-3978-4b33-bef6-24df1f63f92c",
+      "name": "event-bus",
+      "topicDocumentId": null
+    },
+    {
+      "id": "93c964a9-3fc3-455b-bcdf-c6324b5425cb",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The reactor's internal `IEventBus` uses numeric event ids grouped into ranges. `ReactorEventTypes` occupies the 10000 range and `SyncEventTypes` the 20000 range:\n\n| Enum | Members |\n| --- | --- |\n| `QueueEventTypes` | `JOB_AVAILABLE` 10000 |\n| `ReactorEventTypes` | `JOB_PENDING` 10001, `JOB_RUNNING` 10002, `JOB_WRITE_READY` 10003, `JOB_READ_READY` 10004, `JOB_FAILED` 10005, `READMODEL_BATCH_COMPLETED` 10006, `READMODEL_INDEXED` 10007, `MODEL_LOADED` 10008 |\n| `SyncEventTypes` | `SYNC_PENDING` 20001, `SYNC_SUCCEEDED` 20002, `SYNC_FAILED` 20003, `DEAD_LETTER_ADDED` 20004, `CONNECTION_STATE_CHANGED` 20005 |\n| `JobExecutorEventTypes` | `JOB_STARTED` 20000, `JOB_COMPLETED` 20001, `JOB_FAILED` 20002, `EXECUTOR_STARTED` 20003, `EXECUTOR_STOPPED` 20004 |\n\nThe trap is the last row. **Two distinct `JobFailedEvent` shapes exist**, and they differ in the type of the `error` field:\n\n- `ReactorEventTypes.JOB_FAILED` (10005) carries `error: Error`.\n- `JobExecutorEventTypes.JOB_FAILED` (20002) carries `error: string`.\n\nSo `event.error.message` is correct for one and silently `undefined` for the other. Check which enum you subscribed to before reading `error`. Most application code should subscribe to `ReactorEventTypes`; `JobExecutorEventTypes` is the lower-level executor-lifecycle set, emitted by the executor managers for individual job execution and executor startup/shutdown.\n\nWorth flagging: the \"10000 vs 20000 range\" framing is a useful mnemonic but not a guarantee of uniqueness. `JobExecutorEventTypes` also lives in the 20000 range and its numbers **collide** with `SyncEventTypes` \u2014 `JOB_COMPLETED` and `SYNC_SUCCEEDED` are both 20001, `JOB_FAILED` and `SYNC_SUCCEEDED`/`SYNC_FAILED` overlap at 20002/20003. Treat the enum you import, not the number, as the identity.\n\nSubscribers are called sequentially in registration order. `emit()` collects thrown subscriber errors and rejects once with an `EventBusAggregateError` whose `.errors` array holds them.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/01-WorkingWithTheReactor.md (Powerhouse v6.2.2-dev.45)._\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/03-AdvancedReactorUsage.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ReactorEventTypes.JOB_FAILED (10005) carries error as Error; JobExecutorEventTypes.JOB_FAILED (20002) carries error as string.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a8ba8a44-46f1-4989-aaaf-e5fe595dec79",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7ffeb766-8ba8-4251-ada9-50b0912f6f41",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:55.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

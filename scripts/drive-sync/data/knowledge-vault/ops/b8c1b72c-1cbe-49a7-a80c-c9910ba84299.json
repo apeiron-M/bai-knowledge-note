@@ -1,0 +1,277 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:17.489Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "import-graphql-client-subpath-not-package-root",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b8c1b72c-1cbe-49a7-a80c-c9910ba84299",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:17.489Z"
+        },
+        "version": 0,
+        "documentId": "b8c1b72c-1cbe-49a7-a80c-c9910ba84299",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:17.489Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Hsx12JfSbCe4ar+UrYFYS8K6rOs=",
+    "timestampUtcMs": "2026-08-13T14:33:18.095Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Import the /graphql-client subpath \u2014 the reactor-browser package root does not bundle for browsers",
+        "updatedAt": "2026-08-13T14:33:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:18.095Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:17.489Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "b8c1b72c-1cbe-49a7-a80c-c9910ba84299",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:17.489Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "a6XiTzzrk5MLUi+zaPHaIfOVPzw=",
+    "timestampUtcMs": "2026-08-13T14:33:18.095Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:17.000Z",
+        "description": "The root barrel value-imports @powerhousedao/reactor, reaching pg, @electric-sql/pglite and node:worker_threads; Turbopack fails before app code runs."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:18.095Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:19.410Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b8c1b72c-1cbe-49a7-a80c-c9910ba84299",
+        "targetId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:19.410Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "7LYmVvnPkKWNOb2iQbetbSZq5fE=",
+    "timestampUtcMs": "2026-08-13T14:33:18.095Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:33:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:18.095Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Q28MZOLZab0mgYdNB+yJjjMqp7k=",
+    "timestampUtcMs": "2026-08-13T14:33:18.095Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The failure\n\n```tsx\n// \u2705 bundles in Next, Vite or anything else, with no alias or stub\nimport { GraphQLReactorProvider } from \"@powerhousedao/reactor-browser/graphql-client\";\n\n// \u274c drags a Postgres driver and node built-ins into a browser bundle\nimport { GraphQLReactorProvider } from \"@powerhousedao/reactor-browser\";\n```\n\nThe package root re-exports the whole package, and part of that **value-imports** `@powerhousedao/reactor`, whose single entry reaches `pg` (`dns`/`fs`/`net`/`tls`), `@electric-sql/pglite` and `node:worker_threads`. None of it runs on the light-client path, but a browser bundler still has to resolve it \u2014 and Turbopack fails on `node:worker_threads` before any app code runs.\n\n## Why the subpath is safe\n\nThe `/graphql-client` entry imports the reactor **for types only**. Types are erased at compile time, so a bundler never sees them. The few runtime values the client actually needs are mirrored inside `reactor-browser`, with compile-time assertions that fail if they ever drift from the reactor's own definitions.\n\nThe built entry imports exactly `react`, `document-model`, `graphql`, `graphql-request`, `graphql-tag`, `graphql-ws/client`, `@powerhousedao/shared/document-model`, `@powerhousedao/shared/document-drive`, `change-case`, `remeda` and `slug` \u2014 no database driver, no node built-ins. A test walks the entry's import graph and fails if that regresses.\n\n## The general shape\n\nThis is a recurring class of failure, not a one-off: a package whose root entry serves both server and browser consumers will pull server-only backends into a browser bundle, and the fix is always to import the browser subpath. `@powerhousedao/reactor-attachments/client` is the same pattern. The monorepo's `test/test-fusion/` app is a worked example \u2014 it imports the subpath and has no bundler configuration at all.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/01-OverviewAndQuickstart.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:18.095Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "iJkuKwHDicZyFQGjhEqiJrwzLrc=",
+    "timestampUtcMs": "2026-08-13T14:33:18.095Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "77ab89d3-e070-496c-bc24-392fec6fa030",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:18.095Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "z0p09tGsGLiMmVsZdceTgiRqZs8=",
+    "timestampUtcMs": "2026-08-13T14:33:18.095Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8946c1d4-095d-4df5-b140-e7552f39cf7e",
+        "name": "bundling"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:18.095Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "EUynzmCbit9UjO8dgR9FaMMpcAk=",
+    "timestampUtcMs": "2026-08-13T14:33:18.095Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f8dadb3b-3627-4969-86e7-38f04d2ce901",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:18.095Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "zmSvXc9pqg53EjVamUkW3Asuc/A=",
+    "timestampUtcMs": "2026-08-13T14:33:19.367Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:17.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:19.367Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Gc67A1uuzDFl48xtXUKDhzwn3Ko=",
+    "timestampUtcMs": "2026-08-13T15:57:52.331Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:52.331Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "aQfqlQP1srkcnGNysP3jCx8Aurk=",
+    "timestampUtcMs": "2026-08-13T15:57:52.331Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "30ac19b1-63a8-4442-8147-f9fa3fd04c20",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:52.331Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "JsYlIoSwzHFqzr8xoR7cX1obdxM=",
+    "timestampUtcMs": "2026-08-13T15:57:52.331Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "bc4bca69-b808-431a-b328-4520c5f0d8fb",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:52.331Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "sS9dR3W2s6KpNTik8oId+g9xmQU=",
+    "timestampUtcMs": "2026-08-13T16:56:06.516Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:56:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:56:06.516Z"
+    }
+  }
+]

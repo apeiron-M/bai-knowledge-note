@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-40d3fc73-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "40d3fc73-7a72-433b-8f7f-754de53412e7",
+      "targetTitle": "vetra-package-module-types"
+    },
+    {
+      "id": "lnk-ee900e65-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee900e65-175e-4152-9ad5-18db168c583c",
+      "targetTitle": "v6-reactor-subgraph-replaces-legacy-endpoints"
+    },
+    {
+      "id": "lnk-abf010f8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "abf010f8-1c17-4714-824f-7d822003379a",
+      "targetTitle": "subgraphs-extend-document-models-via-graphql"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Reactor Package ships its own subgraph and Switchboard composes them into one endpoint",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fb32de23-ba7f-4905-a7b4-ec2f45c62bb6",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aa262004-eec6-49d3-904f-70549c153d62",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bfa3d7ba-5b13-4690-bada-98b4113a5986",
+      "name": "graphql",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## No monolithic schema\n\nSwitchboard does not expose one hand-maintained schema. Every Reactor Package ships its **own** GraphQL schema fragment \u2014 its subgraph \u2014 and Switchboard composes all of them into a single unified endpoint at `/graphql`.\n\nThe practical payoff is cross-package querying. A client can pull data owned by two completely independent packages in one request, and neither package needs to know the other exists:\n\n```graphql\nquery {\n  todoList(id: \"doc-123\") {\n    id\n    todos {\n      id\n      title\n      done\n    }\n  }\n}\n```\n\nThat query hits one endpoint. Behind it, whichever package owns the `todoList` type resolves it.\n\n## Each subgraph exposes three things\n\n- **Queries** \u2014 for reading documents and processor read models.\n- **Mutations** \u2014 for dispatching actions to documents.\n- **Custom types** \u2014 the domain-specific GraphQL types your resolvers return.\n\n## Why this makes the package the unit of delivery\n\nBecause a package owns its subgraph, shipping the package ships its API. There is no central schema registry to update, no coordination step, no separate gateway config to edit. Installing a package into a Switchboard extends the supergraph.\n\nComposition is also not a one-shot boot step. `GraphQLManager` keeps subgraphs in a map keyed by supergraph name, registers each one, and rebuilds the router; document-model subgraphs are *regenerated* when models are loaded dynamically, so packages installed after startup still land in the composed schema. Duplicate subgraph names are skipped rather than merged \u2014 a name collision silently loses the second registration.\n\nOne endpoint is not quite everything: the per-drive subgraph is served separately at `/d/:driveId` and is deliberately excluded from the `/graphql` supergraph.\n\n_Source: apps/academy/docs/academy/02-Learn/06-switchboard/02-subgraphs.mdx, packages/reactor-api/src/graphql/graphql-manager.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Package-owned schema fragments are stitched into a supergraph, so one query can span independent packages. Shipping a package ships its API \u2014 there is no central schema registry.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b5b35196-1167-48a1-bf23-1955c219d59e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:25.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "53123b13-f0b3-4bc1-8f01-3830e5470388",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:25.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

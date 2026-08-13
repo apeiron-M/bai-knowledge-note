@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:35.932Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-executebatch-dependency-ordered-jobs",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "af4c60c6-3c9c-433b-a957-ea72248b32a7",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:39:35.932Z"
+        },
+        "version": 0,
+        "documentId": "af4c60c6-3c9c-433b-a957-ea72248b32a7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:39:35.932Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "8JQWR5OFa6Osoy6sb+266jTbMHg=",
+    "timestampUtcMs": "2026-08-13T14:39:36.327Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "IReactor.executeBatch runs dependency-ordered multi-document jobs in one call",
+        "updatedAt": "2026-08-13T14:39:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:36.327Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:35.932Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "af4c60c6-3c9c-433b-a957-ea72248b32a7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:39:35.932Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "nLbnD8Gy/spZW3XmHhz0CmFlAdE=",
+    "timestampUtcMs": "2026-08-13T14:39:36.327Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:39:35.000Z",
+        "description": "Each job carries a key, documentId, actions and dependsOn; the reactor resolves ordering, parallelism and failure propagation across documents so callers stop hand-sequencing writes."
+      },
+      "timestampUtcMs": "2026-08-13T14:39:36.327Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:37.824Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "af4c60c6-3c9c-433b-a957-ea72248b32a7",
+        "targetId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:37.824Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "AkFQmTMRnO68HH+QB/25RnIV0rI=",
+    "timestampUtcMs": "2026-08-13T14:39:36.327Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T14:39:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:36.327Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:37.849Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "af4c60c6-3c9c-433b-a957-ea72248b32a7",
+        "targetId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:37.849Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "CiyyfEOmU1WfZK1dxDFdr2c0Ki8=",
+    "timestampUtcMs": "2026-08-13T14:39:36.327Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`executeBatch` takes a set of jobs with declared dependencies and lets the reactor work out the schedule. Each job is `{ key, documentId, actions, dependsOn }`, where `dependsOn` names other jobs by `key`:\n\n```ts\nawait reactor.executeBatch({\n  jobs: [\n    { key: \"budget\",  documentId: budgetId,  actions: [initBudget],  dependsOn: [] },\n    { key: \"scope\",   documentId: scopeId,   actions: [initScope],   dependsOn: [] },\n    { key: \"project\", documentId: projectId, actions: [initProject], dependsOn: [\"budget\", \"scope\"] },\n    { key: \"drive\",   documentId: driveId,   actions: [addFiles],    dependsOn: [\"project\"] },\n  ],\n});\n```\n\n`budget` and `scope` run in parallel; `project` waits for both; `drive` waits for `project`. One call, one result. The reactor handles ordering, parallelism, and failure propagation.\n\nThe `batch-progress` recipe frames it against the alternative \u2014 four sequential `await`s with manual error handling, no atomicity, and, in the recipe's own comment, \"hope nothing interleaves\". The value is not saving keystrokes; it is that the dependency graph is *declared* rather than encoded in statement order, so the reactor can parallelise independent work and propagate a failure to exactly the dependents that needed it.\n\nObservability comes from the EventBus rather than the return value. The recipe subscribes to `JOB_PENDING`, `JOB_RUNNING`, `JOB_WRITE_READY`, `JOB_READ_READY` and `JOB_FAILED` to drive a live multi-bar progress display \u2014 which is the right shape for a batch, since the per-job statuses arrive at different times and a single awaited promise flattens that away.\n\nNote this is on `IReactor`, the low-level fire-and-forget interface, not on the Promise-based `IReactorClient` wrapper. The recipe's demo runs it against an embedded in-memory reactor (PGlite, no external DB).\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Batch Progress recipe, academy 6.2.2-dev.45.",
+        "updatedAt": "2026-08-13T14:39:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:36.327Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "0WVUTYgUJ1cpkS7a6fJgZBpwZr0=",
+    "timestampUtcMs": "2026-08-13T14:39:36.327Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6edf36b3-7fb5-4c1a-8c47-0713f4ea1e71",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:36.327Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "kYeiiqUMnRZmF9F6kw7Dc2rse6k=",
+    "timestampUtcMs": "2026-08-13T14:39:36.327Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "feda8ad0-b113-4be4-bfd2-780bfe6bd860",
+        "name": "jobs"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:36.327Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "hLUkLMVpT9szEBHhRC24akqOKh0=",
+    "timestampUtcMs": "2026-08-13T14:39:36.327Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d41f8c26-ddf2-4b9e-a5ef-2b58b759848f",
+        "name": "batching"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:36.327Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "4wu/ARZQ9tDAJ0kumnjIJSLjzaE=",
+    "timestampUtcMs": "2026-08-13T14:39:37.780Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:39:35.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:37.780Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "xpCAnX5Fw1dFfOeUw3WNRBESt8k=",
+    "timestampUtcMs": "2026-08-13T15:57:36.206Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:36.206Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "HGUrrM38XuUdc3sE1bgXwviAnic=",
+    "timestampUtcMs": "2026-08-13T15:57:36.206Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "006fb416-745f-4f27-896c-0ab4c0185104",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:36.206Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "19FzHTmT3p8jejARPmLSrspY5M4=",
+    "timestampUtcMs": "2026-08-13T15:57:36.206Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "089fcd1b-3071-479c-97c2-0dcc6075fb10",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:36.206Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "G7HkCFFIzH3MUuZoOunqvPT9tco=",
+    "timestampUtcMs": "2026-08-13T16:55:46.766Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:55:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:55:46.766Z"
+    }
+  }
+]

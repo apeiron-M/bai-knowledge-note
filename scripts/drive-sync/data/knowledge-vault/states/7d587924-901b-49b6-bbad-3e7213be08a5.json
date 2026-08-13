@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-1328e41a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1328e41a-9d40-49bf-bcec-1784cef7d878",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Analytics Engine persists to exactly three tables joined many-to-many",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "04117b15-debb-498d-8d7a-22268e788dde",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f02a3220-4134-446d-837a-f50d517eb5b7",
+      "name": "schema",
+      "topicDocumentId": null
+    },
+    {
+      "id": "61344f19-4090-4527-aafb-c347d000a35f",
+      "name": "storage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The whole storage model is three tables \u2014 re-verified against the DDL at 6.2.2-dev.45, and it is still exactly three:\n\n- **`AnalyticsSeries`** \u2014 the raw values: `source`, `start`, `end`, `metric`, `value`, `unit`, `fn`, `params`.\n- **`AnalyticsDimension`** \u2014 the dimension records: `dimension`, `path`, plus display metadata (`label`, `icon`, `description`).\n- **`AnalyticsSeries_AnalyticsDimension`** \u2014 the many-to-many lookup joining the two, indexed on both `seriesId` and `dimensionId`.\n\nNothing else is created, and no persisted database view exists either \u2014 `KnexAnalyticsStore._buildViewQuery` builds an *inline* subquery aliased `AV` at query time, so \"view\" in that code is a SQL expression, not a fourth schema object.\n\nThe many-to-many join is the point, not an implementation detail. There will be millions of series rows and only a handful of distinct dimension rows, so dimensions are *shared* decorations rather than columns on the series. That is what lets a query aggregate *across* unrelated series that happen to share a dimension path, which is the capability the engine exists to provide.\n\nBoth foreign keys in the join table are `on delete cascade`, and that is what shapes the store interface. Deleting series rows (`clearSeriesBySource`) silently takes the join rows with them but leaves the `AnalyticsDimension` rows behind as orphans, because dimensions are shared and no single series owns one. Hence the second, separately callable `clearEmptyAnalyticsDimensions()` on `IAnalyticsStore`, and hence the optional `cleanUpDimensions` flag on `clearSeriesBySource` that just chains the two. The apparently redundant pair of methods is a direct consequence of the schema shape.\n\nThe series table is heavily indexed \u2014 `start`, `end`, `metric`, `source`, `unit`, `value`, and `fn` each get their own index \u2014 which is why filtered time-window queries stay cheap and why arbitrary post-hoc SQL is deliberately not exposed on the interface.\n\nProvisioning differs by store, and the DDL is physically duplicated. `BrowserAnalyticsStore.init()` runs a `create table if not exists` script (the `initSql` template literal in its own source file) inside PGlite, so it is self-provisioning and idempotent \u2014 you never migrate it by hand. `PostgresAnalyticsStore` will not create the schema for you: it assumes an initialized database, and the init script that creates it lives in a *different package*, as `initAnalyticsStoreSql` in `packages/reactor-api/src/utils/db.ts`, which `reactor-api`'s server loops over via `knex.raw` at startup. The two copies are currently byte-identical apart from being one string versus an array of strings, but they are maintained separately \u2014 worth knowing if you ever see the two environments disagree about a column. Note also that there are no Knex migration files for these tables anywhere in the monorepo; the only provisioning path is one of these two raw-SQL scripts.\n\nProvenance: draft `03-Build/04-WorkWithData/_06-Analytics Engine/typescript/schema.md`. DDL verified in the `initSql` block of `packages/analytics-engine/browser/src/BrowserAnalyticsStore.ts` and in `initAnalyticsStoreSql` at `packages/reactor-api/src/utils/db.ts:175`; table set cross-checked against every table reference in `packages/analytics-engine/knex/src/KnexAnalyticsStore.ts` at 6.2.2-dev.45. The draft attributes the auto-create behaviour to a `browser` package built on a `MemoryAnalyticsStore` base class; that class does not exist anywhere in the source (`git grep MemoryAnalyticsStore` returns zero hits outside the academy docs), and `BrowserAnalyticsStore` carries the DDL itself.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "AnalyticsSeries holds raw values, AnalyticsDimension holds dimensions, AnalyticsSeries_AnalyticsDimension is the cascade-deleting lookup. DDL is duplicated in browser and reactor-api.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "26a2eabb-1014-4e24-8c48-e0b2bdc06050",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f2dd1f39-a62e-4d81-95b4-8cea2fd793f5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

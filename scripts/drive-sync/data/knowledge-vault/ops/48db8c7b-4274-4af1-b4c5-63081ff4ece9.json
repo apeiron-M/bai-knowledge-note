@@ -1,0 +1,349 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:20:54.526Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "authorization-uses-layered-model",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:20:54.526Z"
+        },
+        "version": 0,
+        "documentId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:20:54.526Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "+Q+2GPIkEFaq3oqLDUzDEQq+7no=",
+    "timestampUtcMs": "2026-08-13T13:22:47.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Reactor authorization uses a layered model: supreme admin bypass, document protection toggle, and per-document READ/WRITE/ADMIN grants with inheritance",
+        "updatedAt": "2026-08-13T13:22:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:47.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:20:54.526Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:20:54.526Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "4Qz1x+5ke/eLhtaegseIlRUcI+0=",
+    "timestampUtcMs": "2026-08-13T13:22:47.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:22:47.000Z",
+        "description": "ADMINS env var bypasses all checks; documents can be protected or unprotected; grants inherit down the tree."
+      },
+      "timestampUtcMs": "2026-08-13T13:22:47.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:54.284Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "targetId": "388028bb-0973-40eb-8e66-9f443bdfd0c4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:54.284Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "DOQRGC/XGe2k3sC32qS94ZHNynU=",
+    "timestampUtcMs": "2026-08-13T13:22:47.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T13:22:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:47.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:54.317Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "targetId": "2aa55f5b-f3a3-4195-88de-3452a82c2dd2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:54.317Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "/OdGgKKvIb+1SvGs37mFPp8Q9gc=",
+    "timestampUtcMs": "2026-08-13T13:22:47.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Authorization flow: (1) If AUTH_ENABLED=false, all access granted; (2) Validate bearer token, extract ETH address; (3) If address in ADMINS, full access; (4) If document unprotected, anyone reads, authenticated users write; (5) If protected, check explicit grants. Grants support direct user grants, group grants, and inherited grants (drive -> folder -> document). Permission levels: READ (view), WRITE (edit, includes READ), ADMIN (manage permissions, includes WRITE). Configured via env vars (AUTH_ENABLED, ADMINS, DEFAULT_PROTECTION, DOCUMENT_PERMISSIONS_ENABLED) or `powerhouse.config.json`. Env vars override config file values.",
+        "updatedAt": "2026-08-13T13:22:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:47.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:54.541Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "targetId": "3ffe9cae-7925-4e7e-ac90-3a1198b1a6b3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:54.541Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "oX6f8AYq2TzPfaIB03+bX3stCqY=",
+    "timestampUtcMs": "2026-08-13T13:22:47.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:47.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:54.685Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "targetId": "e4a6a6c7-527a-4342-9f0c-b01435197f3c",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:54.685Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ZiOM71SFCaqDhGHVKtxA9kftooI=",
+    "timestampUtcMs": "2026-08-13T13:22:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "00cf8d2a-208d-43f6-b67b-7f6326dbce12",
+        "name": "authorization",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:47.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "fm7KgHhYfzSlW5VyEkbLU+4ViSY=",
+    "timestampUtcMs": "2026-08-13T13:22:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0054acfe-9179-45d0-b532-f6e03580f988",
+        "name": "permissions",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:47.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "U8Mpw3+BBU00o826DHN/9O6pr1w=",
+    "timestampUtcMs": "2026-08-13T13:22:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dadc3663-5bd2-466d-af78-0165d00cdb98",
+        "name": "security",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:47.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "CUOjKIJsuqGwaPywixYs6bt2pg4=",
+    "timestampUtcMs": "2026-08-13T13:22:47.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4198819a-832a-48af-ac42-e9e83ecb9225",
+        "name": "reactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:47.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "vB0zMTx8IJRQt/w+nlJ97B961Jk=",
+    "timestampUtcMs": "2026-08-13T15:11:59.911Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Authorization flow: (1) If AUTH_ENABLED=false, all access granted; (2) Validate bearer token, extract ETH address; (3) If address in ADMINS, full access; (4) If document unprotected, anyone reads, authenticated users write; (5) If protected, check explicit grants. Grants support direct user grants and inherited grants (drive -> folder -> document). Permission levels: READ (view), WRITE (edit, includes READ), ADMIN (manage permissions, includes WRITE). Configured via env vars (AUTH_ENABLED, ADMINS, DEFAULT_PROTECTION, DOCUMENT_PERMISSIONS_ENABLED) or `powerhouse.config.json`. Env vars override config file values.\n\n## Auth subgraph query surface\n\nThe authorization state is readable over GraphQL from `packages/reactor-api/src/graphql/auth/schema.graphql`:\n\n- `documentAccess(documentId: String!): DocumentAccessInfo!` (line 57)\n- `userDocumentPermissions: [DocumentPermissionEntry!]!` (line 63)\n- `canExecuteOperation(documentId: String!, operationType: String!): Boolean!` (line 73)\n\n## Group grants were retired, not renamed\n\n`packages/reactor-api/src/migrations/003_remove_group_tables.ts` drops the `Group`, `UserGroup`,\n`DocumentGroupPermission` and `OperationGroupPermission` tables. Its own header states the feature\n\"had no consumers and disclosed ACL/membership metadata (AUTH_REVIEW S-H3/S-H5); it is retired in\nfavor of direct user grants, ownership, and protection.\" Grepping `group` across\n`packages/reactor-api/src/graphql/auth/` returns zero hits. The surviving tables are three:\n`DocumentPermission`, `OperationUserPermission` (migration 001) and `DocumentProtection` (002).\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+        "updatedAt": "2026-08-13T15:11:59.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:11:59.911Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "hHzsf9wm1PLpp0PwhWJjz6KYqFc=",
+    "timestampUtcMs": "2026-08-13T15:53:57.143Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:53:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:57.143Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Ms2HTkyIHAweWOV1VF7JEo9Hfa0=",
+    "timestampUtcMs": "2026-08-13T15:53:57.143Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "9f62fac4-ef8b-40aa-9cb3-2baa19d8c4e6",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:53:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:57.143Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "rX2qSReVq7uM3BW/D0z07MwIG68=",
+    "timestampUtcMs": "2026-08-13T15:53:57.143Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d6fca9bd-d6ed-4955-b172-f864585682f2",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:53:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:57.143Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "vutw0qJEuIMyVLQQhip/PP+vrqc=",
+    "timestampUtcMs": "2026-08-13T16:51:20.714Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:51:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:51:20.714Z"
+    }
+  }
+]

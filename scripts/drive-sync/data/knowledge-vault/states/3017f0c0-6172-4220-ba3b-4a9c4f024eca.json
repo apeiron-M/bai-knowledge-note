@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-8fbd5cba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8fbd5cba-15ee-4f2b-ae33-731095584405",
+      "targetTitle": "channel-directory-file-layout"
+    },
+    {
+      "id": "lnk-c5c2a2ea-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c5c2a2ea-e76d-4a1f-b98c-a18b41f50423",
+      "targetTitle": "create-swarm-sync-builder-hook"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Wiring the Swarm channel via ReactorBuilder.withSync() avoids monkey-patching the reactor.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-cc3fbe68-1",
+      "name": "reactor-builder",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-cc3fbe68-2",
+      "name": "wiring",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-cc3fbe68-3",
+      "name": "architecture-decision",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nIn `createBrowserReactor()`, the Swarm channel is wired through `ReactorBuilder.withSync(syncBuilder)` rather than `withChannelScheme(...)`. This avoids monkey-patching or SQL hacks.\n\n## Evidence\nFrom the source: \"The ReactorBuilder has two code paths: 1) `if (this.channelScheme)` \u2014 auto-creates a single factory type; 2) `else if (this.syncBuilder)` \u2014 uses YOUR factory. By using path 2, we get full control over which channel types are available.\"\n\nThe build-time registration looks like:\n\n```typescript\nconst { syncBuilder, registerGqlFactory } = createSwarmSyncBuilder(logger, jwtHandler);\nnew ReactorBuilder().withSync(syncBuilder).withJwtHandler(jwtHandler);\n```\n\n## Consequences\n- Swarm remotes persist in `sync_remotes` and are recreated natively on startup.\n- No dynamic re-registration or private-API reach-ins.\n- Rejects hacks: \"No monkey-patching. No SQL hacks. No dynamic re-registration.\"\n\n## Source\n`connect/src/utils/reactor.ts`; Swarm Channel Architecture, \"Wiring Into createBrowserReactor\".",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ReactorBuilder has two code paths; using the syncBuilder path instead of channelScheme gives full control over channel types without patching.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d0120d31-bc61-45cd-9d22-bd808a6bbb7d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9e34a082-3995-436b-8144-3944c53d3f8f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

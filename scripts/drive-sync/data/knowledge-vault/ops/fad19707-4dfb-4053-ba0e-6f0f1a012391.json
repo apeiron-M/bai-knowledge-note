@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:12.365Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "list-resolvers-filter-with-canreaddocument",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "fad19707-4dfb-4053-ba0e-6f0f1a012391",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:12.365Z"
+        },
+        "version": 0,
+        "documentId": "fad19707-4dfb-4053-ba0e-6f0f1a012391",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:12.365Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "B1GvH/m5SPkRcuKxyFJ0jDrlu10=",
+    "timestampUtcMs": "2026-08-13T14:33:12.949Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "List resolvers must filter with canReadDocument, not throw on the first forbidden document",
+        "updatedAt": "2026-08-13T14:33:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:12.949Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:12.365Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "fad19707-4dfb-4053-ba0e-6f0f1a012391",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:12.365Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "yuW1d3RtXs+4fpmGNzYZ/+TG+uE=",
+    "timestampUtcMs": "2026-08-13T14:33:12.949Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:12.000Z",
+        "description": "Short-circuit with authorizationService.isSupremeAdmin(ctx.user?.address), then drop unreadable ids. Filtering also avoids leaking the existence of protected documents."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:12.949Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:14.104Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "fad19707-4dfb-4053-ba0e-6f0f1a012391",
+        "targetId": "1f97e78c-3d96-4139-a03a-828275ebb8e9",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:14.104Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "wdJDkiZDs4va+HkU4mz3CZXXqEY=",
+    "timestampUtcMs": "2026-08-13T14:33:12.949Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:33:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:12.949Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:14.128Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "fad19707-4dfb-4053-ba0e-6f0f1a012391",
+        "targetId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:14.128Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ozV79u/5kQCbipPFF3wqu/kLr4I=",
+    "timestampUtcMs": "2026-08-13T14:33:12.949Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Throwing is wrong for collections\n\nA resolver that returns *one* document should fail closed and throw. A resolver that returns *many* must not: throwing on the first forbidden document turns one protected item into a total failure for a caller who was entitled to the rest of the list. Collection resolvers **drop** what the caller cannot read and return the remainder.\n\nThe shape has two parts \u2014 a policy-wide short circuit, then a per-item non-throwing check:\n\n```typescript\nimport type { CanonicalDocumentId } from \"@powerhousedao/reactor-api\";\n\nsearchTodos: async (\n  _parent,\n  args: { driveId: string; searchTerm: string },\n  ctx: Context,\n) => {\n  const matches = await runSearch(args.driveId, args.searchTerm); // document ids\n\n  // Policy-wide callers see everything; skip the per-item check.\n  if (subgraph.authorizationService.isSupremeAdmin(ctx.user?.address)) {\n    return matches;\n  }\n\n  const visible: string[] = [];\n  for (const id of matches) {\n    // non-throwing; ids returned by the Reactor are already canonical\n    if (await subgraph.canReadDocument(id as CanonicalDocumentId, ctx)) {\n      visible.push(id);\n    }\n  }\n  return visible;\n};\n```\n\n## Why filtering, not post-hoc shaping\n\nFiltering **on read** means the resolver never leaks the *existence* of a protected document through a list endpoint. That is a stronger property than redacting fields after the fetch: an id in a search result is itself information, and a caller who can enumerate ids can probe them individually.\n\nThe `isSupremeAdmin` short circuit is a performance concession, not a correctness one \u2014 supreme admins and the `OPEN` policy would pass every per-item check anyway, so the loop is pure overhead for them.\n\nThis is the same shape the built-in `findDocuments` and relationship resolvers use. The corresponding best practice is stated plainly: filter lists, don't throw on them; reserve the throwing asserts for single-target resolvers.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:12.949Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "0/Es2IOzXAU48FK+LW8r+KQr7eY=",
+    "timestampUtcMs": "2026-08-13T14:33:12.949Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "49e0f557-8b80-42e1-9d11-8270057985f0",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:12.949Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Gb6NLpk84aG/HZbHZylMdwyZq8w=",
+    "timestampUtcMs": "2026-08-13T14:33:12.949Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d9be244e-c0b6-4820-9840-44dc30c494fc",
+        "name": "subgraphs"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:12.949Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "YfHNyIIPIOirMhZdwJz/sTcORTs=",
+    "timestampUtcMs": "2026-08-13T14:33:12.949Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b2d1c4b4-7fdc-4adb-ad97-42ab0d32c64d",
+        "name": "graphql"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:12.949Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "eyFmYh3zROq3jSgT7T6NwRb7YVU=",
+    "timestampUtcMs": "2026-08-13T14:33:14.061Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:12.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:14.061Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "hcIzTBGfHe4ySyUL77DohGcHDOY=",
+    "timestampUtcMs": "2026-08-13T16:00:04.326Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T16:00:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:00:04.326Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "YTgqIkNnSSaSaVV0xEZg36vJ+/4=",
+    "timestampUtcMs": "2026-08-13T16:00:04.326Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "aa2871b4-42b0-4abd-bed4-b91e8792183a",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T16:00:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:00:04.326Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "tRi8+b+Tav5EwNEYToIp5zgbkVk=",
+    "timestampUtcMs": "2026-08-13T16:00:04.326Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "6087af83-10d5-4859-8db4-d328cd070867",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T16:00:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:00:04.326Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "HVw6ey06D9eL9dez5eRGkcIKq2g=",
+    "timestampUtcMs": "2026-08-13T16:58:37.891Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:58:37.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:58:37.891Z"
+    }
+  }
+]

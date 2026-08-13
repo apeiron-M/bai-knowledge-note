@@ -1,0 +1,308 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:12.094Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-manifest-three-tier-hierarchy",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "6350a53a-26de-4f51-bb52-def8f797b47f",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:22:12.094Z"
+        },
+        "version": 0,
+        "documentId": "6350a53a-26de-4f51-bb52-def8f797b47f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:12.094Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "54ndMFnrlRD4cmdiVHGeQGLDbOI=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Swarm manifests form a three-tier hierarchy of user, drive, and document feeds keyed by deterministic keccak256 topics.",
+        "updatedAt": "2026-08-13T13:23:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:12.094Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "6350a53a-26de-4f51-bb52-def8f797b47f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:12.094Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "K1RAp5SA69zvGAlvL5LPS14WRI4=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:32.000Z",
+        "description": "User manifest lists drives, drive manifest lists documents and folders, document manifest lists operation batch references. Each is a SOC feed with a deterministic topic."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:30.387Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6350a53a-26de-4f51-bb52-def8f797b47f",
+        "targetId": "2642b21e-fc0d-413e-a421-2affae6d6164",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:30.387Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "OrjqaUZgtMeAbmKTRBGhfTw18fM=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-13T13:23:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:30.480Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6350a53a-26de-4f51-bb52-def8f797b47f",
+        "targetId": "68376495-bfd8-4cac-9fda-65c52e1c4e74",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:30.480Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "WSQoEwmiH0iqMttQtFGeJG3JSEs=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Three-tier structure\n\n### 1. User Manifest\n- Topic: `keccak256(\"ph:v2:user:\" + ownerAddress)`\n- One per user, keyed by Ethereum address.\n- Contents: `{ address, drives: { [driveId]: { name, preferredEditor, documentIds, lastUpdated } }, documents, stamps }`.\n- Acts as the discovery index used on recovery.\n\n### 2. Drive Manifest\n- Topic: `keccak256(\"ph:v2:drive:\" + driveId)`\n- One per drive.\n- Contents: `{ driveId, name, preferredEditor, documents: { [docId]: { documentType, name, parentFolder? } }, folders: { [folderId]: { name, parentFolder } } }`.\n- Lets recovery reconstruct folder topology without replaying ops first.\n\n### 3. Document Manifest\n- Topic: `keccak256(\"ph:v2:doc:\" + docId)`\n- One per document.\n- Contents: `{ documentId, documentType, operationBatches: [{ reference, scope, startIndex, endIndex }], latestRevision: { document, global }, keyframes }`.\n- `reference` is the content hash of an encrypted `OperationWithContext[]` payload stored at `/bytes`.\n\n### Deterministic topics\n\nBecause topics are hashes of stable strings, any client with the owner's address can find any drive without external coordination \u2014 the key to serverless recovery.",
+        "updatedAt": "2026-08-13T13:23:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:30.701Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "6350a53a-26de-4f51-bb52-def8f797b47f",
+        "targetId": "92d74b95-fe40-4f8c-8e1b-1b685fc1460e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:30.701Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "VbgFcBbvv47/gjOtdfOJpeqdmok=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:47:10.583Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "GbIeoi91lP4HpjOFAojwxVdLhmA=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t1",
+        "name": "manifest",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "fuZ+ztyqe3pWNUrKtlLirlU+SaM=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t2",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "eO6hhjq/KXFYEvsk8LMu9qv0XU0=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t3",
+        "name": "data-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "haqtVZcVXprubRrwxSvAKreTRwE=",
+    "timestampUtcMs": "2026-08-13T15:54:58.207Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:54:58.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:58.207Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "y0DSN5fvZish01pKhi8YLnbwFck=",
+    "timestampUtcMs": "2026-08-13T15:54:58.207Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "702dd244-40ca-450f-9e15-c2d9869b68fd",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:54:58.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:58.207Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Jk/sq/6yuTS5F0KPSi91PhpSjCw=",
+    "timestampUtcMs": "2026-08-13T15:54:58.207Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "7fca89e8-161f-443c-909e-881660f62600",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:54:58.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:58.207Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "QDBALMxsuWSJUZB/eco27Dg7xUU=",
+    "timestampUtcMs": "2026-08-13T16:52:37.151Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:52:37.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:52:37.151Z"
+    }
+  }
+]

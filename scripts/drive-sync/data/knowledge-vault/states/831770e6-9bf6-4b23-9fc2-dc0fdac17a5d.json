@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-615cf1e0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "615cf1e0-6173-4155-9660-4c0a70ac9644",
+      "targetTitle": "The DocumentToolbar className prop merges with defaults via twMerge"
+    },
+    {
+      "id": "lnk-2f11ffb2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2f11ffb2-479c-4005-a25b-50edb86262b8",
+      "targetTitle": "Toolbar buttons must be styled via Tailwind arbitrary child selectors since they have no dedicated style props"
+    },
+    {
+      "id": "lnk-2b95f207-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2b95f207-12de-497a-a98f-ca117cad5919",
+      "targetTitle": "DocumentToolbar has three independent layers of styling control"
+    },
+    {
+      "id": "lnk-e210f325-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e210f325-64f3-447e-a289-f198a8e5df00",
+      "targetTitle": "editors-use-component-based-architecture"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "DocumentToolbar exposes toolbarClassName, control lists, component overrides, and per-button props",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ebc8363b-88b3-4f78-8a63-452b6e3965c6",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c8e16b5-5f68-4b4e-b9d2-a0d3336b1cbd",
+      "name": "component-api",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a743106-c6c4-4eaf-9e67-d80c252da432",
+      "name": "design-system",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `DocumentToolbar` component accepts these props:\n\n```typescript\ntype DocumentToolbarProps = {\n  document?: PHDocument;                            // Override selected document (falls back to useSelectedDocumentSafe)\n  toolbarClassName?: string;                        // Classes for the outer container (merged via twMerge)\n  controlsContainerClassName?: string;              // Classes for each controls container (merged via twMerge)\n  enabledControls?: DocumentToolbarControlName[];    // Render only this subset of built-in controls\n  disabledControls?: DocumentToolbarControlName[];   // Remove built-in controls (takes precedence)\n  // Available (8): \"undo\" | \"redo\" | \"download\" | \"name\" | \"update\" | \"history\" | \"switchboard\" | \"close\"\n  // When both lists are omitted, every built-in control is enabled\n  componentOverrides?: ToolbarControlComponents;    // Replace individual built-in controls\n  customControls?: CustomToolbarControls;           // Add controls to the \"first\" | \"second\" | \"third\" slot\n  toolbarContainer?: ContainerComponent;            // Replace the outer container component\n  controlsContainer?: ContainerComponent;           // Replace each controls container component\n  children?: ReactNode;                             // Replace the entire toolbar contents\n};\n```\n\nThe type is really a union of two mutually exclusive modes: pass `children` to replace the toolbar contents completely, or omit it to render the built-in controls with the customization props above.\n\nThere are **eight** built-in controls, not seven. `DocumentToolbarControlName` is derived structurally \u2014 `ArrayElement<typeof documentToolbarControls>`, where `documentToolbarControls` is just the three slot arrays spread in order \u2014 so the union is whatever `defaultControlSlots` contains:\n\n```typescript\nexport const defaultControlSlots = {\n  first: [\"undo\", \"redo\", \"download\"],\n  second: [\"name\"],\n  third: [\"update\", \"history\", \"switchboard\", \"close\"],\n} as const;\n```\n\n`update` defaults into the **`third` slot, as its first item** \u2014 so it renders immediately left of `history`. The slot layout is not configurable: there is no `controlSlots` prop, and moving a built-in control means disabling it and re-adding it via `customControls` with an explicit `position`.\n\nThe `update` control maps to `ToolbarUpgradeButton` (note the vocabulary split: control key `update`, component `Upgrade`). It is the only control that is conditionally invisible: it calls `useDocumentVersionStatus(document)` from `@powerhousedao/reactor-browser` and returns `null` unless the status has resolved *and* `kind === \"upgrade-available\"` *and* `canUpgrade` is true. So it is absent in three ordinary cases \u2014 status still loading, document already current or unsupported, and no registered upgrade path. Default label is \"Update available\". On click it does **not** perform the upgrade; it calls `showPHModal({ type: \"confirmDocumentUpgrade\", documentId })`, and the modal that actually calls `upgradeDocument()` lives in `apps/connect`. Consequence worth knowing: in a Connect-less host that has not registered that modal type, the button renders but clicking it does nothing visible. It also has no loading or disabled state \u2014 the base `ToolbarButton` supports `disabled`, but only undo/redo use it.\n\nTwo styling entry points, not one: `toolbarClassName` for the outer container and `controlsContainerClassName` for each controls container. There is no `className` prop on `DocumentToolbar` itself.\n\nStyling individual buttons mostly does not need a child-selector workaround. The built-in button controls accept `ToolbarButtonProps` (`document`, `children`, `className`, `onClick`), and **seven of the eight defaults are exported** \u2014 `ToolbarUndoButton`, `ToolbarRedoButton`, `ToolbarDownloadButton`, `ToolbarName`, `ToolbarHistoryButton`, `ToolbarSwitchboardButton`, `ToolbarCloseButton` \u2014 so each can be restyled directly and dropped back in through `componentOverrides` or `children`.\n\n`ToolbarUpgradeButton` is the exception, and it is a real asymmetry rather than an oversight you can route around. It is not re-exported from the component's `index.ts`, so it is not reachable through the `@powerhousedao/design-system/connect` barrier either, and the package's build only emits a handful of entrypoints, so there is no deep-import escape hatch. `componentOverrides` is typed `Partial<Record<DocumentToolbarControlName, ToolbarControlComponent>>`, so `componentOverrides={{ update: MyButton }}` typechecks fine \u2014 **you can replace the update control, but you cannot import its default and wrap it.** Any override must reimplement the version-status check from scratch. Override components receive exactly one prop, `{ document?: PHDocument }`, not the full `ToolbarButtonProps`.\n\nThe `enabledControls` / `disabledControls` arrays let you hide/show buttons; restyling or rebehaving them individually goes through `componentOverrides` or a direct button import.\n\nNote that the component's own `README.md` is stale on exactly this point \u2014 it still lists seven controls and a `third` slot of `[\"history\", \"switchboard\", \"close\"]`. The constants file is authoritative.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T14:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "DocumentToolbar has 8 built-in controls including update (ToolbarUpgradeButton). Styling via toolbarClassName and controlsContainerClassName; the update default is not exported.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ad068b6d-2e37-449e-aa53-a8510810073d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:06.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eb2609df-ce67-4d70-852a-c1e6d287e1c7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:06.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

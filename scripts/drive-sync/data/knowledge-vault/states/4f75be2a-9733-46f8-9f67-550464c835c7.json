@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-c0b2af09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0b2af09-1fc3-43d4-bc28-dca56db6f747",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-a79b6048-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a79b6048-eb4d-447a-8c16-74dde36b9304",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-74b417fd-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "74b417fd-3e07-482e-a486-7a01154360c5",
+      "targetTitle": "swarm-pss-trojan-chunks"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "PSS provides 1-to-1 asymmetrically encrypted messaging with 2\u201310 second latency on Swarm.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-94051b6b5506",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-123cc6b09fcf",
+      "name": "swarm-protocols",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-8048389eef64",
+      "name": "encryption",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Argument\n\nPSS (Postal Service over Swarm) is a one-to-one messaging primitive where the sender mines a Trojan chunk whose address falls inside the recipient's neighborhood, then push-syncs it like any other chunk. The chunk payload is asymmetrically encrypted with the recipient's secp256k1 public key; third-party observers see only encrypted noise.\n\n## Key properties\n\n- **Direction:** one-to-one (sender \u2192 receiver)\n- **Encryption:** asymmetric (recipient's `beeNodePublicKey`)\n- **Max message:** ~4,060 bytes per chunk\n- **Latency:** 2\u201310 seconds (dominated by Trojan chunk mining + push-sync)\n- **Offline delivery:** yes \u2014 the Trojan chunk persists until its stamp TTL expires\n- **Receiver node:** **full node only** (light nodes cannot receive)\n- **Stamp type:** mutable or immutable\n\n## API\n\n```typescript\nawait bee.pssSend(batchId, topic, target, data, recipientPubKey)\nconst sub = bee.pssSubscribe(topic, { onMessage, onError, onClose })\n```\n\n## Why it matters\n\nPSS is the chat primitive for Connect's Swarm messaging layer: end-to-end encrypted, no servers, but slow enough (2\u201310s) that UX decisions like typing indicators stop making sense.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:26:28.044Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PSS sends a Trojan chunk mined into the recipient's neighborhood, encrypted to their secp256k1 pubkey; only the recipient can decrypt.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8fb57655-6e1a-4561-aa11-75899afbbcd1",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "37c5b371-baa6-4cd0-ae5e-f21031f9b837",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-8a7d76ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a7d76ea-6239-4fec-ab11-9b37bb13b5c2",
+      "targetTitle": "chat-document-share-parity-shipped"
+    },
+    {
+      "id": "lnk-631dcd5e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "631dcd5e-12fa-4c44-af7e-af96bf8482d8",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-f865f5ea-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "f865f5ea-0ebb-458b-adf6-f981cc8c307a",
+      "targetTitle": "vetra-studio-is-builder-environment"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Vetra remote drives enable collaborative development via ph init --remote-drive and ph vetra; ph checkout is legacy and unregistered",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a3145965-c3b3-47c7-aa7a-3d80b941801d",
+      "name": "vetra",
+      "topicDocumentId": null
+    },
+    {
+      "id": "384a9edf-51ef-40a2-a9b5-55b972ba81da",
+      "name": "remote-drive",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39a995a3-4a53-4a01-8ab2-9afbed53a5cb",
+      "name": "collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4bdd66ac-466d-4421-a209-c88929bfbcbe",
+      "name": "workflow",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Vetra remote drives enable team collaboration: `ph init --remote-drive <url>` (short form `-r`) creates a new project connected to a remote Vetra drive, adding `vetra.driveId` and `vetra.driveUrl` to `powerhouse.config.json` \u2014 `driveId` is just the last path segment of the URL. `ph vetra` then starts Switchboard connected to the remote drive with auto-sync and Connect Studio; you do not have to re-pass the URL, because `ph vetra`'s own `--remote-drive` option has a `defaultValue` that reads `getConfig().vetra?.driveUrl`. The `--watch` / `-w` flag creates a second 'Vetra Preview' drive for testing local changes while the main drive stays stable (`// Add preview drive (only in watch mode)`); the preview drive dynamically loads local document models and editors. Key distinction: without a remote drive, `ph vetra` runs against a local Vetra Switchboard drive only; with a remote drive, it syncs across team members.\n\n**`ph checkout` is legacy and unreachable \u2014 do not teach it.** The command survives only as `clis/ph-cmd/legacy/commands/checkout.ts` and is registered in neither `phCliCommandNames` (`packages/shared/clis/command-names.ts`) nor the `ph` entrypoint's cmd-ts tree (`clis/ph-cmd/src/commands/ph.ts`, whose subcommands are exactly `init`, `use`, `update`, `setup-globals`, `use-local` plus the help commands). It is not even shipped: `tsdown.config.ts` builds only `src/cli.ts`, `package.json` publishes only `dist`, and `tsconfig.json` has `\"exclude\": [..., \"legacy\"]`. That exclusion is load-bearing \u2014 the file would not compile if it were built, because it imports `../utils/package-manager.js`, which does not exist. The generated `clis/ph-cmd/COMMANDS.md` lists only Init, Use, Update, Setup Globals and Use Local, confirming it is out of the live tree. The academy still teaches it in five places across two pages (`04-Reference/07-CLITooling/06-VetraRemoteDrive.md` and `05-Lookup/00-Cookbook.md`), and `COMMANDS-LEGACY.md` documents it too. All of that is stale.\n\nWhat it *did*, for context: derive the drive id from the URL, query the drive's Vetra package document over GraphQL for a `githubUrl`, `git clone` that repo, then run the package manager's `install`. Note that it never wrote any config \u2014 the cloned repo's committed `powerhouse.config.json` already carried the `vetra` block.\n\n**Joining an existing remote-drive project today.** There is no supported single command; this is a genuine gap, not a renamed flag. `ph init --remote-drive` is built to *create* a project bound to a drive, and it explicitly does not want an already-initialized one. The manual equivalent is:\n\n```bash\ngit clone <githubUrl>        # obtained out of band; checkout used to auto-discover this from the drive\ncd <repo> && pnpm install\nph vetra                     # --remote-drive defaults to config vetra.driveUrl\n```\n\nThis works only because the committed `powerhouse.config.json` already contains `vetra.driveUrl`. If it does not, you must hand-edit the file to add `\"vetra\": { \"driveId\": \"...\", \"driveUrl\": \"...\" }` or pass `ph vetra --remote-drive <url>` on every invocation \u2014 there is no `setConfig` helper for this key. The only writers of the `vetra` block are the two codegen scaffold paths (`packages/codegen/src/templates/boilerplate/powerhouse.config.json.ts` and `packages/codegen/src/file-builders/boilerplate/generated-project-files.ts`), i.e. **the block can only be produced at `ph init` time**. Also worth knowing: `vetra.driveId` is written but never read back by either CLI; only `driveUrl` is consumed.\n\n**Live trap.** `clis/ph-cli/src/utils/validate-remote-drive.ts` still prints, on the exact scenario above, \"please use the checkout command instead: ph checkout --remote-drive <remote drive url>\" \u2014 pointing users at the dead command. Worse, it returns `false` and `clis/ph-cli/src/services/init.ts` ignores the return value, so pointing `ph init --remote-drive` at an existing project's drive prints a red \u274c, then a green \"\u2705 Remote drive set up.\", then scaffolds a brand-new project anyway.\n\nVerified in `packages/shared/clis/{command-names.ts,args/{init,vetra}.ts,types.ts,file-system/get-config.ts}`, `clis/ph-cmd/src/{cli.ts,commands/ph.ts}`, `clis/ph-cli/src/{services/{init,vetra}.ts,utils/validate-remote-drive.ts}` and the two codegen writers at 6.2.2-dev.45.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "WORKFLOW",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ph init --remote-drive creates projects connected to shared drives and writes the vetra config block; ph vetra reads it back. ph checkout is dead \u2014 joining an existing project is manual.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d5a3a24f-3ec8-4194-95fe-7c00575283ba",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:26.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5d3bf99d-b777-434c-a539-e1614d5b20e6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:26.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

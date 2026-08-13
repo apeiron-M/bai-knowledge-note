@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-e50150d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-9f2b2302-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f2b2302-090f-408e-8c9b-1dff5918264a",
+      "targetTitle": "operation-error-index-must-match-the-number-of-prior-dispatches"
+    },
+    {
+      "id": "lnk-10d4751c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "10d4751c-4117-4a5f-86b0-576194f6f853",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-ebe264ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ebe264ee-37c2-4ae1-ae5a-20c5dca62e15",
+      "targetTitle": "event-sourcing-guarantees-audit-trails-but-complicates-querying"
+    },
+    {
+      "id": "lnk-ed65d30e-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ed65d30e-61b0-431d-8162-183dc8c530d3",
+      "targetTitle": "editor-hooks-connect-react-to-documents"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The editor dispatch function takes optional onErrors and onSuccess callbacks as its second and third parameters",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "27d1d4e9-766e-4b86-8100-ff902c38bdc1",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbc99cb8-734e-4f38-9f6e-3e896bfd5315",
+      "name": "error-handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5684b23d-45da-45e9-b5e1-b521df3f19d6",
+      "name": "dispatch",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When dispatching actions in an editor, the second argument to `dispatch` is an `onErrors` callback invoked with any errors thrown by reducers processing the actions. This pattern supports displaying error messages to users, logging errors for debugging, and triggering recovery actions. Example: `dispatch(addTodoItem({ text }), (errors) => { alert(errors[0]?.message); });`\n\nThere is also a **third** parameter the note previously omitted. The full signature (`packages/reactor-browser/src/hooks/dispatch.ts:30-34`) is:\n\n```typescript\ndispatch(\n  actionOrActions: TAction[] | TAction | undefined,\n  onErrors?: (errors: Error[]) => void,\n  onSuccess?: (result: PHDocument) => void,\n)\n```\n\n`onSuccess` receives the updated `PHDocument` once the operation lands. Both callbacks are dispatched by `dispatchActions`, so neither fires when the call bails out before producing a result.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "dispatch(actionOrActions, onErrors?, onSuccess?) \u2014 onErrors receives reducer errors, onSuccess receives the updated PHDocument once the operation lands.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6b0f45b4-e144-4c31-a694-f5a5ca3ef697",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f0ce95e7-a75c-43f4-a3c3-0b46bc592d24",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-0ba40e3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0ba40e3e-168b-49b8-a39d-e24b8265a412",
+      "targetTitle": "document-ids-are-auto-generated-by-createdocument-never-set-manually"
+    },
+    {
+      "id": "lnk-ce0ee124-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+      "targetTitle": "document-model-versioning-system"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "createEmpty resolves to the highest registered model version unless documentModelVersion pins one",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "86035363-605e-4c0c-bb6f-08d9e87af47d",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0017ed1-69c9-4df6-95b7-cccffbfafa8e",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f67d953f-1cf3-4298-8eb8-dd333d7ee9a1",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "New documents are created at the latest model version. The mechanism, in `packages/reactor/src/client/reactor-client.ts`, is worth knowing precisely because it is a *resolution* step, not a stored default:\n\n```ts\n// latest version \u2014 resolved by reduce over registered modules\nconst doc = await client.createEmpty(\"my-org/todo\");\n\n// pinned version\nconst v1Doc = await client.createEmpty(\"my-org/todo\", { documentModelVersion: 1 });\n```\n\nWith no option, `createEmpty` filters registered modules by document type and reduces to the one with the highest `normalizeDocumentModelVersion(m.version)`. \"Latest\" therefore means *highest currently registered in this Reactor* \u2014 not highest that exists. Deploy a host whose package set lags and new documents are created at the older version, silently and without error.\n\nWith `documentModelVersion` set, resolution is an exact match and a miss is loud: `Document model not found for type: <type> with version: <n>`. Passing `0` normalizes to `1`, consistent with how legacy unstamped documents are treated.\n\nReads are version-agnostic. `client.find({ type: \"my-org/todo\" })` returns documents of every version; the Reactor resolves each document to its own module by the version stamped in its header. That is what lets v1 and v2 documents coexist in one drive with no query-side branching \u2014 and why you should never assume a document you just fetched is at the latest version.\n\nWhen to pin: reproducing a bug against a specific reducer, seeding fixtures for an upgrade test, or writing a migration that must produce pre-upgrade documents on purpose.\n\n_Source: apps/academy/docs/academy/03-Build/02-DocumentModelCreation/08-DocumentModelVersioning.md, confirmed against packages/reactor/src/client/reactor-client.ts and packages/shared/document-model/upgrades.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "client.createEmpty(\"my-org/todo\") picks the highest registered version by reduce; pass documentModelVersion to pin, and it throws if that version is not registered.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d2d73480-f282-4aca-8ef4-2e1142766507",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2738553c-bf5f-4970-9e76-9ef008d0c447",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

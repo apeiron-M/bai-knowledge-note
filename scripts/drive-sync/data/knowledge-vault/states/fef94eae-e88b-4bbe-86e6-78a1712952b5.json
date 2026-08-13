@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-57f92159-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "57f92159-9f67-4a9a-b5df-cd2d9e79cba6",
+      "targetTitle": "reactor-operation-based-model-handles-concurrent-edits-nativ"
+    },
+    {
+      "id": "lnk-9b97a142-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b97a142-2322-40a7-a680-c2f822b0abec",
+      "targetTitle": "operations-not-state-log"
+    },
+    {
+      "id": "lnk-e5fd24ec-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e5fd24ec-8f92-4f9d-b3c6-0b675a1f367d",
+      "targetTitle": "drives-are-documents-in-reactors"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Concurrent offline drive edits merge by interlacing the drive's operation logs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4a08c713-58c1-4d7f-ab00-afcfbc4b6742",
+      "name": "drives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ad9acfb4-cce6-4dba-9b42-0f3bc519b219",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3afe77a4-2cfd-4e44-9ff0-d81465d78b09",
+      "name": "collaboration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Because a drive is itself a document with a full operation log, drive-level concurrency needs no special machinery. Two collaborators can both add files to the same drive while offline. On reconnect, Powerhouse merges their drive operation logs exactly as it would merge edits to any other document: no overwrites, no conflicts, no last-write-wins step \u2014 just two interlaced sequences of operations.\n\nThis is the payoff of making the folder a document rather than a table row. In a snapshot-based system, two offline clients each holding a copy of the folder listing would produce two divergent listings, and reconciling them means writing a merge policy: whose rename wins, does a delete beat a concurrent move, what happens to a file added to a folder someone else removed. Under an operation log, those questions dissolve into ordering. `ADD_FILE(a)` from one peer and `ADD_FILE(b)` from another are independent facts; both land, and replaying the merged log yields a drive containing both files.\n\nThe practical consequence for builders: you do not write conflict-resolution code for drive structure, and you should not design around \"the drive might be stale.\" You design around the log. The same guarantee that lets two people edit a todo list offline lets two people reorganize a drive offline.\n\nThis is also why drive structure survives partition gracefully while a cached *derived* listing does not \u2014 the listing is a projection, the log is the source of truth.\n\n_Source: apps/academy/docs/academy/02-Learn/03-document-models/01-documents-and-drives.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Two collaborators adding files offline reconnect and merge drive logs like any other document: no overwrites, no conflicts, just two interlaced operation sequences.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dd4ea29e-a0dc-4a50-a3a7-d02653e4a061",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T16:00:06.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8c8d671b-9ed0-4482-919f-4c35e6ae0547",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T16:00:06.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

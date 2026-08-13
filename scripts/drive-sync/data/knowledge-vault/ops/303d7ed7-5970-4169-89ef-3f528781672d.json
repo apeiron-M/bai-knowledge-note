@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:46.964Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "editor-dispatch-onsuccess-third-parameter",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "303d7ed7-5970-4169-89ef-3f528781672d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:37:46.964Z"
+        },
+        "version": 0,
+        "documentId": "303d7ed7-5970-4169-89ef-3f528781672d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:37:46.964Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "C9gsK+nSAGktoejUyfaJc+fgjak=",
+    "timestampUtcMs": "2026-08-13T14:37:47.650Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The editor dispatch function takes an optional onSuccess callback as its third parameter",
+        "updatedAt": "2026-08-13T14:37:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:47.650Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:46.964Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "303d7ed7-5970-4169-89ef-3f528781672d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:37:46.964Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "afUyQXdepxx43slu5ON/R+bbAdo=",
+    "timestampUtcMs": "2026-08-13T14:37:47.650Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:37:46.000Z",
+        "description": "dispatch(actions, onErrors?, onSuccess?) \u2014 onSuccess receives the updated PHDocument once the operation lands. The React Hooks reference page still documents only the two-argument form."
+      },
+      "timestampUtcMs": "2026-08-13T14:37:47.650Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:48.813Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "303d7ed7-5970-4169-89ef-3f528781672d",
+        "targetId": "8a102b2d-09d8-4f96-b31d-018c0950ce75",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:48.813Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "dmeXO46D09x7Pp5Zb+kZJZHB42U=",
+    "timestampUtcMs": "2026-08-13T14:37:47.650Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:37:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:47.650Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:48.836Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "303d7ed7-5970-4169-89ef-3f528781672d",
+        "targetId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:48.836Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "04r8qeCrKqSzPXw59ySZ+AHcOGE=",
+    "timestampUtcMs": "2026-08-13T14:37:47.650Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`dispatch` has three parameters, not two:\n\n```ts\ndispatch(\n  actionOrActions: TAction | TAction[] | undefined,\n  onErrors?: (errors: Error[]) => void,\n  onSuccess?: (result: PHDocument) => void,\n): void\n```\n\n`onErrors` surfaces per-action reducer failures; `onSuccess` hands you the updated document the moment the operation lands, which is what you want when the next UI step depends on server-assigned data (a new revision number, a header field) rather than on the action input you already have.\n\nThe implementation is `dispatchActions` in `packages/reactor-browser/src/actions/dispatch.ts`, and the ordering there matters. It resolves the document, signs the actions, queues them, and only then runs the callbacks:\n\n```ts\nconst result = await queueActions(document, signedActionsWithContext);\n\nif (onErrors && result) {\n  const errors = getActionErrors(result, signedActionsWithContext);\n  if (errors.length) onErrors(errors);\n}\nif (onSuccess && result) onSuccess(result);\n```\n\nBoth callbacks are guarded on `result`, so **neither fires** when the dispatch bailed out early \u2014 an unresolvable document id or a failure to build signed actions logs an error and returns `undefined` without notifying either callback. `onSuccess` is also not exclusive of `onErrors`: `result` is the document after the operations were appended, and a reducer that threw still produces an operation carrying `.error`. So a dispatch whose actions all failed validation can invoke `onErrors` **and then** `onSuccess` with the (state-unchanged) document. Treat `onSuccess` as \"the write round-tripped\", not as \"the write was accepted\".\n\nDocumentation caveat: `04-Reference/05-EditorsUI/01-ReactHooks.md` still prints the two-argument signature everywhere, including in the \"Dispatch Function\" key-concepts section and in every hook's return type. The three-argument form is documented only in the learn-path page and is confirmed by source.\n\n_Source: packages/reactor-browser/src/actions/dispatch.ts and src/hooks/dispatch.ts, plus apps/academy/docs/academy/02-Learn/04-editors/03-editor-hooks-and-state.mdx (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:37:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:47.650Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "zv2ED4uOFhovnikGsy6X8Qc2OhA=",
+    "timestampUtcMs": "2026-08-13T14:37:47.650Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9a0a2665-de98-4104-95f9-cbb9c6764779",
+        "name": "editors"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:47.650Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "BSQqCD48QPxuPfeeUBcRXRopZB0=",
+    "timestampUtcMs": "2026-08-13T14:37:47.650Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aa25e460-e054-4129-a2c1-683f60f86312",
+        "name": "dispatch"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:47.650Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Hvtyg6i3a3jHkYkom4iM04+Bdlw=",
+    "timestampUtcMs": "2026-08-13T14:37:47.650Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9fc67d5e-f64b-473f-b2f8-5667b254604e",
+        "name": "react-hooks"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:47.650Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "w7BnPrQ3itfkiUF1RU5A38Rk5X4=",
+    "timestampUtcMs": "2026-08-13T14:37:48.769Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:37:46.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:48.769Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "JwaiQZbMSkgmXFY30zXLSHFlhts=",
+    "timestampUtcMs": "2026-08-13T15:53:03.157Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:53:03.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:03.157Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "aM0ccGz2PUhMqjdjq2d/b1adATM=",
+    "timestampUtcMs": "2026-08-13T15:53:03.157Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "62f73f46-bfaa-4162-bbbe-58dcca532c11",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:53:03.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:03.157Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "fhORtShHORI7MySdNvwmHNDWP8c=",
+    "timestampUtcMs": "2026-08-13T15:53:03.157Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a95cc8b8-87d9-4cab-b96c-68485f5c90d1",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:53:03.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:03.157Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "hgNo9LvP5GDKYMcKGsQdVwKkDrI=",
+    "timestampUtcMs": "2026-08-13T16:50:11.766Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:50:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:50:11.766Z"
+    }
+  }
+]

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-fda19118-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fda19118-9f4d-4b96-8d15-5778cf9451d9",
+      "targetTitle": "env-vars-override-config-json"
+    },
+    {
+      "id": "lnk-f158a1f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f158a1f4-eab3-43f6-ba19-00c0608e62e7",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ph connect config dual-writes a connect.* change into both the source config and the served dist config",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b9eb5db6-b57f-4e0e-8d2c-efa0f2438d55",
+      "name": "cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "63d07d9b-7f77-4a6f-97d7-b8ec0b24612c",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0f24b5f-f46f-4e4d-89e7-5452f4d9c4c4",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Six modes, one per invocation\n\n`ph connect config` reads and writes every `connect.*` field:\n\n```bash\nph connect config                                   # list the effective merged block\nph connect config connect.renown.url                # get (positional)\nph connect config --get connect.renown.url          # get (flag form, equivalent)\nph connect config connect.renown.chainId 137        # set (positional)\nph connect config --renown-chain-id 137             # set (per-field flag)\nph connect config --json '{\"drives\":{\"allowAddDrive\":false}}'   # bulk set\n```\n\nPositional `<key>/<value>`, `--get`, `--json`, and the field flags are **mutually exclusive** \u2014 combining them errors out. A positional `<value>` is JSON-parsed first (`137` \u2192 number, `false` \u2192 boolean) then Ajv-validated against the runtime schema at that path; bad types fail loudly *before* any write. Arrays and objects must go through `--json`.\n\n## The dual write\n\nA set or bulk-set patches two files:\n\n1. The **source** `powerhouse.config.json` at the project root, deep-merged into `connect.*` \u2014 so the next `ph connect build` inherits it.\n2. The **dist** `powerhouse.config.json` (default `.ph/connect-build/dist/`, overridable with `--dist-dir` or `PH_CONNECT_OUTDIR`), deep-merged the same way \u2014 so the currently-served SPA picks it up on its next refresh, no rebuild needed.\n\nIf the dist file does not exist the second write is skipped **silently** \u2014 that is the intended \"configure before the first build\" workflow, not an error.\n\nTwo gotchas. `--packages-registry` does not land under `connect.*`: it writes the top-level `packageRegistryUrl`, a project-wide field also read by `ph install`, `ph publish` and Switchboard. And `connect.pwa` is build-time only \u2014 `ph connect config` will happily write it but cannot rebuild the service worker, so PWA changes need `ph connect build`.\n\n`ph connect build` exposes the identical flag surface but has no read mode; passing `<key>` without `<value>` there errors out. Note a doc lag: the academy closes every config recipe with `ph service restart`, yet `service` is absent from the CLI's dispatch table (`phCliCommandNames`).\n\n_Source: `clis/ph-cli/src/services/connect-config.ts` and `apps/academy/docs/academy/03-Build/05-Launch/04-ConfigureEnvironment.md`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "One invocation patches powerhouse.config.json and the built dist copy, so the running SPA picks the change up on refresh without a rebuild.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "36c64b7b-d93a-4f9f-99ae-f582df3ce1f1",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b04769d3-dc4b-4dd2-aa43-57ce5d0bd5d0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

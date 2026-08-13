@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-2736a86f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2736a86f-5937-45c2-909a-b4187de27f58",
+      "targetTitle": "dispersed-replicas-via-redundancy-level"
+    },
+    {
+      "id": "lnk-df9a1dac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df9a1dac-a0dc-4c4b-a372-fc1696671e4b",
+      "targetTitle": "ddup-copy-distinct-recovery-role"
+    },
+    {
+      "id": "lnk-44f72593-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44f72593-fa3f-4dcf-b983-f72378806e47",
+      "targetTitle": "redundancy-stamp-cost-medium-25pct"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Redundancy fixes read tail latency, not write propagation or feed-head discoverability",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b0108a7f-1254-4a65-b025-9e89ba3492cd",
+      "name": "redundancy-level",
+      "topicDocumentId": null
+    },
+    {
+      "id": "212e19b1-f017-4a19-86f7-b47f019a83b4",
+      "name": "push-sync-latency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "574de47a-d827-418b-8996-913f5e7bc4a1",
+      "name": "feed-head",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c7fda59-fa16-4656-92df-1c1ce9c18a13",
+      "name": "limitations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## What `RedundancyLevel` does NOT solve\n\nRedundancy is a READ-side feature: erasure-coded parity lets a downloader RACE-fetch from multiple neighbourhood peers when the primary chunk is missing or slow. It assumes the chunk has already been pushed out.\n\n**It does not fix:**\n\n1. **Bee push-sync latency from sender to target neighborhood.** This is the dominant component of the ~10s GSOC-ping floor on collab ops. Redundancy runs after push-sync completes \u2014 it cannot shorten it.\n\n2. **Feed-head discoverability.** The \"receiver serves stale profile\" problem on 2.7.x is about *feed-index lookup* returning an old update, not about the payload chunk being unavailable. `RedundancyLevel` applies to the chunk pointed to by a feed update, not to the index walk that locates the latest update.\n\nSo it is the right tool for bounding read tail latency on already-propagated data, but not for the feed-staleness or push-sync problems we also see.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "observation",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:51.111Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "RedundancyLevel helps READ tail latency when chunks exist. It does not reduce Bee push-sync latency from sender to target neighborhood, nor the feed-index lookup for stale profile reads.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bd58d423-9059-4a3a-aa2c-23b079e86577",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "df0cc323-eb3c-4ced-b896-a14713eef044",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

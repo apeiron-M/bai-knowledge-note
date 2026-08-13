@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f11ffb2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2f11ffb2-479c-4005-a25b-50edb86262b8",
+      "targetTitle": "Toolbar buttons must be styled via Tailwind arbitrary child selectors since they have no dedicated style props"
+    },
+    {
+      "id": "lnk-e210f325-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e210f325-64f3-447e-a289-f198a8e5df00",
+      "targetTitle": "editors-use-component-based-architecture"
+    },
+    {
+      "id": "lnk-1d8c7fcf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1d8c7fcf-ca5f-4c25-8dae-9c78b4b86763",
+      "targetTitle": "style-editors-with-tailwind-classes-or-scoped-style-tags"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The DocumentToolbar toolbarClassName prop merges with defaults via twMerge requiring ! prefix for overrides",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1d002827-b550-42aa-95ce-f29b1d8fb05b",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4270ef18-3803-4f6b-bc3d-4bdf40e20ea9",
+      "name": "tailwind-css",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `DocumentToolbar` accepts a `toolbarClassName` prop for the outer container and a `controlsContainerClassName` prop for each controls container. There is no `className` prop. Both are merged with the component's default Tailwind classes using `twMerge`. The outer container defaults are:\n\n```\nflex h-12 w-full items-center justify-between rounded-xl border border-border bg-background px-4\n```\n\nTo override these defaults, you must use the `!` (important) prefix on your custom classes:\n\n```tsx\n<DocumentToolbar toolbarClassName=\"!bg-[#181825] !border-white/10\" />\n```\n\nWithout the `!` prefix, `twMerge` may resolve conflicts in favor of the defaults depending on specificity rules. The `!` prefix forces your values to take precedence.\n\nThis is a standard pattern when working with component libraries that use `twMerge` \u2014 the library controls base styling and consumers override specific properties via important modifiers. The same merge behavior applies to `controlsContainerClassName` and to the `className` prop on the individual toolbar buttons.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T14:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When customizing the toolbar container, classes pass through twMerge which resolves conflicts. The ! (important) prefix is needed to guarantee custom values win over the built-in defaults.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e79e32f7-8cf6-472b-a8d4-4dc2f5d3239c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cf0c4421-fadd-492f-9f79-71a6eede29b8",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

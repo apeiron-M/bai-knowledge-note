@@ -1,0 +1,308 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:24.549Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "gql-factory-deferred-registration-post-build",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "dea7cd59-dbf3-4415-8e30-919278a7367c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:24.549Z"
+        },
+        "version": 0,
+        "documentId": "dea7cd59-dbf3-4415-8e30-919278a7367c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:24.549Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "v5tu9yv0zhppIzbPD6EVhnTOkLY=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The GQL channel factory must be registered after buildModule() because it needs the document-model queue.",
+        "updatedAt": "2026-08-13T13:23:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:24.549Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "dea7cd59-dbf3-4415-8e30-919278a7367c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:24.549Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "O32XRdHU2DQyYPdNQ5XRHoLo0kc=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:07.000Z",
+        "description": "GqlRequestChannelFactory depends on the reactor queue for poll-timer backpressure, and that queue only exists after buildModule() runs."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:37.136Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "dea7cd59-dbf3-4415-8e30-919278a7367c",
+        "targetId": "6b41319d-507a-4af0-a563-7fd882ab3581",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:37.136Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "esVn1fqvPYc8A5J0s602WOJHt7g=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "observation",
+        "updatedAt": "2026-08-13T13:23:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:37.160Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "dea7cd59-dbf3-4415-8e30-919278a7367c",
+        "targetId": "22720e65-5178-41e9-b071-9e29543eea0e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:37.160Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "i3hhY1Gj7i1CHc3+O3RJHFE7t9U=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nThe Swarm factory is registered at build time, but the GQL factory registration is deferred until after `buildModule()` completes, because it requires the reactor queue (which hosts the document-model resolver).\n\n## Evidence\nFrom the source: \"GQL is registered after build because `GqlRequestChannelFactory` needs the queue (for poll timer backpressure), which requires the document model resolver created inside `buildModule()`.\"\n\nThe wiring code shows this explicitly:\n\n```typescript\nconst module = await builder.buildModule();\nconst queue = module.reactorModule?.queue;\nif (queue) registerGqlFactory(queue);\n```\n\n## Why this ordering\n- Swarm's factory has no dependency on the queue, so it can be registered up front.\n- GQL's poll timer uses the queue to apply backpressure when the reactor is busy.\n- Attempting to register GQL before the queue exists would fail.\n\n## Source\nSwarm Channel Architecture, \"Wiring Into createBrowserReactor\" (createSwarmSyncBuilder note).",
+        "updatedAt": "2026-08-13T13:23:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:37.249Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "dea7cd59-dbf3-4415-8e30-919278a7367c",
+        "targetId": "c5c2a2ea-e76d-4a1f-b98c-a18b41f50423",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:37.249Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "8/KbkSTaJjfNOQJmj2vM//UMY1k=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "OoLfda4tUXa5ypyYcMdXHIXduq4=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-85c093e2-1",
+        "name": "gql-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "EG5u48JtRCdDTcHf4xYd7BedwTU=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-85c093e2-2",
+        "name": "reactor-builder",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "Ira+nBWlqBBkAgnLjDYxTz8dmJA=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-85c093e2-3",
+        "name": "initialization-order",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "u7pZLJdiPLCnop/MV2A62LU3e88=",
+    "timestampUtcMs": "2026-08-13T15:59:07.833Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:59:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:07.833Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "XV5D1N+adsKYxaIJjPdMruJuzHE=",
+    "timestampUtcMs": "2026-08-13T15:59:07.833Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e08d9f62-a701-4ed0-bb03-cb79e0f9480a",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:59:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:07.833Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "WF/pYU1CdhjtGhZlruIGFnRtamY=",
+    "timestampUtcMs": "2026-08-13T15:59:07.833Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "900e1f3b-2545-48a9-bd61-f02545e60cb6",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:59:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:07.833Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "R6QqOkGPlDNAPBaiJxvGeUjIa6c=",
+    "timestampUtcMs": "2026-08-13T16:57:36.436Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:57:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:57:36.436Z"
+    }
+  }
+]

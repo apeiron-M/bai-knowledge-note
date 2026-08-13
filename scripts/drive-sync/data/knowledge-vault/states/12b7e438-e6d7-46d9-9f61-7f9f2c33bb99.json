@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-55cc00de-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+      "targetTitle": "ddup-collab-envelope-overhead"
+    },
+    {
+      "id": "lnk-631dcd5e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "631dcd5e-12fa-4c44-af7e-af96bf8482d8",
+      "targetTitle": "collaboration-index-feed-structure"
+    },
+    {
+      "id": "lnk-c133a556-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c133a556-7137-4978-8e4b-d18e803fc0b9",
+      "targetTitle": "chat-polish-backlog-items"
+    },
+    {
+      "id": "lnk-675bdd06-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "675bdd06-6192-4223-9581-fa43200d307e",
+      "targetTitle": "collab-three-milestone-build-order"
+    },
+    {
+      "id": "lnk-a039d9b3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a039d9b3-9608-4584-acfd-f231a2296186",
+      "targetTitle": "gsoc-triggered-pull-debounced-with-polling-fallback"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm SOC feeds allow only one writer; collaboration uses N single-writer feeds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d785646e-1be0-46e1-b576-6d0f7b70fa44",
+      "name": "swarm-socs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6516216d-dfe3-4f0f-91b4-43a41a358fc3",
+      "name": "single-writer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b5873333-7588-4236-9967-c8367afa69bc",
+      "name": "feed-ownership",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Single Writer Per Feed\n\nSwarm feeds are backed by Single Owner Chunks (SOCs). A SOC update requires a signature from the owner's private key, so each feed has exactly one writer. This is a protocol-level constraint, not a Powerhouse choice.\n\n## Implications\n\n1. There is no \"shared writable feed\" \u2014 you cannot have Alice and Bob both pushing to one topic\n2. Collaboration must be modeled as N writer feeds, one per participant\n3. The collaboration index feed (itself single-writer by the creator) tells everyone where to subscribe\n4. Each reader fans out across N-1 peer feeds to observe all edits\n\n## Design consequence\n\nThe single-writer rule is why the op-feed layout uses `ph:v2:ops:<address>:<docId>` \u2014 address is part of the topic so each participant owns a distinct feed space for the same document. Without this, two participants would collide on the same topic and only one could actually write.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Swarm SOC feeds require the owner's private key to write; no feed is shared-writable. Collaboration composes N single-writer feeds rather than one shared feed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "629f03ff-a7bb-45a3-be9d-4737854b03ad",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cb4406d2-3c2e-4d96-bf03-e7df3c3c9f5e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

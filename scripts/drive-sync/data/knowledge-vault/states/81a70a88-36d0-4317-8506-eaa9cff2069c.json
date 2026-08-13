@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e50150d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-d1833ecb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+      "targetTitle": "never-use-crypto-randomuuid-or-math-random-in-reducers"
+    },
+    {
+      "id": "lnk-ebe264ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ebe264ee-37c2-4ae1-ae5a-20c5dca62e15",
+      "targetTitle": "event-sourcing-guarantees-audit-trails-but-complicates-querying"
+    },
+    {
+      "id": "lnk-68376495-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68376495-bfd8-4cac-9fda-65c52e1c4e74",
+      "targetTitle": "adapter-key-source-files"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "never use fallback values with non-deterministic functions in reducers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "87c89cbe-ee91-404a-bea7-8d53d7fd3df7",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0cb40c3d-40d2-4fb2-9ab9-27f91720de10",
+      "name": "determinism",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30c706bc-b19e-4132-a21f-40702733ae53",
+      "name": "reducer purity",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f3955e2c-440b-4c4d-adf3-87d4ed80e67a",
+      "name": "anti-patterns",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# never use fallback values with non-deterministic functions in reducers\n\nEven as a fallback, non-deterministic functions are forbidden:\n\n```typescript\n// \u274c FORBIDDEN \u2014 fallback is non-deterministic\nid: action.input.id || crypto.randomUUID();\ntimestamp: action.input.timestamp || new Date();\n\n// \u2705 REQUIRED \u2014 values must always come from input\nid: action.input.id;\ntimestamp: action.input.timestamp;\n```\n\nThe intent behind the fallback (\"provide a default if input is missing\") is reasonable, but the implementation violates [[reducer purity requires all dynamic values from action input]]. If the input field is required in the schema, the fallback is unreachable anyway. If it is optional, you need a deterministic default (like `null`), not a generated value.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:59:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:54.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Patterns like id = action.input.id || crypto.randomUUID() are forbidden because the fallback still introduces non-determinism",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7e969945-9d3e-4a9c-aa0a-8eb0cf515ebb",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5ed1a8c4-cb5e-43e9-9aaa-52f26324fe5e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:33.185Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "never-use-crypto-randomuuid-or-math-random-in-reducers",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:33.185Z"
+        },
+        "version": 0,
+        "documentId": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:33.185Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "0RZ9fF8i8Mo0TxLIjGqG2WGKXcY=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "never use crypto randomUUID or Math random in reducers",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:33.185Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:33.185Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Y9nOYjhEbBKY076XScqy8hfdArw=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:11.000Z",
+        "description": "Non-deterministic calls produce different operation hashes across replays, breaking event-sourcing guarantees"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:47.232Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+        "targetId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:47.232Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "a68U5/ANADQ9NFrjUttnfta78HQ=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:47.486Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+        "targetId": "81a70a88-36d0-4317-8506-eaa9cff2069c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:47.486Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ITcDkVcEBc5jO67HqxHcBnky3j0=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# never use crypto randomUUID or Math random in reducers\n\nForbidden in reducer code:\n- `crypto.randomUUID()`\n- `Math.random()`\n- `Date.now()`\n- `new Date()`\n- Any external API calls or side effects\n- Any async functions\n\nThese are all non-deterministic. Since [[reducer purity requires all dynamic values from action input]], every value that could vary between executions must come from the operation's input schema.\n\nThe event-sourcing model replays operations to reconstruct state. If a reducer generates different values on replay, the resulting state diverges from the original, and document hashes no longer match.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:47.583Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+        "targetId": "8a102b2d-09d8-4f96-b31d-018c0950ce75",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:47.583Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "+AKRHExNFJjmiK97AWl+py+9vmY=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:59:20.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:47.651Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+        "targetId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:47.651Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "O2LhI9tdEF5sTmYFhE3HaADsoCA=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "88933a6b-dceb-4e55-bd8e-7b87aed2c74c",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "JKOTpkD52F9NedQu4CAr4Gf6UGE=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "978760f5-50e0-486c-b7dc-e76d11babd92",
+        "name": "determinism",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "5GPXQA965ZhUs/xjML+EUXOAyH4=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4eaf1af6-10aa-46d7-9911-a2ef8d4627e0",
+        "name": "event sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "BlycmPmvYuWoQTFiF3m7zW9zFL4=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f8fc0c67-7f24-40df-88ce-448811a6b63f",
+        "name": "reducer purity",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "NPb8zTGhI+p3lV5UIJe3cjiEguA=",
+    "timestampUtcMs": "2026-08-13T15:58:47.406Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:58:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:47.406Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "F6Oo//5pDXaM7qdThqm/vdY3+vk=",
+    "timestampUtcMs": "2026-08-13T15:58:47.406Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "00d9bc45-aa98-45e8-9cfc-87c16b0168e1",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:58:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:47.406Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "51arvpc3zLz/lLk+d0apYrjiEUo=",
+    "timestampUtcMs": "2026-08-13T15:58:47.406Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f485e80c-b77f-4a18-acdb-c29330523088",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:58:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:47.406Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "QSBWkjuWt8i4DWAoJ8OZlEFj0jc=",
+    "timestampUtcMs": "2026-08-13T16:57:11.391Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:57:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:57:11.391Z"
+    }
+  }
+]

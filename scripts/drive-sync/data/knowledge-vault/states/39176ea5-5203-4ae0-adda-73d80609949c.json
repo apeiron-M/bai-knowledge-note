@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-1c842c07-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-868cf8ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+      "targetTitle": "pglite-sync-tables-persist-remote-state"
+    },
+    {
+      "id": "lnk-ea2bc239-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ea2bc239-c265-44fb-b8a6-7c0f9fad1bf2",
+      "targetTitle": "sync-state-pglite-tables"
+    },
+    {
+      "id": "lnk-3b5e33c2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3b5e33c2-a8db-4c96-957b-edf84d9bcd9d",
+      "targetTitle": "reactor-subscriptions-document-changes"
+    },
+    {
+      "id": "lnk-5694a8da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5694a8da-b036-4b8a-a16d-bca12de03af9",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Connect core data flow routes UI actions through ReactorClient, PGlite, SyncManager, and out to both GQL and Swarm channels.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "architecture-diagram",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "data-flow",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "sync-pipeline",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Pipeline\n\nThe end-to-end flow inside the browser:\n\n1. **Connect UI (React)** \u2014 user actions (create drive, add doc, edit).\n2. **ReactorClient** \u2014 turns actions into Jobs, enqueues them.\n3. **Job Executor** \u2014 applies operations (`CREATE_DOCUMENT`, `UPGRADE_DOCUMENT`, `ADD_FILE`, `ADD_FOLDER`, `MOVE_NODE`, domain actions).\n4. **PGlite (WASM Postgres, IndexedDB-backed)** \u2014 stores `reactor.Document`, `reactor.Operation`, `reactor.DocumentSnapshot`, `reactor.DocumentRelationship`, plus `operation_index_operations`, `sync_remotes`, `sync_cursors`, `sync_dead_letters`.\n5. **SyncManager** \u2014 detects new ordinals, groups ops by `(docId, scope, branch)`, pushes to channel outboxes, processes inboxes via `reactor.load()`.\n6. **Channels** \u2014 `GqlRequestChannel` for Switchboard, `SwarmChannel` for Swarm. SyncManager treats both identically.\n\nBeyond the browser: the SwarmChannel talks to the user's **Bee node** (`/bytes`, `/feeds`, `/stamps`, `/health`), which gossips chunks into the **Swarm network** (content-addressed, encrypted, replicated across neighborhoods).\n\nKey architectural insight: PGlite's `operation_index_operations` is the single source for both channels' outbound sync, with independent cursors per remote.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect dispatches React actions to ReactorClient, which queues jobs, writes to PGlite (IndexedDB), and triggers SyncManager to fan out via GQL or Swarm channels.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "235068fb-5b5e-495b-bf42-14e384542dcf",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9cc0a836-bfbf-42a1-94a8-158c03a9f8ca",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

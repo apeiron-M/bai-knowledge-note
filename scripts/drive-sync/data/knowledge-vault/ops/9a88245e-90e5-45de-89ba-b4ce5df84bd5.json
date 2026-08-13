@@ -1,0 +1,322 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:33.847Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "never-use-tothrow-when-testing-reducer-errors",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:33.847Z"
+        },
+        "version": 0,
+        "documentId": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:33.847Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "a1lSamc23s2S/glmFYO3+0qxS2Q=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "never use toThrow when testing reducer errors",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:33.847Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:33.847Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "2mnQMbUKAY+xtiVxmHI8cJcGbjo=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:12.000Z",
+        "description": "Reducer errors are captured on the operation object rather than propagated; expect(() => ...).toThrow() will never catch them"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:47.836Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+        "targetId": "2489ac27-cc0c-47ef-bede-20deee16186e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:47.836Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "S3loHlVixq5kZW/uL9OzxFxepzk=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:48.067Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+        "targetId": "9f2b2302-090f-408e-8c9b-1dff5918264a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:48.067Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "VKBSUEZDOXVRK5sZohuc8BkoIBk=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# never use toThrow when testing reducer errors\n\nThe most common testing mistake with Powerhouse reducers:\n\n```typescript\n// \u274c WRONG \u2014 this will always pass (no error is thrown to the caller)\nexpect(() => reducer(document, setName({ name: \"invalid\" }))).toThrow();\n\n// \u2705 CORRECT \u2014 check the operation's error property\nconst updated = reducer(document, setName({ name: \"invalid\" }));\nexpect(updated.operations.global[0].error).toBe(\"Name is not allowed\");\nexpect(updated.state.global.name).toBe(initialState); // state unchanged\n```\n\nSince [[operation errors are recorded on operations not thrown to callers]], the error is captured silently on the operation object. The reducer call itself never throws \u2014 it always returns a document. The error lives in `operations.global[N].error`.\n\nSince [[operation error index must match the number of prior dispatches]], make sure you check the right index.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:48.090Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+        "targetId": "6a1bb35b-5516-4527-b13d-03d7d3792488",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:48.090Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "sd36r8C5kB6FdyoGDeCv7QFAq/g=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:59:47.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:48.113Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+        "targetId": "6018c73a-1c34-4bf5-8502-d1fcb80bb653",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:48.113Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "HxalKP4sxvNik66JJ/ct+q0vDNA=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "278d2f3e-81d9-4ba6-98fd-fd13421d5e9c",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "MGoRzAbhxCuPWOikm9S3/IHiDMs=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "839b1ffd-7009-4aae-8036-220f6bc95b5b",
+        "name": "testing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "KsTX/2eooqJfvhfVWxXGG5I++jQ=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b6f471ba-c331-4e70-b38e-fe0f68bbfe97",
+        "name": "error handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "LHQHMJcUOPfx409RgFtO1LJs2Nw=",
+    "timestampUtcMs": "2026-08-13T15:57:00.645Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:00.645Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "cNFe5MuHjngJRAS/tlR3jzR3U/U=",
+    "timestampUtcMs": "2026-08-13T15:57:00.645Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "890b5c33-9df4-494a-a14f-ce9caed63162",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:00.645Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "wNZJEBx5uihVAg99OPKzSeC6ybk=",
+    "timestampUtcMs": "2026-08-13T15:57:00.645Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "4fc5c465-f884-4948-ac13-523b95e5a79d",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:00.645Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "3bD4U+/ibOfptsrdg2dExVuWgD0=",
+    "timestampUtcMs": "2026-08-13T16:54:57.296Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:57.296Z"
+    }
+  }
+]

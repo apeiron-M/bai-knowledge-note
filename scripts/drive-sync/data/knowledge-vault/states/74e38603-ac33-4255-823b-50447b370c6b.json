@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-85bd1fa1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "85bd1fa1-2fba-4209-8fc0-8ad09e867a76",
+      "targetTitle": "corpus-baseline-v6-0-0-dev-254"
+    },
+    {
+      "id": "lnk-4752ac2e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4752ac2e-835a-4be9-9c2b-ca95ca501cef",
+      "targetTitle": "mcp-workflows"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse docs ship as llms.txt / llms-full.txt and as a Context7 library",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "464b1ac2-b69f-423e-b941-7840ad081619",
+      "name": "documentation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f89ad403-9c1a-4be1-8b01-afb78b2b7dc6",
+      "name": "ai-tooling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The academy follows the [llms.txt standard](https://llmstxt.org) and publishes two machine-readable artifacts at the site root:\n\n| File | Purpose | Size |\n| --- | --- | --- |\n| `https://academy.vetra.io/llms.txt` | Navigation index \u2014 links to every doc page with a short description | ~22KB |\n| `https://academy.vetra.io/llms-full.txt` | All documentation concatenated for full-context ingestion | ~1MB |\n\nThree consumption paths are documented:\n\n- **Context7** \u2014 search `powerhouse-inc/powerhouse` or use library id `/powerhouse-inc/powerhouse`, then `use context7` in Cursor, Windsurf, Zed, etc.\n- **Paste the URL** \u2014 dropping `https://academy.vetra.io/llms-full.txt` into a Claude or ChatGPT message loads the whole corpus at once.\n- **`curl`** either file for programmatic access.\n\nThe size split is the practical bit. The ~22KB index fits comfortably in a prompt and is a page directory, so it is the right artifact for \"which doc covers X\" routing; the ~1MB full corpus is for one-shot ingestion when you want everything and can afford the context.\n\nOne caveat that matters when relying on these: the files are **generated from the academy source docs** by `scripts/generate-llm-docs.ts` (`npm run generate:llm-docs`), writing `static/llms.txt` and `static/llms-full.txt` for Docusaurus to serve. So they are a snapshot at generation time, and they inherit whatever staleness the source pages carry \u2014 including Docusaurus-published pages whose guidance has drifted from the shipped code. They are a fast index, not an authority.\n\nProvenance: academy `05-Lookup/02-LLMDocs.md`, academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "academy.vetra.io/llms.txt is a ~22KB navigation index and /llms-full.txt a ~1MB full corpus; Context7 library id /powerhouse-inc/powerhouse loads them into Cursor, Windsurf and Zed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9305f990-fffd-4850-a1f8-cd8b92e8d4e4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d4764db7-2880-4d82-879f-0c2da02c59b5",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:27.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

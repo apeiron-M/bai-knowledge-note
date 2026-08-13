@@ -1,0 +1,322 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:32.091Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "multiple-remotes-per-collection-core-insight",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "911a47b7-135b-456a-9991-352aa8dc80fc",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:32.091Z"
+        },
+        "version": 0,
+        "documentId": "911a47b7-135b-456a-9991-352aa8dc80fc",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:32.091Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "btk95jBhiFqVfpsDUq252yUTjj0=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The reactor's support for multiple remotes per collection is what enables dual GQL + Swarm sync.",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:32.091Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "911a47b7-135b-456a-9991-352aa8dc80fc",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:32.091Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0Sr6cj29ltPloEegwnyk6SzJMME=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:11.000Z",
+        "description": "A single drive can sync to both Switchboard and Swarm because each remote owns its own channel, cursors, and push/pull state."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:45.986Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "911a47b7-135b-456a-9991-352aa8dc80fc",
+        "targetId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:45.986Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "IyEDVlQVgmkKCrgFZenymR5b/ho=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:46.084Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "911a47b7-135b-456a-9991-352aa8dc80fc",
+        "targetId": "e5fd24ec-8f92-4f9d-b3c6-0b675a1f367d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:46.084Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "LQGP0aWnOpOr1vRhvGaeB1cn4b4=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nThe core architectural insight enabling the Swarm channel is that the reactor's sync system supports multiple remotes per collection \u2014 each with its own channel, cursors, and push/pull state.\n\n## Evidence\nFrom the source: \"The reactor's sync system supports multiple remotes per collection. Each remote has its own channel, its own cursors, and its own push/pull state. This means a single drive can be synced to BOTH Switchboard AND Swarm simultaneously.\"\n\nIn `sync_cursors`, a single collection tracks independent ordinals per remote (e.g., gql remote at ordinal 42, swarm remote at ordinal 38).\n\n## Why it matters\nWithout this property, we would need a custom fan-out layer or a single combined channel. Instead, GQL and Swarm are peers, and either can be added or removed without affecting the other.\n\n## Source\nSwarm Channel Architecture, \"The Core Insight: Two Channels, One Collection\".",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:46.158Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "911a47b7-135b-456a-9991-352aa8dc80fc",
+        "targetId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:46.158Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "SW/Def0DcobdSWYpnArpKH7rTrM=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:46.192Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "911a47b7-135b-456a-9991-352aa8dc80fc",
+        "targetId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:46.192Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "fiXr/xYgLgdd7rvtJaWg+c6jxKg=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-a52fcb27-1",
+        "name": "reactor-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "FgwliO1ayj8AYZ5BpwxUkjeL4kk=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-a52fcb27-2",
+        "name": "sync-cursors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "UtYzC53ujfVPlSGDUk8lDOX7s+o=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-a52fcb27-3",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "LiO8fr2cmt2W8kTN9WJuC96kRm4=",
+    "timestampUtcMs": "2026-08-13T15:56:38.813Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:38.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:38.813Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Wu87TaRxA/C5SwSs/FngbDfcnF8=",
+    "timestampUtcMs": "2026-08-13T15:56:38.813Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "feefa346-663c-449b-91fc-a3fda5dfbb5e",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:38.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:38.813Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "2csSSsVhH4kdCiMMcLPO8D844RY=",
+    "timestampUtcMs": "2026-08-13T15:56:38.813Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b532d1ca-fb58-4ec0-9bba-1fdcc7ad7e40",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:38.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:38.813Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "BwtwwdHgpzz7uzK23XE2lwwHz9Y=",
+    "timestampUtcMs": "2026-08-13T16:54:33.190Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:33.190Z"
+    }
+  }
+]

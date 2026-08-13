@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e210f325-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e210f325-64f3-447e-a289-f198a8e5df00",
+      "targetTitle": "editors-use-component-based-architecture"
+    },
+    {
+      "id": "lnk-9a77cd78-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9a77cd78-5be9-477d-af2f-7d6559b12b07",
+      "targetTitle": "apps-use-useselecteddrive-to-access-drive-state-and-filter-nodes"
+    },
+    {
+      "id": "lnk-10d4751c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "10d4751c-4117-4a5f-86b0-576194f6f853",
+      "targetTitle": "always-check-document-model-schema-before-calling-addactions"
+    },
+    {
+      "id": "lnk-1c313715-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c313715-bfd9-4428-9218-fda37e581365",
+      "targetTitle": "bee-node-prerequisites-and-dev-mode"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse editors use generated React hooks as the recommended pattern for accessing document state and dispatching actions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "18189490-2e1c-4968-949d-f23174f65b12",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e93a21b4-6dda-4d39-a0ba-53b38dac3518",
+      "name": "react",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e335af16-0778-49cd-a49d-b73429e661a1",
+      "name": "state-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68ec7f35-dd22-41a9-9ced-1038a06e207f",
+      "name": "hooks",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each document model gets a generated hook like `useSelectedTodoListDocument()` that returns `[document, dispatch]`. This is the recommended approach over the props-based `EditorProps<T>` pattern because it makes components self-contained, eliminates prop drilling, and follows modern React conventions. The props approach (`document` and `dispatch` passed from parent) is reserved for reusable UI components that should work outside the Powerhouse context or for testing with mock state. Action creators are imported from the generated document model package and passed to `dispatch()`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "useSelectedXDocument hook returns [document, dispatch] and is preferred over prop-drilling for editor components.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1f0cd3c9-fb52-4d37-bf8d-650cfb78895b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6a365113-db31-4a85-beac-06d0d801c2eb",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,322 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:34.645Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "nullable-input-types-require-explicit-coalescing-to-match-state-types",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c6e482a2-e603-4955-8943-6e3d07d96051",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:34.645Z"
+        },
+        "version": 0,
+        "documentId": "c6e482a2-e603-4955-8943-6e3d07d96051",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:34.645Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xr+LJy2sxctqGvRQWdKvN9HOQRI=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "nullable input types require explicit coalescing to match state types",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:34.645Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c6e482a2-e603-4955-8943-6e3d07d96051",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:34.645Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pn/TOWwcrXvGSwrMVVnW69txQ4c=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:12.000Z",
+        "description": "InputMaybe<T> allows null | undefined | T but state uses Maybe<T> = T | null, so coalesce with || null or || [] to satisfy TypeScript"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:48.848Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c6e482a2-e603-4955-8943-6e3d07d96051",
+        "targetId": "83793058-ba70-466d-9707-bde578e2fb6d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:48.848Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "KNfmdPuQ4nLTBVoDbg78yfpc47Y=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:49.099Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c6e482a2-e603-4955-8943-6e3d07d96051",
+        "targetId": "675bdd06-6192-4223-9581-fa43200d307e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:49.099Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "G2BmtrKcGeoQuodVqix9i1N6QZc=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# nullable input types require explicit coalescing to match state types\n\nOptional input types and optional state types have different nullability:\n\n- **Input**: `InputMaybe<T>` = `null | undefined | T`\n- **State**: `Maybe<T>` = `T | null`\n\nTypeScript won't accept `undefined` where `null` is expected, so you must coalesce:\n\n```typescript\n// \u274c Type error \u2014 undefined not assignable to T | null\namount: action.input.amount,\nnotes: action.input.notes,\n\n// \u2705 Correct \u2014 coalesce to match Maybe<T>\namount: action.input.amount || null,\nnotes: action.input.notes || [],\n```\n\nSince [[truthy checks are safer than undefined checks for optional state assignment]], prefer `if (action.input.field)` over `if (action.input.field !== undefined)` for conditional updates.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[gotchas]]",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:49.190Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c6e482a2-e603-4955-8943-6e3d07d96051",
+        "targetId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:49.190Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "HyQjcyTRyqEMQpOEE4d3hLkEmg0=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:58:00.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "9OxMal1Bh1Khb2CWjOt7SAjlpOk=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9d97444b-95e3-468e-9cfd-e756fbbd2dfe",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "dUGLi9W89M5JcZT7PgLbZlfY5zk=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "20a94cde-7170-4799-8c38-ae5bd5cf95f4",
+        "name": "gotchas",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "i9RcFznkSjmwB8MSstw8jmDDJQE=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c5dc3b72-f4f4-4a84-9114-1b515a3e17e0",
+        "name": "TypeScript",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "+AeVL31EGMuaVDv0XVhgt2TnBnw=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "69fe1a8e-df34-4fe7-b5a3-7079ef70bc50",
+        "name": "null coalescing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "iOLoAyPdapzete/k36HdSSuaLOg=",
+    "timestampUtcMs": "2026-08-13T15:58:22.023Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:58:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:22.023Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "qmgxxHVPp+L0o2mFvMiDwEpQeCk=",
+    "timestampUtcMs": "2026-08-13T15:58:22.023Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "177bc49e-5662-4182-be43-284c9250ae10",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:58:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:22.023Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "ABUPb0yiGb4mSg/WivSkK2TGW+k=",
+    "timestampUtcMs": "2026-08-13T15:58:22.023Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "0eba239b-c832-411d-934b-c0c6ab486744",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:58:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:22.023Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "z6Uez29WBpMMICAIOHldxtsk2wY=",
+    "timestampUtcMs": "2026-08-13T16:56:38.004Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:56:37.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:56:38.004Z"
+    }
+  }
+]

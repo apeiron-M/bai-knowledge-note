@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad63c7f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad63c7f0-b6d6-4d10-955e-33fd76cf2363",
+      "targetTitle": "operations-history-is-event-sourced"
+    },
+    {
+      "id": "lnk-52f876b5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+      "targetTitle": "document-models-use-event-sourcing"
+    },
+    {
+      "id": "lnk-9b97a142-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b97a142-2322-40a7-a680-c2f822b0abec",
+      "targetTitle": "operations-not-state-log"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Domain-level undo is a pattern: dispatch the inverse action rather than putting undo logic in the reducer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c5871494-e1c2-4f57-8ca4-0341f3c2542a",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e2e3760-82e2-4f79-ac78-91fc45bb8766",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "359a44a4-f963-4b9f-a3db-1e3e26c20266",
+      "name": "undo",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Because reducers are pure, undo does not belong inside them. For each action you support, emit a paired *inverse* action that the app dispatches to roll the change back:\n\n```ts\nfunction invert(op: Operation): Action | null {\n  switch (op.type) {\n    case \"ADD_TODO\":      return removeTodo({ id: op.input.id });\n    case \"REMOVE_TODO\":   return addTodo({ id: op.input.id, title: op.input.restoreTitle });\n    case \"COMPLETE_TODO\": return uncompleteTodo({ id: op.input.id });\n    default:              return null;\n  }\n}\n```\n\nDispatching the inverse produces a *new* operation in the log. You keep the history, the effect is undone, and nothing about the log is rewritten. Note what this forces on your schema: `REMOVE_TODO` can only be inverted if its input carries enough to reconstruct the item (hence `restoreTitle`). Designing for invertibility is a schema decision made when you specify the operation, not a feature you bolt on later.\n\n**Do not read this as \"the framework has no undo.\"** It does: `UNDO` and `REDO` are base document actions with input `{ count: Int }` (`packages/shared/document-model/types.ts`), implemented by `undoOperationV2` / `processUndoRedo` in the reducer core. That mechanism works by incrementing the index and marking the undone tail with `skip`, so consecutive NOOPs are collapsed during rebuild and garbage collection.\n\nThe two are different tools. Base `UNDO` is a generic \"take back the last N operations\" over the raw log. The inverse-action pattern is domain-level: it expresses the reversal as a first-class business event that peers, processors, and the audit trail all see as an intentional change. Reach for the inverse when the reversal is meaningful to the domain.\n\n_Source: apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx; base UNDO/REDO confirmed in packages/shared/document-model/{types,operations,reducer}.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Pair each action with an inverse (ADD_TODO with removeTodo). Dispatching it appends a new operation, so history is preserved and the log is never rewritten.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "575cff43-4011-48b5-b1e4-46f14446c79d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5dbf1baa-c652-48ad-a6cc-1bac738a56f6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

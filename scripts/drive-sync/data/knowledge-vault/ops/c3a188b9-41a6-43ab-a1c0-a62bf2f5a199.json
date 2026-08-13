@@ -1,0 +1,277 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:49.175Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "upgrademanifest-keys-upgrades-as-v2-v3-and-never-v1",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "c3a188b9-41a6-43ab-a1c0-a62bf2f5a199",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:35:49.175Z"
+        },
+        "version": 0,
+        "documentId": "c3a188b9-41a6-43ab-a1c0-a62bf2f5a199",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:35:49.175Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "SPbhVjzNpwZJJXsmBqhSjIQ3e5E=",
+    "timestampUtcMs": "2026-08-13T14:35:49.879Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "UpgradeManifest keys its upgrades as v2, v3 and never v1",
+        "updatedAt": "2026-08-13T14:35:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:49.879Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:49.175Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "c3a188b9-41a6-43ab-a1c0-a62bf2f5a199",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:35:49.175Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0lXm3e/xhF4PO0hwxk66HFOnf7A=",
+    "timestampUtcMs": "2026-08-13T14:35:49.879Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:35:49.000Z",
+        "description": "Shape is documentType, latestVersion, supportedVersions, upgrades. Each UpgradeTransition is toVersion, upgradeReducer, description. v1 has nothing to upgrade from."
+      },
+      "timestampUtcMs": "2026-08-13T14:35:49.879Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:51.036Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "c3a188b9-41a6-43ab-a1c0-a62bf2f5a199",
+        "targetId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.036Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "bCMN1gLw13qCCwMJuCljk4RhAhs=",
+    "timestampUtcMs": "2026-08-13T14:35:49.879Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:35:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:49.879Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "401/oOp4O0RwBIKArKZdsA3Un9w=",
+    "timestampUtcMs": "2026-08-13T14:35:49.879Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The upgrade manifest is the declaration that ties a document type's versions together. Its shape, from `packages/shared/document-model/upgrades.ts`:\n\n```ts\nexport type UpgradeManifest<TVersions extends readonly number[]> = {\n  documentType: string;\n  latestVersion: TupleMember<TVersions>;   // e.g. 1 | 2 | 3 for [1, 2, 3]\n  supportedVersions: TVersions;            // the tuple itself, [1, 2, 3]\n  upgrades: {\n    // keys: \"v2\" | \"v3\" | ...  (no \"v1\")\n    [V in Exclude<TupleMember<TVersions>, 1> as `v${V}`]: UpgradeTransition;\n  };\n};\n\nexport type UpgradeTransition = {\n  toVersion: number;\n  upgradeReducer: UpgradeReducer<any, any>;\n  description?: string;\n};\n```\n\nThe `Exclude<..., 1>` in the mapped type is the load-bearing part: **v1 is structurally unrepresentable as an upgrade key**, because there is no version to upgrade from. A manifest is written `upgrades: { v2 }`, then `{ v2, v3 }`, and TypeScript rejects a `v1` entry outright. Each transition names only its *target* (`toVersion`); the source is implied by position in the chain, so multi-step upgrades compose by walking v1\u2192v2\u2192v3 rather than declaring every pair.\n\nOne source behaviour worth internalising alongside this: `normalizeDocumentModelVersion` treats a document stamped `0` or nothing at all as version **1**, not as \"latest\". Documents predating versioning are legacy v1 documents and get the v1 reducer. Resolving them to latest instead would re-pin an old document's whole history onto whichever module happens to be newest \u2014 the exact corruption versioning exists to prevent.\n\nThe generated `upgrades/` folder mirrors this: `versions.ts` exports the tuple and `latestVersion`, one file per transition (`v2.ts`), and `upgrade-manifest.ts` assembles them.\n\n_Source: apps/academy/docs/academy/03-Build/02-DocumentModelCreation/08-DocumentModelVersioning.md, confirmed against packages/shared/document-model/upgrades.ts (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:35:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:49.879Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "bUgtBR+vuNogsmROjR4gJSaqy9g=",
+    "timestampUtcMs": "2026-08-13T14:35:49.879Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9adbcb05-b747-400e-a320-30b5bb217b8d",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:49.879Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Zf/I/2Sgp5S1vDnqIl1evTgSUcA=",
+    "timestampUtcMs": "2026-08-13T14:35:49.879Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9f634c07-2580-4791-a33a-00915eb3cdfb",
+        "name": "schema-evolution"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:49.879Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "U1lK5KUuTkMtpbrOFJn/cI7LN0w=",
+    "timestampUtcMs": "2026-08-13T14:35:49.879Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c73a3520-2323-4f60-befd-986981a28dc3",
+        "name": "document-model"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:49.879Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "aWTGdvBjOhF56QY6vs+HAbrgGB0=",
+    "timestampUtcMs": "2026-08-13T14:35:50.991Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:35:49.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:50.991Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "KQZ8SPWelZaLKPJfs9G/l5pZthk=",
+    "timestampUtcMs": "2026-08-13T15:58:14.511Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:58:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:14.511Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "s+NLQvCASVlGDjGTGf8phbshyXg=",
+    "timestampUtcMs": "2026-08-13T15:58:14.511Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "3bfe486e-71a2-4831-9078-786f03fe5aac",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:58:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:14.511Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "ygucwAvRYqouJgiHlO7czr7xzPU=",
+    "timestampUtcMs": "2026-08-13T15:58:14.511Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "db9bc24e-fc9b-4408-ad40-5948c3f395c2",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:58:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:14.511Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "P803R861egMHPk69uPl+FQewXzQ=",
+    "timestampUtcMs": "2026-08-13T16:56:28.923Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:56:28.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:56:28.923Z"
+    }
+  }
+]

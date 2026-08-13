@@ -1,0 +1,143 @@
+{
+  "links": [
+    {
+      "id": "lnk-044efef7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "044efef7-7dca-44e9-91a3-04554267878d",
+      "targetTitle": "operations-use-verb-noun-naming"
+    },
+    {
+      "id": "lnk-b48664d8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b48664d8-e289-4919-8473-613a880faa2c",
+      "targetTitle": "testing-uses-vitest-and-generatemock"
+    },
+    {
+      "id": "lnk-ba09f958-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba09f958-a741-42f0-90f1-9573134154b3",
+      "targetTitle": "state-type-names-use-xstate-not-xglobalstate"
+    },
+    {
+      "id": "lnk-06d31542-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "06d31542-10e9-4d55-b50e-5b393074a2b4",
+      "targetTitle": "truthy-checks-are-safer-than-undefined-checks-for-optional-state-assignment"
+    },
+    {
+      "id": "lnk-9a88245e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+      "targetTitle": "never-use-tothrow-when-testing-reducer-errors"
+    },
+    {
+      "id": "lnk-2489ac27-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2489ac27-cc0c-47ef-bede-20deee16186e",
+      "targetTitle": "error-names-must-end-with-error-and-use-pascalcase"
+    },
+    {
+      "id": "lnk-3304f425-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3304f425-2dbf-4867-909a-75eaba19fdb9",
+      "targetTitle": "never-import-error-classes-manually-in-reducer-code"
+    },
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-1c49aeb6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+      "targetTitle": "helper-functions"
+    },
+    {
+      "id": "lnk-52f876b5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+      "targetTitle": "document-models-use-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reducers must be pure functions, but Powerhouse uses Mutative to allow mutation-style syntax",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e25d25b7-96c4-4392-87be-386bf129734f",
+      "name": "reducers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6d300c7-69eb-448f-864c-a88a605c1dcb",
+      "name": "immutability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "15fdf7bf-0a84-4b62-ac27-5c6f249eaec8",
+      "name": "pure-functions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7c7b8056-0726-4b53-8a00-5cdfc9888d33",
+      "name": "mutative",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Reducers are the core logic units implementing state transitions. They follow the pattern `(currentState, action) => newState` and must obey strict rules:\n\n- **Deterministic**: Same state + action always produces the same result\n- **No side effects**: No API calls, no `Math.random()`, no `Date.now()`, no DOM manipulation\n- **Immutable**: Never mutate the input state directly\n\nHowever, Powerhouse wraps reducers in **[Mutative](https://mutative.js.org/)** under the hood. This means you can write code that *looks* like direct mutation (e.g., `state.items.push(...)`) but Mutative ensures it produces an immutable update. This gives readable code while maintaining the immutability guarantees required for event sourcing.\n\nPurity ensures replaying the same sequence of events always yields the same final state. Immutability ensures each event defines a discrete state transition for the audit trail.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Reducers follow (state, action) => newState pattern. Mutative lets you write mutable-looking code that produces immutable updates.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "88793d45-a186-49ef-b32e-20b87e57cc44",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:25.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6f24f65e-194a-4d79-881d-42f4929cf904",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:25.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Import the /graphql-client subpath \u2014 the reactor-browser package root does not bundle for browsers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "77ab89d3-e070-496c-bc24-392fec6fa030",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8946c1d4-095d-4df5-b140-e7552f39cf7e",
+      "name": "bundling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f8dadb3b-3627-4969-86e7-38f04d2ce901",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The failure\n\n```tsx\n// \u2705 bundles in Next, Vite or anything else, with no alias or stub\nimport { GraphQLReactorProvider } from \"@powerhousedao/reactor-browser/graphql-client\";\n\n// \u274c drags a Postgres driver and node built-ins into a browser bundle\nimport { GraphQLReactorProvider } from \"@powerhousedao/reactor-browser\";\n```\n\nThe package root re-exports the whole package, and part of that **value-imports** `@powerhousedao/reactor`, whose single entry reaches `pg` (`dns`/`fs`/`net`/`tls`), `@electric-sql/pglite` and `node:worker_threads`. None of it runs on the light-client path, but a browser bundler still has to resolve it \u2014 and Turbopack fails on `node:worker_threads` before any app code runs.\n\n## Why the subpath is safe\n\nThe `/graphql-client` entry imports the reactor **for types only**. Types are erased at compile time, so a bundler never sees them. The few runtime values the client actually needs are mirrored inside `reactor-browser`, with compile-time assertions that fail if they ever drift from the reactor's own definitions.\n\nThe built entry imports exactly `react`, `document-model`, `graphql`, `graphql-request`, `graphql-tag`, `graphql-ws/client`, `@powerhousedao/shared/document-model`, `@powerhousedao/shared/document-drive`, `change-case`, `remeda` and `slug` \u2014 no database driver, no node built-ins. A test walks the entry's import graph and fails if that regresses.\n\n## The general shape\n\nThis is a recurring class of failure, not a one-off: a package whose root entry serves both server and browser consumers will pull server-only backends into a browser bundle, and the fix is always to import the browser subpath. `@powerhousedao/reactor-attachments/client` is the same pattern. The monorepo's `test/test-fusion/` app is a worked example \u2014 it imports the subpath and has no bundler configuration at all.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/01-OverviewAndQuickstart.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The root barrel value-imports @powerhousedao/reactor, reaching pg, @electric-sql/pglite and node:worker_threads; Turbopack fails before app code runs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "30ac19b1-63a8-4442-8147-f9fa3fd04c20",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:52.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bc4bca69-b808-431a-b328-4520c5f0d8fb",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:52.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

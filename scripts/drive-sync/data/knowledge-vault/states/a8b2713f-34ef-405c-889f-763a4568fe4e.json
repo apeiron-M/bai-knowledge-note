@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-1af57e9d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    },
+    {
+      "id": "lnk-cbb06ab4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-07376a9b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "07376a9b-020f-4645-8ea6-dc9b911edf50",
+      "targetTitle": "push-flow-encrypt-upload-manifest"
+    },
+    {
+      "id": "lnk-77fad8c4-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "77fad8c4-a3f5-4678-a0d1-15b6c434a0de",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Processors implement IProcessor with onOperations receiving OperationWithContext items filtered by document type, scope, branch, and document ID",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "411e65dd-7231-44e7-898c-941743f5171e",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1033059-2c24-4372-9448-79e7c6c23653",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4468e921-6a96-4687-a2d2-fa6e1aa56125",
+      "name": "factory-pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aa65c3be-396b-48d8-b3d1-51c9409cb940",
+      "name": "CQRS",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A processor implements `IProcessor` with `onOperations(operations: OperationWithContext[])` and `onDisconnect()`. Each `OperationWithContext` pairs an `Operation` (action type, input, index, hash, timestamp) with `OperationContext` (documentId, documentType, scope, branch, ordinal for cross-document ordering, resultingState as JSON). `ProcessorFilter` has optional arrays: `documentType`, `scope`, `branch`, `documentId`. A field that is `undefined` or `[]` matches everything; a field with values matches when the operation's context value is in the array; all present fields must match. The `\"*\"` wildcard is honored **only in `documentId`** \u2014 in `documentType`, `scope`, and `branch` a literal `\"*\"` matches only an operation whose value is the string `\"*\"`, i.e. nothing real. To match all scopes, omit `scope` or set it to `[]`; never write `scope: [\"*\"]` (the codegen analytics template emits exactly that, and it silently matches no operations). The factory pattern: outer function receives `IProcessorHostModule` (shared resources), inner function receives `driveHeader` per drive, returns `ProcessorRecord[]`. By default processors replay all history; set `startFrom: \"current\"` to skip historical operations.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ProcessorFilter determines which ops a processor receives; factory creates instances per drive with configurable filters.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7c2911ec-ed00-41bb-a772-9f14b37ebc20",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:24.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "81403e22-1601-4974-ba27-0ae0c5afdf65",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:24.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

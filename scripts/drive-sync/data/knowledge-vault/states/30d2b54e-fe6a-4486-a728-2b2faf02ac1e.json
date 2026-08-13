@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e210f325-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e210f325-64f3-447e-a289-f198a8e5df00",
+      "targetTitle": "editors-use-component-based-architecture"
+    },
+    {
+      "id": "lnk-2a079433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2a079433-e571-4d78-b20a-3fabbccbe075",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-1d47be65-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1d47be65-72cd-4090-b185-25b0096d6dcc",
+      "targetTitle": "editor-components-should-be-modular-with-separate-files"
+    },
+    {
+      "id": "lnk-aa462073-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "aa462073-1b66-4422-8008-349b70dec86f",
+      "targetTitle": "powerhouse-design-system-graphql-scalars"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "document-engineering components are imported from the /scalars subpath, where the boolean input is BooleanField and no Checkbox export exists",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "470429df-c726-4178-a665-6f10da27ebed",
+      "name": "components",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f42fedde-e52e-4b97-9b47-45542d378a29",
+      "name": "ui-library",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e0dfe1e-fa8d-4a44-899a-bb94b35d6475",
+      "name": "storybook",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2da0f60a-5e41-40aa-8d05-6ad9caccf262",
+      "name": "scalars",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/document-engineering` provides pre-built components, many keyed to GraphQL scalar types so they line up with document-model schemas. The form tier is imported from the `/scalars` subpath:\n\n```tsx\nimport { Form, StringField, BooleanField } from \"@powerhousedao/document-engineering/scalars\";\n```\n\n**There is no `Checkbox` export.** The boolean input is `BooleanField`, exported from `src/scalars/components/boolean-field/index.ts`. The string `Checkbox` does appear inside the repo (22 files) but only as internal implementation and story naming \u2014 it is not exported from any index, so importing it will fail.\n\nThe scalar-backed field components under `src/scalars/components/` are: `aid-field`, `amount-field`, `boolean-field`, `country-code-field`, `currency-code-field`, `date-picker-field`, `date-time-picker-field`, `email-field`, `enum-field`, `file-field`, `id-field`, `number-field`, `oid-field`, `password-field`, `phid-field`, `phone-number-field`, `string-field`, `time-picker-field`, `url-field`, plus `form` and shared `fragments`.\n\nComponents are explored in Storybook. The repo itself only documents running it locally (`pnpm storybook`, per `README.md:95`); the hosted `storybook.powerhouse.academy` URL is asserted by the academy docs and cannot be confirmed from this repo.\n\nNote this package is versioned independently of the Powerhouse stack \u2014 pinned as a dependency (`1.40.5`), not built from the powerhouse monorepo, so its symbols will never appear in a monorepo grep.\n\n_Source-verified 2026-08-13 against the document-engineering repo at v1.40.5 (`/home/p/Powerhouse/document-engineering`), a separate repo from the powerhouse monorepo._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Import Form, StringField and BooleanField from document-engineering/scalars. Checkbox is internal-only and not exported. The package is versioned separately from the stack.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "069decb5-a438-46d5-a6d5-1bb37d7c7083",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "54edc5a5-4a13-4f91-81e0-eba8abb4f4f3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-cbb06ab4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-a8b2713f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-1af57e9d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "startFrom applies only when a processor's cursor row is first created; afterwards the persisted cursor wins",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0c8bf4fa-5320-45f8-9a37-99fca72e1912",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "af564998-3eae-4d4c-b2b6-92ef074248db",
+      "name": "cursors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`startFrom` is the third, optional field on a `ProcessorRecord`:\n\n```typescript\ntype ProcessorRecord = {\n  processor: IProcessor;\n  filter: ProcessorFilter;\n  startFrom?: \"beginning\" | \"current\";\n};\n```\n\nIts semantics are narrower than the name suggests. It is consulted **only when a processor is first created and no cursor row exists yet**:\n\n- `\"beginning\"` (the default) starts the cursor at ordinal 0, so the processor backfills the drive's full history.\n- `\"current\"` starts the cursor at the manager's current ordinal, so the processor sees only operations from now on.\n\nOnce a cursor row exists, `startFrom` is **ignored** \u2014 the persisted cursor wins. Restarting the reactor never re-runs `startFrom`. This is the point most people get wrong: flipping a deployed processor from `\"current\"` to `\"beginning\"` will not backfill it, because its cursor row already exists. To actually replay, you must call `tracked.retry()` (which re-activates and re-runs backfill) or clear the cursor row; changing the declaration alone is inert.\n\nCursors live in the `ProcessorCursor` table keyed by `processorId` (`${factoryId}:${driveId}:${index}`) and survive restarts. On startup the manager rehydrates every cursor and catch-up replays the gap.\n\nThe advance rule has its own subtlety. On each batch the manager filters to operations with `ordinal > lastOrdinal`, applies the filter, calls `onOperations` on the matches, and on success advances `lastOrdinal` to **the maximum ordinal in the batch, including unmatched operations**. The cursor therefore moves forward even when nothing matched \u2014 a narrowly filtered processor does not accumulate an ever-growing backlog of skipped work.\n\nBackfill uses `operationIndex.getSinceOrdinal(lastOrdinal)`, paging through history, filtering each page, calling `onOperations`, advancing and persisting the cursor per page, and following the continuation until exhausted. That path runs in three situations: registering a factory against a drive that already has history, restarting after downtime, and `retry()` on an errored processor.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "\"beginning\" (default) backfills full history, \"current\" starts at the manager's ordinal. Restarting never re-runs startFrom.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "67d00ee9-8c3e-487b-98ea-3ed4a3cbf380",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3ee08cf3-0f5e-4bec-bbb8-d5483a4ad69b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:19.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

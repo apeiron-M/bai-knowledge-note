@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-58125cb8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "58125cb8-0b0a-41c4-ba84-c5be8b1e3f3c",
+      "targetTitle": "ddup-pglite-primary-swarm-backup"
+    },
+    {
+      "id": "lnk-a506e6e4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a506e6e4-0e6e-4f7e-bd2e-6eef32477155",
+      "targetTitle": "ddup-reactor-native-sync-2x"
+    },
+    {
+      "id": "lnk-e700aec6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e700aec6-e8bc-4c24-b50a-a589fcab80de",
+      "targetTitle": "ddup-layer-mutability-lifespan"
+    },
+    {
+      "id": "lnk-22720e65-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "22720e65-5178-41e9-b071-9e29543eea0e",
+      "targetTitle": "reactor-builder-fluent-api-construction"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reactor's default database is an ephemeral in-memory PGlite; persistence requires an explicit choice",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c38d2995-f805-4cf9-8a31-2ed5754e1e08",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "38e55a6f-4497-4e93-8b69-814a8bd44935",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f2791e80-68dc-4673-bdf6-dd7e08d6e2c0",
+      "name": "pglite",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Build a reactor with nothing but document models registered and you get an **in-memory** PGlite database. The builder calls an internal `createDefaultDatabase()` that constructs `new Kysely({ dialect: new PGliteDialect(new PGlite()) })` \u2014 and `new PGlite()` with no arguments is in-memory. Nothing is written to disk and nothing survives the process.\n\n```typescript\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([myDocumentModel])\n  .build();\n```\n\n`buildModule()` picks the base database in a strict precedence order:\n\n1. The instance passed to `withKysely(...)`, if any.\n2. A Postgres pool, if the worker pool is enabled and a worker `db` config is set.\n3. The in-memory PGlite default.\n\nSo persistence is never inferred \u2014 there is no auto-detection, no environment sniffing. If you did not pass a Kysely instance or a worker-pool `db`, your data is gone at process exit. That is the correct backend for unit tests and local development (fresh isolated database every run, no external service), and a silent data-loss bug in anything else.\n\nWhat you get on the default path: migrations run automatically (strategy defaults to `\"auto\"`, running `runMigrations(db, REACTOR_SCHEMA)`), all storage under the `\"reactor\"` Postgres schema, a single in-process executor (`maxConcurrency` defaults to `1`), an in-process read-model coordinator, and `module.pools === []` since there is no `pg.Pool` to instrument.\n\nMove to Postgres when state must survive a restart, when more than one process must share storage, or when you scale \u2014 and note that **neither scaling path can run on PGlite at all**, because PGlite cannot be shared across threads. Both `withWorkerPool` and `withProjectionShards` therefore require a real Postgres server.\n\nFor `\"manual\"` or `\"none\"` migration strategies, run migrations yourself. `runMigrations` never throws on a migration error \u2014 it returns `{ success, migrationsExecuted, error? }`, so you must check the result:\n\n```typescript\nconst result = await runMigrations(db, REACTOR_SCHEMA);\nif (!result.success && result.error) throw result.error;\n```\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Precedence in buildModule(): withKysely instance, then the worker pool's Postgres db, then in-memory PGlite. Nothing survives the process on the default path.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5796b2c7-753e-4aed-9e24-772378ef16c8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c17cd197-bef9-4b69-9222-336b663d955a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:28.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

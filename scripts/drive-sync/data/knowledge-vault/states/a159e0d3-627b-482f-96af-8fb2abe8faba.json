@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-74b417fd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "74b417fd-3e07-482e-a486-7a01154360c5",
+      "targetTitle": "swarm-pss-trojan-chunks"
+    },
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-4f75be2a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4f75be2a-9733-46f8-9f67-550464c835c7",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    },
+    {
+      "id": "lnk-bfa544b8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "bfa544b8-e5ec-42c8-9949-1c82b8b1a264",
+      "targetTitle": "swarm-act-access-control-trie"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat history persists in an ACT-protected feed because PSS messages expire with stamp TTL.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-28b5df4a3782",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-f3ef259dd2e1",
+      "name": "act-encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-f8e2d00aa472",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Problem\n\nPSS messages live only as Trojan chunks and are garbage-collected once the associated postage stamp expires. Chat UX requires history that survives node restarts and stamp rotation.\n\n## Design\n\nEach message is written twice:\n\n1. **Ephemeral PSS send** \u2014 delivers the message to the live peer in 2\u201310s.\n2. **Persistent ACT-encrypted feed append** \u2014 at feed `ph:v2:chatlog:<sorted(alice, bob)>`, entries of the form `{ from, text, timestamp, attachments? }`.\n\nThe feed is uploaded with `{ act: true }` and both users' `beeNodePublicKey` values are registered as ACT grantees via `createGrantees()`. The Bee node handles ECDH decryption transparently when either party reads the feed \u2014 no app-level keys required.\n\n## Implications\n\n- History survives Bee restarts and stamp expiration\n- Either peer's Bee can rebuild the full thread on first open\n- Revocation is possible by rebuilding the ACT with a new access key\n- PSS inbox on reconnect must be reconciled against feed history",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:27:25.629Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PSS messages are ephemeral Trojan chunks. Each message is also appended to ph:v2:chatlog:<sorted(alice,bob)> with ACT grantees set to both parties' Bee pubkeys.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9044ea0d-b586-4884-b07e-a5325b0bf258",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:10.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fc26a077-ed0a-479c-8f9f-00668d8f2234",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:10.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

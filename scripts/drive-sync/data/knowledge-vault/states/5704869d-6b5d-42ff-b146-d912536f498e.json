@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a8b2713f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-cbb06ab4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-d065b560-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d065b560-9609-4b9b-9603-ebd73e35276c",
+      "targetTitle": "consistency-tokens-read-after-write"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Calling reactorClient directly from inside a processor is an anti-pattern because execute() blocks until READ_READY",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9a9321e0-0248-4801-af09-2572fa42193a",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a28c5720-706b-4910-a17e-2c4957b6e2f7",
+      "name": "anti-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ca9b46a1-33e3-4583-8d9e-b5709cb839c2",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The academy marks this as an explicit anti-pattern warning, not a style preference. `reactorClient.execute()` does not return until its job reaches `READ_READY`, and `READ_READY` is only reached after the post-ready phase \u2014 which is where processors run. A processor that calls `reactorClient.execute()` can therefore end up waiting on the processor pipeline it is currently occupying.\n\n```typescript\n// Bad: blocks until the job completes\nconst doc = await reactorClient.execute(docId, \"main\", actions);\n\n// Good: submits and returns immediately\nawait this.dispatch.execute(docId, \"main\", actions);\n```\n\nThree reasons are given, in order of severity:\n\n1. **Potential blocking.** The call could wait on processors finishing their current batch, including the caller.\n2. **Unnecessary round-trip.** The resulting operations arrive through `onOperations` anyway, so awaiting them synchronously buys latency and nothing else.\n3. **One-way flow.** React to operations, dispatch new work, move on. If you need the result, handle it in a later `onOperations` call.\n\nThere is a trap in the type surface here. Connect's host module is `IReactorProcessorHostModule`, which *extends* `IProcessorHostModule` with `client: IReactorClient` and `attachments: IAttachmentClient` \u2014 so a full `IReactorClient` genuinely is reachable from a browser-hosted processor. It is there for reads and for hosts that need it, and reaching for its `execute()` compiles cleanly. The guardrail is the convention, not the type system.\n\nProvenance: academy `03-Build/04-WorkWithData/05-ProcessorBestPractices.md` (published, \"Why not reactorClient?\" warning callout), cross-checked against `packages/reactor-browser/src/types/processor-host-module.ts` at 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "reactorClient.execute() waits for the job to reach READ_READY, so it can wait on the very processor making the call. Use the injected dispatch instead.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "023c75c2-47d0-4fe8-889e-04b7ea03b25d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f3e1e4d3-8d2d-44eb-bc37-953cfeb75dbf",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,378 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:26.105Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "helper-functions",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:26.105Z"
+        },
+        "version": 0,
+        "documentId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:26.105Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "WT1GEHkcpXQ7ql+Lq8yTwpn1meg=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "helper functions",
+        "updatedAt": "2026-08-13T13:23:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:26.105Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:26.105Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "E1d70YUG5X60w808/oCQLpxZDXU=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:07.000Z",
+        "description": "Utility and calculation functions indexed by what they compute and which editors consume them"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.578Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "targetId": "688b0550-36f2-4b89-83ae-9d32502eb40e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.578Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "MZ16dgpeaM7mNYZWFv+fY0cRBl8=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T13:23:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.611Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "targetId": "0646fae1-7c4c-4606-8e9e-d2a6b2458c8d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.611Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "sXfM5LW5K7GscsuPa0CJSFwart8=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# helper functions\n\nHelper functions that live outside reducers but are critical to editor behavior \u2014 pricing calculations, billing breakdowns, cross-model data mapping, and formatting utilities.\n\n## Pricing Calculation (Service Offering)\n- [[getUserSelectionPriceBreakdown is the core pricing calculation engine]] \u2014 the master pricing function in service-offering/src/utils.ts\n- [[pricing-utils provides editor-level formatting and tier price calculations]] \u2014 formatPrice, calculateTierRecurringPrice, calculateEffectiveSetupPrice, detectMajorityCycle\n\n## Billing Calculation (Subscription Instance)\n- [[billing-utils computes subscription billing breakdowns and metric overages]] \u2014 computeBillingBreakdown, formatCurrency, computeMetricOverage\n\n## Cross-Model Bridges\n- [[mapOfferingToSubscription transforms service offering state into subscription initialization]] \u2014 converts offering final config \u2192 subscription init input\n\n## Dependency Graph\n\n```\nservice-offering/src/utils.ts\n  \u2514\u2500 getUserSelectionPriceBreakdown \u2192 TheMatrix.tsx\n\neditors/service-offering-editor/components/pricing-utils.ts\n  \u251c\u2500 re-exports BILLING_CYCLE_MONTHS from model\n  \u2514\u2500 formatPrice, calculateTierRecurringPrice \u2192 ServiceCatalog, TierDefinition, TheMatrix\n\neditors/service-offering-editor/components/resolve-configuration.ts\n  \u2514\u2500 resolveConfiguration \u2192 TheMatrix.tsx (converts PriceBreakdown \u2192 SetFinalConfigurationInput)\n\neditors/subscription-instance-editor/components/billing-utils.ts\n  \u2514\u2500 computeBillingBreakdown \u2192 BillingPanel.tsx\n\neditors/subscription-instance-editor/components/mapOfferingToSubscription.ts\n  \u2514\u2500 mapOfferingToSubscription \u2192 ImportServiceConfigButton.tsx\n```\n\n---\n\nTopics:\n- [[index]]",
+        "updatedAt": "2026-08-13T13:23:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.778Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "targetId": "6552b88d-3e67-4161-8e5b-3922b508106c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.778Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "62IuhYyIPm5IVjUPCJsPYoQ1y0g=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:57:31.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.802Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "targetId": "cc105449-9b8c-4303-98a3-aca2a23208fe",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.802Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "U9eWlCN7kbMBCCXxhRAVlr/5ReQ=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "24463ea0-cf99-4a84-8db8-0caae4309438",
+        "name": "service-offering",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.827Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "targetId": "4ef39331-7e30-4318-aec6-019771d17b27",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.827Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Ifq+uXOXKKYjZH6uOTXjigJvFQk=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8432e20b-4683-47f0-8288-ab67b23daad2",
+        "name": "subscription-instance",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.849Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "targetId": "7e15ba50-2f7c-4ac3-8d6a-396fafc3da98",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.849Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "CUJDyUSxYD2h8atimKL8C05f9UI=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1fecd08e-b91c-43bc-8220-6f1a182eaeee",
+        "name": "editor-utilities",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.871Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "targetId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.871Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1Ffi/zdFBec0icEPp6ifDZDNtEo=",
+    "timestampUtcMs": "2026-08-13T15:52:10.818Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:52:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:10.818Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:39.133Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+        "targetId": "826a2d18-2201-4399-9bd4-c86f6b366164",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:39.133Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "1iyYxDxXsUmxsVqmVSIsV084cUg=",
+    "timestampUtcMs": "2026-08-13T15:52:10.818Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "7a65d858-ecc8-487a-adc0-2b6434af71fb",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:52:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:10.818Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "OswoWrcOG0DijXrSXaeL1DUoo0w=",
+    "timestampUtcMs": "2026-08-13T15:52:10.818Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f1140649-1ed1-4069-b0eb-932963a9369f",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:52:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:10.818Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "VePUyLaztIFTdRRt/DIG+O4dQsc=",
+    "timestampUtcMs": "2026-08-13T16:49:10.847Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:49:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:49:10.847Z"
+    }
+  }
+]

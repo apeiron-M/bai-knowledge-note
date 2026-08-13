@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-5694a8da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5694a8da-b036-4b8a-a16d-bca12de03af9",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    },
+    {
+      "id": "lnk-5067c7ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A non-empty signatures list is not proof of client-side signing \u2014 check context.signer.user.address",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "19e164f2-886f-44d9-af26-ad8e28a606c2",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1ce06deb-bd08-4945-8ae2-b95f4b601945",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64dff100-576f-4d87-8d16-2420c25b8d44",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a37d541a-ed58-454d-8ea3-c37b65a75d47",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Two traps when verifying signatures\n\n**1. The Switchboard signs unsigned actions itself.** When an action arrives with no signature, the Switchboard signs it with its own `did:key`. The resulting operation therefore has a **non-empty `signatures` list** \u2014 which means the presence of signatures is *not* evidence that the client signed anything. A test or audit that asserts `signatures.length > 0` passes just as happily for a server-signed action as for a user-signed one.\n\nThe field to check is `context.signer.user.address`. That is what tells you *whose* identity is attached, and it is the only way to distinguish a user-attributed operation from a server-attributed one.\n\n**2. The server does not validate `prevOpHash`.** A wrong hash is accepted and the write succeeds. So conformance with the stamping contract cannot be inferred from a mutation returning successfully \u2014 it has to be asserted directly in tests, by reading the operation back and comparing `prevOpHash` against the hash you expect for that scope and revision.\n\n## Why this matters beyond tests\n\nTogether these two facts mean a write path can look fully signed and hash-chained while being neither. The failure is silent in both directions: the server fills in the signature you did not produce, and it accepts the hash you got wrong. Any claim that \"operations in this deployment are user-signed\" needs to be backed by checking the signer identity on real operations, not by the write path not erroring.\n\nThe practical check, on an operation read back from the Switchboard:\n\n```typescript\nconst signer = operation.action.context?.signer;\nconst wasClientSigned = Boolean(signer?.user?.address);\n```\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Switchboard signs unsigned actions with its own did:key, and the server does not validate prevOpHash, so a wrong hash is silently accepted.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5eeea0b5-9b79-4398-8b4a-c83eca45a6f2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:33.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9cbbc0ad-2bf6-4b36-874e-6356b77507ad",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:33.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

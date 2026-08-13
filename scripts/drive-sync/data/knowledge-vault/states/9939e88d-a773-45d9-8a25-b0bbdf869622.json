@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-2258b51c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2258b51c-fe2d-4e3e-aa1c-7d6eefe90c74",
+      "targetTitle": "docker-images-for-connect-and-switchboard"
+    },
+    {
+      "id": "lnk-fda19118-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fda19118-9f4d-4b96-8d15-5778cf9451d9",
+      "targetTitle": "env-vars-override-config-json"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "PH_CONNECT_CONFIG_JSON deep-merges operator config into Connect's dist config at container start with operator-wins semantics",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "47f52eb6-753d-4d6d-8904-201560c839bc",
+      "name": "docker",
+      "topicDocumentId": null
+    },
+    {
+      "id": "61fcbfec-e1ef-4035-800e-ca8cd7c991d0",
+      "name": "deployment",
+      "topicDocumentId": null
+    },
+    {
+      "id": "044e5e4d-fb64-4b26-b0e7-490f8b7b86be",
+      "name": "configuration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f28160cf-4fc4-4dac-bcb9-15cecbf0bcd1",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The one env var Connect's container still needs\n\nConnect's SPA never reads `process.env` at runtime \u2014 it fetches `/powerhouse.config.json`. That leaves an operator who runs the published image with no way to change branding, drives, renown or Sentry without rebuilding. `PH_CONNECT_CONFIG_JSON` closes that gap at the container boundary: the entrypoint deep-merges the payload into the **dist** `powerhouse.config.json` at container start, which is exactly equivalent to pre-running `ph connect config --json '{...}'` against that file. The SPA then reads the file as usual.\n\n### Operator-wins semantics\n\n- A **concrete value** in the payload overwrites whatever was baked or mounted.\n- A **`null` leaf**, or an omitted key, keeps the file's existing value.\n- **`connect.app.basePath` is ignored.** The base path is baked into the bundled asset URLs at build time \u2014 rebuild with `--base`, or build once with `--dynamic-base` to resolve it at serve time.\n\n```bash\ndocker run -e PH_CONNECT_CONFIG_JSON='{\n  \"connect\": {\n    \"app\": { \"logLevel\": \"debug\" },\n    \"renown\": { \"url\": \"https://renown.staging.example\", \"chainId\": 137 },\n    \"drives\": { \"sections\": { \"remote\": { \"enabled\": true, \"allowAdd\": false } } },\n    \"sentry\": { \"dsn\": \"https://prod-key@sentry.io/1\", \"env\": \"prod\", \"tracing\": true }\n  }\n}' connect:latest\n```\n\nThe accepted shape is the same one `ph connect config --json` takes, schema'd at `packages/builder-tools/connect-utils/runtime-config.schema.json`.\n\n### Fails loudly, not silently\n\nMalformed JSON or a non-object payload **aborts container startup** with a stderr message rather than dropping the operator's intent and booting with stale config. That is deliberate: a silently-ignored payload in production is far worse than a crash-loop you can see.\n\nThis is the migration target for the retired per-field variables \u2014 `PH_CONNECT_LOG_LEVEL`, `PH_CONNECT_DISABLE_ADD_DRIVE`, `PH_CONNECT_RENOWN_URL`, `PH_CONNECT_DEFAULT_DRIVES_URL`, the whole `PH_CONNECT_SENTRY_*` family. Wrap their values into one payload. The Sentry *release* tag stays build-time only: it is stamped into the bundle from `WORKSPACE_VERSION` so it always matches CI's sourcemap upload.\n\n_Source: `apps/academy/docs/academy/03-Build/05-Launch/05-DockerDeployment.md`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Concrete values overwrite the baked file; null or omitted keys keep it. connect.app.basePath is ignored and malformed JSON aborts startup.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1e43cf20-660b-4545-825d-eb81394c0673",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:56.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "38327586-e220-462e-a707-a7f9a4ae2735",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

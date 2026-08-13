@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ebe264ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ebe264ee-37c2-4ae1-ae5a-20c5dca62e15",
+      "targetTitle": "event-sourcing-guarantees-audit-trails-but-complicates-querying"
+    },
+    {
+      "id": "lnk-ad63c7f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad63c7f0-b6d6-4d10-955e-33fd76cf2363",
+      "targetTitle": "operations-history-is-event-sourced"
+    },
+    {
+      "id": "lnk-9b97a142-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "9b97a142-2322-40a7-a680-c2f822b0abec",
+      "targetTitle": "operations-not-state-log"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A SQL UPDATE destroys exactly what an operation log preserves: when, who, the prior value, and selective undo",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8b98f62c-e776-4465-9cf4-e3b9247965ef",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c71fa9cb-e4a8-4ad1-b1f8-d6753dc36b8b",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dfd5ef6d-5c4c-43d0-b7fc-fee580927b31",
+      "name": "mental-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The clearest way to see what an operation log buys you is to watch a single CRUD statement destroy it. Marking a todo done, SQL-shaped:\n\n```sql\nUPDATE todos SET done = true WHERE id = 't-1';\n```\n\nAfterwards, four questions have become unanswerable:\n\n- *When* did it get marked done?\n- *Who* marked it?\n- *What was it before?*\n- Can we undo just this change, without rolling back everything since?\n\nNone of these are exotic requirements. They are the ordinary substance of audit, support, and debugging. And they were not lost to a missing column \u2014 they were destroyed by the shape of the write. The statement's entire semantics is \"replace the old value,\" so the old value is gone by construction.\n\n## The snapshot trap\n\nThe usual response is to bolt history back on: audit tables, triggers, soft-delete flags, `updated_by` columns. Each recovers a fragment, and together they can recover quite a lot. But this is the trap \u2014 you are reintroducing history on top of a model that actively throws it away. Every new table needs its own trigger; every fragment can drift from the row it shadows; and selective undo stays out of reach, because an audit row records that a value changed without describing the change as something you can invert.\n\n## The operation-shaped answer\n\n`dispatch(completeTodo({ id: \"t-1\" }))` appends a record of the *intent* \u2014 the action name and its input \u2014 rather than overwriting a cell. State becomes derived: fold the log for the current value, fold to index 30 for the value as of index 30. Nothing is bolted on, because nothing was thrown away.\n\n## Why it matters as a mindset shift\n\nIf you have built CRUD apps, the instinct is to think in rows \u2014 the current value of a record. Powerhouse asks you to flip that and think in the *sequence of changes* that produced the row. The log is the source of truth; the row is a convenience.\n\n_Source: apps/academy/docs/academy/02-Learn/01-foundations/02-thinking-in-operations.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The snapshot trap: audit tables, triggers and soft deletes reintroduce history on top of a data model that actively throws it away.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8aab81a0-1e8f-4d59-8664-0e7a63ca64d5",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2f735b58-0fb3-4bb0-ac40-72b35ef07c4b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,305 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:26.896Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "processors-run-only-on-in-process-reactor-path",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "34663fc0-8d7d-45c0-8006-022df1532285",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:34:26.896Z"
+        },
+        "version": 0,
+        "documentId": "34663fc0-8d7d-45c0-8006-022df1532285",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:26.896Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ym4xCf0Lzv9eTYFeHa7edxSXkhk=",
+    "timestampUtcMs": "2026-08-13T14:34:27.525Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Processors run only on the in-process reactor path \u2014 the SharedWorker path silently skips every factory",
+        "updatedAt": "2026-08-13T14:34:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:27.525Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:26.896Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "34663fc0-8d7d-45c0-8006-022df1532285",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:26.896Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Dr97otMJFDkV8BXhmQ1InaogOsk=",
+    "timestampUtcMs": "2026-08-13T14:34:27.525Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:34:26.000Z",
+        "description": "Connect logs a warning and skips registration on the worker path, so worker-hosted reactors run no processors today."
+      },
+      "timestampUtcMs": "2026-08-13T14:34:27.525Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:28.692Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "34663fc0-8d7d-45c0-8006-022df1532285",
+        "targetId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:28.692Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "sJ+OelkGSkM2SfWs4TT3egJarJM=",
+    "timestampUtcMs": "2026-08-13T14:34:27.525Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-13T14:34:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:27.525Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:28.718Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "34663fc0-8d7d-45c0-8006-022df1532285",
+        "targetId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:28.718Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "X3h13tjzgYbF3ptPVenWj4WTULk=",
+    "timestampUtcMs": "2026-08-13T14:34:27.525Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The processor documentation carries an explicit \"Not stable yet\" warning that is easy to miss and expensive to discover empirically: **processors run only on the in-process reactor path.** On the SharedWorker reactor path, processor registration is not bridged \u2014 Connect logs a warning and skips every factory (`apps/connect/src/store/reactor.ts`). Worker-hosted reactors do not run processors today.\n\nThe failure mode is the worst kind: silent and total. Nothing throws. Your factory builder is never called, `onOperations` never fires, your relational tables stay empty, and the only signal is a console warning. Anything that depends on a processor \u2014 a search index, an analytics rollup, a webhook, a follow-up dispatch \u2014 simply does not happen.\n\nThis also explains the shape of the registration API. The processor manager is deliberately **not** a method on `IReactor`; it lives on the in-process reactor module as `processorManager`. Reaching it requires narrowing on the module kind, which is the code-level expression of the same constraint:\n\n```typescript\nconst reactorModule =\n  reactorClientModule.kind === \"browser\"\n    ? reactorClientModule.reactorModule\n    : undefined;\n\nawait reactorModule?.processorManager.registerFactory(id, factory);\n```\n\nNote the optional chaining. If the reactor is not on the browser in-process path, `reactorModule` is `undefined` and the `registerFactory` call evaporates without complaint.\n\nPractical consequences while this is unstable:\n\n- Verify which path a host actually booted before debugging a processor that \"does not run\" \u2014 check the module kind, not the processor code.\n- Treat processor-mediated behavior as unavailable in worker-hosted topologies, and do not build UI that assumes a read model will be populated.\n- When you do register, use the package name as the `identifier`; re-registering the same identifier unregisters the prior factory first, so registration is idempotent.\n\nRelated but separate: a factory that *throws* is caught, logged as `Factory '<id>' failed for drive '<driveId>'`, and skipped for that drive \u2014 registration does not crash.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:34:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:27.525Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:28.742Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "34663fc0-8d7d-45c0-8006-022df1532285",
+        "targetId": "c11dcad5-69d6-4730-a59c-fa2820e8c0a0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:28.742Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "yXUE+XIbkjzER/iGhSolPbjTwAE=",
+    "timestampUtcMs": "2026-08-13T14:34:27.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4041a679-2d7e-4f65-91b3-530dc72d1981",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:27.525Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "eSayB9JF3Ui68NnavWo0X7F/dxo=",
+    "timestampUtcMs": "2026-08-13T14:34:27.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f659f818-e0d0-4c62-b407-ef02d32facb3",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:27.525Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "a9vrdnfjn+DfoTIrQESoTvyXZWQ=",
+    "timestampUtcMs": "2026-08-13T14:34:27.525Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b0e72ce8-b467-47c8-8852-3515242b811f",
+        "name": "connect"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:27.525Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "WChewtkB51n5Qz775mOc6L29hvE=",
+    "timestampUtcMs": "2026-08-13T14:34:28.647Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:26.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:28.647Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "WhaAPsx3XBA+pqAAOvYFTnT9iNg=",
+    "timestampUtcMs": "2026-08-13T15:53:11.773Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:53:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:11.773Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "/XGTuoDDfibH73Jjnuqygg/+3Yk=",
+    "timestampUtcMs": "2026-08-13T15:53:11.773Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "03cf964f-1b2e-4087-9ed0-22292db28e42",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:53:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:11.773Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "feg8xXpgmVy8DwcWCYEUC6J+R3M=",
+    "timestampUtcMs": "2026-08-13T15:53:11.773Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "e3c807cb-eb7e-4414-af4a-8e3a2d139e89",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:53:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:11.773Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "mjMjra2BNkuPJfZFlvThNrzYGWI=",
+    "timestampUtcMs": "2026-08-13T16:50:22.862Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:50:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:50:22.862Z"
+    }
+  }
+]

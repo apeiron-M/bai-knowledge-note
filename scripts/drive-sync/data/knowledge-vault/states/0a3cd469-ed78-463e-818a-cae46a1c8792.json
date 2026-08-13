@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-3c8bb297-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c8bb297-ae31-4f7a-b7f2-c91fdd89217d",
+      "targetTitle": "drive-apps-are-custom-drive-editors"
+    },
+    {
+      "id": "lnk-ce65f0dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce65f0dc-e22e-4b36-854a-d427c544489b",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-f158a1f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f158a1f4-eab3-43f6-ba19-00c0608e62e7",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "v6.0.0 bulk-renamed DriveEditor across every package, and drive editors are now apps of type powerhouse/app",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9712afc5-37bc-41d8-b800-11708bed8b72",
+      "name": "v6-migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6db9abc-96a3-45bc-917d-e2fb5c385de6",
+      "name": "drive-apps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4eb1b2bf-90f8-4b68-9efe-23655045f585",
+      "name": "terminology",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "v6.0.0 lists the rename under Breaking Changes with no migration table:\n\n> **`DriveEditor` renamed** \u2014 a bulk rename was applied across all packages. Search your codebase for old `DriveEditor` references and update as directed by TypeScript.\n\nThe intended workflow is therefore compile-error-driven rather than documented symbol-by-symbol, which is worth knowing before going looking for a mapping that does not exist.\n\nThe terminology landed on **Drive-app**, and the concept is now a first-class generated module type rather than a special kind of editor. The CLI reference confirms the surface:\n\n- `ph generate app` \u2014 \"Generate a drive app\", with `--name`, `--document-types`, `--dir`, `--all`, `--extract`, and a `--disable-drag-and-drop` flag.\n- Its spec files are `powerhouse/app` documents: `--document` takes \"Path to a `powerhouse/app` spec file (.phd or .json) to drive codegen\", and `--extract` writes \"a `powerhouse/app` spec for each existing drive app into `specs/apps/`\".\n- The CSS customization reference maps the `app-editor` slot to document type `powerhouse/app`.\n\nSo the rename is not only cosmetic: it aligns the drive-level UI with the same spec-document-as-source-of-truth model used for document models and editors, each with its own document type and its own `ph generate` subcommand.\n\nThe other subgraph-shaped breaking change in the same release reinforces the direction \u2014 generated subgraph code should be **deleted** (`rm -rf src/subgraphs/`) because subgraphs are now generated and loaded at runtime.\n\nProvenance: academy `ReleaseNotes/v6.0.0.md:192` (Breaking Changes) for the rename; `04-Reference/07-CLITooling/00-PowerhouseCLI.md` App section and `03-Build/03-BuildingUserExperiences/04-CSSCustomization.md:135` for the `powerhouse/app` type and `ph generate app`. Academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The release notes list the rename as a breaking change to fix by following TypeScript errors. The CLI now exposes ph generate app, whose spec files are powerhouse/app documents.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "50d7fdbd-1ae9-42e6-8826-3dee6776431f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "082a498e-13f3-4a75-90b8-79c11a9a4644",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-cd9fb0ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-a8b2713f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RelationalDbProcessor extends IProcessor to project document operations into SQL tables with type-safe migrations and namespaced databases per drive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c34fba22-589c-4866-9606-d477bc1c1416",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a469c8b8-5c1e-4daa-8c20-b5de8f114ad9",
+      "name": "relational-database",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1eaea6d6-0d2d-4c71-abb5-122e887aa2b1",
+      "name": "migrations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0442b194-8251-447a-bcca-7388dfd90ccd",
+      "name": "CQRS",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Generate with `ph generate processor --name <name> --type relationalDb --document-types <type>`. Creates: processor class (extends `RelationalDbProcessor<DB>`), migrations.ts (up/down functions with Kysely-style schema builder), factory.ts (creates namespaced DB per drive), schema.ts (generated TypeScript types from migration via `ph generate migration-file --path <migrations-file>`). The processor lifecycle: `initAndUpgrade()` runs migrations on startup, `onOperations()` handles each batch, `onDisconnect()` cleans up. Namespaces (`getNamespace(driveId)`) prevent data collisions between drives. Data is exposed through subgraphs via `TodoIndexerProcessor.query(driveId, relationalDb)` for type-safe SQL queries.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Generated with `ph generate processor --type relationalDb`; uses migrations for schema, namespaces to isolate per-drive data.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "236ae8b6-1465-4b75-89f0-77d376298305",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2bac98e4-2223-41dc-9c61-9e0dae70899a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:55.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

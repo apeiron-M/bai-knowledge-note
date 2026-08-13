@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-7b7e1f27-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7b7e1f27-3ae1-4032-95e1-364b0f5de6c4",
+      "targetTitle": "swarm-push-cycle-encrypt-bytes-feed"
+    },
+    {
+      "id": "lnk-4846256a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4846256a-068e-4ecb-99bf-cfdb3230391f",
+      "targetTitle": "swarm-pull-cycle-manifest-to-inbox"
+    },
+    {
+      "id": "lnk-ab51b1bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab51b1bd-4e7d-420a-b673-52bbc4e39277",
+      "targetTitle": "swarmchannel-is-transport-only"
+    },
+    {
+      "id": "lnk-c0b2af09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0b2af09-1fc3-43d4-bc28-dca56db6f747",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-a159e0d3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a159e0d3-627b-482f-96af-8fb2abe8faba",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adapter sync flow: reactor ops encrypted, uploaded to Swarm, replayed on recovery",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "sync-flow",
+      "name": "sync-flow",
+      "topicDocumentId": null
+    },
+    {
+      "id": "swarm-channel",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cross-device-recovery",
+      "name": "cross-device-recovery",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "End-to-end sync flow from document edit to cross-device recovery:\n\n```\nUser edits document in Connect\n       \u2193\nReactor stores operation in local PGlite\n       \u2193\nSyncManager detects new ordinal \u2192 populates SwarmChannel outbox\n       \u2193\nSwarmChannel encrypts ops \u2192 uploads to Swarm /bytes \u2192 updates feed pointer\n       \u2193\nOn new device: wallet signature \u2192 same key \u2192 read feeds \u2192 download ops \u2192 replay \u2192 restored\n```\n\nKey properties:\n- Local writes hit PGlite first, so edits never block on network I/O.\n- The outbox is populated reactively by ordinal, not polled.\n- Encryption happens at the SwarmChannel layer before `/bytes` upload.\n- Feed pointers are the only mutable primitive \u2014 the op blobs themselves are immutable.\n- Cross-device recovery is deterministic from the wallet signature alone, no backup seed phrase or extra credentials needed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:52:46.944Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SyncManager detects new ordinals, SwarmChannel encrypts and uploads ops to /bytes and updates feed pointers; a new device replays ops after a wallet signature re-derives the key.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7f7f7c49-6083-4010-8944-6f82c0f7c7ed",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4e35acb4-be69-45ec-ae0c-2f6ae438bf6d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

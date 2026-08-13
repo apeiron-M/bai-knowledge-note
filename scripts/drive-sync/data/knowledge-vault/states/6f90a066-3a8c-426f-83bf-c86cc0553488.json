@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f330b4b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f330b4b8-5345-4649-9bdf-7903cb92e827",
+      "targetTitle": "relational-db-processor-for-sql-projections"
+    },
+    {
+      "id": "lnk-a8b2713f-con",
+      "linkType": "CONTRADICTS",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The \"*\" wildcard in a ProcessorFilter is honored only in documentId",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4f882800-5630-408e-bf19-dead62dc0f6c",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "634e19dd-6d0e-4004-909d-269f3e126586",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b50852c-e067-484b-8136-eb91f40fb3ef",
+      "name": "filters",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`ProcessorFilter` looks uniform, which is the source of the bug:\n\n```typescript\ntype ProcessorFilter = {\n  documentType?: string[];\n  scope?: string[];\n  branch?: string[];\n  documentId?: string[];\n};\n```\n\nMatching is per field, and all present fields must match. A field that is `undefined` or `[]` matches everything; a field with values matches an operation whose corresponding context value is in the array.\n\nThe `\"*\"` wildcard is special-cased in **`documentId` only**. There it means \"any document\". In `documentType`, `scope`, and `branch` there is no wildcard handling at all \u2014 a literal `\"*\"` is compared as a plain string, so it matches only an operation whose value *is* the string `\"*\"`. Since no real operation has a scope named `\"*\"`, `scope: [\"*\"]` matches **nothing** and the processor silently receives zero operations.\n\nThe correct way to match all scopes is to omit the field or set it to `[]`:\n\n```typescript\nconst filter: ProcessorFilter = {\n  documentType: [\"powerhouse/todo\"],\n  scope: [\"global\"],   // concrete scopes, or omit entirely\n  branch: [\"main\"],\n  documentId: [\"*\"],   // \"*\" is honored here\n};\n```\n\nThis is not hypothetical: the docs flag a **latent inconsistency** in the codegen analytics template, which emits `scope: [\"*\"]`. Scaffold an analytics processor and you get a filter that cannot match, with no error to tell you. Set `scope` to the concrete scopes you want, or drop the key.\n\nBe aware this **contradicts** the guidance in the existing note \"Processors implement IProcessor with onOperations\u2026\", which states that `ProcessorFilter` arrays take `[\"*\"]` for all. That generalization holds for `documentId` and fails for the other three fields; the per-field rule above is the current behavior.\n\nAlso note the division of labour: the filter decides *which* operations reach a processor, while `startFrom` on the `ProcessorRecord` decides *where in history* it starts. They are unrelated knobs.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "In documentType, scope and branch a literal \"*\" matches only the string \"*\". Omit the field or use [] to match all \u2014 the codegen analytics template's scope [\"*\"] matches nothing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2f844733-de5b-47a5-9275-aab03ef5f2ff",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1bd43da5-9711-42e9-9d6a-4433c17ca60f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

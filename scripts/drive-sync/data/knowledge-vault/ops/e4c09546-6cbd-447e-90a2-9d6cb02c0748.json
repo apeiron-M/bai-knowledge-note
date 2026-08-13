@@ -1,0 +1,350 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:20:53.142Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "adr-002-extract-stamp-share-managers",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e4c09546-6cbd-447e-90a2-9d6cb02c0748",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:20:53.142Z"
+        },
+        "version": 0,
+        "documentId": "e4c09546-6cbd-447e-90a2-9d6cb02c0748",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:20:53.142Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "XTllsMA7/T57o4FBiXBlLt2/dLc=",
+    "timestampUtcMs": "2026-08-13T13:22:46.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ADR-002 splits SwarmClient's 10 responsibilities into focused StampManager and ShareManager classes",
+        "updatedAt": "2026-08-13T13:22:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:46.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:20:53.142Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e4c09546-6cbd-447e-90a2-9d6cb02c0748",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:20:53.142Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "OhIW34+n0luDuLbjS9TvgKT01VQ=",
+    "timestampUtcMs": "2026-08-13T13:22:46.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:22:46.000Z",
+        "description": "Accepted 2026-04-10: SwarmClient shrinks from 1035 to 531 lines of core CRUD/feeds/manifests; StampManager and ShareManager become independently testable behind thin delegation wrappers."
+      },
+      "timestampUtcMs": "2026-08-13T13:22:46.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:52.400Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e4c09546-6cbd-447e-90a2-9d6cb02c0748",
+        "targetId": "a41320a9-65d2-4d0b-81ba-791aa4a859d7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:52.400Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "coQnrCzyQeJoN8fBfyCbKtYZvCM=",
+    "timestampUtcMs": "2026-08-13T13:22:46.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "decision",
+        "updatedAt": "2026-08-13T13:22:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:46.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:52.430Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e4c09546-6cbd-447e-90a2-9d6cb02c0748",
+        "targetId": "ab51b1bd-4e7d-420a-b673-52bbc4e39277",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:52.430Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "ExhCFxEmHSSJSP8jqbnDBmI68nE=",
+    "timestampUtcMs": "2026-08-13T13:22:46.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "**ADR-002: Extract StampManager and ShareManager from SwarmClient**\n\n**Status:** Accepted (2026-04-10)\n\n**Context:** `SwarmClient` had grown to 1,035 lines with ~30 methods covering 10 responsibilities \u2014 data CRUD, feeds, stamps, pricing, sharing, profiles, ACT, compaction, and more. The class became hard to test and reason about.\n\n**Decision:** Extract two focused classes:\n\n- `StampManager` \u2014 stamp lifecycle and pricing.\n- `ShareManager` \u2014 profiles, sharing, and key derivation.\n\n`SwarmClient` keeps thin delegation methods pointing at these managers so existing call sites continue to work.\n\n**Consequences:**\n- Positive: `SwarmClient` refocuses on core CRUD + feeds + manifests and drops to 531 lines.\n- Positive: `StampManager` and `ShareManager` become independently unit-testable.\n- Negative: delegation wrappers add a layer of indirection that readers must follow.\n\nADR-003 (same date) complements this by adding optional DI parameters (e.g. `bee: Bee` on `SwarmClient`, `provider: EthereumProvider` on `wallet-signer`) so all three classes can be constructed with injected mocks and tested without global patching.",
+        "updatedAt": "2026-08-13T13:22:46.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:46.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:52.664Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e4c09546-6cbd-447e-90a2-9d6cb02c0748",
+        "targetId": "3ff7866d-98e3-4ccc-adb8-ede09347f9a3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:52.664Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "hhhLklqMKtkHMR5qf6hZFiO0Tns=",
+    "timestampUtcMs": "2026-08-13T13:22:46.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:31.656Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:46.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:52.799Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e4c09546-6cbd-447e-90a2-9d6cb02c0748",
+        "targetId": "946f2a49-d15b-4915-94ff-7066966c43f5",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:52.799Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ogP0VJqc/zpZun9hWRll3R+xpto=",
+    "timestampUtcMs": "2026-08-13T13:22:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5c872c0c-ce91-4055-9c0a-21442abd27b2",
+        "name": "adr",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:46.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:52.823Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e4c09546-6cbd-447e-90a2-9d6cb02c0748",
+        "targetId": "2b7f5dc0-996e-4ed3-b8fd-dc7d83ab0662",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:52.823Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "xl7YsQJvsFSVgTtm7gyJUapGqas=",
+    "timestampUtcMs": "2026-08-13T13:22:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "142d9c2e-3458-4ed4-ba83-71add84ea483",
+        "name": "swarm-client",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:46.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "EhTXFafggXcn3li3tA31XKyM1H8=",
+    "timestampUtcMs": "2026-08-13T13:22:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "02f45b64-51b4-42f3-9af4-f6bf7beec69d",
+        "name": "refactor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:46.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "OuxZeaNeJjI98mD5AYA4z4p973c=",
+    "timestampUtcMs": "2026-08-13T13:22:46.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "68973b85-ad62-48e0-8f02-77214376b4e5",
+        "name": "testability",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:46.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "cU5V2PYiOoj/DtJSUkI7kMWiqm4=",
+    "timestampUtcMs": "2026-08-13T15:59:24.343Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:59:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:24.343Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "bcgj8c0f12zNeCkxYGevZQdVCio=",
+    "timestampUtcMs": "2026-08-13T15:59:24.343Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2e76e2d6-2496-4dfc-b42c-0a35c71cc963",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:59:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:24.343Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "YUEWF7m5uHDCWhAMu1zBkoOhJcQ=",
+    "timestampUtcMs": "2026-08-13T15:59:24.343Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "629b7260-161c-41d1-afff-26c8238f23b0",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:59:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:24.343Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "WHtveFwoPKKldMDTF+xBS5TeW/8=",
+    "timestampUtcMs": "2026-08-13T16:57:54.360Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:57:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:57:54.360Z"
+    }
+  }
+]

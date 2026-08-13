@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-6a1bb35b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6a1bb35b-5516-4527-b13d-03d7d3792488",
+      "targetTitle": "operation-errors-are-recorded-on-operations-not-thrown-to-callers"
+    },
+    {
+      "id": "lnk-39176ea5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "39176ea5-5203-4ae0-adda-73d80609949c",
+      "targetTitle": "core-flow-connect-reactor-swarm"
+    },
+    {
+      "id": "lnk-cbb06ab4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "operation error index must match the number of prior dispatches",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b53dbc92-9c7a-40cb-a641-4f68c4c41824",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4864ee81-fe7e-4c11-824d-18d08228ebed",
+      "name": "testing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "473bec9f-a9fb-468c-855e-1fe5228e4a56",
+      "name": "debugging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ac5c486-bf50-402b-a97d-a4c7be6fb555",
+      "name": "error handling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# operation error index must match the number of prior dispatches\n\nWhen testing reducer errors, the operation index matters:\n\n```typescript\n// First operation dispatched \u2192 index [0]\nconst doc1 = reducer(document, addItem({ id: \"1\", name: \"test\" }));\n\n// Second operation dispatched \u2192 index [1]\nconst doc2 = reducer(doc1, addItem({ id: \"1\", name: \"duplicate\" }));\nexpect(doc2.operations.global[1].error).toBe(\"Duplicate ID\");\n\n// \u274c Wrong \u2014 index [0] is the first (successful) operation\nexpect(doc2.operations.global[0].error).toBe(\"Duplicate ID\");\n```\n\nThe index corresponds to the total number of operations dispatched, not the number of errors. Since [[operation errors are recorded on operations not thrown to callers]], every dispatch (successful or failed) produces an operation at the next index.\n\n---\n\nTopics:\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:00:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:03.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The error lives at document.operations.global[N] where N equals prior dispatches; wrong index checks the wrong operation",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a6424d57-84ae-419f-b48b-04f575892a75",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:04.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b857ee69-40db-42ff-992b-7f1ae28ce582",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

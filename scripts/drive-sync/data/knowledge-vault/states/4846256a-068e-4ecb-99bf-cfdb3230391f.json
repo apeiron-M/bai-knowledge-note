@@ -1,0 +1,119 @@
+{
+  "links": [
+    {
+      "id": "lnk-868cf8ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+      "targetTitle": "pglite-sync-tables-persist-remote-state"
+    },
+    {
+      "id": "lnk-f71d5a21-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f71d5a21-6516-4fbd-9bec-85dfc0fafeaf",
+      "targetTitle": "bee-reactor-adapter-storage-sharing-features"
+    },
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-1c842c07-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-37b131a5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "37b131a5-e4fc-4b62-89d0-f7bcaec4a88c",
+      "targetTitle": "swarm-bytes-vs-feeds"
+    },
+    {
+      "id": "lnk-23d9e53f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "23d9e53f-4704-48d2-948d-20106512437d",
+      "targetTitle": "swarmchannel-push-pull-flow"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Swarm pull cycle polls user and document manifests then decrypts batches into the inbox.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-c634a118-1",
+      "name": "pull-cycle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-c634a118-2",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-c634a118-3",
+      "name": "manifest",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-c634a118-4",
+      "name": "feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nPull is manifest-driven: poll user feed \u2192 read user manifest \u2192 per-document manifests \u2192 batch references \u2192 /bytes downloads \u2192 decrypt \u2192 inbox.\n\n## Step-by-step\n1. SwarmChannel polls the user's feed at the configured interval (`pollIntervalMs`).\n2. Reads the user manifest \u2192 discovers drives and documents.\n3. For each document, reads its manifest \u2192 discovers operation batches.\n4. Downloads each batch from `/bytes`, decrypts with AES-256-GCM, deserializes.\n5. Converts to `SyncOperation` objects and adds to `SwarmChannel.inbox`.\n6. SyncManager applies them to the local reactor via `reactor.load()`.\n7. Cursor advances in `sync_cursors`; subsequent polls only fetch new operations.\n\n## Implications\n- First load on a new device walks the full manifest tree but only applies each batch once.\n- Steady-state pulls are cheap \u2014 only new manifest entries trigger downloads.\n- The manifest tree is the discovery index; without it, the pull cannot proceed.\n\n## Source\nSwarm Channel Architecture, \"Pull Cycle (Swarm \u2192 local)\".",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "procedure",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SwarmChannel polls the user feed, walks manifests to discover documents and batches, downloads + decrypts via /bytes, and hands SyncOperations to SyncManager.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3cc8942a-b45a-4f77-8848-18c4ad25d09e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:56.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4985aed2-ec2c-49f6-ae49-c535badaecc1",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

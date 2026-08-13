@@ -1,0 +1,138 @@
+{
+  "tier": "DOMAIN",
+  "title": "Reactor and Drives",
+  "version": "v6.2.2-dev.44",
+  "tensions": [],
+  "childRefs": [],
+  "coreIdeas": [
+    {
+      "id": "ci-4d98df7d",
+      "noteRef": "4d98df7d-a81e-461c-aa76-f59378303502",
+      "contextPhrase": "",
+      "sortOrder": 0,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-e5fd24ec",
+      "noteRef": "e5fd24ec-8f92-4f9d-b3c6-0b675a1f367d",
+      "contextPhrase": "",
+      "sortOrder": 1,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-3f8ca25d",
+      "noteRef": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "contextPhrase": "",
+      "sortOrder": 2,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-22720e65",
+      "noteRef": "22720e65-5178-41e9-b071-9e29543eea0e",
+      "contextPhrase": "",
+      "sortOrder": 3,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-3b5e33c2",
+      "noteRef": "3b5e33c2-a8db-4c96-957b-edf84d9bcd9d",
+      "contextPhrase": "",
+      "sortOrder": 4,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-d065b560",
+      "noteRef": "d065b560-9609-4b9b-9603-ebd73e35276c",
+      "contextPhrase": "",
+      "sortOrder": 5,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-063e8261",
+      "noteRef": "063e8261-4095-4cdf-83dd-3fa6c05f07a3",
+      "contextPhrase": "",
+      "sortOrder": 6,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-b463e3e1",
+      "noteRef": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "contextPhrase": "",
+      "sortOrder": 7,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-cbb06ab4",
+      "noteRef": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "contextPhrase": "",
+      "sortOrder": 8,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-e2a19850",
+      "noteRef": "e2a19850-c400-4a2e-a3d7-7bb273c770df",
+      "contextPhrase": "",
+      "sortOrder": 9,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-4752ac2e",
+      "noteRef": "4752ac2e-835a-4be9-9c2b-ca95ca501cef",
+      "contextPhrase": "",
+      "sortOrder": 10,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-63660cff",
+      "noteRef": "63660cff-4660-4af1-875d-520690e27a57",
+      "contextPhrase": "",
+      "sortOrder": 11,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-10d4751c",
+      "noteRef": "10d4751c-4117-4a5f-86b0-576194f6f853",
+      "contextPhrase": "",
+      "sortOrder": 12,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-4ee19a4a",
+      "noteRef": "4ee19a4a-7d11-444f-a6fa-63b807ed6cae",
+      "contextPhrase": "",
+      "sortOrder": 13,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    },
+    {
+      "id": "ci-0ba40e3e",
+      "noteRef": "0ba40e3e-168b-49b8-a39d-e24b8265a412",
+      "contextPhrase": "",
+      "sortOrder": 14,
+      "addedAt": "2026-08-13T17:00:09.000Z",
+      "addedBy": "knowledge-agent"
+    }
+  ],
+  "createdAt": "2026-04-02T13:00:00.000Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-08-13T16:50:40.000Z",
+  "agentNotes": [],
+  "description": "How reactors serve as the backend runtime for drives, managing document lifecycle, synchronization, subscriptions, and client connectivity.",
+  "orientation": "Reactors are the server-side execution environment where Powerhouse documents live, sync, and evolve. A reactor hosts one or more drives \u2014 themselves documents \u2014 that organize content into collaborative workspaces. Understanding the reactor architecture means grasping how the ReactorClient abstraction hides network complexity, how the fluent ReactorBuilder API composes middleware and processors, how subscriptions push real-time document changes to connected clients, and how consistency tokens ensure read-after-write guarantees in distributed scenarios. This MOC maps the complete server-side story from construction through operation, including browser-side hooks that bridge the gap to React UIs and the MCP integration that opens the reactor to AI agents.",
+  "openQuestions": [],
+  "links": []
+}

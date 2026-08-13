@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-c0b2af09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0b2af09-1fc3-43d4-bc28-dca56db6f747",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-2642b21e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2642b21e-fc0d-413e-a421-2affae6d6164",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Chat 1-to-1 PSS messaging with feed-indexed history shipped",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ae86cf2c-b271-45d8-a34e-801402cbe643",
+      "name": "chat-roadmap",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1fec93a-835f-44b7-8c47-7355257119bb",
+      "name": "shipped-features",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65bd1a0a-bb48-43cf-9adc-741bf555c126",
+      "name": "pss-messaging",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Context\n\nAs of 2026-04-18, the core chat stack on Swarm is shipped and stable.\n\n## Shipped capabilities\n\n- **PSS 1-to-1 messaging** via `pss-messenger.ts` and `ChatManager.sendMessage`.\n- **Broadcast ping for new conversations** - `pss.subscribeAll` + `sendBroadcastPing`, with a synchronous `seenMessageIds` guard to deduplicate.\n- **Feed-indexed chat history** - paginated, ACT-encrypted, chapter-rotated. Both parties are grantees; a 64-byte wrapper chunk keeps ACT decode self-contained (`chat-history.ts`).\n- **Recovery across browser wipes** - `chatPeers[]` stored in the user manifest, with chapter tracking in localStorage using `Date.now()` to stay wipe-safe.\n- **Clear-all-chats** - two-step confirm in `conversation-list.tsx` calls `ph.swarm.clearChats()`, which bumps the chapter, wipes caches, and clears `chatPeers`.\n- **Dedup across Bee re-serves and broadcast+direct overlap** - `seenMessageIds` set, batch-trimmed.\n\n## Implications\n\nMessaging is no longer the bottleneck. Further chat investment should concentrate on live collaboration and polish items, not on the base conversation layer.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "observation",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:38:00.466Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PSS-based 1-to-1 chat with ACT-encrypted paginated feed history is shipped, including recovery across browser wipes and clear-all-chats.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4e3c82ff-79e1-4460-9576-e417a55145a2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:23.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "64e8baa7-339d-4e23-a169-512460a61d0c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:23.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

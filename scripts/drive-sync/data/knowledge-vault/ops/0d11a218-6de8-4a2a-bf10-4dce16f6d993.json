@@ -1,0 +1,350 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:11.891Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-manifest-as-reference-pattern",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:22:11.891Z"
+        },
+        "version": 0,
+        "documentId": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:11.891Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "GPr4ywaVpA5xhUJGm2s0YcaOdWI=",
+    "timestampUtcMs": "2026-08-13T13:23:31.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The adapter writes manifests as 32-byte references inside SOC feeds, not inline payloads",
+        "updatedAt": "2026-08-13T13:23:31.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:31.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:11.891Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:11.891Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "mNjisyx4TRm682uJEjkTvEUlOaw=",
+    "timestampUtcMs": "2026-08-13T13:23:31.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:31.000Z",
+        "description": "Instead of writing manifest JSON inline, we upload it to /bytes, encrypt with AES-256-GCM, and write only the 32-byte content hash to the feed via uploadReference."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:31.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:29.916Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+        "targetId": "c1c4bb51-3b52-46f8-a0e6-8cc8eb274a7b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:29.916Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "YyBqr8CIR+s3wbFgfqsDTby6DXI=",
+    "timestampUtcMs": "2026-08-13T13:23:31.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-13T13:23:31.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:31.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:30.167Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+        "targetId": "6350a53a-26de-4f51-bb52-def8f797b47f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:30.167Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "aaYNC5vDzq3p03FB0ln8uqRq91w=",
+    "timestampUtcMs": "2026-08-13T13:23:31.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nThe Bee Reactor Adapter uses a **manifest-as-reference pattern**: the feed SOC contains only a 32-byte pointer to encrypted manifest bytes uploaded via `/bytes`, not the manifest itself.\n\n## Evidence\n\nWrite path:\n1. Serialize manifest JSON\n2. Encrypt with app-layer AES-256-GCM\n3. Upload to `/bytes` \u2192 receive 64-char content hash\n4. Write ONLY the 32-byte hash into the feed via `makeFeedWriter().uploadReference(stamp, reference)` (72-byte SOC)\n\nRead path reverses: read feed \u2192 get hash \u2192 download from `/bytes` \u2192 decrypt \u2192 parse.\n\nbee-js offers two feed writer modes:\n- `uploadPayload(stamp, data)` \u2014 writes data <= 4096 bytes directly into the SOC\n- `uploadReference(stamp, reference)` \u2014 writes just a 32-byte reference\n\n## Why it matters\n\nThis pattern keeps feed SOCs tiny and fixed-size regardless of manifest size, and decouples encryption/versioning of manifest bytes from feed indexing. It's how every drive, doc, and user manifest is persisted.\n",
+        "updatedAt": "2026-08-13T13:23:31.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:31.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:30.314Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+        "targetId": "c133a556-7137-4978-8e4b-d18e803fc0b9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:30.314Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "fZkXR97nKXDXbnmnK/+3c4YvmTY=",
+    "timestampUtcMs": "2026-08-13T13:23:31.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:31.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:30.345Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+        "targetId": "d4792033-cd60-4178-85a0-80687e05718b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:30.345Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ftQ9bc2MoT3YdoMXGr2RJ8UbpSk=",
+    "timestampUtcMs": "2026-08-13T13:23:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c38107eb-6e59-4878-bf96-26229b4ed704",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:31.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:30.366Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+        "targetId": "39d0ea90-7bec-4e86-a1be-5893c3a607dd",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:30.366Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "KafbMIiadyLYdcCyudzzTUpcjEU=",
+    "timestampUtcMs": "2026-08-13T13:23:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "65d0a050-51c8-4fcf-ab82-4b073de6c020",
+        "name": "manifests",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:31.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "qUSGaBHeY2f1QLFWdVn3rRnONT4=",
+    "timestampUtcMs": "2026-08-13T13:23:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "23848b44-bba9-4b05-955f-b7b641122d37",
+        "name": "adapter",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:31.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "R6M6FOJyT4Dvd7cDowRKr2PLfxY=",
+    "timestampUtcMs": "2026-08-13T13:23:31.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3abf8032-75c5-4571-ae91-ee76123cc801",
+        "name": "encryption",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:31.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "kn0KIsmTFe7Q/R7o/HNEVdzI2dQ=",
+    "timestampUtcMs": "2026-08-13T15:51:42.851Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:51:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:42.851Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "zCjEBaLhp6vmKUKqiprAQUWTMBM=",
+    "timestampUtcMs": "2026-08-13T15:51:42.851Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "fd4a35f9-108b-44df-aa78-ad1f3438cff1",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:51:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:42.851Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "xL6F8VFxpRIr2YVJuiVgeYkfp/M=",
+    "timestampUtcMs": "2026-08-13T15:51:42.851Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "3cd4ec5a-722f-40e3-a90c-85d914570816",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:51:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:42.851Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "AWIKonNwUyEhFf8SinB6SJzx3YQ=",
+    "timestampUtcMs": "2026-08-13T16:48:34.938Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:48:34.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:48:34.938Z"
+    }
+  }
+]

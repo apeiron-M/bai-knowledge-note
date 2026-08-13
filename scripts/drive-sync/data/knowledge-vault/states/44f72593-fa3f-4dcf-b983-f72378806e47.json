@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-8a7d76ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a7d76ea-6239-4fec-ab11-9b37bb13b5c2",
+      "targetTitle": "chat-document-share-parity-shipped"
+    },
+    {
+      "id": "lnk-6245621c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6245621c-f24d-4c22-885b-22355a1f848d",
+      "targetTitle": "phase-2b-added-raw-file-sharing-in-chat-with-act-encrypted-b"
+    },
+    {
+      "id": "lnk-2736a86f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2736a86f-5937-45c2-909a-b4187de27f58",
+      "targetTitle": "dispersed-replicas-via-redundancy-level"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RedundancyLevel MEDIUM adds ~25% stamp cost via parity chunks",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d09a3f01-fcad-46ee-998c-48c0f67f5c9c",
+      "name": "stamp-utilization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a629ff22-3ac4-457e-bc2e-0a590f330134",
+      "name": "redundancy-level",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30a40aa4-64e4-4cff-a6c3-35fd2aecbba5",
+      "name": "parity-chunks",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Stamp-cost accounting for `RedundancyLevel.MEDIUM`\n\nThe tradeoff is write-side, not read-side:\n\n- **Stamp usage per write goes up ~25%**: MEDIUM adds ~1 parity chunk per 4 data chunks.\n- **Op-batches (~1KB) still fit in one SOC**, so the overhead is negligible for `collab-ops-feed.ts:138`.\n- **Larger chunks** (drive share bundle, manifest snapshots) see meaningful additional stamp consumption.\n- **Reader side: zero runtime cost** if chunks arrive \u2014 redundancy is only consulted on miss/timeout.\n\n**Required code change:** our existing stamp-utilization logic calls `calculateSize` / `calculateRemainingSize(encryption, ...)`. To report honest headroom, we must thread the `redundancyLevel` parameter through these calls: `calculateRemainingSize(true, MEDIUM)` rather than just `calculateRemainingSize(true)`.\n\n**Rollback rule from the experiment plan:** if stamp-utilization chirps warn of exhaustion, back off to `OFF` for ops and keep `MEDIUM` only for long-lived bundles.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "observation",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:42:03.432Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "MEDIUM adds roughly 1 parity chunk per 4 data chunks. Must thread the redundancy arg into calculateRemainingSize/calculateSize so stamp-utilization logic sees the real cost.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6c201370-36e6-4f07-8ec0-73b7e1c4954b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3cdd53d4-63de-435e-a7f5-bcbb74a77864",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

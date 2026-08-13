@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:28.807Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "getreadmodel-throws-when-read-model-unregistered",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "309e39f9-dc34-41bb-a719-7cde60760942",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:38:28.807Z"
+        },
+        "version": 0,
+        "documentId": "309e39f9-dc34-41bb-a719-7cde60760942",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:28.807Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "KCkWdBvZ0AgD7xum5BH4WRnQjv0=",
+    "timestampUtcMs": "2026-08-13T14:38:29.214Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Processors query indexed data via getReadModel<T>(name), which throws when the read model is not registered",
+        "updatedAt": "2026-08-13T14:38:28.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:29.214Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:28.807Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "309e39f9-dc34-41bb-a719-7cde60760942",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:28.807Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Of6HzAMcV8Mhco5jTn3xCuCogXQ=",
+    "timestampUtcMs": "2026-08-13T14:38:29.214Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:38:28.000Z",
+        "description": "The reactor registers four built-ins by name: document-view, document-indexer, processor-manager, subscription-notification. Custom read models resolve by their name property."
+      },
+      "timestampUtcMs": "2026-08-13T14:38:29.214Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:30.380Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "309e39f9-dc34-41bb-a719-7cde60760942",
+        "targetId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:30.380Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "uHsO9tt+A4MsUpvi9xBk3Ng3xnA=",
+    "timestampUtcMs": "2026-08-13T14:38:29.214Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:38:28.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:29.214Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:30.405Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "309e39f9-dc34-41bb-a719-7cde60760942",
+        "targetId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:30.405Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "tnilwIdz7c0GFyYOxtauzFILOT4=",
+    "timestampUtcMs": "2026-08-13T14:38:29.214Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`getReadModel<T>(name: string): T` is the processor's read path into materialized views the reactor already maintains. It is a name lookup with a cast, and it **throws** when the name is not registered \u2014 there is no undefined return to check.\n\nThe reactor ships four built-ins:\n\n| Name | Type | What it gives you |\n| --- | --- | --- |\n| `\"document-view\"` | `IDocumentView` | Document snapshots for reads: `get()`, `find()`, consistency tracking |\n| `\"document-indexer\"` | `IDocumentIndexer` | Parent/child document relationships and metadata |\n| `\"processor-manager\"` | `IProcessorManager` | Routes operations to registered processors |\n| `\"subscription-notification\"` | `SubscriptionNotificationReadModel` | Notifies subscription callbacks on document change |\n\nCustom read models registered through `IReadModelCoordinator` resolve by their `name` property the same way.\n\nThe throwing behaviour drives where you call it. Resolve read models in the **factory**, not inside `onOperations`, so a missing dependency fails loudly at registration rather than on the first operation batch:\n\n```typescript\nexport const budgetCheckProcessorFactory =\n  (module: IProcessorHostModule) =>\n  async (driveHeader: PHDocumentHeader): Promise<ProcessorRecord[]> => {\n    const budgetModel = module.getReadModel<IBudgetReadModel>(\"budget\");\n    const processor = new BudgetCheckProcessor(module.dispatch, budgetModel);\n    return [{ processor, filter: { branch: [\"main\"], documentId: [\"*\"],\n      documentType: [\"powerhouse/expense-report\"], scope: [\"global\"] } }];\n  };\n```\n\nIf the read model is genuinely optional, wrap the factory call in try/catch and degrade \u2014 the docs call this out explicitly. Note also that in Connect the read models available to `getReadModel` are exactly `reactorModule.readModelCoordinator.readModels`, which is only populated on the in-process reactor path.\n\nProvenance: academy `03-Build/04-WorkWithData/05-ProcessorBestPractices.md` (published), wiring confirmed in `apps/connect/src/store/processor-host-module.ts` at 6.2.2-dev.45.",
+        "updatedAt": "2026-08-13T14:38:28.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:29.214Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "l0Gj3UEICmwQDevoeSWP/tBd/r0=",
+    "timestampUtcMs": "2026-08-13T14:38:29.214Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "00bd33c9-c3d9-4900-af5d-36aa81ad6b89",
+        "name": "read-models"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:29.214Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "5X9wwJdbsw27UTNVus9jcZlGv1Y=",
+    "timestampUtcMs": "2026-08-13T14:38:29.214Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e28a0cea-fdb0-43c4-bec8-cd2dfcd7b9a2",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:29.214Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "9G3kh9qglC0vLx84kiMpSKfqgHk=",
+    "timestampUtcMs": "2026-08-13T14:38:29.214Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a2946348-5ae0-4d55-8d77-1544920a9773",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:29.214Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "24TjBDQqxnoSClEy5/CFk+Thi7Q=",
+    "timestampUtcMs": "2026-08-13T14:38:30.336Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:28.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:30.336Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "FfPy7yY5imwk6ftkVZiXaxE/pV8=",
+    "timestampUtcMs": "2026-08-13T15:53:04.238Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:53:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:04.238Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "6ARqoq6f1YDShenzY0xNGxqV1D0=",
+    "timestampUtcMs": "2026-08-13T15:53:04.238Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "80e61e19-27c3-429f-ad3d-dc29d4a317d4",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:53:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:04.238Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "rzcDw9koOD1c1VxdVHr/FJPJa3s=",
+    "timestampUtcMs": "2026-08-13T15:53:04.238Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "18dd569b-9d08-411d-ae67-86030246c598",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:53:04.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:04.238Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "4QaHlOkUsLu9PBQCDeo4fAbYaXs=",
+    "timestampUtcMs": "2026-08-13T16:50:12.832Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:50:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:50:12.832Z"
+    }
+  }
+]

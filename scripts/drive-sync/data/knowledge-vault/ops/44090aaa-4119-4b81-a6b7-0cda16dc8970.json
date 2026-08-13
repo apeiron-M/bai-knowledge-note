@@ -1,0 +1,277 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:47.679Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "realtime-degrades-to-local-only",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "44090aaa-4119-4b81-a6b7-0cda16dc8970",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:47.679Z"
+        },
+        "version": 0,
+        "documentId": "44090aaa-4119-4b81-a6b7-0cda16dc8970",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:47.679Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "V/zSIJA8yj0nYPyMFJTt27wiTds=",
+    "timestampUtcMs": "2026-08-13T14:33:48.008Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Realtime is an enhancement that degrades to local-only; the websocket URL is derived from the GraphQL url",
+        "updatedAt": "2026-08-13T14:33:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:48.008Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:47.679Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "44090aaa-4119-4b81-a6b7-0cda16dc8970",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:47.679Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ncG8kIkOCijzow/wQKbQVyU3/Uc=",
+    "timestampUtcMs": "2026-08-13T14:33:48.008Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:47.000Z",
+        "description": "http becomes ws, https becomes wss, /subscriptions appended. A refused socket is logged once, closed and ignored; nothing resubscribes on sign-in of its own accord."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:48.008Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:49.410Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "44090aaa-4119-4b81-a6b7-0cda16dc8970",
+        "targetId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:49.410Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "Pv5mP/vOVQc/x7NA9sN331tBUlA=",
+    "timestampUtcMs": "2026-08-13T14:33:48.008Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T14:33:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:48.008Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "tNEPLbY1ZxIgaDKg47fC6liRnJ8=",
+    "timestampUtcMs": "2026-08-13T14:33:48.008Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## URL derivation\n\nThe websocket endpoint is derived from the client's `url`: `http` becomes `ws`, `https` becomes `wss`, and `/subscriptions` is appended. For a Switchboard on `http://localhost:4001/graphql` that is `ws://localhost:4001/graphql/subscriptions`. There is **one socket server for the whole Switchboard**, not one per subgraph. Override it with the `subscriptionsUrl` prop, or set `realtime={false}` where there is no websocket to talk to.\n\nThe first `subscribe` opens **one** websocket for all subscribers and subscribes to `documentChanges` with no `search` argument. The server sends every change the connection may read, and the client applies each subscriber's filter on the way out. Because the `DocumentCache` the provider builds subscribes in its constructor, the socket opens as soon as the provider mounts.\n\n## Degradation, not dependency\n\nRealtime is an enhancement, never a dependency. A socket that cannot be opened or is refused is **logged once and then ignored**, and the app keeps working on the changes it makes itself \u2014 every successful `create`, `execute` and `deleteDocument` emits a local change event, which is what makes the cache invalidate after a dispatch with no websocket involved.\n\nThe failed socket is **closed rather than kept**, so the next component to subscribe tries again. But \u2014 and this is the trap \u2014 **nothing subscribes on sign-in of its own accord**. An app on a Switchboard that refuses anonymous subscribers and that authenticates *after* mount will have had its one subscribe attempt refused, and will then sit with no realtime indefinitely. The fix is to **remount the provider** once the user is in.\n\n## Socket auth\n\nAuth on the socket reuses the same `tokenProvider`, sent as the **lowercase `authorization` connection param**, and re-resolved on every reconnect. A Switchboard with auth enabled refuses a connection that arrives without it, so an anonymous subscriber gets no realtime there.\n\nOne cosmetic consequence of the dual event sources: own writes are announced twice \u2014 once locally, once by the server push \u2014 so the cache refetches twice. Harmless.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md and 01-OverviewAndQuickstart.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:48.008Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "3MYDK44vuA8MKAoPPxsdftgfHac=",
+    "timestampUtcMs": "2026-08-13T14:33:48.008Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8f71abb9-cde2-4673-a20b-60e7d5a5c4e3",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:48.008Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "+LmV5ADd+nlYRBKKofOOU/MpCDU=",
+    "timestampUtcMs": "2026-08-13T14:33:48.008Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6083c91d-2b3d-48f0-8236-45605aa718c8",
+        "name": "realtime"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:48.008Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "8k8YQTHwMowKkx7TEBWD/vTpm3k=",
+    "timestampUtcMs": "2026-08-13T14:33:48.008Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1079a901-ae43-4b33-9aae-306f3e5b5877",
+        "name": "websocket"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:48.008Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "bjZbqWA2T8ndPiYYLzN/yq+WojA=",
+    "timestampUtcMs": "2026-08-13T14:33:49.367Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:47.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:49.367Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "+vi9XpbtgS7YFRO+4ETxmy7REAk=",
+    "timestampUtcMs": "2026-08-13T15:53:45.282Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:53:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:45.282Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Oy6C1QFwfuy1mdiFXseDQegKikQ=",
+    "timestampUtcMs": "2026-08-13T15:53:45.282Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "cf665f41-9e6d-4b2d-a252-c2c1ae73a065",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:53:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:45.282Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "u56Aosm+BPcwNONNAhFSU0o6Bow=",
+    "timestampUtcMs": "2026-08-13T15:53:45.282Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "260a57e3-c012-418c-8d81-ee559383ad08",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:53:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:45.282Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "UJIyVpDs9u3+IDkAmKh8gAh0n6s=",
+    "timestampUtcMs": "2026-08-13T16:51:07.939Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:51:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:51:07.939Z"
+    }
+  }
+]

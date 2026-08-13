@@ -1,0 +1,392 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:31.531Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "model-editor-wiring",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:31.531Z"
+        },
+        "version": 0,
+        "documentId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:31.531Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "7Sv+XdNJU5KedS5LIGjN4k0xbTw=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "model-editor wiring",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:31.531Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:31.531Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5svNjSWwH3dbqhvryvh9GhtPU+Y=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:11.000Z",
+        "description": "Which document model feeds which editor \u2014 hook imports, dispatch targets, state reads, helper dependencies"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:45.086Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+        "targetId": "688b0550-36f2-4b89-83ae-9d32502eb40e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:45.086Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "gqFaoeUBGmV16AT7gseQT5gieVc=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:45.110Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+        "targetId": "0646fae1-7c4c-4606-8e9e-d2a6b2458c8d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:45.110Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "NVwRxCbBnr+bkB4T8Iv8OMwyMnY=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# model-editor wiring\n\nThe integration layer between document models and their editors.\n\n## Core Wiring Pattern\n- [[editors use the modern React hooks pattern from reactor-browser]] \u2014 the useSelectedXDocument pattern\n- [[editors import action creators from gen/creators not from model source]] \u2014 correct import path for creators\n- [[generateId from document-model/core provides deterministic IDs for dispatch]] \u2014 ID generation before dispatch\n- [[useSelectedDocument hook is auto-generated per document model]] \u2014 auto-generated hooks per model\n\n## Drive-Level Wiring\n- [[apps use useSelectedDrive to access drive state and filter nodes]] \u2014 drive editors filter nodes by type\n\n## By Editor\n- [[service-offering editor wires four tab views to the service-offering model]] \u2014 ResourceTemplateSelector, ServiceCatalog, TierDefinition, TheMatrix\n- [[subscription-instance editor provides client and operator views with billing]] \u2014 dual-mode with ImportServiceConfigButton bridge to ServiceOffering\n- [[resource-template editor manages template info and facet targeting]] \u2014 simplest editor, two components\n- [[resource-instance editor manages provisioning lifecycle and facet configuration]] \u2014 most action creator imports (17), lifecycle state machine\n\n## By Document Model\n\n| Model | Editor | Hook | Modules Used |\n|-------|--------|------|--------------|\n| service-offering | service-offering-editor | useSelectedServiceOfferingDocument | offering, services, tiers, option-groups, service-groups, configuration |\n| subscription-instance | subscription-instance-editor | useSelectedSubscriptionInstanceDocument | subscription, service, service-group, metrics, customer |\n| resource-template | resource-template-editor | useSelectedResourceTemplateDocument | template-management, facet-targeting |\n| resource-instance | resource-instance-editor | useSelectedResourceInstanceDocument | instance-management, configuration-management |\n| facet | (no dedicated editor) | useFacetDocument | \u2014 |\n\n## Cross-Model Editors\n- [[subscription-instance editor provides client and operator views with billing]] \u2014 imports from ServiceOffering via mapOfferingToSubscription\n\n---\n\nTopics:\n- [[index]]",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:45.200Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+        "targetId": "57134619-3d20-45e0-8cc7-bc51d37a0c25",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:45.200Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "9wtQ6kfxZkQDfwp50N/BgqbDg0w=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:57:20.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:45.426Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+        "targetId": "2769c72c-9eaa-4b90-ae1d-726643ae06b0",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:45.426Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ANd+t2a3ud/+p5G4EVJBlvkXlJg=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "773a957f-5e8f-46f2-ae8f-7aff55af8538",
+        "name": "service-offering",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:45.449Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+        "targetId": "a4235bb5-ea05-4c05-9d34-9b2244e44be7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:45.449Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "rY0a8JLpt1BqFmJMzCWWMOSsz64=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c00587b4-747b-4b31-8ad8-85c04dd25de0",
+        "name": "subscription-instance",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:45.471Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+        "targetId": "10d4751c-4117-4a5f-86b0-576194f6f853",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:45.471Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "V6woxvJyYIi80VZy+UmO9zb/3HM=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b1465032-9942-4c7c-b411-5ea1b8f59dd5",
+        "name": "resource-template",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:45.493Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+        "targetId": "183d0714-1c6b-4e54-9135-430bd6ae8da4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:45.493Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "fbFcwZjiHa0GlaTZ8cPlvsnMY7w=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3277a46d-0ad9-4652-b071-c591c5163d60",
+        "name": "resource-instance",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "UKTjgvzIl/B27Au1x5xS4n0SCqM=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a6dd6517-fa3f-407f-b9cb-80d64772b2fb",
+        "name": "editor-integration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "hqecwjSMIcNvcfPorcKIbnnYsJo=",
+    "timestampUtcMs": "2026-08-13T15:52:54.542Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:52:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:54.542Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "RgYiIjL3P02hDGbeFFJqJuIqB2Q=",
+    "timestampUtcMs": "2026-08-13T15:52:54.542Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "88f76a59-ae33-4909-8f11-85a7519a4ad5",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:52:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:54.542Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "UzaTDg8q2Nh3NbfeTWKRUheLBw4=",
+    "timestampUtcMs": "2026-08-13T15:52:54.542Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "be525088-2b9a-4de8-a26d-0aee8ac04c44",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:52:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:54.542Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "pHyniNfDsDR7BCWyswaaavxHydw=",
+    "timestampUtcMs": "2026-08-13T16:50:00.861Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:50:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:50:00.861Z"
+    }
+  }
+]

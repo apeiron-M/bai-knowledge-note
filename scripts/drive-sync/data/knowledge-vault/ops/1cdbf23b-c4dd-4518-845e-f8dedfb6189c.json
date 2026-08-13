@@ -1,0 +1,305 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:57.580Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "editors-render-reducers-validate",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1cdbf23b-c4dd-4518-845e-f8dedfb6189c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:37:57.579Z"
+        },
+        "version": 0,
+        "documentId": "1cdbf23b-c4dd-4518-845e-f8dedfb6189c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:37:57.580Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "mxSAEBegnjPaq2TibgHG8t07h/A=",
+    "timestampUtcMs": "2026-08-13T14:37:58.312Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Rendering and side effects belong to the editor; validation and state transitions belong to the reducer",
+        "updatedAt": "2026-08-13T14:37:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:58.312Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:57.580Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "1cdbf23b-c4dd-4518-845e-f8dedfb6189c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:37:57.580Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "g53xgczlwh7Negcc/8O3a5ZNYIA=",
+    "timestampUtcMs": "2026-08-13T14:37:58.312Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:37:57.000Z",
+        "description": "Editors are impure React components that only dispatch. Reducers are pure and own field validation, so the rules hold no matter which editor fired the action."
+      },
+      "timestampUtcMs": "2026-08-13T14:37:58.312Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:59.471Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1cdbf23b-c4dd-4518-845e-f8dedfb6189c",
+        "targetId": "021f70cc-31a1-401f-b067-330c4ac5af9a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:59.471Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "2AhZsVAVk2OEWNQke8HKv3bzbHY=",
+    "timestampUtcMs": "2026-08-13T14:37:58.312Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "CONCEPT",
+        "updatedAt": "2026-08-13T14:37:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:58.312Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:59.495Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1cdbf23b-c4dd-4518-845e-f8dedfb6189c",
+        "targetId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:59.495Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "EPu7AMSHJ8ELkn+8nzgUlN7HJGQ=",
+    "timestampUtcMs": "2026-08-13T14:37:58.312Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The division of labour between an editor and a reducer is the cleanest boundary in the Powerhouse stack, and it is easy to blur because both feel like \"handling the user's click\".\n\n| Job | Belongs in |\n| --- | --- |\n| Rendering state on screen | Editor |\n| Dispatching an action when the user clicks | Editor |\n| Showing a toast notification | Editor |\n| Computing the next state from an action | Reducer |\n| Validating that a field is non-empty | Reducer |\n| Generating the new document history | Reducer |\n\nThe rule underneath: **reducers are pure, editors are impure.** Reducers have no access to the DOM, the network, or the clock. Editors can touch all three freely, because they are just React components. The editor dispatches; the reducer computes; never the other way around.\n\nThe counter-intuitive row is validation. Instinct puts \"is this title non-empty?\" in the form, because that is where the user is. But a document model can have several editors, and it also has a subgraph \u2014 a GraphQL mutation dispatches the same action with no form in sight. Validation in the editor guards one entry point; validation in the reducer guards the state transition itself, so the invariant holds regardless of which editor, API call or processor fired the action. That is why the reducer owns it and why validation failures come back through `dispatch`'s `onErrors` callback rather than being prevented client-side.\n\nConcretely, an editor never mutates `document.state`, never talks to the network, and never generates timestamps or hashes \u2014 the Reactor stamps those. The full sequence for a checkbox click is: editor dispatches `completeTodo` \u2192 the reducer produces the next state \u2192 the Reactor appends the operation \u2192 the new state flows back and the editor re-renders. The editor's only product is actions.\n\n_Source: apps/academy/docs/academy/02-Learn/04-editors/{01-what-is-an-editor,02-your-first-editor}.mdx (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:37:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:58.312Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:37:59.519Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1cdbf23b-c4dd-4518-845e-f8dedfb6189c",
+        "targetId": "c39ad3d5-04e5-459c-8cdf-400b3faf534e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:59.519Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "C33L5wJBnJ/ZdnuV1sxXxuey1ck=",
+    "timestampUtcMs": "2026-08-13T14:37:58.312Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3378cc17-af67-445d-b2a2-d2c7df162bee",
+        "name": "editors"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:58.312Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "91O1I/ILdrq1mk8GgHxy5Oc0iyc=",
+    "timestampUtcMs": "2026-08-13T14:37:58.312Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "54c0843e-1895-4884-8717-9748e0b29b2a",
+        "name": "reducer-patterns"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:58.312Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "38OhsGM8IA2wbj+iRd256XA/ZYE=",
+    "timestampUtcMs": "2026-08-13T14:37:58.312Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7afd5fab-1043-49e6-a695-69c5fa3c698c",
+        "name": "architecture"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:58.312Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "k0UYKkeLTIty1Mf5FVlt33Xkviw=",
+    "timestampUtcMs": "2026-08-13T14:37:59.427Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:37:57.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:37:59.427Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "uzQgI1907NHV2UDG/N6SrZsaYGQ=",
+    "timestampUtcMs": "2026-08-13T15:52:12.969Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:52:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:12.969Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "hN77X1JzWb5aC+MXIv7mnJcn2IE=",
+    "timestampUtcMs": "2026-08-13T15:52:12.969Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "cbef9ebe-0a3a-4022-96e8-eeb5cb209dce",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:52:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:12.969Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "s1kqh/w6fL4f3sKvf0I1Sly2afo=",
+    "timestampUtcMs": "2026-08-13T15:52:12.969Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "474eb4ac-a91d-410a-8afd-bba5db491487",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:52:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:12.969Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "jcPWiwAWPXFAyc6HSZ7rT1GmM70=",
+    "timestampUtcMs": "2026-08-13T16:49:12.997Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:49:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:49:12.997Z"
+    }
+  }
+]

@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-3f8ca25d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IReactorBrowserClient is a Pick of exactly six IReactorClient members",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6f1ca0a7-b8e4-424f-bd64-a61ae7e68af1",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39ffc72a-32ef-4820-9a1b-65335c591056",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "babd2626-a657-45ad-8b46-577bad71f2c0",
+      "name": "api",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The contract\n\n`IReactorBrowserClient` is the contract the reactor-browser hooks depend on. It is declared as a `Pick` of the reactor's own `IReactorClient`, so the six member signatures **cannot drift** from the reactor's:\n\n```typescript\nexport interface IReactorBrowserClient extends Pick<\n  IReactorClient,\n  | \"get\"\n  | \"subscribe\"\n  | \"execute\"\n  | \"getOperations\"\n  | \"create\"\n  | \"deleteDocument\"\n> {}\n```\n\nTwo implementations satisfy it: the full in-browser reactor client, which gets it for free by implementing `IReactorClient`, and `GraphQLReactorClient`.\n\n## What is excluded, and why that is the point\n\nEverything outside those six is deliberately absent: `drives`, `find`, `resolveIdOrSlug`, relationships, `executeAsync`, `executeBatch`, jobs, `createEmpty`, `rename`, and the document-model module getters. `create(document, parentIdentifier?)` is the only parenting there is \u2014 there is no drive concept on this interface at all.\n\n## Light-client behaviour of the six\n\n| Method | On the light client |\n| --- | --- |\n| `get(identifier, view?, signal?)` | Reads by id or slug. A `view.revision` **throws** \u2014 no point-in-time reads |\n| `getOperations(...)` | Paged; `next()` follows the cursor, default page `{ cursor: \"0\", limit: 100 }` |\n| `create(document, parentIdentifier?, signal?)` | Creates and emits `Created` |\n| `execute(identifier, branch, actions, signal?)` | Reads, stamps and signs a single action, pushes, emits `Updated` \u2014 **two round trips** |\n| `deleteDocument(identifier, propagate?, signal?)` | Deletes and emits `Deleted` carrying the identifier it was called with |\n| `subscribe(search, callback, view?)` | Registers a subscriber, returns unsubscribe. `view` is accepted and ignored |\n\n`execute` returns the updated document with this call's operations appended, which is how `useDispatch` reports per-action errors: it scans the returned operations for the action it sent and reads its `error` field.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:43.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "get, subscribe, execute, getOperations, create and deleteDocument. Drives, find, relationships, jobs, executeAsync and the module getters are deliberately excluded.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1b108636-f832-4a8e-a81f-3d5d16b0cb4c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:48.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "42bfc39c-1a00-46a6-8f5f-33fab1c95996",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:48.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

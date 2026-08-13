@@ -1,0 +1,308 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:20:54.814Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "batch-multiple-actions-in-a-single-addactions-call-to-minimize-round-trips",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "63660cff-4660-4af1-875d-520690e27a57",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:20:54.814Z"
+        },
+        "version": 0,
+        "documentId": "63660cff-4660-4af1-875d-520690e27a57",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:20:54.814Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "crpNcV1GAFrqwVc3Ca53tgTSmaA=",
+    "timestampUtcMs": "2026-08-13T13:22:48.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "batch multiple actions in a single addActions call to minimize round trips",
+        "updatedAt": "2026-08-13T13:22:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:48.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:20:54.814Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "63660cff-4660-4af1-875d-520690e27a57",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:20:54.814Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "tx9GUjfqa/Ah002dzGpTK7w5RPE=",
+    "timestampUtcMs": "2026-08-13T13:22:48.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:22:48.000Z",
+        "description": "Each addActions call has overhead; combining related operations into one call is faster and reduces partial failure risk"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:48.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:54.721Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "63660cff-4660-4af1-875d-520690e27a57",
+        "targetId": "10d4751c-4117-4a5f-86b0-576194f6f853",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:54.721Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "8Q2zbrXY1pFOwxSyU0Ekcj0/1xU=",
+    "timestampUtcMs": "2026-08-13T13:22:48.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T13:22:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:48.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:54.747Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "63660cff-4660-4af1-875d-520690e27a57",
+        "targetId": "4ee19a4a-7d11-444f-a6fa-63b807ed6cae",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:54.747Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "HCZTcxYqNtJ0IbIgwzbWsJWv8Ow=",
+    "timestampUtcMs": "2026-08-13T13:22:48.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# batch multiple actions in a single addActions call to minimize round trips\n\nThe `addActions` MCP tool accepts an array of actions. Instead of making separate calls for each operation, batch them:\n\n```typescript\n// \u2705 One call with multiple actions\naddActions({\n  documentId: \"...\",\n  actions: [\n    { type: \"SET_MODEL_NAME\", scope: \"global\", input: { name: \"Invoice\" } },\n    { type: \"SET_MODEL_DESCRIPTION\", scope: \"global\", input: { description: \"...\" } },\n    { type: \"ADD_MODULE\", scope: \"global\", input: { id: \"...\", name: \"header\" } },\n  ]\n});\n\n// \u274c Three separate calls \u2014 slower and more failure-prone\n```\n\nBatching reduces network overhead and ensures related changes are applied atomically. If one action in a batch fails, the error is visible without having lost context from intermediate calls.\n\n---\n\nTopics:\n- [[mcp workflows]]",
+        "updatedAt": "2026-08-13T13:22:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:48.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:23:54.769Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "63660cff-4660-4af1-875d-520690e27a57",
+        "targetId": "75be6bcc-b469-4024-90d6-3270bbefd4e6",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:54.769Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "r2FwA8dzgN//dnvK7G5ylC8bmIw=",
+    "timestampUtcMs": "2026-08-13T13:22:48.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T14:00:55.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:48.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ETSXT/aT8+9Ccvocf+dj5ci9E8o=",
+    "timestampUtcMs": "2026-08-13T13:22:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d10f0aef-1351-4b5f-8fd6-de58886fdab4",
+        "name": "MCP workflows",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:48.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "KeQhy+tPeDhm/dI7rmBRbYuPQZk=",
+    "timestampUtcMs": "2026-08-13T13:22:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b4cccdf0-00c9-4ec9-a743-6512f3d1e1eb",
+        "name": "performance",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:48.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "j5iPtPFZk0SB6kDrDs7Mfh/kzgs=",
+    "timestampUtcMs": "2026-08-13T13:22:48.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1f4836fa-bc1a-4f0c-99c8-17a868320b37",
+        "name": "batch operations",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:48.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "46+iNtGpuK7UqLglrugu2j3oMMM=",
+    "timestampUtcMs": "2026-08-13T15:55:00.364Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:55:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:00.364Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "UGpA6kVS3MaO5dh2vBhRd/RQetI=",
+    "timestampUtcMs": "2026-08-13T15:55:00.364Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d1095062-04bb-4b0b-933a-af71b2cdba45",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:55:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:00.364Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "zl3FywyBmqMXSbR9hfcBb2LIZwQ=",
+    "timestampUtcMs": "2026-08-13T15:55:00.364Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "155b729c-5969-49db-8b8f-adedb8b7224b",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:55:00.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:00.364Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "lLfxHiMimRYu/Yqfw4I/SfUSbRc=",
+    "timestampUtcMs": "2026-08-13T16:52:39.287Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:52:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:52:39.287Z"
+    }
+  }
+]

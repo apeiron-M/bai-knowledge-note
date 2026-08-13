@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-464de7c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "464de7c4-b8c0-4ecd-b94d-e157900c465f",
+      "targetTitle": "inspector-modal-for-debugging-sync"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect modals are driven imperatively from editors via showPHModal and the PHModal discriminated union",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3c2256df-9229-4cfa-83a6-344b15d26068",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "26761caa-314c-41c2-aa77-e62d9d1865a6",
+      "name": "modals",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2199bc36-6cc4-4b79-8f14-2d484f9bab88",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Connect's modals are global state, not React context, so an editor opens one by calling a plain function rather than rendering a component. There is no `<Modal>` to mount and no provider to wrap.\n\nFive entry points:\n\n- `usePHModal(): PHModal | undefined` \u2014 reads whichever modal is currently displayed\n- `showPHModal(modal: PHModal)` \u2014 displays one; it is literally `setPHModal(modal)`\n- `closePHModal()` \u2014 `setPHModal(undefined)`\n- `showCreateDocumentModal(documentType)` and `showDeleteNodeModal(nodeOrId)` \u2014 typed shortcuts for the two cases editors reach for most\n\n`PHModal` is a discriminated union on `type`, with the payload each modal needs carried alongside. Source (`packages/reactor-browser/src/types/modals.ts`) has **19** members: `createDocument` (with an optional `documentModelVersion`), `deleteItem`, `addDrive`, `upgradeDrive`, `deleteDrive`, `driveSettings`, `settings`, `clearStorage`, `debugSettings`, `disclaimer`, `cookiesPolicy`, `downloadDocumentWithErrors`, `inspector`, `missingPackage`, `documentVersionUnsupported`, `confirmDocumentUpgrade`, `driveAuthRequired`, `openFileDocuments` (`modals.ts:44`) and `login` (`modals.ts:45`).\n\n```tsx\n<button onClick={() => showCreateDocumentModal(\"powerhouse/budget-statement\")}>\n  Create Budget Statement\n</button>\n```\n\nBecause it is a union, `showPHModal` is type-safe on the payload \u2014 `showPHModal({ type: \"deleteItem\" })` will not compile \u2014 and the same call is how built-in UI works: `ToolbarUpgradeButton` fires `showPHModal({ type: \"confirmDocumentUpgrade\", documentId })`, and `{ type: \"inspector\" }` is the programmatic route to the Inspector Modal.\n\n**Documentation caveat:** `01-ReactHooks.md` prints a 13-member union -- six short. It omits `missingPackage`, `documentVersionUnsupported`, `confirmDocumentUpgrade`, `driveAuthRequired`, `openFileDocuments` and `login`, misses `documentModelVersion` on `createDocument`, and names one member `exportDocumentWithErrors` where source says `downloadDocumentWithErrors`. Take member names from source.\n\n_Source: packages/reactor-browser/src/types/modals.ts and src/hooks/modals.ts, cross-checked against apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "usePHModal reads the current modal; showPHModal, closePHModal and the typed shortcuts control it. Source has 19 union members; the academy documents 13.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6f8a90b1-b0ce-4cff-9a43-beffecc137a9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:42.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5eee9f80-5757-4933-8a1f-9a6b842fba6d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:42.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

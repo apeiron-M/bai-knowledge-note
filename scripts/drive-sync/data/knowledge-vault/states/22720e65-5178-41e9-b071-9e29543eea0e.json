@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-68376495-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "68376495-bfd8-4cac-9fda-65c52e1c4e74",
+      "targetTitle": "adapter-key-source-files"
+    },
+    {
+      "id": "lnk-3f8ca25d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    },
+    {
+      "id": "lnk-4d98df7d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4d98df7d-a81e-461c-aa76-f59378303502",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ReactorBuilder uses a fluent API to wire storage, executors, read models, sync, and document models into a reactor instance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4c2a0e0f-8946-4c37-8db9-67a15321d3f0",
+      "name": "reactor-builder",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c92cd1a3-032e-403b-badb-b842bc6652d8",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "56091692-1a9c-4b78-b68f-7c2248b466fe",
+      "name": "configuration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `ReactorBuilder` from `@powerhousedao/reactor` provides a fluent API for constructing reactors: `withDocumentModelSources(sources)` (which accepts live document-model modules, importable `{ filePath }` files, and importable `{ packageName }` packages), `withExecutorConfig({ maxConcurrency, jobTimeoutMs })`, `withWriteCacheConfig({ maxDocuments, ringBufferSize })`, `withMigrationStrategy('auto')`, `withKysely()` (defaults to in-memory PGlite), `withQueue()` (defaults to InMemoryQueue), `withEventBus()`, `withReadModel()`, `withSync()`, and more. Calling `build()` returns `IReactor`; calling `buildModule()` returns an `InProcessReactorModule` exposing all internal components including operationStore, keyframeStore, writeCache, documentView, documentIndexer, readModelCoordinator, processorManager, and the underlying Kysely database. The base `ReactorModule` interface it extends carries only three fields (`documentModelRegistry`, `syncModule`, `eventBus`) \u2014 the subset a client can resolve regardless of where the reactor graph lives.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The builder pattern configures maxConcurrency, write cache, migration strategy, Kysely DB, queues, event bus, and sync for reactor construction.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "80b554de-7f64-4d65-8437-eb5df1bc40fa",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:26.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b93bf1bb-175e-4ca5-9aba-d0fad3961b0d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:26.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

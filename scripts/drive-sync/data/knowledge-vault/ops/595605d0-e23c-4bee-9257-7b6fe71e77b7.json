@@ -1,0 +1,244 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:34.656Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "moc-data-processing-and-cqrs",
+        "slug": "",
+        "model": "bai/moc",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+          "documentType": "bai/moc",
+          "createdAtUtcIso": "2026-08-13T13:22:34.656Z"
+        },
+        "version": 0,
+        "documentId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:34.656Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "d9v9J1qbGsucMKkOkMeK5R+0i4s=",
+    "timestampUtcMs": "2026-08-13T13:23:39.000Z",
+    "action": {
+      "type": "CREATE_MOC",
+      "input": {
+        "tier": "DOMAIN",
+        "title": "Data Processing and CQRS",
+        "createdAt": "2026-04-02T13:00:00.000Z",
+        "description": "Processors, subgraphs, relational database projections, live queries, and the analytics engine that transform event-sourced documents into queryable read models.",
+        "orientation": "The write side of Powerhouse captures intent through operations on event-sourced documents, but real-world applications need to query, aggregate, and analyze that data in ways the document model alone cannot efficiently support. This is where the CQRS read side comes in. Subgraphs extend document models with custom GraphQL resolvers. Processors receive operation streams and project them into relational databases for SQL-friendly querying. The RelationalDBProcessor base class standardizes this pattern with PgLite for live queries that push updates to connected clients. And the analytics engine adds time-series aggregation with interval-based bucketing and level-of-detail dimension querying. Together, these components transform a stream of document operations into the rich, queryable data surfaces that dashboards, reports, and integrations demand."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:39.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:34.656Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/moc",
+        "toVersion": 1,
+        "documentId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "tier": null,
+            "title": null,
+            "tensions": [],
+            "childRefs": [],
+            "coreIdeas": [],
+            "createdAt": null,
+            "noteCount": 0,
+            "parentRef": null,
+            "updatedAt": null,
+            "agentNotes": [],
+            "description": null,
+            "orientation": null,
+            "openQuestions": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:34.656Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "V2PaktRKr2ZbUyAnLNS7AP8YXwE=",
+    "timestampUtcMs": "2026-08-13T16:28:54.084Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T16:28:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:28:54.084Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:03.832Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "targetId": "abf010f8-1c17-4714-824f-7d822003379a",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:03.832Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "0UAIStp/InQmE761UdHjXyFUCmo=",
+    "timestampUtcMs": "2026-08-13T16:52:06.590Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:52:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:52:06.590Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:03.867Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "targetId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:03.867Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:03.891Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "targetId": "f330b4b8-5345-4649-9bdf-7903cb92e827",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:03.891Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:03.914Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "targetId": "c11dcad5-69d6-4730-a59c-fa2820e8c0a0",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:03.914Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:03.936Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "targetId": "dd78af2a-d570-4a14-8b99-4a40dfe10510",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:03.936Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:03.959Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "targetId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:03.959Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:04.113Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "targetId": "1328e41a-9d40-49bf-bcec-1784cef7d878",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:04.113Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:04.146Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "targetId": "6a1bb35b-5516-4527-b13d-03d7d3792488",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:04.146Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:04.170Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "595605d0-e23c-4bee-9257-7b6fe71e77b7",
+        "targetId": "9f2b2302-090f-408e-8c9b-1dff5918264a",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:04.170Z"
+    }
+  }
+]

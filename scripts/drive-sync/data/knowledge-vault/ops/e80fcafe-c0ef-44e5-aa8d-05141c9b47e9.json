@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:51.710Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "pin-a-documents-model-version-with-documentmodelversion",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e80fcafe-c0ef-44e5-aa8d-05141c9b47e9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:35:51.710Z"
+        },
+        "version": 0,
+        "documentId": "e80fcafe-c0ef-44e5-aa8d-05141c9b47e9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.710Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "TtE6aA1zEW8enfBun3IiOPnX5JA=",
+    "timestampUtcMs": "2026-08-13T14:35:51.912Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "createEmpty resolves to the highest registered model version unless documentModelVersion pins one",
+        "updatedAt": "2026-08-13T14:35:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.912Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:51.710Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e80fcafe-c0ef-44e5-aa8d-05141c9b47e9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.710Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "AKUjdKjy2KZj9NgCpU3LYyXEDT0=",
+    "timestampUtcMs": "2026-08-13T14:35:51.912Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:35:51.000Z",
+        "description": "client.createEmpty(\"my-org/todo\") picks the highest registered version by reduce; pass documentModelVersion to pin, and it throws if that version is not registered."
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.912Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:53.532Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e80fcafe-c0ef-44e5-aa8d-05141c9b47e9",
+        "targetId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:53.532Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "xu3FYIiMidfUNU7VCiTxoJVjREs=",
+    "timestampUtcMs": "2026-08-13T14:35:51.912Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:35:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.912Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:53.556Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e80fcafe-c0ef-44e5-aa8d-05141c9b47e9",
+        "targetId": "0ba40e3e-168b-49b8-a39d-e24b8265a412",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:53.556Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "sJfGl0BzI6ZGctlqnsmICiMmuko=",
+    "timestampUtcMs": "2026-08-13T14:35:51.912Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "New documents are created at the latest model version. The mechanism, in `packages/reactor/src/client/reactor-client.ts`, is worth knowing precisely because it is a *resolution* step, not a stored default:\n\n```ts\n// latest version \u2014 resolved by reduce over registered modules\nconst doc = await client.createEmpty(\"my-org/todo\");\n\n// pinned version\nconst v1Doc = await client.createEmpty(\"my-org/todo\", { documentModelVersion: 1 });\n```\n\nWith no option, `createEmpty` filters registered modules by document type and reduces to the one with the highest `normalizeDocumentModelVersion(m.version)`. \"Latest\" therefore means *highest currently registered in this Reactor* \u2014 not highest that exists. Deploy a host whose package set lags and new documents are created at the older version, silently and without error.\n\nWith `documentModelVersion` set, resolution is an exact match and a miss is loud: `Document model not found for type: <type> with version: <n>`. Passing `0` normalizes to `1`, consistent with how legacy unstamped documents are treated.\n\nReads are version-agnostic. `client.find({ type: \"my-org/todo\" })` returns documents of every version; the Reactor resolves each document to its own module by the version stamped in its header. That is what lets v1 and v2 documents coexist in one drive with no query-side branching \u2014 and why you should never assume a document you just fetched is at the latest version.\n\nWhen to pin: reproducing a bug against a specific reducer, seeding fixtures for an upgrade test, or writing a migration that must produce pre-upgrade documents on purpose.\n\n_Source: apps/academy/docs/academy/03-Build/02-DocumentModelCreation/08-DocumentModelVersioning.md, confirmed against packages/reactor/src/client/reactor-client.ts and packages/shared/document-model/upgrades.ts (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:35:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.912Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "l3naSGabIsrWQlGJmCEBrVf9QNw=",
+    "timestampUtcMs": "2026-08-13T14:35:51.912Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "86035363-605e-4c0c-bb6f-08d9e87af47d",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.912Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "T+/hCHfb1HBifvq81egOipJ5I2s=",
+    "timestampUtcMs": "2026-08-13T14:35:51.912Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a0017ed1-69c9-4df6-95b7-cccffbfafa8e",
+        "name": "reactor-client"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.912Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "XFbtk23RKgTrmijmNseSqaKN9Zc=",
+    "timestampUtcMs": "2026-08-13T14:35:51.912Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f67d953f-1cf3-4298-8eb8-dd333d7ee9a1",
+        "name": "document-model"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:51.912Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "DfZ/yDBbC+ktQMiZP6GTC2yeh0A=",
+    "timestampUtcMs": "2026-08-13T14:35:53.488Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:35:51.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:53.488Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "W52PVg9ldij1P5Iqx9qPFJFIzGw=",
+    "timestampUtcMs": "2026-08-13T15:59:36.057Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:59:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:36.057Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "dTkXLtGvT0cYeiNs1T/oCJzvOfs=",
+    "timestampUtcMs": "2026-08-13T15:59:36.057Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d2d73480-f282-4aca-8ef4-2e1142766507",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:59:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:36.057Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "GolgHvXzLwEgCGi9Zr709jT1UeU=",
+    "timestampUtcMs": "2026-08-13T15:59:36.057Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "2738553c-bf5f-4970-9e76-9ef008d0c447",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:59:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:36.057Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "XxynuDB5zRAqzhPSBM6eLYUbz8k=",
+    "timestampUtcMs": "2026-08-13T16:58:06.465Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:58:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:58:06.465Z"
+    }
+  }
+]

@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-75ec6ad9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75ec6ad9-17da-4fc8-bfb6-a4e76f01a08b",
+      "targetTitle": "redundancy-does-not-fix-write-or-feed-head"
+    },
+    {
+      "id": "lnk-6018c73a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6018c73a-1c34-4bf5-8502-d1fcb80bb653",
+      "targetTitle": "chat-requires-both-users-to-run-full-bee-nodes-because-light"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Feed write throughput is bounded by neighborhood propagation, not upload bandwidth",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "137afead-e3fe-4ebf-9091-195e33075fcf",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ddc7b13-cd3e-4607-ad3d-30ec5ceb770e",
+      "name": "performance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "97acb321-5e9c-4233-ad42-02694beb1a44",
+      "name": "soc",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9f5279b5-d769-4eeb-9d80-b3d1aad40967",
+      "name": "swarm",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nThe throughput ceiling on a single feed is **network propagation of the SOC through the responsible neighborhood**, not the bandwidth between the client and its Bee node.\n\n## Evidence\n\n- Bee processes feed writes sequentially per topic because SOC index is monotonic\n- A newly-written SOC at index N must be stored by the responsible neighborhood before a reader at any other node will see it \u2014 and therefore before index N+1's causal \"based on\" is reliable\n- The adapter's 3-second debounce already batches rapid edits into single writes, so per-topic write rate is typically well below the propagation limit\n- The throttled flush (max 5 concurrent writes) prevents overloading the node across topics\n- Quoted key insight from source: *\"the bottleneck is not upload speed but feed propagation time (SOC must be stored by the neighborhood before the next write is visible).\"*\n\n## Why it matters\n\nTuning the debounce window smaller than propagation time buys nothing \u2014 you just queue writes behind each other. It reframes performance work: invest in propagation-side strategies (mutable stamps, GSOC notifications, advance retrieve requests) rather than client upload parallelism for single-feed scenarios.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:24.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A SOC must be stored by the responsible neighborhood before the next index is visible, so feed write rate is propagation-limited even on a fast local node.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c0c97347-ffa5-4492-9a8f-c7348da9af19",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:57.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5c0289c6-c433-4aaa-8bc6-82144573d3c2",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:57.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-2aa55f5b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2aa55f5b-f3a3-4195-88de-3452a82c2dd2",
+      "targetTitle": "cli-identity-did-key-ethereum-delegation"
+    },
+    {
+      "id": "lnk-1ff211ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1ff211ec-a668-4efb-b55c-799a5bc4e8be",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ph access-token mints a locally self-signed JWT from the CLI's DID with no network call",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8f8538d1-70c5-49fc-a39d-fc8cc836526d",
+      "name": "cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "629902b6-7254-4b87-af50-047c6a015ad9",
+      "name": "identity",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa5ebae6-f2b7-480d-86c6-64735c1f9b80",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71b8a661-2977-4923-9079-00ca215d134a",
+      "name": "renown",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Authentication without a round trip\n\n`ph access-token` turns the CLI's cryptographic identity into a bearer token for Powerhouse APIs (reactor-api / Switchboard). It signs a verifiable credential with the keypair `ph login` created and wraps it as a JWT. **No network request is made** \u2014 tokens are generated entirely locally, so this works offline and cannot be rate-limited or fail on a Renown outage.\n\nPrerequisite: run `ph login` first, which generates the keypair at `.ph/.keypair.json` and optionally links an Ethereum address, stored at `.ph/.renown.json`.\n\nThe JWT carries `iss` and `sub` set to the CLI's `did:key:...`, a credential subject with chain id, network id and the linked address if authenticated, `exp` from `--expiry` (default `7d`, accepting `7d` / `24h` / `3600` / `3600s`), and `aud` when `--audience <url>` is passed.\n\n## The stdout/stderr split is the API\n\nToken information (DID, address, expiry) goes to **stderr**; the token alone goes to **stdout**. That is what makes command substitution safe:\n\n```bash\nTOKEN=$(ph access-token --expiry 1d)\ncurl -X POST http://localhost:4001/graphql \\\n  -H \"Content-Type: application/json\" \\\n  -H \"Authorization: Bearer $TOKEN\" \\\n  -d '{\"query\": \"{ drives { id name } }\"}'\n\nexport PH_ACCESS_TOKEN=$(ph access-token)\n```\n\nYou see the diagnostics on your terminal while the variable captures only the token \u2014 no trimming, no parsing.\n\n## Two conditions on the far end\n\nBecause the token is **self-signed with your own private key**, it proves only that the holder controls that DID. It carries no authority by itself: the recipient API must independently *trust* the CLI's DID to accept it. And for reactor-api, authentication is only enforced when `AUTH_ENABLED=true` \u2014 with auth disabled the token is simply ignored, which is a common source of \"my token isn't working\" confusion running in the opposite direction.\n\nRelated: `ph registry-login` performs the analogous mint against a package registry and writes the resulting Renown bearer token into `~/.npmrc`.\n\n_Source: `clis/ph-cli/src/commands/access-token.ts`, mirrored in `apps/academy/docs/academy/04-Reference/07-CLITooling/00-PowerhouseCLI.md`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Signs a verifiable credential with the ph login keypair. Token goes to stdout for piping, info to stderr. Needs AUTH_ENABLED=true on the receiving API.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "095d15e2-0594-4aa4-ad38-839567f78d40",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c726add7-828b-4b20-9177-6c107a2243f6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,290 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:52.581Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "attachment-service-from-reactor-attachments-client",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1f3957ba-02c2-4833-8e71-7e789f7a955d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:52.581Z"
+        },
+        "version": 0,
+        "documentId": "1f3957ba-02c2-4833-8e71-7e789f7a955d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:52.581Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "DV1C4ehSMrnqVAQNZ0ptgvHwTY0=",
+    "timestampUtcMs": "2026-08-13T14:33:53.175Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Build the browser attachment service with createRemoteAttachmentService from @powerhousedao/reactor-attachments/client",
+        "updatedAt": "2026-08-13T14:33:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:53.175Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:52.581Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "1f3957ba-02c2-4833-8e71-7e789f7a955d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:52.581Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "SmzzjcJizH0paCKryFtKfY39gEs=",
+    "timestampUtcMs": "2026-08-13T14:33:53.175Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:52.000Z",
+        "description": "The package root also exports the Kysely, S3 and filesystem backends, so only the /client subpath is browser-safe."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:53.175Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:54.338Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1f3957ba-02c2-4833-8e71-7e789f7a955d",
+        "targetId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:54.338Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "wAQ0GdHz7FIWfI7xt7rL87quVcM=",
+    "timestampUtcMs": "2026-08-13T14:33:53.175Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:33:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:53.175Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "friKFr5snjS82jD5P+6oFulD3O8=",
+    "timestampUtcMs": "2026-08-13T14:33:53.175Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The import that matters\n\n```ts\nimport { createRemoteAttachmentService } from \"@powerhousedao/reactor-attachments/client\";\n```\n\nPoint it at the same Switchboard the light client uses, then pass it in:\n\n```tsx\n<GraphQLReactorProvider url={switchboardUrl} attachmentService={attachmentService}>\n  <YourApp />\n</GraphQLReactorProvider>\n```\n\nImport the **`/client` subpath, not the package root**. The root entry also exports the Kysely, S3 and filesystem backends, so a browser bundler has to resolve `kysely`, `@aws-sdk/client-s3` and `node:fs` \u2014 and fails before any app code runs. This is the same failure class as importing `@powerhousedao/reactor-browser` from its root instead of `/graphql-client`, and it has the same shape of fix: import the browser subpath.\n\n## Who owns what\n\nAttachments are configured at the same point as everything else, but the **app constructs the service**. Which storage it talks to is the app's business; `@powerhousedao/reactor-browser` does not depend on the attachment implementation at all.\n\nThe provider publishes the service into the `window.ph.attachmentService` slot Connect publishes it into, so `useAttachmentService` and the editors below find it. Leave the prop out and the slot stays empty, exactly as it is without the provider.\n\nIt is published from its **own effect, keyed on the prop**, so an app that builds the service asynchronously can pass it in later \u2014 passing a new service does not rebuild the client or the document cache.\n\n## Honest caveat\n\nThe docs are explicit that this prop is a **wiring seam and nothing more has been proven**: the service an app passes reaches `useAttachmentService` below the provider, but no attachment has been read over the light client end to end. Treat a working attachment flow on this client as something to verify yourself rather than assume.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/03-SubgraphsAndAttachments.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:53.175Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "pzXXNruAey8sq8eDY+7xoyQpeuo=",
+    "timestampUtcMs": "2026-08-13T14:33:53.175Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ec35336c-1910-4988-a79e-fcc9537dcaf4",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:53.175Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "/3AgK1Adxd3C12T1QqpHBm5HCps=",
+    "timestampUtcMs": "2026-08-13T14:33:53.175Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ce26855f-60be-480c-b285-df90218b29f7",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:53.175Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "/QP+1OHwbaBrGcUA6H6yHCMqVyg=",
+    "timestampUtcMs": "2026-08-13T14:33:53.175Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "48bd15f8-e106-47f1-94d5-66f5f05af210",
+        "name": "bundling"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:53.175Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "AmOGj6fJVeBMkSRMGadWQkrLwlY=",
+    "timestampUtcMs": "2026-08-13T14:33:53.175Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2198e9ef-2a7b-4df3-ab78-63ce5cfe9823",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:53.175Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "CyUQ6mzjYpxB4RZHKAmPX5A4Dfs=",
+    "timestampUtcMs": "2026-08-13T14:33:54.296Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:52.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:54.296Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "xwWXHqpaSm1t2+hinhotzssqxbw=",
+    "timestampUtcMs": "2026-08-13T15:52:18.347Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:52:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:18.347Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "yCGvuYFPUqCT0y4z594LYtOEek4=",
+    "timestampUtcMs": "2026-08-13T15:52:18.347Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "67dcdde7-dc2f-4313-a110-1b9f6f8a07a0",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:52:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:18.347Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "pIDJ+pfwYb0FtFL212A25enhCoI=",
+    "timestampUtcMs": "2026-08-13T15:52:18.347Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a599d0c4-8152-4d2a-aeff-755a99fd7b48",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:52:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:18.347Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "CGeWoPxrf6UWSqs8X3IIcBlkUgg=",
+    "timestampUtcMs": "2026-08-13T16:49:19.171Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:49:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:49:19.171Z"
+    }
+  }
+]

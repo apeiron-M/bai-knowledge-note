@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-61521b75-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "61521b75-ffa4-4d01-9630-ff49ba87ab71",
+      "targetTitle": "specification-documents-are-blueprints"
+    },
+    {
+      "id": "lnk-ad209147-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad209147-6647-4e7b-9d66-41260fbcd4a5",
+      "targetTitle": "vetra-auto-generates-code-on-spec-change"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ph generate all --extract writes a spec document for every existing module instead of generating code",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1913c218-055e-490d-b022-4ab51712ea31",
+      "name": "cli",
+      "topicDocumentId": null
+    },
+    {
+      "id": "efe6c16d-3f27-45f2-82e5-3e0e63ca4b2a",
+      "name": "code-generation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "34c915d7-d087-4405-8bac-ce9cd9bce94f",
+      "name": "migration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The generator run backwards\n\nNormally codegen flows spec \u2192 code. `--extract` / `-x` inverts it: instead of generating code the command reads the existing project and writes a **spec document** for each module it finds. The CLI describes it as a \"one-shot migration to documents-as-source-of-truth\" \u2014 the way a hand-written pre-Vetra project becomes a project Vetra Studio can drive.\n\n```bash\nph generate all --extract        # every module in the project\nph generate editor --extract     # just the editors\nph generate processor -x         # short form\n```\n\n`startGenerateAll` builds a ts-morph project over the source tree, calls `extractAllDocuments(project)`, and saves each of `documentModels`, `editors`, `processors`, `subgraphs` and `apps` \u2014 then **returns before `generateAll` runs**. Extract and generate are mutually exclusive within one invocation; nothing is overwritten in `document-models/` or `editors/`.\n\n## Where the specs land\n\n`saveSpec` writes to a deterministic path: `<projectDir>/specs/<subdir>/<kebab-name>.<ext>.phd`, with one subdirectory per kind \u2014 `specs/document-models/`, `specs/editors/`, `specs/processors/`, `specs/subgraphs/`, `specs/apps/`. Directories are created as needed, the name is kebab-cased from the document header (falling back to `untitled`), and the extension comes from each document type's own utils. Every written path is echoed as `Wrote <path>`.\n\nThe per-module `--extract` flags name their target explicitly, so the mapping is documented on each subcommand: `powerhouse/document-model` specs to `specs/document-models/`, `powerhouse/document-editor` to `specs/editors/`, `powerhouse/app` to `specs/apps/`, `powerhouse/processor` to `specs/processors/`, `powerhouse/subgraph` to `specs/subgraphs/`.\n\nThe point of the round trip: once the specs exist, they are ordinary Powerhouse documents. Drop them into the Vetra drive and `ph vetra --watch` picks up changes to them and regenerates the code \u2014 the project stops being source-first and becomes specification-driven, without a rewrite.\n\n_Source: `clis/ph-cli/src/commands/generate-all.ts`, `clis/ph-cli/src/services/generate-all.ts`, `packages/vetra/codegen/specs.ts`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "WORKFLOW",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A one-shot migration to documents-as-source-of-truth: it emits a spec per document model, editor, app, processor and subgraph into specs/<kind>/ and generates nothing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f4985945-60c6-4980-a4aa-465040baf794",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9a1889f7-17ac-49fb-8514-a93f813d6111",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

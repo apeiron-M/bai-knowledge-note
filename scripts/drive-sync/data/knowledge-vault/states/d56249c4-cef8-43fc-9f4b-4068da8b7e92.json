@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-a8b2713f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse ships two ready-made analytics processors for DriveOperations and DocumentOperations counters, but Connect no longer enables them by default",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "18dbf843-3482-4e36-bf75-b7b241e8a714",
+      "name": "drive-analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "88fa373c-8a6a-4d39-8bcb-151aabeaed7a",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a288ee8f-c45d-4e58-ad3d-954e34cf677a",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "36d63aa4-6ba1-4ef6-a7b1-9e874f677952",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/shared/processors/drive-analytics` (re-exported as `@powerhousedao/common/analytics` -- `packages/common/package.json` maps the `\"./analytics\"` subpath to `./drive-analytics.ts`, so the internal filename kept the old name but the public subpath did not) exports two processors plus a `processorFactory` that returns both per drive:\n\n- **`DriveAnalyticsProcessor`** \u2014 filters to `powerhouse/document-drive` and writes the `DriveOperations` metric, value always `1`, for `ADD_FILE`, `ADD_FOLDER`, `UPDATE_FILE`, `UPDATE_NODE`, `MOVE_NODE`, `COPY_NODE`, `DELETE_NODE`. It derives an `actionType` of `CREATED`/`DUPLICATED`/`UPDATED`/`MOVED`/`REMOVED` and a `target` of `NODE` or `DRIVE`.\n- **`DocumentAnalyticsProcessor`** \u2014 no `documentType` filter at all, so it counts the `DocumentOperations` metric across every document type, tagging `target` as `DRIVE` when the document *is* the drive.\n\nBoth are pure counters: `value: 1` per operation, dated by `operation.action.timestampUtcMs` / `operation.timestampUtcMs`, with the aggregation left entirely to query-time granularity and level of detail.\n\n**The \"enabled by default\" claim is stale.** The draft doc states that Connect enables drive analytics by default through a `ReactorAnalyticsProvider` component in `apps/connect/src/context/reactor-analytics.tsx`. At 6.2.2-dev.45 that component no longer exists, and `apps/connect/src/connect.config.ts` reads:\n\n```typescript\n// Analytics off by default; flip to true (or wire a runtime-config field)\n// when we want analytics enabled out of the box.\nisAnalyticsEnabled: false,\n```\n\nConnect's boot path registers processors only from installed packages that export a `processorFactory` \u2014 there is no built-in registration of the drive-analytics factory. A `driveAnalyticsEnabled` flag does survive, fed from `PH_CONNECT_DRIVE_ANALYTICS_ENABLED`, alongside `isAnalyticsExternalProcessorsEnabled`. So treat these two processors as a ready-made factory you opt into, not as ambient telemetry you already have.\n\nProvenance: draft `04-Reference/04-Processors/_07-DriveAnalyticsHooks.md` for the metric/dimension design; the enablement correction comes from `packages/shared/processors/drive-analytics/index.ts`, `apps/connect/src/connect.config.ts` and `apps/connect/src/store/reactor.ts` at 6.2.2-dev.45, which contradict the draft.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "DriveAnalyticsProcessor tracks node adds/copies/moves/updates/deletes on drive documents; DocumentAnalyticsProcessor counts operations on every document type. Both are opt-in.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7c7341ce-6b6d-456d-b100-49ec99a243ba",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:53.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5a30f4f6-2339-431f-ae6f-7449335e5332",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:53.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

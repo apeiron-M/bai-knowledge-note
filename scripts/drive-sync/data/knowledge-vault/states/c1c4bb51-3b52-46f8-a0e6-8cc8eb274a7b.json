@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-193565ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "193565ae-e174-412d-8aec-b3cf723cdc49",
+      "targetTitle": "user-and-drive-manifests"
+    },
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-e4c09546-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e4c09546-6cbd-447e-90a2-9d6cb02c0748",
+      "targetTitle": "adr-002-extract-stamp-share-managers"
+    },
+    {
+      "id": "lnk-dad3b3ec-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "dad3b3ec-98b2-4eac-abd1-fc367cbe84bc",
+      "targetTitle": "swarm-chunks-4kb-content-addressing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Mantaray manifests are compacted Merkle tries that let Swarm resolve paths under a single hash",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5aabcea2-b2db-4a87-821b-3dbe3379fd04",
+      "name": "mantaray",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cdec8133-156d-48a3-8573-aea6328c980a",
+      "name": "swarm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b430747-8566-4866-aab5-d3f659114ac2",
+      "name": "manifests",
+      "topicDocumentId": null
+    },
+    {
+      "id": "23619ec0-8abe-4806-b65a-3ff95a50729e",
+      "name": "file-storage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\n**Mantaray manifests** are Swarm's native file-collection format \u2014 compacted Merkle tries where each node carries a path segment, a target chunk reference, and metadata, exposing a single root hash that resolves arbitrary paths.\n\n## Evidence\n\n- Used for file collections (directories, websites), not our custom document manifests\n- Upload: `POST /bzz` with `Swarm-Collection: true` header + TAR body\n- Download: `GET /bzz/{manifest-hash}/{path}` resolves the path through the trie\n- Supports `indexDocument` (default page) and `errorDocument` (404 page) metadata\n- bee-js: `bee.uploadFile()`, `bee.downloadFile()`, `bee.uploadFiles()`, `bee.uploadCollection()`\n\n## What this unlocks for us\n\n1. **File attachments**: upload images/PDFs via `/bzz`, store the manifest reference inside document ops \u2014 content-addressed and encrypted\n2. **Document export**: package an entire drive as a Swarm collection (HTML + JSON), share via one hash or ENS name\n3. **Static publishing**: deploy the Connect SPA itself to Swarm (HashRouter + ENS = fully decentralized app)\n\n## Why it matters\n\nMantaray is distinct from our app-level `manifest-as-reference` pattern and provides the transport for any file-shaped content. It's also the route to deploying Connect itself on Swarm.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each trie node has a path segment, target reference, and metadata. Upload via POST /bzz with Swarm-Collection: true; download at /bzz/{hash}/{path}.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ea567da9-340a-449a-8d0e-90ba7c29f884",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "51cc9b3d-ef48-4b88-997a-3a3d0d2f0f78",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

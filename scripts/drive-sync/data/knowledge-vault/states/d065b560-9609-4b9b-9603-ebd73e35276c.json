@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a039d9b3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a039d9b3-9608-4584-acfd-f231a2296186",
+      "targetTitle": "gsoc-triggered-pull-debounced-with-polling-fallback"
+    },
+    {
+      "id": "lnk-231dfe10-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "231dfe10-26e1-4fe2-a353-3fff8725cbe5",
+      "targetTitle": "local-first-workflows-diverge-from-blockchain-global-consensus"
+    },
+    {
+      "id": "lnk-3f8ca25d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Consistency tokens in the reactor guarantee read-after-write correctness by capturing operation coordinates from writes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b6efcdd9-1222-449b-8306-3ed0763bdb30",
+      "name": "consistency",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71dac70f-3ce2-4d00-b3cb-d71b8c7b662e",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c520df8e-7c06-40f0-959c-45749f2851f1",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every reactor write operation returns a `JobInfo` containing a `ConsistencyToken` with `version`, `createdAtUtcIso`, and `coordinates` (array of `{ documentId, scope, branch, operationIndex }`). Passing this token to subsequent reads guarantees you see the effects of the write: `await reactor.get(docId, undefined, token)`. Without a consistency token, reads may return stale data if read models haven't indexed the latest operations. `IReactorClient` handles this automatically by waiting for `READ_READY` before returning, but `IReactor` requires explicit token management.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:07.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every write returns a ConsistencyToken with document/scope/branch/operationIndex coordinates for subsequent reads.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d46a01ac-d0f2-45d7-ab19-bc7a5f85ab0d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "65d954ea-cade-45d8-83e5-d3c3f7eef360",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

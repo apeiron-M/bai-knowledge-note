@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "GraphQLReactorProvider reads url and tokenProvider once and never rebuilds \u2014 remount to change them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8e497395-5323-419b-ac2d-4bf7f37139af",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e12c9b33-107d-4b7d-9bcd-30468827f194",
+      "name": "react",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2073aedd-6662-4c15-8b93-e56b784f81cd",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The gotcha\n\n`GraphQLReactorProvider`'s props are read **once, in the `useState` initialiser**. Changing `url` or `tokenProvider` after mount does not rebuild the client \u2014 the old client keeps serving the old endpoint and the old token resolver, silently. If the endpoint has to change, **remount the provider** (a `key` on it is the usual mechanism).\n\nThe same applies to `subscriptionsUrl` and `realtime`, which the client reads at construction time.\n\n## The two exceptions\n\n`attachmentService` and `documentModels` are each published from their **own effect**, keyed on the prop, so passing them in later does not throw away every open document or rebuild the document cache. That matters for an app that builds its attachment service asynchronously, or that code-splits its generated document models.\n\n## Prop reference\n\n| Prop | Default | Effect |\n| --- | --- | --- |\n| `url` | required | Switchboard GraphQL endpoint |\n| `tokenProvider` | the logged-in Renown user | Resolves the bearer token per request; `undefined` sends anonymously |\n| `subscriptionsUrl` | derived from `url` | Websocket endpoint |\n| `realtime` | `true` | Whether server-pushed changes reach subscribers |\n| `attachmentService` | none | Published into the slot the editors read |\n| `documentModels` | none | Generated modules, published so the document-model hooks work |\n\nOn mount the provider registers the `window.ph` event handlers once per page and publishes the client plus a `DocumentCache` built over it. On unmount it disposes both but **leaves the slots populated**, matching how Connect never unsets them.\n\nNote that `dispose()` is not final: a `subscribe` after a dispose opens a new socket. React remounts a tree by running an effect's cleanup then the effect again on the same client \u2014 `StrictMode` does it on every mount \u2014 and a terminal dispose would leave those pages with no realtime at all and nothing logged.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both props are read in the useState initialiser. Only attachmentService and documentModels publish from their own effects and can therefore be passed in later.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9cb98315-4837-41e1-89c4-166cf0f5526f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:57.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "78ff4004-40b5-4512-941c-b25a3b41b156",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:57.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

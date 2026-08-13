@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-5694a8da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5694a8da-b036-4b8a-a16d-bca12de03af9",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    },
+    {
+      "id": "lnk-5067c7ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reducer-level RBAC gates operations on action.context.signer.user.address so access control replicates with the document",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c2c24106-7933-44a4-bd9b-a8e3a300c8ca",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a019441-7b09-4061-b9af-d0e4f446c7c8",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5b6102e-6cac-454d-b29b-ca3ed835fe47",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `role-based-auth` recipe puts authorization **inside the reducer**, reading the signer off the action context. Because roles are ordinary document state, they replicate with the document \u2014 every peer enforces the same rules without a central policy service, and the rules hold no matter which editor, subgraph, or script fired the action.\n\nThe state is just address lists:\n\n```graphql\ntype RoleBasedAuthState {\n  creator: String\n  admins: [String!]!\n  members: [String!]!\n  notes: [Note!]!\n}\n```\n\nEvery operation opens with the same guard, and role-mutating operations add `requireAdmin(state, address)`:\n\n```ts\nconst address = action.context?.signer?.user?.address;\nif (!address) throw new NotAuthorized(\"User is not authenticated\");\n```\n\nThe permission model is small and worth copying: `bootstrap` may be called by anyone but only once, and it makes the caller the permanent `creator` and first admin \u2014 creator auto-promotion, with no demotion path (`revokeAdmin` throws `CannotRevokeCreator`). It also throws `LastAdmin` rather than allowing the admin set to be emptied, so the document cannot be locked out. The domain action `writeNote` is gated on member-or-higher and throws `NotAuthorized` for a caller with no role.\n\n**How rejection surfaces is the part that trips people up.** A thrown reducer error does not propagate to the caller as an exception. The framework captures it and records it as `operation.error` on the resulting document \u2014 the operation is still appended, and the state is unchanged. Callers detect rejection by inspecting the operation log, and tests must read `operations.global[n].error` rather than using `.toThrow()`.\n\nErrors are a typed taxonomy generated into `gen/access/error.ts` (`AlreadyBootstrapped`, `CannotRevokeCreator`, `LastAdmin`, `AddressAlreadyAdmin`, `NotAuthorized`), so each failure is distinguishable rather than one generic denial.\n\nNote the scope of the guarantee: this gates *writes* deterministically on every replica, but it does not hide state \u2014 anyone who can read the document reads the whole document, roles included.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Role-Based Auth recipe, academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Roles live in document state and every operation reads the signer address, throwing a typed error when unauthorized. Rejections surface as operation.error, not as thrown exceptions to callers.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2a9a5dcc-9993-4654-b888-f43ef5fb88fa",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9a86761d-fbe7-455f-b0e1-dfbe74b93f2e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,138 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad63c7f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad63c7f0-b6d6-4d10-955e-33fd76cf2363",
+      "targetTitle": "operations-history-is-event-sourced"
+    },
+    {
+      "id": "lnk-0eb0b43b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eb0b43b-c44b-4c9f-929b-378e56ee5975",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-7ccc9c21-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ccc9c21-72d3-46cf-931d-57b4dfc1e063",
+      "targetTitle": "document-type-is-namespaced-identifier"
+    },
+    {
+      "id": "lnk-c1b2c7da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c1b2c7da-f7a0-47f7-85a7-ff9f5cfebdc3",
+      "targetTitle": "document-model-driven-architecture-rad"
+    },
+    {
+      "id": "lnk-3c8bb297-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c8bb297-ae31-4f7a-b7f2-c91fdd89217d",
+      "targetTitle": "drive-apps-are-custom-drive-editors"
+    },
+    {
+      "id": "lnk-3ffe9cae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3ffe9cae-7925-4e7e-ac90-3a1198b1a6b3",
+      "targetTitle": "document-state-has-global-and-local-scopes"
+    },
+    {
+      "id": "lnk-c39ad3d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c39ad3d5-04e5-459c-8cdf-400b3faf534e",
+      "targetTitle": "actions-become-operations-after-dispatch-adding-metadata"
+    },
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-9f994404-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "9f994404-d34a-4429-a93d-bc07463b399e",
+      "targetTitle": "powerhouse-applies-blockchain-immutability-through-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse document models use event sourcing with an append-only operation log",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e0983a88-9d18-4f93-8543-88e5862b685f",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0081697e-a7a0-4479-81dd-b587ace4bb92",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "75c8e796-1aa2-417d-82dc-a9a65a43f241",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Document models in Powerhouse are event-sourced. Instead of directly mutating state, every change is represented by a named operation that gets appended to an immutable log. The current document state is computed by replaying (\"folding\") all operations sequentially through reducers. This architecture provides:\n\n- Transparent audit trail of all changes\n- Time-travel debugging by reconstructing past states\n- Replay capability to restore or verify state\n- Scalability and auditability since past data is never altered\n\nThis is combined with CQRS (Command Query Responsibility Segregation), where operations are \"commands\" representing intent, and the resulting state is the \"read model.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every state change is recorded as an operation event in an append-only log, enabling audit trails, time-travel debugging, and state replay.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5a8a16fe-27f1-43e1-9af6-19c01212c806",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:10.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c3a51b77-0625-4f32-a200-e01ccf3c0674",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:10.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

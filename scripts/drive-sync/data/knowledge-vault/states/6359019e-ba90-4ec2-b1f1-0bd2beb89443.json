@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-75ec6ad9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75ec6ad9-17da-4fc8-bfb6-a4e76f01a08b",
+      "targetTitle": "redundancy-does-not-fix-write-or-feed-head"
+    },
+    {
+      "id": "lnk-44f72593-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44f72593-fa3f-4dcf-b983-f72378806e47",
+      "targetTitle": "redundancy-stamp-cost-medium-25pct"
+    },
+    {
+      "id": "lnk-60d8ae20-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "60d8ae20-472f-49ab-af30-5b7be5c938cd",
+      "targetTitle": "redundancy-hot-path-collab-ops-feed"
+    },
+    {
+      "id": "lnk-2736a86f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2736a86f-5937-45c2-909a-b4187de27f58",
+      "targetTitle": "dispersed-replicas-via-redundancy-level"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Roll out RedundancyLevel incrementally, starting with collab-ops-feed only",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b44537de-afd0-4e89-b7e5-38017db95295",
+      "name": "rollout-plan",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9f5ba35b-317b-4560-833f-98809463f287",
+      "name": "redundancy-level",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4df850bb-210c-4bbb-9708-51aa3b656a8a",
+      "name": "experiment-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Incremental rollout plan for `RedundancyLevel`\n\nBaseline to preserve: commit `1e95c27` on `main`.\n\n1. Thread `redundancyLevel` option through `SwarmClient.uploadFile` and `uploadData`.\n2. Expose a single shared constant `COLLAB_OPS_REDUNDANCY = RedundancyLevel.MEDIUM`.\n3. Apply at `collab-ops-feed.ts:138` **only**. Rebuild. Run existing two-Bee setup end-to-end.\n4. Compare observed op apply-latency to the ~10s baseline.\n5. Verify `calculateRemainingSize(true, MEDIUM)` in stamp-utilization logs still shows headroom.\n6. **Decision gate:** if Awaiting\u2192joined fires within ~5s of accept AND op latency \u2264 baseline, commit.\n7. **Expand** to `lifecycle.ts:169` (drive-bundle) and the manifest feeds only after the first step is green.\n8. **Back off** to `OFF` for ops (keeping MEDIUM only for long-lived bundles) if stamp exhaustion warnings appear.\n9. **Rollback path:** revert the 2\u20133 line flag additions \u2014 no data-shape changes, no migration.\n\nThe experiment is explicitly reversible at every step; measure before expanding.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "procedure",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:42:09.748Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Add MEDIUM to collab-ops-feed.ts:138 first, compare op apply-latency to ~10s baseline, then expand to lifecycle and manifest feeds only if neutral or improved.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4b071407-818e-410f-96c0-ef7da95b4436",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4e223666-f97d-4da3-817f-2fe3ee867553",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

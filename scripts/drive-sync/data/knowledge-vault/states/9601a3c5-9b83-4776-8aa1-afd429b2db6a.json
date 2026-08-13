@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-0d11a218-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+      "targetTitle": "swarm-manifest-as-reference-pattern"
+    },
+    {
+      "id": "lnk-6359019e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6359019e-ba90-4ec2-b1f1-0bd2beb89443",
+      "targetTitle": "incremental-experiment-redundancy-rollout"
+    },
+    {
+      "id": "lnk-44f72593-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44f72593-fa3f-4dcf-b983-f72378806e47",
+      "targetTitle": "redundancy-stamp-cost-medium-25pct"
+    },
+    {
+      "id": "lnk-27133f8f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "27133f8f-af50-4b6f-8880-074358c494c7",
+      "targetTitle": "swarm-postage-stamps-bucket-mechanics"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Feed-backing stamps should be mutable to avoid bucket exhaustion from frequent updates",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "705df5d6-2054-4b11-ab5d-1f7c179f623d",
+      "name": "postage-stamps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "abb2ab12-50a9-4471-8792-4aff10fe950b",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b125ea3a-28ae-4680-b35e-4d7f616d8eaf",
+      "name": "adapter",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3c3b670d-04c6-4575-90d7-d4c3a3b88b2b",
+      "name": "optimization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nStamps used to back **feed writes** (manifests) should be created **mutable** \u2014 immutable stamps waste one bucket slot per feed update and will exhaust long before the nominal capacity.\n\n## Evidence\n\n- Each feed update is a new SOC \u2192 a new chunk that consumes a bucket slot under immutable semantics\n- With immutable batches, the batch fails when any single bucket fills (non-uniform distribution means this happens well before 2^depth chunks)\n- Mutable batches replace the oldest chunk in an overflowing bucket \u2014 old feed indices are garbage-collected automatically, keeping capacity stable\n\n## How\n\n```js\nbee.createPostageBatch(amount, depth, { immutableFlag: false })\n```\n\n## Why it matters\n\nOur adapter writes frequent manifest updates (every 3-second debounce flush). Running these on immutable stamps is a time-bomb: the batch eventually fails on hot-bucket exhaustion long before its TTL expires. Mutable stamps are the correct primitive for this workload.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Immutable stamps waste a new bucket slot on every feed update. Creating stamps with immutableFlag: false reuses slots and prevents exhaustion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "00caf8be-d6e8-44f3-ad09-eb1f753ea376",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "43fdf608-817a-4eaa-9e22-c11dd14ad10c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:47.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

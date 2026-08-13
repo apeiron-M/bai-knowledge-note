@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-c39ad3d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c39ad3d5-04e5-459c-8cdf-400b3faf534e",
+      "targetTitle": "actions-become-operations-after-dispatch-adding-metadata"
+    },
+    {
+      "id": "lnk-5dce4e61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5dce4e61-3a7c-4243-b26a-ce1e45ad09f9",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    },
+    {
+      "id": "lnk-584cc17c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "584cc17c-0c35-4ba8-b755-2735fee58676",
+      "targetTitle": "document-model-three-components"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse's twist on CRDTs, event sourcing, and Git is that each document's type is explicit, so actions are validated before becoming operations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "108dbb2e-3a6e-4545-a304-431632fab635",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d39017cd-957c-4b4e-80a8-ce67b234add6",
+      "name": "foundations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f900f01d-aeb0-49a0-a109-a82e8ebe07fc",
+      "name": "validation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "If you have worked with CRDTs, event sourcing, or Git, most of Powerhouse will feel familiar: immutable history, derived state, merge by ordering rather than overwriting. The Academy names one distinguishing twist \u2014 Powerhouse makes the *type* of each document explicit, so actions are always validated before they turn into operations.\n\n## What the twist buys\n\nThe three familiar traditions are all deliberately content-agnostic. A CRDT knows how to merge a map or a sequence but not what a valid invoice is. Git versions bytes. A classical event store appends whatever event objects the application hands it, and trusts the application to have checked them. In each case the *meaning* of a change is the application's business, and validation therefore lives in application code \u2014 once per write path, and easy to skip.\n\nPowerhouse moves that check into the document model. Each model declares its state schema and its legal operations, so an action must satisfy the declared input shape before a reducer accepts it and stamps it into the log.\n\n## Why it matters\n\nAn untyped log is only as trustworthy as every writer that ever appended to it. Because a Powerhouse log accepts nothing that failed its model's validation, a document's history stays meaningful independently of which surface produced it \u2014 an editor, a GraphQL mutation, an MCP call, or a replay all pass through the same gate. And because validity is a property of the model rather than of an app, adding a second client cannot weaken it.\n\n## The core loop this sits inside\n\nThe cycle never varies, whatever the document: you dispatch an action (plain data describing what you want to happen); a pure reducer runs and produces the next state; the operation is appended to immutable history and eventually synced to peers. The type system is what makes step one safe enough for step three to be permanent.\n\n_Source: apps/academy/docs/academy/02-Learn/01-foundations/01-what-is-powerhouse.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A typed model means an action must satisfy its schema before a reducer turns it into an operation \u2014 validation lives in the model, not in the app.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8da33756-ea09-4d8e-a5cb-eb5b1d9b3ca5",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "144ca682-7017-4cdb-b0fe-3c3467df6705",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:55.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

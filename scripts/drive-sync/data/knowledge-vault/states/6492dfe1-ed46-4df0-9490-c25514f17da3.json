@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-3810d088-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3810d088-7a77-42ad-8d53-9fdba4049e71",
+      "targetTitle": "docsync-protocol-is-decentralized-storage-agnostic-and-supports-p2p"
+    },
+    {
+      "id": "lnk-1bd8cea5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1bd8cea5-efef-4028-b116-9d63e17711e2",
+      "targetTitle": "powerhouse-stack-feature-surface"
+    },
+    {
+      "id": "lnk-57f92159-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "57f92159-9f67-4a9a-b5df-cd2d9e79cba6",
+      "targetTitle": "reactor-operation-based-model-handles-concurrent-edits-nativ"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Reactor syncs operations, not state \u2014 the remote Reactor replays them and both ends land on the same state",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d0701699-69e7-4512-ab3f-79b44bbc53e8",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d603b174-5169-4563-83d7-565c3e5b2940",
+      "name": "docsync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "106535a2-1052-40b1-befe-0ea3cbcb5049",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Sync in Powerhouse never moves state. What crosses the wire is the operation stream, and convergence happens because the receiving Reactor replays what it was sent.\n\n## The mechanism\n\nEdit a document in Connect while offline. On reconnect, the Reactor sends the operations you produced to the remote Reactor \u2014 typically one hosted by Switchboard. The remote replays them through the same reducers, and both ends land on the same state. There is no last-write-wins arbitration and no manual merge step, because at no point did two versions of the state meet and have to be reconciled.\n\n## Why this is the load-bearing claim\n\nMost of what looks impressive about the stack falls out of this one property. Offline editing needs no special handling, because the offline path and the online path produce the same artefact \u2014 operations \u2014 and only differ in when they are handed over. Non-conflicting concurrent edits survive on both sides, because independent intents can be interleaved into one ordered log without either being lost. And a transport only ever needs to carry what is new since the last cursor, never a whole document.\n\n## The distinction worth keeping sharp\n\nThat documents are *stored* as an append-only log and that they are *synchronised* as one are two claims, not one. The second does not follow automatically: plenty of event-sourced systems still ship snapshots between nodes. Powerhouse commits to the stronger version \u2014 the log is the wire format as well as the storage format \u2014 which is why DocSync can stay a transport concern and stay storage-agnostic. Ordering, conflict handling, and state computation live in the Reactor; the channel just moves batches.\n\n## The consequence\n\nBecause the wire carries intent rather than results, a peer that replays your operations reaches your state by re-deriving it, not by trusting it. That is also why the sync layer needs no merge UI: there is nothing for a user to resolve.\n\n_Source: apps/academy/docs/academy/02-Learn/02-architecture/01-the-big-picture.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Reconnecting after offline edits sends only the operations produced. The remote replays them to converge: no last-write-wins, no manual merge step, no state on the wire.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4a7430d7-9627-43ed-b59f-2a1482be7d2d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "aed023ac-1e38-4a03-a23c-ef5a7fbf4658",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

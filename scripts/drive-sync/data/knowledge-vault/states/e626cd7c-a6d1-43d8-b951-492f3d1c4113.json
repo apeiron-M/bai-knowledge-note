@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-7e6a5c41-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7e6a5c41-60c4-440e-8590-c1b28c686008",
+      "targetTitle": "css-scoped-via-data-attributes"
+    },
+    {
+      "id": "lnk-e210f325-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e210f325-64f3-447e-a289-f198a8e5df00",
+      "targetTitle": "editors-use-component-based-architecture"
+    },
+    {
+      "id": "lnk-7eb8ebc2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7eb8ebc2-4277-4cf1-ac3a-11c6cca16607",
+      "targetTitle": "builder-platform-transforms-powerhouse-from-platform-to-living-ecosystem"
+    },
+    {
+      "id": "lnk-1c313715-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c313715-bfd9-4428-9218-fda37e581365",
+      "targetTitle": "bee-node-prerequisites-and-dev-mode"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CSS imports in .tsx files work in dev but are silently dropped in production builds -- all imports must go through styles.css",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a6847db3-f53b-4e9a-8fe8-4f559de6e8f3",
+      "name": "css",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71899029-07c6-459a-9c9c-9646746dc356",
+      "name": "build-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "820220af-4d00-4fb0-aa43-f1cdb72d539e",
+      "name": "tailwind",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c6907805-308b-417f-b559-aa87c6d1b06a",
+      "name": "production",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "In any Powerhouse package, styles are generated through the `styles.css` file via `tailwindcss/cli`. Importing CSS directly in `.tsx` files works in development mode but will NOT be picked up in static production builds. All style imports must be centralized into `styles.css` using file import syntax (`@import \"...\"` not `@import url(\"...\")`, since `@import url()` is ignored by tailwindcss/cli). When installing a package with `ph install`, package styles are automatically added to styles.css.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Production builds use tailwindcss/cli which only resolves @import from styles.css, not from .tsx files.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3cbe0c96-28d2-400f-9fee-ef137b115d6d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "94bfd997-36ce-4340-b3b9-b15108eb14a7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-5dce4e61-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5dce4e61-3a7c-4243-b26a-ce1e45ad09f9",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    },
+    {
+      "id": "lnk-f8ba011f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f8ba011f-a1ed-4965-a8ea-47359dfabd98",
+      "targetTitle": "document-model-structure-has-metadata-specifications-and-modules"
+    },
+    {
+      "id": "lnk-cd9fb0ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-42c550c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42c550c3-df9c-4cbc-9ab4-3a88b9312230",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-826a2d18-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "826a2d18-2201-4399-9bd4-c86f6b366164",
+      "targetTitle": "document-models-are-the-core-unit-of-powerhouse-architecture"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A document model consists of a state schema, document operations, and event history",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "737fa639-f314-4e18-ac68-609e82613234",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d1a71a1-9f1e-48db-afd7-cb8c0ada6e59",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "073ed0a1-e882-4e1b-994b-0da7a1a5784e",
+      "name": "schema",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each document model has three key components:\n\n1. **State Schema** - Defines the structure of the document using GraphQL SDL (types, fields, scalars). This is the blueprint for data storage and validation.\n2. **Document Operations** - Defines how the document can be modified. Operations are specified as GraphQL `input` types and represent valid state transitions (e.g., `AddTodoItemInput`, `UpdateTodoItemInput`).\n3. **Event History** - An append-only log storing every operation applied to the document as a timestamped event.\n\nThe state schema acts as a template for document instances, operations act as commands, and the event history provides the complete audit trail.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The three structural components define what data exists, how it can change, and the record of all changes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "19865e2f-221f-443a-99f2-6b76c0e9db1c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:29.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "918fb7a9-7295-45cb-a275-a740fba170e7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:29.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

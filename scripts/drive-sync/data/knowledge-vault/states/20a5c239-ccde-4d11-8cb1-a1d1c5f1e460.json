@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-c7f73a29-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c7f73a29-d8df-42c3-832b-7dfdeedbcf55",
+      "targetTitle": "reactor-is-a-storage-node-supporting-multiple-adapters"
+    },
+    {
+      "id": "lnk-1bd8cea5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1bd8cea5-efef-4028-b116-9d63e17711e2",
+      "targetTitle": "powerhouse-stack-feature-surface"
+    },
+    {
+      "id": "lnk-22720e65-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "22720e65-5178-41e9-b071-9e29543eea0e",
+      "targetTitle": "reactor-builder-fluent-api-construction"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The host, not the Reactor, chooses the storage backend and wires it in at startup",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "eac86da7-2884-45f2-9b0b-55600c5a0e3f",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "581ef3ec-8b44-4383-96ba-3299cca5aefa",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "34716ab2-e81f-409d-8b76-e9c64fae8e41",
+      "name": "host-applications",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Reactor does not pick where operations are persisted. It declares a storage contract and waits for someone to satisfy it. That someone is always the host application, and it does so at construction time.\n\n## The decision\n\nThree plausible designs were available: bake in one store, sniff the environment at runtime, or let each document model declare its own. Powerhouse rejected all three. Storage is an interface \u2014 `IOperationStore` and its siblings in `@powerhousedao/reactor` \u2014 and the host instantiates the Reactor with an implementation already chosen. The Academy is explicit about the two rejected alternatives: PGlite is the *default*, not a fixture, and \"there's no auto-detection. The host is explicit about what it wires.\" Document models, meanwhile, \"define schemas and reducers \u2014 they don't touch storage configuration at all.\"\n\n## Why it matters\n\nThis is what makes a document model portable. If storage selection happened inside the model, or were sniffed from the environment, the same package could not run in a browser and on a server without variants. Pushing the choice to the host boundary means the model's contract is purely schema plus reducers.\n\n## The mental model\n\nRead the wiring direction as inward: the host constructs, the Reactor receives. In the shipped builder that handshake is a call such as `ReactorBuilder.withKysely(kysely)` \u2014 the host hands in a configured database and the Reactor uses it, with an in-memory PGlite standing in when nothing is supplied.\n\n## Worked example\n\nThe two ready-made hosts demonstrate the range. Connect initialises its Reactor with PGlite running in IndexedDB, so the browser holds the operation log locally and works offline. Switchboard can point its Reactor at a real Postgres instance. Same engine, same reducers, two backends \u2014 because the choice was never the engine's to make. A custom host can substitute anything that satisfies the interface.\n\n_Source: apps/academy/docs/academy/02-Learn/02-architecture/02-host-applications.mdx (Powerhouse v6.2.2-dev.45); interface and builder names confirmed in packages/reactor/src/storage/interfaces.ts and packages/reactor/src/core/reactor-builder.ts._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:24.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Storage sits behind an interface the host satisfies at construction time. There is no runtime auto-detection, and document models never touch storage configuration.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6c6d3214-3b11-4c80-843f-cb89c7a0e979",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "96388419-501f-48ec-83f6-a17b197acde2",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

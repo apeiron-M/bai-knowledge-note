@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-3ac66d63-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3ac66d63-e907-447c-bb02-cd81e698867d",
+      "targetTitle": "open-source-capitalism-makes-oss-self-sustaining-investable-and-scalable"
+    },
+    {
+      "id": "lnk-5dce4e61-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "5dce4e61-3a7c-4243-b26a-ce1e45ad09f9",
+      "targetTitle": "graphql-sdl-defines-schemas-and-operations"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Custom GraphQL scalars in Powerhouse use Zod schemas for validation and must be registered in seven places in scalars.ts",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "58c1b89e-defe-47c1-b535-28b8251bc609",
+      "name": "custom-scalars",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c0d61f0-2881-4d7e-9bf3-2abaa872e20c",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "74c43fb4-5eaf-489a-a588-f110c2e6f14d",
+      "name": "zod",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0e817301-84cd-43da-b892-44e06d8e6441",
+      "name": "document-engineering",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Custom scalars are created in `src/scalars/graphql/` of the document-engineering project. Each scalar file exports (verified in `src/scalars/graphql/AmountMoney.ts` at lines 9, 11, 13, 15, 32, 50): `type` (TS type as string), `typedef` (GraphQL definition e.g. `'scalar PhoneNumber'`), `schema` (Zod validation), `stringSchema` (string representation for code generation), `config` (GraphQLScalarTypeConfig with name, description, serialize/parseValue/parseLiteral), and `scalar` (GraphQLScalarType instance). Registration in `src/scalars/graphql/scalars.ts` requires updating **seven** sections \u2014 this note previously listed eight by including a separate \"export object\" that does not exist. The real seven are: (1) the namespace imports (`import * as Currency from './Currency.js'`), (2) the `export type { ScalarType as XScalarType }` re-exports, then the five exported registries: (3) `customScalars` (line 61), (4) `resolvers` (86), (5) `typeDefs` (107), (6) `generatorTypeDefs` (128) and (7) `validationSchema` (149). There is no separate aggregate export \u2014 `customScalars` is the registry. Scalars can be integrated into React components by using `scalar.schema.safeParse(value)` for validation, enabling consistent frontend/backend validation.\n\n_Source-verified 2026-08-13 against the document-engineering repo at v1.40.5 (`/home/p/Powerhouse/document-engineering`), a separate repo from the powerhouse monorepo._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each scalar exports type, typedef, schema (Zod), stringSchema, config and scalar; registration touches seven sections of scalars.ts \u2014 two import/export blocks plus five registries.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "965b5b58-4788-40fd-8520-7c5397042aba",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e205f122-f15a-419a-975c-1159c83d663a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:47.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

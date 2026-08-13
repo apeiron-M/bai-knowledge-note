@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-cd9fb0ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-67bcb93e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "67bcb93e-c4f7-4573-ab75-efaddf88c13f",
+      "targetTitle": "accounts-model-defines-the-chart-of-accounts-structure"
+    },
+    {
+      "id": "lnk-42c550c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42c550c3-df9c-4cbc-9ab4-3a88b9312230",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Per-user op feed carries type=operations payloads wrapping operation + context per entry",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "08ba4902-3d7a-4c42-b64b-9cb6befab33c",
+      "name": "per-user-ops-feed",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c8f77d4-580e-4a93-8c27-39acb345585a",
+      "name": "collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e0094dc-cf44-4f2a-96bb-9ef379aa2507",
+      "name": "sync-envelope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Per-User Operation Feed\n\nIn collaborative mode, each user writes their own operations to `ph:v2:ops:<address>:<docId>`, owned by that user's signer. Peers read each other's op feeds.\n\n## Schema\n\n```json\n{\n  \"type\": \"operations\",\n  \"channelMeta\": { \"source\": \"0xAlice_signer\" },\n  \"operations\": [\n    {\n      \"operation\": {\n        \"id\": \"op-aaa\",\n        \"index\": 0,\n        \"skip\": 0,\n        \"timestampUtcMs\": \"1712750460000\",\n        \"hash\": \"abc123...\",\n        \"action\": { \"id\": \"act-001\", \"type\": \"ADD_LINE_ITEM\", \"scope\": \"global\" }\n      },\n      \"context\": {\n        \"documentId\": \"doc-001\",\n        \"documentType\": \"powerhouse/budget-statement\",\n        \"scope\": \"global\",\n        \"branch\": \"main\",\n        \"ordinal\": 1\n      }\n    }\n  ]\n}\n```\n\n## Key points\n\n- Each feed index is one batch, debounced\n- `channelMeta.source` identifies the writer for downstream validation\n- `context.ordinal` is the writer-local sequence number \u2014 NOT the globally-resolved index\n- Final global index/skip is assigned by each reader's reactor during conflict resolution\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:45:54.611Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Per-user op feed at ph:v2:ops:<address>:<docId> carries type=operations payloads with channelMeta and an operations array where each entry wraps operation + context.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2bc9593b-b224-454b-b1c6-93b1735a7cc7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:23.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "08650607-915f-47b4-9413-d86bd85db59b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:23.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

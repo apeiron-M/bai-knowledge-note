@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e50150d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-b1996abf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b1996abf-016c-4625-9c20-f0cd628d8d2b",
+      "targetTitle": "reducer-code-goes-into-setoperationreducer-without-function-headers"
+    },
+    {
+      "id": "lnk-c0b2af09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0b2af09-1fc3-43d4-bc28-dca56db6f747",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-4752ac2e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4752ac2e-835a-4be9-9c2b-ca95ca501cef",
+      "targetTitle": "mcp-workflows"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "external imports go in src reducer files not in SET_OPERATION_REDUCER",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4766b8bf-87b4-42ce-9d58-2c4eb57f2755",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4a6ef3fe-f370-4486-b4e4-b6d4def1cdfd",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2415204a-52a1-4553-a230-a46fa733f438",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4c69fb87-996f-47cc-9f80-1bd9619ab5be",
+      "name": "imports",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# external imports go in src reducer files not in SET_OPERATION_REDUCER\n\nThe `SET_OPERATION_REDUCER` MCP action receives only the reducer body \u2014 no imports, no function wrapper. If your reducer needs external utilities:\n\n1. Write the reducer body (without imports) in `SET_OPERATION_REDUCER`\n2. Add the import statements at the top of the actual file in `src/reducers/<module>.ts`\n\nSince [[reducer code goes into SET_OPERATION_REDUCER without function headers]], the MCP action only accepts the body. The src/ file is where the full module lives, including imports.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[gotchas]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:58:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:26.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Import statements belong at the top of the actual reducer file in src/; the MCP reducer code should contain no imports",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c50e5e7a-8ed2-4075-867d-ba4a8c0167c6",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5e038a47-3c1a-4a50-b73a-22e63194e15c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

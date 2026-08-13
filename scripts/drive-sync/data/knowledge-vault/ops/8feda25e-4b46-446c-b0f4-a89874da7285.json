@@ -1,0 +1,277 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:57.871Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "analytics-engine-uses-luxon-not-js-date",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "8feda25e-4b46-446c-b0f4-a89874da7285",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:38:57.871Z"
+        },
+        "version": 0,
+        "documentId": "8feda25e-4b46-446c-b0f4-a89874da7285",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:57.871Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "CUdnLS9BmParB/IxdZwahwD5wNY=",
+    "timestampUtcMs": "2026-08-13T14:38:58.651Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Analytics Engine uses luxon DateTime everywhere because a JS Date cannot report whether it was constructed in UTC",
+        "updatedAt": "2026-08-13T14:38:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:58.651Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:57.871Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "8feda25e-4b46-446c-b0f4-a89874da7285",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:57.871Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "hkPpHyFVb3/axoW0PKbr5mp4kXU=",
+    "timestampUtcMs": "2026-08-13T14:38:58.651Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:38:57.000Z",
+        "description": "Series bounds and query windows are luxon DateTime objects. The stated design goal is making a timezone mistake hard to make silently in a time-series system."
+      },
+      "timestampUtcMs": "2026-08-13T14:38:58.651Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:00.044Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8feda25e-4b46-446c-b0f4-a89874da7285",
+        "targetId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:00.044Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "4JmoarZ2ZYG0SxOFfemmXpeehIo=",
+    "timestampUtcMs": "2026-08-13T14:38:58.651Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-08-13T14:38:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:58.651Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "70HhyU51ag+uSJF5ft3Wf5ZP8Fs=",
+    "timestampUtcMs": "2026-08-13T14:38:58.651Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "This is one of the few places the Powerhouse docs record the reasoning behind an API choice rather than just the choice.\n\nThe team started with the built-in `Date`. The problem is not that `Date` cannot represent UTC \u2014 `new Date('2024-12-25T14:46:22.001Z')` parses UTC fine \u2014 it is that the resulting object is a local-time object with **no way to ask whether it was constructed from a UTC timestamp**. You can call the constructor and end up with a different instant than the one you thought you passed in, and nothing in the type or the object tells you. `toISO()` will happily emit a UTC string either way.\n\nStrings were considered and rejected: they carry their own class of problems and are only checkable at runtime.\n\nluxon's `DateTime` carries time, date, and timezone in one object, and the docs' summary of why it won is characteristically blunt: it is \"difficult (but not impossible) to create a luxon `DateTime` object with a timezone you weren't intending to use.\" For a time-series analytics system, where a silent timezone shift moves numbers into the wrong bucket rather than producing an error, that difficulty is the feature.\n\nThe consequence is that luxon appears on both sides of the API: `AnalyticsSeriesInput.start`/`end` and `AnalyticsQuery.start`/`end` are `DateTime`, and `GroupedPeriodResult.start`/`end` come back as `DateTime`. Series insertion in the shipped processors uses `DateTime.fromISO(operation.timestampUtcMs)`, so the operation log's own UTC timestamp is the input rather than any local clock reading \u2014 which also keeps analytics writes deterministic under replay.\n\nProvenance: draft `03-Build/04-WorkWithData/_06-Analytics Engine/typescript/index.md` (\"A note about times\"); luxon imports confirmed across `packages/analytics-engine/{core,browser,knex}/src/` and `packages/shared/processors/drive-analytics/` at 6.2.2-dev.45.",
+        "updatedAt": "2026-08-13T14:38:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:58.651Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "QH3708hWhcVy/llune2gaU+A0wc=",
+    "timestampUtcMs": "2026-08-13T14:38:58.651Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2d32a384-efdb-4576-bf9a-1acca68ea31e",
+        "name": "analytics-engine"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:58.651Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ROYJR+t3igovZ0YefY/Qh6nX88s=",
+    "timestampUtcMs": "2026-08-13T14:38:58.651Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9aa1c083-941f-4bf6-b7ca-04062a8d64c9",
+        "name": "api-design"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:58.651Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Zx1S1AYAiW+Foq1ijjg8CcmU2EY=",
+    "timestampUtcMs": "2026-08-13T14:38:58.651Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "54f9fa0c-aaa8-4017-8758-67fec8995e21",
+        "name": "time"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:58.651Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "rb/S/8wx38wzg3SCIMRhqih89i8=",
+    "timestampUtcMs": "2026-08-13T14:38:59.993Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:57.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:59.993Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "IoWMplf5Bbs1FzgLwUSfShGvT6Q=",
+    "timestampUtcMs": "2026-08-13T15:56:36.667Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:36.667Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "yG30PVnX6uqIck+QykMfMSrBL0o=",
+    "timestampUtcMs": "2026-08-13T15:56:36.667Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4909042e-248a-4074-8a0b-e87ac3f52a54",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:36.667Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "SxQZuUPPqjXmEDI2tK7gx/QSlUA=",
+    "timestampUtcMs": "2026-08-13T15:56:36.667Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "a10b4cc8-0c25-479e-9a48-4fd6bbfba785",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:36.667Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "+KRM2UmH5h49kDVjAD99tXTOf6o=",
+    "timestampUtcMs": "2026-08-13T16:54:30.445Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:30.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:30.445Z"
+    }
+  }
+]

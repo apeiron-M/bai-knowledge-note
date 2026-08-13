@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-e1aaf7f5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e1aaf7f5-9add-401a-b2db-bcc7b3353df2",
+      "targetTitle": "manifest-as-reference-feed-pattern"
+    },
+    {
+      "id": "lnk-2b7f5dc0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2b7f5dc0-996e-4ed3-b8fd-dc7d83ab0662",
+      "targetTitle": "swarm-bee-v271-feed-auto-racing"
+    },
+    {
+      "id": "lnk-52f876b5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+      "targetTitle": "document-models-use-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Document model versioning allows schema evolution while maintaining backward compatibility",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c9cd6679-ea98-4bc4-9d83-444413634f61",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a25fe8d-771b-416c-8d3c-5b341b840b39",
+      "name": "schema-evolution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "97754887-3cd4-4af1-bd39-4bd7c85d3170",
+      "name": "backward-compatibility",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Because document models are event-sourced, changing a schema would break existing documents. Versioning solves this with four components:\n\n1. **Version Folders** - Separate `v1/`, `v2/` directories with version-specific gen/ and src/ code\n2. **DocumentModelModule** - Each version exports a module with an explicit `version` number\n3. **Upgrade Manifest** - Declares supported versions and upgrade paths for a document type\n4. **Upgrade Reducer** - Pure function that transforms document state from one version to another\n\nKey rules:\n- V1 documents continue to work with v1 reducers\n- New documents are created at the latest version by default\n- Upgrade reducers must handle both `state` and `initialState`\n- Never remove operations from newer versions\n- Don't change existing input schemas; add new operations instead\n- Upgrade reducers must be pure (no side effects)\n- Always provide sensible defaults for new fields\n- Never lose data during upgrades\n\nConnect and Switchboard automatically load all versions and upgrade manifests, handling version detection and migration transparently.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Multiple versions coexist with separate v1/, v2/ folders. Upgrade manifests and reducers handle migration between versions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fc39f9b8-163c-475b-982c-0b69cb4f8301",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "425efa83-10b7-46b5-b6f8-1082540c2581",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

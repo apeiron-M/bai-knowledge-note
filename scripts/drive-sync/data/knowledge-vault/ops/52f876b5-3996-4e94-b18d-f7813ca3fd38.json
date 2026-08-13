@@ -1,0 +1,406 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:15.980Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "document-models-use-event-sourcing",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:15.980Z"
+        },
+        "version": 0,
+        "documentId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:15.980Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "bC6kTNPckhqbVfePn4cwCJku3gY=",
+    "timestampUtcMs": "2026-08-13T13:23:01.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Powerhouse document models use event sourcing with an append-only operation log",
+        "updatedAt": "2026-08-13T13:23:01.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:01.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:15.980Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:15.980Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "FqzzTwyDr8Y2HOQxOWd4J358XxU=",
+    "timestampUtcMs": "2026-08-13T13:23:01.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:01.000Z",
+        "description": "Every state change is recorded as an operation event in an append-only log, enabling audit trails, time-travel debugging, and state replay."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:01.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.167Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "ad63c7f0-b6d6-4d10-955e-33fd76cf2363",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.167Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "o8XaOi+QvFsTj9oeu7ymyi2jrKk=",
+    "timestampUtcMs": "2026-08-13T13:23:01.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T13:23:01.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:01.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.266Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "0eb0b43b-c44b-4c9f-929b-378e56ee5975",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.266Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jgIIag9aGXX/9X3Fl6zQYwxVhEE=",
+    "timestampUtcMs": "2026-08-13T13:23:01.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Document models in Powerhouse are event-sourced. Instead of directly mutating state, every change is represented by a named operation that gets appended to an immutable log. The current document state is computed by replaying (\"folding\") all operations sequentially through reducers. This architecture provides:\n\n- Transparent audit trail of all changes\n- Time-travel debugging by reconstructing past states\n- Replay capability to restore or verify state\n- Scalability and auditability since past data is never altered\n\nThis is combined with CQRS (Command Query Responsibility Segregation), where operations are \"commands\" representing intent, and the resulting state is the \"read model.\"",
+        "updatedAt": "2026-08-13T13:23:01.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:01.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.341Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "7ccc9c21-72d3-46cf-931d-57b4dfc1e063",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.341Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "QNcyKerk10QnPPVJ82gTJan9sy0=",
+    "timestampUtcMs": "2026-08-13T13:23:01.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:01.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.366Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "c1b2c7da-f7a0-47f7-85a7-ff9f5cfebdc3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.366Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "WBaJwgFqhE34T7AtGXSipsZvU7Y=",
+    "timestampUtcMs": "2026-08-13T13:23:01.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e0983a88-9d18-4f93-8543-88e5862b685f",
+        "name": "document-model",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:01.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.605Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "3c8bb297-ae31-4f7a-b7f2-c91fdd89217d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.605Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "eSYaOCFvfb1JI4iXpcYe4V3rWUE=",
+    "timestampUtcMs": "2026-08-13T13:23:01.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0081697e-a7a0-4479-81dd-b587ace4bb92",
+        "name": "event-sourcing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:01.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.768Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "3ffe9cae-7925-4e7e-ac90-3a1198b1a6b3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.768Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "MdxoJSkTcTasJK1j36TGTNOsYrc=",
+    "timestampUtcMs": "2026-08-13T13:23:01.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "75c8e796-1aa2-417d-82dc-a9a65a43f241",
+        "name": "architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:01.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.792Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "c39ad3d5-04e5-459c-8cdf-400b3faf534e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.792Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "PzmjyxxO8Siw/KnwOdcHL9E/uCc=",
+    "timestampUtcMs": "2026-08-13T15:54:10.063Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:54:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:10.063Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.815Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.815Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "wJJoFDR1vNmH0cACaeK4+nc8vo8=",
+    "timestampUtcMs": "2026-08-13T15:54:10.063Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "5a8a16fe-27f1-43e1-9af6-19c01212c806",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:54:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:10.063Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.836Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.836Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "c1Isw8WNK1i8vXjRXxshIDb0Qhk=",
+    "timestampUtcMs": "2026-08-13T15:54:10.063Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "c3a51b77-0625-4f32-a200-e01ccf3c0674",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:54:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:10.063Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:23.925Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "targetId": "9f994404-d34a-4429-a93d-bc07463b399e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:23.925Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "t8PheFvqGkTUsA3iOGAsOUcn7nE=",
+    "timestampUtcMs": "2026-08-13T16:51:38.798Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:51:38.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:51:38.798Z"
+    }
+  }
+]

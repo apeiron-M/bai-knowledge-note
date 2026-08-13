@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-ee900e65-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee900e65-175e-4152-9ad5-18db168c583c",
+      "targetTitle": "v6-reactor-subgraph-replaces-legacy-endpoints"
+    },
+    {
+      "id": "lnk-4324b1ff-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Custom resolvers list a drive's children via reactorClient.getOutgoingRelationships(driveId, \"child\")",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bb542e2f-4f8a-4a1a-8bf8-ddbd89558f39",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "376abaf9-9a38-441a-bebb-df07738b6b3d",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "925ce069-9ffb-4744-953c-e668fb9d5202",
+      "name": "graphql",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Walking a drive from a resolver\n\nA custom subgraph that searches or aggregates across a drive needs the drive's contents. In v6 that is a relationship query on the reactor client, not a walk over a `nodes` array:\n\n```ts\nexport const getResolvers = (subgraph: BaseSubgraph) => {\n  const reactorClient = subgraph.reactorClient;\n\n  return {\n    Query: {\n      searchTodos: async (\n        parent: unknown,\n        args: { driveId: string; searchTerm: string },\n      ) => {\n        const children = await reactorClient.getOutgoingRelationships(\n          args.driveId,\n          \"child\",\n        );\n        const todoItems: string[] = [];\n        for (const doc of children.results) {\n          if (doc.header.documentType !== \"powerhouse/todo-list\") continue;\n          const todoDoc = doc as TodoListDocument;\n          const hits = todoDoc.state.global.items.filter((e) =>\n            e.text.includes(args.searchTerm),\n          ).length;\n          if (hits > 0) todoItems.push(doc.header.id);\n        }\n        return todoItems;\n      },\n    },\n  };\n};\n```\n\nThree details to carry over into your own resolvers:\n\n- **`\"child\"` is the relationship type.** Drive membership is modelled as an outgoing relationship from the drive document, which is why the same call generalises to any relationship you define.\n- **Results come back as a page**, read via `children.results` \u2014 not a bare array. Large drives require paging, so a resolver that assumes one page is correct only by accident.\n- **Type filtering is yours to do.** The call returns documents of every type in the drive; each carries `header.documentType`, and skipping the ones you do not care about is resolver code, not a query parameter.\n\nThe same `getOutgoingRelationships` call backs the built-in reactor resolvers, so this is the supported path rather than a workaround.\n\n_Source: apps/academy/docs/academy/03-Build/04-WorkWithData/03-UsingSubgraphs.md, packages/reactor-api/src/graphql/reactor/resolvers.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The v6 replacement for iterating drive.nodes. It returns a result page whose documents carry header.documentType, so filtering by type happens in the resolver.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "60185ded-609f-4f6e-bd20-d25321372fb8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4678ed78-6004-4377-951f-b87780c12f41",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-60d8ae20-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "60d8ae20-472f-49ab-af30-5b7be5c938cd",
+      "targetTitle": "redundancy-hot-path-collab-ops-feed"
+    },
+    {
+      "id": "lnk-daf8c8f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "daf8c8f0-7040-4fb6-9fea-fbb9be1da02e",
+      "targetTitle": "swarm-kademlia-neighborhoods"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Dispersed replicas are a one-field opt-in via bee-js RedundancyLevel",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6ff7848d-44bd-423b-ae12-d6fd7f6a8778",
+      "name": "dispersed-replicas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf791c0e-ed54-47ca-94bf-f72770792bd3",
+      "name": "redundancy-level",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b2c1708e-5368-43c4-8ba5-9635b015288c",
+      "name": "erasure-coding",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd93f730-17aa-4bf8-a150-625e6001dfd1",
+      "name": "bee-js-sdk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Dispersed replicas via `RedundancyLevel` \u2014 additive, reversible\n\nbee-js exposes:\n\n```ts\nenum RedundancyLevel { OFF=0, MEDIUM=1, STRONG=2, INSANE=3, PARANOID=4 }\nenum RedundancyStrategy { NONE, DATA, PROX, RACE }\n```\n\nUploading with `{ redundancyLevel: MEDIUM }` makes Bee erasure-code the chunks across the neighbourhood. The default download strategy cascade is `NONE \u2192 DATA \u2192 PROX \u2192 RACE`, so existing readers transparently benefit \u2014 no reader-side code changes needed.\n\nThis is **not** the paper's literal balanced-SOC-replica pattern (paper \u00a75.1.3) but achieves the same outcome through Reed-Solomon coding, as a one-field opt-in with zero protocol changes.\n\n**Why it's low-risk:**\n- No schema changes, no wire-protocol changes, no feed-shape changes.\n- ACT layering is unaffected \u2014 redundancy operates on chunks, ACT on their contents.\n- Rolling back = revert the 2\u20133 line flag additions.\n- Zero behavioural change if `RedundancyLevel.OFF` (default).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "integration",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:45.004Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "bee-js exposes RedundancyLevel (OFF..PARANOID); upload with redundancyLevel:MEDIUM and Bee erasure-codes chunks. Readers transparently RACE-fetch via the default cascade.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7c22cea4-aac6-43e1-b346-9d69ec641a97",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:44.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d9858a70-1f5f-4d84-b579-5bac15edeb76",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:44.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

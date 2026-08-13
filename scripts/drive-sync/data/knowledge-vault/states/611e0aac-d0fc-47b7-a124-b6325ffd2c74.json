@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-3f8ca25d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    },
+    {
+      "id": "lnk-fe57b669-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "fe57b669-898b-4381-8c5c-60ca981ef900",
+      "targetTitle": "Error Handling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IReactorClient mutations throw a bare Error carrying only job.error?.message, losing the typed class and stack",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c32539bc-c16d-4e2f-b126-965d0a80493f",
+      "name": "error-handling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ca17199-3469-418f-93af-7e3e36a00e4b",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "973dc3d1-90e4-4abe-9221-324c64daf837",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The convenience of `IReactorClient` costs you error fidelity. On a `FAILED` job the client rethrows the message and nothing else:\n\n```typescript\n// inside ReactorClient, after the job reaches a terminal status\nif (job.status === JobStatus.FAILED) {\n  throw new Error(job.error?.message);\n}\n```\n\nThe same pattern runs in `execute`, `executeBatch`, `create`, `deleteDocument`, `deleteDocuments`, `addRelationship`, and `removeRelationship`. Two consequences:\n\n- The thrown `Error.message` equals `job.error?.message`, which **can be `undefined`** if `error` was never set. Guard before displaying it.\n- The original error class, stack, and `errorHistory` are gone. You cannot `instanceof` your way to a diagnosis at this boundary.\n\nTo recover the detail, drop to the lower-level `IReactor.getJobStatus(jobId)` and read the `JobInfo`:\n\n```typescript\ntype JobInfo = {\n  id: string; documentId: string; status: JobStatus;\n  error?: { message: string; stack: string };        // the failing error\n  errorHistory?: Array<{ message: string; stack: string }>; // one per attempt, oldest first\n  job?: Job;                                          // populated on failure for debugging\n  consistencyToken: ConsistencyToken; meta: JobMeta;\n  // ...\n};\n```\n\n`errorHistory` is the payoff: a job the queue retried carries **every** failure, with `error` being the most recent. That is invisible from the client boundary, where you see one message. The `{ message, stack }` shape is structural \u2014 treat it as a type you match, not one you import; the barrel's exported `ErrorInfo` is a different (worker-protocol) type aliased as `WorkerErrorInfo`.\n\nSeveral internal write-path errors lose their typed identity at this edge and survive only as a message string: `DocumentDeletedError`, `DocumentNotFoundError`, `CreateDocumentRequiredError`, `InvalidSignatureError`, and `UpgradeManifestNotFoundError`. None are exported, so branching on them means matching `err.message` \u2014 brittle by construction.\n\nRelated edge: `ReactorClient.deleteDocument` throws a plain `new Error(\"Operation aborted\")` rather than an `AbortError` when its signal fires during cascade traversal, so prefer handling that call without relying on `err.name === \"AbortError\"`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/08-ErrorHandling.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Class, stack and errorHistory are dropped at the client boundary. Drop to IReactor.getJobStatus(jobId) to read JobInfo.error, errorHistory and job.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bf68acac-d514-47fa-923e-c2119abf3bc4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f5e6b00a-7f22-4c1c-b124-aefcff59d633",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:47.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

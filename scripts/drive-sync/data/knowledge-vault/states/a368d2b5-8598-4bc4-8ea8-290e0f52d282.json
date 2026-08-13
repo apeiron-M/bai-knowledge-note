@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-464de7c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "464de7c4-b8c0-4ecd-b94d-e157900c465f",
+      "targetTitle": "inspector-modal-for-debugging-sync"
+    },
+    {
+      "id": "lnk-ad69cf1c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+      "targetTitle": "moc-reactor-sync-infrastructure"
+    },
+    {
+      "id": "lnk-de11636d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+      "targetTitle": "reactor-sync-ichannel-three-mailbox-model"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Per-document SyncStatus is derived from mailbox depth, not from a stored flag",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a934e13d-e3c8-426f-8cf5-5ada8ace8616",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "576eb606-0df5-412b-93d1-a86d092a0a9f",
+      "name": "observability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`SyncStatus` is not a field the reactor writes and updates. It is **computed on demand from the depth of the channel's mailboxes**, which is why it can never drift out of step with the actual queues.\n\n```typescript\ngetSyncStatus(documentId: string): SyncStatus | undefined;\nonSyncStatusChange(callback: SyncStatusChangeCallback): () => void;\n```\n\n```typescript\nenum SyncStatus {\n  Synced = \"SYNCED\",\n  Outgoing = \"OUTGOING\",\n  Incoming = \"INCOMING\",\n  OutgoingAndIncoming = \"OUTGOING_AND_INCOMING\",\n  Error = \"ERROR\",\n}\n```\n\nThe derivation rules are strictly ordered: **any error gives `Error`**; pending work in both directions gives `OutgoingAndIncoming`; otherwise it is `Incoming`, `Outgoing`, or \u2014 with both mailboxes empty \u2014 `Synced`. Because error wins, `Error` does not tell you the direction failed in; read the dead-letter events or the per-remote connection state for that.\n\n`getSyncStatus` returns `undefined` for a document that has never been tracked. That is a distinct third state from \"synced\" and worth handling explicitly in UI: absent, not clean. `onSyncStatusChange` returns an unsubscribe function, and its callback is `(documentId: string, status: SyncStatus) => void`.\n\nThis per-document view is one of three. The other two are per-job (`waitForSync(jobId)`, which resolves \u2014 never rejects \u2014 on both success and failure, carrying `status: \"succeeded\" | \"failed\"`) and per-remote (`channel.getConnectionState()`, returning a `ConnectionStateSnapshot` with `state`, `failureCount`, `pushBlocked`, `receivingPages`, and `requiresAuth`).\n\nThere is a hard boundary to be aware of: when the sync manager runs in a SharedWorker and you hold the tab-side RPC proxy, `waitForSync` **always** rejects with `\"waitForSync is not supported over the worker RPC boundary\"`. In that topology the mailbox-derived `getSyncStatus` / `onSyncStatusChange` pair and per-remote connection state are your only observability, which makes this derived status the more portable of the three views.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Synced/Outgoing/Incoming/OutgoingAndIncoming/Error. Any error wins; pending in both directions gives OutgoingAndIncoming. Untracked documents return undefined.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "973ea622-5367-4262-8f7c-d335ab1f9139",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:13.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "859ca351-157c-4767-b845-6f383bf90449",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:13.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

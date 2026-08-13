@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce65f0dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce65f0dc-e22e-4b36-854a-d427c544489b",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-ed65d30e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed65d30e-61b0-431d-8162-183dc8c530d3",
+      "targetTitle": "editor-hooks-connect-react-to-documents"
+    },
+    {
+      "id": "lnk-aa462073-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa462073-1b66-4422-8008-349b70dec86f",
+      "targetTitle": "powerhouse-design-system-graphql-scalars"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "One document model can have several registered editors, such as a viewer and a full editor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b5e927ed-aedb-4a4d-a443-f417600c748b",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b8e3724-41df-42ec-9887-43f61867dcd0",
+      "name": "document-viewer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f24d42c2-848b-4ee5-b55d-1dbec5dada75",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Nothing about registration is one-to-one. An `EditorModule` declares `documentTypes: string[]`, and several modules may name the same type \u2014 so a budget document can have both a simple viewer and a full spreadsheet-style editor, as two independent React components against one model.\n\nThe split follows a difference in audience, not in data:\n\n- **Document editor** \u2014 used by one or more authorised users to make data entries and update state. Its value is structured input for collaboration inside a group.\n- **Document viewer** \u2014 permits no modification. Its value is transparency: informing a broader group or the public about the state of a document.\n\nA viewer does not have to mirror the editor one-to-one. The data presented can be a deliberate selection, or filtered to surface a particular insight \u2014 a viewer is a curated read, not a disabled clone.\n\nThat said, the disabled clone is cheap, because the component library was designed for it. The same `document-engineering` component used in an editor has a **disabled state** for viewer contexts, so the read-only variant reuses the identical components rather than needing a parallel set of display-only ones. The recommended order is editor first, viewer second: build the editor, then decide which viewer format is actually useful.\n\nThis also explains why `config.name` exists on `EditorModule` alongside `config.id`. When one document type resolves to several editors, the host needs a human-readable label to distinguish them \u2014 an id alone is enough to register a component but not enough to let anyone choose between two.\n\nMultiple editors are also the practical migration path for a redesign: register the new editor alongside the old one against the same document type instead of rewriting in place, since neither the document model nor its stored operation log is touched by editor changes.\n\n_Source: apps/academy/docs/academy/02-Learn/04-editors/01-what-is-an-editor.mdx and 04-Reference/05-EditorsUI/00-DocumentEngineering.md, with packages/shared/document-model/types.ts for the EditorModule shape (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Editors are separate React components registered against the same document type; a viewer renders the same document-engineering components in their disabled, read-only state.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "31abd4d0-d566-4b45-88cc-6772e8a905f7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1573aad0-c24c-4fed-80a9-9038bf0b5446",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

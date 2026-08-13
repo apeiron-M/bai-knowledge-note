@@ -1,0 +1,277 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:54.951Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "one-tokenprovider-is-the-single-auth-seam",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "11b89038-2305-4650-9ae6-b146f6f640df",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:54.951Z"
+        },
+        "version": 0,
+        "documentId": "11b89038-2305-4650-9ae6-b146f6f640df",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:54.951Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "oHYZzMr+01+YQIBawBDGy0uMWxU=",
+    "timestampUtcMs": "2026-08-13T14:33:55.543Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "One tokenProvider is the single auth seam for the generated SDK, hand-written requests, subgraph SDKs and the websocket",
+        "updatedAt": "2026-08-13T14:33:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:55.543Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:54.951Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "11b89038-2305-4650-9ae6-b146f6f640df",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:54.951Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "FnNY1JEGv+tlieD+GiueS2FPuec=",
+    "timestampUtcMs": "2026-08-13T14:33:55.543Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:54.000Z",
+        "description": "Resolved per request. The HTTP header is a lowercase authorization; the websocket sends the same value as a lowercase authorization connection param."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:55.543Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:56.694Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "11b89038-2305-4650-9ae6-b146f6f640df",
+        "targetId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:56.694Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "cMaC2tXQdGcyIjfFfSruGVeMEeI=",
+    "timestampUtcMs": "2026-08-13T14:33:55.543Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:33:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:55.543Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Bd3PpPbnt+dXTzTHFahfqsDxJIo=",
+    "timestampUtcMs": "2026-08-13T14:33:55.543Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## One seam, four consumers\n\nAuthentication on the light client is a single function, resolved **per request**, applied identically to:\n\n1. the generated reactor SDK,\n2. the hand-authored mutation,\n3. subgraph SDKs built via `client.subgraph(name, getSdk)`,\n4. the websocket connection params.\n\n```tsx\n<GraphQLReactorProvider\n  url={switchboardUrl}\n  tokenProvider={async () => session?.accessToken}\n>\n```\n\nThe HTTP header is a **lowercase `authorization`**. On the websocket the same value is sent as a **lowercase `authorization` connection param**, re-resolved on every reconnect.\n\n## Default and edge behaviour\n\nThe default provider (`ambientRenownTokenProvider`) returns the logged-in Renown user's bearer token, and `undefined` when nobody is logged in.\n\n| Return value | Result |\n| --- | --- |\n| a token | Sent as the `authorization` header / connection param |\n| `undefined` or `\"\"` | Request sent with **no** authorization header at all |\n| a rejected promise | The request **fails** rather than silently downgrading to anonymous |\n\nThat last row is the deliberate design choice worth remembering: a provider that throws does not fall back to anonymous. If you want anonymous access, return `undefined` explicitly.\n\n## Two consequences\n\nBecause the provider is read per request but the **prop is read once at mount**, changing `tokenProvider` after mount has no effect \u2014 the function captured at construction keeps being called. Make the function stable and let it read mutable state, rather than swapping the function.\n\nAnd because the socket uses the same provider, a Switchboard with auth enabled refuses a connection that arrives without a token, so an anonymous subscriber gets no realtime there. An app that authenticates after mount should remount the provider so the socket reconnects with a token.\n\nThe one exception to the single seam: a pre-built `graphqlClient` passed as an option owns its own transport and headers, so it carries **no** auth middleware \u2014 it is mainly a test seam.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:55.543Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "k+efNz9M9zc9FUnbOm/eCtRn2Ws=",
+    "timestampUtcMs": "2026-08-13T14:33:55.543Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "acd13526-b50e-45be-9cf9-aa46725ae347",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:55.543Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "RhNisRgAI0vIfqIPiT7i98HwB9Y=",
+    "timestampUtcMs": "2026-08-13T14:33:55.543Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7af90765-bfa6-481b-bf40-664f4df416d1",
+        "name": "authentication"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:55.543Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "uULMOveTQoG6sOPBCo4oqWx+67c=",
+    "timestampUtcMs": "2026-08-13T14:33:55.543Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "510cb1d9-41f9-4ca4-93f6-4e3d22f1f660",
+        "name": "graphql"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:55.543Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "FNNbPMetaBzxiI5KE8McWGUEbQg=",
+    "timestampUtcMs": "2026-08-13T14:33:56.652Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:54.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:56.652Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "WqCB53iwYiNSfWE8LyQ9NaRLbno=",
+    "timestampUtcMs": "2026-08-13T15:51:49.315Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:51:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:49.315Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Py17xadIIGqjmQFUYUYh3cMX8KY=",
+    "timestampUtcMs": "2026-08-13T15:51:49.315Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d07c5f75-22e9-4ee7-8629-ba884cca896e",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:51:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:49.315Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "6rAo7eOrZWqB9gTaQhGe8c4wCJI=",
+    "timestampUtcMs": "2026-08-13T15:51:49.315Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "2d95692e-8e57-479b-abbc-7a23580bcd09",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:51:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:49.315Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "/S4E8Mw0GNpIlFe9BIRRXPszBAw=",
+    "timestampUtcMs": "2026-08-13T16:48:44.287Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:48:44.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:48:44.287Z"
+    }
+  }
+]

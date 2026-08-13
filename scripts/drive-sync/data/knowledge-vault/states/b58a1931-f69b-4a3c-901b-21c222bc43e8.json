@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-44526c84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44526c84-c188-45ed-9472-51e84e11bfd0",
+      "targetTitle": "connect-is-host-application"
+    },
+    {
+      "id": "lnk-4d98df7d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4d98df7d-a81e-461c-aa76-f59378303502",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Closing Connect ends the session, sidebar, editor, and sync loop but not the Reactor library or the operation log",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1347b739-36ee-420e-9811-243f458f509c",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6c616521-b738-4e55-ad0a-27f4d5c537fe",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7077acac-15ac-40eb-8cc3-ba1f82b3d891",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## What actually dies when the window closes\n\nConnect embeds a Reactor, which makes \"is the Reactor still running?\" a confusing question. The answer separates cleanly into three categories.\n\n**Gone with Connect** \u2014 everything Connect itself owns: the session, the drives sidebar, the mounted editor, and the sync loop. There is no running session without a running host.\n\n**Untouched** \u2014 the Reactor *library*. It is an npm package, not a service. Closing an application does not uninstall code; the same library can be imported by a Switchboard, a test, or a script. This is why \"the Reactor is a library, not a server\" matters practically rather than pedantically.\n\n**Untouched** \u2014 the document models and the operation log. Document models are schema definitions living in your package, not runtime state. Persisted operations live in the local Reactor store, so they survive the restart and are still there, in order, when Connect comes back.\n\n## Why the distinction is load-bearing\n\nIt tells you what a restart can and cannot fix, and what it can and cannot lose.\n\nSync state, in-memory subscriptions, and any UI state you never committed as an operation are session-scoped \u2014 they go. Anything that reached the operation log is durable, which is the whole point of dispatching through the Reactor rather than holding state in React.\n\nIt also explains why offline work is safe. Operations accumulate in the local store while the sync loop is dead. Reopening Connect restarts the sync client, which replicates the accumulated operations to Switchboard \u2014 nothing was buffered in the closed application, because nothing needed to be.\n\nThe corollary for editors: never treat \"Connect is open\" as a precondition for data existing. The document is in the store either way.\n\n_Source: apps/academy/docs/academy/02-Learn/05-connect/01-what-is-connect.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect owns the running session; the Reactor is just an npm package, and the persisted operations live in the local store and survive restarts.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ae675e4a-11bc-4e72-a740-f1576b61302a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:48.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f6382aaa-1780-40b5-a65d-d660f61671e0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:48.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

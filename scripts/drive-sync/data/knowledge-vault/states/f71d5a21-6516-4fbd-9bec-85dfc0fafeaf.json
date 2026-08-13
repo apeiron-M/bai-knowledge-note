@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-1328e41a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1328e41a-9d40-49bf-bcec-1784cef7d878",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    },
+    {
+      "id": "lnk-193565ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "193565ae-e174-412d-8aec-b3cf723cdc49",
+      "targetTitle": "user-and-drive-manifests"
+    },
+    {
+      "id": "lnk-30222dd8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "30222dd8-d353-432c-a399-11ebc8241109",
+      "targetTitle": "act-cross-user-sharing-ecdh"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adapter storage uses AES-256-GCM with hierarchical feeds; sharing delegates to Swarm ACT",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "storage-architecture",
+      "name": "storage-architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "encryption",
+      "name": "encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "act-sharing",
+      "name": "act-sharing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "feature-categories",
+      "name": "feature-categories",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Storage and recovery feature set:\n- **AES-256-GCM encryption** at the app layer for operations and manifests.\n- **Hierarchical feeds**: user \u2192 drive \u2192 document, letting the reader walk the tree lazily.\n- **Folder topology preserved** across sync, recovery, and sharing.\n- **Manifest compaction** \u2014 old op batches are merged so recovery is fast even after long history.\n\nSharing (ACT-protected):\n- **Encrypted drive bundles** shared between users via Swarm IDs.\n- **ECDH-based access control** through Swarm's native ACT (Access Control Trie). The Bee node handles decryption transparently, so the app layer does not perform any shared-secret math itself. This avoids a whole class of app-layer key-exchange bugs and delegates the crypto boundary to a well-audited primitive.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:52:46.944Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Storage encrypts ops and manifests with AES-256-GCM in hierarchical user/drive/document feeds; drive sharing delegates to Swarm's native ACT ECDH instead of app-layer shared secrets.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c464e858-262f-4c34-89c2-fa46baa11bc3",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T16:00:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e935ad0e-0120-4578-ac39-83d4468e42c6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T16:00:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

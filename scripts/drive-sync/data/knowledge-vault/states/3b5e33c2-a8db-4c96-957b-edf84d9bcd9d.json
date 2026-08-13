@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-77fad8c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "77fad8c4-a3f5-4678-a0d1-15b6c434a0de",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    },
+    {
+      "id": "lnk-3810d088-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3810d088-7a77-42ad-8d53-9fdba4049e71",
+      "targetTitle": "docsync-protocol-is-decentralized-storage-agnostic-and-supports-p2p"
+    },
+    {
+      "id": "lnk-063e8261-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "063e8261-4095-4cdf-83dd-3fa6c05f07a3",
+      "targetTitle": "reactor-abort-signal-cancellation"
+    },
+    {
+      "id": "lnk-d065b560-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d065b560-9609-4b9b-9603-ebd73e35276c",
+      "targetTitle": "consistency-tokens-read-after-write"
+    },
+    {
+      "id": "lnk-4d98df7d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4d98df7d-a81e-461c-aa76-f59378303502",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IReactorClient.subscribe enables real-time document change listening with filter-based event matching returning unsubscribe functions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2d609080-9303-4e71-9783-4ba73bb156dc",
+      "name": "subscriptions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fe68fd76-89af-4afc-b84b-282d61b0a31b",
+      "name": "reactor-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9803eb6d-b5ed-496f-a9b9-d08bd594d553",
+      "name": "real-time",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `IReactorClient.subscribe(search, callback, view?)` method enables real-time document change listening. It accepts a `SearchFilter` (type, parentId, ids, slugs), a callback receiving `DocumentChangeEvent`, and optional `ViewFilter`. DocumentChangeEvent includes `type`, a `documents` array, and optional `context` with parentId/childId. `subscribe` emits only five `DocumentChangeType` values \u2014 `Created`, `Deleted`, `Updated`, `ChildAdded`, and `ChildRemoved`. `ParentAdded` and `ParentRemoved` exist in the `DocumentChangeType` enum but are not currently emitted by `subscribe`. Returns an unsubscribe function. For the internal event bus (via ReactorModule), subscribe to `ReactorEventTypes.JOB_READ_READY` for completed jobs or `SyncEventTypes.SYNC_FAILED` for sync failures. In GraphQL, real-time updates use the `documentChanges` subscription.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Subscribe with a SearchFilter (type/parentId/ids/slugs) and a callback; subscribe emits only Created, Deleted, Updated, ChildAdded, ChildRemoved. Returns an unsubscribe function.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c3440004-cefe-48f7-9242-459b4234aeb3",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8cdf2e66-78fa-487e-bc7e-968deb2e691d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:27.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

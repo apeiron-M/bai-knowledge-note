@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-1ff211ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1ff211ec-a668-4efb-b55c-799a5bc4e8be",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    },
+    {
+      "id": "lnk-e4a6a6c7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e4a6a6c7-527a-4342-9f0c-b01435197f3c",
+      "targetTitle": "renown-creates-did-from-ethereum-wallet"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RenownProvider from @powerhousedao/reactor-browser/renown is SSR-safe and must not be wrapped in next/dynamic ssr:false",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "37352dac-948f-4f32-bb66-8aae15364648",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aac730c1-92f4-4f93-945b-9fc864757c31",
+      "name": "SSR",
+      "topicDocumentId": null
+    },
+    {
+      "id": "60d17a4e-c78f-416d-974a-c6872622e57a",
+      "name": "react",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e10427bf-0610-4e8f-9679-2826962d74d2",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Do not disable SSR for it\n\nThe reflex with anything wallet-adjacent is to wrap it in `next/dynamic` with `ssr: false`, because wallet libraries touch `window`. `RenownProvider` does **not** need that and must not get it: each adapter's wallet library is fetched only on the **first login click**, so the provider itself renders on the server unchanged.\n\nWrapping it in `ssr: false` costs you the server-rendered authenticated shell and reintroduces the logged-in flash it is designed to avoid.\n\n```tsx\nimport { RenownProvider } from \"@powerhousedao/reactor-browser/renown\";\nimport { privyAdapter } from \"@renown/sdk/wallet/privy\";\n\n// Module scope: RenownWalletProvider snapshots this array on mount.\nconst adapters = [privyAdapter({ appId: \"...\", methods: [\"google\", \"email\"] })];\n\n<RenownProvider appName=\"my-app\" namespace=\"my-app\"\n  switchboardUrl=\"https://switchboard.example/graphql\" adapters={adapters}>\n  {children}\n</RenownProvider>\n```\n\n## Two first-render strategies\n\n**Client-only apps** (Vite and similar): the provider seeds the first render **synchronously from `localStorage`**, so a returning user is authenticated on the first paint with no flash.\n\n**SSR apps** (Next.js): pass a server-resolved `session`, read from a verified session cookie in a Data Access Layer. Under SSR the cookie seeds the server render and hydration \u2014 it is the only thing readable server-side \u2014 and then `localStorage` takes over once mounted, since that is the credential the SDK actually restores. Passing `session` also keeps the cookie in sync after login and logout.\n\nBecause two sources feed the same UI, include the `documentId`/`username`/`userImage` fields in the cookie's profile hint so both agree on name, avatar and profile links.\n\n## Gating on auth\n\nUse a plain `if (!user)` from `useRenownAuth()`. For a no-Suspense \"still resolving\" state, `useRenownAuthAsync()` returns `state: \"authenticated\" | \"resolving\" | \"unauthenticated\"`. `\"resolving\"` appears only when the answer is genuinely unknown \u2014 a visitor the first render already knows is signed out resolves straight to `\"unauthenticated\"`, so logged-out visitors never sit behind a spinner.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/01-RenownAuthenticationFlow.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Wallet libraries load client-side on the first login click, so the provider renders unchanged on the server; client-only apps seed the first render from localStorage.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2588e694-ea6d-4a48-ab69-1bcf8e2239cb",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "de3afc29-81cc-45e4-8cff-a29751630674",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

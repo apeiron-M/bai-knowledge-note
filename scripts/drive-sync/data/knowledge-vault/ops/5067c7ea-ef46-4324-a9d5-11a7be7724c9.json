@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:17.690Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "two-signing-mechanisms-header-and-action",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:22:17.690Z"
+        },
+        "version": 0,
+        "documentId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:17.690Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "zl7FFka6+rKprzSpx4U2cLf9Km0=",
+    "timestampUtcMs": "2026-08-13T13:23:34.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Powerhouse uses header signing (document ID = cryptographic signature of creator) and action signing (every mutation signed with ECDSA P-256)",
+        "updatedAt": "2026-08-13T13:23:34.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:34.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:17.690Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:17.690Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "t4hU+t00LdGCDrdBvcXGHfGhvtg=",
+    "timestampUtcMs": "2026-08-13T13:23:34.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:34.000Z",
+        "description": "Document ID is the creator's signature over header fields; each action gets a 5-tuple Signature with did:key."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:34.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:37.185Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+        "targetId": "5694a8da-b036-4b8a-a16d-bca12de03af9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:37.185Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "e3QrreidXbd1VmiWn9m//ppp/Ig=",
+    "timestampUtcMs": "2026-08-13T13:23:34.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T13:23:34.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:34.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:37.212Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+        "targetId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:37.212Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "xhC3/OFFT3vofD8aQgxtrYgnnfk=",
+    "timestampUtcMs": "2026-08-13T13:23:34.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Header signing: when a document is created, `documentType + createdAtUtcIso + nonce` is signed with the creator's private key and the resulting signature becomes the document's `id`. The header embeds the public key (JWK) for self-contained verification via `validateHeader()`. Action signing: each dispatched action produces a 5-element Signature tuple `[timestamp, signerKey, actionHash, hashField, signatureHex]`. The `actionHash` is SHA-1 of `documentId + scope + actionType + JSON(input)`. The signed message uses prefix `\\x19Signed Operation:\\n{length}` matching Ethereum-style signing. Both use ECDSA with P-256 curve and SHA-256 via Web Crypto API.",
+        "updatedAt": "2026-08-13T13:23:34.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:34.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:37.459Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+        "targetId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:37.459Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "Qjt4OSjU1kRwQY3Ug+QLoTJha4k=",
+    "timestampUtcMs": "2026-08-13T13:23:34.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:34.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:37.558Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+        "targetId": "2aa55f5b-f3a3-4195-88de-3452a82c2dd2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:37.558Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "P2Rk7pHGXAys7CISGGCsVQ0ffaU=",
+    "timestampUtcMs": "2026-08-13T13:23:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "4f432524-bb1f-4b65-9b71-abf90ba8965a",
+        "name": "signing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:34.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "pX0BP7PNNNSjyHggY7u7Vcxrzhs=",
+    "timestampUtcMs": "2026-08-13T13:23:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9e15a19a-4505-4b27-bea6-c6e912c9c962",
+        "name": "cryptography",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:34.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "LSZEb3Wwv/hoWlwiz1n/6gdr7T8=",
+    "timestampUtcMs": "2026-08-13T13:23:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c150e804-dd48-40c8-a017-30c10ce8f39b",
+        "name": "ECDSA",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:34.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "hTWogagdrC78H1i+ytGdyB+O5P8=",
+    "timestampUtcMs": "2026-08-13T13:23:34.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a68c5451-66da-443a-87af-a6f5c984f0ed",
+        "name": "document-identity",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:34.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "VPdpCeuBi45oJDp/EFsMpFL9GWk=",
+    "timestampUtcMs": "2026-08-13T15:54:06.841Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:54:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:06.841Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "tSgEyVqYdOFHKkH98WY28lrz6Bo=",
+    "timestampUtcMs": "2026-08-13T15:54:06.841Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "3002670b-0b36-4939-b058-67b6f4a7ee1e",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:54:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:06.841Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "g4T4wcEWAk+nJ14tc2GU8oN7ZuM=",
+    "timestampUtcMs": "2026-08-13T15:54:06.841Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "4d99a485-d47f-46b0-9169-7955afba8800",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:54:06.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:06.841Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "tWOBRjq7Cm0sKcJs2MJckfi6h8Q=",
+    "timestampUtcMs": "2026-08-13T16:51:34.120Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:51:34.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:51:34.120Z"
+    }
+  }
+]

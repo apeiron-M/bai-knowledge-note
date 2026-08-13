@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-8f77c8b5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8f77c8b5-e763-4b78-bf25-e27cfc7df5dc",
+      "targetTitle": "live-collab-next-major-track"
+    },
+    {
+      "id": "lnk-388028bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "388028bb-0973-40eb-8e66-9f443bdfd0c4",
+      "targetTitle": "document-permissions-support-groups-and-ops"
+    },
+    {
+      "id": "lnk-3ffe9cae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3ffe9cae-7925-4e7e-ac90-3a1198b1a6b3",
+      "targetTitle": "document-state-has-global-and-local-scopes"
+    },
+    {
+      "id": "lnk-614bc6a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "614bc6a6-9dc9-45c4-bbde-bbc957c8753e",
+      "targetTitle": "collab-initial-state-via-share-bundle"
+    },
+    {
+      "id": "lnk-48db8c7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+      "targetTitle": "authorization-uses-layered-model"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collab testing requires two Bee nodes and covers signature attribution, permission boundary, and offline resilience",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-ef9c32c4-1",
+      "name": "live-collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ef9c32c4-2",
+      "name": "testing-strategy",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ef9c32c4-3",
+      "name": "bee-nodes",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Testing strategy: two Bee nodes, five dimensions\n\nCollab cannot be faithfully unit-tested alone \u2014 the mesh, ACT, and GSOC paths require real Bee infrastructure. The strategy pairs targeted unit tests with integration runs on **two live Bee nodes**.\n\n### Test dimensions\n\n- **Unit.** Collab-manifest read/write, participant add/remove idempotency, GSOC routing by `collabId` / `writerAddress`.\n- **Integration (two Bee nodes).** A creates drive-level collab with B; verify B receives invitation via PSS; B joins; both users make drive ops and doc ops; verify each sees the other's ops in the operation store within **2 s (GSOC path)** and within the **poll interval (fallback path)**.\n- **Signature attribution.** Every revision arriving on B's side is signed by A's signer, and vice versa, in the toolbar history. No unsigned or mis-attributed ops.\n- **Permission boundary (doc-level collab).** A and B collaborate on doc X only; verify B cannot read other docs in A's drive, and verify B's reactor does not materialize them locally.\n- **Offline resilience.** A goes offline, B makes 10 ops, A comes back, A pulls all 10 ops from B's feed. (No GSOC pings arrived during the offline window, so the poll fallback is doing the work.)\n\nThe two-Bee-node requirement is non-negotiable: a single-node test cannot exercise the cross-peer GSOC path or ACT grantee boundary.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "procedure",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:16:54.676Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Collab testing requires two Bee nodes and covers unit tests, integration, signature attribution, permission-boundary at doc scope, and offline resilience.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e9cbae85-1763-45f4-9cb0-5871c9297c25",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:53.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d3f17c38-a0cc-4771-b41f-e62393896c13",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:53.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

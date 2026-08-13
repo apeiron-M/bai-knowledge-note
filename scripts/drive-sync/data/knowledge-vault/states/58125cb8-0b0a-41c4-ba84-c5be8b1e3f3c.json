@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-d4792033-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4792033-cd60-4178-85a0-80687e05718b",
+      "targetTitle": "ddup-four-storage-layers"
+    },
+    {
+      "id": "lnk-df9a1dac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df9a1dac-a0dc-4c4b-a372-fc1696671e4b",
+      "targetTitle": "ddup-copy-distinct-recovery-role"
+    },
+    {
+      "id": "lnk-cd9fb0ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-d4792033-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d4792033-cd60-4178-85a0-80687e05718b",
+      "targetTitle": "ddup-four-storage-layers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "PGlite is the primary store and Swarm /bytes is the durable backup for raw operations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1e7a90a7-f398-47de-926d-692044c96f9c",
+      "name": "data-duplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "44a563eb-2e37-4953-9e92-87e7aebb6060",
+      "name": "primary-backup",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6dcc233a-6ce6-476a-95ea-e60255197c9e",
+      "name": "swarm-bytes",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e1c24c8-5edc-4dcd-8d1e-069eb2f63440",
+      "name": "pglite",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Operations have a clear primary/backup relationship across layers:\n\n| Data | PGlite | Swarm /bytes | Swarm feeds | IndexedDB |\n|---|---|---|---|---|\n| Operations (raw) | PRIMARY | BACKUP | \u2014 | pending only |\n| Document state (computed) | DERIVED | not stored | \u2014 | \u2014 |\n| Doc/drive/user manifests | \u2014 | PAYLOAD | POINTER | \u2014 |\n| Signer key | \u2014 | \u2014 | \u2014 | cache only (re-derivable from wallet) |\n| Pending ops buffer | \u2014 | \u2014 | \u2014 | temporary (cleared after flush) |\n\nKey consequences:\n- **Document state is derived**, never stored on Swarm \u2014 always recomputed from operations on load.\n- **Manifests exist in both /bytes and feeds**: the /bytes chunk holds the payload, the feed holds the pointer to the latest version.\n- **The signer key is a cache only**, re-derivable from the wallet signature.\n- **Pending ops are temporary** \u2014 cleared once flushed to Swarm.\n\nThis split is intentional: PGlite optimizes hot reads, Swarm optimizes durability, manifests use the feed-as-pointer pattern to make \"latest version\" lookups cheap.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:55.863Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operations are primary in PGlite (hot reads), backed up to Swarm /bytes. Document state is derived from operations and never stored on Swarm.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "346287f5-63ba-42b5-a083-f71195cb90aa",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f26f42cf-2099-41b2-9650-f6c554a286b6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:27.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

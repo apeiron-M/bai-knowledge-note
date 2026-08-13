@@ -1,0 +1,308 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:12.959Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-postage-stamps-bucket-mechanics",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "27133f8f-af50-4b6f-8880-074358c494c7",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:22:12.959Z"
+        },
+        "version": 0,
+        "documentId": "27133f8f-af50-4b6f-8880-074358c494c7",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:12.959Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "OLeKoH1WpPB9n80ObvYV/Db5rC0=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Postage stamp batches use 65,536 buckets distributed by the first 16 bits of chunk address",
+        "updatedAt": "2026-08-13T13:23:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:12.959Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "27133f8f-af50-4b6f-8880-074358c494c7",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:12.959Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "qaXAdowPWFcmSKA86sdBnDRS4IQ=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:32.000Z",
+        "description": "Each batch has 2^16 buckets, each holding 2^(depth-16) slots. Immutable batches fail when any bucket fills, giving ~62-87% effective utilization."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:31.302Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "27133f8f-af50-4b6f-8880-074358c494c7",
+        "targetId": "d4792033-cd60-4178-85a0-80687e05718b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:31.302Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "fiVy5eqhNaCihdgLpdb/ypkW+oY=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-08-13T13:23:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:31.327Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "27133f8f-af50-4b6f-8880-074358c494c7",
+        "targetId": "9bf38a14-cc20-4611-9a71-96a64f661c3f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:31.327Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "FJ+i++uOs6TpuaYO0PCJp3CRA6w=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nEvery postage stamp batch has a fixed structure of **65,536 buckets (2^16)** into which chunks are distributed by the first 16 bits of their address, producing non-uniform effective capacity.\n\n## Evidence\n\n- Bucket depth is fixed at 16 regardless of batch depth\n- Each bucket holds `2^(depth - 16)` slots\n- Chunks assigned to buckets by the first 16 bits of their chunk address\n- **Immutable batches** fail once ANY single bucket fills up \u2014 random distribution yields only ~62-87% effective utilization depending on batch depth\n- **Mutable batches** never exhaust \u2014 when a bucket overflows, the oldest chunk in that bucket is replaced (ideal for feeds)\n\n## Effective utilization table (99.9% confidence)\n\n| Depth | Effective capacity | Utilization |\n|------:|-------------------:|------------:|\n| 20    | ~680 MB            | ~62.89%     |\n| 22    | ~7.7 GB            | ~65.05%     |\n| 24    | ~43 GB             | ~68.48%     |\n| 28    | ~909 GB            | ~87%+       |\n\n## Why it matters\n\nPricing by nominal `2^depth * amount` dramatically overestimates usable capacity on shallow batches. Users should size up or use `GET /stamps/{id}/buckets` to monitor hot-bucket exhaustion.\n",
+        "updatedAt": "2026-08-13T13:23:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:31.350Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "27133f8f-af50-4b6f-8880-074358c494c7",
+        "targetId": "dad3b3ec-98b2-4eac-abd1-fc367cbe84bc",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:31.350Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "O+/IzSYAftQEYfx/YpJfruYgSWQ=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "x4DiLTU2AhmtXkYat/I8khNuk/4=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f0abd27e-ff8c-45b1-be1d-cc8fdbb9b3e4",
+        "name": "postage-stamps",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "A/ZlczAaMsopChXArQtl6CV7kTY=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "850e79a6-2b7c-4a79-9194-d5a0b7d8095e",
+        "name": "swarm",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "0xP+7UGq5YQiemMZVcxdP039Rb8=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "dc9e6da7-ed7e-4c83-98a9-385b7e5b3b87",
+        "name": "storage",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "jXqArBKk8AJqv/QdnnalqzOArgk=",
+    "timestampUtcMs": "2026-08-13T15:52:42.966Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:52:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:42.966Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "8hRFbQ76p4KBrspgxXeqpQ99eV0=",
+    "timestampUtcMs": "2026-08-13T15:52:42.966Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d9edafc7-9b5e-48e5-8814-1750caa73e22",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:52:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:42.966Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "18fB+JQXluDdEPdFsvl0KxBvl70=",
+    "timestampUtcMs": "2026-08-13T15:52:42.966Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ce34745c-3e5e-4772-b420-cfe5143b26a9",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:52:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:42.966Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "a6co/Akg441Bt1HSyhx1pY1jnDs=",
+    "timestampUtcMs": "2026-08-13T16:49:48.426Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:49:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:49:48.426Z"
+    }
+  }
+]

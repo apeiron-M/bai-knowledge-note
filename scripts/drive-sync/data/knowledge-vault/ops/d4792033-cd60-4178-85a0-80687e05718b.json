@@ -1,0 +1,308 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:09.750Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ddup-four-storage-layers",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "d4792033-cd60-4178-85a0-80687e05718b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:09.750Z"
+        },
+        "version": 0,
+        "documentId": "d4792033-cd60-4178-85a0-80687e05718b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:09.750Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "vlTS0whppxFV9KAwSAZhdsPL+0s=",
+    "timestampUtcMs": "2026-08-13T13:22:57.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Connect-on-Swarm data spans four distinct storage layers with different durability",
+        "updatedAt": "2026-08-13T13:22:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:57.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:09.750Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "d4792033-cd60-4178-85a0-80687e05718b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:09.750Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ilCibHIVYSr02ZksXMv6QCMJR6Y=",
+    "timestampUtcMs": "2026-08-13T13:22:57.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:22:57.000Z",
+        "description": "Data lives in four layers: PGlite (ephemeral), Swarm /bytes (immutable), Swarm feeds (append-only pointers), and IndexedDB caches \u2014 each with different loss conditions."
+      },
+      "timestampUtcMs": "2026-08-13T13:22:57.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:13.992Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d4792033-cd60-4178-85a0-80687e05718b",
+        "targetId": "ce65f0dc-e22e-4b36-854a-d427c544489b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:13.992Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "tWS89KXG5v5ZvgFv3UJ+bsWls3M=",
+    "timestampUtcMs": "2026-08-13T13:22:57.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-13T13:22:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:57.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:14.018Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "d4792033-cd60-4178-85a0-80687e05718b",
+        "targetId": "228513a2-ac79-4eb3-a344-d3a8dc02843d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:14.018Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "1W4hbURe4ksNyfZNtWlnksNOPl4=",
+    "timestampUtcMs": "2026-08-13T13:22:57.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Connect-on-Swarm data is distributed across four layers with distinct durability properties:\n\n**Layer 1 \u2014 PGlite (browser, ephemeral)**: Operations, documents, relationships, keyframes. Survives page refresh via IndexedDB, lost on \"Clear site data\", new device, or new browser.\n\n**Layer 2 \u2014 Swarm /bytes (immutable, permanent until stamp expires)**: Encrypted operation batches and manifest payloads. Content-addressed (uploading the same data twice produces the same reference), replicated across the neighborhood. Lost only when stamps expire and chunks are evicted from reserves.\n\n**Layer 3 \u2014 Swarm feeds (mutable pointers)**: 64-char hex references pointing to /bytes data. Each feed index is write-once; the feed as a whole is append-only. One feed per topic. Same durability as /bytes.\n\n**Layer 4 \u2014 IndexedDB caches (browser, ephemeral helpers)**: Manifest index (docId -> latest /bytes ref, for bee dev mode), pending ops buffer, wallet-derived signer key cache. Survives page refresh, lost on \"Clear site data\".\n\nEach layer has a specific role: PGlite is the hot read path, /bytes is the durable payload store, feeds are the mutable lookup, and IndexedDB accelerates repeated lookups.",
+        "updatedAt": "2026-08-13T13:22:57.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:57.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "C916T4cMGy2Bt+4p+VH4pQZVEpg=",
+    "timestampUtcMs": "2026-08-13T13:22:57.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:41:42.307Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:57.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "nS1NsBTElR/96iTbf/b76sgBSYg=",
+    "timestampUtcMs": "2026-08-13T13:22:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "54b4b56c-c994-4f46-a002-0ab05c0fcf23",
+        "name": "data-duplication",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:57.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "bHUzcMTu1tfu4k+Tq2eZUILIyCs=",
+    "timestampUtcMs": "2026-08-13T13:22:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "749a8a34-9f1a-424b-b3e8-8f9455fcc151",
+        "name": "storage-layers",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:57.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "rcNNfYR36Txk8Xb3VIdgtu2FWD4=",
+    "timestampUtcMs": "2026-08-13T13:22:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d688d524-f065-4849-a4db-854033eafa63",
+        "name": "swarm-architecture",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:57.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "fWzMEdZ2MLv8x0wjfDDfnMGuyBQ=",
+    "timestampUtcMs": "2026-08-13T13:22:57.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0d3c2ac1-93b5-4021-a36f-c308f1dddf9b",
+        "name": "connect",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:57.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "n9r6E7gYcf+QHW7G3qlDtU3A+Hc=",
+    "timestampUtcMs": "2026-08-13T15:58:50.621Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:58:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:50.621Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "2G+HiG2duRwbTSRxcyh2pZIJTe0=",
+    "timestampUtcMs": "2026-08-13T15:58:50.621Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "4d6c4ccf-726d-48af-9c27-7107c886d77c",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:58:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:50.621Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "IlFwmb47T1yK1erpHAT+VNdKal8=",
+    "timestampUtcMs": "2026-08-13T15:58:50.621Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f9cb840b-5119-4602-a5c7-7c9fd674b05b",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:58:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:50.621Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "WMqZsuLcltxO2h+ptubNj0tnb9A=",
+    "timestampUtcMs": "2026-08-13T16:57:14.997Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:57:14.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:57:14.997Z"
+    }
+  }
+]

@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-183d0714-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "183d0714-1c6b-4e54-9135-430bd6ae8da4",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-c1c4bb51-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c1c4bb51-3b52-46f8-a0e6-8cc8eb274a7b",
+      "targetTitle": "swarm-mantaray-manifests"
+    },
+    {
+      "id": "lnk-2642b21e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2642b21e-fc0d-413e-a421-2affae6d6164",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    },
+    {
+      "id": "lnk-831770e6-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "831770e6-9bf6-4b23-9fc2-dc0fdac17a5d",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Toolbar buttons accept ToolbarButtonProps and can be replaced via componentOverrides",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "277b9b18-0bc0-4640-b503-51129bbfd378",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9117ef5c-5fcc-48f7-aea6-1b71087626c8",
+      "name": "tailwind-css",
+      "topicDocumentId": null
+    },
+    {
+      "id": "83aab829-363d-4d22-89db-61e9c3ef1e23",
+      "name": "editor-styling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The buttons inside `DocumentToolbar` accept `ToolbarButtonProps`:\n\n```ts\n{\n  document?: PHDocument;\n  children?: ReactNode;\n  className?: string;\n  onClick?: (document?: PHDocument) => void;\n}\n```\n\n`className` is merged into the button's defaults via `twMerge`, `children` replaces the default button contents, and `onClick` replaces the default behavior. Their default styling is:\n\n- **Undo/Redo/Download/Switchboard/History/Close**: the shared `ToolbarButton` base \u2014 `grid size-fit place-items-center rounded-lg border border-border bg-background p-1 text-foreground` plus hover/active/disabled effects\n- **Download button**: same base, with a `<span className=\"px-1 text-xs\">Download</span>` label instead of an icon\n- **Document name**: `<h1>` with `text-sm font-medium text-muted-foreground` (`ToolbarName` takes `titleClassName` / `inputClassName`)\n\nEvery button is exported individually (`ToolbarButton`, `ToolbarUndoButton`, `ToolbarRedoButton`, `ToolbarDownloadButton`, `ToolbarSwitchboardButton`, `ToolbarHistoryButton`, `ToolbarCloseButton`, `ToolbarName`), so the way to customize one is to wrap it and pass it back through `componentOverrides`:\n\n```tsx\n<DocumentToolbar\n  document={document}\n  componentOverrides={{\n    download: (props) => (\n      <ToolbarDownloadButton\n        {...props}\n        className=\"!bg-[#1e1e2e] !border-white/10\"\n      >\n        <span>Export</span>\n      </ToolbarDownloadButton>\n    ),\n  }}\n/>\n```\n\nOr render the buttons yourself inside `children` for complete control over the toolbar contents.\n\nTailwind arbitrary child selectors (`[&_button]`, `[&_button_svg]`, `[&_h1]`, ...) passed through `toolbarClassName` still work as a blanket theming shortcut, but they are no longer required \u2014 they were a workaround for buttons that did not expose style props, and the buttons now do.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T14:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Built-in toolbar buttons accept ToolbarButtonProps (document, children, className, onClick) and are exported individually, so customizing one means wrapping it and passing it via componentOverrides.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ba2426c2-d665-4e48-8538-b182c2c4d8c3",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:57.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0c49d297-4bab-45d7-af6d-f3966986f9aa",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:57.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

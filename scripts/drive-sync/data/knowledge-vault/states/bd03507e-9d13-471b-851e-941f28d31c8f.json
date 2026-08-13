@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce0ee124-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-e50150d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The latest reducer owns the entire historical operation log, so retired operations must stay in newer specs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6207fcc8-9362-46cc-b914-3cb27b354ddb",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "016ff9cc-133b-4e44-8538-55c841f55754",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0572b6b8-cf88-4af9-aaed-9eabb2b76fcf",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Retiring an operation from the editor does not retire it from history. Replay sends the *entire* operation log through the **latest** reducer \u2014 including operations whose action type no longer appears in the current schema. The reducer for a retired operation is not dead code; it is the migration path for every document that ever used it.\n\nThe `document-versioning` recipe makes this concrete. v1 has `CHECK_ITEM` toggling `checked: boolean`; v2 replaces that field with `status: \"TODO\" | \"IN_PROGRESS\" | \"DONE\"`. `CHECK_ITEM` is nevertheless **retained as an operation in the v2 spec**, so codegen keeps generating its action and reducer slot, and `v2/src/reducers/todo.ts` maps the old boolean onto the new enum. Drop it from the spec and every v1 document with a `CHECK_ITEM` in its log becomes unloadable.\n\nThis pairs with the upgrade reducer, and the division of labour is easy to get backwards:\n\n- the **upgrade reducer** transforms the stored `state` and `initialState` snapshots once, at `UPGRADE_DOCUMENT`;\n- the **retained operation reducers** handle the historical actions on every subsequent replay, forever.\n\nYou need both. The upgrade fixes the snapshot; the retained reducers fix the fold.\n\nThe practical consequence for schema design is that a document model's operation set is append-mostly. Renaming or retyping a field means the new reducer grows a compatibility branch, and that branch's lifetime is the lifetime of the oldest document anyone might still load. `supportedVersions` lists every version the model has ever shipped, in ascending order, which is the same commitment stated a different way.\n\nOne deployment corollary from the recipe: a peer that has only the v1 package registered cannot execute the upgrade at all. The document stays at v1 there and v2 operations fail \u2014 so deploy the new model version everywhere before dispatching the first v2 operation.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Document Versioning recipe (\"The latest reducer owns the historical log\"), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Replay sends every past operation through the newest reducer, including operations whose type no longer exists in the new schema, so they must map old fields onto the new shape.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bcfe5d67-34f9-488e-b7ae-ee99b4735439",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:56.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "147522f7-1233-44fe-8872-8b52db434e70",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

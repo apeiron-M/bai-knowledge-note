@@ -1,0 +1,286 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:30.960Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "moc-act-encryption-sharing",
+        "slug": "",
+        "model": "bai/moc",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "b3680335-b793-4d45-9998-b30ab3683690",
+          "documentType": "bai/moc",
+          "createdAtUtcIso": "2026-08-13T13:22:30.960Z"
+        },
+        "version": 0,
+        "documentId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:30.960Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "MWZWmMNce2GlATy3/A3SCAvnOFQ=",
+    "timestampUtcMs": "2026-08-13T13:23:38.000Z",
+    "action": {
+      "type": "CREATE_MOC",
+      "input": {
+        "tier": "TOPIC",
+        "title": "ACT Encryption and Sharing",
+        "createdAt": "2026-04-21T19:32:16.008Z",
+        "description": "How Connect encrypts data at the Swarm /bytes layer with AES-256-GCM and uses ACT+ECDH for cross-user sharing without leaking the wallet key.",
+        "orientation": "Connect's privacy story has two layers. At rest, every payload uploaded to /bytes is AES-256-GCM encrypted with a deterministic key derived from a one-time wallet signature so any device with the wallet can recover state. For sharing across users, Connect uses Swarm's ACT with ECDH-derived per-session keys and per-grantee manifests \u2014 replacing the older deriveShareKey approach that leaked through publicly derivable SHA-256. This MOC collects the notes that define the encryption layer, the ACT model, and the concrete flows (chat sharing, raw-file sharing, session keys) that depend on them."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:38.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:30.960Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/moc",
+        "toVersion": 1,
+        "documentId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "tier": null,
+            "title": null,
+            "tensions": [],
+            "childRefs": [],
+            "coreIdeas": [],
+            "createdAt": null,
+            "noteCount": 0,
+            "parentRef": null,
+            "updatedAt": null,
+            "agentNotes": [],
+            "description": null,
+            "orientation": null,
+            "openQuestions": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:30.960Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "p1+gmm/10Ol4bpiI2aJ65yQCpGo=",
+    "timestampUtcMs": "2026-08-13T16:29:10.478Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T16:28:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:29:10.478Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:55.553Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "b7dae0d0-5ec8-425d-87cf-830a7b010888",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:55.553Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "5ustLt0E2Vssfur3NHVlPclQRus=",
+    "timestampUtcMs": "2026-08-13T16:55:51.445Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:55:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:55:51.445Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:55.713Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "e5f7fb87-402e-4ec8-ba5e-cc7a2f36b868",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:55.713Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:55.736Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "2c0ab997-9d5f-47e1-8519-4bfd264cb13e",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:55.736Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:55.758Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "7b7e1f27-3ae1-4032-95e1-364b0f5de6c4",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:55.758Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:55.997Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "bfa544b8-e5ec-42c8-9949-1c82b8b1a264",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:55.997Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:56.023Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "30222dd8-d353-432c-a399-11ebc8241109",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:56.023Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:56.170Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:56.170Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:56.204Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "49ee3ac6-36d1-4dc2-9d18-ca278715759c",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:56.204Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:56.226Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "f71d5a21-6516-4fbd-9bec-85dfc0fafeaf",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:56.226Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:56.249Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "e0c33a0f-3911-4499-9662-19b4d1cbaf42",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:56.249Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:56.270Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "6245621c-f24d-4c22-885b-22355a1f848d",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:56.270Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:56.527Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "b3680335-b793-4d45-9998-b30ab3683690",
+        "targetId": "de9c24eb-ae8b-42c8-ba20-0b926d017be6",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:56.527Z"
+    }
+  }
+]

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-464de7c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "464de7c4-b8c0-4ecd-b94d-e157900c465f",
+      "targetTitle": "inspector-modal-for-debugging-sync"
+    },
+    {
+      "id": "lnk-6b41319d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6b41319d-507a-4af0-a563-7fd882ab3581",
+      "targetTitle": "composite-channel-factory-routing"
+    },
+    {
+      "id": "lnk-ab51b1bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab51b1bd-4e7d-420a-b673-52bbc4e39277",
+      "targetTitle": "swarmchannel-is-transport-only"
+    },
+    {
+      "id": "lnk-9b97a142-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "9b97a142-2322-40a7-a680-c2f822b0abec",
+      "targetTitle": "operations-not-state-log"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Each reactor IChannel exposes three mailboxes: inbox, outbox, and deadLetter.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-1880798c-1",
+      "name": "ichannel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-1880798c-2",
+      "name": "mailbox",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-1880798c-3",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-1880798c-4",
+      "name": "interface",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nEvery reactor `IChannel` implementation exposes three `IMailbox` instances \u2014 `inbox`, `outbox`, and `deadLetter` \u2014 plus lifecycle and connection-state APIs.\n\n## Interface (from source)\n```typescript\ninterface IChannel {\n  inbox: IMailbox;        // Ops received from remote\n  outbox: IMailbox;       // Ops to send to remote\n  deadLetter: IMailbox;   // Failed ops\n  init(): Promise<void>;\n  shutdown(): Promise<void>;\n  getConnectionState(): ConnectionStateSnapshot;\n  onConnectionStateChange(callback): () => void;\n}\n```\n\n## Why this shape\n- Uniform contract lets SyncManager treat GQL, Swarm, or any future channel identically.\n- `deadLetter` is a first-class concept, not an afterthought \u2014 failed ops are observable and retryable.\n- Connection state is part of the interface, enabling UI-level channel health without channel-specific code.\n\n## Source\nSwarm Channel Architecture, \"Key Types\" section.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The reactor sync protocol standardizes every channel to have inbox for pulls, outbox for pushes, and deadLetter for failed ops, plus init/shutdown lifecycle.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6d8d771f-cf36-44d6-913f-763323c133dd",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "eb4f5961-cd99-4534-964b-6c018544dcba",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

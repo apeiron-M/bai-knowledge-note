@@ -1,0 +1,305 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:57.299Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "no-react-hooks-exist-for-authorization",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "14be4fc3-eb84-431f-93d5-7c5e3e58779a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:57.298Z"
+        },
+        "version": 0,
+        "documentId": "14be4fc3-eb84-431f-93d5-7c5e3e58779a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:57.299Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "hhHg6ZB2CQOmf0Hi+/C8ObEGNQ8=",
+    "timestampUtcMs": "2026-08-13T14:33:57.473Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "No React hooks exist for authorization; permission-aware UI must query the auth subgraph directly",
+        "updatedAt": "2026-08-13T14:33:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:57.473Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:57.299Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "14be4fc3-eb84-431f-93d5-7c5e3e58779a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:57.299Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "c7vQAOdK720b5TOx0uOzMoCIQHA=",
+    "timestampUtcMs": "2026-08-13T14:33:57.473Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:56.000Z",
+        "description": "The authorization-hooks specification is an unpublished exploration. useCanWrite, useDocumentPermission and friends do NOT exist in the shipped reactor-browser API."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:57.473Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:59.048Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "14be4fc3-eb84-431f-93d5-7c5e3e58779a",
+        "targetId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:59.048Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "mSwqzGWzmwxy1eiFmu3XgPCotuI=",
+    "timestampUtcMs": "2026-08-13T14:33:57.473Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "OBSERVATION",
+        "updatedAt": "2026-08-13T14:33:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:57.473Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:59.072Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "14be4fc3-eb84-431f-93d5-7c5e3e58779a",
+        "targetId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:59.072Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "8THueoanOi1j3vhs7Jg/RpK+e3Y=",
+    "timestampUtcMs": "2026-08-13T14:33:57.473Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The gap\n\nThe authorization system is fully implemented in the Reactor API, with GraphQL queries and mutations for roles, document permissions, groups and operation permissions. **There are no React hooks to consume it.** Nothing in `@powerhousedao/reactor-browser` exposes the current user's role, a document's permission level, or a grant/revoke mutation.\n\nA permission-aware UI therefore has to query the `auth` subgraph directly \u2014 `client.request` or a generated subgraph SDK \u2014 and manage the loading and caching itself, with whatever the app already uses for server state.\n\n## Why this is easy to get wrong\n\nThere is a document in the academy repo, `_AuthorizationHooksSpecification.md`, that reads like an API reference: it specifies `useCurrentUser`, `useDocumentPermission`, `useCanRead`, `useCanWrite`, `useGrantPermission`, `useRevokePermission` and `useSelectedDocumentWithPermission`, with signatures and usage examples.\n\n**None of these hooks exist.** The document carries a banner on its third line:\n\n> WARNING: AI Exploration for Discussion with the team. Not for live publication.\n\nIts leading underscore excludes it from the published site, and its own \"Current State\" section says plainly that the hooks are the *gap*, not the shipped API. A grep across `packages/` in the monorepo finds no definition or export of any of those names.\n\nSo the failure mode is specific: an agent or developer who finds that file \u2014 by filename search, by grep, or by reading the authorization folder top to bottom \u2014 will write `const canWrite = useCanWrite(documentId)` in good faith and get an unresolved import.\n\n## What to do instead\n\nTreat the specification as a design sketch of what *should* exist, not a contract. For today's code, query the auth subgraph, and gate UI on the results the same way you would gate on any other server state. Do not build against these names until they appear in a published reference and in the package's exports.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/_AuthorizationHooksSpecification.md, cross-checked against packages/reactor-browser (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:57.473Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:59.096Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "14be4fc3-eb84-431f-93d5-7c5e3e58779a",
+        "targetId": "6159609c-0a13-4d16-845f-0afd965d73e2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:59.096Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "4jndi8aQ5cWKZqHg7cbycgr5lw8=",
+    "timestampUtcMs": "2026-08-13T14:33:57.473Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e2e5c650-720e-4209-8cf0-125cd0e76580",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:57.473Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "P975ogUKmajN6u5E3dnhEbk8Uss=",
+    "timestampUtcMs": "2026-08-13T14:33:57.473Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3707058e-d429-4cc3-8d03-e41ab4537e19",
+        "name": "react-hooks"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:57.473Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Gl2NyvdjeS+CtYk8QvdI6MbVuIQ=",
+    "timestampUtcMs": "2026-08-13T14:33:57.473Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "14800ac3-e214-404f-96c3-b464922cc4b5",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:57.473Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "6yPtgpsisZT84mMQj7yVyqvHSTU=",
+    "timestampUtcMs": "2026-08-13T14:33:59.004Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:56.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:59.004Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "QfsPLm6+mPJ6fBoxLIWtNQlOh2o=",
+    "timestampUtcMs": "2026-08-13T15:51:54.690Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:51:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:54.690Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "gEBeyGL6jAGwbVDihGOH+7/AnC0=",
+    "timestampUtcMs": "2026-08-13T15:51:54.690Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ddba0daa-3828-4359-a5b2-23141e4aae01",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:51:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:54.690Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "AJm3E4jF8FCRM0ukSqX7Mg+JDuY=",
+    "timestampUtcMs": "2026-08-13T15:51:54.690Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b4596946-8047-4749-a07f-841c410eb5fb",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:51:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:51:54.690Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "deJYaW7TYL5r4MTLVohcnlkKw1U=",
+    "timestampUtcMs": "2026-08-13T16:48:50.459Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:48:50.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:48:50.459Z"
+    }
+  }
+]

@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-1328e41a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1328e41a-9d40-49bf-bcec-1784cef7d878",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Analytics queries run through AnalyticsQueryEngine.execute() and return GroupedPeriodResult aggregates",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5c499037-29de-4dab-a5ff-f6f8a9b4fb94",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "751a9826-73a6-4f62-b182-3fab31232cb1",
+      "name": "querying",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`AnalyticsQueryEngine` wraps an `IAnalyticsStore` and is the read entry point. Construction is trivial; the interesting surface is the query object:\n\n```typescript\ntype AnalyticsQuery = {\n  start: DateTime | null;\n  end: DateTime | null;\n  metrics: string[];\n  currency: AnalyticsPath;\n  select: Record<string, AnalyticsPath[]>;\n  granularity: AnalyticsGranularity;\n  lod: Record<string, number | null>;\n};\n```\n\n`select` maps **dimension name \u2192 list of paths to match**, and `lod` maps dimension name \u2192 truncation depth. The two travel together: a path in `select` sets the *specificity* of what is matched, and the `lod` for that dimension sets how deeply results are *grouped*. Mismatch them and you get data that is technically correct and analytically useless.\n\n`execute()` returns an array of `GroupedPeriodResult`:\n\n```typescript\ntype GroupedPeriodResult = {\n  period: string;\n  start: DateTime;\n  end: DateTime;\n  rows: Array<{\n    dimensions: Record<string, AnalyticsDimension>;\n    metric: string;\n    unit: string | null;\n    value: number;\n    sum: number;\n  }>;\n};\n```\n\nOne result per time bucket, one row per unique dimension combination inside that bucket. `value` is the metric for that row in that period; `sum` is the aggregate over the whole period. `unit` is what keeps currencies from being added together \u2014 the engine never sums across units, so USD and EUR stay separate series rather than silently merging.\n\nPractical caution from the recipe layer: the engine can infer a missing `start`/`end` from the data, but it is fragile on degenerate inputs, so pass an explicit window. And every key present in `select` needs a matching `lod` entry.\n\nProvenance: draft `03-Build/04-WorkWithData/_06-Analytics Engine/typescript/index.md`, with the explicit-window and lod-coverage caveats from the Analytics Processor recipe in `05-Lookup/00-Cookbook.md`; types confirmed against `packages/analytics-engine/core/src/` at 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "An AnalyticsQuery takes start, end, metrics, currency, select and granularity plus lod; each result carries period, start, end and rows of dimensions with value and sum.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f262f446-b5b3-4bb0-949d-a6428eed0303",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:13.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6e50b6f3-da5e-4f2b-ae64-8f9902d68065",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:13.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

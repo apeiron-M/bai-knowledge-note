@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-c0b2af09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0b2af09-1fc3-43d4-bc28-dca56db6f747",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-572c0e38-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+      "targetTitle": "act-sharing-ecdh-publisher-grantee"
+    },
+    {
+      "id": "lnk-e0c33a0f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e0c33a0f-3911-4499-9662-19b4d1cbaf42",
+      "targetTitle": "share-bundle-three-object-layout"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Phase 2b added raw-file sharing in chat with ACT-encrypted /bzz uploads up to 200MB.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-18f62e9a3d24",
+      "name": "file-sharing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-363e8b7a30ee",
+      "name": "act-encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-8d3922144828",
+      "name": "chat-features",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Scope\n\nPhase 2b was not in the original design; it was added during implementation to cover raw-file sharing alongside document sharing.\n\n## What shipped\n\n- **ACT-encrypted upload** via `/bzz` with a grantee list of both parties' Bee pubkeys\n- `FileAttachment` type with inline preview cards per mime type (images, PDFs, audio, video, text)\n- **Drag-and-drop zone** in the chat thread\n- **Files tab** with thumbnail grid and a universal preview modal\n- Click-to-load video with pre-flight `canPlayType` check and download fallback when the browser can't play the codec\n- External `bzz://<hash>` link previews routed through the same render path (no ACT, public content, badged as such)\n- 200 MB file cap enforced on both client and adapter, with broad mime-guess coverage\n\n## Design parity\n\nFile sharing and document sharing use the same ACT envelope and the same grantee shape \u2014 any difference between them lives above ACT, in how the attachment card renders. This keeps the Bee-node surface identical for both flows.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "integration",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:29:49.052Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Beyond document sharing, chat supports raw files (images, PDFs, audio, video, text) via ACT-encrypted /bzz uploads with both parties as grantees, capped at 200MB.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1b985b33-62af-4104-9f8b-f0e8532460a9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:52.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c67f247e-9298-4e6f-b593-db2a9cfd85c3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:52.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,305 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:23.181Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "processor-reactorclient-direct-call-antipattern",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "5704869d-6b5d-42ff-b146-d912536f498e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:38:23.181Z"
+        },
+        "version": 0,
+        "documentId": "5704869d-6b5d-42ff-b146-d912536f498e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:23.181Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "JoGEnC+0UFvLxoW+mPgVsI0qfUA=",
+    "timestampUtcMs": "2026-08-13T14:38:23.893Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Calling reactorClient directly from inside a processor is an anti-pattern because execute() blocks until READ_READY",
+        "updatedAt": "2026-08-13T14:38:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:23.893Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:23.181Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "5704869d-6b5d-42ff-b146-d912536f498e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:23.181Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "9VVbjoqEb+O+8YfcEn8a9vmSheE=",
+    "timestampUtcMs": "2026-08-13T14:38:23.893Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:38:22.000Z",
+        "description": "reactorClient.execute() waits for the job to reach READ_READY, so it can wait on the very processor making the call. Use the injected dispatch instead."
+      },
+      "timestampUtcMs": "2026-08-13T14:38:23.893Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:25.056Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5704869d-6b5d-42ff-b146-d912536f498e",
+        "targetId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:25.056Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9LOgO1jDBYueYxutKw1P/SpFEso=",
+    "timestampUtcMs": "2026-08-13T14:38:23.893Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "DECISION",
+        "updatedAt": "2026-08-13T14:38:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:23.893Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:25.080Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5704869d-6b5d-42ff-b146-d912536f498e",
+        "targetId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:25.080Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "F9rmNQQ3MTgMOrS8u67qGt1aPEA=",
+    "timestampUtcMs": "2026-08-13T14:38:23.893Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The academy marks this as an explicit anti-pattern warning, not a style preference. `reactorClient.execute()` does not return until its job reaches `READ_READY`, and `READ_READY` is only reached after the post-ready phase \u2014 which is where processors run. A processor that calls `reactorClient.execute()` can therefore end up waiting on the processor pipeline it is currently occupying.\n\n```typescript\n// Bad: blocks until the job completes\nconst doc = await reactorClient.execute(docId, \"main\", actions);\n\n// Good: submits and returns immediately\nawait this.dispatch.execute(docId, \"main\", actions);\n```\n\nThree reasons are given, in order of severity:\n\n1. **Potential blocking.** The call could wait on processors finishing their current batch, including the caller.\n2. **Unnecessary round-trip.** The resulting operations arrive through `onOperations` anyway, so awaiting them synchronously buys latency and nothing else.\n3. **One-way flow.** React to operations, dispatch new work, move on. If you need the result, handle it in a later `onOperations` call.\n\nThere is a trap in the type surface here. Connect's host module is `IReactorProcessorHostModule`, which *extends* `IProcessorHostModule` with `client: IReactorClient` and `attachments: IAttachmentClient` \u2014 so a full `IReactorClient` genuinely is reachable from a browser-hosted processor. It is there for reads and for hosts that need it, and reaching for its `execute()` compiles cleanly. The guardrail is the convention, not the type system.\n\nProvenance: academy `03-Build/04-WorkWithData/05-ProcessorBestPractices.md` (published, \"Why not reactorClient?\" warning callout), cross-checked against `packages/reactor-browser/src/types/processor-host-module.ts` at 6.2.2-dev.45.",
+        "updatedAt": "2026-08-13T14:38:22.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:23.893Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:25.105Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "5704869d-6b5d-42ff-b146-d912536f498e",
+        "targetId": "d065b560-9609-4b9b-9603-ebd73e35276c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:25.105Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "niG7YKOxoM80d7b+AQMOXN0XIvA=",
+    "timestampUtcMs": "2026-08-13T14:38:23.893Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "9a9321e0-0248-4801-af09-2572fa42193a",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:23.893Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "BEih4EN+4EhQuBS9VnZgVMLjEaE=",
+    "timestampUtcMs": "2026-08-13T14:38:23.893Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a28c5720-706b-4910-a17e-2c4957b6e2f7",
+        "name": "anti-patterns"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:23.893Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "+FSeG7RIPOPBenzIcOvL9tfMNgA=",
+    "timestampUtcMs": "2026-08-13T14:38:23.893Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ca9b46a1-33e3-4583-8d9e-b5709cb839c2",
+        "name": "reactor-client"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:23.893Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "nKjcWCDEOx5xy8Up9614FbPBgsc=",
+    "timestampUtcMs": "2026-08-13T14:38:25.007Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:22.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:25.007Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "kPOYVu9K77WcSXOGkwO4rppGz4Q=",
+    "timestampUtcMs": "2026-08-13T15:54:20.555Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:54:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:20.555Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "iK6NSQiR/k3XdQdr0FEBBxgZjU0=",
+    "timestampUtcMs": "2026-08-13T15:54:20.555Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "023c75c2-47d0-4fe8-889e-04b7ea03b25d",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:54:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:20.555Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "F7IzjW9Zrwo6jmEggi4v+Tok23w=",
+    "timestampUtcMs": "2026-08-13T15:54:20.555Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f3e1e4d3-8d2d-44eb-bc37-953cfeb75dbf",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:54:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:20.555Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "aXz66r3wYRIIQ9urL4M2LOSj55w=",
+    "timestampUtcMs": "2026-08-13T16:51:49.854Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:51:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:51:49.854Z"
+    }
+  }
+]

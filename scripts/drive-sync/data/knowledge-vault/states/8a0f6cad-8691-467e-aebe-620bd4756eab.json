@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a79b6048-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a79b6048-eb4d-447a-8c16-74dde36b9304",
+      "targetTitle": "chat-pss-messaging-history-shipped"
+    },
+    {
+      "id": "lnk-f271a45f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f271a45f-492a-4473-87b9-8fd2d2600c3d",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-b4bd82ad-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b4bd82ad-10c1-4080-9264-2339febc7de6",
+      "targetTitle": "collab-non-goals-explicit-exclusions"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Typing indicators and presence dots scratched due to PSS latency",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0a28739a-db5c-42b4-9893-f0e59acc804c",
+      "name": "chat-roadmap",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d94cece8-4db0-4643-b7fe-65329fb01552",
+      "name": "scratched-work",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa597b9d-4440-43e7-b179-a3500e4bd0ad",
+      "name": "pss-latency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Decision (2026-04-18)\n\nThe typing-indicator UI (formerly \"Track A\") is **not shipping**.\n\n## Rationale\n\nPSS message latency is 2-10 seconds because of Trojan chunk mining and push-sync. A \"User is typing...\" hint doesn't pay off when the message itself arrives on a longer timescale than the hint would cover. The signal would flicker or misfire more often than it would help.\n\n## Scope of the decision\n\n- **No UI indicator** for typing in chat.\n- **Presence dots** (green-dot + \"Last seen ...\") are **parked**, not deleted. Low payoff relative to live collaboration, which is what users actually want next.\n- **Adapter hooks stay.** `sendTyping`, `sendStoppedTyping`, `sendPresence`, `onNotification` remain in the GSOC notifier because they are useful primitives for presence and live collab.\n\n## Consequence\n\nEngineering attention redirects from ephemeral status indicators toward the live-collaboration track, where the latency profile is tolerable and the payoff is concrete.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:38:00.466Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "2026-04-18 decision: no typing-indicator UI will ship. PSS 2-10s latency makes the hint useless. Presence dots also parked; adapter hooks kept for live collab.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2f196956-f195-4694-9098-ae66ed87747b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e10ba664-298c-4e63-8523-468b3f6f5f8e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

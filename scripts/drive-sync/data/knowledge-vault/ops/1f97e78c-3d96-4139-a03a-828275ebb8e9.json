@@ -1,0 +1,304 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:03:56.140Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "subgraph-resolvers-unguarded-by-default",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "1f97e78c-3d96-4139-a03a-828275ebb8e9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:03:56.140Z"
+        },
+        "version": 0,
+        "documentId": "1f97e78c-3d96-4139-a03a-828275ebb8e9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.140Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "BDE1L5KQ2XKgdFnZjidDLlMhU/g=",
+    "timestampUtcMs": "2026-08-13T14:03:56.533Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Custom subgraph resolvers are unguarded by default and must enforce authorization themselves",
+        "updatedAt": "2026-08-13T14:03:55.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.533Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:03:56.140Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "1f97e78c-3d96-4139-a03a-828275ebb8e9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.140Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "bT0toin9/CnSdAGmm/FgLuamsxc=",
+    "timestampUtcMs": "2026-08-13T14:03:56.533Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:03:55.000Z",
+        "description": "ph generate subgraph scaffolds resolvers that call the reactor directly with no permission check, leaking ids and the existence of protected documents."
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.533Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:03:57.902Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1f97e78c-3d96-4139-a03a-828275ebb8e9",
+        "targetId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:57.902Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "s4RS3gPzgVKm8KoYCbNK+sFdXeY=",
+    "timestampUtcMs": "2026-08-13T14:03:56.533Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:03:55.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.533Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:03:57.927Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "1f97e78c-3d96-4139-a03a-828275ebb8e9",
+        "targetId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:57.927Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "XLubXo0g/UyA6+DNwaUQvn2GsdU=",
+    "timestampUtcMs": "2026-08-13T14:03:56.533Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The gap\n\n`ph generate subgraph --name <name>` scaffolds resolvers that call the reactor **directly, with no permission check**. Nothing in the generated code consults the authorization service.\n\nThe leak is twofold: the resolver returns document contents the caller may not be entitled to, and \u2014 because a missing document and a forbidden document are indistinguishable in the response \u2014 it also leaks the *existence* of protected documents.\n\n## What to do instead\n\nUse the enforcement helpers `BaseSubgraph` exposes: `assertCanRead`, `assertCanWrite`, `assertCanExecuteOperation`, `assertCanCreate` (all throw Forbidden), plus the non-throwing `canReadDocument` for filtering lists.\n\nAlways re-fetch through `AuthorizedDocumentHandle.fetchIdentifier` rather than the caller's raw identifier \u2014 permission rows key on canonical ids, so reusing a caller-supplied slug after an assert lets an attacker alias one document's slug onto another.\n\n## Source\n\n`apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md` (Powerhouse v6.2.2-dev.45)",
+        "updatedAt": "2026-08-13T14:03:55.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.533Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "7GQNwguDGXnHbvxoCnHf7ZhrcEI=",
+    "timestampUtcMs": "2026-08-13T14:03:56.533Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fb27176f-48c0-4fb2-b28a-72ed67dabdc4",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.533Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ASmkZiQUNTWdExhFtvxwdA3wNNk=",
+    "timestampUtcMs": "2026-08-13T14:03:56.533Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "79b762c9-5818-476d-b1e9-aedaae2ae83b",
+        "name": "subgraphs"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.533Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "34yRrqC2gG7yBKk8TWqUwJ4FkN0=",
+    "timestampUtcMs": "2026-08-13T14:03:56.533Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "93848d6c-ec9e-4a16-94ba-e03f82659575",
+        "name": "security"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.533Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "20zFyCJvYpgaAosOIE2tZVD1N1w=",
+    "timestampUtcMs": "2026-08-13T14:03:56.533Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0112b4c5-6866-494f-83ee-683f93ffc3d3",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:56.533Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "wZt6uQu6zSjgmxo9N7Hy6yUJySM=",
+    "timestampUtcMs": "2026-08-13T14:03:57.858Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:03:55.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:03:57.858Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "3Y/ksvLXPPzmsE3cSCkPz2DtU3w=",
+    "timestampUtcMs": "2026-08-13T15:49:58.605Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:49:58.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:49:58.605Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "OyRH/59mXV5jWviKUjhJjSmtJ+8=",
+    "timestampUtcMs": "2026-08-13T15:49:58.605Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "ecd76123-5729-4812-b3e6-5022b51d4223",
+        "actor": "claude",
+        "comment": "Verified against powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:49:58.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:49:58.605Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "QGtvxA3SvRrN5A5lzvagTYkYgPk=",
+    "timestampUtcMs": "2026-08-13T15:49:58.605Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "819b4a39-f12b-4962-b545-81722166b17a",
+        "actor": "liberuum",
+        "comment": "Canonical at powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:49:58.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:49:58.605Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "BnlRN3hVOL5ExLPXKAIr/18Um2c=",
+    "timestampUtcMs": "2026-08-13T16:49:21.314Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:49:21.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:49:21.314Z"
+    }
+  }
+]

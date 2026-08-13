@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-40d3fc73-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "40d3fc73-7a72-433b-8f7f-754de53412e7",
+      "targetTitle": "vetra-package-module-types"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Only the document hooks run on the light GraphQL client; drive, node, job and package hooks require a full host",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "930e6a42-b9c0-4279-896c-d8a7152cc182",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f32b06ef-9bbf-4e49-969c-4a83a2e9f3a3",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "246f6651-5cf7-4458-9619-023e6f71e86a",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`@powerhousedao/reactor-browser` ships a second, much smaller client \u2014 `GraphQLReactorClient`, mounted with `GraphQLReactorProvider url={...}` \u2014 that satisfies the document hooks by talking plain GraphQL to a Switchboard. No reactor, no PGlite, no job queue in the bundle. It is how a plain webapp gets `useDocument`, `useDispatch` and `useReactorClient`.\n\nThe line between \"works\" and \"finds nothing\" is drawn by an interface. `IReactorBrowserClient` \u2014 what the hooks depend on, and what both this client and the full reactor client implement \u2014 is declared as a `Pick` of the reactor's own `IReactorClient` so the signatures cannot drift. It has exactly six members:\n\n| Member | Note |\n| --- | --- |\n| `get(identifier, view?, signal?)` | by id or slug; a `view.revision` throws \u2014 no point-in-time reads |\n| `getOperations(identifier, view?, filter?, \u2026)` | paged, `next()` follows the cursor |\n| `create(document, parentIdentifier?, signal?)` | emits `Created` |\n| `execute(identifier, branch, actions, signal?)` | fetches, stamps, signs, pushes |\n| `deleteDocument(identifier, propagate?, signal?)` | emits `Deleted` |\n| `subscribe(search, callback, view?)` | local emissions plus, lazily, the server's |\n\nEverything outside those six \u2014 `drives`, `find`, `resolveIdOrSlug`, relationships, jobs, `rename`, `executeBatch`, the document-model module getters \u2014 is not on the interface and not implemented, which is why the drive, node and job hooks do not work below this provider.\n\nThe package and module hooks fail for a different reason: `useVetraPackages`, `useDocumentModelModules`, `useEditorModules`, `useEditorModuleById` and the rest read `window.ph.vetraPackageManager`, a slot only a host application fills. Passing `documentModels` to the provider publishes a fixed `StaticPackageManager` into that slot, which makes the document-model module hooks work \u2014 but it never installs, updates or removes packages and its mutating members throw.\n\nEditors are explicitly not portable here: they read the selected document through Connect's drive/node selection, which a light app deliberately has no equivalent of.\n\n_Source: packages/reactor-browser/src/graphql-client/README.md, confirmed by apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "IReactorBrowserClient is a Pick of IReactorClient with exactly six members. Package and module hooks read window.ph.vetraPackageManager, which only a host application fills.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0bb4af5a-5cdc-448b-916e-63d665faa6ef",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3aa34eda-8029-42e3-a7f9-24a9234604e3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

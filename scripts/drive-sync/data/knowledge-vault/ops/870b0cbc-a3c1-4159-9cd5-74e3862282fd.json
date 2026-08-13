@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:53.369Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "attachment-uploads-have-two-equal-reservation-modes",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "870b0cbc-a3c1-4159-9cd5-74e3862282fd",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:34:53.369Z"
+        },
+        "version": 0,
+        "documentId": "870b0cbc-a3c1-4159-9cd5-74e3862282fd",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:53.369Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ZqCIImqEmeZqkHKe5N8T2YzuyoI=",
+    "timestampUtcMs": "2026-08-13T14:34:54.082Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Attachment uploads have two equal modes: upload-first learns the ref after send(), hash-first knows it at reserve time",
+        "updatedAt": "2026-08-13T14:34:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:54.082Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:53.369Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "870b0cbc-a3c1-4159-9cd5-74e3862282fd",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:53.369Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "dC+b+GWUgS0kR1Fwy/SFETc2gJg=",
+    "timestampUtcMs": "2026-08-13T14:34:54.082Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:34:53.000Z",
+        "description": "Hash-first lets you write the ref into document state before the bytes exist, and short-circuits dedup. IAttachmentClient.preprocess() does the hashing."
+      },
+      "timestampUtcMs": "2026-08-13T14:34:54.082Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:55.464Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "870b0cbc-a3c1-4159-9cd5-74e3862282fd",
+        "targetId": "0c751904-3dbc-4136-a078-83cd812c75f7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:55.464Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "u8Lxka2BrLdIwH+blqjyygR0iUE=",
+    "timestampUtcMs": "2026-08-13T14:34:54.082Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:34:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:54.082Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:55.490Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "870b0cbc-a3c1-4159-9cd5-74e3862282fd",
+        "targetId": "39df9a3c-c28b-413c-87fe-93748fe86a0e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:55.490Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "gldpayT3pP1H2M8rr3CEo1KxTRA=",
+    "timestampUtcMs": "2026-08-13T14:34:54.082Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Every attachment interaction is three steps \u2014 reserve a slot, send the bytes, later read them back by ref \u2014 and there are two reservation modes. The docs are explicit that they are **equivalent in capability; neither is preferred.** Pick by what the caller can supply.\n\n**Upload-first.** Reserve with just `{ mimeType, fileName }`. The content hash, and therefore the final ref, is known only *after* `send()` resolves. `IAttachmentUpload.ref` is `null` until then.\n\n```typescript\nconst upload = await attachments.reserve({ mimeType: \"image/png\", fileName: \"avatar.png\" });\nconst { ref } = await upload.send(stream);   // ref known here\n```\n\nSimplest when you can stream bytes straight through and do not need the ref until the upload finishes.\n\n**Hash-first.** Hash the content up front and reserve with `{ clientHash, sizeBytes, ... }`. The ref is known at reservation time, which buys two things: you can write it into document state *before or in parallel with* the upload, and dedup can short-circuit before any bytes are sent. The cost is reading the whole file to hash it.\n\n`IAttachmentClient.preprocess(file)` does that hashing, returning `{ ref, hash, sizeBytes, options, data, stream }`. Because it must read the entire file, it is async and buffers in memory \u2014 `file` is a `Blob`, not a stream.\n\n```typescript\nconst results = await attachments.preprocess(file);\n\nawait client.execute(documentId, \"main\", [attachInvoice({ scan: results.ref })]);\nawait attachments.reserve(results.options, (handle) => handle.send(results.stream()));\n```\n\nTwo details that bite. Pass `results.stream()` \u2014 a factory returning a **fresh** `ReadableStream` each call \u2014 rather than the single-use `results.data`, if the upload might be retried. And the execute and the reserve are awaited **separately on purpose**: a failed upload does not roll back the action, and a failed action does not strand an upload. Wrap them in `Promise.all` only if you do not need that separation.\n\nHash-first is also where the verification errors live: `HashMismatch` if uploaded bytes do not match the claimed `clientHash`, `SizeMismatch` if the byte count differs from the declared `sizeBytes`, and `AttachmentAlreadyExists` when the hash is already stored \u2014 which the *client's* `reserve()` catches internally and turns into the existing ref. In React, `useAttachmentUpload()` wraps the whole flow with `status` (`None | Hashing | Uploading | Done | Error`), `progress`, and `error`; progress is stage-based because the remote transport buffers then issues a single PUT.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/09-AttachmentService.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:34:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:54.082Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "k+Z1VGkwgGNaavdQG7E2cV0K2DQ=",
+    "timestampUtcMs": "2026-08-13T14:34:54.082Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b0638e05-aef9-4c87-a028-6ffd081b8498",
+        "name": "attachments"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:54.082Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "ODuKvFDo7kti/wbakTJ+4M9OKEs=",
+    "timestampUtcMs": "2026-08-13T14:34:54.082Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b24f413e-2f34-490c-9745-8990d428e5b1",
+        "name": "upload"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:54.082Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "SKtj0wePTmTCCp1j4WsUrAoESzI=",
+    "timestampUtcMs": "2026-08-13T14:34:54.082Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "56c38787-224c-460b-8b7e-ab7cff8b078b",
+        "name": "hash-first"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:54.082Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "KCb/ppCtRxWrIeHHdLGB4Gneem8=",
+    "timestampUtcMs": "2026-08-13T14:34:55.411Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:53.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:55.411Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "Fh9WnSbJyUh1nz7WZhjxCVIcI44=",
+    "timestampUtcMs": "2026-08-13T15:56:17.150Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:17.150Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "60+SbKSXvBm5RrRQxPbyL5nY/Vk=",
+    "timestampUtcMs": "2026-08-13T15:56:17.150Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "c6f0bc48-dceb-4f13-8a35-a494bf17b06f",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:17.150Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "JGeWSeam1vZATCtqOoykGkfNkWE=",
+    "timestampUtcMs": "2026-08-13T15:56:17.150Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "00edc452-2031-40fa-9b51-d5dd0525eba6",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:17.150Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "e6P8ric9Cj+cho4QIrw+0m0TXGU=",
+    "timestampUtcMs": "2026-08-13T16:54:10.015Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:10.015Z"
+    }
+  }
+]

@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-5067c7ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    },
+    {
+      "id": "lnk-48db8c7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+      "targetTitle": "authorization-uses-layered-model"
+    },
+    {
+      "id": "lnk-6159609c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6159609c-0a13-4d16-845f-0afd965d73e2",
+      "targetTitle": "moc-authorization-and-identity"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Authentication, signing, authorization and validity are four separate gates on a single operation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8050f5d9-90b5-41d6-947d-db1827b99a44",
+      "name": "identity",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9398ad92-205e-473b-85d6-bcd754281ba3",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5f51ff4b-932f-40c7-a53b-15a60fbab010",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "85c83732-acca-4e4d-a5eb-401328916b28",
+      "name": "operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Four questions, four owners\n\nFour concerns all meet at a single operation, and conflating them is the most common source of confusion about what a signature buys you:\n\n| Gate | Question | Where it lives |\n| --- | --- | --- |\n| **Authentication** | Who is this identity? | Renown |\n| **Signing** | Did this identity really produce this exact operation? | Signature verification |\n| **Authorization** | Is this identity allowed to perform this action here? | Document permissions |\n| **Validity** | Is the resulting state legal? | The reducer |\n\n## What a signature does and does not prove\n\nA signature answers \"who, and unchanged?\" \u2014 authenticity plus integrity. It binds the identity to this specific operation *and its position in the log*, via the stamped `prevOpHash` and `prevOpIndex`.\n\nIt does **not** prove:\n\n- that the signer had permission on that document \u2014 that is a separate check against document permissions;\n- that the change is legal \u2014 the reducer still decides;\n- that this is the most recent operation \u2014 ordering comes from the index and hash chain, not the signature itself.\n\nSo a signed operation can be perfectly authentic and still be **rejected**, because the signer lacks permission on that document or because the reducer's rules do not allow the change. Identity establishes *trust*; it does not replace the other checks.\n\n## Why this structure is cheap\n\nNone of it needs a bolt-on audit system. Because state is already an ordered, hash-linked log of operations, attaching a signature to each entry is enough to make the whole history **tamper-evident**: change any past operation and every signature and hash after it stops verifying. The same structure that gives deterministic replay and conflict-free sync yields a trustworthy audit trail for free.\n\n> Doc note: the academy section is headed \"Three gates, not one\" but its table lists four (Authentication, Signing, Authorization, Validity). Four is what the table and the surrounding prose actually describe.\n\n_Source: apps/academy/docs/academy/02-Learn/08-deep-dives/02-identity-and-signing.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A signature proves who and unchanged \u2014 not that the signer had permission, nor that the reducer will accept the change. Each gate has a different owner.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c5d57ea2-4f66-43e6-8bf3-68c7354adb8e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0a6601a0-113a-4493-9224-bb56e5ee02bb",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

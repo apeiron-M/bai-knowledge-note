@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-ab51b1bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab51b1bd-4e7d-420a-b673-52bbc4e39277",
+      "targetTitle": "swarmchannel-is-transport-only"
+    },
+    {
+      "id": "lnk-83d37fbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+      "targetTitle": "three-layer-swarm-stack"
+    },
+    {
+      "id": "lnk-ddafbd86-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ddafbd86-2d13-4ed2-815c-643a52560999",
+      "targetTitle": "window-ph-swarm-plugin-surface"
+    },
+    {
+      "id": "lnk-cbcbb6cb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbcbb6cb-4db5-4ac6-8d8e-4149e0d6cff8",
+      "targetTitle": "ph-service-setup-configures-nginx-pm2-ssl"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm channel connection state is derived from the Bee node's /health endpoint.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-70e46151-1",
+      "name": "connection-state",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-70e46151-2",
+      "name": "bee-health",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-70e46151-3",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nThe Swarm channel's `ConnectionState` is a direct projection of Bee node health probes.\n\n## Mapping (from source)\n| Bee Status | Channel State |\n|---|---|\n| `/health` returns 200 | `connected` |\n| `/health` fails | `reconnecting` |\n| Multiple failures | `error` |\n| Bee URL changed | `connecting` |\n| Channel shutdown | `disconnected` |\n\n## Why this is useful\n- UI components subscribing to `onConnectionStateChange` can render status without custom Bee-health logic.\n- Push is gated on `connected`; in `error` state, operations accumulate in PGlite safely.\n- Reconnect flow (`error \u2192 connected`) triggers catch-up push automatically.\n\n## Source\nSwarm Channel Architecture, \"Connection State\" table; `adapter/src/channel/swarm-channel.ts`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Bee /health 200 maps to connected; failures map to reconnecting; repeated failures to error; URL change to connecting; shutdown to disconnected.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1aec4549-fa8b-4064-8ae6-fdbe87993bbe",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:42.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f40d5195-f1a6-4969-a1bb-d69f2a514283",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:42.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

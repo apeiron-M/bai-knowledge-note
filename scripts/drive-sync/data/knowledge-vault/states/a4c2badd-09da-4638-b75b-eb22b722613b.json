@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-f271a45f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f271a45f-492a-4473-87b9-8fd2d2600c3d",
+      "targetTitle": "chat-uses-pss-for-messages-and-gsoc-for-notifications-matchi"
+    },
+    {
+      "id": "lnk-30222dd8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "30222dd8-d353-432c-a399-11ebc8241109",
+      "targetTitle": "act-cross-user-sharing-ecdh"
+    },
+    {
+      "id": "lnk-42c550c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42c550c3-df9c-4cbc-9ab4-3a88b9312230",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-e3ae2359-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e3ae2359-51b8-4ac9-8acf-9ab7823fc5ba",
+      "targetTitle": "gsoc-provides-many-to-one-notifications-with-sub-second-late"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Document sharing in chat reuses the existing ACT share bundle plus a chat message and GSOC ping.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-ad1b9f0bd2f0",
+      "name": "document-sharing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-a3848fe3330c",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-b45fe5d620ea",
+      "name": "gsoc-notifications",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Pattern\n\nSharing a document through chat composes three existing primitives \u2014 no new protocol:\n\n1. **Share bundle** \u2014 the existing `shareDocuments(docIds, recipientAddress)` creates the ACT-protected bundle on Swarm.\n2. **Chat message** \u2014 a PSS message of type `share` carries a `DocumentShareAttachment` with the bundle's Swarm reference + a human-readable document list.\n3. **GSOC notification** \u2014 a ping to the recipient's notify signer so their UI refreshes immediately rather than on next poll.\n\n## Payload shape\n\n```typescript\n{\n  type: \"share\",\n  text: \"Check out this invoice\",\n  timestamp: \"2026-04-15T18:30:00Z\",\n  attachment: {\n    kind: \"document-share\",\n    driveId: \"96ffdf26-...\",\n    driveName: \"Q1 Invoices\",\n    shareReference: \"abc123...\",\n    documents: [\n      { id: \"b9e4fe2e-...\", name: \"Invoice #42\", type: \"powerhouse/document-model\" }\n    ]\n  }\n}\n```\n\n## Adapter surface\n\nThe unified `buildDriveShareBundle()` in `plugin/sharing.ts` is shared between the Settings share panel and the chat share picker (`document-share-picker.tsx`). Both produce the same bundle shape and preserve sender signatures on every op \u2014 full parity with the Settings path.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:27:40.700Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A chat share sends three things: the existing shareDocuments() bundle, a PSS message of type share referencing it, and a GSOC notification so the recipient's UI reacts instantly.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "86a93985-a2f1-43ee-bce1-11a1b60bf616",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:18.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f45902c7-cd01-4f4d-a11a-f40770efc210",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:18.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

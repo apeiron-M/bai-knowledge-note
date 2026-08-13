@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-4324b1ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-48db8c7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+      "targetTitle": "authorization-uses-layered-model"
+    },
+    {
+      "id": "lnk-1f97e78c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1f97e78c-3d96-4139-a03a-828275ebb8e9",
+      "targetTitle": "subgraph-resolvers-unguarded-by-default"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "BaseSubgraph exposes four throwing assertCan* helpers plus a non-throwing canReadDocument for list filtering",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a54d8dcc-b7e7-4bb5-8830-fcdd35a64530",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d3311f5-070e-4984-b355-90773f980753",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e80446e8-fe46-411a-9e07-9abe8f6b4d0c",
+      "name": "reactor-api",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The enforcement surface\n\nAll of these are public methods on `BaseSubgraph`. The `ph generate subgraph` scaffold hands you the instance as the `subgraph` parameter of `getResolvers`, so you call them as `subgraph.assertCanRead(...)`. Class-field resolvers call them on `this` instead \u2014 that is the style the built-in subgraphs use, and both forms reach the same public methods.\n\n| Helper | Use when | On failure |\n| --- | --- | --- |\n| `assertCanRead(identifier, ctx)` | Reading one document the caller named (id or slug) | throws `Forbidden` |\n| `assertCanWrite(identifier, ctx)` | Mutating one document the caller named | throws `Forbidden` |\n| `assertCanExecuteOperation(identifier, type, ctx)` | Executing a specific operation type on a document | throws `Forbidden` |\n| `assertCanCreate(ctx)` | Creating a genuinely top-level document with no parent | throws `Forbidden` |\n| `canReadDocument(canonicalId, ctx)` | Filtering a list \u2014 non-throwing read check on an id from the data layer | returns `boolean` |\n| `authorizationService.isSupremeAdmin(address)` | Short-circuiting per-item filtering for policy-wide callers | returns `boolean` |\n\nNote the sixth row: `isSupremeAdmin` is reached through `subgraph.authorizationService`, not directly on the subgraph.\n\n## Details worth knowing\n\nEvery `assertCan*` that takes an `identifier` returns an `AuthorizedDocumentHandle`; use its `fetchIdentifier` for the subsequent fetch. There are also lower-level `*Canonical` variants (`assertCanReadCanonical` and friends) used by the built-in subgraphs when the data layer has already resolved an id \u2014 prefer the identifier-accepting variants in your own code.\n\n`assertCanCreate` is narrower than it looks. When creating a document **under a parent**, the meaningful check is write access on that parent, so `assertCanWrite(parentIdentifier, ctx)` is the right call; reserve `assertCanCreate` for top-level documents.\n\nSupporting types exported from `@powerhousedao/reactor-api`: `Context`, `CanonicalDocumentId`, `AuthorizationPolicy`, `AuthorizedDocumentHandle`, `IAuthorizationService`.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "assertCanRead/Write/ExecuteOperation/Create throw Forbidden; canReadDocument returns a boolean. isSupremeAdmin lives on subgraph.authorizationService, not on the subgraph itself.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2f825faf-87d9-4d25-9b51-35266209c58c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:15.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "302077ef-2a3f-4905-b93b-c2f24f5650db",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:15.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

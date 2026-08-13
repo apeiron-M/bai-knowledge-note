@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:08.813Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ph-app-config-replaces-drive-editor-config",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7ee86582-459d-405f-a026-063deff80757",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:38:08.813Z"
+        },
+        "version": 0,
+        "documentId": "7ee86582-459d-405f-a026-063deff80757",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:08.813Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "xJxLuqyCoFznhXzxb19mGWqy/+E=",
+    "timestampUtcMs": "2026-08-13T14:38:09.499Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Drive-app config is set with setPHAppConfig, not the academy's setPHDriveEditorConfig, which no longer exists in source",
+        "updatedAt": "2026-08-13T14:38:08.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:09.499Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:08.813Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "7ee86582-459d-405f-a026-063deff80757",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:08.813Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "7e2OxBsNtqA6piyzyGqsk3B6mzY=",
+    "timestampUtcMs": "2026-08-13T14:38:09.499Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:38:08.000Z",
+        "description": "PHAppConfig carries allowedDocumentTypes and isDragAndDropEnabled; PHDocumentEditorConfig carries isExternalControlsEnabled. The useSetPH*Config hooks apply once on mount."
+      },
+      "timestampUtcMs": "2026-08-13T14:38:09.499Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:10.659Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7ee86582-459d-405f-a026-063deff80757",
+        "targetId": "3c8bb297-ae31-4f7a-b7f2-c91fdd89217d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:10.659Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "QAG0V7hcipfuCvDV9KaKfUzBr7g=",
+    "timestampUtcMs": "2026-08-13T14:38:09.499Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:38:08.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:09.499Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:10.682Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7ee86582-459d-405f-a026-063deff80757",
+        "targetId": "9a77cd78-5be9-477d-af2f-7d6559b12b07",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:10.682Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "M3YurfhG2gkqgyETNp9c3EMDH84=",
+    "timestampUtcMs": "2026-08-13T14:38:09.499Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Editors and drive apps declare their behaviour by writing into a global config store, and the setters come in two flavours: imperative (`setPH\u2026Config`) and mount-time (`useSetPH\u2026Config`).\n\nTwo config slices matter here:\n\n```ts\nexport type PHAppConfig = {\n  /** Empty array means any document type is allowed. */\n  allowedDocumentTypes?: string[];\n  isDragAndDropEnabled?: boolean;\n};\n\nexport type PHDocumentEditorConfig = {\n  isExternalControlsEnabled?: boolean;\n};\n```\n\nBoth are members of the larger `PHGlobalConfig` intersection, and `setPHAppConfig` / `setPHDocumentEditorConfig` simply iterate the partial's keys and forward each one to the per-key global setter \u2014 so setting a slice is exactly equivalent to setting its keys individually.\n\nThe wrapper hooks are what codegen actually emits. The app template writes `useSetPHAppConfig(editorConfig)` at the top of the generated editor, with the object living in a sibling `./config.ts`. Read the implementation before relying on it: the hook guards its effect with a one-shot `isInitialized` state flag, so it applies the config **once on mount and never again**. Passing a config object that changes between renders will not update anything \u2014 for dynamic changes call the imperative `setPHAppConfig` directly.\n\n**Naming caveat \u2014 the academy is stale here.** `04-Reference/05-EditorsUI/01-ReactHooks.md` documents `PHDriveEditorConfig`, `setPHDriveEditorConfig` and `useSetPHDriveEditorConfig`. Those identifiers have **zero occurrences** anywhere in the monorepo outside build output; the slice was renamed to `PHAppConfig` and the functions to `setPHAppConfig` / `useSetPHAppConfig`, consistent with drive editors having been renamed to apps. The `PHDocumentEditorConfig` names in the doc are still correct. Some doc comments in source also lag, describing `setPHAppConfig` as \"the global drive config\".\n\n_Source: packages/reactor-browser/src/types/config.ts, src/hooks/config/set-config-by-object.ts and packages/codegen/src/templates/app/editor.ts (Powerhouse v6.2.2-dev.45); the academy's React Hooks page still uses the removed setPHDriveEditorConfig names._",
+        "updatedAt": "2026-08-13T14:38:08.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:09.499Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "N/N6Ab0WPYRWfW5rBaEGNgH7jas=",
+    "timestampUtcMs": "2026-08-13T14:38:09.499Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "7ba594d6-b2d2-4d15-8836-e1b1e68de68d",
+        "name": "react-hooks"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:09.499Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "YCicy7z73hlDsB9PaXhcZ1KE7ag=",
+    "timestampUtcMs": "2026-08-13T14:38:09.499Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "befb28f8-154b-4522-ac9e-76e0734f09ee",
+        "name": "drive-apps"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:09.499Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "WsnfLJvkEgN5JYCAHbquEX9ZIYc=",
+    "timestampUtcMs": "2026-08-13T14:38:09.499Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "45aad48c-5171-46be-a672-937d1a1cfd0e",
+        "name": "gotchas"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:09.499Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "ptmpXXU948OQoK6E1ywbgAH3ttI=",
+    "timestampUtcMs": "2026-08-13T14:38:10.616Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:08.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:10.616Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "eajnlmigk+BhyzbqVOnPIpM0pGE=",
+    "timestampUtcMs": "2026-08-13T15:55:55.704Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:55:55.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:55.704Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "M4yKNFrvAq/vyoMlON/e0vLoQeg=",
+    "timestampUtcMs": "2026-08-13T15:55:55.704Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "82467f43-7fc0-4497-8d78-68dd7935222d",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:55:55.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:55.704Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "RM0+6Cch/qzK5K1oJIp1e6SlPK8=",
+    "timestampUtcMs": "2026-08-13T15:55:55.704Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9186b57a-b7d2-4413-943e-b6a87e9afed7",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:55:55.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:55.704Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "PXpzk8XB2juD5Lzq/auFqO26PGM=",
+    "timestampUtcMs": "2026-08-13T16:53:45.158Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:53:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:53:45.158Z"
+    }
+  }
+]

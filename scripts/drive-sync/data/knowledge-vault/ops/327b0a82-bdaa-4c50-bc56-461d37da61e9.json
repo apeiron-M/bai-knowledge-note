@@ -1,0 +1,278 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:40.131Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "the-state-argument-a-reducer-receives-is-already-scoped",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "327b0a82-bdaa-4c50-bc56-461d37da61e9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:35:40.131Z"
+        },
+        "version": 0,
+        "documentId": "327b0a82-bdaa-4c50-bc56-461d37da61e9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:35:40.131Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Fb7D1D4FWx9AMfrcNOnhTrA3nx0=",
+    "timestampUtcMs": "2026-08-13T14:35:40.897Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The state argument a reducer receives is already the scoped state",
+        "updatedAt": "2026-08-13T14:35:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:40.897Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:40.131Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "327b0a82-bdaa-4c50-bc56-461d37da61e9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:35:40.131Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "qXHCWd6+gAtZX6TugJuy/PDw5EY=",
+    "timestampUtcMs": "2026-08-13T14:35:40.897Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:35:39.000Z",
+        "description": "Inside a reducer you write state.items; from outside the same data is doc.state.global.items. The reducer never sees the other scope."
+      },
+      "timestampUtcMs": "2026-08-13T14:35:40.897Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:42.363Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "327b0a82-bdaa-4c50-bc56-461d37da61e9",
+        "targetId": "3ffe9cae-7925-4e7e-ac90-3a1198b1a6b3",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:42.363Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "6FyF+NQLkxRtUg36Gx+PXyt/HNY=",
+    "timestampUtcMs": "2026-08-13T14:35:40.897Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:35:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:40.897Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:35:42.388Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "327b0a82-bdaa-4c50-bc56-461d37da61e9",
+        "targetId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:42.388Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "BDtcWVk5qmeph6jhL33+/Z38iR0=",
+    "timestampUtcMs": "2026-08-13T14:35:40.897Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Reducer operations receive the state of **their own scope**, already unwrapped. Inside the reducer you write `state.items`. From outside, the same data is `doc.state.global.items`.\n\n```ts\n// document-models/todo/src/reducers/todos.ts\naddTodoOperation(state, action) {\n  state.items.push({ id: action.input.id, title: action.input.title, done: false });\n}\n```\n\n```ts\n// from a test or an editor\nexpect(doc.state.global.items).toHaveLength(1);\n```\n\nThe mistake this prevents is writing `state.global.items` inside the reducer. Under `strict` TypeScript that fails to compile, which is the good case \u2014 but when the state type is loose or the value is threaded through an `unknown`, you instead get a runtime `undefined` and a reducer that silently does nothing while the operation still lands in the log.\n\nThe corollary matters as much as the rule: a reducer **cannot** see or touch the other scope. A global-scope operation has no access to local state and vice versa. If a transition genuinely needs to read both, that is a signal the data is in the wrong scope, or that the work belongs in the editor (which can read both) before dispatch.\n\nThe scoping is not inferred at call time \u2014 it is bound when the operation is specified and baked into the generated action creator, which passes `\"global\"` or `\"local\"` to `createAction`. The reducer signature is simply the other half of that contract.\n\nVerified in generated project code: reducers in `document-models/<name>/v1/src/reducers/*.ts` assign directly to `state.<field>` with no scope hop.\n\n_Source: apps/academy/docs/academy/02-Learn/03-document-models/04-your-first-document-model.mdx (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:35:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:40.897Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "JpPaMjHl6JN326knUyWws5myvpU=",
+    "timestampUtcMs": "2026-08-13T14:35:40.897Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "27bc79b3-3d47-4a0f-8f93-7717db4a04a2",
+        "name": "reducer-patterns"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:40.897Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "t8Q3A69l039hLl0YcHuKb02APi8=",
+    "timestampUtcMs": "2026-08-13T14:35:40.897Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e2415070-ffb1-4d20-b030-7b75e55db113",
+        "name": "state-management"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:40.897Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "O26DwyS/yMq0VtQ4j9YVqxP8Ryw=",
+    "timestampUtcMs": "2026-08-13T14:35:42.317Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:35:39.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:35:42.317Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "F+I6Q4izxyhqYjfH+95O+N5/Itk=",
+    "timestampUtcMs": "2026-08-13T15:53:07.466Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:53:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:07.466Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "+D5RsE4P1O8+pjhnP4E6RQhx5oc=",
+    "timestampUtcMs": "2026-08-13T15:53:07.466Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2f5d02bf-ec09-4247-8679-7f4f37132988",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:53:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:07.466Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "5PEBIGD74WX3Xa9d/ONoZTF1vYg=",
+    "timestampUtcMs": "2026-08-13T15:53:07.466Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "dec0bfed-7855-4af9-bd88-e0b4ac3c2684",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:53:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:07.466Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "tcGgzYTOAKhqDHA1PvxRV7VDysM=",
+    "timestampUtcMs": "2026-08-13T16:50:16.850Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:50:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:50:16.850Z"
+    }
+  }
+]

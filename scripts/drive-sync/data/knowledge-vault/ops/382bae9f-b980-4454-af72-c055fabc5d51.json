@@ -1,0 +1,292 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:32.213Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "startfrom-applies-only-at-first-cursor-creation",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "382bae9f-b980-4454-af72-c055fabc5d51",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:34:32.213Z"
+        },
+        "version": 0,
+        "documentId": "382bae9f-b980-4454-af72-c055fabc5d51",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:32.213Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "4P4Kn770CuO7r7fE+m5A14YEphY=",
+    "timestampUtcMs": "2026-08-13T14:34:32.408Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "startFrom applies only when a processor's cursor row is first created; afterwards the persisted cursor wins",
+        "updatedAt": "2026-08-13T14:34:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:32.408Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:32.213Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "382bae9f-b980-4454-af72-c055fabc5d51",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:32.213Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "0eM/b1YdjnKbVx12V4NiLSJW13s=",
+    "timestampUtcMs": "2026-08-13T14:34:32.408Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:34:32.000Z",
+        "description": "\"beginning\" (default) backfills full history, \"current\" starts at the manager's ordinal. Restarting never re-runs startFrom."
+      },
+      "timestampUtcMs": "2026-08-13T14:34:32.408Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:34.004Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "382bae9f-b980-4454-af72-c055fabc5d51",
+        "targetId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:34.004Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "D4o/7ei48SBDkByEAJf3j4/JseU=",
+    "timestampUtcMs": "2026-08-13T14:34:32.408Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:34:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:32.408Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:34.028Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "382bae9f-b980-4454-af72-c055fabc5d51",
+        "targetId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:34.028Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "zusGbUs9UGs7Fl8/Oky6reqIWEc=",
+    "timestampUtcMs": "2026-08-13T14:34:32.408Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`startFrom` is the third, optional field on a `ProcessorRecord`:\n\n```typescript\ntype ProcessorRecord = {\n  processor: IProcessor;\n  filter: ProcessorFilter;\n  startFrom?: \"beginning\" | \"current\";\n};\n```\n\nIts semantics are narrower than the name suggests. It is consulted **only when a processor is first created and no cursor row exists yet**:\n\n- `\"beginning\"` (the default) starts the cursor at ordinal 0, so the processor backfills the drive's full history.\n- `\"current\"` starts the cursor at the manager's current ordinal, so the processor sees only operations from now on.\n\nOnce a cursor row exists, `startFrom` is **ignored** \u2014 the persisted cursor wins. Restarting the reactor never re-runs `startFrom`. This is the point most people get wrong: flipping a deployed processor from `\"current\"` to `\"beginning\"` will not backfill it, because its cursor row already exists. To actually replay, you must call `tracked.retry()` (which re-activates and re-runs backfill) or clear the cursor row; changing the declaration alone is inert.\n\nCursors live in the `ProcessorCursor` table keyed by `processorId` (`${factoryId}:${driveId}:${index}`) and survive restarts. On startup the manager rehydrates every cursor and catch-up replays the gap.\n\nThe advance rule has its own subtlety. On each batch the manager filters to operations with `ordinal > lastOrdinal`, applies the filter, calls `onOperations` on the matches, and on success advances `lastOrdinal` to **the maximum ordinal in the batch, including unmatched operations**. The cursor therefore moves forward even when nothing matched \u2014 a narrowly filtered processor does not accumulate an ever-growing backlog of skipped work.\n\nBackfill uses `operationIndex.getSinceOrdinal(lastOrdinal)`, paging through history, filtering each page, calling `onOperations`, advancing and persisting the cursor per page, and following the continuation until exhausted. That path runs in three situations: registering a factory against a drive that already has history, restarting after downtime, and `retry()` on an errored processor.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/05-Processors.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:34:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:32.408Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:34.052Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "382bae9f-b980-4454-af72-c055fabc5d51",
+        "targetId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:34.052Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "TbrTxnIfrz8BjRyWVsmpgesnOM8=",
+    "timestampUtcMs": "2026-08-13T14:34:32.408Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0c8bf4fa-5320-45f8-9a37-99fca72e1912",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:32.408Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "WJ81Cs1DSbTiHc0sehGXSjWTrD8=",
+    "timestampUtcMs": "2026-08-13T14:34:32.408Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "af564998-3eae-4d4c-b2b6-92ef074248db",
+        "name": "cursors"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:32.408Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Ta5VYsuS/dF5aT5pdlKHT6tX76E=",
+    "timestampUtcMs": "2026-08-13T14:34:33.959Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:32.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:33.959Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "+7LwKeK1j9UGlbmL9DipJA3slAM=",
+    "timestampUtcMs": "2026-08-13T15:53:19.303Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:53:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:19.303Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "faXhn3srMAuqA9ChFvF3kiTx+n4=",
+    "timestampUtcMs": "2026-08-13T15:53:19.303Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "67d00ee9-8c3e-487b-98ea-3ed4a3cbf380",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:53:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:19.303Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "g/3JwJVBqRmtSklPkYBmpToCW9A=",
+    "timestampUtcMs": "2026-08-13T15:53:19.303Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "3ee08cf3-0f5e-4bec-bbb8-d5483a4ad69b",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:53:19.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:19.303Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "G2omcGFLl2x6Snz74EPQxXD7R90=",
+    "timestampUtcMs": "2026-08-13T16:50:32.506Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:50:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:50:32.506Z"
+    }
+  }
+]

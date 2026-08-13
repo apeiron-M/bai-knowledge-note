@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-1328e41a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1328e41a-9d40-49bf-bcec-1784cef7d878",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IAnalyticsStore is the single analytics write and subscribe surface, with one store implementation per execution environment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "eda9946f-4a6a-4e94-b5e7-d6ed4d1399a3",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e0f1c3e5-00b6-409b-9eb3-7dc46e6750c5",
+      "name": "storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d02b15d-57e5-49b4-9cba-c6fc65fa6d42",
+      "name": "portability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Everything that writes analytics goes through one interface, and the environment decides which implementation backs it:\n\n```typescript\nexport interface IAnalyticsStore {\n  clearSeriesBySource(source, cleanUpDimensions?): Promise<number>;\n  clearEmptyAnalyticsDimensions(): Promise<number>;\n  getMatchingSeries(query): Promise<AnalyticsSeries[]>;\n  addSeriesValue(input): Promise<void>;\n  addSeriesValues(inputs): Promise<void>;\n  getDimensions(): Promise<any>;\n  subscribeToSource(source, callback): () => void;\n}\n```\n\nNote what is *not* there: no arbitrary-SQL escape hatch, no wipe method, and no lifecycle. `raw(sql)` and `destroy()` both exist on the concrete classes but neither is declared on the interface, so neither is reachable through an `IAnalyticsStore`-typed reference. `raw(sql)` is on `BrowserAnalyticsStore` *and* `PostgresAnalyticsStore` (the benchmarks and the reactor-api schema bootstrap are its only callers); `KnexAnalyticsStore` has no `raw` at all. `destroy()` just releases the handle \u2014 the browser store closes its PGlite instance, the Knex store destroys its pool \u2014 so wiping data is on you, and in the browser that means deleting the backing IndexedDB database through the standard browser API (`window.indexedDB.deleteDatabase(name)`, which is exactly what `Persistence.test.ts` does).\n\nThe shipped implementations at 6.2.2-dev.45 \u2014 three classes, and only two of them are related:\n\n- **`BrowserAnalyticsStore`** (`@powerhousedao/analytics-engine-browser`) \u2014 `implements IAnalyticsStore` directly, sharing no code with Knex. Runs Postgres-in-WASM via PGlite and talks to it in hand-written parameterised SQL. `BrowserAnalyticsStoreOptions` **requires** a live `pgLite: PGlite | PGliteWorker` instance \u2014 the store does not open the database for you, and there is no `databaseName` option on it (`databaseName` is a prop on reactor-browser's `AnalyticsProvider`, a different layer). `await store.init()` is required; it is idempotent and runs a `create table if not exists` script, so nothing pre-provisions the database. This is what Connect gets from reactor-browser's `createAnalyticsStore({ pgLite })`.\n- **`KnexAnalyticsStore`** (`@powerhousedao/analytics-engine-knex`) \u2014 the shared base for the SQL-builder path, and the base of exactly one subclass. It is not a base for the browser store.\n- **`PostgresAnalyticsStore`** (`@powerhousedao/analytics-engine-pg`) \u2014 `extends KnexAnalyticsStore`, takes a `connectionString` or a ready `knex` instance, registers `pg` type parsers, and assumes an already-initialized schema.\n\nSo \"one per environment\" cuts along the browser/Node line, not along the real-Postgres/embedded-Postgres line. `reactor-api`'s server always constructs `PostgresAnalyticsStore` \u2014 even in local development, where the `knex` instance it is handed is backed by PGlite rather than a Postgres server, and where the server itself runs `initAnalyticsStoreSql` through `knex.raw` first. Both stores can therefore end up on PGlite; what differs is whether the SQL is built by Knex or written by hand.\n\n**Doc drift worth knowing:** the Analytics Engine pages document a `MemoryAnalyticsStore` as the everywhere-compatible default and use it in nearly every example, including the GraphQL integration snippet. `git grep MemoryAnalyticsStore` over `packages/`, `clis/` and `apps/` returns **zero** hits outside the academy docs themselves \u2014 no such class exists in the monorepo any more. `BrowserAnalyticsStore` absorbed the PGlite-in-memory role (the benchmark suite still names its `BrowserAnalyticsStore` variable `memory`). Copying those examples verbatim will not compile. The academy also claims the browser store \"sits on top of `MemoryAnalyticsStore` but adds an IndexedDB plugin\"; in the shipped code there is no layering and no plugin \u2014 persistence is entirely a property of the `PGlite` instance you pass in.\n\nProvenance: drafts `03-Build/04-WorkWithData/_06-Analytics Engine/typescript/{index,memory,browser,pg,compatibility}.md`, which are stale. Interface verified in `packages/shared/analytics/types.ts` (re-exported through `analytics-engine-core`); store set verified in `packages/analytics-engine/{browser,knex,pg}/src/`; environment wiring verified in `apps/connect/src/store/processor-host-module.ts` and `packages/reactor-api/src/server.ts` + `src/utils/db.ts` at 6.2.2-dev.45.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Shipped stores are BrowserAnalyticsStore (PGlite, hand-written SQL) and PostgresAnalyticsStore (extends KnexAnalyticsStore). No MemoryAnalyticsStore exists; the academy still teaches it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "90f31ad0-bb1b-49e1-aa2f-0d3b9dae8499",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:41.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "73199964-8995-4af0-84f9-61e22959450e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

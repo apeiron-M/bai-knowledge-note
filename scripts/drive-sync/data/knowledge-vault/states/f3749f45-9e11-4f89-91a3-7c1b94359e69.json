@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-61521b75-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "61521b75-ffa4-4d01-9630-ff49ba87ab71",
+      "targetTitle": "specification-documents-are-blueprints"
+    },
+    {
+      "id": "lnk-c1b2c7da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c1b2c7da-f7a0-47f7-85a7-ff9f5cfebdc3",
+      "targetTitle": "document-model-driven-architecture-rad"
+    },
+    {
+      "id": "lnk-3810d088-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "3810d088-7a77-42ad-8d53-9fdba4049e71",
+      "targetTitle": "docsync-protocol-is-decentralized-storage-agnostic-and-supports-p2p"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Vetra remote drives enable team collaboration by syncing specifications across developers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fa1f4819-4c48-4cd4-9fc6-efc59c31b984",
+      "name": "vetra-studio",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f25b753a-5c97-4793-afc3-bc501003021f",
+      "name": "collaboration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "63958a09-a88b-4e5f-8f40-0d3c26d1f73d",
+      "name": "remote-drives",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Vetra supports collaborative development through remote drives:\n\n- **Without `--remote-drive`**: `ph vetra` boots a local Vetra Switchboard and creates the drive there (solo development)\n- **With `--remote-drive <url>`**: Connects to a shared remote drive, skipping local switchboard initialization\n\nKey workflows:\n- **Project Owner**: `ph init --remote-drive <url>` -> Create GitHub repo -> Push -> `ph vetra --watch`\n- **Collaborator**: `git clone <repo>` -> `pnpm install` -> `ph vetra --watch`\n\n\u26a0\ufe0f **The collaborator step used to be `ph checkout --remote-drive <url>`, and that command no longer exists as far as the CLI is concerned.** It survives only as `clis/ph-cmd/legacy/commands/checkout.ts`, registered in neither `phCliCommandNames` (`packages/shared/clis/command-names.ts`) nor the `ph` entrypoint's cmd-ts subcommand tree (`clis/ph-cmd/src/commands/ph.ts` \u2192 `init`, `use`, `update`, `setup-globals`, `use-local` + help commands). The `legacy/` directory is excluded from tsconfig and never built or published; the file would not even compile, since it imports a `../utils/package-manager.js` that does not exist. The academy still teaches it in five places across two pages, and `COMMANDS-LEGACY.md` documents it as well \u2014 all stale. There is no replacement command: `ph init --remote-drive` is for *creating* a project bound to a drive, so joining an existing one is the manual clone-and-install shown above.\n\nThe clone works as a substitute for one specific reason: the repo's committed `powerhouse.config.json` already carries the `vetra` block, and `ph vetra`'s `--remote-drive` option has a `defaultValue` that reads `getConfig().vetra?.driveUrl`. So a fresh clone picks up the team's drive with no flags. If the block is missing, hand-edit it in or pass `ph vetra --remote-drive <url>` every time \u2014 nothing in the CLI can write that key after `ph init` (its only two writers are codegen scaffold paths, and `getConfig` is read-only). Note also that only `driveUrl` is ever read back; `driveId` is written and then ignored.\n\nBe aware of a live trap on the owner's side too: if you point `ph init --remote-drive` at a drive that has already been configured with a GitHub URL, `clis/ph-cli/src/utils/validate-remote-drive.ts` prints an error telling you to \"use the checkout command instead\" \u2014 the dead command \u2014 and because `clis/ph-cli/src/services/init.ts` ignores that validation failure, it then reports success and scaffolds a new project regardless.\n\nThe **preview drive** (created with `--watch` / `-w` mode) provides a safe testing environment:\n- The main \"Vetra\" drive syncs with the remote and contains stable configuration\n- The \"Vetra Preview\" drive is local-only for testing document models and editors before syncing\n\nRemote drive configuration is stored in `powerhouse.config.json`:\n```json\n\"vetra\": {\n  \"driveId\": \"bai-specifications\",\n  \"driveUrl\": \"https://switchboard.staging.vetra.io/d/bai-specifications\"\n}\n```\n\nIts type is `vetra?: { driveId: string; driveUrl: string }` (`packages/shared/clis/types.ts`), and the JSON schema marks both fields required with `additionalProperties: false`.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "WORKFLOW",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Teams share a remote Vetra drive via --remote-drive. Collaborators clone and run ph vetra, which reads the config; ph checkout is legacy. Preview drives test locally first.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "14d2d824-e1c2-4e55-90af-bb2e9522c6ad",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:56.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "341cd537-20eb-42bb-9ed2-0fc1864d5e9d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

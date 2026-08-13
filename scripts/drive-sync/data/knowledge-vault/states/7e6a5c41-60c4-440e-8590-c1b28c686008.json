@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e626cd7c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e626cd7c-a6d1-43d8-b951-492f3d1c4113",
+      "targetTitle": "style-imports-must-be-in-styles-css"
+    },
+    {
+      "id": "lnk-0d9ef441-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0d9ef441-278a-4eaa-ab59-d7717271a353",
+      "targetTitle": "customization-layer-enables-organization-specific-deployments"
+    },
+    {
+      "id": "lnk-e5fd24ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5fd24ec-8f92-4f9d-b3c6-0b675a1f367d",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-428c5cfe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "428c5cfe-6a37-4cb5-ad7f-f31762408a4a",
+      "targetTitle": "usephtoast-replaces-direct-toast-library-imports-in-editors"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect wraps editors in containers with data-editor and data-document-type attributes enabling scoped CSS without affecting other editors",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9ce30d1f-2016-4795-bc86-69d0d36e88b6",
+      "name": "css",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79cedbeb-cb73-4c42-9046-125da947c1ff",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e49e8a14-9a3e-4744-8cfc-ffa0f9cdf9bc",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e54e179b-d889-4356-824f-95b91d3bfa6d",
+      "name": "styling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Connect renders editors inside `#document-editor-container` (outer, `flex-1`) and `#document-editor-context` (inner, `relative h-full`). Both carry `data-document-type` attributes; the inner also has `data-editor`. To scope styles to one editor: `#document-editor-context[data-editor=\"my-editor-id\"] { ... }`. The `data-editor` value comes from the `id` field in the editor module config. Targeting container IDs without data-attribute scoping affects ALL editors. Style imports must go in `styles.css` (not `.tsx` files) for production builds, because `tailwindcss/cli` only processes file imports.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "CSS selectors like #document-editor-context[data-editor='my-editor'] scope styles to a specific editor.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e5d43a45-7de7-4a9f-9df3-4dd7aa4d1087",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:51.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fdfe8dff-10fb-4203-bc27-d8d590bfbeba",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:51.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

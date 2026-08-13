@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-4324b1ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-48db8c7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+      "targetTitle": "authorization-uses-layered-model"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Custom subgraph resolvers are unguarded by default and must enforce authorization themselves",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fb27176f-48c0-4fb2-b28a-72ed67dabdc4",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79b762c9-5818-476d-b1e9-aedaae2ae83b",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "93848d6c-ec9e-4a16-94ba-e03f82659575",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0112b4c5-6866-494f-83ee-683f93ffc3d3",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The gap\n\n`ph generate subgraph --name <name>` scaffolds resolvers that call the reactor **directly, with no permission check**. Nothing in the generated code consults the authorization service.\n\nThe leak is twofold: the resolver returns document contents the caller may not be entitled to, and \u2014 because a missing document and a forbidden document are indistinguishable in the response \u2014 it also leaks the *existence* of protected documents.\n\n## What to do instead\n\nUse the enforcement helpers `BaseSubgraph` exposes: `assertCanRead`, `assertCanWrite`, `assertCanExecuteOperation`, `assertCanCreate` (all throw Forbidden), plus the non-throwing `canReadDocument` for filtering lists.\n\nAlways re-fetch through `AuthorizedDocumentHandle.fetchIdentifier` rather than the caller's raw identifier \u2014 permission rows key on canonical ids, so reusing a caller-supplied slug after an assert lets an attacker alias one document's slug onto another.\n\n## Source\n\n`apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md` (Powerhouse v6.2.2-dev.45)",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:03:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ph generate subgraph scaffolds resolvers that call the reactor directly with no permission check, leaking ids and the existence of protected documents.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ecd76123-5729-4812-b3e6-5022b51d4223",
+      "actor": "claude",
+      "comment": "Verified against powerhouse v6.2.2-dev.45",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:49:58.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "819b4a39-f12b-4962-b545-81722166b17a",
+      "actor": "liberuum",
+      "comment": "Canonical at powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:49:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

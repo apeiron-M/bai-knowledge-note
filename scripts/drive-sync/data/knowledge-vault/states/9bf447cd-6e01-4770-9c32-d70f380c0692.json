@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-1ff211ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1ff211ec-a668-4efb-b55c-799a5bc4e8be",
+      "targetTitle": "renown-sdk-decentralized-identity-auth"
+    },
+    {
+      "id": "lnk-2aa55f5b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2aa55f5b-f3a3-4195-88de-3452a82c2dd2",
+      "targetTitle": "cli-identity-did-key-ethereum-delegation"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Server-side Renown sessions use RENOWN_SESSION_COOKIE plus verifyRenownSession in a Data Access Layer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "98904ee5-3220-4e78-8c4a-596d4f115fe9",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "401ed383-6ef4-4775-949e-e9b166152ff5",
+      "name": "SSR",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b1d3d609-754e-4d15-86ef-e6bad7631a81",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8f77db4b-ef13-490f-bea5-341b8001cbbc",
+      "name": "authentication",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The flow\n\n**1. On login** the client mints a bearer token (`renown.getBearerToken()`) and stores it \u2014 with a `RenownSessionProfile` display hint (`name`/`avatar` plus `documentId`/`username`/`userImage`) \u2014 in an **HttpOnly cookie**. The name is exported as `RENOWN_SESSION_COOKIE` and the value is built with `serializeRenownSessionCookie`. `RenownProvider`'s session-cookie sync does this automatically when given a `session`. Type the route handler with the exported `RenownSessionCookie` rather than redeclaring the payload shape.\n\n**2. A Data Access Layer** reads the cookie and calls `verifyRenownSession`, memoized per request:\n\n```typescript\nimport { RENOWN_SESSION_COOKIE, verifyRenownSession } from \"@renown/sdk/node\";\n\nconst cookie = (await cookies()).get(RENOWN_SESSION_COOKIE)?.value;\nreturn (await verifyRenownSession(cookie, { switchboardUrl: SWITCHBOARD_URL })) ?? null;\n```\n\n## What verification actually checks\n\nBy default `verifyRenownSession` verifies the **JWT only** \u2014 signature and expiry \u2014 and merges the display hint into `user` as *unverified, display-only* data, rebuilding `user.ens` and, when `documentId` is present, `user.profile`.\n\nPass **`verifyCredential: true`** to also re-check the credential against the Switchboard, so a **revoked or expired credential is rejected**. It defaults to `false`, which is token-only and does no network call. That default is the gotcha: a revoked credential still presents a valid, unexpired JWT, so the default path keeps admitting a user whose credential has been pulled until the token itself expires.\n\n## The one thing never to use for access control\n\n`readSessionClaims(cookieValue)` gives a cheap, **signature-free** decode. It is for optimistic checks only \u2014 an edge redirect, for instance. Never trust it for access control: an attacker can author any claims they like in a cookie they control, and a signature-free decode will happily return them.\n\n_Source: apps/academy/docs/academy/04-Reference/06-Authorization/renown-sdk/01-Authentication.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "verifyRenownSession checks JWT signature and expiry only by default; pass verifyCredential true to reject revoked credentials. readSessionClaims is never valid for access control.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ed476f13-0dfa-4b36-abb5-510423a393b4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8dcdfd77-6c96-467b-a3fb-26b19a35502b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

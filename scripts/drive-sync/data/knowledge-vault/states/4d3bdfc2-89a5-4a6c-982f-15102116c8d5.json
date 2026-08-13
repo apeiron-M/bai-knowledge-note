@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a4235bb5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4235bb5-ea05-4c05-9d34-9b2244e44be7",
+      "targetTitle": "editors-use-the-modern-react-hooks-pattern-from-reactor-browser"
+    },
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-ed65d30e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed65d30e-61b0-431d-8162-183dc8c530d3",
+      "targetTitle": "editor-hooks-connect-react-to-documents"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Editors reach the Reactor only through Connect's React hooks \u2014 you never construct a Reactor inside an editor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e9f1d019-f721-4543-ad81-fac54ca06ce0",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "351e447d-b291-45c5-9694-17f3b6756c6d",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c2301000-280f-4cc7-b88c-5f177fe58787",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "There is exactly one Reactor per Connect session, and the editor did not create it. Connect boots first: it initialises a Reactor with PGlite storage in IndexedDB, loads your installed packages, and exposes the engine through React hooks. By the time an editor mounts, the Reactor already exists and is already holding the session's documents.\n\n## The rule\n\nEvery editor reaches the Reactor through those hooks. You never construct a Reactor yourself inside an editor.\n\n## Why the temptation is a trap\n\nThe Reactor is a plain npm package with a public builder, so instantiating one inside a component *works* in the narrow sense of not throwing. What it does is create a second engine with its own storage handle, its own document set, and its own sync state, unknown to the one Connect is running. The editor would then be reading and writing a document nobody else can see: the drive browser would not list it, the toolbar's history would not show it, and sync would not carry it. Nothing fails loudly \u2014 the writes simply land somewhere the rest of the host is not looking.\n\n## The mental model\n\nOwnership is the host's, and it is not shared. Treat the Reactor as ambient infrastructure that the surrounding host supplies, the way a component treats a React context it consumes but does not provide. The hooks are not a convenience wrapper over a constructor you could have called yourself; they are the only sanctioned handle, precisely because there is only one engine to hand out.\n\n## In practice\n\nTake `[document, dispatch]` from the generated hook for your document model and work with that. If you find yourself wanting a Reactor instance \u2014 to reach a second document, to query across a drive, to inspect sync \u2014 there is a hook for it. Reaching for the constructor is the signal that you are looking for the wrong hook, not that you need your own engine.\n\n_Source: apps/academy/docs/academy/02-Learn/02-architecture/02-host-applications.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect initialises the Reactor at boot, loads installed packages, and exposes it through hooks. Editor code has no business instantiating one.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dfadcb66-b60b-440b-9c89-31f175b27348",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4d7a1757-c5e8-4496-a290-75beb30e6a99",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

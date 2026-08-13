@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-44526c84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44526c84-c188-45ed-9472-51e84e11bfd0",
+      "targetTitle": "connect-is-host-application"
+    },
+    {
+      "id": "lnk-1bd8cea5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1bd8cea5-efef-4028-b116-9d63e17711e2",
+      "targetTitle": "powerhouse-stack-feature-surface"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect ships as a Progressive Web App whose precaching service worker keeps the app shell available offline",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ddbf9dad-16c9-4e70-8640-ab15348ab5bd",
+      "name": "pwa",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d043fe9-768e-42c3-a526-bdfee2ff75b4",
+      "name": "offline",
+      "topicDocumentId": null
+    },
+    {
+      "id": "44bb69ef-4dff-4d9d-b327-1a6673cf48e7",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Installable, and offline by default\n\nConnect is a PWA: users can install it, and a precaching **service worker** keeps the app shell available offline \u2014 along with its in-browser database assets and registry-loaded editors. It is built on `vite-plugin-pwa` and Workbox, configured entirely through `powerhouse.config.json` rather than a separate PWA config file.\n\nOffline support is on by default via `connect.app.offline`:\n\n```bash\nph connect config connect.app.offline false\nph connect build --json '{\"app\":{\"offline\":false}}'\n```\n\n## Three behaviours worth knowing\n\n**The worker is production-only.** During local development it is always disabled regardless of `connect.app.offline`, so hot-reload is never intercepted by a cache. A caching bug you cannot reproduce in `ph connect studio` is expected.\n\n**Disabling is not a no-op \u2014 it emits a self-destroying worker.** Any worker installed by an earlier build unregisters itself and clears its caches on the browser's next update check. That matters because a service worker outlives the deploy that installed it: without the tombstone, users who visited the offline-enabled build would keep serving stale assets forever.\n\n**Workbox runs in `injectManifest` mode with a hand-written worker.** Connect owns the worker source; your `globPatterns` feed the injected precache list, and your `runtimeCaching` rules are registered by that worker *after* its built-ins. Workbox is first-match-wins, and the built-ins (Google Fonts, the `/-/cdn/` registry assets, `powerhouse.config.json`) are registered first \u2014 so custom rules add coverage but cannot override a built-in rule for the same URL. A `urlPattern` is either a verbatim string or `{ source, flags }` rebuilt into a `RegExp`; function patterns are not supported. For `NetworkFirst`, set `options.networkTimeoutSeconds` or a slow network stalls instead of falling back to cache.\n\n`connect.pwa` is validated at build time and only applies when `offline` is `true`; an unknown field, bad file handler or non-compiling regex fails `ph connect build` naming the offending field. It is build-time only \u2014 set it with `ph connect build`, not `ph connect config`, which writes the file but cannot rebuild the worker.\n\n_Source: `apps/academy/docs/academy/03-Build/05-Launch/06-ConfigurePWA.md`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Controlled by connect.app.offline (default true), built on vite-plugin-pwa and Workbox injectManifest. Production-only; disabling emits a self-destroying worker.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0312ae12-9e7c-4af1-b4ca-15703912eb2f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:30.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e1910a6b-e662-49ba-bac3-2f9116af5913",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:30.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

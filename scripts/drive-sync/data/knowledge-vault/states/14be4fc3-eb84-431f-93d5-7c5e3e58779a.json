@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-48db8c7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+      "targetTitle": "authorization-uses-layered-model"
+    },
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-6159609c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6159609c-0a13-4d16-845f-0afd965d73e2",
+      "targetTitle": "moc-authorization-and-identity"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "No React hooks exist for authorization; permission-aware UI must query the auth subgraph directly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e2e5c650-720e-4209-8cf0-125cd0e76580",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3707058e-d429-4cc3-8d03-e41ab4537e19",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "14800ac3-e214-404f-96c3-b464922cc4b5",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The gap\n\nThe authorization system is fully implemented in the Reactor API, with GraphQL queries and mutations for roles, document permissions, groups and operation permissions. **There are no React hooks to consume it.** Nothing in `@powerhousedao/reactor-browser` exposes the current user's role, a document's permission level, or a grant/revoke mutation.\n\nA permission-aware UI therefore has to query the `auth` subgraph directly \u2014 `client.request` or a generated subgraph SDK \u2014 and manage the loading and caching itself, with whatever the app already uses for server state.\n\n## Why this is easy to get wrong\n\nThere is a document in the academy repo, `_AuthorizationHooksSpecification.md`, that reads like an API reference: it specifies `useCurrentUser`, `useDocumentPermission`, `useCanRead`, `useCanWrite`, `useGrantPermission`, `useRevokePermission` and `useSelectedDocumentWithPermission`, with signatures and usage examples.\n\n**None of these hooks exist.** The document carries a banner on its third line:\n\n> WARNING: AI Exploration for Discussion with the team. Not for live publication.\n\nIts leading underscore excludes it from the published site, and its own \"Current State\" section says plainly that the hooks are the *gap*, not the shipped API. A grep across `packages/` in the monorepo finds no definition or export of any of those names.\n\nSo the failure mode is specific: an agent or developer who finds that file \u2014 by filename search, by grep, or by reading the authorization folder top to bottom \u2014 will write `const canWrite = useCanWrite(documentId)` in good faith and get an unresolved import.\n\n## What to do instead\n\nTreat the specification as a design sketch of what *should* exist, not a contract. For today's code, query the auth subgraph, and gate UI on the results the same way you would gate on any other server state. Do not build against these names until they appear in a published reference and in the package's exports.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/_AuthorizationHooksSpecification.md, cross-checked against packages/reactor-browser (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The authorization-hooks specification is an unpublished exploration. useCanWrite, useDocumentPermission and friends do NOT exist in the shipped reactor-browser API.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ddba0daa-3828-4359-a5b2-23141e4aae01",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:54.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b4596946-8047-4749-a07f-841c410eb5fb",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:54.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-831770e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "831770e6-9bf6-4b23-9fc2-dc0fdac17a5d",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-a025fc82-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a025fc82-56de-48a9-81e7-f44e3cb489b1",
+      "targetTitle": "document-toolbar"
+    },
+    {
+      "id": "lnk-2b95f207-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2b95f207-12de-497a-a98f-ca117cad5919",
+      "targetTitle": "DocumentToolbar has three independent layers of styling control"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "DocumentToolbar arranges its built-in controls into three named slots, and source ships an eighth control the academy omits",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d9e66265-a6a0-4bd8-a840-e135d1d37fe2",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "85fb3494-cc99-49ff-bd99-ee590c668429",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11e2aac7-6cdd-4ca9-ae04-5497a8092094",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`DocumentToolbar` does not lay its controls out as one flat row. `defaultControlSlots` in `packages/design-system/src/connect/components/document-toolbar/constants.ts` splits them into three named groups, and `ControlSlot` is the literal union `\"first\" | \"second\" | \"third\"`:\n\n```ts\nexport const defaultControlSlots = {\n  first: [\"undo\", \"redo\", \"download\"],   // primary document actions\n  second: [\"name\"],                       // document identity\n  third: [\"update\", \"history\", \"switchboard\", \"close\"], // secondary actions\n} as const;\n```\n\nThe slot names are the addressing scheme for `customControls` \u2014 you target a group, never an index \u2014 and `documentToolbarControls` (the source of the `DocumentToolbarControlName` union that `enabledControls` / `disabledControls` accept) is derived by spreading the three slots in order, so slot membership also fixes render order.\n\n**The eighth control.** Source has **eight** built-in controls, not seven. The `third` slot leads with `update`, mapped in `defaultControlComponents` to `ToolbarUpgradeButton`. The academy page (`00-DocumentToolbar.mdx`) lists only `[\"undo\", \"redo\", \"download\", \"name\", \"history\", \"switchboard\", \"close\"]` and shows `third` as `[\"history\", \"switchboard\", \"close\"]` \u2014 the doc has not been updated for the upgrade control, so treat source as authoritative here.\n\n`ToolbarUpgradeButton` is conditional rather than always-on, which is presumably why it went unnoticed: it calls `useDocumentVersionStatus(document)` and returns `null` unless the status is `\"upgrade-available\"` **and** `canUpgrade` is true. When it does render, it shows an `Update available` label and its click handler fires `showPHModal({ type: \"confirmDocumentUpgrade\", documentId })`.\n\nOne rough edge: unlike every other built-in button, `ToolbarUpgradeButton` is **not** re-exported from the component's `index.ts`. So `update` is overridable through `componentOverrides` but the default implementation cannot be imported and wrapped the way `ToolbarDownloadButton` can.\n\n_Source: packages/design-system/src/connect/components/document-toolbar/{constants.ts,types.ts,toolbar-button.tsx,index.ts}, cross-checked against apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/06-DocumentTools/00-DocumentToolbar.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Slots are first [undo, redo, download], second [name], third [update, history, switchboard, close]. The academy lists only seven controls and drops `update` from the third slot.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bb70a7d9-19cf-4dbb-94f6-7f8adf927f58",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2157b316-630b-45ac-8aae-91802ad3a1f7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

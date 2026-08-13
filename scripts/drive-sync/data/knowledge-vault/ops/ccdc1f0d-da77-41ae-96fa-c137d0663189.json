@@ -1,0 +1,277 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:27.345Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "stamp-prevophash-prevopindex-before-signing",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ccdc1f0d-da77-41ae-96fa-c137d0663189",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:27.345Z"
+        },
+        "version": 0,
+        "documentId": "ccdc1f0d-da77-41ae-96fa-c137d0663189",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:27.345Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "FiLBZp/UyKzInIEgipDk/GSp3zE=",
+    "timestampUtcMs": "2026-08-13T14:33:27.944Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The light client stamps prevOpHash and prevOpIndex onto action.context before signing",
+        "updatedAt": "2026-08-13T14:33:27.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:27.944Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:27.345Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ccdc1f0d-da77-41ae-96fa-c137d0663189",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:27.345Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "5wTQahPUEZ8wKxBqcUjrjNCw5Zc=",
+    "timestampUtcMs": "2026-08-13T14:33:27.944Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:27.000Z",
+        "description": "prevOpHash = hashDocumentStateForScope(document, scope), prevOpIndex = header.revision[scope] - 1, so an empty scope stamps -1. Order matters: stamp, then sign."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:27.944Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:29.106Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ccdc1f0d-da77-41ae-96fa-c137d0663189",
+        "targetId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.106Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "9oBaLVCRPBJSNcwvLLvcQDGASb0=",
+    "timestampUtcMs": "2026-08-13T14:33:27.944Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T14:33:27.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:27.944Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "XtHBJh3c8H1YLClKXHJTWyxB8E0=",
+    "timestampUtcMs": "2026-08-13T14:33:27.944Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The two stamped fields\n\nBefore a single action is signed, the light client writes two fields onto `action.context`:\n\n- **`prevOpHash`** = `hashDocumentStateForScope(document, scope)` \u2014 the hash of the state the action applies to. For a document at head that is the hash of the last operation in the scope, which the read path cannot fetch, so it is recomputed from the state instead.\n- **`prevOpIndex`** = `header.revision[scope] - 1`. Revisions count operations and indices are zero-based, so an **empty scope stamps `-1`**, which matches what the remote controller records.\n\n```typescript\nexport function stampAction(action: Action, document: PHDocument): Action {\n  const revision = document.header.revision[action.scope] ?? 0;\n  return {\n    ...action,\n    context: {\n      ...action.context,\n      prevOpHash: hashDocumentStateForScope(document, action.scope),\n      prevOpIndex: revision - 1,\n    },\n  };\n}\n```\n\n## Order is load-bearing\n\nStamping must run **before** signing, because the signer reads `context.prevOpHash` off the action as part of what it signs. Reversing the order does not fail loudly \u2014 it produces a signature over an action that lacks the fields, so the signature no longer binds the action to its position in the log.\n\nThis is the mechanism behind the hash chain: each signed action commits not just to its own payload but to the state it was written against, which is what makes the operation history tamper-evident rather than merely attributable.\n\n## The related trap\n\nThe server **does not validate `prevOpHash`**. A wrong hash is accepted and the write succeeds. Conformance therefore has to be asserted in tests; it cannot be inferred from a mutation returning successfully.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md, confirmed against packages/reactor-browser/src/graphql-client/signing.ts (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:27.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:27.944Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "a79+pp0XOZloexGOf1Xl1I1x5UM=",
+    "timestampUtcMs": "2026-08-13T14:33:27.944Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "32f6180f-49ac-4c77-8713-62b8dcba6a31",
+        "name": "signing"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:27.944Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Bu0YiOrfZwu1gnOQcuAzdH/gJo0=",
+    "timestampUtcMs": "2026-08-13T14:33:27.944Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "078b9d0b-9c4b-4648-a36f-eb82af0d81e0",
+        "name": "reactor-browser"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:27.944Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "gG/QrISEPKRWteBPgJHJxKyBBTo=",
+    "timestampUtcMs": "2026-08-13T14:33:27.944Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3bf28523-58e9-43c4-a58a-afdd25f32f18",
+        "name": "operations"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:27.944Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "2wepbBqcTTh9/kLIyOtRConU2Xo=",
+    "timestampUtcMs": "2026-08-13T14:33:29.062Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:27.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:29.062Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "y6UOenXU60wbYNJMMPESHK7SWYo=",
+    "timestampUtcMs": "2026-08-13T15:58:35.717Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:58:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:35.717Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "PI6d1tOc9GV34uzsnKPe/13Vc5k=",
+    "timestampUtcMs": "2026-08-13T15:58:35.717Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "97d95348-0764-41df-b122-74dc1835aac0",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:58:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:35.717Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "W17HJenq1LelQ6/IRp0lDq1KgaQ=",
+    "timestampUtcMs": "2026-08-13T15:58:35.717Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "b1d966e1-c31d-45e8-8ad9-58faa79967b2",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:58:35.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:58:35.717Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "eavi2KWrzcOMI6PW34wzHzMt7LM=",
+    "timestampUtcMs": "2026-08-13T16:56:56.472Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:56:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:56:56.472Z"
+    }
+  }
+]

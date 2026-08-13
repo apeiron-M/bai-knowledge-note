@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:12.808Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "swarm-mutable-stamps-for-feeds",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "9601a3c5-9b83-4776-8aa1-afd429b2db6a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:22:12.808Z"
+        },
+        "version": 0,
+        "documentId": "9601a3c5-9b83-4776-8aa1-afd429b2db6a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:12.808Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Io6bHCLOem7ckTjodBrM2zulJQE=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Feed-backing stamps should be mutable to avoid bucket exhaustion from frequent updates",
+        "updatedAt": "2026-08-13T13:23:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:12.808Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "9601a3c5-9b83-4776-8aa1-afd429b2db6a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:12.808Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "m9dvS5TeQA0cCxIJq/CBO62fpSI=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:32.000Z",
+        "description": "Immutable stamps waste a new bucket slot on every feed update. Creating stamps with immutableFlag: false reuses slots and prevents exhaustion."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:30.949Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9601a3c5-9b83-4776-8aa1-afd429b2db6a",
+        "targetId": "0d11a218-6de8-4a2a-bf10-4dce16f6d993",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:30.949Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "wIthBnK6GNSW7HnsSiGo1fudw5k=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-13T13:23:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:30.974Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9601a3c5-9b83-4776-8aa1-afd429b2db6a",
+        "targetId": "6359019e-ba90-4ec2-b1f1-0bd2beb89443",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:30.974Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "whKMvcGHM5dU4TnFehn1jMBxn2Y=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\n\nStamps used to back **feed writes** (manifests) should be created **mutable** \u2014 immutable stamps waste one bucket slot per feed update and will exhaust long before the nominal capacity.\n\n## Evidence\n\n- Each feed update is a new SOC \u2192 a new chunk that consumes a bucket slot under immutable semantics\n- With immutable batches, the batch fails when any single bucket fills (non-uniform distribution means this happens well before 2^depth chunks)\n- Mutable batches replace the oldest chunk in an overflowing bucket \u2014 old feed indices are garbage-collected automatically, keeping capacity stable\n\n## How\n\n```js\nbee.createPostageBatch(amount, depth, { immutableFlag: false })\n```\n\n## Why it matters\n\nOur adapter writes frequent manifest updates (every 3-second debounce flush). Running these on immutable stamps is a time-bomb: the batch eventually fails on hot-bucket exhaustion long before its TTL expires. Mutable stamps are the correct primitive for this workload.\n",
+        "updatedAt": "2026-08-13T13:23:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:31.247Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9601a3c5-9b83-4776-8aa1-afd429b2db6a",
+        "targetId": "44f72593-fa3f-4dcf-b983-f72378806e47",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:31.247Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "0Ua4mkKucB+PRpvh7qioTnMPlVY=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:24:54.753Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:31.279Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "9601a3c5-9b83-4776-8aa1-afd429b2db6a",
+        "targetId": "27133f8f-af50-4b6f-8880-074358c494c7",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:31.279Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "2h5o69ZKc/6g/zLFukNDNCYa5Bk=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "705df5d6-2054-4b11-ab5d-1f7c179f623d",
+        "name": "postage-stamps",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "puegZIeTKSo4tB/iF9oEcj7K0t8=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "abb2ab12-50a9-4471-8792-4aff10fe950b",
+        "name": "swarm-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "bUWp3+/x4iJfRijuIAxOcL5r6xA=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b125ea3a-28ae-4680-b35e-4d7f616d8eaf",
+        "name": "adapter",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "a8pI+jhX5y4+SgH1g2/nJJxYenE=",
+    "timestampUtcMs": "2026-08-13T13:23:32.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3c3b670d-04c6-4575-90d7-d4c3a3b88b2b",
+        "name": "optimization",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:32.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "2CEq10QoYAAXkFwJiQo13odhIEk=",
+    "timestampUtcMs": "2026-08-13T15:56:47.408Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:47.408Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "tWWodGj5RvDPX47tWicmlo0ksPI=",
+    "timestampUtcMs": "2026-08-13T15:56:47.408Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "00caf8be-d6e8-44f3-ad09-eb1f753ea376",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:47.408Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "J5tXe3bMVTaS45RoykwCrm/oCQs=",
+    "timestampUtcMs": "2026-08-13T15:56:47.408Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "43fdf608-817a-4eaa-9e22-c11dd14ad10c",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:47.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:47.408Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "Icu5NFZMKadsiRMM9oiz/chVRm8=",
+    "timestampUtcMs": "2026-08-13T16:54:42.543Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:42.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:42.543Z"
+    }
+  }
+]

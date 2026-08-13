@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-ee900e65-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee900e65-175e-4152-9ad5-18db168c583c",
+      "targetTitle": "v6-reactor-subgraph-replaces-legacy-endpoints"
+    },
+    {
+      "id": "lnk-1adbb770-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbb770-4b64-4070-b6fc-8e57fcce92d8",
+      "targetTitle": "project-structure-four-directories"
+    },
+    {
+      "id": "lnk-f865f5ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f865f5ea-0ebb-458b-adf6-f981cc8c307a",
+      "targetTitle": "vetra-studio-is-builder-environment"
+    },
+    {
+      "id": "lnk-0eb0b43b-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "0eb0b43b-c44b-4c9f-929b-378e56ee5975",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Subgraphs are modular GraphQL components that extend document models with custom queries, external integrations, and cross-document logic",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "40c258b2-ec90-4fec-b2fd-c047a1c72ffc",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2fb0dbae-6160-4a53-9949-64ba5ffa73d9",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a110fe99-345e-4d14-9f1c-8d42ad1ec1c0",
+      "name": "supergraph",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5fda63b2-c04a-4cae-b945-9575c6ab5a86",
+      "name": "CQRS",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A subgraph is an independent GraphQL service with its own schema and resolvers. Subgraphs can retrieve data from the Reactor (via `subgraph.reactorClient`), relational data stores, or analytics stores. They consist of a schema (GraphQL types/queries/mutations), resolvers (data fetching logic), and context fields (auth, external sources). Generated via `ph generate subgraph --name <name>`, they auto-register at `/graphql/<name>`. The supergraph gateway at `/graphql` combines all subgraphs (except the drive subgraph at `/d/:driveId`) into a single endpoint, enabling federated queries across document models and custom subgraphs in one request.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Generated with `ph generate subgraph --name <name>`; consist of schema + resolvers; auto-registered in the supergraph gateway.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "17313e14-aa5f-42df-b447-b7ef6d519d8d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:29.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6f54f595-4077-455a-8301-cd0a5c7f0e0b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:29.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

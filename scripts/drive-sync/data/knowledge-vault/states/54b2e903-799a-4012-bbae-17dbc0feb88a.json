@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a8b2713f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-3f8ca25d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    },
+    {
+      "id": "lnk-1af57e9d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Processors mutate documents only through dispatch.execute(), which submits a job and returns immediately",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "81abba52-bc82-4f08-ab86-92f29fde93d4",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8824489a-3358-4b18-ac5b-35f9ff6e7ae2",
+      "name": "dispatch",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb0a790d-8b7d-4025-84fd-b7f6dd78d074",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A processor is supposed to run a strictly one-way data flow: operations arrive through `onOperations`, and any resulting mutation leaves through `dispatch`. The `dispatch` object is handed to the factory on `IProcessorHostModule`, and its only method is `execute`:\n\n```typescript\ninterface IProcessorDispatch {\n  execute(\n    docId: string,\n    branch: string,\n    actions: Action[],\n    signal?: AbortSignal,\n    meta?: Record<string, unknown>,\n  ): Promise<ProcessorDispatchResult>;\n}\n\ntype ProcessorDispatchResult = {\n  id: string;      // job ID\n  status: string;  // job status at time of submission\n};\n```\n\nUnder the hood `dispatch.execute()` calls `reactorClient.executeAsync()`. The returned `status` is the status *at submission*, so awaiting the promise tells you the job was accepted, never that it landed. The canonical shape is a processor that watches for a state transition and fires an action at a different document:\n\n```typescript\nif (operation.action.type === \"SET_STATUS\" &&\n    operation.action.input?.status === \"approved\") {\n  await this.dispatch.execute(this.paymentDocId, \"main\", [\n    { type: \"CREATE_PAYMENT\",\n      input: { invoiceId: context.documentId, amount: operation.action.input.amount },\n      scope: \"global\" },\n  ]);\n}\n```\n\nThe processor dispatches and moves on. If it needs to observe the result, the correct move is to widen its own `ProcessorFilter` to include the target document type so the resulting operations come back through a later `onOperations` call \u2014 not to await the outcome. That constraint is what keeps a processor from waiting on work that depends on the processor itself finishing.\n\nBecause backfill and restart-gap replay can re-deliver the same operations, a dispatching processor also wants an idempotence guard: check the target document's state (or a dedup key in it) before dispatching, so a replayed batch does not double-fire the side action.\n\nProvenance: academy `03-Build/04-WorkWithData/05-ProcessorBestPractices.md` (published), confirmed against `packages/shared/processors/types.ts` and `apps/connect/src/store/processor-host-module.ts` at monorepo 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "IProcessorDispatch.execute(docId, branch, actions, signal?, meta?) wraps reactorClient.executeAsync() and returns the job id and status at submission time, not at completion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2d81b9af-8de0-43e7-913f-6684000665fa",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:12.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9488d30d-8f89-46c1-9224-0f34e3712e00",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:12.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

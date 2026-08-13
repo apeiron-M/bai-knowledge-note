@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ff6a1433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ff6a1433-a4d6-4b53-a147-daefe1c8f0f5",
+      "targetTitle": "host-applications-are-empty-shells-gaining-functionality-through-plugins"
+    },
+    {
+      "id": "lnk-1bd8cea5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1bd8cea5-efef-4028-b116-9d63e17711e2",
+      "targetTitle": "powerhouse-stack-feature-surface"
+    },
+    {
+      "id": "lnk-cad7d23d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cad7d23d-3a7b-442a-84b8-3570c0e6c8e2",
+      "targetTitle": "powerhouse-three-layer-architecture"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The same document model runs unchanged in a browser host and a headless server host because the host owns the runtime",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c8bb6bbe-fe55-45b3-b53f-01ff79382e59",
+      "name": "host-applications",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b2070c23-4dce-4f39-bcb5-21fe9190249c",
+      "name": "document-model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7c249fda-1c37-454d-b18b-043abd17b253",
+      "name": "portability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A document model is a schema plus reducers. Nothing in it names a database, a transport, a DOM, or a credential. That absence is deliberate, and it is what lets one package run in a browser and on a headless server with no per-host variant.\n\n## Where the difference lives instead\n\nEverything environment-specific is the host's, not the model's:\n\n- **Connect** renders the model's editor components and signs actions with the user's identity. It supplies the DOM, the modals, the drive browser.\n- **Switchboard** exposes the same documents over GraphQL and MCP so agents, back-ends, and integrations reach them without a browser, and it runs processors server-side.\n\nBoth embed a Reactor. Both feed the same reducers. The model, as the Academy puts it, \"doesn't know which host it's in, and it doesn't need to.\"\n\n## Why it matters\n\nThis is the practical payoff of keeping the Reactor a plain library rather than a service. Because the host owns the runtime, you get to choose the runtime \u2014 and you can have more than one at the same time. A finance ledger written once is simultaneously an offline-capable browser app and an API-addressable server resource, without a second implementation to keep in sync.\n\n## The mental model\n\nThink of the model as a cartridge and hosts as consoles. The cartridge carries logic and shape; the console supplies power, display, and controllers. Asking \"which host is this model for?\" is the wrong question \u2014 it is a category error, like asking which screen a function is for.\n\n## The design pressure it creates\n\nPortability only holds if you honour the boundary. A reducer that reaches for `window`, a wall clock, or a network call quietly binds the model to one runtime and breaks the property. That is the deeper reason reducers must be pure: purity is not fastidiousness, it is what keeps the cartridge playable on every console.\n\n_Source: apps/academy/docs/academy/02-Learn/02-architecture/02-host-applications.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect renders the editor and signs with the user's identity; Switchboard exposes the same document over an API and runs processors. The model never learns which host it is in.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fb6f7e21-6b4a-4a74-8b12-c0764c53e30f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b1c8afd1-abf8-4ddf-83ac-aa8bc7a2a390",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

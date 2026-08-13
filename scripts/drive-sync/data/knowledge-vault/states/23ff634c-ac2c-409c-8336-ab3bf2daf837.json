@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-a8b2713f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-c11dcad5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c11dcad5-69d6-4730-a59c-fa2820e8c0a0",
+      "targetTitle": "relational-db-processor-base-class"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IProcessorHostModule bundles every processor-facing API into the factory's outer parameter",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "665379a3-42f8-437c-b6f5-7403528c8ab1",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39ec45c2-dbd6-43ab-a31d-4732d58e0058",
+      "name": "factory-pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d2027c54-bbbe-42a4-9417-54929805a7d8",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A processor factory is a curried pair of functions. The **outer** function receives `IProcessorHostModule` and is called once, at host initialization; the **inner** function receives a `PHDocumentHeader` and is called once per drive. Everything a processor is allowed to touch from the outside world arrives through that outer parameter:\n\n```typescript\ninterface IProcessorHostModule {\n  analyticsStore: IAnalyticsStore;\n  relationalDb: IRelationalDb;\n  processorApp: ProcessorApp;      // \"connect\" | \"switchboard\"\n  dispatch: IProcessorDispatch;\n  getReadModel<T>(name: string): T;\n  config?: Map<string, unknown>;\n}\n```\n\n| Field | Purpose |\n| --- | --- |\n| `analyticsStore` | Time-series store for writing metrics |\n| `relationalDb` | Creates namespaced relational stores |\n| `processorApp` | Which host is running you \u2014 branch on this for app-specific behaviour |\n| `dispatch` | Fire-and-forget action dispatch |\n| `getReadModel` | Read-model lookup by name |\n| `config` | Optional processor-specific configuration |\n\nThe shape means the factory is the only place dependency resolution happens: capture what you need from `module` in the outer closure, pass it into your processor's constructor, and the processor itself takes plain typed dependencies with no host coupling. That is why `DriveAnalyticsProcessor`'s constructor is just `(private readonly analyticsStore: IAnalyticsStore)` \u2014 it never sees the module.\n\n`processorApp` is worth noticing: the same package can register the same processor on Connect and Switchboard, and this field is the seam for deciding whether the browser copy should do the write at all.\n\nBrowser hosts pass a superset. `IReactorProcessorHostModule` extends this interface with `client: IReactorClient` and `attachments: IAttachmentClient`, defined in `reactor-browser` rather than `shared` to avoid a circular package reference.\n\nProvenance: academy `03-Build/04-WorkWithData/05-ProcessorBestPractices.md` (published), interface verified verbatim in `packages/shared/processors/types.ts` at 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "It carries analyticsStore, relationalDb, processorApp (\"connect\" or \"switchboard\"), dispatch, getReadModel<T>(name) and an optional config map.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0c3b2067-9806-4661-b51b-5ce7e39938e2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9908a2c9-45cc-48a4-9fed-cdec4b453985",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

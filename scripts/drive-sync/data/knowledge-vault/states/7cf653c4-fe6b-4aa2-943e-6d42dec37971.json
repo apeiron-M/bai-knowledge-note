@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f158a1f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f158a1f4-eab3-43f6-ba19-00c0608e62e7",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    },
+    {
+      "id": "lnk-1adbb770-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbb770-4b64-4070-b6fc-8e57fcce92d8",
+      "targetTitle": "project-structure-four-directories"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Node.js 24 is the minimum supported version as of v6.0.0",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0917bb9f-33ef-409d-ac75-d645195227d1",
+      "name": "prerequisites",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a87627b2-d2ae-4554-9963-65cdb96e84e0",
+      "name": "v6-migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "40cf78e5-f083-4d97-9c0c-9eeb1810157a",
+      "name": "tooling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "v6.0.0 opens its Breaking Changes section with the runtime floor:\n\n> **Node.js 24 is now the minimum supported version.**\n\n```bash\nnode --version          # must be >= 24.0.0\nnvm install 24 && nvm use 24\n```\n\nIt is a hard requirement, not a recommendation, and it is the first thing to check when a v6 project fails in an unexplained way during install or codegen. The tutorial track agrees: the Manual Todo tutorial's prerequisites list \"Node.js 24 and a package manager (pnpm or npm) installed\" rather than any earlier range.\n\nWorth pairing this with the other toolchain shifts in the same release, because they land together and a stale Node is often not the only thing lagging: `tsdown` replaced the previous build toolchain across `analytics-engine`, `builder-tools`, `ph-cli`, `ph-cmd`, `registry`, `shared` and `design-system`; processors now publish distinct `node` and `browser` entrypoints; and `sideEffects: false` was added to generated package boilerplate with pglite, jszip and renown crypto lazy-loaded.\n\nAlso from the same release: `ph-cmd` now delegates `init` and all forwarded commands to the versioned `ph-cli` binary, so version pinning finally works correctly \u2014 which means \"which Node am I on\" and \"which ph-cli am I actually running\" are now two separate questions worth asking independently.\n\nProvenance: academy `ReleaseNotes/v6.0.0.md:182` (Breaking Changes) and `03-Build/01-ManualTodoTutorial/01-CreateNewPowerhouseProject.md:24` (Prerequisites), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "v6.0.0 raised the floor to Node >= 24.0.0 as a hard breaking change, and the tutorial prerequisites now list Node.js 24 rather than a range.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c559f356-e327-4866-9be5-fc2f0c23ac69",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bbff5165-d38f-41ce-a3bb-bdfa819a18e7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:47.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

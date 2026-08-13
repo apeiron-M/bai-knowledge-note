@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-9a88245e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9a88245e-90e5-45de-89ba-b4ce5df84bd5",
+      "targetTitle": "never-use-tothrow-when-testing-reducer-errors"
+    },
+    {
+      "id": "lnk-e50150d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-b48664d8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "b48664d8-e289-4919-8473-613a880faa2c",
+      "targetTitle": "testing-uses-vitest-and-generatemock"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The document passed into reducer is unchanged after the call \u2014 assert snapshot isolation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2e2678e2-c591-4b9e-bf8e-1ce7a3f75bab",
+      "name": "testing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7deb6295-3658-4272-b54c-721af7c51c20",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b0d7bc00-b4f4-45d4-870d-5d3a6332c8ee",
+      "name": "immutability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every reducer test should assert two things beyond the expected state change: **determinism** (same inputs, same output across runs) and **snapshot isolation** (the document you passed in is unchanged afterwards).\n\n```ts\ntest(\"completing a todo marks it done\", () => {\n  let doc = utils.createDocument();\n  doc = reducer(doc, addTodo({ id: \"t-1\", title: \"Test\" }));\n  const afterComplete = reducer(doc, completeTodo({ id: \"t-1\" }));\n\n  expect(afterComplete.state.global.items[0].done).toBe(true);\n  expect(doc.state.global.items[0].done).toBe(false); // original snapshot untouched\n});\n```\n\nThe second assertion is the one people skip, and it is the one that catches real bugs. It works because the reducer core runs your operation inside Mutative's `create()`, which hands you a draft and returns a fresh document \u2014 the input object is never written through.\n\nSo the assertion is not testing Mutative. It is testing **your** reducer, by detecting the one class of impurity Mutative cannot protect you from: reaching outside the draft. Capturing a reference to a nested object across calls, mutating an array that came from module scope or from `action.input`, or holding state in a closure all produce a reducer that writes to memory the draft does not cover. Those writes leak into the input snapshot, and this assertion is what surfaces them.\n\nWhy it matters more than a typical purity test: an impure reducer does not fail locally. It fails when a peer replays the log and lands on different state, or when the recomputed hash stops matching. Sync will eventually betray you \u2014 the snapshot assertion is how you find out in CI instead.\n\nNote this is distinct from asserting on a *failed* operation: when a reducer throws, the operation is still appended with `.error` set and state is left unchanged.\n\n_Source: apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx, confirmed against packages/shared/document-model/reducer.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Mutative returns a new document, so the input snapshot still holds pre-operation state. Failing this assertion means the reducer mutated something outside the draft.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1206a1bc-d31d-4c7b-afa6-73a31199d686",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:34.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0a3bd99b-c45d-4578-82e5-b32c332fafd3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:34.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

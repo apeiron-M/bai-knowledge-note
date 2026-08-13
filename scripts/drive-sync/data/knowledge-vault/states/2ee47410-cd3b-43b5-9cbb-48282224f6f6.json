@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-44526c84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44526c84-c188-45ed-9472-51e84e11bfd0",
+      "targetTitle": "connect-is-host-application"
+    },
+    {
+      "id": "lnk-cad7d23d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cad7d23d-3a7b-442a-84b8-3570c0e6c8e2",
+      "targetTitle": "powerhouse-three-layer-architecture"
+    },
+    {
+      "id": "lnk-1bd8cea5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1bd8cea5-efef-4028-b116-9d63e17711e2",
+      "targetTitle": "powerhouse-stack-feature-surface"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect layers a drives sidebar, an editor host, and a sync client on top of an embedded Reactor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a182e974-df74-4178-a181-df9cbc69332e",
+      "name": "connect",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c2d64e81-b8cf-493b-9ef8-c4e7a40ae6ed",
+      "name": "host-applications",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8b241d8a-b897-4bf4-be98-8c5f329cc9c1",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Connect is a host, not a UI skin\n\nConnect is the default host application Powerhouse ships. The distinction that matters: it does not reach across the network to a remote engine for its core behaviour \u2014 it **embeds** a Reactor and then adds three things the bare Reactor has no opinion about.\n\n- **A drives sidebar** \u2014 a file-browser-style view of every drive the user can reach.\n- **An editor host** \u2014 it inspects the document type being opened and mounts whichever editor is registered for it.\n- **A sync client** \u2014 it connects to Switchboard and replicates state in real time.\n\nBelow that line sits the Reactor: reducers, the deterministically ordered operation log, local storage. Above it sits Connect's own product surface. Nothing in the Reactor knows a sidebar exists.\n\n## Why the split is worth internalising\n\nIt localises bugs. A document whose state is wrong after an edit is a reducer problem \u2014 Reactor territory. A document that opens to a blank pane is an *editor-host* problem: the opened type has no registered editor, and the usual cause is a missing entry in `editors/editors.ts`.\n\n```ts\nimport type { EditorModule } from \"document-model\";\nimport { TodoListEditor } from \"./todo-list-editor/module.js\";\n\nexport const editors: EditorModule[] = [TodoListEditor];\n```\n\nIf that array is empty, Connect renders nothing when a todo document opens \u2014 even though the Reactor is holding a perfectly valid document with a complete history.\n\nConnect runs in two modes that are indistinguishable from an editor's point of view: **studio mode**, pointed at your local Reactor Package with reload-on-save, and **production mode**, a static bundle served from a host and talking to a production Switchboard. Same editor code, different environment. For local development you rarely wire any of this by hand \u2014 `ph vetra` brings up Connect, Switchboard, and MCP against your package automatically.\n\n_Source: apps/academy/docs/academy/02-Learn/05-connect/01-what-is-connect.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Connect is a host application: it embeds the Reactor engine and adds a drive browser, an editor host that mounts by document type, and a sync client replicating to Switchboard.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fce27ccc-b035-4afc-a4b5-f53d6336c0a7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:56.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ce90f4c5-7d6a-4b11-ac43-00592b294e65",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

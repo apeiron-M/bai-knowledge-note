@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ff6a1433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ff6a1433-a4d6-4b53-a147-daefe1c8f0f5",
+      "targetTitle": "host-applications-are-empty-shells-gaining-functionality-through-plugins"
+    },
+    {
+      "id": "lnk-b7dae0d0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7dae0d0-5ec8-425d-87cf-830a7b010888",
+      "targetTitle": "wallet-derived-aes256-encryption"
+    },
+    {
+      "id": "lnk-e4a6a6c7-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "e4a6a6c7-527a-4342-9f0c-b01435197f3c",
+      "targetTitle": "renown-creates-did-from-ethereum-wallet"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Renown SDK provides DID-based authentication using did:pkh, with hook-based init, cookie sessions, and profile enrichment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9573f171-cccb-42fb-8065-0501bc879f12",
+      "name": "renown",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0e847afd-a75c-48b4-acb2-90f17e9e5809",
+      "name": "authentication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4a0ec617-ab8b-409b-b229-eefbd97c6bba",
+      "name": "decentralized-identity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `@renown/sdk` provides decentralized identity authentication for Powerhouse apps. There is **no provider component**: `RenownUserProvider` returns zero hits in source. Initialization runs through the `useRenownInit` hook (`packages/reactor-browser/src/hooks/renown.ts`), and no `window.renown` / `window.connectCrypto` globals exist. `useUser()` returns `User | undefined` (`renown.ts:29`) -- not an object bundle; the other values come from sibling hooks (`useRenown`, `useLoginStatus`, `useRenownLoginMethods`, `useRenownInitialUser`). Users are identified by DIDs in `did:pkh:eip155:<chainId>:<ethAddress>` format. The `User` type includes `did`, `address`, `name`, `email`, `avatar`, and `ethAddress`. Sessions are **not** in `sessionStorage` -- that identifier has zero hits in the entire monorepo. The session lives in a cookie, `RENOWN_SESSION_COOKIE = \"renown_session\"` (`packages/renown/src/constants.ts:6`), with a localStorage seed used only to cover the first paint before the SDK becomes authoritative. The `RenownAuthButton` is a headless component with render props for customization. LoginStatus flows: `initial` -> `checking` -> `authorized` | `not-authorized`.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No provider component: init is via useRenownInit. useUser() returns User|undefined. Sessions live in the renown_session cookie, not sessionStorage.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "50802e2c-8ee4-4117-87df-ccf806248cd9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f29d498b-a315-4f42-9a03-4e58eab5f327",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

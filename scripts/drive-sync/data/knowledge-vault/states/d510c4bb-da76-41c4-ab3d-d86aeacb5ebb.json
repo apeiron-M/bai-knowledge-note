@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-9a77cd78-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9a77cd78-5be9-477d-af2f-7d6559b12b07",
+      "targetTitle": "apps-use-useselecteddrive-to-access-drive-state-and-filter-nodes"
+    },
+    {
+      "id": "lnk-3c8bb297-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c8bb297-ae31-4f7a-b7f2-c91fdd89217d",
+      "targetTitle": "drive-apps-are-custom-drive-editors"
+    },
+    {
+      "id": "lnk-b463e3e1-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Drive apps read drive-wide data with useDocumentsInSelectedDrive() and start creation with showCreateDocumentModal()",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0fee5a6c-07eb-443d-b235-6e26e1ba2580",
+      "name": "drive-apps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "440e8d41-3306-4c20-b3bd-b8aa05208786",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "27af5195-71b7-4b75-afe0-daf67b1ada73",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The two calls a drive app almost always needs\n\nA drive app's job is cross-document: list, aggregate, board, dashboard. Two primitives from `@powerhousedao/reactor-browser` cover most of that surface.\n\n```tsx\nimport {\n  useDocumentsInSelectedDrive,\n  showCreateDocumentModal,\n} from \"@powerhousedao/reactor-browser\";\n\nfunction DriveContents() {\n  const documents = useDocumentsInSelectedDrive();\n\n  if (!documents) return <Spinner />;\n\n  return (\n    <>\n      <button onClick={() => showCreateDocumentModal(/* ... */)}>\n        New document\n      </button>\n      <ul>\n        {documents.map((d) => (\n          <li key={d.header.id}>{d.header.name}</li>\n        ))}\n      </ul>\n    </>\n  );\n}\n```\n\n`useDocumentsInSelectedDrive()` returns every document in the currently selected drive \u2014 the read that an editor legitimately cannot make, since an editor is scoped to one document. Its return type is `PHDocument[] | undefined`, and the `undefined` is load-bearing: it means \"the selected drive is not resolved yet\", which is a different state from \"the drive is empty\". Rendering `documents.length` without the guard is the classic first crash in a new drive app.\n\n`showCreateDocumentModal()` is an imperative call, not a hook \u2014 it opens Connect's standard creation flow rather than making you build your own type-picker and dispatch a create action by hand. That keeps drive apps consistent with the rest of Connect and means new document types appear in your drive app's create flow without any change to your code.\n\nThe pair reflects a broader rule: a drive app reaches the Reactor **only** through these hooks. It never constructs a client of its own.\n\n_Source: apps/academy/docs/academy/02-Learn/05-connect/02-drive-apps.mdx, packages/reactor-browser/src/hooks/{items-in-selected-drive,modals}.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both come from @powerhousedao/reactor-browser and give a drive app cross-document reads plus the standard new-document flow, without touching the Reactor directly.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "606681b2-f693-447e-afcb-afeb6b814193",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:51.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b4fdc288-dec4-4448-a443-d335bd8a00ce",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:51.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

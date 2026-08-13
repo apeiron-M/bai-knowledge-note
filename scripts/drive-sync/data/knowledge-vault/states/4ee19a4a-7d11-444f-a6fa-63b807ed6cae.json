@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-4752ac2e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4752ac2e-835a-4be9-9c2b-ca95ca501cef",
+      "targetTitle": "mcp-workflows"
+    },
+    {
+      "id": "lnk-0ba40e3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0ba40e3e-168b-49b8-a39d-e24b8265a412",
+      "targetTitle": "document-ids-are-auto-generated-by-createdocument-never-set-manually"
+    },
+    {
+      "id": "lnk-6018c73a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6018c73a-1c34-4bf5-8502-d1fcb80bb653",
+      "targetTitle": "chat-requires-both-users-to-run-full-bee-nodes-because-light"
+    },
+    {
+      "id": "lnk-675bdd06-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "675bdd06-6192-4223-9581-fa43200d307e",
+      "targetTitle": "collab-three-milestone-build-order"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "delete nodes with DELETE_NODE not DELETE_FILE",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d64c8a46-bd89-448a-b31c-7213823e7788",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bea72bd8-502e-42ea-ba65-25196772be49",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "769db1f1-517a-4d2f-8845-726a0b0a96fb",
+      "name": "drive operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# delete nodes with DELETE_NODE not DELETE_FILE\n\nWhen removing files or folders from a drive:\n\n```typescript\n// \u2705 Correct operation name\n{ type: \"DELETE_NODE\", scope: \"global\", input: { id: nodeId } }\n\n// \u274c This operation does not exist\n{ type: \"DELETE_FILE\", scope: \"global\", input: { id: nodeId } }\n```\n\nThe drive uses a node abstraction \u2014 both files and folders are \"nodes.\" The operation to remove either is `DELETE_NODE`. Since [[always check document model schema before calling addActions]], checking the drive schema first would reveal the correct operation name.\n\n---\n\nTopics:\n- [[mcp workflows]]\n- [[gotchas]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:01:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:29.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The drive operation for removing files or folders is DELETE_NODE; DELETE_FILE does not exist and will fail",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "63301f01-6f44-4855-b619-148a70464c27",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:02.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f1d5b8ff-76be-46c8-828c-06cb640842b3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:02.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

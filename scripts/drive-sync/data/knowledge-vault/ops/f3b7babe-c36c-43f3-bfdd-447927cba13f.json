@@ -1,0 +1,244 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:38.118Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "moc-deployment-and-operations",
+        "slug": "",
+        "model": "bai/moc",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+          "documentType": "bai/moc",
+          "createdAtUtcIso": "2026-08-13T13:22:38.118Z"
+        },
+        "version": 0,
+        "documentId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:38.118Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Kf35klrWeBCx5n6MLDF83Rh6Mws=",
+    "timestampUtcMs": "2026-08-13T13:23:40.000Z",
+    "action": {
+      "type": "CREATE_MOC",
+      "input": {
+        "tier": "DOMAIN",
+        "title": "Deployment and Operations",
+        "createdAt": "2026-04-02T13:00:00.000Z",
+        "description": "Docker images, production service setup with nginx/PM2/SSL, environment configuration, document format migration, and the v6 reactor architecture transition.",
+        "orientation": "Getting Powerhouse from development to production involves a layered deployment strategy. Docker images package Connect and Switchboard for containerized deployment, while the ph service setup command configures bare-metal installations with nginx reverse proxying, PM2 process management, and SSL termination. Environment variables override config.json for twelve-factor app compliance in cloud environments. Beyond initial deployment, the operations story includes document format migration \u2014 the PHDocument v4 header consolidation that streamlined the wire format \u2014 and the ongoing v6 reactor transition that replaces legacy REST endpoints with subgraph-based access, flattens operations to remove the strand abstraction, and provides custom subgraphs for ReactorClient consumers. This MOC captures both the how of getting Powerhouse running and the evolution of the runtime architecture itself."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:40.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:38.118Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/moc",
+        "toVersion": 1,
+        "documentId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {},
+          "global": {
+            "tier": null,
+            "title": null,
+            "tensions": [],
+            "childRefs": [],
+            "coreIdeas": [],
+            "createdAt": null,
+            "noteCount": 0,
+            "parentRef": null,
+            "updatedAt": null,
+            "agentNotes": [],
+            "description": null,
+            "orientation": null,
+            "openQuestions": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:38.118Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Eja0mphX8Wqzw+0Z0nWbPj0Wd4o=",
+    "timestampUtcMs": "2026-08-13T16:29:19.880Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T16:28:36.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:29:19.880Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:13.643Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "targetId": "2258b51c-fe2d-4e3e-aa1c-7d6eefe90c74",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:13.643Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "AZr4fLZoC8CFiNDprX4aZP2LbbA=",
+    "timestampUtcMs": "2026-08-13T16:58:29.199Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:58:29.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:58:29.199Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:13.673Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "targetId": "cbcbb6cb-4db5-4ac6-8d8e-4149e0d6cff8",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:13.673Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:13.944Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "targetId": "fda19118-9f4d-4b96-8d15-5778cf9451d9",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:13.944Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:13.966Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "targetId": "be079043-cb70-4dbb-b272-e94be0bd8677",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:13.966Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:14.128Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "targetId": "ee900e65-175e-4152-9ad5-18db168c583c",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:14.128Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:14.167Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "targetId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:14.167Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:14.192Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "targetId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:14.192Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:14.216Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "targetId": "4752ac2e-835a-4be9-9c2b-ca95ca501cef",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:14.216Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:26:14.238Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f3b7babe-c36c-43f3-bfdd-447927cba13f",
+        "targetId": "1adbb770-4b64-4070-b6fc-8e57fcce92d8",
+        "relationshipType": "CORE_IDEA"
+      },
+      "timestampUtcMs": "2026-08-13T13:26:14.238Z"
+    }
+  }
+]

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-831770e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "831770e6-9bf6-4b23-9fc2-dc0fdac17a5d",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    },
+    {
+      "id": "lnk-2f11ffb2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2f11ffb2-479c-4005-a25b-50edb86262b8",
+      "targetTitle": "Toolbar buttons must be styled via Tailwind arbitrary child selectors since they have no dedicated style props"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "customControls adds controls to a DocumentToolbar slot, rendering at the slot start unless position is end",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a1b082f5-511a-4169-ad86-9e1dd3520ee4",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "99608df7-3fc9-4f3e-9d0b-817b8319b1b2",
+      "name": "editor-styling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "21c75ed8-e833-48f2-af40-d3aa56638192",
+      "name": "editors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Adding to the toolbar is slot-addressed, not index-addressed. `customControls` is a `Partial<Record<ControlSlot, CustomToolbarControl | CustomToolbarControlList>>`, so each of `first`, `second` and `third` takes either a single control object or an array of them.\n\nA `CustomToolbarControl` is `{ component, position? }`, where `component` matches `ToolbarControlComponent` \u2014 a function taking `{ document?: PHDocument }` and returning `JSX.Element | null`. The toolbar passes the document it is operating on, which is the `document` prop when given and the currently selected document otherwise, so a custom control must treat `document` as optional.\n\n```tsx\n<DocumentToolbar\n  document={document}\n  customControls={{\n    second: {\n      position: \"end\",\n      component: ({ document }) => (\n        <button onClick={() => alert(document?.header.name)}>custom two</button>\n      ),\n    },\n  }}\n/>\n```\n\nTwo behaviours worth internalising:\n\n- **`position` defaults to `\"start\"`.** A custom control renders *before* the slot's built-in controls unless you set `position: \"end\"`. This surprises people who expect appended controls.\n- **Lists need a `key`.** When a slot receives a `CustomToolbarControlList`, each item is a `CustomToolbarControl & { key: React.Key }`. The key is passed straight to React; there is no implicit index fallback.\n\nThe mutual exclusivity with `children` is enforced by the type system, not by a runtime warning. `DocumentToolbarProps` is a union of `DocumentToolbarWithChildrenProps` (document, toolbarContainer, toolbarClassName, children) and `DocumentToolbarWithCustomControlsProps` (those three plus enabled/disabled controls, componentOverrides, customControls, controlsContainer, controlsContainerClassName). In `children` mode the toolbar renders only the children inside the toolbar container, so `customControls` and every other customization prop is unused \u2014 the slots themselves stop existing.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/06-DocumentTools/00-DocumentToolbar.mdx, confirmed against packages/design-system/src/connect/components/document-toolbar/types.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:43.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each slot takes one CustomToolbarControl or a keyed list. position defaults to \"start\". Passing children switches to a mutually exclusive mode where customControls is ignored.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c897a1f5-7895-4959-bb88-47dbbe880b64",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T16:00:07.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6d3982e3-cc28-497e-9237-bd0302a8963c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T16:00:07.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-911a47b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "911a47b7-135b-456a-9991-352aa8dc80fc",
+      "targetTitle": "multiple-remotes-per-collection-core-insight"
+    },
+    {
+      "id": "lnk-dea7cd59-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dea7cd59-dbf3-4415-8e30-919278a7367c",
+      "targetTitle": "gql-factory-deferred-registration-post-build"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "PollBehavior.Manual registers a remote without a timer; pulls happen only via triggerPull",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "698c142f-9d98-41ac-909f-1a16b94832d5",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b5f3c05f-98cd-43bd-966a-222eeb3f4320",
+      "name": "polling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "97d5ec10-863d-4563-9234-d83c4bd12d0e",
+      "name": "backpressure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`PollBehavior` is set per remote in `RemoteOptions` and controls only the schedule, never whether the channel connects:\n\n```typescript\nenum PollBehavior { Auto = \"auto\", Manual = \"manual\" }\n```\n\n`Auto` is the default. The channel runs its interval timer in the background: **the first tick fires immediately on `init()`**, then repeats every `pollIntervalMs` (default 2000 ms). That immediate first tick matters \u2014 adding an `Auto` remote produces a fetch straight away, not after one interval.\n\n`Manual` still registers and connects the channel; it simply never ticks on its own. Pulls happen only when you ask:\n\n```typescript\ntriggerPull(name: string): void;\n```\n\n`triggerPull` runs exactly one pull cycle. For a `Manual` remote it does **not** promote it to recurring polling \u2014 the remote stays `Manual` and a single fetch runs. This makes `Manual` the right choice for test harnesses, on-demand refresh buttons, and any environment where you want deterministic control over when network traffic happens.\n\nTwo edge behaviors: `triggerPull` on an unknown remote throws ``Remote with name '${name}' does not exist``, and on a `GqlResponseChannel` (the Switchboard push side) it is a **no-op**, because that channel has nothing to poll.\n\nPolling is not a naive timer. Two mechanisms guard the reactor:\n\n- **Backpressure** \u2014 a tick *defers* when the reactor queue depth exceeds `maxQueueDepth` (default 100) and rechecks after `backpressureCheckIntervalMs` (default 500 ms). A saturated reactor stops pulling more work onto itself rather than piling it up. This is why `GqlRequestChannelFactory` needs the queue passed to its constructor.\n- **Exponential backoff** \u2014 transient poll failures retry between `retryBaseDelayMs` (default 1000) and `retryMaxDelayMs` (default 300000, i.e. five minutes).\n\nAll four are optional `parameters` on the `\"gql\"` channel config alongside the required `url`, and each is type-checked at registration: a wrong type throws, for example `'\"pollIntervalMs\" parameter must be a number'`.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Auto ticks immediately on init then every pollIntervalMs (default 2000). Polling defers under backpressure when queue depth exceeds maxQueueDepth.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7a0c9bb1-1cc5-4500-a7b2-760fd56e40f8",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "175eb4e2-b2d7-4c04-99c7-de5e5b93a2fb",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

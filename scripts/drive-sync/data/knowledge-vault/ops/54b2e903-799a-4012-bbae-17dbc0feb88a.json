@@ -1,0 +1,305 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:20.230Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "processor-dispatch-execute-submits-without-waiting",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "54b2e903-799a-4012-bbae-17dbc0feb88a",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:38:20.230Z"
+        },
+        "version": 0,
+        "documentId": "54b2e903-799a-4012-bbae-17dbc0feb88a",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:20.230Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "dg6+h25YeC/aqdW5rjyId2nP1SI=",
+    "timestampUtcMs": "2026-08-13T14:38:20.954Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Processors mutate documents only through dispatch.execute(), which submits a job and returns immediately",
+        "updatedAt": "2026-08-13T14:38:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:20.954Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:20.230Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "54b2e903-799a-4012-bbae-17dbc0feb88a",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:20.230Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "jjBdo/DueWMNoVK22/bxi2RPvZU=",
+    "timestampUtcMs": "2026-08-13T14:38:20.954Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:38:20.000Z",
+        "description": "IProcessorDispatch.execute(docId, branch, actions, signal?, meta?) wraps reactorClient.executeAsync() and returns the job id and status at submission time, not at completion."
+      },
+      "timestampUtcMs": "2026-08-13T14:38:20.954Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:22.112Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "54b2e903-799a-4012-bbae-17dbc0feb88a",
+        "targetId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:22.112Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "UkyTRanls6/s/RHBtOLMhNHknmU=",
+    "timestampUtcMs": "2026-08-13T14:38:20.954Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:38:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:20.954Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:22.137Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "54b2e903-799a-4012-bbae-17dbc0feb88a",
+        "targetId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:22.137Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "EhYaGEIuGLTXBcgKJgqEBipYDZQ=",
+    "timestampUtcMs": "2026-08-13T14:38:20.954Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "A processor is supposed to run a strictly one-way data flow: operations arrive through `onOperations`, and any resulting mutation leaves through `dispatch`. The `dispatch` object is handed to the factory on `IProcessorHostModule`, and its only method is `execute`:\n\n```typescript\ninterface IProcessorDispatch {\n  execute(\n    docId: string,\n    branch: string,\n    actions: Action[],\n    signal?: AbortSignal,\n    meta?: Record<string, unknown>,\n  ): Promise<ProcessorDispatchResult>;\n}\n\ntype ProcessorDispatchResult = {\n  id: string;      // job ID\n  status: string;  // job status at time of submission\n};\n```\n\nUnder the hood `dispatch.execute()` calls `reactorClient.executeAsync()`. The returned `status` is the status *at submission*, so awaiting the promise tells you the job was accepted, never that it landed. The canonical shape is a processor that watches for a state transition and fires an action at a different document:\n\n```typescript\nif (operation.action.type === \"SET_STATUS\" &&\n    operation.action.input?.status === \"approved\") {\n  await this.dispatch.execute(this.paymentDocId, \"main\", [\n    { type: \"CREATE_PAYMENT\",\n      input: { invoiceId: context.documentId, amount: operation.action.input.amount },\n      scope: \"global\" },\n  ]);\n}\n```\n\nThe processor dispatches and moves on. If it needs to observe the result, the correct move is to widen its own `ProcessorFilter` to include the target document type so the resulting operations come back through a later `onOperations` call \u2014 not to await the outcome. That constraint is what keeps a processor from waiting on work that depends on the processor itself finishing.\n\nBecause backfill and restart-gap replay can re-deliver the same operations, a dispatching processor also wants an idempotence guard: check the target document's state (or a dedup key in it) before dispatching, so a replayed batch does not double-fire the side action.\n\nProvenance: academy `03-Build/04-WorkWithData/05-ProcessorBestPractices.md` (published), confirmed against `packages/shared/processors/types.ts` and `apps/connect/src/store/processor-host-module.ts` at monorepo 6.2.2-dev.45.",
+        "updatedAt": "2026-08-13T14:38:20.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:20.954Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:22.162Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "54b2e903-799a-4012-bbae-17dbc0feb88a",
+        "targetId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:22.162Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "pv2j7ruXjaKgnZaRpmBrq0ZNhF0=",
+    "timestampUtcMs": "2026-08-13T14:38:20.954Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "81abba52-bc82-4f08-ab86-92f29fde93d4",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:20.954Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "nraeTj4NqFNaxydmMxQKrzXlml0=",
+    "timestampUtcMs": "2026-08-13T14:38:20.954Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "8824489a-3358-4b18-ac5b-35f9ff6e7ae2",
+        "name": "dispatch"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:20.954Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "qUDDV0xPLcsQGn7CyeV3XnykBWw=",
+    "timestampUtcMs": "2026-08-13T14:38:20.954Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "bb0a790d-8b7d-4025-84fd-b7f6dd78d074",
+        "name": "reactor"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:20.954Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "56O3BORjJxVxvMtM0QpdxqUBoAo=",
+    "timestampUtcMs": "2026-08-13T14:38:22.066Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:20.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:22.066Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "WUJnZSx6Af7y5+amGj5ha3CDmmk=",
+    "timestampUtcMs": "2026-08-13T15:54:12.215Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:54:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:12.215Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "2W1bPOO4mpflEFBWRM5YyivCgZM=",
+    "timestampUtcMs": "2026-08-13T15:54:12.215Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2d81b9af-8de0-43e7-913f-6684000665fa",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:54:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:12.215Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "stzODmVM5fC0vi6CE9pn8aOMMKA=",
+    "timestampUtcMs": "2026-08-13T15:54:12.215Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "9488d30d-8f89-46c1-9224-0f34e3712e00",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:54:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:12.215Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "TYzsf2mbETlYlnZ1nt35WT0Dbow=",
+    "timestampUtcMs": "2026-08-13T16:51:41.338Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:51:41.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:51:41.338Z"
+    }
+  }
+]

@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-e50150d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+      "targetTitle": "reducers-are-pure-functions-with-immer"
+    },
+    {
+      "id": "lnk-8ec644f1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8ec644f1-d030-4696-8630-970f496fe7ab",
+      "targetTitle": "external-imports-go-in-src-reducer-files-not-in-setoperationreducer"
+    },
+    {
+      "id": "lnk-8a102b2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a102b2d-09d8-4f96-b31d-018c0950ce75",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-ce0ee124-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+      "targetTitle": "document-model-versioning-system"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "reducer code goes into SET_OPERATION_REDUCER without function headers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a1405fe4-fd68-415c-8bb6-495324af333c",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4943aa0-50a7-47a9-b3c8-6da19c3e53be",
+      "name": "MCP workflows",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5147ca2f-15ec-4b2e-be9f-842b6083e241",
+      "name": "code generation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# reducer code goes into SET_OPERATION_REDUCER without function headers\n\nWhen using the `SET_OPERATION_REDUCER` MCP action, you provide only the reducer body \u2014 no function declaration, no parameter list. The framework wraps the code with the correct signature (receiving `state` and `action`).\n\n```typescript\n// \u2705 What you provide to SET_OPERATION_REDUCER\nstate.items.push({\n  id: action.input.id,\n  name: action.input.name,\n});\n\n// \u274c Don't include the function wrapper\nfunction reducer(state, action) {\n  state.items.push({ ... });\n}\n```\n\nSince [[external imports go in src reducer files not in SET_OPERATION_REDUCER]], the reducer code sent via MCP should contain no import statements either.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[mcp workflows]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:59:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:48.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When setting reducer code via MCP, provide only the function body; the framework wraps it with the appropriate signature",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "898ffe46-a0b8-403f-8eee-8b0002da6b4c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:38.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "45c7751e-9d5e-4fd4-bf94-6351e2cb2505",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:38.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

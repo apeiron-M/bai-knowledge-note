@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-8a102b2d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "8a102b2d-09d8-4f96-b31d-018c0950ce75",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The editor dispatch function takes an optional onSuccess callback as its third parameter",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9a0a2665-de98-4104-95f9-cbb9c6764779",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aa25e460-e054-4129-a2c1-683f60f86312",
+      "name": "dispatch",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9fc67d5e-f64b-473f-b2f8-5667b254604e",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`dispatch` has three parameters, not two:\n\n```ts\ndispatch(\n  actionOrActions: TAction | TAction[] | undefined,\n  onErrors?: (errors: Error[]) => void,\n  onSuccess?: (result: PHDocument) => void,\n): void\n```\n\n`onErrors` surfaces per-action reducer failures; `onSuccess` hands you the updated document the moment the operation lands, which is what you want when the next UI step depends on server-assigned data (a new revision number, a header field) rather than on the action input you already have.\n\nThe implementation is `dispatchActions` in `packages/reactor-browser/src/actions/dispatch.ts`, and the ordering there matters. It resolves the document, signs the actions, queues them, and only then runs the callbacks:\n\n```ts\nconst result = await queueActions(document, signedActionsWithContext);\n\nif (onErrors && result) {\n  const errors = getActionErrors(result, signedActionsWithContext);\n  if (errors.length) onErrors(errors);\n}\nif (onSuccess && result) onSuccess(result);\n```\n\nBoth callbacks are guarded on `result`, so **neither fires** when the dispatch bailed out early \u2014 an unresolvable document id or a failure to build signed actions logs an error and returns `undefined` without notifying either callback. `onSuccess` is also not exclusive of `onErrors`: `result` is the document after the operations were appended, and a reducer that threw still produces an operation carrying `.error`. So a dispatch whose actions all failed validation can invoke `onErrors` **and then** `onSuccess` with the (state-unchanged) document. Treat `onSuccess` as \"the write round-tripped\", not as \"the write was accepted\".\n\nDocumentation caveat: `04-Reference/05-EditorsUI/01-ReactHooks.md` still prints the two-argument signature everywhere, including in the \"Dispatch Function\" key-concepts section and in every hook's return type. The three-argument form is documented only in the learn-path page and is confirmed by source.\n\n_Source: packages/reactor-browser/src/actions/dispatch.ts and src/hooks/dispatch.ts, plus apps/academy/docs/academy/02-Learn/04-editors/03-editor-hooks-and-state.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "dispatch(actions, onErrors?, onSuccess?) \u2014 onSuccess receives the updated PHDocument once the operation lands. The React Hooks reference page still documents only the two-argument form.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "62f73f46-bfaa-4162-bbbe-58dcca532c11",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a95cc8b8-87d9-4cab-b96c-68485f5c90d1",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

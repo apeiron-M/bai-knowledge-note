@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-5694a8da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5694a8da-b036-4b8a-a16d-bca12de03af9",
+      "targetTitle": "reactor-client-auto-signs-all-actions"
+    },
+    {
+      "id": "lnk-5067c7ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The light client signs single-action dispatches only; a multi-action batch is pushed unsigned with a warning",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7aab7685-f499-452e-9888-53e2ffb786be",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5997638-af45-4427-814c-23b8bf015c27",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "73170222-ea5d-4e45-bcb0-5f0e1552f47f",
+      "name": "limitations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Three cases\n\nThe signer is resolved from `window.ph.renown` **at push time**, so a client built before login signs after login with no rebuild.\n\n| Situation | What happens |\n| --- | --- |\n| Logged-in Renown user, one action | The action is stamped, then signed, then pushed |\n| Logged-in Renown user, several actions | The batch is pushed **unsigned** and a warning is logged |\n| No user | Nothing is stamped or signed; the server computes the hashes itself |\n\n## Why batches cannot be signed\n\nSigning stamps each action with the hash of the state it applies to. For the first action in a batch that hash is computable from the document just read. For the **second** action it is the hash of the state *after* the first action has been applied \u2014 and computing that means running the reducer.\n\nThe light client deliberately ships no reducer. That is the whole point of the design: the app builds actions as plain data, the Switchboard owns the model and its reducer, and nothing generated has to reach the browser. Batch signing is the price of that trade, and it is listed as a known limitation rather than a bug.\n\n## What this means in practice\n\nIf every operation in a flow must carry the user's signature, dispatch the actions **one at a time** rather than as a batch. The cost is one `execute` round trip pair per action (`execute` already costs two round trips: one read for the signing and `sinceRevision` baseline, one mutation).\n\nA related limitation: a mixed-scope batch over-fetches, because the returned operations are windowed from the lowest head revision across the scopes the batch targets.\n\nIf you need real batch signing, you need the full reactor client, which has the reducer in the browser.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Batch signing needs the second action's baseline hash, which requires running the reducer \u2014 and the light client deliberately ships no reducer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "acdb70e0-559a-4231-aa2b-d05c467b188b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:41.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "666a2a82-d759-4cb3-af22-a05efdc35f90",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

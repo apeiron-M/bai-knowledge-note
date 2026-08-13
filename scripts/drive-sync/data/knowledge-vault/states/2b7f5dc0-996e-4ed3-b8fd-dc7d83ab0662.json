@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-18f57188-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "18f57188-3f00-4702-a0e3-18c3f4917dc3",
+      "targetTitle": "swarm-feeds-no-websocket-subscription"
+    },
+    {
+      "id": "lnk-e5f7fb87-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5f7fb87-402e-4ec8-ba5e-cc7a2f36b868",
+      "targetTitle": "swarm-app-layer-aes-gcm-encryption"
+    },
+    {
+      "id": "lnk-6c2c67b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6c2c67b7-172a-42f0-afde-9b8ab5a62b21",
+      "targetTitle": "bee-reactor-adapter-prerequisites"
+    },
+    {
+      "id": "lnk-f158a1f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f158a1f4-eab3-43f6-ba19-00c0608e62e7",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    },
+    {
+      "id": "lnk-39ff8736-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "39ff8736-5226-4ae3-a97a-f5fc13878df4",
+      "targetTitle": "ipspv-employs-dual-licensing-for-copyleft-and-enterprise"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Bee v2.7.0 auto-races legacy and wrapped feed versions so adapters no longer pick versions manually",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ab9b4b1b-0ba4-4fbd-b99b-cb39dfb0cf17",
+      "name": "bee-node",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1edb2ce0-ee6b-4ed8-83aa-8138973c1d35",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eb36851c-849d-4200-b3d6-fc3d2d4c0ac7",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "93136b68-2831-4a77-bed4-6db47bab31f8",
+      "name": "adapter",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n\nStarting in Bee v2.7.0, feed reads **auto-race legacy and wrapped feed formats** and return whichever resolves first \u2014 adapters no longer need to choose a feed version explicitly.\n\n## Evidence\n\n- Both legacy and wrapped feed versions now race automatically on every read\n- The response header `Swarm-Feed-Resolved-Version` reports which format won\n- The `swarm-feed-legacy-resolve` query parameter was **removed** \u2014 code that still passes it will break\n- The adapter never used that query param, so we are unaffected\n\n## Related v2.7.x adapter-relevant changes\n\n- **AutoTLS / WSS**: secure WebSocket via `p2p-wss-enable` \u2014 relevant when we wire up PSS/GSOC subscriptions\n- **Redundancy validation**: `/bytes` and `/bzz` now reject invalid `Swarm-Redundancy-Level` values \u2014 we don't set it, so fine\n- **`POST /tags`** no longer requires a body \u2014 simplifies upload progress tracking\n- **`/reservestate`** now includes `reserveCapacityDoubling`\n- **v2.7.1 TopUpBatch nil-pointer fix** \u2014 prevents crashes when topping up stamps on light nodes (critical for StampManager)\n\nOur production node runs **Bee v2.7.1**.\n\n## Why it matters\n\nCodifies a forward-compatibility win (one fewer branch in read paths) and catalogs the v2.7.x changes the adapter inherits. Also a reminder to run `/health` version checks before debugging feed-read mysteries \u2014 bee-js targets Bee 2.5, and some 2.7-only behaviors (like auto-racing) are implicit.\n",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:24:54.753Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both feed versions race; the Swarm-Feed-Resolved-Version response header reveals the winner. The swarm-feed-legacy-resolve query param was removed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a0d54bf1-bcf8-4852-8bc0-c088e23fb840",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "dc341194-b937-414a-9f99-2447369175c6",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

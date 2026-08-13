@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-c5c2a2ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c5c2a2ea-e76d-4a1f-b98c-a18b41f50423",
+      "targetTitle": "create-swarm-sync-builder-hook"
+    },
+    {
+      "id": "lnk-1c842c07-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CompositeChannelFactory routes IChannel creation by config.type to registered sub-factories.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-ffc93b31-1",
+      "name": "composite-factory",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ffc93b31-2",
+      "name": "channel-factory",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-ffc93b31-3",
+      "name": "design-pattern",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\n`CompositeChannelFactory` implements `IChannelFactory` but dispatches `instance()` calls to registered sub-factories keyed by `config.type` (e.g., `\"gql\"`, `\"swarm\"`).\n\n## Evidence\nThe source defines a `factories: Map<string, IChannelFactory>` with `register(type, factory)`. On `instance()`, it looks up `config.type` and delegates, throwing if the type is unregistered.\n\n```typescript\nconst factory = this.factories.get(config.type);\nif (!factory) throw new Error(`Unknown channel type \"${config.type}\"...`);\nreturn factory.instance(remoteId, remoteName, config, cursorStorage, collectionId, filter, operationIndex);\n```\n\n## Why this pattern\nThe reactor exposes only one `IChannelFactory` slot per instance. Without the composite, adding Swarm would require monkey-patching or forking the reactor. The composite is a clean strategy/registry pattern that leaves the reactor interface untouched.\n\n## Source\n`adapter/src/channel/composite-factory.ts`; Swarm Channel Architecture, \"CompositeChannelFactory\" section.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The reactor accepts one IChannelFactory. A composite implementation dispatches to named sub-factories so GQL and Swarm channels can coexist.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dc34a3e5-7a57-403d-91c3-257c4b7a482f",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T16:00:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "60dc658e-90f3-474f-abc5-77903fc22f92",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T16:00:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

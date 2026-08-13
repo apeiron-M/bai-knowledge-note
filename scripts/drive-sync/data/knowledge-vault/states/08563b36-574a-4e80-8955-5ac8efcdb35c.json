@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-831770e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "831770e6-9bf6-4b23-9fc2-dc0fdac17a5d",
+      "targetTitle": "DocumentToolbar exposes className enabledControls and callback props"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "useGetSwitchboardLink returns null for local drives and mints a fresh bearer token per call",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "001fcce0-b790-4ffb-9a6d-ed4814adc075",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "66fabc49-8b6b-4cfb-8f10-c5c87aec52ab",
+      "name": "switchboard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f7aad1ef-056f-4587-9f7d-4e1633a96939",
+      "name": "authentication",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`useGetSwitchboardLink` is the hook behind the toolbar's Switchboard button, and its signature encodes a precondition:\n\n```ts\nfunction useGetSwitchboardLink(\n  document: PHDocument | undefined,\n): (() => Promise<string>) | null;\n```\n\nIt returns `null` \u2014 not a function that fails \u2014 when there is nothing to link to. Callers branch on the null and hide their button entirely.\n\n\"Remote\" is not a flag on the drive. The hook takes the selected drive, builds `DriveCollectionId.forDrive(drive.header.id)`, and looks for a matching entry in `useSyncList()`. A drive is remote precisely when a sync remote exists for its collection id. The endpoint then comes from that remote's channel config (`(remote.channel as GqlRequestChannel).config.url`), so a purely local drive with no configured remote yields `null` even though the document is perfectly real. Three things must all resolve \u2014 a remote drive, a document id, and a remote URL \u2014 or the hook returns `null`.\n\nThe token is minted at **call** time, not render time. Inside the returned async function:\n\n```ts\nconst token = user?.address\n  ? await renown?.getBearerToken({ expiresIn: 600, aud: remoteUrl })\n  : undefined;\nreturn buildDocumentSubgraphUrl(remoteUrl, document.header.id, token);\n```\n\nTwo consequences. First, the credential has a 600-second (10-minute) lifetime and is audienced to the specific remote URL, so a link generated now cannot be pasted into a chat and opened tomorrow, and cannot be replayed against a different Switchboard. Second, when no Renown user address is present the token is simply `undefined` and the URL is built anonymously rather than the call failing \u2014 so an unauthenticated user gets a link that may be rejected at the far end.\n\nBecause the function is async, wire it to a handler that awaits the URL and then opens it, rather than putting it in an `href`.\n\n_Source: packages/reactor-browser/src/hooks/use-get-switchboard-link.ts, documented at apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The hook returns an async URL generator only for documents in remote drives; each call mints a 10-minute bearer token audienced to the remote and builds an authenticated Switchboard URL.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "97fc90eb-8d0c-4da7-a6ee-d3a3d3110be7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8baa64bc-4e0b-4b46-aea5-fa25ec05db2b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

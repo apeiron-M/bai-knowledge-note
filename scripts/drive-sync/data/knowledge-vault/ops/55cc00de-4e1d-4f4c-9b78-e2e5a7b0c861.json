@@ -1,0 +1,364 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:08.779Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "ddup-collab-envelope-overhead",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:08.779Z"
+        },
+        "version": 0,
+        "documentId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:08.779Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "7o5HwfncqE/jgxYfuY1R4g7XvBA=",
+    "timestampUtcMs": "2026-08-13T13:22:56.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Collaboration adds SyncEnvelope wrappers and per-user feeds but does not re-duplicate raw ops",
+        "updatedAt": "2026-08-13T13:22:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:56.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:08.779Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:08.779Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "pUofNYMNPcM8qTFKUU+12ilRa1M=",
+    "timestampUtcMs": "2026-08-13T13:22:56.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:22:56.000Z",
+        "description": "Per-user op feeds wrap the same operations in SyncEnvelope context metadata (~20% per-op overhead) plus small feed pointers \u2014 the core action data isn't duplicated."
+      },
+      "timestampUtcMs": "2026-08-13T13:22:56.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:12.556Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+        "targetId": "ca235eee-0fee-42d8-b9a7-8eb21f351a2f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:12.556Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "sCM0xo1gJJQylWBHBDMvSC+37TY=",
+    "timestampUtcMs": "2026-08-13T13:22:56.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "observation",
+        "updatedAt": "2026-08-13T13:22:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:56.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:12.652Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+        "targetId": "d4792033-cd60-4178-85a0-80687e05718b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:12.652Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "k71tqZuounEKOB6iwRxrENwNto4=",
+    "timestampUtcMs": "2026-08-13T13:22:56.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Collaboration adds per-user op feeds on top of the single-user sync \u2014 and the additional storage cost is small and structural rather than full re-duplication:\n\n**Already present (single-user baseline)**\n- PGlite: all operations (local + remote)\n- Swarm /bytes: operation batches (per user)\n- Single-user feeds: doc/drive/user manifests (personal backup)\n\n**New in collaboration**\n- Collab index feed: 1 per shared document (~1 KB)\n- Per-user op feeds: 1 per user per document\n  - Content: `SyncEnvelope` wrapping the SAME operations that are already in the single-user /bytes batches\n\n**What's actually added**:\n- Feed pointer updates: ~64 bytes per update per user\n- SyncEnvelope wrappers around operations (OperationContext metadata)\n\n**Overhead quantified**: ~20% per op for the context metadata. The core action data itself is not duplicated \u2014 only the wrapping envelope.\n\n**Why it matters**: this means collaboration scales linearly in users rather than in users x ops. Adding N collaborators to a document doesn't N-duplicate the ops; it adds N small-wrapped pointers over the same underlying content-addressed operation chunks.",
+        "updatedAt": "2026-08-13T13:22:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:56.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:12.722Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+        "targetId": "a79b6048-eb4d-447a-8c16-74dde36b9304",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:12.722Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "/MLS+anOJ+dh6DdwHBc/gpSmvVQ=",
+    "timestampUtcMs": "2026-08-13T13:22:56.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:42:40.589Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:56.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:12.959Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+        "targetId": "df9a1dac-a0dc-4c4b-a372-fc1696671e4b",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:12.959Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "qGxsz4FwspWhoFpaMdqs4dkVZdA=",
+    "timestampUtcMs": "2026-08-13T13:22:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0f1debfc-b251-41c6-8ab4-e289b8fa1e32",
+        "name": "collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:56.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:12.989Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+        "targetId": "d4792033-cd60-4178-85a0-80687e05718b",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:12.989Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "p7FrCTGCsAa5m3gSm1ggIx5W4tw=",
+    "timestampUtcMs": "2026-08-13T13:22:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "50778ccb-7e38-48d5-b6e3-93cd6f918d90",
+        "name": "sync-envelope",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:56.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:13.087Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "55cc00de-4e1d-4f4c-9b78-e2e5a7b0c861",
+        "targetId": "3368da0f-b07d-40a2-a5e6-9ac28f434744",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:13.087Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "TVDdxqo8MHTJU7UpBMWh+u1WVlI=",
+    "timestampUtcMs": "2026-08-13T13:22:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "2753cee2-a781-4223-8ad1-191dc84d643d",
+        "name": "data-duplication",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:56.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "gCxAsup/aw9lq0DoC7AnTmdPDyk=",
+    "timestampUtcMs": "2026-08-13T13:22:56.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "06e33d74-c90c-46ac-8571-a0c9346f8bc3",
+        "name": "per-user-feeds",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:56.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "gHOohNBjmdP2a1NZWC6xCRnoaks=",
+    "timestampUtcMs": "2026-08-13T15:54:15.438Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:54:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:15.438Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "0RgLhahLoYpNGjuIC0SHJ9+ylUc=",
+    "timestampUtcMs": "2026-08-13T15:54:15.438Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "d275c636-b1a4-4df8-92b2-d1f6a07b559e",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:54:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:15.438Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "JGQ8ZkSWysI/eR2EVuM/r6xS+X0=",
+    "timestampUtcMs": "2026-08-13T15:54:15.438Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d3a888f8-417d-4e78-830c-597faa88e8d6",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:54:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:15.438Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "wLjtjfWEduK5Q0oSZBcdmfdH2Aw=",
+    "timestampUtcMs": "2026-08-13T16:51:45.167Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:51:45.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:51:45.167Z"
+    }
+  }
+]

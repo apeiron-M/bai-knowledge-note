@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:55.156Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "reactor-sync-ichannel-three-mailbox-model",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "de11636d-6f4b-46b3-bf00-649c81feec23",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:55.156Z"
+        },
+        "version": 0,
+        "documentId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:55.156Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "4tBn6CO1NURrRMkU69L/iov52tM=",
+    "timestampUtcMs": "2026-08-13T13:23:23.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Each reactor IChannel exposes three mailboxes: inbox, outbox, and deadLetter.",
+        "updatedAt": "2026-08-13T13:23:23.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:23.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:55.156Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:55.156Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "606bG2/zjyCo1HqSd/02t+bT2Ic=",
+    "timestampUtcMs": "2026-08-13T13:23:23.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:23.000Z",
+        "description": "The reactor sync protocol standardizes every channel to have inbox for pulls, outbox for pushes, and deadLetter for failed ops, plus init/shutdown lifecycle."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:23.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:13.550Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "targetId": "464de7c4-b8c0-4ecd-b94d-e157900c465f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:13.550Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "zyJCYd85LHkoPd0+CkoiqtwmwQg=",
+    "timestampUtcMs": "2026-08-13T13:23:23.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "concept",
+        "updatedAt": "2026-08-13T13:23:23.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:23.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:13.580Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "targetId": "6b41319d-507a-4af0-a563-7fd882ab3581",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:13.580Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "GnqaMbIUCzA11yVRUBfGTCpuC8M=",
+    "timestampUtcMs": "2026-08-13T13:23:23.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nEvery reactor `IChannel` implementation exposes three `IMailbox` instances \u2014 `inbox`, `outbox`, and `deadLetter` \u2014 plus lifecycle and connection-state APIs.\n\n## Interface (from source)\n```typescript\ninterface IChannel {\n  inbox: IMailbox;        // Ops received from remote\n  outbox: IMailbox;       // Ops to send to remote\n  deadLetter: IMailbox;   // Failed ops\n  init(): Promise<void>;\n  shutdown(): Promise<void>;\n  getConnectionState(): ConnectionStateSnapshot;\n  onConnectionStateChange(callback): () => void;\n}\n```\n\n## Why this shape\n- Uniform contract lets SyncManager treat GQL, Swarm, or any future channel identically.\n- `deadLetter` is a first-class concept, not an afterthought \u2014 failed ops are observable and retryable.\n- Connection state is part of the interface, enabling UI-level channel health without channel-specific code.\n\n## Source\nSwarm Channel Architecture, \"Key Types\" section.",
+        "updatedAt": "2026-08-13T13:23:23.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:23.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:13.825Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "targetId": "ab51b1bd-4e7d-420a-b673-52bbc4e39277",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:13.825Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "cI+8np7ccLNUvfAhFq4NuPCsT1Q=",
+    "timestampUtcMs": "2026-08-13T13:23:23.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:23.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:13.980Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "targetId": "9b97a142-2322-40a7-a680-c2f822b0abec",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:13.980Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "qH+50ffXiQzO5jha4E2JrIYUUUM=",
+    "timestampUtcMs": "2026-08-13T13:23:23.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-1880798c-1",
+        "name": "ichannel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:23.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "I1aFIkf1oci+OaxLggEO1zMJkig=",
+    "timestampUtcMs": "2026-08-13T13:23:23.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-1880798c-2",
+        "name": "mailbox",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:23.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "wqQ81fJNgXxg0uKItxtYPEWVhEQ=",
+    "timestampUtcMs": "2026-08-13T13:23:23.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-1880798c-3",
+        "name": "reactor-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:23.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "OWuXtZghb5HOLqHl71OYeX4hqik=",
+    "timestampUtcMs": "2026-08-13T13:23:23.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-1880798c-4",
+        "name": "interface",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:23.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "CwBA0Cto7VCl2OTNBU0BatTFVUE=",
+    "timestampUtcMs": "2026-08-13T15:59:05.677Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:59:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:05.677Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "AnXFZmuyNCg8HTjH1VDFymbzuD0=",
+    "timestampUtcMs": "2026-08-13T15:59:05.677Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "6d8d771f-cf36-44d6-913f-763323c133dd",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:59:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:05.677Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "mcUm4WZlpCrXGCKSovMK0dM9slg=",
+    "timestampUtcMs": "2026-08-13T15:59:05.677Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "eb4f5961-cd99-4534-964b-6c018544dcba",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:59:05.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:05.677Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "TdkG/CtyoIjv0/ta2qrDtkHEK78=",
+    "timestampUtcMs": "2026-08-13T16:57:33.885Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:57:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:57:33.885Z"
+    }
+  }
+]

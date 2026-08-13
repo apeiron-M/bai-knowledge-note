@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:10.238Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "latest-reducer-owns-entire-historical-log",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "bd03507e-9d13-471b-851e-941f28d31c8f",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:39:10.238Z"
+        },
+        "version": 0,
+        "documentId": "bd03507e-9d13-471b-851e-941f28d31c8f",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:39:10.238Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "Jeb0VjanRQRZyFuRNEhQiZVCkLw=",
+    "timestampUtcMs": "2026-08-13T14:39:11.063Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The latest reducer owns the entire historical operation log, so retired operations must stay in newer specs",
+        "updatedAt": "2026-08-13T14:39:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:11.063Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:10.238Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "bd03507e-9d13-471b-851e-941f28d31c8f",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:39:10.238Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "i4oxHoJinLuD0dykiQH/K/GMt4c=",
+    "timestampUtcMs": "2026-08-13T14:39:11.063Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:39:10.000Z",
+        "description": "Replay sends every past operation through the newest reducer, including operations whose type no longer exists in the new schema, so they must map old fields onto the new shape."
+      },
+      "timestampUtcMs": "2026-08-13T14:39:11.063Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:12.233Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bd03507e-9d13-471b-851e-941f28d31c8f",
+        "targetId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:12.233Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "8fO2TSgN+iA3pC+P3UN/eCPpDdw=",
+    "timestampUtcMs": "2026-08-13T14:39:11.063Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:39:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:11.063Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:12.259Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "bd03507e-9d13-471b-851e-941f28d31c8f",
+        "targetId": "e50150d7-fd15-416a-975f-3871a1d8025d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:12.259Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "FU0eRWiwhNr4pwVx4Srj0RrfdgI=",
+    "timestampUtcMs": "2026-08-13T14:39:11.063Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "Retiring an operation from the editor does not retire it from history. Replay sends the *entire* operation log through the **latest** reducer \u2014 including operations whose action type no longer appears in the current schema. The reducer for a retired operation is not dead code; it is the migration path for every document that ever used it.\n\nThe `document-versioning` recipe makes this concrete. v1 has `CHECK_ITEM` toggling `checked: boolean`; v2 replaces that field with `status: \"TODO\" | \"IN_PROGRESS\" | \"DONE\"`. `CHECK_ITEM` is nevertheless **retained as an operation in the v2 spec**, so codegen keeps generating its action and reducer slot, and `v2/src/reducers/todo.ts` maps the old boolean onto the new enum. Drop it from the spec and every v1 document with a `CHECK_ITEM` in its log becomes unloadable.\n\nThis pairs with the upgrade reducer, and the division of labour is easy to get backwards:\n\n- the **upgrade reducer** transforms the stored `state` and `initialState` snapshots once, at `UPGRADE_DOCUMENT`;\n- the **retained operation reducers** handle the historical actions on every subsequent replay, forever.\n\nYou need both. The upgrade fixes the snapshot; the retained reducers fix the fold.\n\nThe practical consequence for schema design is that a document model's operation set is append-mostly. Renaming or retyping a field means the new reducer grows a compatibility branch, and that branch's lifetime is the lifetime of the oldest document anyone might still load. `supportedVersions` lists every version the model has ever shipped, in ascending order, which is the same commitment stated a different way.\n\nOne deployment corollary from the recipe: a peer that has only the v1 package registered cannot execute the upgrade at all. The document stays at v1 there and v2 operations fail \u2014 so deploy the new model version everywhere before dispatching the first v2 operation.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Document Versioning recipe (\"The latest reducer owns the historical log\"), academy 6.2.2-dev.45.",
+        "updatedAt": "2026-08-13T14:39:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:11.063Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "p5rouT0wlpaieZuTqQNNqkFxiTo=",
+    "timestampUtcMs": "2026-08-13T14:39:11.063Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6207fcc8-9362-46cc-b914-3cb27b354ddb",
+        "name": "versioning"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:11.063Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "57N6A0GBW+9nJEY0A/30AbhW12k=",
+    "timestampUtcMs": "2026-08-13T14:39:11.063Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "016ff9cc-133b-4e44-8538-55c841f55754",
+        "name": "reducer-patterns"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:11.063Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "bNmsPkbAUxSbMZNg44vrMMtew8g=",
+    "timestampUtcMs": "2026-08-13T14:39:11.063Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "0572b6b8-cf88-4af9-aaed-9eabb2b76fcf",
+        "name": "event-sourcing"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:11.063Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "etuM957lO3+OuH2ej8JWLWpw6xQ=",
+    "timestampUtcMs": "2026-08-13T14:39:12.186Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:39:10.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:12.186Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "fgwMKYiSDxfOMBRQztXCzdbBhEA=",
+    "timestampUtcMs": "2026-08-13T15:57:56.998Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:56.998Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "+uy6nIBcOhYeGrUMXFtiq2x5lq4=",
+    "timestampUtcMs": "2026-08-13T15:57:56.998Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "bcfe5d67-34f9-488e-b7ae-ee99b4735439",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:56.998Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "250oqmXWuGo2U4BqYnAMdx0CdeU=",
+    "timestampUtcMs": "2026-08-13T15:57:56.998Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "147522f7-1233-44fe-8872-8b52db434e70",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:56.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:56.998Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Zejo7lnRGG9wx5xVX5AFvTPOZc4=",
+    "timestampUtcMs": "2026-08-13T16:56:10.123Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:56:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:56:10.123Z"
+    }
+  }
+]

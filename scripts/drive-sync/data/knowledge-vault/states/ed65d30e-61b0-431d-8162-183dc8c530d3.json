@@ -1,0 +1,126 @@
+{
+  "links": [
+    {
+      "id": "lnk-021f70cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "021f70cc-31a1-401f-b067-330c4ac5af9a",
+      "targetTitle": "editors-use-react-hooks-for-document-state"
+    },
+    {
+      "id": "lnk-8a102b2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a102b2d-09d8-4f96-b31d-018c0950ce75",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-df8692bc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df8692bc-219a-4718-8cd4-adecb6d6cb48",
+      "targetTitle": "node-actions-hook-drive-operations"
+    },
+    {
+      "id": "lnk-cdfc327e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cdfc327e-2c36-4bc7-868f-74ec57af002a",
+      "targetTitle": "useselecteddocument-hook-is-auto-generated-per-document-model"
+    },
+    {
+      "id": "lnk-8636b83a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8636b83a-d96a-4dfe-ba64-07f112282fb0",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-2ceda563-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2ceda563-18c6-4f1c-89e2-db0b872563b7",
+      "targetTitle": "model-editor-wiring"
+    },
+    {
+      "id": "lnk-b463e3e1-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    },
+    {
+      "id": "lnk-584cc17c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "584cc17c-0c35-4ba8-b755-2735fee58676",
+      "targetTitle": "document-model-three-components"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Generated hooks like useSelectedDocument connect React editors to document state and dispatch",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "13e13970-c68d-4d4f-b970-cb5620f96542",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3086823-9ed8-4fe2-9fe9-373edeeca4ce",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbac14b6-c4e1-4803-b303-f2494310f05c",
+      "name": "state-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When Powerhouse generates code for a document model, it creates React hooks for editor integration. For a `TodoList` model, the generated hook is `useSelectedTodoListDocument`.\n\nUsage pattern:\n```tsx\nconst [selectedTodoList, dispatch] = useSelectedTodoListDocument();\n```\n\nThis provides:\n1. **Document state** (`selectedTodoList`) - The current document including `state.global`, `name`, `operations`, etc.\n2. **Dispatch function** - Send actions to the reducer to modify the document\n\nThe dispatch function works with generated action creators:\n```tsx\nimport { addTodoItem, updateTodoItem, deleteTodoItem } from \"...\";\n\ndispatch(addTodoItem({ text: \"Buy groceries\" }));\ndispatch(updateTodoItem({ id: itemId, checked: true }));\ndispatch(deleteTodoItem({ id: itemId }));\n```\n\nThis follows React's `useReducer` pattern. Any component can use the same hook - you don't need to be in the parent component to dispatch updates. The hook automatically connects to the currently selected document.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The hook returns [document, dispatch] \u2014 the first element is the whole document (state.global, header, operations), not just the state slice.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "27bc7d82-786c-4014-a3b6-43a815960326",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a4a52c06-8d9b-4f29-9867-76cbb4d51464",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

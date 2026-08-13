@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-40d3fc73-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "40d3fc73-7a72-433b-8f7f-754de53412e7",
+      "targetTitle": "vetra-package-module-types"
+    },
+    {
+      "id": "lnk-8636b83a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8636b83a-d96a-4dfe-ba64-07f112282fb0",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse packages are published to NPM and installed into host apps via ph install",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ba89a2ad-b6d4-4eee-accb-81cd17f24c8b",
+      "name": "packaging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a52337b-8c07-4cc0-b3fb-94e1647d45bb",
+      "name": "npm",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4386fa9c-cd07-4003-90e4-6a9e3bc0272b",
+      "name": "distribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse packages follow a standard publishing workflow:\n\n1. **Package naming**: Scoped convention `@your-org-ph/your-package-name` (the `-ph` suffix identifies Powerhouse ecosystem packages)\n2. **powerhouse.manifest.json**: Declares package contents - document models (with document type IDs) and editors (linked to document types). Before the first publish, set its `name`, `description`, and `publisher`, and make `package.json`'s `name` match\n3. **Build**: `pnpm build` or `npm run build` compiles to dist/\n4. **Publish**: `npm login` then `npm publish` (with `\"publishConfig\": { \"access\": \"public\" }` for scoped packages), or `ph publish --registry=<url>`\n5. **Install**: `ph install @your-org-ph/your-package-name` makes document models and editors available in any Powerhouse environment\n\n`ph install` defaults to the **Powerhouse registry**: it only registers the package in `powerhouse.config.json` with provider `\"registry\"`, and Connect loads it from the registry CDN at runtime -- it does NOT install into `node_modules` by default. Use `--local` to also install into `node_modules` (provider `\"local\"`) so `ph connect build` bundles it and the preview works without the registry being reachable. Registry URL resolution order: `--registry` flag > `PH_REGISTRY_URL` env > `powerhouse.config.json` > default.\n\nThe scaffolded `package.json` `files` array contains only `[\"/dist\"]` -- the compiled build output is what ships, not the source `document-models` / `editors` folders.\n\nSemantic versioning is used for package versions. The AGPL-3.0-only license is common in the ecosystem.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "WORKFLOW",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Packages use scoped NPM names (@org-ph/name), include powerhouse.manifest.json, and are installed with `ph install @org/package`.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3e16f676-6757-47d4-956f-3c328cccc93b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b4b4db95-f46f-441f-85a5-43c3a66d7e5b",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:09.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

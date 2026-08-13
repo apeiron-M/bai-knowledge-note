@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-1af57e9d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+      "targetTitle": "v6-processor-flat-operations-replace-strands"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Analytics processors must buffer series inputs and flush in chunks rather than inserting per operation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "91105b93-ca0c-4046-946b-e3c0d4c077c4",
+      "name": "analytics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "56b4ee47-cb08-4ab9-893d-4dd67f6070bc",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "507b6afc-879c-441e-95f0-1b8c73d20981",
+      "name": "performance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`onOperations` receives a flat list that can be arbitrarily long \u2014 a backfill over a drive's full history arrives page by page, not operation by operation. Writing one row per operation turns that into one database round-trip per operation. Both shipped analytics processors use the same buffer-and-chunk shape, and the migration guide names it as the recommended pattern:\n\n```typescript\nconst CHUNK_SIZE = 50;\nconst buffer: AnalyticsSeriesInput[] = [];\n\nfor (const { operation, context } of operations) {\n  // ...build seriesInput...\n  buffer.push(seriesInput);\n\n  while (buffer.length >= CHUNK_SIZE) {\n    const batch = buffer.splice(0, CHUNK_SIZE);\n    await this.analyticsStore.addSeriesValues(batch);\n  }\n}\n\nif (buffer.length > 0) {\n  await this.analyticsStore.addSeriesValues(buffer);\n}\n```\n\nTwo details are easy to get wrong. The flush uses `while`, not `if` \u2014 with `splice` draining the front, `while` is correct for a buffer that could already be over the threshold, and it keeps the invariant \"never hold more than CHUNK_SIZE-1 items\". And the trailing `if (buffer.length > 0)` is not optional: without it every partial final chunk is silently dropped.\n\n`IAnalyticsStore` exposes both `addSeriesValue(input)` and `addSeriesValues(inputs)`. The chunked pattern uses the plural form; the singular is a convenience for one-off writes and is what the older Analytics Engine prose shows.\n\nBecause a processor registered with `startFrom: \"beginning\"` can be re-delivered its entire history \u2014 on first registration against a drive with history, after a restart gap, or after `tracked.retry()` \u2014 chunked inserts alone are not idempotent. The `clearSource` companion pattern handles that: on seeing operation index 0 again for a known document, call `clearSeriesBySource(source, true)` and rebuild, so reprocessing converges on the same totals.\n\nProvenance: academy `04-Reference/04-Processors/08-ProcessorMigrationGuide.md` (published) and the draft `03-Build/04-WorkWithData/_04-analytics-processor.md`; code verified byte-for-byte in `packages/shared/processors/drive-analytics/{drive,document}-processor.ts` at 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The shipped pattern buffers AnalyticsSeriesInput[] and calls addSeriesValues whenever the buffer reaches CHUNK_SIZE (50), then flushes the remainder after the loop.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "88b1a066-61a1-432a-98bb-a64a09d3c73a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:38.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "df57b42c-8143-4ed5-88a5-8a34b06f3fe0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:38.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

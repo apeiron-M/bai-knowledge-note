@@ -1,7 +1,7 @@
 # drive-sync — upload, download, reindex, repair a Powerhouse knowledge vault
 
 This folder holds the canonical scripts and a committed dataset
-(`data/knowledge-vault/`, ~407 docs) so anyone with a fresh clone can
+(`data/knowledge-vault/`, 543 docs) so anyone with a fresh clone can
 recreate the vault on a clean local reactor in one command.
 
 ---
@@ -23,17 +23,55 @@ python3 scripts/drive-sync/upload.py \
     --drive-name "knowledge vault"
 ```
 
-A clean run takes **~3–5 min** on local (407 documents + 2,000 cross-refs).
+A clean run takes **~5–8 min** on local (543 documents + 2,211 cross-refs).
 You should see:
 
 ```
-[upload] created 407/407 documents
-→ applied 2025/2025 cross-ref actions (0 failures)
+[upload] created 543/543 documents
+→ applied 2211/2211 cross-ref actions (0 failures)
 [upload] done — drive: <UUID> (knowledge-vault)
 ```
 
 Open Connect at `http://localhost:3001/d/knowledge-vault` (vetra studio)
 to browse the drive.
+
+---
+
+## Uploading to a remote Switchboard
+
+Every script resolves its target from the `PH_GRAPHQL_ENDPOINT` environment
+variable, which defaults to `http://localhost:4001/graphql` (see
+`lib/gql.py`). There is no `--endpoint` flag on `upload.py` — set the env var:
+
+```bash
+export PH_GRAPHQL_ENDPOINT=https://<your-switchboard-host>/graphql
+
+python3 scripts/drive-sync/upload.py \
+    --data scripts/drive-sync/data/knowledge-vault \
+    --drive-name "knowledge vault" \
+    --throttle-ms 50                      # ease backpressure over the network
+```
+
+Then rebuild the graph projection on the remote (the processor indexes live,
+but a reindex guarantees a consistent baseline after a bulk import):
+
+```bash
+ENDPOINT=https://<your-switchboard-host>/graphql/knowledgeGraph \
+  bash scripts/drive-sync/reindex.sh scripts/drive-sync/data/knowledge-vault
+```
+
+Three things to check before you start:
+
+- **The remote must already run this Reactor Package**, i.e. have the `bai/*`
+  document models deployed. Uploading against a Switchboard that lacks them
+  fails per-document at creation.
+- **`id-map.json` must not exist** for a clean run — it is the resume marker
+  and is keyed to the *previous* target's document ids, so a stale one makes
+  the upload skip documents it wrongly believes already exist. It is
+  deliberately absent from the committed dataset.
+- **Semantic search needs a separate step.** Embeddings are computed
+  client-side and pushed, so run `embed-backfill.mjs` against the remote after
+  the upload; `reindex` does not create them.
 
 ---
 
@@ -66,7 +104,7 @@ actions by upload.py's phase 4.
    folders inside it (`/knowledge/`, `/sources/`, `/ops/`, etc.). Skip
    this phase with `--existing-drive <id>` if you've already created a
    drive and only want to import documents into it.
-2. **Create documents.** For each of the 407 docs in `manifest.json`,
+2. **Create documents.** For each of the 543 docs in `manifest.json`,
    calls `KnowledgeNote { createDocument }` (or `Moc {...}`,
    `Source {...}`, etc. depending on type), then `DocumentDrive.moveNode`
    to place it inside its target folder. Writes the new server id to
@@ -101,6 +139,34 @@ This calls the subgraph's `knowledgeGraphReindex(driveId)` mutation,
 which deletes all `graph_edges` rows whose `source_document_id` is in
 the drive and re-fans-out per relationship type from
 `DocumentRelationship`. Returns `{ indexedNodes, indexedEdges, errors }`.
+
+---
+
+## After upload: backfill embeddings (semantic search)
+
+Reindexing does **not** compute embeddings — vectors are pushed by
+clients via `knowledgeGraphUpsertEmbedding`, normally by the Connect
+drive-app when someone opens the vault (`use-embedding-backfill.ts`).
+After a headless upload, `knowledgeGraphSimilar` and
+`knowledgeGraphSearchByEmbedding` return nothing until embeddings
+exist. Backfill them without opening Connect:
+
+```bash
+bun scripts/drive-sync/embed-backfill.mjs --drive <drive-uuid-or-slug>
+# optionally: --endpoint http://localhost:4001/graphql
+```
+
+The script queries `knowledgeGraphMissingEmbeddings`, embeds
+`title + " " + description` per node with `Supabase/gte-small` (q8 —
+the same model/quantization the browser uses, so vectors are
+interchangeable), and pushes each via the upsert mutation. The model
+(~34 MB) downloads from the Hugging Face hub on first run and is
+cached. ~385 docs take about 2 minutes; re-runs are incremental
+(only missing embeddings are computed). Verify with:
+
+```bash
+switchboard query '{ knowledgeGraphMissingEmbeddings(driveId: "<UUID>") }'
+```
 
 ---
 
@@ -160,6 +226,7 @@ dev.246+ — match your vetra version.
 | `upload.sh` | Bash wrapper that enforces `switchboard config` profile is `local` before delegating to `upload.py`. Use it in CI/automation to prevent accidental remote uploads. |
 | `download.py` | Snapshot a vault from any reactor (works against `/graphql/r` on local or remote). |
 | `reindex.py` / `reindex.sh` | Force the `knowledgeGraph` subgraph to rebuild from `DocumentRelationship`. |
+| `embed-backfill.mjs` | Compute + push embeddings for nodes missing them (headless counterpart of the Connect drive-app backfill). Required for semantic search after a headless upload. |
 | `compare.py` | Diff two `data/` dumps to detect drift between snapshots. |
 | `cleanup-duplicates.py` | Operator tool to dedupe drive-level node entries (rare). |
 | `lib/gql.py` | Direct GraphQL helpers used by `upload.py` (no subprocess overhead). |

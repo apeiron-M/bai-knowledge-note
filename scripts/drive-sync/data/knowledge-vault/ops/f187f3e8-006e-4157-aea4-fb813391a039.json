@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:03.978Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "collaborate-tab-in-chat-panel",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "f187f3e8-006e-4157-aea4-fb813391a039",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:03.978Z"
+        },
+        "version": 0,
+        "documentId": "f187f3e8-006e-4157-aea4-fb813391a039",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:03.978Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "pFkG/JFimC2DdFVL4B/uD30Gyds=",
+    "timestampUtcMs": "2026-08-13T13:22:53.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Collaboration management lives in a new Collaborate tab inside the existing chat panel",
+        "updatedAt": "2026-08-13T13:22:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:53.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:03.978Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "f187f3e8-006e-4157-aea4-fb813391a039",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:03.978Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "vb1yL557azwFhtTg0p20GY107G0=",
+    "timestampUtcMs": "2026-08-13T13:22:53.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:22:53.000Z",
+        "description": "The Collaborate tab is added to the existing chat panel \u2014 reuses peer resolution, public-profile lookup, multi-user picker, and notification plumbing already built for chat."
+      },
+      "timestampUtcMs": "2026-08-13T13:22:53.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:06.262Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f187f3e8-006e-4157-aea4-fb813391a039",
+        "targetId": "37861991-256f-47c8-b559-38ccd8dff506",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:06.262Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "v0e7gh3NAuaWAyq6Q5k4q07A2Qo=",
+    "timestampUtcMs": "2026-08-13T13:22:53.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-13T13:22:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:53.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:06.288Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f187f3e8-006e-4157-aea4-fb813391a039",
+        "targetId": "631dcd5e-12fa-4c44-af7e-af96bf8482d8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:06.288Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "nUYREDAw47Fvmp5XlMeEB/TBwP8=",
+    "timestampUtcMs": "2026-08-13T13:22:53.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## UX: Collaborate tab inside the Chat panel\n\n### Why the chat panel?\n\nThe chat panel already owns everything collab needs:\n\n- Peer address resolution.\n- Public profile lookup (Bee pubkey for ACT).\n- Multi-user picker patterns (from the existing document-share picker).\n- Notification plumbing.\n\nAdding Collaborate next to the existing conversation list keeps everything multi-peer in one place rather than scattering peer-oriented UI across the app.\n\n### Layout\n\n```\nChat Panel (left pane)\n  \u251c\u2500\u2500 [Conversations] tab    \u2190 existing\n  \u2514\u2500\u2500 [Collaborate]    tab   \u2190 NEW\n        \u251c\u2500\u2500 \"+ New collaboration\" button\n        \u251c\u2500\u2500 Pending invitations  (I received)\n        \u2514\u2500\u2500 Active collaborations (I'm part of)\n```\n\n### Key flows\n\n- **Create:** pick target (Drive or Document), pick participants (multi-select from known chat peers or paste a Swarm ID), optional caption, click Invite.\n- **Accept:** recipient sees a `CollabInviteCard` in chat \u2014 mirrors `DocumentShareCard` but with `[Join]` instead of `[Import]`.\n- **Active row:** drive/doc name, participant avatars (initials \u2014 allowed as a list, not a per-editor overlay), last activity timestamp. Click opens the drive/doc in Connect.\n- **Leave:** local-only stop (feed writes/pulls stop); initiator can later remove from manifest.",
+        "updatedAt": "2026-08-13T13:22:53.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:53.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:06.377Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f187f3e8-006e-4157-aea4-fb813391a039",
+        "targetId": "c133a556-7137-4978-8e4b-d18e803fc0b9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:06.377Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "j5OtJWbSSRJ0UYijHDmPTqRqInI=",
+    "timestampUtcMs": "2026-08-13T13:22:53.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:53.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:06.447Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f187f3e8-006e-4157-aea4-fb813391a039",
+        "targetId": "675bdd06-6192-4223-9581-fa43200d307e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:06.447Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "52P7RnxONwNeiCHo3U55Iez/Aak=",
+    "timestampUtcMs": "2026-08-13T13:22:53.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-ccbd016f-1",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:53.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:06.677Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "f187f3e8-006e-4157-aea4-fb813391a039",
+        "targetId": "c1b2c7da-f7a0-47f7-85a7-ff9f5cfebdc3",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:06.677Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Wpnvs+uA9irOFioNCk0xpiEAEpg=",
+    "timestampUtcMs": "2026-08-13T13:22:53.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-ccbd016f-2",
+        "name": "ux-design",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:53.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "5ECtC/SxJEe/LvPOpdAvpMTFSng=",
+    "timestampUtcMs": "2026-08-13T13:22:53.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-ccbd016f-3",
+        "name": "chat-panel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:53.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "TDZkqCY6caTw+tFEjJ7+E3Bk0FI=",
+    "timestampUtcMs": "2026-08-13T15:59:51.905Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:59:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:51.905Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "CPLD2CLft2RtmAbBK7/3sPqhoVY=",
+    "timestampUtcMs": "2026-08-13T15:59:51.905Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "0347047c-0d29-4929-82d1-26f030e04a81",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:59:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:51.905Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "8F6a9goUpkhlIsGoVlvpUmM3XAk=",
+    "timestampUtcMs": "2026-08-13T15:59:51.905Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "8fe2b8e0-fb81-4559-b910-96f99599f891",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:59:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:51.905Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "d4/rOnMemRqwHe06tViPCcZnVkc=",
+    "timestampUtcMs": "2026-08-13T16:58:23.251Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:58:23.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:58:23.251Z"
+    }
+  }
+]

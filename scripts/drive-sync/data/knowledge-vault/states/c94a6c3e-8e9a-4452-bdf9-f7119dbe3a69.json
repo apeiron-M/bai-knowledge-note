@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-cbb06ab4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    },
+    {
+      "id": "lnk-0eb0b43b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eb0b43b-c44b-4c9f-929b-378e56ee5975",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-a8b2713f-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Processors are materialised views over the operation log and can be rebuilt by replaying from zero",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1597062a-4ad5-48fe-a242-61c9a384d520",
+      "name": "processors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5f73520b-8383-43cd-a9eb-0d557311b68b",
+      "name": "read-models",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4fd9dc6d-f154-4cf2-ab22-2759c142b927",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The mental model: a lens, not a store of record\n\nA document's operation log is authoritative but not always convenient. Asking \"which todos did Alice complete last week?\" should not mean replaying an entire log on every request. That is what processors are for: event-driven handlers that subscribe to the operation stream and maintain a **read model** on the side.\n\nThink of each processor as a materialised view. It:\n\n1. Subscribes to one or more document types (or specific documents).\n2. Receives every operation as it is appended, in order, exactly once.\n3. Updates its own storage \u2014 a table, an index, a counter.\n\nReducers stay lean; queries stay fast; neither side has to know about the other.\n\n## Why replayability is the important property\n\nA processor's only input is an append-only log it does not own. That makes its output *derived data*, and derived data is disposable. Add a counter, fix an aggregation bug, reshape the output \u2014 then drop the processor's state and replay from operation zero. The log never changed; only the lens did.\n\nThis is what makes processors forgiving in a way that a schema migration on a mutable table is not. A bad migration destroys information. A bad processor produces a wrong view over information that is still fully intact upstream, so the fix is mechanical rather than archaeological.\n\n## Where the line falls\n\nThe division of labour is sharp:\n\n- **Reducer** \u2014 \"what is this document now?\" Validation, state transitions. Must be pure.\n- **Processor** \u2014 \"what else should happen because of that operation?\" Aggregates, indexes, notifications, side effects.\n\nCounting completed todos across all history belongs in a processor: doing it in the reducer couples the document's state size to its age. Sending mail on assignment belongs in a processor too, because reducers cannot perform I/O. Rejecting an empty title belongs in the reducer, because that check must run *before* the action becomes an operation.\n\n_Source: apps/academy/docs/academy/02-Learn/06-switchboard/03-processors-and-read-models.mdx (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:36:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:43.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Because a processor only reduces an immutable log, changing its code cannot corrupt the source of truth \u2014 drop the read model and replay from operation zero.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dc4d863c-bc6d-40f5-ab31-9a7bf6d7d912",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:25.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "15f56999-dfdb-46a1-bcd3-825acbbef691",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:25.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

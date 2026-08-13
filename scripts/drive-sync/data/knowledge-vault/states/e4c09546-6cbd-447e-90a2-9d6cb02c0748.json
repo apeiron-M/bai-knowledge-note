@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-a41320a9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a41320a9-65d2-4d0b-81ba-791aa4a859d7",
+      "targetTitle": "powerhouse-emerged-from-dao-coordination-failures"
+    },
+    {
+      "id": "lnk-ab51b1bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab51b1bd-4e7d-420a-b673-52bbc4e39277",
+      "targetTitle": "swarmchannel-is-transport-only"
+    },
+    {
+      "id": "lnk-3ff7866d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3ff7866d-98e3-4ccc-adb8-ede09347f9a3",
+      "targetTitle": "multisig-participation-agreements-formalize-dao-governance"
+    },
+    {
+      "id": "lnk-946f2a49-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "946f2a49-d15b-4915-94ff-7066966c43f5",
+      "targetTitle": "adapter-monorepo-two-packages"
+    },
+    {
+      "id": "lnk-2b7f5dc0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2b7f5dc0-996e-4ed3-b8fd-dc7d83ab0662",
+      "targetTitle": "swarm-bee-v271-feed-auto-racing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ADR-002 splits SwarmClient's 10 responsibilities into focused StampManager and ShareManager classes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5c872c0c-ce91-4055-9c0a-21442abd27b2",
+      "name": "adr",
+      "topicDocumentId": null
+    },
+    {
+      "id": "142d9c2e-3458-4ed4-ba83-71add84ea483",
+      "name": "swarm-client",
+      "topicDocumentId": null
+    },
+    {
+      "id": "02f45b64-51b4-42f3-9af4-f6bf7beec69d",
+      "name": "refactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68973b85-ad62-48e0-8f02-77214376b4e5",
+      "name": "testability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "**ADR-002: Extract StampManager and ShareManager from SwarmClient**\n\n**Status:** Accepted (2026-04-10)\n\n**Context:** `SwarmClient` had grown to 1,035 lines with ~30 methods covering 10 responsibilities \u2014 data CRUD, feeds, stamps, pricing, sharing, profiles, ACT, compaction, and more. The class became hard to test and reason about.\n\n**Decision:** Extract two focused classes:\n\n- `StampManager` \u2014 stamp lifecycle and pricing.\n- `ShareManager` \u2014 profiles, sharing, and key derivation.\n\n`SwarmClient` keeps thin delegation methods pointing at these managers so existing call sites continue to work.\n\n**Consequences:**\n- Positive: `SwarmClient` refocuses on core CRUD + feeds + manifests and drops to 531 lines.\n- Positive: `StampManager` and `ShareManager` become independently unit-testable.\n- Negative: delegation wrappers add a layer of indirection that readers must follow.\n\nADR-003 (same date) complements this by adding optional DI parameters (e.g. `bee: Bee` on `SwarmClient`, `provider: EthereumProvider` on `wallet-signer`) so all three classes can be constructed with injected mocks and tested without global patching.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:31.656Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Accepted 2026-04-10: SwarmClient shrinks from 1035 to 531 lines of core CRUD/feeds/manifests; StampManager and ShareManager become independently testable behind thin delegation wrappers.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2e76e2d6-2496-4dfc-b42c-0a35c71cc963",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:24.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "629b7260-161c-41d1-afff-26c8238f23b0",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:24.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

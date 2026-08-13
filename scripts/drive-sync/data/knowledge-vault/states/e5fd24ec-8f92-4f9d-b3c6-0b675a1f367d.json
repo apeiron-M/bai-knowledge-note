@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-0eb0b43b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eb0b43b-c44b-4c9f-929b-378e56ee5975",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-4d98df7d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4d98df7d-a81e-461c-aa76-f59378303502",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    },
+    {
+      "id": "lnk-c7f73a29-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c7f73a29-d8df-42c3-832b-7dfdeedbcf55",
+      "targetTitle": "reactor-is-a-storage-node-supporting-multiple-adapters"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A drive is itself a document of type powerhouse/document-drive containing a list of child documents, hosted by a reactor node",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "25ef7297-0924-4bf8-8182-3e92c65648b5",
+      "name": "drives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9980a209-8ca3-4928-a2ae-abfd0f65ea5f",
+      "name": "reactors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e603e904-4309-408e-992c-bdcce66a1074",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0b8ae9e-2a4f-442f-92ac-ca654d4fa7ad",
+      "name": "storage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Drives are containers for documents that are technically documents themselves. Reactors are the network nodes that store and synchronize documents/drives, resolve conflicts, and rerun operations to verify event histories. Reactors can use local storage, cloud storage, or decentralized storage (Ceramic, IPFS). A reactor hosts multiple drives with different organizational purposes, users, and access rights. Drives can be created via Connect UI (with options for Local, Cloud, or Public location) or programmatically via GraphQL mutation `DocumentDrive { createDocument(name, slug) }`. Drive URLs follow the format `domain/d/<driveId>` or `domain/d/<driveSlug>`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Drives are documents; reactors store drives, resolve conflicts, verify event histories, and sync across nodes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ceb0a074-b0da-4671-bb63-abcec8de4677",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cd2ca1fb-2354-43d0-82de-30b16a08bb6a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

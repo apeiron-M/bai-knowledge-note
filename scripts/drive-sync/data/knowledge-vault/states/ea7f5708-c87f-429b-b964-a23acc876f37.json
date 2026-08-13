@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-85bd1fa1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "85bd1fa1-2fba-4209-8fc0-8ad09e867a76",
+      "targetTitle": "corpus-baseline-v6-0-0-dev-254"
+    },
+    {
+      "id": "lnk-a8b2713f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-cbb06ab4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Powerhouse Recipes repository is the canonical catalog of runnable Reactor patterns",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "41497e1b-ddca-43c4-9d96-0c83ef9d8bcf",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c7211336-7d08-46c8-a4d8-3fef69d6c403",
+      "name": "recipes",
+      "topicDocumentId": null
+    },
+    {
+      "id": "863385b4-f3d6-4913-a219-1e27bc93b444",
+      "name": "learning-resources",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`github.com/powerhouse-inc/recipes` holds 21 standalone projects, each a clonable-and-runnable demonstration of one Reactor pattern. The Cookbook's recipe table and its per-recipe detail sections are **auto-generated** from that repo by `scripts/generate-recipe-docs.ts` \u2014 the academy markdown carries an explicit \"do not edit directly\" marker \u2014 so the repo, not the docs, is the source of truth.\n\nGrouped by what they teach:\n\n| Theme | Recipes |\n| --- | --- |\n| Read models & projection | analytics-processor, custom-read-model, full-text-search, semantic-search, relational-db-subgraph |\n| Cross-document automation | cross-document-reactor, saga, batch-progress |\n| External integrations | external-feed-ingest, inbound-webhook-bridge, discord-webhook-processor |\n| Identity, auth & limits | role-based-auth, signed-operations-verifier, rate-limiter, audit-trail |\n| Sync & ops | sync-health-monitor, subscription-cli, db-migrate, document-snapshot-exporter |\n| Schema evolution & containers | document-versioning, drive-override |\n\nSeveral are the *only* documentation of their subject at any depth \u2014 `document-versioning` on the `initialState` replay trap, `inbound-webhook-bridge` on raw-bytes HMAC verification, `drive-override` on `ADD_RELATIONSHIP` scaling. Where the reference docs and a recipe overlap, the recipe usually carries the failure mode and the test that proves it.\n\nTwo properties make them unusually citable. Most run **fully offline** on an in-process PGlite-backed reactor with no external services, and most **generate their document models from a committed spec** via `ph generate document-model --document <spec>.json` with a pinned `ph-cli`, so the codegen output in the repo matches a known toolchain version. Several also pair a demo (`pnpm start`) with a test suite that asserts the pathological case rather than just the happy path.\n\nRecipes are AGPL-3.0-only where licensing is stated.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, \"Reactor Recipes\" section (auto-generated block), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "21 self-contained projects at github.com/powerhouse-inc/recipes, auto-generated into the Cookbook, covering processors, read models, sync, auth, integrations and versioning.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5a78196d-4a07-40b5-9e16-a19c0f387da0",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:41.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "93797759-693a-4c7b-983b-ce9d3cfec44c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

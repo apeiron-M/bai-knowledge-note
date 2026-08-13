@@ -1,0 +1,350 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:35.050Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "offline-edits-replay-on-reconnect-via-cursor",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "228513a2-ac79-4eb3-a344-d3a8dc02843d",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:35.050Z"
+        },
+        "version": 0,
+        "documentId": "228513a2-ac79-4eb3-a344-d3a8dc02843d",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:35.050Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "d2j7Y3421ymygeexOVTVq0Y5jm8=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Offline edits accumulate locally and replay to Swarm on reconnect via the outbox cursor.",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:35.050Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "228513a2-ac79-4eb3-a344-d3a8dc02843d",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:35.050Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ixKNw2U/JXYR9ujvZGI0lZC8etk=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:12.000Z",
+        "description": "When Bee is unreachable the channel goes to error; ops pile up in PGlite; on reconnect the outbox cursor catches up, replaying everything with no data loss."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:50.175Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "228513a2-ac79-4eb3-a344-d3a8dc02843d",
+        "targetId": "7ba92762-d467-4cf8-86d0-4ebdedb53502",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:50.175Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "d+7sbdNWYivVzIU28+UV9Mh7ipo=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "workflow",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:50.200Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "228513a2-ac79-4eb3-a344-d3a8dc02843d",
+        "targetId": "4924a018-cf23-42a5-9d3c-fb993ef38ed4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:50.200Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "5rHCUJkv4MV+3A1RcwRBftQagm4=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nOffline-edit durability is provided by PGlite + the outbox cursor: the local reactor keeps working, and on reconnect the cursor replays accumulated ops to Swarm.\n\n## Flow\n1. User edits documents while Bee node is unreachable.\n2. Operations accumulate in PGlite (local reactor works fine).\n3. SwarmChannel connection state transitions to `error` \u2192 push is blocked.\n4. User reconnects Bee node \u2192 state becomes `connected`.\n5. Outbox cursor catches up: all accumulated ops are pushed to Swarm.\n6. No data loss \u2014 cursors in PGlite track exactly what was synced.\n\n## Why this is safe\n- The cursor is only advanced after a successful feed write, so a crash mid-push is idempotent.\n- The local reactor is the source of truth; Swarm is purely a mirror.\n- User never loses work due to Bee downtime.\n\n## Source\nSwarm Channel Architecture, \"Flow 4: Offline Edits \u2192 Reconnect\".",
+        "updatedAt": "2026-08-13T13:23:12.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:50.291Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "228513a2-ac79-4eb3-a344-d3a8dc02843d",
+        "targetId": "a159e0d3-627b-482f-96af-8fb2abe8faba",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:50.291Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "ra0EQghAEfBMvgigO1BOdzI1kLs=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:50.361Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "228513a2-ac79-4eb3-a344-d3a8dc02843d",
+        "targetId": "c0b2af09-1fc3-43d4-bc28-dca56db6f747",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:50.361Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "8RGgABF/sF22DDCrg7oH5DELoNs=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-44e2d872-1",
+        "name": "offline-first",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:50.544Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "228513a2-ac79-4eb3-a344-d3a8dc02843d",
+        "targetId": "a039d9b3-9608-4584-acfd-f231a2296186",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:50.544Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "NSNlGlKji+TXQBNf4sRdVC/Byso=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-44e2d872-2",
+        "name": "outbox-cursor",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "MjXh56u3jVJQNyQtsvoNyh9g3fc=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-44e2d872-3",
+        "name": "durability",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "n7SVBE1B7XoZmobdyWeXQ+evXxY=",
+    "timestampUtcMs": "2026-08-13T13:23:12.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-44e2d872-4",
+        "name": "user-flow",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:12.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Xjkc/rUwrfNkjY3j9dTOBsLT9F0=",
+    "timestampUtcMs": "2026-08-13T15:52:28.035Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:52:28.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:28.035Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "pm0Pw5ew1jmByyqkQiOD9VsbSlc=",
+    "timestampUtcMs": "2026-08-13T15:52:28.035Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "1a61abd1-4590-460a-a414-f734efc2605e",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:52:28.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:28.035Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "6JktkwRGOieMBIEdx98l54yF5z4=",
+    "timestampUtcMs": "2026-08-13T15:52:28.035Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f0d06329-b3f5-4d76-b2ba-39de6531a59c",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:52:28.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:52:28.035Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "N/FwmVYXFsAntp1WUJnlKbT/OHg=",
+    "timestampUtcMs": "2026-08-13T16:49:32.834Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:49:32.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:49:32.834Z"
+    }
+  }
+]

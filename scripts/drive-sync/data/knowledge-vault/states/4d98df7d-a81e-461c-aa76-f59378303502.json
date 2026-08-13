@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-e5fd24ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5fd24ec-8f92-4f9d-b3c6-0b675a1f367d",
+      "targetTitle": "drives-are-documents-in-reactors"
+    },
+    {
+      "id": "lnk-e2a19850-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2a19850-c400-4a2e-a3d7-7bb273c770df",
+      "targetTitle": "reactor-mcp-bridges-ai-agents"
+    },
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-0eb0b43b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eb0b43b-c44b-4c9f-929b-378e56ee5975",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-c7f73a29-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c7f73a29-d8df-42c3-832b-7dfdeedbcf55",
+      "targetTitle": "reactor-is-a-storage-node-supporting-multiple-adapters"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Reactor is a library, not a service: it stores and syncs documents while a host application like Switchboard exposes the API",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "77380361-e27d-46cc-9648-fef98047c8b2",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "97013c90-b70d-4235-b6c8-c8a982dcec8b",
+      "name": "backend",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2ce488e9-baa2-42b9-8538-262dce43413a",
+      "name": "infrastructure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A **Reactor** is the Powerhouse library (`@powerhousedao/reactor`) that applies reducers, orders operations into a deterministic log, and routes them to processors and sync channels. It is *not* a service: it has no `main()` and it does not open a port. A **host application** embeds it and supplies storage, network, UI surfaces, and the package registry. When you run `ph vetra --watch`, a local host application starts and embeds a Reactor for you. Reactors provide:\n\n- Document storage and hosting\n- Document synchronization across clients\n- Conflict resolution\n- Operation history verification (by rerunning operations)\n\nReactors can be configured for:\n- Local storage (development/Studio Mode)\n- Centralized cloud storage\n- Decentralized storage networks\n\nThe Reactor has no public API of its own \u2014 that surface belongs to the host. **Switchboard**, the API host that wraps a Reactor, is what exposes the GraphQL subgraphs: system, analytics, and per-model subgraphs such as document-editor, vetra-package, subgraph-module, processor-module and app-module, plus vetra-read-model. Switchboard also provides the WebSocket server for subscriptions and the MCP server for AI agent integration.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Reactor is a library handling document storage, conflict resolution, and operation verification. Host applications such as Switchboard expose the GraphQL/MCP API.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f2b8d327-64b0-4364-ab88-802c2e625dc2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bf8e0692-1fe6-446e-954f-0135fb79b1c7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

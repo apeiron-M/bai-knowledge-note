@@ -1,0 +1,317 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:52.038Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "analytics-engine-three-tables-many-to-many",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "7d587924-901b-49b6-bbad-3e7213be08a5",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:38:52.038Z"
+        },
+        "version": 0,
+        "documentId": "7d587924-901b-49b6-bbad-3e7213be08a5",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:52.038Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "GhYFINbB88GloIg5PAM/i3OeH54=",
+    "timestampUtcMs": "2026-08-13T14:38:52.244Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The Analytics Engine persists to exactly three tables joined many-to-many",
+        "updatedAt": "2026-08-13T14:38:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:52.244Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:52.038Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "7d587924-901b-49b6-bbad-3e7213be08a5",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:52.038Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "w/Zj+2ToABPq4TPI3i5lXyFos28=",
+    "timestampUtcMs": "2026-08-13T14:38:52.244Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:38:51.000Z",
+        "description": "AnalyticsSeries holds raw values, AnalyticsDimension holds dimensions, and AnalyticsSeries_AnalyticsDimension is the lookup table. The browser store creates all three in PGlite itself."
+      },
+      "timestampUtcMs": "2026-08-13T14:38:52.244Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:54.131Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7d587924-901b-49b6-bbad-3e7213be08a5",
+        "targetId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:54.131Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "XoeP7qgOmbWxJo6xZkJvx4gmSw0=",
+    "timestampUtcMs": "2026-08-13T14:38:52.244Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "ARCHITECTURE",
+        "updatedAt": "2026-08-13T14:38:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:52.244Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:54.155Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "7d587924-901b-49b6-bbad-3e7213be08a5",
+        "targetId": "1328e41a-9d40-49bf-bcec-1784cef7d878",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:54.155Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "HjZ5lq784DZfj4eQngL3rTvkLfM=",
+    "timestampUtcMs": "2026-08-13T14:38:52.244Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The whole storage model is three tables:\n\n- **`AnalyticsSeries`** \u2014 the raw values: `source`, `start`, `end`, `metric`, `value`, `unit`, `fn`, `params`.\n- **`AnalyticsDimension`** \u2014 the dimension records: `dimension`, `path`, plus display metadata (`label`, `icon`, `description`).\n- **`AnalyticsSeries_AnalyticsDimension`** \u2014 the many-to-many lookup joining the two, indexed on both `seriesId` and `dimensionId`.\n\nThe many-to-many join is the point, not an implementation detail. There will be millions of series rows and only a handful of distinct dimension rows, so dimensions are *shared* decorations rather than columns on the series. That is what lets a query aggregate *across* unrelated series that happen to share a dimension path, which is the capability the engine exists to provide.\n\nThe series table is heavily indexed \u2014 `start`, `end`, `metric`, `source`, `unit`, `value`, and `fn` each get their own index \u2014 which is why filtered time-window queries stay cheap and why arbitrary post-hoc SQL is deliberately not exposed on the interface.\n\nProvisioning differs by store. `BrowserAnalyticsStore.init()` runs a `create table if not exists` script inside PGlite, so it is self-provisioning and idempotent \u2014 you never migrate it by hand. The Postgres store assumes a fully initialized database and ships an init script instead; it will not create the schema for you.\n\nProvenance: draft `03-Build/04-WorkWithData/_06-Analytics Engine/typescript/schema.md`; DDL verified in the `initSql` block of `packages/analytics-engine/browser/src/BrowserAnalyticsStore.ts` at 6.2.2-dev.45. The draft attributes the auto-create behaviour to a `browser` package built on `MemoryAnalyticsStore`; the class has since been folded into `BrowserAnalyticsStore`.",
+        "updatedAt": "2026-08-13T14:38:51.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:52.244Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "CCLp55nvQv3daoz712A6c0YuVio=",
+    "timestampUtcMs": "2026-08-13T14:38:52.244Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "04117b15-debb-498d-8d7a-22268e788dde",
+        "name": "analytics-engine"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:52.244Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "S9Dz6wW15IG7ji8waXh/a47MeNw=",
+    "timestampUtcMs": "2026-08-13T14:38:52.244Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "f02a3220-4134-446d-837a-f50d517eb5b7",
+        "name": "schema"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:52.244Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "raKnm1I3HXcqCgTgxstS3ZlJntg=",
+    "timestampUtcMs": "2026-08-13T14:38:52.244Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "61344f19-4090-4527-aafb-c347d000a35f",
+        "name": "storage"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:52.244Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "gTKdn8VHyBlL26WDUwvMfQVhhY0=",
+    "timestampUtcMs": "2026-08-13T14:38:54.087Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:51.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:54.087Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "910S7NaJXg7GCnZMF/fuizRFFM0=",
+    "timestampUtcMs": "2026-08-13T14:58:04.533Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The whole storage model is three tables \u2014 re-verified against the DDL at 6.2.2-dev.45, and it is still exactly three:\n\n- **`AnalyticsSeries`** \u2014 the raw values: `source`, `start`, `end`, `metric`, `value`, `unit`, `fn`, `params`.\n- **`AnalyticsDimension`** \u2014 the dimension records: `dimension`, `path`, plus display metadata (`label`, `icon`, `description`).\n- **`AnalyticsSeries_AnalyticsDimension`** \u2014 the many-to-many lookup joining the two, indexed on both `seriesId` and `dimensionId`.\n\nNothing else is created, and no persisted database view exists either \u2014 `KnexAnalyticsStore._buildViewQuery` builds an *inline* subquery aliased `AV` at query time, so \"view\" in that code is a SQL expression, not a fourth schema object.\n\nThe many-to-many join is the point, not an implementation detail. There will be millions of series rows and only a handful of distinct dimension rows, so dimensions are *shared* decorations rather than columns on the series. That is what lets a query aggregate *across* unrelated series that happen to share a dimension path, which is the capability the engine exists to provide.\n\nBoth foreign keys in the join table are `on delete cascade`, and that is what shapes the store interface. Deleting series rows (`clearSeriesBySource`) silently takes the join rows with them but leaves the `AnalyticsDimension` rows behind as orphans, because dimensions are shared and no single series owns one. Hence the second, separately callable `clearEmptyAnalyticsDimensions()` on `IAnalyticsStore`, and hence the optional `cleanUpDimensions` flag on `clearSeriesBySource` that just chains the two. The apparently redundant pair of methods is a direct consequence of the schema shape.\n\nThe series table is heavily indexed \u2014 `start`, `end`, `metric`, `source`, `unit`, `value`, and `fn` each get their own index \u2014 which is why filtered time-window queries stay cheap and why arbitrary post-hoc SQL is deliberately not exposed on the interface.\n\nProvisioning differs by store, and the DDL is physically duplicated. `BrowserAnalyticsStore.init()` runs a `create table if not exists` script (the `initSql` template literal in its own source file) inside PGlite, so it is self-provisioning and idempotent \u2014 you never migrate it by hand. `PostgresAnalyticsStore` will not create the schema for you: it assumes an initialized database, and the init script that creates it lives in a *different package*, as `initAnalyticsStoreSql` in `packages/reactor-api/src/utils/db.ts`, which `reactor-api`'s server loops over via `knex.raw` at startup. The two copies are currently byte-identical apart from being one string versus an array of strings, but they are maintained separately \u2014 worth knowing if you ever see the two environments disagree about a column. Note also that there are no Knex migration files for these tables anywhere in the monorepo; the only provisioning path is one of these two raw-SQL scripts.\n\nProvenance: draft `03-Build/04-WorkWithData/_06-Analytics Engine/typescript/schema.md`. DDL verified in the `initSql` block of `packages/analytics-engine/browser/src/BrowserAnalyticsStore.ts` and in `initAnalyticsStoreSql` at `packages/reactor-api/src/utils/db.ts:175`; table set cross-checked against every table reference in `packages/analytics-engine/knex/src/KnexAnalyticsStore.ts` at 6.2.2-dev.45. The draft attributes the auto-create behaviour to a `browser` package built on a `MemoryAnalyticsStore` base class; that class does not exist anywhere in the source (`git grep MemoryAnalyticsStore` returns zero hits outside the academy docs), and `BrowserAnalyticsStore` carries the DDL itself.\n\n_Source-verified 2026-08-13 against Powerhouse source at v6.2.2-dev.45._",
+        "updatedAt": "2026-08-13T14:57:54.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:58:04.533Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Wn5VYlJ9wFtRnce1HXyQhQFG/OI=",
+    "timestampUtcMs": "2026-08-13T14:58:04.533Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:57:54.000Z",
+        "description": "AnalyticsSeries holds raw values, AnalyticsDimension holds dimensions, AnalyticsSeries_AnalyticsDimension is the cascade-deleting lookup. DDL is duplicated in browser and reactor-api."
+      },
+      "timestampUtcMs": "2026-08-13T14:58:04.533Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "Pp11RPNHOtwh3WOa7QqxPTmuB7U=",
+    "timestampUtcMs": "2026-08-13T15:55:49.260Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:55:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:49.260Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "I4DXEGsyZv/z4Icr/o0Jwx8ja6M=",
+    "timestampUtcMs": "2026-08-13T15:55:49.260Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "26a2eabb-1014-4e24-8c48-e0b2bdc06050",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:55:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:49.260Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "BXV03lZAA9uizS0Uc5MrPLH1BoE=",
+    "timestampUtcMs": "2026-08-13T15:55:49.260Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "f2dd1f39-a62e-4d81-95b4-8cea2fd793f5",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:55:49.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:49.260Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "oJMC2zXRfYvGDRVmp3U/EleiLyE=",
+    "timestampUtcMs": "2026-08-13T16:53:37.920Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:53:37.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:53:37.920Z"
+    }
+  }
+]

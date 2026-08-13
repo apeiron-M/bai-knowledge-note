@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-79fef290-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "79fef290-3839-43d6-a074-1c055d39cee6",
+      "targetTitle": "revision-history-timeline-in-editors"
+    },
+    {
+      "id": "lnk-3810d088-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3810d088-7a77-42ad-8d53-9fdba4049e71",
+      "targetTitle": "docsync-protocol-is-decentralized-storage-agnostic-and-supports-p2p"
+    },
+    {
+      "id": "lnk-8a102b2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a102b2d-09d8-4f96-b31d-018c0950ce75",
+      "targetTitle": "dispatch-accepts-onerrors-callback"
+    },
+    {
+      "id": "lnk-ebe264ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ebe264ee-37c2-4ae1-ae5a-20c5dca62e15",
+      "targetTitle": "event-sourcing-guarantees-audit-trails-but-complicates-querying"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Inspector Modal exposes the local PGlite database and sync remote channel states (inbox, outbox, dead letter) for debugging",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d04c6ede-35d1-4c06-bc1f-0f60f9ebf188",
+      "name": "debugging",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bcdc79f5-5c43-4119-b689-584a9fdfc977",
+      "name": "inspector",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be84d0a5-1cb5-42b5-b244-3a77bd0dc447",
+      "name": "sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "537fceaa-12dc-4df6-aa30-27cb1fc89713",
+      "name": "connect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Inspector Modal is a Connect development tool with two tabs: Database (explore local PGlite tables with schema tree, pagination, sorting, and export/import) and Remotes (view sync remotes and their channel states). Each remote has Inbox (received operations), Outbox (pending send), and Dead Letter (failed sync with error info). Operations have statuses: Pending, Applied, or Error. The Inspector is generally available to every Connect user \u2014 there is no feature flag. To open it, click the **Settings** (gear) button in the Connect sidebar footer, select the **About** tab, then click **Open Inspector**.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Generally available (no feature flag): Connect sidebar footer > Settings > About > Open Inspector. Shows DB tables, remote sync channel states, and DB export/import.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "99bf9a35-0c30-470c-8aa4-c09d174cab7d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "75e5380d-d854-45de-9d15-b27cd157e276",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

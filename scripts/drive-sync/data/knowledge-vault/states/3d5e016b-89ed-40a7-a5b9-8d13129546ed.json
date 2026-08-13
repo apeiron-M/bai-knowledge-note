@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f8ba011f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f8ba011f-a1ed-4965-a8ea-47359dfabd98",
+      "targetTitle": "document-model-structure-has-metadata-specifications-and-modules"
+    },
+    {
+      "id": "lnk-7c21c306-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7c21c306-5957-4ab9-b71e-40d36ff16593",
+      "targetTitle": "powa-document-model-bridges-on-chain-contracts-with-off-chain-governance"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm feeds use a versioned ph:v2:<kind>:<id> topic namespace spanning doc, drive, user, profile, and share feeds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "eb4a2d1d-5564-42a3-9f45-192cb7cecc14",
+      "name": "feed-topics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c8e0b6d-f003-422e-9550-bad37c0731aa",
+      "name": "manifest-hierarchy",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90fd48bd-974a-425c-99fd-a387b300b6ec",
+      "name": "ph-v2-namespace",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# Feed Topic Naming Convention (ph:v2:*)\n\nThe adapter uses a versioned colon-delimited topic namespace for all Swarm feeds. The `ph:v2:` prefix anchors the schema version and enables forward-compatible migration.\n\n| Feed | Topic pattern | Content |\n|------|--------------|---------|\n| Document manifest | `ph:v2:doc:<documentId>` | Pointer to encrypted operation batches |\n| Drive manifest | `ph:v2:drive:<driveId>` | Documents + folder structure for one drive |\n| User manifest | `ph:v2:user:<eth_address>` | Index of all user's drives |\n| Public profile | `ph:v2:profile:<address>` | Bee node public key for sharing (unencrypted) |\n| Share manifest | `ph:v2:share:<sender>:<recipient>` | Shared drive bundles between users |\n\nTopology is hierarchical: **user manifest \u2192 drive manifests \u2192 document manifests \u2192 encrypted op batches**. On recovery, a client reads the user feed first, then descends to discover all drives and documents.\n\nProfile feeds are the only unencrypted feeds \u2014 they publish a Bee node's public key so senders can ACT-encrypt shares to that recipient. Share feeds carry full drive bundles (including folder metadata) from sender to recipient.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:57:41.685Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "All adapter feeds follow ph:v2:<kind>:<id>: doc, drive, user manifests are encrypted; profile feeds publish an unencrypted public key; share feeds carry encrypted drive bundles between users.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bae71330-6542-4a52-b419-c4da21a00db2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "39b98897-aecf-4d80-bbca-a44e841006f7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

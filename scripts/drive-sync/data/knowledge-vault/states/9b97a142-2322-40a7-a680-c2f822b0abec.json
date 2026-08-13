@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-3ffe9cae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3ffe9cae-7925-4e7e-ac90-3a1198b1a6b3",
+      "targetTitle": "document-state-has-global-and-local-scopes"
+    },
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse documents are stored as an append-only operation log, not state snapshots",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "eb9bc90d-3285-47a2-894d-1821014f065b",
+      "name": "operations-log",
+      "topicDocumentId": null
+    },
+    {
+      "id": "40756e45-157e-41d6-8716-f66f06d9f3e7",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec82568d-7238-42c9-ab5c-02df67d87258",
+      "name": "reactor-sync",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd6b2570-7317-4f9b-8816-ac15447d389c",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Powerhouse stores documents as an append-only log of operations rather than as snapshots of state. Each edit (add a row, change a title, move an item) becomes an Operation with an index, timestamp, and hash.\n\nTo get the current document state you replay all operations through the document model's reducer, a pure function. Same operations in the same order always produce the same state.\n\nThis property is what makes Swarm sync possible: uploading the operations is sufficient for any device to reconstruct the full document by replaying them. It also means network transport only needs to carry new ordinals since the last cursor, not re-sync full documents.\n\nEvidence: the write path serializes operation batches with `uploadData(JSON.stringify(ops))`, SyncManager detects new ordinals in `operation_index_operations`, and recovery reconstructs documents by downloading batches and calling `reactor.load()` to replay them.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:17:36.098Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every edit becomes an Operation (index, timestamp, hash); current state is reconstructed by replaying operations through a pure reducer, enabling deterministic Swarm sync.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e1c2372e-e523-4077-a4f4-e96293d154a9",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8652e6ec-223c-4f9f-89c2-d7211830c357",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

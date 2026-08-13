@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-3f8ca25d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+      "targetTitle": "reactor-client-vs-reactor-interface"
+    },
+    {
+      "id": "lnk-cbb06ab4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb06ab4-761e-4cdd-9f97-47cfeb7ad827",
+      "targetTitle": "reactor-read-models-pre-ready-phase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "IReactor.executeBatch runs dependency-ordered multi-document jobs in one call",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6edf36b3-7fb5-4c1a-8c47-0713f4ea1e71",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "feda8ad0-b113-4be4-bfd2-780bfe6bd860",
+      "name": "jobs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d41f8c26-ddf2-4b9e-a5ef-2b58b759848f",
+      "name": "batching",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`executeBatch` takes a set of jobs with declared dependencies and lets the reactor work out the schedule. Each job is `{ key, documentId, actions, dependsOn }`, where `dependsOn` names other jobs by `key`:\n\n```ts\nawait reactor.executeBatch({\n  jobs: [\n    { key: \"budget\",  documentId: budgetId,  actions: [initBudget],  dependsOn: [] },\n    { key: \"scope\",   documentId: scopeId,   actions: [initScope],   dependsOn: [] },\n    { key: \"project\", documentId: projectId, actions: [initProject], dependsOn: [\"budget\", \"scope\"] },\n    { key: \"drive\",   documentId: driveId,   actions: [addFiles],    dependsOn: [\"project\"] },\n  ],\n});\n```\n\n`budget` and `scope` run in parallel; `project` waits for both; `drive` waits for `project`. One call, one result. The reactor handles ordering, parallelism, and failure propagation.\n\nThe `batch-progress` recipe frames it against the alternative \u2014 four sequential `await`s with manual error handling, no atomicity, and, in the recipe's own comment, \"hope nothing interleaves\". The value is not saving keystrokes; it is that the dependency graph is *declared* rather than encoded in statement order, so the reactor can parallelise independent work and propagate a failure to exactly the dependents that needed it.\n\nObservability comes from the EventBus rather than the return value. The recipe subscribes to `JOB_PENDING`, `JOB_RUNNING`, `JOB_WRITE_READY`, `JOB_READ_READY` and `JOB_FAILED` to drive a live multi-bar progress display \u2014 which is the right shape for a batch, since the per-job statuses arrive at different times and a single awaited promise flattens that away.\n\nNote this is on `IReactor`, the low-level fire-and-forget interface, not on the Promise-based `IReactorClient` wrapper. The recipe's demo runs it against an embedded in-memory reactor (PGlite, no external DB).\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Batch Progress recipe, academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each job carries a key, documentId, actions and dependsOn; the reactor resolves ordering, parallelism and failure propagation across documents so callers stop hand-sequencing writes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "006fb416-745f-4f27-896c-0ab4c0185104",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "089fcd1b-3071-479c-97c2-0dcc6075fb10",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

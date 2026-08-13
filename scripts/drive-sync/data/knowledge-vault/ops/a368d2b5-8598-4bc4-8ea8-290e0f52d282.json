@@ -1,0 +1,292 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:16.000Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "syncstatus-derived-from-mailbox-depth",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a368d2b5-8598-4bc4-8ea8-290e0f52d282",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:34:16.000Z"
+        },
+        "version": 0,
+        "documentId": "a368d2b5-8598-4bc4-8ea8-290e0f52d282",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:16.000Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "KJWJtUWQwYMLjStPzeO/ogutuiU=",
+    "timestampUtcMs": "2026-08-13T14:34:16.621Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Per-document SyncStatus is derived from mailbox depth, not from a stored flag",
+        "updatedAt": "2026-08-13T14:34:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:16.621Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:16.000Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a368d2b5-8598-4bc4-8ea8-290e0f52d282",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:16.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "IAJCO+GafkLPSszatmjrnPhsyjU=",
+    "timestampUtcMs": "2026-08-13T14:34:16.621Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:34:15.000Z",
+        "description": "Synced/Outgoing/Incoming/OutgoingAndIncoming/Error. Any error wins; pending in both directions gives OutgoingAndIncoming. Untracked documents return undefined."
+      },
+      "timestampUtcMs": "2026-08-13T14:34:16.621Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:17.781Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a368d2b5-8598-4bc4-8ea8-290e0f52d282",
+        "targetId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:17.781Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "t4jZPHxvQIbP6eVr1ewt7qWborA=",
+    "timestampUtcMs": "2026-08-13T14:34:16.621Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:34:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:16.621Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:17.807Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a368d2b5-8598-4bc4-8ea8-290e0f52d282",
+        "targetId": "464de7c4-b8c0-4ecd-b94d-e157900c465f",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:17.807Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "wrIhv8StaMWfNVr9VUT4lEHn6bw=",
+    "timestampUtcMs": "2026-08-13T14:34:16.621Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`SyncStatus` is not a field the reactor writes and updates. It is **computed on demand from the depth of the channel's mailboxes**, which is why it can never drift out of step with the actual queues.\n\n```typescript\ngetSyncStatus(documentId: string): SyncStatus | undefined;\nonSyncStatusChange(callback: SyncStatusChangeCallback): () => void;\n```\n\n```typescript\nenum SyncStatus {\n  Synced = \"SYNCED\",\n  Outgoing = \"OUTGOING\",\n  Incoming = \"INCOMING\",\n  OutgoingAndIncoming = \"OUTGOING_AND_INCOMING\",\n  Error = \"ERROR\",\n}\n```\n\nThe derivation rules are strictly ordered: **any error gives `Error`**; pending work in both directions gives `OutgoingAndIncoming`; otherwise it is `Incoming`, `Outgoing`, or \u2014 with both mailboxes empty \u2014 `Synced`. Because error wins, `Error` does not tell you the direction failed in; read the dead-letter events or the per-remote connection state for that.\n\n`getSyncStatus` returns `undefined` for a document that has never been tracked. That is a distinct third state from \"synced\" and worth handling explicitly in UI: absent, not clean. `onSyncStatusChange` returns an unsubscribe function, and its callback is `(documentId: string, status: SyncStatus) => void`.\n\nThis per-document view is one of three. The other two are per-job (`waitForSync(jobId)`, which resolves \u2014 never rejects \u2014 on both success and failure, carrying `status: \"succeeded\" | \"failed\"`) and per-remote (`channel.getConnectionState()`, returning a `ConnectionStateSnapshot` with `state`, `failureCount`, `pushBlocked`, `receivingPages`, and `requiresAuth`).\n\nThere is a hard boundary to be aware of: when the sync manager runs in a SharedWorker and you hold the tab-side RPC proxy, `waitForSync` **always** rejects with `\"waitForSync is not supported over the worker RPC boundary\"`. In that topology the mailbox-derived `getSyncStatus` / `onSyncStatusChange` pair and per-remote connection state are your only observability, which makes this derived status the more portable of the three views.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:34:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:16.621Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:17.833Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a368d2b5-8598-4bc4-8ea8-290e0f52d282",
+        "targetId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:17.833Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "3ATtRdiG23L7yvPHmmIsygfZYAM=",
+    "timestampUtcMs": "2026-08-13T14:34:16.621Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a934e13d-e3c8-426f-8cf5-5ada8ace8616",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:16.621Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "AYTH7tzEn90dLLXM+oE+Tam1yj0=",
+    "timestampUtcMs": "2026-08-13T14:34:16.621Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "576eb606-0df5-412b-93d1-a86d092a0a9f",
+        "name": "observability"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:16.621Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "FlAQKd6pA4LaY7FI5c5Fdjd5fec=",
+    "timestampUtcMs": "2026-08-13T14:34:17.731Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:15.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:17.731Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "QDBC723U1Scyg4UO0qOKjiA6cLc=",
+    "timestampUtcMs": "2026-08-13T15:57:13.557Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:13.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:13.557Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "VvFYGDUsM56Q0dLSQB+sXzCVGYU=",
+    "timestampUtcMs": "2026-08-13T15:57:13.557Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "973ea622-5367-4262-8f7c-d335ab1f9139",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:13.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:13.557Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "LKRd7A38D/QWZzky+vqsgktdMtE=",
+    "timestampUtcMs": "2026-08-13T15:57:13.557Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "859ca351-157c-4767-b845-6f383bf90449",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:13.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:13.557Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "bKSXdmKPv7p6n08ImL25O0O1qdM=",
+    "timestampUtcMs": "2026-08-13T16:55:17.464Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:55:17.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:55:17.464Z"
+    }
+  }
+]

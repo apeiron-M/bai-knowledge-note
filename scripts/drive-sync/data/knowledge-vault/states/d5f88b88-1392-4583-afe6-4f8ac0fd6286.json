@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-826a2d18-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "826a2d18-2201-4399-9bd4-c86f6b366164",
+      "targetTitle": "document-models-are-the-core-unit-of-powerhouse-architecture"
+    },
+    {
+      "id": "lnk-77fad8c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "77fad8c4-a3f5-4678-a0d1-15b6c434a0de",
+      "targetTitle": "event-driven-architecture-decouples-components-for-parallel-processing"
+    },
+    {
+      "id": "lnk-0eb0b43b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eb0b43b-c44b-4c9f-929b-378e56ee5975",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Reactive Document Architecture has five properties: reactive, document-centric, Git-like UX, stateful, and scalable",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e90c3894-6cd3-47b6-8205-bceff030ade1",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a1faffdd-f8f9-46d8-b87e-bc2dca384381",
+      "name": "foundations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "\"Reactive Document Architecture\" is Powerhouse's own name for the design its framework is built around: structured document models plus declarative design, on a deliberately minimal stack of GraphQL, TypeScript, and React. The reference architecture enumerates five properties.\n\n- **Reactive** \u2014 real-time, responsive, and message-driven, with an elastically scalable architecture.\n- **Document-Centric** \u2014 documents are local-first, self-contained data structures and nodes in a decentralized network.\n- **Git-like UX** \u2014 state-of-the-art editing with history branching, merging, and commenting.\n- **Stateful** \u2014 documents with well-defined operations as state transitions become mini-APIs.\n- **Scalable** \u2014 a CQRS- and EDA-inspired architecture with read models for data aggregation.\n\n## Reading the list as a system\n\nThe five are not independent virtues; they are consequences of one another. Making the document the unit (\"document-centric\") is what allows it to be self-contained enough to live on a device and act as a node in a network. Giving it well-defined operations rather than free-form writes is what turns it into an addressable mini-API \u2014 the \"stateful\" property \u2014 and it is those same typed operations that make Git-like history, branching, and commenting expressible over a document rather than over a repository of files. Message-driven reactivity and CQRS read models then handle the part documents are bad at on their own: aggregation across many of them.\n\n## Why it matters\n\nThe list is the design brief behind concrete choices elsewhere in the stack \u2014 why documents are the unit rather than tables, why operations are declared rather than ad hoc, and why aggregate reads are pushed into separate read models instead of queried from the source of truth. It is also the vocabulary the framework's own materials use, so it is worth recognising.\n\nAlongside it sits a second commitment, Specification Driven Design & Development: machine-readable, executable specification documents used as a shared language for AI collaboration \u2014 \"Git for Intent.\"\n\n_Source: apps/academy/docs/academy/04-Reference/00-Architecture/00-PowerhouseArchitecture.md \u2014 unchanged since the v6.0.0-dev.254 baseline, so this is older material that remains valid rather than freshly re-verified v6.2.2 content._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Documents are local-first nodes in a decentralized network; well-defined operations turn each document into a mini-API; CQRS/EDA read models handle aggregation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b2a98ae3-b9c8-42bc-bcba-48e54d493e7a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:54.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2ec84836-d6e3-4b6b-9f22-ac120d0b040a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:54.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

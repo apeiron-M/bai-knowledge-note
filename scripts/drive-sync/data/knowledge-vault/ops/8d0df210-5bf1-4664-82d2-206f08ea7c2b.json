@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:19.063Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "idempotent-ingestion-checkpoint-lives-in-document-state",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "8d0df210-5bf1-4664-82d2-206f08ea7c2b",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:39:19.063Z"
+        },
+        "version": 0,
+        "documentId": "8d0df210-5bf1-4664-82d2-206f08ea7c2b",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:39:19.063Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "edywdmNjGczNjkVGJcleRNY0ELg=",
+    "timestampUtcMs": "2026-08-13T14:39:19.783Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Idempotent external ingestion stores the dedup set and the watermark in document state, not in worker memory",
+        "updatedAt": "2026-08-13T14:39:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:19.783Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:19.063Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "8d0df210-5bf1-4664-82d2-206f08ea7c2b",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:39:19.063Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "hspmz68/G/AZqMyqO3+VMVfNmQY=",
+    "timestampUtcMs": "2026-08-13T14:39:19.783Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:39:18.000Z",
+        "description": "Seeding the dedup id-set from document state at startup makes a worker restart a no-op; an in-memory-only checkpoint re-ingests everything since the last flush."
+      },
+      "timestampUtcMs": "2026-08-13T14:39:19.783Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:20.947Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8d0df210-5bf1-4664-82d2-206f08ea7c2b",
+        "targetId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:20.947Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "1gqRDWi2WdsKt9Aknb4AeikpK7A=",
+    "timestampUtcMs": "2026-08-13T14:39:19.783Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:39:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:19.783Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:39:20.971Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "8d0df210-5bf1-4664-82d2-206f08ea7c2b",
+        "targetId": "3f8ca25d-a869-497d-a540-cec2908fdc9c",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:20.971Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Q3O+Y8OKCNbmdWprc5UtbcSWn+U=",
+    "timestampUtcMs": "2026-08-13T14:39:19.783Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `external-feed-ingest` recipe states its thesis as one line: **the document is the checkpoint store.** Both the dedup set and the high-watermark live in document state, and the worker rebuilds them from state at startup via `seedFromState()`. An in-memory-only checkpoint is the bug the recipe exists to prevent \u2014 crash the worker mid-stream and it re-ingests everything since the last flush.\n\nThe subtler half is *which* value is the dedup key. It is `(source, externalId)`, **not** the watermark:\n\n> The watermark is only a fetch optimization (\"don't re-read the whole feed\"). It is not the dedup mechanism, because real feeds redeliver: the same `externalId` can reappear at a *later* cursor, sailing straight past a watermark filter.\n\nSo the two do different jobs. The watermark tracks the feed's monotonic *delivery cursor* and bounds how much you re-read; the id-set answers the authoritative question \"have I already recorded this?\" On restart the id-set is what saves you.\n\nThe state schema keeps both in the document:\n\n```graphql\ntype FeedLedgerState {\n  source: String!\n  watermark: Int!\n  entries: [LedgerEntry!]!\n}\n```\n\nWatermark advancement is folded into the domain operations (`max(watermark, sequence)`, so an out-of-order delivery cannot regress it) rather than living in a separate `setWatermark` op. And the reducer enforces uniqueness too, throwing `DuplicateEntry` \u2014 defence in depth against racing redeliveries that both pass the worker's in-memory check.\n\nCorrections are modelled as explicit operations, never mutations: `markSuperseded` flips the old entry's status, sets `supersededBy`, and appends the corrected value as a *new* `RECORDED` entry. The original payload is never touched.\n\nThe same pattern appears in `inbound-webhook-bridge` for the push direction, where provider `event.id` values accumulate in the document's `processedEventIds`. Notably the recipe argues the crash-safety property is independent of where the loop lives \u2014 a long-running script or an `IProcessor` both work, because the guarantee comes from seeding state from the document.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, External Feed Ingest recipe (\"The one idea worth taking away\", \"Why externalId is the dedup key\"), academy 6.2.2-dev.45.",
+        "updatedAt": "2026-08-13T14:39:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:19.783Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "pblsbMf1XHzb5fVmGEp4uTbC38o=",
+    "timestampUtcMs": "2026-08-13T14:39:19.783Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "d0d2d4c5-095c-4bb6-ad67-95882360dbe2",
+        "name": "integrations"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:19.783Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "NcDcVZ1NhYtTgRP6MMILi/mkbPA=",
+    "timestampUtcMs": "2026-08-13T14:39:19.783Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "334495d5-86be-4823-800d-e7ed61eabbf8",
+        "name": "idempotency"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:19.783Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "Qrz1G5X3dXMSHsaaUlWTEdzRcvo=",
+    "timestampUtcMs": "2026-08-13T14:39:19.783Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a0c42a11-8ee4-49e5-b409-bdb09a8bb7cc",
+        "name": "event-sourcing"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:19.783Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "/xGFvfpWGQMMIaT0WA1MEiCbIKw=",
+    "timestampUtcMs": "2026-08-13T14:39:20.903Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:39:18.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:39:20.903Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "gEOReKHfsQ/3EDnXdVf0z/3PHcY=",
+    "timestampUtcMs": "2026-08-13T15:56:26.842Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:26.842Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "AL3tLYQZjQKt7UbIIh3X0TNIvjY=",
+    "timestampUtcMs": "2026-08-13T15:56:26.842Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "9c4271d9-fabc-4bbe-b327-f43f48771aff",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:26.842Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "rcPSXponErGJKKgUPCKCDs1EJ0k=",
+    "timestampUtcMs": "2026-08-13T15:56:26.842Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "560cda5d-c109-4eec-8853-7c3e4145976c",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:26.842Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "WNghmFuz9XBSGQRroi0HCsxQLCs=",
+    "timestampUtcMs": "2026-08-13T16:54:21.099Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:21.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:21.099Z"
+    }
+  }
+]

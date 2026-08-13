@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-79fef290-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "79fef290-3839-43d6-a074-1c055d39cee6",
+      "targetTitle": "revision-history-timeline-in-editors"
+    },
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Timeline selection is global state exposed through useSelectedTimelineItem and useSelectedTimelineRevision",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5ccd76e5-2697-4cd3-a21c-603e824ef1e0",
+      "name": "timeline",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d3ef65a-2549-4d7f-a4f3-3988426e34ba",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f5d88ff2-59fe-437c-9637-bfa2bc697152",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Which revision the timeline is parked on is not editor-local state. It lives in the same global store the rest of `reactor-browser`'s selection state uses, so an editor, a drive app and Connect's own chrome all observe the same value.\n\nTwo getter/setter pairs:\n\n```ts\nfunction useSelectedTimelineItem(): TimelineItem | null | undefined;\nfunction setSelectedTimelineItem(item: TimelineItem | null | undefined): void;\n\nfunction useSelectedTimelineRevision(): string | number | null | undefined;\nfunction setSelectedTimelineRevision(rev: string | number | null | undefined): void;\n```\n\nThe setters are plain functions, not hooks \u2014 call them from an event handler without violating the rules of hooks.\n\n`TimelineItem` is a union of two shapes. `TimelineBarItem` (`type: \"bar\"`) is a change candle: `revision`, `timestampUtcMs`, `startDate`/`endDate`, raw `additions`/`deletions` counts, and the bucketed `addSize`/`delSize` fields typed as `0 | 1 | 2 | 3 | 4`. That bucketing is worth noticing \u2014 the render height is a five-step scale, not a raw count, so the bar is comparable across documents of wildly different churn. `TimelineDividerItem` (`type: \"divider\"`) is a labelled separator instead: `title`, `subtitle`, plus the same `revision`, `timestampUtcMs` and date fields.\n\nEvery field except `id` and `type` is optional on both variants, so a consumer reading `item.revision` must handle `undefined`.\n\nNote the two values are tracked separately: the *item* and the *revision* are distinct pieces of state, and `useSelectedTimelineRevision` accepts a `string | number`, so it can hold a revision identifier the timeline never produced a bar for. Reading revision directly is the cheaper path when all you need is \"which point in history am I rendering\".\n\n_Source: apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each getter has a paired setter. Items are TimelineBarItem or TimelineDividerItem, both carrying revision, timestamps and dates; bars add addSize/delSize and additions/deletions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4ca866a2-d15c-4082-9582-2e243082b9ea",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "736bf118-bcfb-4d88-a657-3a78b4fb15b8",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:28.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

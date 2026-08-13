@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-81a70a88-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "81a70a88-36d0-4317-8506-eaa9cff2069c",
+      "targetTitle": "never-use-fallback-values-with-non-deterministic-functions-in-reducers"
+    },
+    {
+      "id": "lnk-a8b2713f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b2713f-34ef-405c-889f-763a4568fe4e",
+      "targetTitle": "processors-receive-operations-with-context"
+    },
+    {
+      "id": "lnk-d1833ecb-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+      "targetTitle": "never-use-crypto-randomuuid-or-math-random-in-reducers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Side-effects belong in one of three places: action inputs, processors, or the editor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6affdc07-175d-4dd9-8dc5-023ecb91a611",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "51b787f7-a5b4-4615-8c3a-1d0a20b1e28a",
+      "name": "architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9314c0e2-ffb2-4de0-9623-7960f3feeec4",
+      "name": "processors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The reducer rules \u2014 no I/O, no time, no randomness, mutate only the provided draft \u2014 are usually taught as prohibitions. The more useful framing is that each prohibition has a designated destination. Nothing is forbidden; it is *relocated*.\n\n**Action inputs** \u2014 for anything the reducer would otherwise have to conjure. IDs, timestamps, external data, computed values. The caller mints them before dispatch:\n\n```ts\ndispatch(addTodo({\n  id: generateId(),\n  createdAt: new Date().toISOString(),\n  title: input.title,\n}));\n```\n\nThis is why `generateId()` lives at the call site: it is `globalThis.crypto.randomUUID()`, so a reducer that called it would produce a different id on every replay and break determinism outright.\n\n**Processors** \u2014 for anything that should happen *because* an operation was appended. Derived read models, indexing, notifications, downstream dispatches. A processor sees operations after they land, runs outside the purity contract, and can do I/O freely. \"When X changes, also do Y\" is a processor, never a reducer.\n\n**The editor** \u2014 for UI-facing effects. Fetching to populate a form, reading `localStorage`, showing a modal, debouncing. The editor is an impure React component by nature; that is its job.\n\nUse the mapping diagnostically. When a reducer *seems* to need a side-effect, the question is which of the three it belongs to, and the answer is almost always obvious once asked. If it must be true before the operation is recorded, it goes in the input. If it should happen after, it is a processor. If it only concerns what the user sees, it is the editor.\n\n_Source: apps/academy/docs/academy/02-Learn/08-deep-dives/01-reducers-in-depth.mdx, confirmed against packages/shared/document-model/utils.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:35:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A reducer wanting I/O, time or randomness has misplaced it. The caller supplies it in the input, a processor reacts after the append, or the editor handles UI effects.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bffc94a0-a085-4c52-afa5-f56078dca2de",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e30e5d34-43a9-4e64-89cd-576f22584cd9",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

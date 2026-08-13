@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-1adbb770-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbb770-4b64-4070-b6fc-8e57fcce92d8",
+      "targetTitle": "project-structure-four-directories"
+    },
+    {
+      "id": "lnk-f158a1f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f158a1f4-eab3-43f6-ba19-00c0608e62e7",
+      "targetTitle": "ph-cli-is-primary-project-tool"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The 6.2.x ph init scaffold declares no runtime dependencies and lints with oxlint/oxfmt instead of eslint/prettier",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "224444ee-d36c-4d7c-9fa4-200bb7d55794",
+      "name": "project-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "018e939f-add7-4f2c-a367-e433a6a205e3",
+      "name": "scaffolding",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fb705c71-1736-4d44-96d7-578940164aba",
+      "name": "tooling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Verified against the template, not the docs\n\n**The academy has not been updated for this** \u2014 its project-structure pages still describe the older scaffold (eslint/prettier scripts, a `dependencies` block). The template source is authoritative.\n\n`packageJsonTemplate` emits **no `dependencies` key at all**. It writes exactly `peerDependencies` and `devDependencies`, both alphabetically sorted. That is what makes a Powerhouse package installable into a host that already supplies the runtime: the host (Connect, Switchboard, or a reactor) owns `document-model`, `@powerhousedao/reactor-browser` and friends, and the package must not drag a second copy in. It also explains `\"files\": [\"/dist\"]` and `\"sideEffects\": false` \u2014 the compiled output ships, the source trees do not.\n\nLinting and formatting are **oxlint and oxfmt**:\n\n```json\n\"lint\":         \"oxlint --type-aware --type-check\",\n\"lint:fix\":     \"oxlint --type-aware --type-check --fix\",\n\"format\":       \"oxfmt\",\n\"format:check\": \"oxfmt --check\"\n```\n\n`--type-aware --type-check` means the lint step performs TypeScript type checking too, which is why lint failures in a fresh project can look like `tsc` errors. `tsc`, `tsc:watch`, `vitest` (`test`, `test:watch`, `test:coverage`) and `check-circular-imports` (dpdm over `./index.ts`) round out the scripts, alongside thin `ph-cli` passthroughs: `generate`, `connect`, `build`, `reactor`, `service`, `vetra`.\n\nThe project-files builder writes `.oxlintrc.json` and `.oxfmtrc.json` at the project root \u2014 there is no `.eslintrc` or `.prettierrc` to find. It also emits **`reactor/index.ts`**, a headless entry point, so the package can be booted without a browser host.\n\nOne inconsistency worth flagging: the scaffold's `\"service\": \"ph-cli service\"` script points at a command that is *not* registered in `phCliCommands` or `phCliCommandNames`, so it is not dispatchable \u2014 the same gap that makes the Launch docs' `ph service setup` / `ph service restart` instructions stale.\n\n_Source: `packages/codegen/src/templates/boilerplate/package.json.ts` and `packages/codegen/src/file-builders/boilerplate/generated-project-files.ts`, Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "package.json emits only peerDependencies and devDependencies; the scaffold writes .oxlintrc.json and .oxfmtrc.json plus a headless reactor/index.ts entry.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c76f43a7-f744-49c2-bb17-f868de34f20d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:57.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "52915575-6682-4494-a235-d690f712888a",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:57.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

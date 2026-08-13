@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-b463e3e1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b463e3e1-d900-4ff8-af5a-f02deef47a3a",
+      "targetTitle": "reactor-browser-hooks-provide-document-state"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Build the browser attachment service with createRemoteAttachmentService from @powerhousedao/reactor-attachments/client",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ec35336c-1910-4988-a79e-fcc9537dcaf4",
+      "name": "attachments",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ce26855f-60be-480c-b285-df90218b29f7",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "48bd15f8-e106-47f1-94d5-66f5f05af210",
+      "name": "bundling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2198e9ef-2a7b-4df3-ab78-63ce5cfe9823",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The import that matters\n\n```ts\nimport { createRemoteAttachmentService } from \"@powerhousedao/reactor-attachments/client\";\n```\n\nPoint it at the same Switchboard the light client uses, then pass it in:\n\n```tsx\n<GraphQLReactorProvider url={switchboardUrl} attachmentService={attachmentService}>\n  <YourApp />\n</GraphQLReactorProvider>\n```\n\nImport the **`/client` subpath, not the package root**. The root entry also exports the Kysely, S3 and filesystem backends, so a browser bundler has to resolve `kysely`, `@aws-sdk/client-s3` and `node:fs` \u2014 and fails before any app code runs. This is the same failure class as importing `@powerhousedao/reactor-browser` from its root instead of `/graphql-client`, and it has the same shape of fix: import the browser subpath.\n\n## Who owns what\n\nAttachments are configured at the same point as everything else, but the **app constructs the service**. Which storage it talks to is the app's business; `@powerhousedao/reactor-browser` does not depend on the attachment implementation at all.\n\nThe provider publishes the service into the `window.ph.attachmentService` slot Connect publishes it into, so `useAttachmentService` and the editors below find it. Leave the prop out and the slot stays empty, exactly as it is without the provider.\n\nIt is published from its **own effect, keyed on the prop**, so an app that builds the service asynchronously can pass it in later \u2014 passing a new service does not rebuild the client or the document cache.\n\n## Honest caveat\n\nThe docs are explicit that this prop is a **wiring seam and nothing more has been proven**: the service an app passes reaches `useAttachmentService` below the provider, but no attachment has been read over the light client end to end. Treat a working attachment flow on this client as something to verify yourself rather than assume.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/03-SubgraphsAndAttachments.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The package root also exports the Kysely, S3 and filesystem backends, so only the /client subpath is browser-safe.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "67dcdde7-dc2f-4313-a110-1b9f6f8a07a0",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:18.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a599d0c4-8152-4d2a-aeff-755a99fd7b48",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:18.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

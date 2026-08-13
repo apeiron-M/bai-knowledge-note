@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-388028bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "388028bb-0973-40eb-8e66-9f443bdfd0c4",
+      "targetTitle": "document-permissions-support-groups-and-ops"
+    },
+    {
+      "id": "lnk-48db8c7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+      "targetTitle": "authorization-uses-layered-model"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Renaming a document is UPDATE_NODE on the parent drive, not WRITE on the document itself",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bdb9516e-25a9-4b19-8b0b-dc6943ff9a3f",
+      "name": "permissions",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e909f5ac-7c96-4f39-bd49-dc8a0e7f775b",
+      "name": "document-drive",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0e91af72-fd22-4bec-ad02-ddf091bdf423",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The gotcha\n\nA user with `WRITE` on a document **cannot rename it**. Renaming is not part of the document's own write permission \u2014 the name lives on the drive's node entry, so renaming is an `UPDATE_NODE` operation on the **drive** document. Grant it there, not on the document.\n\nThis catches people because \"rename\" feels like the mildest possible edit. Structurally it is not an edit to the document at all.\n\n## Drive operation types\n\nFor document drives specifically, these operation permissions are available:\n\n| Operation | What it allows |\n| --- | --- |\n| `ADD_FILE` | Create new files within the drive |\n| `ADD_FOLDER` | Create new folders within the drive |\n| `DELETE_NODE` | Delete files or folders within the drive |\n| `UPDATE_FILE` | Modify existing files within the drive |\n| `UPDATE_NODE` | Update properties of files or folders \u2014 **including renaming documents** |\n| `COPY_NODE` | Copy files or folders within the drive |\n| `MOVE_NODE` | Move files or folders within the drive |\n\n## Two orthogonal axes\n\nOperation permissions give fine-grained control over specific actions, **separate from** the general document permission levels (`READ`, `WRITE`, `ADMIN`). They are two axes, not a hierarchy: a grant on one says nothing about the other.\n\nOperation permissions are queried and granted per `(documentId, operationType)` pair, with both user and group grants:\n\n```graphql\nquery GetOperationPermissions($documentId: String!, $operationType: String!) {\n  operationPermissions(documentId: $documentId, operationType: $operationType) {\n    documentId\n    operationType\n    userPermissions { userAddress grantedBy createdAt }\n    groupPermissions { groupId group { id name } grantedBy createdAt }\n  }\n}\n```\n\nThe list above is drive-specific. If you need operation permissions for documents of other models, look up the available operations of the installed document-model package \u2014 the operation type is just the action name, so the vocabulary is per model.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/02-DocumentPermissions.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Drive operation permissions (ADD_FILE, ADD_FOLDER, DELETE_NODE, UPDATE_FILE, UPDATE_NODE, COPY_NODE, MOVE_NODE) are separate from the READ/WRITE/ADMIN levels.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a6be1b64-c47f-4c59-b55d-d6af88fd7d84",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "55e561e8-31bf-411e-9d4a-779796f7d304",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

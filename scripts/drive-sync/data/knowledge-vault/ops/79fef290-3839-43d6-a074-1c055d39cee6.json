@@ -1,0 +1,388 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:00.404Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "revision-history-timeline-in-editors",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "79fef290-3839-43d6-a074-1c055d39cee6",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:22:00.404Z"
+        },
+        "version": 0,
+        "documentId": "79fef290-3839-43d6-a074-1c055d39cee6",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:00.404Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "reN0Xr/fccNHoOxPCkgj2XtmF9E=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The revision history timeline lets users navigate document history visually, putting the editor into read-only mode at a selected revision",
+        "updatedAt": "2026-08-13T13:23:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:00.404Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "79fef290-3839-43d6-a074-1c055d39cee6",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:00.404Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "4GqbsWlG98NzmyIpDKVYQ7SBeeE=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:26.000Z",
+        "description": "Timeline uses useTimelineItems hook and getRevisionFromDate; selecting a candle activates read-only mode."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.148Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "79fef290-3839-43d6-a074-1c055d39cee6",
+        "targetId": "831770e6-9bf6-4b23-9fc2-dc0fdac17a5d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.148Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "4Rfs3q+Ifh+XmUpRVCDsTkClDwU=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T13:23:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.173Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "79fef290-3839-43d6-a074-1c055d39cee6",
+        "targetId": "183d0714-1c6b-4e54-9135-430bd6ae8da4",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.173Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "A8Wa3DyBBlv9Yy6IgZmdLlQNUmo=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "To enable timeline in an editor, the editor module exports the configuration and the Drive-app or default app fetches timeline items via `useTimelineItems(documentId)` from `@powerhousedao/common`. When a user clicks a timeline candle, `getRevisionFromDate(startDate, endDate, operations.global)` resolves the revision number. The editor receives `context.readMode = true` and `context.selectedTimelineRevision`. The editor then calls `getDocumentRevision({ revisions: { global: selectedTimelineRevision } })` to fetch the document at that point in time and disables edit controls. The timeline only activates once a document has some operation history.",
+        "updatedAt": "2026-08-13T13:23:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.306Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "79fef290-3839-43d6-a074-1c055d39cee6",
+        "targetId": "ad63c7f0-b6d6-4d10-955e-33fd76cf2363",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.306Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "hXL5xr4tG6Llrcr3FHLCnxkz8oI=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-02T12:00:00.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:19.328Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "79fef290-3839-43d6-a074-1c055d39cee6",
+        "targetId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:19.328Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "FFt3g/WcAgwN7/76k5hJqvNcXp8=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "32acfa84-c059-4f5c-a9ed-3111d5e9df00",
+        "name": "timeline",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "khdC1YyxmHM/W+0mJf+YRv1hNsY=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a6561021-9d14-4639-89e5-c52706f75721",
+        "name": "revision-history",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "1/e5U2qPUPl12fmrsJgl/l7iD2w=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd2e93a0-a04e-4a4a-b0df-cc19c8876796",
+        "name": "editors",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "z45UCo3u7WAymiZ8F++W8q4Abm8=",
+    "timestampUtcMs": "2026-08-13T13:23:26.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "11634a14-f41e-4ebc-8b77-e68d0b5d5010",
+        "name": "read-mode",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:26.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "ZG+EWrCSjC11sNq6houm23H/wDg=",
+    "timestampUtcMs": "2026-08-13T14:10:41.983Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The `DocumentToolbar` accepts a `toolbarClassName` prop for the outer container and a `controlsContainerClassName` prop for each controls container. There is no `className` prop. Both are merged with the component's default Tailwind classes using `twMerge`. The outer container defaults are:\n\n```\nflex h-12 w-full items-center justify-between rounded-xl border border-border bg-background px-4\n```\n\nTo override these defaults, you must use the `!` (important) prefix on your custom classes:\n\n```tsx\n<DocumentToolbar toolbarClassName=\"!bg-[#181825] !border-white/10\" />\n```\n\nWithout the `!` prefix, `twMerge` may resolve conflicts in favor of the defaults depending on specificity rules. The `!` prefix forces your values to take precedence.\n\nThis is a standard pattern when working with component libraries that use `twMerge` \u2014 the library controls base styling and consumers override specific properties via important modifiers. The same merge behavior applies to `controlsContainerClassName` and to the `className` prop on the individual toolbar buttons.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-13T14:10:28.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:10:41.983Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "gNo/1stmpyWqqaA/7jp9Mcxuea0=",
+    "timestampUtcMs": "2026-08-13T14:10:41.983Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The DocumentToolbar toolbarClassName prop merges with defaults via twMerge requiring ! prefix for overrides",
+        "updatedAt": "2026-08-13T14:10:28.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:10:41.983Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "bwH+2ouw4orjrln+SOg79IhkIQU=",
+    "timestampUtcMs": "2026-08-13T14:12:15.941Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The revision history timeline lets users navigate document history visually, putting the editor into read-only mode at a selected revision",
+        "updatedAt": "2026-08-13T14:12:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:12:15.941Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "E6Rw5jkoMPdihL4gSmRu/qiSfTk=",
+    "timestampUtcMs": "2026-08-13T14:12:15.941Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "To enable timeline in an editor, the editor module exports the configuration and the Drive-app or default app fetches timeline items via `useTimelineItems(documentId)` from `@powerhousedao/reactor-browser/analytics`. When a user clicks a timeline candle, `getRevisionFromDate(startDate, endDate, operations.global)` resolves the revision number. The editor receives `context.readMode = true` and `context.selectedTimelineRevision`. The editor then calls `getDocumentRevision({ revisions: { global: selectedTimelineRevision } })` to fetch the document at that point in time and disables edit controls. The timeline only activates once a document has some operation history.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+        "updatedAt": "2026-08-13T14:12:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:12:15.941Z"
+    }
+  },
+  {
+    "index": 13,
+    "hash": "12YyWFFKRrN+l3EcyEJ/laLRI9M=",
+    "timestampUtcMs": "2026-08-13T15:55:39.597Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:55:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:39.597Z"
+    }
+  },
+  {
+    "index": 14,
+    "hash": "2skPI3mqVMUiLQVF0b96xauPHzc=",
+    "timestampUtcMs": "2026-08-13T15:55:39.597Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "35b52797-8bb2-49ac-b630-582bf0adf831",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:55:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:39.597Z"
+    }
+  },
+  {
+    "index": 15,
+    "hash": "tiLd/9FQmJw0w+aqVbX13NyhyTY=",
+    "timestampUtcMs": "2026-08-13T15:55:39.597Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "4cf31dd2-0c20-45b9-a433-1748c1a11e62",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:55:39.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:55:39.597Z"
+    }
+  },
+  {
+    "index": 16,
+    "hash": "P2rpwe8e/ul0UPniECzBNL8ydFI=",
+    "timestampUtcMs": "2026-08-13T16:53:26.776Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:53:26.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:53:26.776Z"
+    }
+  }
+]

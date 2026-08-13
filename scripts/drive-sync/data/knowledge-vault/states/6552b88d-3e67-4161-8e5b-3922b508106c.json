@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-688b0550-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "688b0550-36f2-4b89-83ae-9d32502eb40e",
+      "targetTitle": "service-offering-model-defines-tiered-pricing-with-option-groups-and-service-gro"
+    },
+    {
+      "id": "lnk-cc105449-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cc105449-9b8c-4303-98a3-aca2a23208fe",
+      "targetTitle": "pricing-utils-provides-editor-level-formatting-and-tier-price-calculations"
+    },
+    {
+      "id": "lnk-1c49aeb6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c49aeb6-de4d-4a70-b0a3-3a70e8ec8085",
+      "targetTitle": "helper-functions"
+    },
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-2684ab8a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2684ab8a-e397-4dac-a0e7-69744af3f4c3",
+      "targetTitle": "invoice-model-generates-formal-payment-requests"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "getUserSelectionPriceBreakdown is the core pricing calculation engine",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2f03b9a6-bead-4952-82a6-92eda182204c",
+      "name": "service-offering",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5e82eab0-957f-4596-a9dd-f12c6033d45b",
+      "name": "pricing-calculation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# getUserSelectionPriceBreakdown is the core pricing calculation engine\n\nLocated at `document-models/service-offering/src/utils.ts`, this is the most important business logic function in the project.\n\n## Signature\n\n```typescript\nfunction getUserSelectionPriceBreakdown(\n  state: ServiceOfferingPHState,\n  selection: UserSelection\n): PriceBreakdown\n```\n\n## What It Computes\n\nGiven a ServiceOffering state and a user's selection (tier, billing cycle, enabled add-ons, per-group overrides):\n\n1. **Tier base price** \u2014 Sum of regular groups' monthly prices \u00d7 billing cycle months\n2. **Regular group breakdowns** \u2014 Per-group recurring amounts with discounts, setup costs\n3. **Setup group breakdowns** \u2014 Setup-only groups (no recurring, setup cost only)\n4. **Add-on breakdowns** \u2014 Selected add-on pricing with independent billing cycles\n5. **Totals** \u2014 Grand recurring total, grand setup total, add-on totals\n\n## Internal Helpers\n\n- `applyDiscount()` \u2014 Applies percentage or flat amount discounts\n- `buildResolvedDiscount()` \u2014 Creates discount result with original/discounted amounts\n- `getGroupPriceForTier()` \u2014 Gets monthly price for group-tier pair (tier-dependent \u2192 standalone fallback)\n- `getGroupIndependentDiscount()` \u2014 Extracts tier-dependent pricing discounts\n- `resolveGroupDiscountForTier()` \u2014 Resolves discount checking billingCycleDiscounts then tier-dependent\n- `computeRegularGroupBreakdown()` \u2014 Full breakdown for recurring groups\n- `computeSetupGroupBreakdown()` \u2014 Full breakdown for setup-only groups\n- `computeAddOnBreakdown()` \u2014 Full breakdown for add-on groups\n\n## Used By\n\n- `TheMatrix.tsx` in the service-offering editor \u2014 the pricing configuration panel\n\nSince [[service-offering model defines tiered pricing with option groups and service groups]], this function resolves all the pricing relationships into concrete numbers.\n\n---\n\nTopics:\n- [[helper functions]]\n- [[model-editor wiring]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:55:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:41.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Pure function in service-offering/src/utils.ts that computes full price breakdown for a user selection \u2014 tier base, group recurring, setup costs, add-ons, and discounts",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "40530e79-971c-4124-af36-d5b2e7f4926c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:02.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9a1f0191-ac6a-463a-9ad9-b0fc1069c465",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:02.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

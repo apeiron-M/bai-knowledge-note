@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:02.328Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "collab-initial-state-via-share-bundle",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "614bc6a6-9dc9-45c4-bbde-bbc957c8753e",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:02.328Z"
+        },
+        "version": 0,
+        "documentId": "614bc6a6-9dc9-45c4-bbde-bbc957c8753e",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:02.328Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "77bKwK0951CzMv4fKboZAdBsU34=",
+    "timestampUtcMs": "2026-08-13T13:22:52.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Initial-state transfer for a new participant reuses the existing document-share bundle path",
+        "updatedAt": "2026-08-13T13:22:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:52.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:02.328Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "614bc6a6-9dc9-45c4-bbde-bbc957c8753e",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:02.328Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Ui0dEudyIJNbuMYoxx6kqF8xkHs=",
+    "timestampUtcMs": "2026-08-13T13:22:52.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:22:52.000Z",
+        "description": "A new participant joining a collab gets initial state through the existing document-share bundle \u2014 invitation carries shareReference + actHistoryAddress."
+      },
+      "timestampUtcMs": "2026-08-13T13:22:52.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:03.670Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "614bc6a6-9dc9-45c4-bbde-bbc957c8753e",
+        "targetId": "20c8d555-0340-4f29-b2eb-9f736d5b2eed",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:03.670Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "dW8FSocsUxiuO5pQp21FVkdc8/s=",
+    "timestampUtcMs": "2026-08-13T13:22:52.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-13T13:22:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:52.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:03.698Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "614bc6a6-9dc9-45c4-bbde-bbc957c8753e",
+        "targetId": "631dcd5e-12fa-4c44-af7e-af96bf8482d8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:03.698Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "D1voJd4DbDDxvs8M5kfqVg3vyJs=",
+    "timestampUtcMs": "2026-08-13T13:22:52.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Initial-state transfer pattern\n\nA participant who accepts an invitation needs the current state, not just future ops. Rather than inventing a new snapshot protocol, the design **reuses the existing document-share bundle**:\n\n- The invitation message carries a `shareReference` plus `actHistoryAddress` pointing to a one-shot drive bundle built via `buildDriveShareBundle`.\n- On accept, the recipient imports the bundle. Drive, folders, and docs materialize locally with the original signatures preserved.\n- After import, the recipient's SwarmChannel registers the peer feeds and starts pulling incremental ops.\n\nThis keeps the **snapshot path and the incremental-ops path decoupled**. The snapshot path is the same battle-tested import flow used by one-off document sharing; collab adds only the peer-feed subscription on top.\n\nBecause `action.context.signer.signatures` is preserved through imports (per the 2026-04-17 fix), the imported history already shows correct per-author attribution. New ops arriving through peer feeds continue the same signed chain.",
+        "updatedAt": "2026-08-13T13:22:52.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:52.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:03.784Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "614bc6a6-9dc9-45c4-bbde-bbc957c8753e",
+        "targetId": "03bacaf7-d91f-4a3c-9536-5078930c8df8",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:03.784Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "n0hqkIvbObJpuB+eUVjVDZDzKqs=",
+    "timestampUtcMs": "2026-08-13T13:22:52.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:22:52.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:03.858Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "614bc6a6-9dc9-45c4-bbde-bbc957c8753e",
+        "targetId": "675bdd06-6192-4223-9581-fa43200d307e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:03.858Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "fRQFyT36+emR6Qo0vvQJUa2M6Ws=",
+    "timestampUtcMs": "2026-08-13T13:22:52.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-da589971-1",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:52.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:03.885Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "614bc6a6-9dc9-45c4-bbde-bbc957c8753e",
+        "targetId": "f187f3e8-006e-4157-aea4-fb813391a039",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:03.885Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "RoNjQxk675HtxCqBATcFmcc+fvA=",
+    "timestampUtcMs": "2026-08-13T13:22:52.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-da589971-2",
+        "name": "initial-state-transfer",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:52.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "QyRQEnC0RvLCI50YkuFfTRLNtyg=",
+    "timestampUtcMs": "2026-08-13T13:22:52.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-da589971-3",
+        "name": "share-bundle",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:22:52.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "dXgZx5I38reIeBwGse6fr/b3ZJk=",
+    "timestampUtcMs": "2026-08-13T15:54:48.514Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:54:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:48.514Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "1XVa9MJWylKsTXWx6tCHvBhPiRk=",
+    "timestampUtcMs": "2026-08-13T15:54:48.514Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "1cb4bc3b-ccac-44ba-ac90-21d61e185a0b",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:54:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:48.514Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "b002AGhBR6axw88uxXo5fIvTtZk=",
+    "timestampUtcMs": "2026-08-13T15:54:48.514Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "d4466174-d70d-4440-aaa0-0fee33e9b01e",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:54:48.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:54:48.514Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "jcnIx51+gi8kQeWYR4+bu2w59Ok=",
+    "timestampUtcMs": "2026-08-13T16:52:24.259Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:52:24.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:52:24.259Z"
+    }
+  }
+]

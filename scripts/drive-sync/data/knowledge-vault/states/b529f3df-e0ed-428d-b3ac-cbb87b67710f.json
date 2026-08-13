@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-0b606bae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b606bae-5e64-4a98-bdd7-1a7915800db6",
+      "targetTitle": "document-models-have-37-available-operations-across-7-categories"
+    },
+    {
+      "id": "lnk-d9294d65-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d9294d65-3bbd-4b90-9187-c970a8de7a7a",
+      "targetTitle": "input-types-should-reflect-user-intent-with-simple-specific-fields"
+    },
+    {
+      "id": "lnk-cd9fb0ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "operation design uses descriptive names and includes examples and errors",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "25a3aacd-6ee6-4c8a-adb1-ca47755924a1",
+      "name": "schema design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2f49dafb-42e5-441f-883f-27a31e3f9708",
+      "name": "reducer patterns",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbc7a1fc-e261-45bd-bafa-59a5de9d9635",
+      "name": "operation design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cb0a0fba-b8fa-476c-bb31-77a69b66c6cd",
+      "name": "naming conventions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# operation design uses descriptive names and includes examples and errors\n\nWell-designed operations have three qualities:\n\n1. **Descriptive names** \u2014 `ADD_LINE_ITEM`, `UPDATE_RECIPIENT`, `SET_DUE_DATE` (not `UPDATE_DATA` or `MODIFY`)\n2. **Comprehensive examples** \u2014 Added via `ADD_OPERATION_EXAMPLE` to demonstrate expected inputs and outputs\n3. **Specific error definitions** \u2014 Added via `ADD_OPERATION_ERROR` with patterns like `EntityNotFoundError`, `DuplicateIdError`, `InvalidInputError`\n\nSince [[one operation per user intent keeps concerns separated]], each operation maps to exactly one user action. Since [[error names must end with Error and use PascalCase]], error definitions follow strict naming conventions.\n\n---\n\nTopics:\n- [[schema design]]\n- [[reducer patterns]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:00:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:59.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operations should have names like ADD_LINE_ITEM with comprehensive examples and specific error type definitions",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ecad5368-451a-4631-b06f-9c3172376961",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "073e024c-7888-49c0-a62f-23e3f56c7022",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

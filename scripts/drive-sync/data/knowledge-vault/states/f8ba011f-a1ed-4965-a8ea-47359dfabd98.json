@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-0b606bae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b606bae-5e64-4a98-bdd7-1a7915800db6",
+      "targetTitle": "document-models-have-37-available-operations-across-7-categories"
+    },
+    {
+      "id": "lnk-ce65f0dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce65f0dc-e22e-4b36-854a-d427c544489b",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-cd9fb0ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-42c550c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "42c550c3-df9c-4cbc-9ab4-3a88b9312230",
+      "targetTitle": "adapter-src-infrastructure-layout"
+    },
+    {
+      "id": "lnk-584cc17c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "584cc17c-0c35-4ba8-b755-2735fee58676",
+      "targetTitle": "document-model-three-components"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "document model structure has metadata specifications and modules",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0d65e2c9-ccb3-4dc0-bf3f-574a9958c63a",
+      "name": "schema design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c88b424-e0db-45c2-8965-413b234b785e",
+      "name": "document model",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c2b277bd-70a3-4d03-8831-9eefbb14763a",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# document model structure has metadata specifications and modules\n\nA document model consists of three layers:\n\n1. **Basic Metadata** \u2014 `id`, `name`, `extension`, `description`, `author` (name + website)\n2. **Specifications** \u2014 Versioned specs containing `version`, `changeLog`, and `state` definitions (global/local with schema, initialValue, examples)\n3. **Modules** \u2014 Operational modules that group related operations\n\nThe metadata identifies the model. The specifications define its state shape. The modules organize what operations can be performed on that state.\n\nSince [[document models have 37 available operations across 7 categories]], the operations for building a document model span header setup, module creation, operation definition, and state schema configuration.\n\n---\n\nTopics:\n- [[schema design]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T14:03:27.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:36.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Core components: basic metadata (id, name, extension), versioned specifications (state with global/local schemas), and operational modules",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "41dc136b-ce84-467d-82ba-d734f27659d2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T16:00:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c7c67c66-dd22-473d-96a3-91152a9ebe6c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T16:00:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

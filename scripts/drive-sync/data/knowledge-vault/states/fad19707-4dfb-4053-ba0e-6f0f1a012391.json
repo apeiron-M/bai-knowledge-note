@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-4324b1ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-1f97e78c-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1f97e78c-3d96-4139-a03a-828275ebb8e9",
+      "targetTitle": "subgraph-resolvers-unguarded-by-default"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "List resolvers must filter with canReadDocument, not throw on the first forbidden document",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "49e0f557-8b80-42e1-9d11-8270057985f0",
+      "name": "authorization",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d9be244e-c0b6-4820-9840-44dc30c494fc",
+      "name": "subgraphs",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b2d1c4b4-7fdc-4adb-ad97-42ab0d32c64d",
+      "name": "graphql",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Throwing is wrong for collections\n\nA resolver that returns *one* document should fail closed and throw. A resolver that returns *many* must not: throwing on the first forbidden document turns one protected item into a total failure for a caller who was entitled to the rest of the list. Collection resolvers **drop** what the caller cannot read and return the remainder.\n\nThe shape has two parts \u2014 a policy-wide short circuit, then a per-item non-throwing check:\n\n```typescript\nimport type { CanonicalDocumentId } from \"@powerhousedao/reactor-api\";\n\nsearchTodos: async (\n  _parent,\n  args: { driveId: string; searchTerm: string },\n  ctx: Context,\n) => {\n  const matches = await runSearch(args.driveId, args.searchTerm); // document ids\n\n  // Policy-wide callers see everything; skip the per-item check.\n  if (subgraph.authorizationService.isSupremeAdmin(ctx.user?.address)) {\n    return matches;\n  }\n\n  const visible: string[] = [];\n  for (const id of matches) {\n    // non-throwing; ids returned by the Reactor are already canonical\n    if (await subgraph.canReadDocument(id as CanonicalDocumentId, ctx)) {\n      visible.push(id);\n    }\n  }\n  return visible;\n};\n```\n\n## Why filtering, not post-hoc shaping\n\nFiltering **on read** means the resolver never leaks the *existence* of a protected document through a list endpoint. That is a stronger property than redacting fields after the fetch: an id in a search result is itself information, and a caller who can enumerate ids can probe them individually.\n\nThe `isSupremeAdmin` short circuit is a performance concession, not a correctness one \u2014 supreme admins and the `OPEN` policy would pass every per-item check anyway, so the loop is pure overhead for them.\n\nThis is the same shape the built-in `findDocuments` and relationship resolvers use. The corresponding best practice is stated plainly: filter lists, don't throw on them; reserve the throwing asserts for single-target resolvers.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Short-circuit with authorizationService.isSupremeAdmin(ctx.user?.address), then drop unreadable ids. Filtering also avoids leaking the existence of protected documents.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "aa2871b4-42b0-4abd-bed4-b91e8792183a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T16:00:04.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6087af83-10d5-4859-8db4-d328cd070867",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T16:00:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

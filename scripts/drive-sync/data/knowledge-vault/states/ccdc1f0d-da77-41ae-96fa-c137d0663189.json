@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-5067c7ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5067c7ea-ef46-4324-a9d5-11a7be7724c9",
+      "targetTitle": "two-signing-mechanisms-header-and-action"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The light client stamps prevOpHash and prevOpIndex onto action.context before signing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "32f6180f-49ac-4c77-8713-62b8dcba6a31",
+      "name": "signing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "078b9d0b-9c4b-4648-a36f-eb82af0d81e0",
+      "name": "reactor-browser",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3bf28523-58e9-43c4-a58a-afdd25f32f18",
+      "name": "operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## The two stamped fields\n\nBefore a single action is signed, the light client writes two fields onto `action.context`:\n\n- **`prevOpHash`** = `hashDocumentStateForScope(document, scope)` \u2014 the hash of the state the action applies to. For a document at head that is the hash of the last operation in the scope, which the read path cannot fetch, so it is recomputed from the state instead.\n- **`prevOpIndex`** = `header.revision[scope] - 1`. Revisions count operations and indices are zero-based, so an **empty scope stamps `-1`**, which matches what the remote controller records.\n\n```typescript\nexport function stampAction(action: Action, document: PHDocument): Action {\n  const revision = document.header.revision[action.scope] ?? 0;\n  return {\n    ...action,\n    context: {\n      ...action.context,\n      prevOpHash: hashDocumentStateForScope(document, action.scope),\n      prevOpIndex: revision - 1,\n    },\n  };\n}\n```\n\n## Order is load-bearing\n\nStamping must run **before** signing, because the signer reads `context.prevOpHash` off the action as part of what it signs. Reversing the order does not fail loudly \u2014 it produces a signature over an action that lacks the fields, so the signature no longer binds the action to its position in the log.\n\nThis is the mechanism behind the hash chain: each signed action commits not just to its own payload but to the state it was written against, which is what makes the operation history tamper-evident rather than merely attributable.\n\n## The related trap\n\nThe server **does not validate `prevOpHash`**. A wrong hash is accepted and the write succeeds. Conformance therefore has to be asserted in tests; it cannot be inferred from a mutation returning successfully.\n\n_Source: apps/academy/docs/academy/04-Reference/08-ReactorBrowserClient/02-ApiReference.md, confirmed against packages/reactor-browser/src/graphql-client/signing.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:33:27.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:56:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "prevOpHash = hashDocumentStateForScope(document, scope), prevOpIndex = header.revision[scope] - 1, so an empty scope stamps -1. Order matters: stamp, then sign.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "97d95348-0764-41df-b122-74dc1835aac0",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:58:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b1d966e1-c31d-45e8-8ad9-58faa79967b2",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:58:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-a506e6e4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a506e6e4-0e6e-4f7e-bd2e-6eef32477155",
+      "targetTitle": "ddup-reactor-native-sync-2x"
+    },
+    {
+      "id": "lnk-22720e65-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "22720e65-5178-41e9-b071-9e29543eea0e",
+      "targetTitle": "reactor-builder-fluent-api-construction"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "withWorkerPool requires real Postgres and worker-importable document-model sources, enforced at build time",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fd981b5d-ce28-45f7-93dd-4f0131aaa92f",
+      "name": "reactor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a5793eff-cf9c-4eb6-a7dd-f37c3f7f7d9d",
+      "name": "scaling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45779521-8bdc-4b2c-b037-017ace63a781",
+      "name": "worker-pool",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The executor worker pool moves job execution off the main thread into N `node:worker_threads` workers. Each worker opens its own Postgres pool and runs document models in isolation. Jobs route to a worker **stickily by document id**, so all work for one document lands on the same worker \u2014 which is how per-document serialization survives the move to multiple threads.\n\nCalling `withWorkerPool` is what enables it; there is no `enabled` flag.\n\n```typescript\nconst reactor = await new ReactorBuilder()\n  .withDocumentModelSources([\n    { packageName: \"@my-org/account-document-model\", subpath: \"document-models\" },\n  ])\n  .withWorkerPool({ numWorkers: 4, db: { host: \"localhost\", port: 5432, /* ... */ } })\n  .build();\n```\n\nTwo hard requirements, and the notable thing is that both are enforced up front rather than at runtime.\n\n**Importable sources.** Workers re-import document models across the thread boundary, so a live module object cannot cross. Models must be registered as `{ filePath }` or `{ packageName }` sources. `buildModule()` throws on violation: `\"withWorkerPool requires at least one worker-importable document-model source ({ filePath } or { packageName }).\"`, and for a model registered only as a live module, `\"withWorkerPool requires worker-importable sources, but these models were registered only as live modules: ...\"`. A live module for the same `documentType@version` may coexist as long as an importable source covers it. Sources resolve in one pass \u2014 file and package sources are imported host-side and their exports scanned for `DocumentModelModule` values \u2014 so host and workers are derived from the same list and cannot diverge.\n\n**Real Postgres.** PGlite cannot be shared across threads, so parent and workers must point at the same Postgres instance. When the pool carries a `db`, the builder builds the parent's database from that same config unless `withKysely` overrides it.\n\nConnection info, by contrast, is a *compile-time* guarantee: `WorkerPoolOptions` is a union requiring either `db` or a custom `factory`, making an enabled pool without connection info unrepresentable. `DbConfig` crosses worker IPC so it must be JSON-clonable; `ssl: true` maps to `{ rejectUnauthorized: false }`, `poolSize` to pg's `max`. The optional `verifier` is off by default \u2014 omit it and workers perform no executor-side signature verification, matching the in-process executor.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/07-StorageAndScaling.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:34:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Jobs route stickily by document id across N worker threads. A model registered only as a live module throws at buildModule(). PGlite cannot cross threads.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e8a1b0f9-733c-463b-88d4-43b95808a420",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:10.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2fde7d50-12d9-4ffc-9c10-e92ff4e91591",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:10.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

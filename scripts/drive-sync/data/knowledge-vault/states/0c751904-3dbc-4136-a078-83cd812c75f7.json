@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-1c313715-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c313715-bfd9-4428-9218-fda37e581365",
+      "targetTitle": "bee-node-prerequisites-and-dev-mode"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm /bytes content-addressing means identical uploads dedupe automatically at the network layer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "558236a8-c6f7-477e-9105-378dec31c9d5",
+      "name": "content-addressing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "76792b57-9eb7-4d13-baac-b5a82f97ca3b",
+      "name": "swarm-bytes",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec9ed60b-c68e-4544-9422-7ebd4dc070f9",
+      "name": "deduplication",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dbf170db-a957-4bc5-a82f-4d967d5af7d7",
+      "name": "immutability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Swarm /bytes chunks are content-addressed: the reference is derived from the chunk's content (BMT hash). Two consequences for duplication analysis:\n\n**1. Same data -> same reference, regardless of uploader.** If Alice and Bob both upload the same encrypted operation batch, they produce identical chunk references. The network stores it once.\n\n**2. Immutability is intrinsic.** Once written, a chunk cannot change \u2014 changing the content would change the reference. This is why /bytes is durable until stamp expiration and why \"versioning\" requires feeds (mutable pointers) layered on top.\n\n**Implications for our duplication picture**:\n- Our encrypted operation batches are per-user (encryption key differs), so cross-user de-dup is limited in practice.\n- But within a user's own writes, re-uploading the same batch (e.g., after a retry) is effectively free \u2014 the network already has the chunk.\n- This is different from PostgreSQL/IndexedDB where \"duplicate\" means \"both rows exist and take up bytes twice.\"\n\n**Terminology care**: when the analysis says \"operations exist in both PGlite and Swarm,\" the Swarm side is the content-addressed chunk \u2014 a single chunk even if uploaded many times. PGlite, by contrast, stores raw rows with no content-addressing.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:42:40.589Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:48:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Because /bytes chunks are content-addressed, uploading the same data twice yields the same reference \u2014 the network deduplicates for free, independent of who uploaded it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6f3d2471-6186-457d-8fbf-481a30e3aa8d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:51:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "523ff123-fb6b-4b06-bc31-b3f2f780a1bb",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:51:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

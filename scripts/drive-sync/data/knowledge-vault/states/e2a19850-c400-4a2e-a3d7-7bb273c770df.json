@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-f865f5ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f865f5ea-0ebb-458b-adf6-f981cc8c307a",
+      "targetTitle": "vetra-studio-is-builder-environment"
+    },
+    {
+      "id": "lnk-4752ac2e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4752ac2e-835a-4be9-9c2b-ca95ca501cef",
+      "targetTitle": "mcp-workflows"
+    },
+    {
+      "id": "lnk-63660cff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "63660cff-4660-4af1-875d-520690e27a57",
+      "targetTitle": "batch-multiple-actions-in-a-single-addactions-call-to-minimize-round-trips"
+    },
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-4d98df7d-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4d98df7d-a81e-461c-aa76-f59378303502",
+      "targetTitle": "reactor-is-backend-service-for-drives"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reactor MCP bridges AI agents with Powerhouse document operations via Model Context Protocol",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1f262d99-5d60-47f3-9061-366ebe056534",
+      "name": "mcp",
+      "topicDocumentId": null
+    },
+    {
+      "id": "38a3de8d-e4fe-46e8-98eb-d7a88d2922a1",
+      "name": "ai-integration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3abe59d4-6f00-46c4-acee-23f1d0d0c708",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "**Reactor-mcp** is a Model Context Protocol (MCP) server that bridges AI agents (like Claude) with Powerhouse document operations. It enables:\n\n- Automatic document model creation from natural language descriptions\n- Smart editor generation based on underlying document models\n- Automatic code generation when documents reach valid state\n- Working with both existing and newly created document models\n\nMCP operations include:\n- **Document**: `createDocument`, `getDocument`, `deleteDocument`, `addActions`\n- **Drive**: `getDrives`, `addDrive`, `getDrive`, `addRemoteDrive`\n- **Document Model**: `getDocumentModels`, `getDocumentModelSchema`\n\nWorkflow: Run `ph vetra --interactive --watch` in one terminal, then start Claude in another. Claude connects to the MCP server and can create document models, implement reducers, build editors, and fix errors through natural language interaction.\n\nBest practices with MCP: work in layers (model first, test, then editor), always review proposals before confirming, provide detailed requirements, and reference operation names when describing editor functionality.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The MCP server at localhost:4001/mcp lets Claude create documents, manage drives, and generate code from natural language.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0ac043cb-b9e6-40b5-8826-00cdcc02bde7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b4cd9bb9-4308-405d-a518-85ca9bfd5fa3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-44526c84-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44526c84-c188-45ed-9472-51e84e11bfd0",
+      "targetTitle": "connect-is-host-application"
+    },
+    {
+      "id": "lnk-cd9fb0ae-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+      "targetTitle": "present-document-model-proposals-to-user-before-implementing"
+    },
+    {
+      "id": "lnk-68376495-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "68376495-bfd8-4cac-9fda-65c52e1c4e74",
+      "targetTitle": "adapter-key-source-files"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The adapter/src/channel/ directory holds all Swarm-sync integration code, split into factory wiring, the IChannel implementation, and manifest management.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "file-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "channel-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "codebase-map",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## `adapter/src/channel/` layout\n\n```\nadapter/src/channel/\n  index.ts                    - Public exports\n  composite-factory.ts        - Routes \"gql\"/\"swarm\" to sub-factories\n  swarm-channel.ts            - IChannel: outbox push + inbox pull\n  swarm-channel-factory.ts    - Creates SwarmChannel from ChannelConfig\n  create-composite-factory.ts - createSwarmSyncBuilder() for ReactorBuilder.withSync()\n  register-swarm-channel.ts   - Runtime factory injection (legacy/edge cases)\n  add-swarm-remote.ts         - Per-drive Swarm remote registration\n  manifest-manager.ts         - User + drive manifest writes\n```\n\n### How they fit\n\n- `swarm-channel.ts` is the new code path \u2014 a native `IChannel` implementation that SyncManager treats identically to the GQL channel.\n- `composite-factory.ts` plus `create-composite-factory.ts` form the wiring that lets GQL and Swarm coexist behind one factory.\n- `add-swarm-remote.ts` is the entry point used by plugin init / registration retry to attach a Swarm remote to a specific drive.\n- `manifest-manager.ts` is the only module that writes the user and drive manifest feeds, keeping manifest-write logic in one place.\n- `register-swarm-channel.ts` exists for edge cases where the factory needs to be injected after reactor construction (legacy paths).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Key files: swarm-channel.ts (IChannel), composite-factory.ts (routing), create-composite-factory.ts (builder wiring), add-swarm-remote.ts, manifest-manager.ts.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9dc9f829-a5f9-4fc6-bf9a-fbaf9ca66877",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:34.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "59f9bb8c-b3b5-4967-be7d-32c7ad98ab59",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:34.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

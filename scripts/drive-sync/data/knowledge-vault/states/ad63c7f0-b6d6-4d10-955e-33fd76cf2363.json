@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-0596a075-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0596a075-1d95-42d7-ba4f-b57e5fbf137d",
+      "targetTitle": "document-manifest-feed-structure"
+    },
+    {
+      "id": "lnk-4752ac2e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4752ac2e-835a-4be9-9c2b-ca95ca501cef",
+      "targetTitle": "mcp-workflows"
+    },
+    {
+      "id": "lnk-9f994404-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "9f994404-d34a-4429-a93d-bc07463b399e",
+      "targetTitle": "powerhouse-applies-blockchain-immutability-through-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every document modification is an immutable, append-only operation that can be replayed to reconstruct state at any point in time",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5d778c78-a788-4319-984d-cbdade21106c",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4e1db7e-98f6-4864-803c-5ff219474749",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d948b83-e1e7-47ae-bc19-1d5a9b8ee5e8",
+      "name": "CQRS",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8af4fd9a-4d7e-4828-90df-2ba1586c7449",
+      "name": "architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each edit to a document submits an operation (a CQRS 'command') like `ADD_LINE_ITEM` or `UPDATE_RECIPIENT`. Operations are appended to an immutable history and never overwritten. The current document state is the result of applying all past operations in sequence. Each revision has a unique event ID, state hash, and optional commit message. Operations can be signed, stored on-chain, or synchronized across systems. This enables auditability (inspect every change), transparency (see what others did), versioning (revert to prior state), and interoperability (operations are just data). Branch and merge capabilities are under development.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Documents use event sourcing: state = replay of all operations in sequence. Operations are never overwritten.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "75f5d34a-3f1b-4483-b81f-efb44524b5f1",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:34.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e8260fd1-6d79-4497-b673-7e37ae522b4d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:34.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-1577d689-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1577d689-bd59-4661-a162-e638a96c8abe",
+      "targetTitle": "connect-as-switchboard-swarm-bridge"
+    },
+    {
+      "id": "lnk-2a079433-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2a079433-e571-4d78-b20a-3fabbccbe075",
+      "targetTitle": "bee-reactor-adapter-package-structure"
+    },
+    {
+      "id": "lnk-8fbd5cba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8fbd5cba-15ee-4f2b-ae33-731095584405",
+      "targetTitle": "channel-directory-file-layout"
+    },
+    {
+      "id": "lnk-1c842c07-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Connect's Swarm integration is split into three layers: bee-reactor-adapter, SwarmChannel, and Connect UI",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fd74c7e5-b525-4655-9a0f-b48b06ba751d",
+      "name": "architecture-layers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8fc7f31-d9ee-42cc-8464-12145fa4e8a7",
+      "name": "swarm-channel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1fb976e0-caff-4d1d-8fe9-e19493b1a71a",
+      "name": "bee-adapter",
+      "topicDocumentId": null
+    },
+    {
+      "id": "13f9fb0d-1e92-4e95-99d0-9f9a12dbd7a9",
+      "name": "connect-ui",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The integration decomposes into three layers with clear seams:\n\n**Layer 1 \u2014 `bee-reactor-adapter` (npm)**: the `SwarmClient` class wraps the Bee SDK. It exposes `uploadData`/`downloadData` for encrypted `/bytes`, `uploadFile`/`downloadFile` for ACT-protected `/bzz`, `createGrantees`/`patchGrantees` for ACT grantee lists, `pssSend`/`pssSubscribe` for 1-to-1 messaging, `gsocSend`/`gsocSubscribe` for sub-second notifications, and manifest helpers (`updateManifest`, `readManifest`, `updateDriveManifest`, `updateUserManifest`). It also handles per-topic write locks, 3-retry backoff on feed writes, and auto-detects reference vs inline feed format.\n\n**Layer 2 \u2014 SwarmChannel**: a native `IChannel` implementation wired via `ReactorBuilder.withSync()` and a `CompositeChannelFactory` that routes `\"swarm\"` and `\"gql\"` config types to the right sub-factory. Owns push (outbox) and pull (inbox), cursor tracking via `sync_cursors`, and dead letters via `sync_dead_letters`.\n\n**Layer 3 \u2014 Connect UI**: the `swarm-settings/` panel shows connection status, stamp health, doc tree with sync badges, and share/import controls; the `components/chat/` panel ships the chat UI.\n\nThe plugin layer still owns Bee detection, stamp selection, wallet key derivation, and UI event emission.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:12.396Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SwarmClient wraps the Bee SDK (CRUD + ACT + PSS + GSOC); SwarmChannel implements IChannel for reactor sync; swarm-settings and chat panels expose state and controls in Connect UI.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0c9c39a6-48be-4cd5-bd17-45c99ee14ce2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:11.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ac2c6d1f-55b6-4ba3-b835-ae0a81d09419",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:11.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

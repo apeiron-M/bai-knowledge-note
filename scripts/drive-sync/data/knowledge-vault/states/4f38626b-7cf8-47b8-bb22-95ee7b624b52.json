@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce0ee124-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce0ee124-0fd8-41bc-aa54-56519ae13dab",
+      "targetTitle": "document-model-versioning-system"
+    },
+    {
+      "id": "lnk-52f876b5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "52f876b5-3996-4e94-b18d-f7813ca3fd38",
+      "targetTitle": "document-models-use-event-sourcing"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An upgrade reducer must patch state and initialState together or replay fails with a hash mismatch",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5a1168e8-7d24-4ad7-b1d0-271bf40baae3",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "054f24f6-d66a-4377-a6ac-4b1068ae4b44",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "603af217-eac0-44db-84e8-12f45e3ab3b6",
+      "name": "event-sourcing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The upgrade runs exactly **once**, when `UPGRADE_DOCUMENT` is dispatched. Replay never re-runs it: loading a document (`baseLoadFromInput` \u2192 `replayDocument`) starts from the stored `initialState` and folds the domain operations through the latest reducer. The `document`-scope log where the upgrade was recorded is not part of that fold.\n\nThat asymmetry is the whole trap. A migration that patches `state` but forgets `initialState` produces a document that looks perfectly healthy in the running system \u2014 and is unrecoverable:\n\n- anything seeded into `initialState`, i.e. data that was never created by an operation, is still v1-shaped there;\n- so a rebuild can no longer reproduce the stored state;\n- so the replayed final state fails the recorded hash check.\n\nThe document then errors on load with a `HashMismatchError` whose message embeds `Hash mismatch on document \u2026, scope global`. The recipe's tests match it with `/Hash mismatch/`.\n\nThe failure mode is worth dwelling on: nothing goes wrong at upgrade time, nothing goes wrong while the process stays up, and the break surfaces later on a cold load or on a peer that never held the live document. The `document-versioning` recipe ships a deliberately broken state-only transition specifically so the failure is visible in a test rather than in production.\n\nTwo supporting constraints from the same recipe. Upgrade reducers **must be pure** \u2014 they run on every peer that loads the document, so no `Date.now()`, no randomness, no I/O \u2014 and they must **return** a new document spread-style, because there is no immer/Mutative draft in an upgrade reducer and in-place mutation is simply lost. And `supportedVersions` is ordered and every hop must be covered: upgrading a v1 document on a package already at v3 composes v1\u2192v2 then v2\u2192v3, with a missing intermediate entry throwing at upgrade time.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Document Versioning recipe (\"Critical pitfall: patch state and initialState together\"), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Replay folds domain ops from the stored initialState and never re-runs the upgrade, so a state-only migration leaves v1-shaped seed data and the document errors on load.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "35d44ec7-db58-4161-b91b-3ebb179ccd69",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:04.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "693618c3-e1c1-46cf-b4df-a9c42669e505",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

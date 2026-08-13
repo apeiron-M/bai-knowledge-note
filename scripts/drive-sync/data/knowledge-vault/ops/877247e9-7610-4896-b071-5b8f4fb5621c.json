@@ -1,0 +1,305 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:10.626Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "isyncmanager-add-registers-remote-by-unique-name",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "877247e9-7610-4896-b071-5b8f4fb5621c",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:34:10.626Z"
+        },
+        "version": 0,
+        "documentId": "877247e9-7610-4896-b071-5b8f4fb5621c",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:10.626Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "ZUBd5aLW1UQOAAG0k4Ydl9eYKNM=",
+    "timestampUtcMs": "2026-08-13T14:34:11.237Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "ISyncManager.add registers a remote by unique name, creates its channel, and rolls back the record if init() throws",
+        "updatedAt": "2026-08-13T14:34:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:11.237Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:10.626Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "877247e9-7610-4896-b071-5b8f4fb5621c",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:34:10.626Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "tmGWAp0CblA9/6BsV8iSYoApA1o=",
+    "timestampUtcMs": "2026-08-13T14:34:11.237Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:34:10.000Z",
+        "description": "Takes name, DriveCollectionId, ChannelConfig, filter, options and id. Duplicate names throw; add after shutdown throws."
+      },
+      "timestampUtcMs": "2026-08-13T14:34:11.237Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:12.397Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "877247e9-7610-4896-b071-5b8f4fb5621c",
+        "targetId": "911a47b7-135b-456a-9991-352aa8dc80fc",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:12.397Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "tuuDnQvzErVSOCnxOOBzUJ0MrQE=",
+    "timestampUtcMs": "2026-08-13T14:34:11.237Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PROCEDURE",
+        "updatedAt": "2026-08-13T14:34:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:11.237Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:12.421Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "877247e9-7610-4896-b071-5b8f4fb5621c",
+        "targetId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:12.421Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "H+rb1oW+/SgusTo8zgFd22EGHxk=",
+    "timestampUtcMs": "2026-08-13T14:34:11.237Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`ISyncManager.add` is the single entry point for attaching a remote drive. It persists the remote record, creates its channel through the channel factory, and calls `channel.init()`:\n\n```typescript\nadd(\n  name: string,\n  collectionId: DriveCollectionId,\n  channelConfig: ChannelConfig,\n  filter?: RemoteFilter,\n  options?: RemoteOptions,\n  id?: string,\n): Promise<Remote>;\n```\n\n- `name` is the unique key across the manager. Reusing one throws ``Remote with name '${name}' already exists``.\n- `collectionId` identifies the drive; build it with `DriveCollectionId.forDrive(driveId, branch?)` (branch defaults to `\"main\"`).\n- `filter` defaults to `{ documentId: [], scope: [], branch: \"\" }` \u2014 empty arrays and an empty branch string all mean \"no restriction\".\n- `options` defaults to `{ sinceTimestampUtcMs: \"0\" }`, i.e. sync from the start of history.\n- `id` defaults to a generated UUID.\n\nThe important behavior is the failure path: **if `channel.init()` throws, `add` rolls the remote back out of both the in-memory map and storage, then rethrows the original error.** There is no half-registered remote to clean up. Calling `add` after `shutdown()` throws `\"SyncManager is shutdown and cannot add remotes\"`.\n\nConnect's `addRemoteDrive(url, driveId?, options?)` helper shows the canonical call. It reads `window.ph.reactorClient` and the sync manager, fetches `{ id, graphqlEndpoint }` from the URL, dedupes against `sync.list()`, then:\n\n```typescript\nawait sync.add(\n  crypto.randomUUID(),                 // name\n  DriveCollectionId.forDrive(driveId),\n  { type: \"gql\", parameters: { url: driveInfo.graphqlEndpoint } },\n  undefined,                           // filter -> no restriction\n  options?.pollBehavior ? { pollBehavior: options.pollBehavior } : undefined,\n);\n```\n\nNote that Connect passes a random UUID as the name \u2014 the name is an internal handle, not a label. To remove a drive, find every remote whose `meta.collectionId.equals(...)` and call `sync.remove(remote.meta.name)`. Config validation is eager: a `\"gql\"` config missing `url` throws at `add` time, as does any optional parameter with the wrong type.\n\n_Source: apps/academy/docs/academy/04-Reference/01-Reactor/04-Synchronization.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:34:10.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:11.237Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:34:12.446Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "877247e9-7610-4896-b071-5b8f4fb5621c",
+        "targetId": "ad69cf1c-6ea3-49c0-9d75-7b1d7f367f75",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:12.446Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "/AT/AckXws1ycWz0kl3EdfulbmE=",
+    "timestampUtcMs": "2026-08-13T14:34:11.237Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3ea1666f-fad5-4b1a-b7f7-c496819c0a69",
+        "name": "reactor-sync"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:11.237Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "/ZY9eNsYV8WqFfdlKaL0YFNXpZ8=",
+    "timestampUtcMs": "2026-08-13T14:34:11.237Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "ebeea7ba-618a-4fbb-ae4b-a5aa006f7da5",
+        "name": "remotes"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:11.237Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "iUwgW8uWOcXvoV5281rReyzum+w=",
+    "timestampUtcMs": "2026-08-13T14:34:11.237Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "aee679c3-65df-4045-9b07-d5766a1ca2ba",
+        "name": "api"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:11.237Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "IJLnXbb4t8XGD39p5D6JBhR8Q2Y=",
+    "timestampUtcMs": "2026-08-13T14:34:12.351Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:34:10.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:34:12.351Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "1fRGpFVnV78kLbjZoAWIQ7C7gnc=",
+    "timestampUtcMs": "2026-08-13T15:56:18.223Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:18.223Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "ufWF+w3OkcqITLsL+fx17T+yYzA=",
+    "timestampUtcMs": "2026-08-13T15:56:18.223Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "e31b98ca-b8e4-418f-b29a-3004abf45d7d",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:18.223Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "jg2t+bTxOSqmXB0GS4D/pEMBjZg=",
+    "timestampUtcMs": "2026-08-13T15:56:18.223Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "86973436-05f2-435e-a503-fd48de8f0fbf",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:18.223Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "Y9ugKq2A2AOw0tAcqmRRDHnVvaQ=",
+    "timestampUtcMs": "2026-08-13T16:54:11.486Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:11.486Z"
+    }
+  }
+]

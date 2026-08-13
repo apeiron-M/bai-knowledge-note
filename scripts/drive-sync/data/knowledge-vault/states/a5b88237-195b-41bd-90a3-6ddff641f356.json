@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-3c8bb297-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c8bb297-ae31-4f7a-b7f2-c91fdd89217d",
+      "targetTitle": "drive-apps-are-custom-drive-editors"
+    },
+    {
+      "id": "lnk-ee900e65-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee900e65-175e-4152-9ad5-18db168c583c",
+      "targetTitle": "v6-reactor-subgraph-replaces-legacy-endpoints"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ADD_RELATIONSHIP keeps container state O(1) where ADD_FILE grows the drive document with every child",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "034d6ec7-63fe-4cd2-8ebb-cfa923bce3df",
+      "name": "drives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "21283e52-149b-4846-bcc1-0225bed47549",
+      "name": "scalability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b78610e-cfbd-47ca-9fa1-caf5d0c449e0",
+      "name": "reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "`document-drive` keeps its child catalogue **inside the drive document's own state**, at `state.global.nodes[]`. Every `ADD_FILE` mutates that array, which means three costs grow together with child count: every replay walks every previously-added child, every read materialises the full node list, and the drive's operation log grows one entry per file. Container performance decays as the drive fills.\n\n`ADD_RELATIONSHIP` sidesteps all three. It is a **system-scope action handled directly by the reactor's job executor** \u2014 the source document's state and operation log are untouched. The indexer writes one row to the `DocumentRelationship` table, and the graph is read back through `IDocumentIndexer`. Cost is flat in the number of children.\n\nThe `drive-override` recipe demonstrates this by building a container document whose entire schema is:\n\n```graphql\ntype CustomContainerState {\n  name: String!\n  description: String\n}\n```\n\nNo `nodes`, no children, no files. It then links 10,000 children via `reactor.execute(containerId, \"main\", [addRelationshipAction(containerId, childId, \"contains\")])` and confirms `state.global` keys are still exactly `[\"description\", \"name\"]`.\n\nEnumeration is paged and DB-native rather than a state read:\n\n- `documentIndexer.getOutgoing(containerId, [\"contains\"], { cursor, limit })` \u2014 children; advance `cursor` until `nextCursor` is empty.\n- `documentIndexer.getIncoming(childId)` \u2014 parents. The relationship table is indexed on both `sourceId` and `targetId`, so the graph is genuinely bidirectional.\n\nThe same data is exposed over GraphQL as `documentOutgoingRelationships(documentId, relationshipTypes, paging)` and `documentIncomingRelationships(...)`, both paged, for external clients.\n\nThe trade-off: the container's reducer never sees relationships at all, so any invariant you wanted to enforce over the child set (\"no more than N children\", \"child types must match\") is no longer enforceable in the reducer. You gain flat scaling and lose reducer-level control over membership.\n\nProvenance: academy `05-Lookup/00-Cookbook.md`, Drive Override recipe (\"Why this scales better than ADD_FILE\"), academy 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:55:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "document-drive mutates state.global.nodes[] per file; ADD_RELATIONSHIP is a system-scope action the job executor handles, writing one indexed row so container cost is flat in child count.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cc7fc93b-f41d-434f-808f-7212d4400b6e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:57:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4f1a21d8-7c05-412b-ada3-f3823491777e",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:57:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

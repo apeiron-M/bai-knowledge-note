@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-183d0714-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "183d0714-1c6b-4e54-9135-430bd6ae8da4",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    },
+    {
+      "id": "lnk-1817c337-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1817c337-9b3b-4234-ac80-423b79cdd7a7",
+      "targetTitle": "revision-history-panel-internal-dom-structure"
+    },
+    {
+      "id": "lnk-79fef290-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "79fef290-3839-43d6-a074-1c055d39cee6",
+      "targetTitle": "revision-history-timeline-in-editors"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Revision-history panel visibility is controlled by useRevisionHistoryVisible, showRevisionHistory and hideRevisionHistory",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "652183f3-b01d-400d-93b4-557557543371",
+      "name": "revision-history",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e9193d80-d1a0-48f5-99e2-10c7d5aa1c63",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "365b3826-206e-4c8a-a111-3590266c597a",
+      "name": "editors",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The revision-history panel is rendered by Connect, outside the editor's component tree \u2014 which is why it can only be *styled* through scoped CSS. Its *visibility*, though, is ordinary global state with a three-function API:\n\n```ts\nfunction useRevisionHistoryVisible(): boolean | undefined;\nfunction showRevisionHistory(): void;\nfunction hideRevisionHistory(): void;\n```\n\n`showRevisionHistory` and `hideRevisionHistory` are plain functions rather than hooks, so they are safe to call from a click handler, an effect, or a keyboard shortcut. Neither takes arguments: the panel always targets the currently selected document, so there is no way to open history for some other document from here.\n\n`useRevisionHistoryVisible` returns `boolean | undefined`, and the third state is meaningful \u2014 `undefined` is \"not yet initialised\" rather than \"hidden\". Treat it as falsy for rendering, but do not write `visible === false` as your hidden check.\n\nThis matters because the toolbar `history` button is not the only sensible affordance. An editor that wants a \"see what changed\" link inside its own layout, a drive app that opens history on a keyboard shortcut, or an editor that wants to close the panel when the user starts editing again, can all drive the panel directly. The reverse read is equally useful: an editor can consult `useRevisionHistoryVisible()` to collapse a sidebar or suppress its own controls while history is on screen, since the panel takes over the view.\n\nCombined with `disabledControls={[\"history\"]}` on `DocumentToolbar`, these hooks let you remove the built-in button entirely and replace it with your own trigger without losing the feature.\n\n_Source: apps/academy/docs/academy/04-Reference/05-EditorsUI/01-ReactHooks.md (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Editors can open and close Connect's revision-history panel programmatically instead of relying on the toolbar history button.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c60805e0-1075-4f47-ab38-b4ee0b0dd791",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d2386c5c-1148-4a1c-84fb-d093b2814845",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

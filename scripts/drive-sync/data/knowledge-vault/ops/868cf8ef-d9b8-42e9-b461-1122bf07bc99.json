@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:43.360Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "pglite-sync-tables-persist-remote-state",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:43.360Z"
+        },
+        "version": 0,
+        "documentId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:43.360Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "0+GtUhRHaWqSS8O6xXFKH0KKGWQ=",
+    "timestampUtcMs": "2026-08-13T13:23:18.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "The reactor persists sync state in four PGlite tables: remotes, cursors, dead letters, and operation index.",
+        "updatedAt": "2026-08-13T13:23:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:18.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:43.360Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:43.360Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Whrqve6q8mmKL8rM73qXcz0IUZ4=",
+    "timestampUtcMs": "2026-08-13T13:23:18.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:18.000Z",
+        "description": "sync_remotes, sync_cursors, sync_dead_letters, and operation_index_operations together let channels be recreated natively on startup."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:18.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:00.449Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+        "targetId": "de11636d-6f4b-46b3-bf00-649c81feec23",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:00.449Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "v8P4TXyb+fn1uURkicGBdcfeavE=",
+    "timestampUtcMs": "2026-08-13T13:23:18.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "reference",
+        "updatedAt": "2026-08-13T13:23:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:18.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:00.521Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+        "targetId": "cd9fb0ae-ac9b-4785-a4e6-0a52347a2418",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:00.521Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "Fc+UfB+f5eGQaz8kYVY8/lYlBIc=",
+    "timestampUtcMs": "2026-08-13T13:23:18.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Claim\nReactor sync state is durable across sessions because it lives in four dedicated PGlite tables.\n\n## Tables (from source)\n| Table | Purpose |\n|---|---|\n| `sync_remotes` | Registered remotes: name, collection_id, channel_type, push/pull state |\n| `sync_cursors` | Per-remote cursor tracking: ordinal position (inbox & outbox) |\n| `sync_dead_letters` | Failed operations with error details |\n| `operation_index_operations` | Global ordinal index across all operations |\n\n## Why this matters\n- Swarm remotes registered via `syncManager.add(...)` persist in `sync_remotes` and are recreated natively on startup \u2014 no re-registration code needed after reload.\n- Cursors in `sync_cursors` provide exactly-once push semantics: the outbox cursor advances only after a successful remote write.\n- `operation_index_operations` is the shared global ordinal space that lets multiple remotes coexist without stepping on each other.\n\n## Source\nSwarm Channel Architecture, \"PGlite Tables\" table.",
+        "updatedAt": "2026-08-13T13:23:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:18.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:00.762Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+        "targetId": "572c0e38-3b83-40bc-976d-61d44f23883a",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:00.762Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "mVzKUO1KdtUAcSZkXGa9/suJFjQ=",
+    "timestampUtcMs": "2026-08-13T13:23:18.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:19:49.348Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:18.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:00.790Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "868cf8ef-d9b8-42e9-b461-1122bf07bc99",
+        "targetId": "ea2bc239-c265-44fb-b8a6-7c0f9fad1bf2",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:00.790Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "fn/ZuIzZtdpJJPRz9NqEX/ttXWw=",
+    "timestampUtcMs": "2026-08-13T13:23:18.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-c767e2c9-1",
+        "name": "pglite",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:18.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "J9KUHw6tVWDfq6tayr1Y2ueZ9/U=",
+    "timestampUtcMs": "2026-08-13T13:23:18.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-c767e2c9-2",
+        "name": "sync-state",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:18.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "1EH9RZ6pCWsjHbh9B3x2W8SEvOc=",
+    "timestampUtcMs": "2026-08-13T13:23:18.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-c767e2c9-3",
+        "name": "reactor-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:18.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "bNW8S50A0TTWHJ8MbxL5vbjgGfo=",
+    "timestampUtcMs": "2026-08-13T13:23:18.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-c767e2c9-4",
+        "name": "persistence",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:18.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "NpR+/KZmuDb6HJMJyuQQK5fFe7c=",
+    "timestampUtcMs": "2026-08-13T15:56:16.078Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:16.078Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "GTM7dY2dfCCswHusj2CGHSNJEgk=",
+    "timestampUtcMs": "2026-08-13T15:56:16.078Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "6b16d69c-a043-47aa-9919-02c9e5f089e0",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:16.078Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "OkBf2ztRKpDSJA5vMbWpmThMWzE=",
+    "timestampUtcMs": "2026-08-13T15:56:16.078Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "4e45b5c2-6705-411f-bead-986e97671649",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:16.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:16.078Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "X1gbjSCP5IIm4WmRVTKBM1IlIgo=",
+    "timestampUtcMs": "2026-08-13T16:54:08.944Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:08.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:08.944Z"
+    }
+  }
+]

@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:25.724Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "gsoc-triggered-pull-debounced-with-polling-fallback",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "a039d9b3-9608-4584-acfd-f231a2296186",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:25.724Z"
+        },
+        "version": 0,
+        "documentId": "a039d9b3-9608-4584-acfd-f231a2296186",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:25.724Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "pSSrQwkwkxL6+AKTZVt+J6YJm+Q=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "GSOC op-committed pings trigger sub-second pulls with ~300ms debounce, polling stays as fallback",
+        "updatedAt": "2026-08-13T13:23:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:25.724Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "a039d9b3-9608-4584-acfd-f231a2296186",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:25.724Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "Rt8nOFU3LlcxBjaNZNN7+cqLAgw=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:07.000Z",
+        "description": "GSOC op-committed pings trigger on-demand pulls of the writer's feeds with ~300ms debounce; periodic polling remains as a fallback for offline participants."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.129Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a039d9b3-9608-4584-acfd-f231a2296186",
+        "targetId": "3368da0f-b07d-40a2-a5e6-9ac28f434744",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.129Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "q2J3JBqO8zMHucEuQxMwTbMKVec=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "pattern",
+        "updatedAt": "2026-08-13T13:23:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.155Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a039d9b3-9608-4584-acfd-f231a2296186",
+        "targetId": "f271a45f-492a-4473-87b9-8fd2d2600c3d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.155Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "3m0MRRv62SY3sJzRglLdkjeb6dk=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## Real-time trigger: GSOC with polling fallback\n\nGSOC is sub-second \u2014 direct SOC sync with no Trojan mining on the hot path. Mining a signer targeting a peer's neighborhood costs roughly 10\u201330 s per (peer, collab) pair, but that cost is paid **once on collab creation/join** and never again.\n\n### Protocol\n\n1. Participant writes a new op \u2192 SwarmChannel pushes to their feed.\n2. Immediately after, a GSOC ping goes to each *other* participant's signer:\n\n```json\n{\n  \"type\": \"op-committed\",\n  \"collabId\": \"drive:<driveId>\" | \"doc:<driveId>:<docId>\",\n  \"writerAddress\": \"0xA\u2026\",\n  \"latestIndex\": { \"global\": 42 }\n}\n```\n\n3. Each recipient's SwarmChannel reacts by pulling that writer's feed on demand, **debounced ~300 ms** so a burst of ops coalesces into a single pull. This prevents a drag-reorder on a large list from triggering dozens of overlapping fetches.\n4. The timer-based poll remains as a **fallback** for participants who were offline when the ping was sent. When they come back, the next poll catches up any ops whose pings they missed.\n\nResult: sub-second live updates when everyone is online, eventual consistency otherwise.",
+        "updatedAt": "2026-08-13T13:23:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.180Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a039d9b3-9608-4584-acfd-f231a2296186",
+        "targetId": "8f77c8b5-e763-4b78-bf25-e27cfc7df5dc",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.180Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "m5nUud3yo/fNHost26paUNL1ijU=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:16:54.676Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.270Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a039d9b3-9608-4584-acfd-f231a2296186",
+        "targetId": "675bdd06-6192-4223-9581-fa43200d307e",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.270Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "EBAvPpUsm+YVIn+wRqMNSTi5ls4=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-9cb75620-1",
+        "name": "live-collaboration",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:38.337Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "a039d9b3-9608-4584-acfd-f231a2296186",
+        "targetId": "42ca76e1-c0a6-47d5-82dd-7980405a1a8d",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:38.337Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "OqRU7mrsUyjO2djkkKB1bFXqeus=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-9cb75620-2",
+        "name": "gsoc-sync",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "pai7s2gESxcdqz13C2R5hwNa61I=",
+    "timestampUtcMs": "2026-08-13T13:23:07.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "t-9cb75620-3",
+        "name": "debouncing",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:07.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "QM/6lrrkXd+28qjyam2DK9EKVK0=",
+    "timestampUtcMs": "2026-08-13T15:57:07.105Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:57:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:07.105Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "SnnVifumlknjZOfzWqlMVdPAkTg=",
+    "timestampUtcMs": "2026-08-13T15:57:07.105Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2e76b0c5-bea8-4653-af89-6eae6eff0875",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:57:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:07.105Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "g8vuuwsyqTHb0A2cL8WKSvx6s64=",
+    "timestampUtcMs": "2026-08-13T15:57:07.105Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "c4194b5a-7fe7-4059-9a84-fd3b42b36515",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:57:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:57:07.105Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "scVeGDTL/n0YW35dfS83AAZADyo=",
+    "timestampUtcMs": "2026-08-13T16:55:07.068Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:55:07.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:55:07.068Z"
+    }
+  }
+]

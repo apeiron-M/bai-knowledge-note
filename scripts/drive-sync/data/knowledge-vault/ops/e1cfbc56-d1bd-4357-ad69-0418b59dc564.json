@@ -1,0 +1,305 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:09.767Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "basesubgraph-authorization-helper-reference",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "e1cfbc56-d1bd-4357-ad69-0418b59dc564",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:33:09.767Z"
+        },
+        "version": 0,
+        "documentId": "e1cfbc56-d1bd-4357-ad69-0418b59dc564",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:09.767Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "vsBj6cWugEopcrXqmZIOFSv+xd8=",
+    "timestampUtcMs": "2026-08-13T14:33:10.364Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "BaseSubgraph exposes four throwing assertCan* helpers plus a non-throwing canReadDocument for list filtering",
+        "updatedAt": "2026-08-13T14:33:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:10.364Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:09.767Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "e1cfbc56-d1bd-4357-ad69-0418b59dc564",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:33:09.767Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "cik8/S3Wnh3TEJpANzvySiIPjTI=",
+    "timestampUtcMs": "2026-08-13T14:33:10.364Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:33:09.000Z",
+        "description": "assertCanRead/Write/ExecuteOperation/Create throw Forbidden; canReadDocument returns a boolean. isSupremeAdmin lives on subgraph.authorizationService, not on the subgraph itself."
+      },
+      "timestampUtcMs": "2026-08-13T14:33:10.364Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:11.533Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e1cfbc56-d1bd-4357-ad69-0418b59dc564",
+        "targetId": "1f97e78c-3d96-4139-a03a-828275ebb8e9",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:11.533Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "tlRaTY1AGb6Xb+KtvtT4I5bfHhs=",
+    "timestampUtcMs": "2026-08-13T14:33:10.364Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "REFERENCE",
+        "updatedAt": "2026-08-13T14:33:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:10.364Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:11.558Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e1cfbc56-d1bd-4357-ad69-0418b59dc564",
+        "targetId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:11.558Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "r0lxc1AL/BrIoTEV8yk06d+UJBM=",
+    "timestampUtcMs": "2026-08-13T14:33:10.364Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "## The enforcement surface\n\nAll of these are public methods on `BaseSubgraph`. The `ph generate subgraph` scaffold hands you the instance as the `subgraph` parameter of `getResolvers`, so you call them as `subgraph.assertCanRead(...)`. Class-field resolvers call them on `this` instead \u2014 that is the style the built-in subgraphs use, and both forms reach the same public methods.\n\n| Helper | Use when | On failure |\n| --- | --- | --- |\n| `assertCanRead(identifier, ctx)` | Reading one document the caller named (id or slug) | throws `Forbidden` |\n| `assertCanWrite(identifier, ctx)` | Mutating one document the caller named | throws `Forbidden` |\n| `assertCanExecuteOperation(identifier, type, ctx)` | Executing a specific operation type on a document | throws `Forbidden` |\n| `assertCanCreate(ctx)` | Creating a genuinely top-level document with no parent | throws `Forbidden` |\n| `canReadDocument(canonicalId, ctx)` | Filtering a list \u2014 non-throwing read check on an id from the data layer | returns `boolean` |\n| `authorizationService.isSupremeAdmin(address)` | Short-circuiting per-item filtering for policy-wide callers | returns `boolean` |\n\nNote the sixth row: `isSupremeAdmin` is reached through `subgraph.authorizationService`, not directly on the subgraph.\n\n## Details worth knowing\n\nEvery `assertCan*` that takes an `identifier` returns an `AuthorizedDocumentHandle`; use its `fetchIdentifier` for the subsequent fetch. There are also lower-level `*Canonical` variants (`assertCanReadCanonical` and friends) used by the built-in subgraphs when the data layer has already resolved an id \u2014 prefer the identifier-accepting variants in your own code.\n\n`assertCanCreate` is narrower than it looks. When creating a document **under a parent**, the meaningful check is write access on that parent, so `assertCanWrite(parentIdentifier, ctx)` is the right call; reserve `assertCanCreate` for top-level documents.\n\nSupporting types exported from `@powerhousedao/reactor-api`: `Context`, `CanonicalDocumentId`, `AuthorizationPolicy`, `AuthorizedDocumentHandle`, `IAuthorizationService`.\n\n_Source: apps/academy/docs/academy/03-Build/03-BuildingUserExperiences/07-Authorization/05-EnforcingAuthorizationInSubgraphs.md (Powerhouse v6.2.2-dev.45)._",
+        "updatedAt": "2026-08-13T14:33:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:10.364Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:33:11.583Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "e1cfbc56-d1bd-4357-ad69-0418b59dc564",
+        "targetId": "48db8c7b-4274-4af1-b4c5-63081ff4ece9",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:11.583Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "1OQWFnF+5Qbzh+4pOVY4EBOYXdE=",
+    "timestampUtcMs": "2026-08-13T14:33:10.364Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "a54d8dcc-b7e7-4bb5-8830-fcdd35a64530",
+        "name": "authorization"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:10.364Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "PPhkmRIMMM9VEQzm5orJ/sRwO8w=",
+    "timestampUtcMs": "2026-08-13T14:33:10.364Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "5d3311f5-070e-4984-b355-90773f980753",
+        "name": "subgraphs"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:10.364Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "mNp9nxs+LLN9SANE1RouV9eyxl0=",
+    "timestampUtcMs": "2026-08-13T14:33:10.364Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "e80446e8-fe46-411a-9e07-9abe8f6b4d0c",
+        "name": "reactor-api"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:10.364Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "3OknHI1ZIIaY8czCZCWNZHTtLNc=",
+    "timestampUtcMs": "2026-08-13T14:33:11.488Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:33:09.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:33:11.488Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "7BAHA/p5Xf0S40kaIaYqjLo/hzw=",
+    "timestampUtcMs": "2026-08-13T15:59:15.748Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:59:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:15.748Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "EA2L2BGEtu5ZeG0jsBvdNuwFJXs=",
+    "timestampUtcMs": "2026-08-13T15:59:15.748Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "2f825faf-87d9-4d25-9b51-35266209c58c",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:59:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:15.748Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "0pp3a+4SvbJZ8kd69xYlJ43tKRw=",
+    "timestampUtcMs": "2026-08-13T15:59:15.748Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "302077ef-2a3f-4905-b93b-c2f24f5650db",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:59:15.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:15.748Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "88wBvtj1ijiJI4hhML2IcTNL4mQ=",
+    "timestampUtcMs": "2026-08-13T16:57:44.988Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:57:44.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:57:44.988Z"
+    }
+  }
+]

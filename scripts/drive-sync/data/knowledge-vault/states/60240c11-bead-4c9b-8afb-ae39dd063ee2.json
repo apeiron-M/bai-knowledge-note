@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-1c313715-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c313715-bfd9-4428-9218-fda37e581365",
+      "targetTitle": "bee-node-prerequisites-and-dev-mode"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Epoch feeds are not viable on bee-js 11 \u2014 SDK support is vestigial",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9d67b4c2-a162-4c57-83ed-e9cacc5e0be2",
+      "name": "epoch-feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a84f717-72fc-4226-b63a-32c9426db23e",
+      "name": "bee-js-sdk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ba368d2-196a-4cb1-8d71-bdfa326ba150",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Epoch feeds: SDK gap blocks adoption\n\nSwarm epoch feeds (paper \u00a74.3.4) index SOC feeds by `(time, level)` instead of sequence number, giving a cold reader O(log age) lookup of the latest-as-of-time update \u2014 directly useful for the cross-Bee `publishPublicProfile` staleness we see on 2.7.x (receivers serve pre-update versions for minutes).\n\nBut they are not implementable today:\n\n- **bee-js 11.1.1**: the `Epoch { time, level }` type exists, but `findNextIndex`, `updateFeedWithReference`, and `downloadFeedUpdate` all take a sequence-`FeedIndex`. Epoch support is vestigial.\n- **Bee 2.7.x HTTP**: `/feeds/{owner}/{topic}` is sequence-only.\n- **Custom path**: would require bypassing feed helpers and manipulating SOCs directly \u2014 epoch lookup algorithm, custom chunk address derivation per level, grid traversal reader. Feasible but significant scope.\n\n**Decision:** DEFER. Reconsider when bee-js or Bee exposes epoch lookup natively. Not worth custom chunk-layer work right now.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "observation",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:41:41.542Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "bee-js 11.1.1 defines the Epoch type but every feed function takes a sequence-FeedIndex, and Bee 2.7.x /feeds HTTP is sequence-only. Defer until native.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "162f6c6c-18a6-4b8f-bc0f-06fae73c3d2c",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:42.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5cf6e3a0-dbfa-46fc-b826-9f5e894b7c6d",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:42.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

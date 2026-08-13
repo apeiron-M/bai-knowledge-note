@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-e210f325-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e210f325-64f3-447e-a289-f198a8e5df00",
+      "targetTitle": "editors-use-component-based-architecture"
+    },
+    {
+      "id": "lnk-30222dd8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "30222dd8-d353-432c-a399-11ebc8241109",
+      "targetTitle": "act-cross-user-sharing-ecdh"
+    },
+    {
+      "id": "lnk-615cf1e0-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "615cf1e0-6173-4155-9660-4c0a70ac9644",
+      "targetTitle": "The DocumentToolbar className prop merges with defaults via twMerge"
+    },
+    {
+      "id": "lnk-2f11ffb2-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "2f11ffb2-479c-4005-a25b-50edb86262b8",
+      "targetTitle": "Toolbar buttons must be styled via Tailwind arbitrary child selectors since they have no dedicated style props"
+    },
+    {
+      "id": "lnk-183d0714-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "183d0714-1c6b-4e54-9135-430bd6ae8da4",
+      "targetTitle": "Revision History panel styling requires scoped CSS on document-editor-context since no props are exposed"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "DocumentToolbar has three independent layers of styling control",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "82d9d3ff-09f1-4312-bfdf-2742f54e2cce",
+      "name": "document-toolbar",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9e9ca5f-3884-41a9-9b58-a1a674becf75",
+      "name": "editor-styling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `DocumentToolbar` component provides a layered styling architecture with clear separation of concerns:\n\n## Layer 1: Containers\nThe toolbar's outer container (background, border, rounding) is controlled via the `toolbarClassName` prop, and each controls container via `controlsContainerClassName`. Both use `twMerge` to merge custom classes with defaults. Default outer classes: `flex h-12 w-full items-center justify-between rounded-xl border border-border bg-background px-4`. Either container component can also be replaced outright with `toolbarContainer` / `controlsContainer`.\n\n## Layer 2: Buttons\nInternal buttons (undo, redo, download, history, close) accept `ToolbarButtonProps` \u2014 `document`, `children`, `className`, `onClick` \u2014 so they can be restyled and rebehaved directly. Each one is also exported (`ToolbarUndoButton`, `ToolbarDownloadButton`, ...), so the usual route is to style the button yourself and pass it back through `componentOverrides` (or render it inside `children`). Arbitrary child selectors are no longer necessary.\n\n## Layer 3: Revision History Panel\nThe revision history panel is rendered by Connect outside the editor component tree. It lives inside `#document-editor-context` in the DOM and can only be styled via scoped CSS in `style.css`.\n\nThis three-layer architecture means theming a toolbar requires understanding which technique applies at each level \u2014 `toolbarClassName` / `controlsContainerClassName` for the containers, per-button `className` or `componentOverrides` for buttons, and external CSS for the history panel.\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "architecture",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-03-30T14:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "DocumentToolbar styling has three layers: containers via toolbarClassName/controlsContainerClassName with twMerge, buttons via their own props or componentOverrides, and Revision History via CSS.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6fdd1cd7-367c-4486-8d89-0104343e094a",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:51.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fc369b15-9c3e-4456-a10c-972690a9aa9c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:51.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,291 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:31.289Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "analytics-processor-buffer-and-flush-in-chunks",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "ea1d95b2-ce01-4561-9de7-b29072e9d363",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T14:38:31.289Z"
+        },
+        "version": 0,
+        "documentId": "ea1d95b2-ce01-4561-9de7-b29072e9d363",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:31.289Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "eGPS2yLOOVkoAkzB9paL66S/qKc=",
+    "timestampUtcMs": "2026-08-13T14:38:32.007Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Analytics processors must buffer series inputs and flush in chunks rather than inserting per operation",
+        "updatedAt": "2026-08-13T14:38:31.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:32.007Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:31.289Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "ea1d95b2-ce01-4561-9de7-b29072e9d363",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T14:38:31.289Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "U3myrDt2gSDI9EEhl9SIflHjdaU=",
+    "timestampUtcMs": "2026-08-13T14:38:32.007Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T14:38:31.000Z",
+        "description": "The shipped pattern buffers AnalyticsSeriesInput[] and calls addSeriesValues whenever the buffer reaches CHUNK_SIZE (50), then flushes the remainder after the loop."
+      },
+      "timestampUtcMs": "2026-08-13T14:38:32.007Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:33.164Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ea1d95b2-ce01-4561-9de7-b29072e9d363",
+        "targetId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:33.164Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "7rIVmtjFC4+3rgfXy3RzNdWQzLo=",
+    "timestampUtcMs": "2026-08-13T14:38:32.007Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T14:38:31.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:32.007Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T14:38:33.188Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "ea1d95b2-ce01-4561-9de7-b29072e9d363",
+        "targetId": "1af57e9d-9c66-4821-a25d-ab46c4de1b50",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:33.188Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "jkv9pJKUj7NEhDKe8kzECVWc130=",
+    "timestampUtcMs": "2026-08-13T14:38:32.007Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "`onOperations` receives a flat list that can be arbitrarily long \u2014 a backfill over a drive's full history arrives page by page, not operation by operation. Writing one row per operation turns that into one database round-trip per operation. Both shipped analytics processors use the same buffer-and-chunk shape, and the migration guide names it as the recommended pattern:\n\n```typescript\nconst CHUNK_SIZE = 50;\nconst buffer: AnalyticsSeriesInput[] = [];\n\nfor (const { operation, context } of operations) {\n  // ...build seriesInput...\n  buffer.push(seriesInput);\n\n  while (buffer.length >= CHUNK_SIZE) {\n    const batch = buffer.splice(0, CHUNK_SIZE);\n    await this.analyticsStore.addSeriesValues(batch);\n  }\n}\n\nif (buffer.length > 0) {\n  await this.analyticsStore.addSeriesValues(buffer);\n}\n```\n\nTwo details are easy to get wrong. The flush uses `while`, not `if` \u2014 with `splice` draining the front, `while` is correct for a buffer that could already be over the threshold, and it keeps the invariant \"never hold more than CHUNK_SIZE-1 items\". And the trailing `if (buffer.length > 0)` is not optional: without it every partial final chunk is silently dropped.\n\n`IAnalyticsStore` exposes both `addSeriesValue(input)` and `addSeriesValues(inputs)`. The chunked pattern uses the plural form; the singular is a convenience for one-off writes and is what the older Analytics Engine prose shows.\n\nBecause a processor registered with `startFrom: \"beginning\"` can be re-delivered its entire history \u2014 on first registration against a drive with history, after a restart gap, or after `tracked.retry()` \u2014 chunked inserts alone are not idempotent. The `clearSource` companion pattern handles that: on seeing operation index 0 again for a known document, call `clearSeriesBySource(source, true)` and rebuild, so reprocessing converges on the same totals.\n\nProvenance: academy `04-Reference/04-Processors/08-ProcessorMigrationGuide.md` (published) and the draft `03-Build/04-WorkWithData/_04-analytics-processor.md`; code verified byte-for-byte in `packages/shared/processors/drive-analytics/{drive,document}-processor.ts` at 6.2.2-dev.45.",
+        "updatedAt": "2026-08-13T14:38:31.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:32.007Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "otm3SKX2DLCSimN0vIlGGmIeXmI=",
+    "timestampUtcMs": "2026-08-13T14:38:32.007Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "91105b93-ca0c-4046-946b-e3c0d4c077c4",
+        "name": "analytics"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:32.007Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "YaacPwfseiySl+whuze58zPTfMA=",
+    "timestampUtcMs": "2026-08-13T14:38:32.007Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "56b4ee47-cb08-4ab9-893d-4dd67f6070bc",
+        "name": "processors"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:32.007Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "LvsRtKvQ6rRi+mFIFpOjGKKNx2Q=",
+    "timestampUtcMs": "2026-08-13T14:38:32.007Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "507b6afc-879c-441e-95f0-1b8c73d20981",
+        "name": "performance"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:32.007Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "6KG1NV4MKhQ2huImGMi9ir3LyqI=",
+    "timestampUtcMs": "2026-08-13T14:38:33.120Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "claude",
+        "createdAt": "2026-08-13T14:38:31.000Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T14:38:33.120Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "wsExGxkQDTC6l2in89YBYbuRH/s=",
+    "timestampUtcMs": "2026-08-13T15:59:38.205Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:59:38.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:38.205Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "Fe7G+N27Azc4TXN03JaFIxEY1is=",
+    "timestampUtcMs": "2026-08-13T15:59:38.205Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "88b1a066-61a1-432a-98bb-a64a09d3c73a",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:59:38.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:38.205Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "7/jue+tuCVw82kRVSrJhp5X8vUc=",
+    "timestampUtcMs": "2026-08-13T15:59:38.205Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "df57b42c-8143-4ed5-88a5-8a34b06f3fe0",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:59:38.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:59:38.205Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "f6u2rn57Wf9+WPLbMzSkTxzKDGg=",
+    "timestampUtcMs": "2026-08-13T16:58:09.008Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:58:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:58:09.008Z"
+    }
+  }
+]

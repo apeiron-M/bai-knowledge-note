@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-464de7c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "464de7c4-b8c0-4ecd-b94d-e157900c465f",
+      "targetTitle": "inspector-modal-for-debugging-sync"
+    },
+    {
+      "id": "lnk-cd55111a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd55111a-2b5e-45fc-9ec0-03139788f546",
+      "targetTitle": "bee-reactor-adapter-overview"
+    },
+    {
+      "id": "lnk-0eb0b43b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0eb0b43b-c44b-4c9f-929b-378e56ee5975",
+      "targetTitle": "cqrs-separates-write-commands-from-read-queries-for-independent-scaling"
+    },
+    {
+      "id": "lnk-c11dcad5-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "c11dcad5-69d6-4730-a59c-fa2820e8c0a0",
+      "targetTitle": "relational-db-processor-base-class"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse relational database hooks provide type-safe live queries backed by PGlite with automatic re-rendering on data changes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d4f16e9b-a69d-457c-8202-3ed2545c71d1",
+      "name": "relational-db",
+      "topicDocumentId": null
+    },
+    {
+      "id": "98071082-f4e4-48ff-a315-0005a3c782fa",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d9578a1-1452-4324-b3d0-c2299fd882c0",
+      "name": "pglite",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `@powerhousedao/reactor-browser/relational` package provides three main hooks: `createProcessorQuery(ProcessorClass)` creates a typed query hook factory returning `{ isLoading, error, result: LiveQueryResults<T> }` with automatic retry logic and deep-comparison parameter memoization; `useRelationalDb<Schema>()` provides direct access to the enhanced Kysely database instance; `useRelationalQuery<Schema, T, TParams>()` is a lower-level hook for manual query control. Queries can use either Kysely query builder (with `.compile()`) or raw SQL with `{ sql, parameters }` objects. All queries are live and update automatically when underlying data changes, backed by PGlite integration.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:57:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "createProcessorQuery() creates typed hooks that return live-updating results with automatic parameter memoization via deep comparison.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d8dfbfeb-a6fe-475b-8377-f178a42f438b",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8877eb93-c5b4-49a8-9959-57144ae83309",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

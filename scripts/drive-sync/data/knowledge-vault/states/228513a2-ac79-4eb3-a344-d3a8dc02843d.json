@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-7ba92762-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ba92762-d467-4cf8-86d0-4ebdedb53502",
+      "targetTitle": "bee-health-maps-to-channel-connection-state"
+    },
+    {
+      "id": "lnk-4924a018-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4924a018-cf23-42a5-9d3c-fb993ef38ed4",
+      "targetTitle": "masterchef-accumulator-pattern-enables-per-token-revenue-tracking"
+    },
+    {
+      "id": "lnk-a159e0d3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a159e0d3-627b-482f-96af-8fb2abe8faba",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-c0b2af09-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0b2af09-1fc3-43d4-bc28-dca56db6f747",
+      "targetTitle": "bee-reactor-adapter-chat-settings-features"
+    },
+    {
+      "id": "lnk-a039d9b3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a039d9b3-9608-4584-acfd-f231a2296186",
+      "targetTitle": "gsoc-triggered-pull-debounced-with-polling-fallback"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Offline edits accumulate locally and replay to Swarm on reconnect via the outbox cursor.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t-44e2d872-1",
+      "name": "offline-first",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-44e2d872-2",
+      "name": "outbox-cursor",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-44e2d872-3",
+      "name": "durability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t-44e2d872-4",
+      "name": "user-flow",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Claim\nOffline-edit durability is provided by PGlite + the outbox cursor: the local reactor keeps working, and on reconnect the cursor replays accumulated ops to Swarm.\n\n## Flow\n1. User edits documents while Bee node is unreachable.\n2. Operations accumulate in PGlite (local reactor works fine).\n3. SwarmChannel connection state transitions to `error` \u2192 push is blocked.\n4. User reconnects Bee node \u2192 state becomes `connected`.\n5. Outbox cursor catches up: all accumulated ops are pushed to Swarm.\n6. No data loss \u2014 cursors in PGlite track exactly what was synced.\n\n## Why this is safe\n- The cursor is only advanced after a successful feed write, so a crash mid-push is idempotent.\n- The local reactor is the source of truth; Swarm is purely a mirror.\n- User never loses work due to Bee downtime.\n\n## Source\nSwarm Channel Architecture, \"Flow 4: Offline Edits \u2192 Reconnect\".",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "workflow",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:19:49.348Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:49:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When Bee is unreachable the channel goes to error; ops pile up in PGlite; on reconnect the outbox cursor catches up, replaying everything with no data loss.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1a61abd1-4590-460a-a414-f734efc2605e",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f0d06329-b3f5-4d76-b2ba-39de6531a59c",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:28.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

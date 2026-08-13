@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-1adbb770-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1adbb770-4b64-4070-b6fc-8e57fcce92d8",
+      "targetTitle": "project-structure-four-directories"
+    },
+    {
+      "id": "lnk-3304f425-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3304f425-2dbf-4867-909a-75eaba19fdb9",
+      "targetTitle": "never-import-error-classes-manually-in-reducer-code"
+    },
+    {
+      "id": "lnk-8636b83a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8636b83a-d96a-4dfe-ba64-07f112282fb0",
+      "targetTitle": "builder-platform-enables-creation-of-reusable-modules-with-value-sharing"
+    },
+    {
+      "id": "lnk-ad209147-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "ad209147-6647-4e7b-9d66-41260fbcd4a5",
+      "targetTitle": "vetra-auto-generates-code-on-spec-change"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The gen/ folder contains auto-generated code and must never be manually edited",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d7468b95-e29e-49aa-bd73-e6e3f0d91756",
+      "name": "code-generation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "de5095b4-c1f7-462e-944f-1423bdaa432f",
+      "name": "project-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c282ada0-ea00-4762-81b6-219783e5dd2a",
+      "name": "document-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "When Powerhouse generates code for a document model (either automatically via Vetra or manually via `ph generate`), it creates two key directories:\n\n- **`gen/`** - Auto-generated code that must NOT be manually edited. It will be overwritten on regeneration. Contains:\n  - `types.ts` - TypeScript interfaces from GraphQL schema (state types, input types)\n  - `creators.ts` - Action creator functions (e.g., `addTodoItem({ text: '...' })`)\n  - `utils.ts` - Utility functions including `createDocument()`\n  - `reducer.ts` - Reducer interface definition\n  - Module-specific operation types\n\n- **`src/`** - Your custom implementation. Contains:\n  - `reducers/` - Skeleton reducer files with function stubs for each operation\n  - `tests/` - Test file scaffolding\n\nThis separation ensures generated code stays in sync with specifications while preserving your custom business logic.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:54:07.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Generated TypeScript types, action creators, and utilities in gen/ are overwritten on regeneration. Custom logic goes in src/.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dd743e82-392b-4b51-b8fe-b89a178247f2",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:56:15.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "06ec1d1a-6faf-40e7-b495-7c137374aeb7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:56:15.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

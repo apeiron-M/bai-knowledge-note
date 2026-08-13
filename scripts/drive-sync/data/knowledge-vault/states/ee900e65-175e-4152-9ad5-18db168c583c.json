@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-4324b1ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4324b1ff-3f8c-474d-87f5-4344eaef37d2",
+      "targetTitle": "custom-subgraphs-v6-reactor-client-access"
+    },
+    {
+      "id": "lnk-be079043-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "be079043-cb70-4dbb-b272-e94be0bd8677",
+      "targetTitle": "phdocument-v4-header-consolidation"
+    },
+    {
+      "id": "lnk-f330b4b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f330b4b8-5345-4649-9bdf-7903cb92e827",
+      "targetTitle": "relational-db-processor-for-sql-projections"
+    },
+    {
+      "id": "lnk-c11dcad5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c11dcad5-69d6-4730-a59c-fa2820e8c0a0",
+      "targetTitle": "relational-db-processor-base-class"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The v6 reactor replaced legacy hardcoded subgraphs with a reactor subgraph at /graphql/r and auto-generated per-model subgraphs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3d5d19d7-bf63-4d3b-9560-67deed1463d8",
+      "name": "graphql",
+      "topicDocumentId": null
+    },
+    {
+      "id": "226cbbfc-1c9d-4d9e-b14b-d1445b7c7d2a",
+      "name": "subgraph",
+      "topicDocumentId": null
+    },
+    {
+      "id": "190a9375-be4f-413f-b20b-1c97c386a7ca",
+      "name": "migration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8e74f3b9-1f33-4d24-bdff-c04858f70aa6",
+      "name": "v6-reactor",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The v6 Reactor introduced three subgraph types: the reactor subgraph (`/graphql/r`) for drives, documents, sync, and subscriptions; auto-generated document-model subgraphs (`/graphql/<model-name>`) with namespaced queries/mutations per registered model; and custom user-defined subgraphs. Document-model subgraphs auto-generate `document(identifier)`, `documents(paging)`, `findDocuments(search)`, `documentOutgoingRelationships(sourceIdentifier, relationshipType)`, `documentIncomingRelationships(targetIdentifier, relationshipType)`, `createDocument(name, parentIdentifier)`, and per-operation mutations (e.g., `addTodoItem(docId, input)`) with async variants. Legacy strand-based sync (`registerPullResponderListener`, `system.sync.strands`) was replaced with channel-based sync (`touchChannel`, `pollSyncEnvelopes`) and GraphQL subscriptions (`documentChanges`).\n\n_Corrected 2026-08-13 against Powerhouse v6.2.2-dev.45._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-02T12:00:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:58:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Legacy /graphql/document-drive and /graphql/system merged into /graphql/r; each document model gets its own namespaced subgraph.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7483b86a-9dac-4d2f-975a-9c399a46b479",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:59:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d442a6f8-0798-4c88-b32a-36f339461f63",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:59:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

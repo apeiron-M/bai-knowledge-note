@@ -1,0 +1,322 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:32.920Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "never-import-error-classes-manually-in-reducer-code",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "3304f425-2dbf-4867-909a-75eaba19fdb9",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:21:32.920Z"
+        },
+        "version": 0,
+        "documentId": "3304f425-2dbf-4867-909a-75eaba19fdb9",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:32.920Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "U3QrMRqvgSIKCoxNZNKwlbTMegM=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "never import error classes manually in reducer code",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:21:32.920Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "3304f425-2dbf-4867-909a-75eaba19fdb9",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:21:32.920Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "ja3/wwK+ir45RLeEsf0X88n3e64=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:11.000Z",
+        "description": "Importing from gen/module-name/error.js creates duplicate imports; the code generator handles imports when you reference errors by name"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:47.012Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3304f425-2dbf-4867-909a-75eaba19fdb9",
+        "targetId": "b84fd8ac-a177-417f-9258-a04577006eeb",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:47.012Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "xCFkzhzDJWhTXHK0f2ne4zcVeA8=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "PATTERN",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:47.122Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3304f425-2dbf-4867-909a-75eaba19fdb9",
+        "targetId": "0ba40e3e-168b-49b8-a39d-e24b8265a412",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:47.122Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "c0tbaQGjTF0jG0Oz1e5FFzTEPbs=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "# never import error classes manually in reducer code\n\n```typescript\n// \u274c Don't manually import error classes\nimport { MissingIdError } from \"../../gen/module-name/error.js\";\nthrow new MissingIdError(\"message\");\n\n// \u274c Don't use nested access patterns\nthrow new errors.ModuleName.MissingIdError(\"message\");\n\n// \u2705 Just reference the error by name \u2014 auto-imported\nthrow new MissingIdError(\"message\");\n```\n\nSince [[error classes in reducers are auto-imported by name reference]], the code generator scans for error class names and inserts the correct imports. Manual imports conflict with auto-generated ones, creating duplicate import errors or path mismatches.\n\n---\n\nTopics:\n- [[reducer patterns]]\n- [[gotchas]]",
+        "updatedAt": "2026-08-13T13:23:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:24:47.193Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "3304f425-2dbf-4867-909a-75eaba19fdb9",
+        "targetId": "f158a1f4-eab3-43f6-ba19-00c0608e62e7",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:24:47.193Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "95YUPnnd6tQ/8kGmi7BsWiVOKEY=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-03T13:59:03.000Z",
+        "sourceOrigin": "IMPORT"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "HgdBw4jQrFf/g8M5+xAj9E15THQ=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "3957fefb-667d-4c9c-bd39-49c6c01491a8",
+        "name": "reducer patterns",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "zhkiONP981divGwRGzpRlY1HrJ0=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "6b0885a0-503d-44f2-b626-08a0ba722241",
+        "name": "gotchas",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "GErMRkteZSBLzp450E14Iys2Xag=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "124ad98a-eaef-434a-adb4-0bbd3421aab8",
+        "name": "error handling",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "e1CEfyzoDWMFVCK+5WrYtuOldgI=",
+    "timestampUtcMs": "2026-08-13T13:23:11.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "b55ac8aa-9de8-4797-890e-37b2b583425b",
+        "name": "imports",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:11.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "2bqzLH0WNBIXbxey1b72CpqDh7A=",
+    "timestampUtcMs": "2026-08-13T15:53:09.621Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:53:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:09.621Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "A4N9adJipPeEnTqMDVkAYmwA1uo=",
+    "timestampUtcMs": "2026-08-13T15:53:09.621Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "dff4d5d7-8f2f-4942-97b2-7d16c6a3e11b",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:53:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:09.621Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "DEDJgoDb8JZD8kzUld1wPjyfUkA=",
+    "timestampUtcMs": "2026-08-13T15:53:09.621Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "8e6c590a-1087-4107-8b33-0c935e812e24",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:53:09.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:53:09.621Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "EWZCRd/S43/xOKN6+m5lGwIg5d8=",
+    "timestampUtcMs": "2026-08-13T16:50:18.997Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:50:18.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:50:18.997Z"
+    }
+  }
+]

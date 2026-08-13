@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-4f75be2a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4f75be2a-9733-46f8-9f67-550464c835c7",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    },
+    {
+      "id": "lnk-e84af990-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e84af990-c85d-44c6-9418-f2a1b4e6762c",
+      "targetTitle": "chat-pss-trojan-plus-act-history"
+    },
+    {
+      "id": "lnk-a159e0d3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a159e0d3-627b-482f-96af-8fb2abe8faba",
+      "targetTitle": "chat-history-persists-in-an-act-protected-feed-because-pss-m"
+    },
+    {
+      "id": "lnk-4f75be2a-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "4f75be2a-9733-46f8-9f67-550464c835c7",
+      "targetTitle": "pss-provides-1-to-1-asymmetrically-encrypted-messaging-with-"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Public profile feed publishes the beeNodePublicKey and overlayAddress that PSS and ACT need.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-aeea4cb859ed",
+      "name": "public-profile",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-a5871dd6728b",
+      "name": "pss-chat",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-906a37deec4b",
+      "name": "swarm-feeds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Schema\n\nEach user publishes a public profile at feed `ph:v2:profile:<address>`:\n\n```typescript\n{\n  address: \"0xadbA7C2F...\",       // Swarm signer address\n  ethAddress: \"0x...\",            // Original ETH wallet (optional)\n  beeNodePublicKey: \"02abc...\",   // Compressed secp256k1 \u2014 for PSS targeting\n  swarmPublicKey: \"03def...\",     // Wallet-derived \u2014 for ECDH key agreement\n  overlayAddress: \"abc123...\",    // Bee overlay \u2014 for PSS/GSOC addressing\n  updatedAt: \"2026-04-15T...\"\n}\n```\n\n## Role in chat/collab\n\n- `beeNodePublicKey` is the PSS recipient key. It is also the ACT grantee pubkey.\n- `overlayAddress` is the PSS target and the GSOC-signer mining target.\n- `swarmPublicKey` is the ECDH partner for wallet-level key agreement.\n- `ethAddress` enables ENS \u2192 profile lookup (ENS resolves to ETH address, and profile indexes by ETH address).\n\n## Why unencrypted\n\nThe profile feed is intentionally **unencrypted** \u2014 it serves as a user-discovery directory. Discovery without some public rendezvous point is impossible; the data here is deliberately non-sensitive (public keys and overlay addresses, not wallet private keys or personal content).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "reference",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:30:20.417Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Feed ph:v2:profile:<address> exposes beeNodePublicKey for PSS encryption targeting and overlayAddress for PSS/GSOC neighborhood routing \u2014 the per-user directory for chat.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "164c1d79-c783-4f75-93b9-095201a58ef7",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:54:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d5fb1598-5257-4652-94f5-922dbe2345b4",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:54:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

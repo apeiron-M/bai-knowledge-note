@@ -1,0 +1,336 @@
+[
+  {
+    "index": 0,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:17.412Z",
+    "action": {
+      "type": "CREATE_DOCUMENT",
+      "input": {
+        "meta": {},
+        "name": "three-layer-swarm-stack",
+        "slug": "",
+        "model": "bai/knowledge-note",
+        "branch": "main",
+        "signing": {
+          "nonce": "",
+          "publicKey": {},
+          "signature": "83d37fbe-3664-4325-96f8-6baace6523a3",
+          "documentType": "bai/knowledge-note",
+          "createdAtUtcIso": "2026-08-13T13:22:17.412Z"
+        },
+        "version": 0,
+        "documentId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+        "protocolVersions": {
+          "base-reducer": 2
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:17.412Z"
+    }
+  },
+  {
+    "index": 0,
+    "hash": "+RwbyPTpEeS4Iy5HeQ25lXSoFuw=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_TITLE",
+      "input": {
+        "title": "Connect's Swarm integration is split into three layers: bee-reactor-adapter, SwarmChannel, and Connect UI",
+        "updatedAt": "2026-08-13T13:23:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:22:17.412Z",
+    "action": {
+      "type": "UPGRADE_DOCUMENT",
+      "input": {
+        "model": "bai/knowledge-note",
+        "toVersion": 1,
+        "documentId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+        "fromVersion": 0,
+        "initialState": {
+          "auth": {
+            "grants": [],
+            "version": 0
+          },
+          "local": {
+            "lastViewedAt": null,
+            "personalTags": []
+          },
+          "global": {
+            "links": [],
+            "model": null,
+            "scope": null,
+            "title": null,
+            "editor": null,
+            "inputs": [],
+            "models": [],
+            "status": "DRAFT",
+            "topics": [],
+            "content": null,
+            "context": null,
+            "modelId": null,
+            "modules": [],
+            "outputs": [],
+            "version": null,
+            "computes": null,
+            "filePath": null,
+            "noteType": null,
+            "severity": null,
+            "hooksUsed": [],
+            "rootCause": null,
+            "confidence": null,
+            "consumedBy": [],
+            "provenance": null,
+            "sourceType": null,
+            "targetType": null,
+            "cardinality": null,
+            "description": null,
+            "alternatives": [],
+            "consequences": [],
+            "errorMessage": null,
+            "relationType": null,
+            "correctPattern": null,
+            "decisionStatus": null,
+            "dispatchTargets": [],
+            "lifecycleEvents": []
+          },
+          "document": {
+            "hash": {
+              "encoding": "base64",
+              "algorithm": "sha1"
+            },
+            "version": 1
+          }
+        }
+      },
+      "timestampUtcMs": "2026-08-13T13:22:17.412Z"
+    }
+  },
+  {
+    "index": 1,
+    "hash": "f2RirERXzdyqPpme22bCm1hwraI=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_DESCRIPTION",
+      "input": {
+        "updatedAt": "2026-08-13T13:23:33.000Z",
+        "description": "SwarmClient wraps the Bee SDK (CRUD + ACT + PSS + GSOC); SwarmChannel implements IChannel for reactor sync; swarm-settings and chat panels expose state and controls in Connect UI."
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:36.564Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+        "targetId": "1577d689-bd59-4661-a162-e638a96c8abe",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:36.564Z"
+    }
+  },
+  {
+    "index": 2,
+    "hash": "zVxCe/ngoJQFEFzueHR6sl4XHKY=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_NOTE_TYPE",
+      "input": {
+        "noteType": "architecture",
+        "updatedAt": "2026-08-13T13:23:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:36.701Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+        "targetId": "2a079433-e571-4d78-b20a-3fabbccbe075",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:36.701Z"
+    }
+  },
+  {
+    "index": 3,
+    "hash": "uzi1hF7SHpKFVlUwBRY/sq4wzSg=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_CONTENT",
+      "input": {
+        "content": "The integration decomposes into three layers with clear seams:\n\n**Layer 1 \u2014 `bee-reactor-adapter` (npm)**: the `SwarmClient` class wraps the Bee SDK. It exposes `uploadData`/`downloadData` for encrypted `/bytes`, `uploadFile`/`downloadFile` for ACT-protected `/bzz`, `createGrantees`/`patchGrantees` for ACT grantee lists, `pssSend`/`pssSubscribe` for 1-to-1 messaging, `gsocSend`/`gsocSubscribe` for sub-second notifications, and manifest helpers (`updateManifest`, `readManifest`, `updateDriveManifest`, `updateUserManifest`). It also handles per-topic write locks, 3-retry backoff on feed writes, and auto-detects reference vs inline feed format.\n\n**Layer 2 \u2014 SwarmChannel**: a native `IChannel` implementation wired via `ReactorBuilder.withSync()` and a `CompositeChannelFactory` that routes `\"swarm\"` and `\"gql\"` config types to the right sub-factory. Owns push (outbox) and pull (inbox), cursor tracking via `sync_cursors`, and dead letters via `sync_dead_letters`.\n\n**Layer 3 \u2014 Connect UI**: the `swarm-settings/` panel shows connection status, stamp health, doc tree with sync badges, and share/import controls; the `components/chat/` panel ships the chat UI.\n\nThe plugin layer still owns Bee detection, stamp selection, wallet key derivation, and UI event emission.",
+        "updatedAt": "2026-08-13T13:23:33.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:36.723Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+        "targetId": "8fbd5cba-15ee-4f2b-ae33-731095584405",
+        "relationshipType": "RELATES_TO"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:36.723Z"
+    }
+  },
+  {
+    "index": 4,
+    "hash": "NXCwzosbNwu1Rs5hzmR8oLs5MJ4=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "SET_PROVENANCE",
+      "input": {
+        "author": "knowledge-agent",
+        "createdAt": "2026-04-21T14:21:12.396Z",
+        "sourceOrigin": "DERIVED"
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "",
+    "timestampUtcMs": "2026-08-13T13:25:36.745Z",
+    "action": {
+      "type": "ADD_RELATIONSHIP",
+      "input": {
+        "sourceId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+        "targetId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+        "relationshipType": "BUILDS_ON"
+      },
+      "timestampUtcMs": "2026-08-13T13:25:36.745Z"
+    }
+  },
+  {
+    "index": 5,
+    "hash": "Kjex0RF7iUQ9/f3FqeZdr/vTF5M=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "fd74c7e5-b525-4655-9a0f-b48b06ba751d",
+        "name": "architecture-layers",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 6,
+    "hash": "mobLpx0NyhUSNKYZBt6Lvy+oKYM=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "c8fc7f31-d9ee-42cc-8464-12145fa4e8a7",
+        "name": "swarm-channel",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 7,
+    "hash": "9Lnti2vOEqyY7cmIgUnqy0JHmww=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "1fb976e0-caff-4d1d-8fe9-e19493b1a71a",
+        "name": "bee-adapter",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 8,
+    "hash": "4KDacg32ryQ00PqQ0Rjg9fTH0eg=",
+    "timestampUtcMs": "2026-08-13T13:23:33.000Z",
+    "action": {
+      "type": "ADD_TOPIC",
+      "input": {
+        "id": "13f9fb0d-1e92-4e95-99d0-9f9a12dbd7a9",
+        "name": "connect-ui",
+        "topicDocumentId": null
+      },
+      "timestampUtcMs": "2026-08-13T13:23:33.000Z"
+    }
+  },
+  {
+    "index": 9,
+    "hash": "8WdNtiO7Eyj8tnKwLu6tqkXxEEI=",
+    "timestampUtcMs": "2026-08-13T15:56:11.801Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.45",
+        "updatedAt": "2026-08-13T15:56:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:11.801Z"
+    }
+  },
+  {
+    "index": 10,
+    "hash": "tvfrz3/VBxXQblMsWKENyoUrmGg=",
+    "timestampUtcMs": "2026-08-13T15:56:11.801Z",
+    "action": {
+      "type": "SUBMIT_FOR_REVIEW",
+      "input": {
+        "id": "0c9c39a6-48be-4cd5-bd17-45c99ee14ce2",
+        "actor": "claude",
+        "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+        "timestamp": "2026-08-13T15:56:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:11.801Z"
+    }
+  },
+  {
+    "index": 11,
+    "hash": "W30+oJvvtEYrx2WulpivXETVprM=",
+    "timestampUtcMs": "2026-08-13T15:56:11.801Z",
+    "action": {
+      "type": "APPROVE_NOTE",
+      "input": {
+        "id": "ac2c6d1f-55b6-4ba3-b835-ae0a81d09419",
+        "actor": "liberuum",
+        "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+        "timestamp": "2026-08-13T15:56:11.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T15:56:11.801Z"
+    }
+  },
+  {
+    "index": 12,
+    "hash": "ly5RVLw5dWDQ53qOZbUjqz5uy7E=",
+    "timestampUtcMs": "2026-08-13T16:54:03.237Z",
+    "action": {
+      "type": "SET_METADATA_FIELD",
+      "input": {
+        "field": "version",
+        "value": "v6.2.2-dev.44",
+        "updatedAt": "2026-08-13T16:54:03.000Z"
+      },
+      "timestampUtcMs": "2026-08-13T16:54:03.237Z"
+    }
+  }
+]

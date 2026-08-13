@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-19e69eb8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "19e69eb8-38d6-4696-8cc8-d93449c25f46",
+      "targetTitle": "oid-scalar-for-unique-identifiers"
+    },
+    {
+      "id": "lnk-d1833ecb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d1833ecb-3641-4956-bb83-cc9cfe4e80e5",
+      "targetTitle": "never-use-crypto-randomuuid-or-math-random-in-reducers"
+    },
+    {
+      "id": "lnk-81a70a88-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "81a70a88-36d0-4317-8506-eaa9cff2069c",
+      "targetTitle": "never-use-fallback-values-with-non-deterministic-functions-in-reducers"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The academy Build tutorials still teach a replay-unsafe reducer pattern, generating IDs inside the reducer via generateId()",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0f0fc614-8c02-4143-a470-0247286d7051",
+      "name": "gotchas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ddf7541-3bf4-4b41-b14b-89cd0c3b8423",
+      "name": "documentation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b2d4adc-4328-4b7d-a9d5-8460194eab72",
+      "name": "reducer-patterns",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "This records a **documentation bug**, not stack behaviour. Several `03-Build` tutorial pages instruct the reader to generate IDs inside the reducer, and one of them explicitly blesses it as the recommended approach:\n\n- `03-Build/02-DocumentModelCreation/05-ImplementDocumentReducers.md:118` \u2014 *\"Notice that `addTodoItemOperation` uses `generateId()` from `document-model/core` to create a unique ID. This is the recommended pattern \u2014 the ID is generated in the reducer, not passed from the UI.\"* Reducer-side `const id = generateId();` appears at lines 92, 136, 205, 254, 288 and 314.\n- `03-Build/02-DocumentModelCreation/03-SpecifyDocumentOperations.md:46, 51, 150, 206` \u2014 teaches omitting `id` from the operation input because \"the reducer will generate it automatically\".\n- `03-Build/01-ManualTodoTutorial/03-ImplementOperationReducers.md:107, 122` \u2014 same reducer body, with \"We generate a unique ID using `generateId()`\" in the walkthrough.\n- Also `02-SpecifyTheStateSchema.md:39` and `07-ExampleToDoListRepository.md:22`.\n\n`generateId` is non-deterministic. In `packages/shared/document-model/utils.ts` it is:\n\n```typescript\nexport function generateId(method?: \"UUIDv4\"): string {\n  if (method && method.toString() !== \"UUIDv4\") { throw new Error(...); }\n  return globalThis.crypto.randomUUID();\n}\n```\n\nCalling it in a reducer means two peers folding the same operation log produce different IDs, and a document replayed from its own log no longer reproduces its stored state \u2014 the same class of failure as the `initialState` hash mismatch.\n\n**The rest of the docs are right.** `02-Learn/08-deep-dives/01-reducers-in-depth.mdx:13` states \"No time or randomness. No `Date.now()`, no `Math.random()`, no `crypto.randomUUID()` \u2014 those values come from action inputs.\" `02-Learn/03-document-models/03-actions-and-reducers.mdx` shows `generateId()` called **in the editor before dispatch** and includes a quiz answer explaining that random fallbacks make a reducer non-deterministic. The purity rule and the Learn track are correct; the Build tutorial pages are stale legacy.\n\nA corroborating staleness signal on the same pages: the Manual Todo walkthrough still says \"Powerhouse uses Immer.js\" where the stack uses Mutative.\n\nCorrect pattern: put `id: OID!` in the operation input schema, call `generateId()` in the editor, and use `action.input.id` in the reducer.\n\nProvenance: file/line audit of academy `03-Build/**` versus `02-Learn/**` at academy 6.2.2-dev.45, with the `generateId` implementation read from `packages/shared/document-model/utils.ts:4-12`.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:39:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "generateId() returns crypto.randomUUID(), so reducer-side ID generation breaks replay determinism. The Learn track and the purity rule are correct; these legacy Build pages are stale.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3c0355a2-0b64-40ff-bf28-c284678b5757",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:52.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1e88a6a9-7713-4391-a44a-c6a03322475f",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:52.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

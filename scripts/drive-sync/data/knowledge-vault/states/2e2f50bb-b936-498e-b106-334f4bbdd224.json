@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ed65d30e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed65d30e-61b0-431d-8162-183dc8c530d3",
+      "targetTitle": "editor-hooks-connect-react-to-documents"
+    },
+    {
+      "id": "lnk-ce65f0dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce65f0dc-e22e-4b36-854a-d427c544489b",
+      "targetTitle": "document-model-vs-document-editor-vs-app-serves-different-purposes"
+    },
+    {
+      "id": "lnk-7e6a5c41-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7e6a5c41-60c4-440e-8590-c1b28c686008",
+      "targetTitle": "css-scoped-via-data-attributes"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An editor is registered by an EditorModule in editors/editors.ts, and a missing entry is the top reason an editor never appears",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b927284d-1624-4102-9470-64e37804e8f0",
+      "name": "editors",
+      "topicDocumentId": null
+    },
+    {
+      "id": "87c2332d-a4dc-4fab-8945-2334751aae68",
+      "name": "registration",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a8374401-ff10-42d6-9173-1a6e461c4e36",
+      "name": "code-generation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "An editor is not just a component \u2014 it is a component paired with metadata saying which document type it handles. That pairing is an `EditorModule`, typed in `packages/shared/document-model/types.ts`:\n\n```ts\nexport type EditorModule<TProps = any> = {\n  Component: FC<EditorProps & TProps>;\n  documentTypes: string[];\n  config: { id: string; name: string };\n};\n```\n\n`documentTypes` is an array, so one module can serve several document types. `EditorProps` is deliberately minimal \u2014 `{ children?, className?, document? }` \u2014 because the modern pattern is for the component to reach the document through a generated hook rather than through props.\n\nCodegen emits the module next to the component and wraps the import in `lazy()` so the editor is code-split:\n\n```ts\n// editors/todo-editor/module.ts\nexport const TodoEditor: EditorModule = {\n  Component: lazy(() => import(\"./editor.js\")),\n  documentTypes: [\"powerhouse/todo\"],\n  config: { id: \"todo-editor\", name: \"Todo Editor\" },\n};\n```\n\nThe registry itself is `editors/editors.ts`, a barrel collecting every module into one array. The boilerplate template ships it with an empty array and a `WARNING: DO NOT EDIT / auto-generated and updated by codegen` header:\n\n```ts\nimport type { EditorModule } from \"document-model\";\nimport { TodoEditor } from \"./todo-editor/module.js\";\n\nexport const editors: EditorModule[] = [TodoEditor];\n```\n\nWhen a user opens a document, the host looks up which editor is registered for that document type and mounts it. If nothing is registered, there is no UI \u2014 no error, no fallback. The academy is blunt about the consequence: a missing registration is **the most common reason an editor doesn't appear in Connect**. Because the file is codegen-owned, the failure mode is usually a codegen run that did not update the barrel, not hand-written code \u2014 so when a freshly scaffolded editor does not show up, check the array before debugging the component.\n\n_Source: apps/academy/docs/academy/02-Learn/04-editors/{01-what-is-an-editor,02-your-first-editor}.mdx, confirmed against packages/shared/document-model/types.ts and packages/codegen/src/templates/boilerplate/editors/editors.ts (Powerhouse v6.2.2-dev.45)._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:37:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "EditorModule is { Component, documentTypes, config: { id, name } }. Connect reads the editors array at startup to pick a UI per document type; without an entry there is simply no UI.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c9cf607e-f3d2-4524-b491-f014d1aea383",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:52:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e7ae7fe9-b27a-4d7a-b1ad-c95d2c6e76dd",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:52:55.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

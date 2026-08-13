@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-d4792033-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4792033-cd60-4178-85a0-80687e05718b",
+      "targetTitle": "ddup-four-storage-layers"
+    },
+    {
+      "id": "lnk-7765f4d8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7765f4d8-e2a0-40be-a2ab-56150407238c",
+      "targetTitle": "swarm-gsoc-requires-full-nodes"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swarm exposes two primitives: immutable content-addressed /bytes and mutable owner-signed feeds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3f3b0c5d-3382-46f9-8e5d-38e579c31ad8",
+      "name": "swarm-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ce0849e0-5a3f-4f4f-81fc-dbd480295ed8",
+      "name": "feeds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ed81133e-5ae0-498e-a551-9bbab6c1ff44",
+      "name": "bytes-storage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "72c29c05-3a74-4f18-b501-da5f2862715a",
+      "name": "content-addressing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Swarm exposes two storage primitives that Connect composes for sync:\n\n- `/bytes` \u2014 immutable, content-addressed. Upload data, get back a 64-char hex hash; the same data always yields the same hash and can never be mutated in place.\n- Feeds \u2014 mutable pointers identified by the pair `(topic, owner address)`. Only the owner can update what the feed points to, but anyone who knows the topic and owner can read it.\n\nConnect's write layering uses both: encrypted operation bytes are uploaded to `/bytes`, and the resulting reference is written to a feed. This lets readers look up a known topic (for example `ph:v2:doc:<documentId>`), follow the reference to `/bytes`, and fetch the latest encrypted batch.\n\nThe separation also clarifies where encryption belongs: encryption lives at the `/bytes` layer, while feeds hold plain-text references only.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "concept",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:21:07.369Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:50:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "/bytes uploads return a content hash and never change; feeds are (topic, owner) pointers that the owner updates and anyone can read \u2014 Connect uses bytes for data and feeds as pointers.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7a1d7053-ca4c-4ec1-b0b8-03a3ccfbe3e0",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0739d031-32f0-4c90-a145-4ae88e29c8be",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

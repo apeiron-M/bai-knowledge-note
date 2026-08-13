@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-3c8bb297-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c8bb297-ae31-4f7a-b7f2-c91fdd89217d",
+      "targetTitle": "drive-apps-are-custom-drive-editors"
+    },
+    {
+      "id": "lnk-9a77cd78-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9a77cd78-5be9-477d-af2f-7d6559b12b07",
+      "targetTitle": "apps-use-useselecteddrive-to-access-drive-state-and-filter-nodes"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Drive-app config is set with setPHAppConfig, not the academy's setPHDriveEditorConfig, which no longer exists in source",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7ba594d6-b2d2-4d15-8836-e1b1e68de68d",
+      "name": "react-hooks",
+      "topicDocumentId": null
+    },
+    {
+      "id": "befb28f8-154b-4522-ac9e-76e0734f09ee",
+      "name": "drive-apps",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45aad48c-5171-46be-a672-937d1a1cfd0e",
+      "name": "gotchas",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Editors and drive apps declare their behaviour by writing into a global config store, and the setters come in two flavours: imperative (`setPH\u2026Config`) and mount-time (`useSetPH\u2026Config`).\n\nTwo config slices matter here:\n\n```ts\nexport type PHAppConfig = {\n  /** Empty array means any document type is allowed. */\n  allowedDocumentTypes?: string[];\n  isDragAndDropEnabled?: boolean;\n};\n\nexport type PHDocumentEditorConfig = {\n  isExternalControlsEnabled?: boolean;\n};\n```\n\nBoth are members of the larger `PHGlobalConfig` intersection, and `setPHAppConfig` / `setPHDocumentEditorConfig` simply iterate the partial's keys and forward each one to the per-key global setter \u2014 so setting a slice is exactly equivalent to setting its keys individually.\n\nThe wrapper hooks are what codegen actually emits. The app template writes `useSetPHAppConfig(editorConfig)` at the top of the generated editor, with the object living in a sibling `./config.ts`. Read the implementation before relying on it: the hook guards its effect with a one-shot `isInitialized` state flag, so it applies the config **once on mount and never again**. Passing a config object that changes between renders will not update anything \u2014 for dynamic changes call the imperative `setPHAppConfig` directly.\n\n**Naming caveat \u2014 the academy is stale here.** `04-Reference/05-EditorsUI/01-ReactHooks.md` documents `PHDriveEditorConfig`, `setPHDriveEditorConfig` and `useSetPHDriveEditorConfig`. Those identifiers have **zero occurrences** anywhere in the monorepo outside build output; the slice was renamed to `PHAppConfig` and the functions to `setPHAppConfig` / `useSetPHAppConfig`, consistent with drive editors having been renamed to apps. The `PHDocumentEditorConfig` names in the doc are still correct. Some doc comments in source also lag, describing `setPHAppConfig` as \"the global drive config\".\n\n_Source: packages/reactor-browser/src/types/config.ts, src/hooks/config/set-config-by-object.ts and packages/codegen/src/templates/app/editor.ts (Powerhouse v6.2.2-dev.45); the academy's React Hooks page still uses the removed setPHDriveEditorConfig names._",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PHAppConfig carries allowedDocumentTypes and isDragAndDropEnabled; PHDocumentEditorConfig carries isExternalControlsEnabled. The useSetPH*Config hooks apply once on mount.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "82467f43-7fc0-4497-8d78-68dd7935222d",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9186b57a-b7d2-4413-943e-b6a87e9afed7",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:55.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-bd5b97f0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd5b97f0-fc1f-4c93-b435-84be00b9dcce",
+      "targetTitle": "analytics-engine-interval-time-series"
+    },
+    {
+      "id": "lnk-1328e41a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1328e41a-9d40-49bf-bcec-1784cef7d878",
+      "targetTitle": "analytics-paths-lod-dimension-querying"
+    },
+    {
+      "id": "lnk-abf010f8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "abf010f8-1c17-4714-824f-7d822003379a",
+      "targetTitle": "subgraphs-extend-document-models-via-graphql"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Analytics GraphQL API exposes a single analytics.series(filter) query and accepts no writes at all",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2c603fd6-1405-4299-89f4-26cb50c35515",
+      "name": "analytics-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b76d9182-c8ea-466f-ae43-cd42811bad3a",
+      "name": "graphql",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The entire GraphQL surface of the Analytics Engine is one field:\n\n```graphql\ntype AnalyticsQuery {\n  series(filter: AnalyticsFilter): [AnalyticsPeriod]\n}\n\nextend type Query {\n  analytics: AnalyticsQuery\n}\n```\n\nNo mutations are declared anywhere in the schema, and the docs state it plainly: data cannot be input through GraphQL. Writes go through `IAnalyticsStore` in TypeScript, from a processor or a script. Treat the GraphQL layer as strictly a reporting surface.\n\n`AnalyticsFilter` must be **fully populated** \u2014 it is not a partial where the engine fills in defaults. All six of `start`, `end`, `granularity`, `metrics`, `dimensions` (each with `name`, `select`, `lod`), and `currency` are required for the query to function. The characteristic symptom of a partial filter is not a validation message but a bare `\"Cannot read properties of undefined (reading 'filter')\"`.\n\nCase sensitivity is the other common failure. Metric names and granularity values are matched exactly, so `Monthlyu` produces an enum error suggesting `monthly`, and a mistyped metric produces an error listing the valid names.\n\nA useful exploration technique from the best-practices page: start with a broad `select` and a high `lod` (e.g. `select: \"atlas\"`, `lod: 5`) to *discover* which sub-paths exist under a dimension, then narrow the `select` path once you know the hierarchy. The high-lod response is effectively a directory listing of the dimension tree.\n\nProvenance: drafts `03-Build/04-WorkWithData/_06-Analytics Engine/graphql/index.md` and `.../best-practices.md`; schema verified in `packages/analytics-engine/graphql/src/schema.ts` (zero occurrences of `Mutation`) and the read-only statement in `.../_06-Analytics Engine/intro.md`, at 6.2.2-dev.45.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "claude",
+    "createdAt": "2026-08-13T14:38:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:53:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "AnalyticsQuery has exactly one field, series(filter: AnalyticsFilter), reached via extend type Query { analytics }. There is no Mutation, and a partial filter errors out.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b409a824-30a4-45f8-86a4-5fc29d27c1f4",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:48.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4ea15e28-c7a9-430d-b374-22512c9770f3",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:48.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

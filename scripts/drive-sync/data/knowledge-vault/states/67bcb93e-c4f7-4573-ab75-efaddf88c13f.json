@@ -1,0 +1,97 @@
+{
+  "links": [
+    {
+      "id": "lnk-c652a667-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c652a667-3ca2-47d2-9db4-69c9784b655b",
+      "targetTitle": "account-transactions-model-tracks-financial-transaction-records"
+    },
+    {
+      "id": "lnk-51f95f25-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "51f95f25-0238-4c0f-b773-6fbee2f80773",
+      "targetTitle": "ecosystem-map"
+    },
+    {
+      "id": "lnk-ef903cca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ef903cca-e39a-42fc-9676-a6cbf297f184",
+      "targetTitle": "billing-statement-model-captures-periodic-billing-summaries"
+    },
+    {
+      "id": "lnk-2bffe93a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2bffe93a-dc83-4b40-8e55-84e8655e941e",
+      "targetTitle": "expense-report-model-tracks-expense-claims-and-approvals"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "accounts model defines the chart of accounts structure",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "3cc84c34-f0c7-4c71-8b7b-73e09dc87233",
+      "name": "accounts",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3003b116-3a21-4f54-b3ff-957115b39140",
+      "name": "finance-billing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "# accounts model defines the chart of accounts structure\n\n`powerhouse/accounts` (4 ops) is the simplest finance model. Defines account entities that [[account-transactions model tracks financial transaction records]] references for recording debits and credits.\n\n## Position in Ecosystem\n\nFoundation of the Finance & Billing zone \u2014 other finance models reference accounts.\n\n---\n\nTopics:\n- [[ecosystem map]]\n- [[object relations]]",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-03T13:40:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:47.000Z",
+    "sourceOrigin": "IMPORT"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "4 operations \u2014 minimal model defining account entities (likely chart of accounts) referenced by account-transactions for debit/credit recording",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f330cc54-f0db-4cc8-8cfc-a7333e12c336",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:07.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "87c04477-9006-4a82-b2bf-34afb3006bce",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:07.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

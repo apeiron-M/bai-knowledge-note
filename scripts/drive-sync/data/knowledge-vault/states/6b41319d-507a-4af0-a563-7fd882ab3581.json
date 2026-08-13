@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-f57c09f2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f57c09f2-b019-4613-913b-c311614518fe",
+      "targetTitle": "composite-channel-factory-routes-by-type"
+    },
+    {
+      "id": "lnk-1c842c07-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1c842c07-c8a6-44fb-9a9c-460712cb3395",
+      "targetTitle": "ddup-swarm-channel-replaces-gql"
+    },
+    {
+      "id": "lnk-83d37fbe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "83d37fbe-3664-4325-96f8-6baace6523a3",
+      "targetTitle": "three-layer-swarm-stack"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CompositeChannelFactory routes IChannel instantiation by config.type, letting Swarm and GQL factories coexist behind one SyncManager interface.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "t1",
+      "name": "composite-factory",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t2",
+      "name": "channel-routing",
+      "topicDocumentId": null
+    },
+    {
+      "id": "t3",
+      "name": "reactor-builder",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Setup sequence\n\n`createSwarmSyncBuilder(logger, jwtHandler)` returns `{ syncBuilder, compositeFactory, registerGqlFactory }`:\n\n1. `CompositeChannelFactory` created with `\"swarm\"` registered.\n2. `SyncBuilder.withChannelFactory(compositeFactory)`.\n\nThen wired into the reactor:\n\n```\nReactorBuilder\n  .withSync(syncBuilder)       // proper builder API\n  .withJwtHandler(jwtHandler)\n```\n\n`buildModule()` runs:\n- Creates queue with the document-model resolver.\n- `SyncManager.startup()` recreates persisted remotes.\n- Swarm remotes work immediately because the factory is already registered.\n\nAfter `buildModule()`: `registerGqlFactory(reactorModule.queue)` registers `\"gql\"` on the same `CompositeChannelFactory`, so GQL remotes can now be added via `addRemoteDrive()`.\n\n## Dispatch\n\n```\ncompositeFactory.instance(config)\n  config.type === \"gql\"   -> GqlRequestChannelFactory -> GqlRequestChannel\n  config.type === \"swarm\" -> SwarmChannelFactory    -> SwarmChannel\n```\n\nSyncManager remains channel-type-agnostic; it only touches `outbox`, `inbox`, and `deadLetter` on whatever channel object it receives.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "pattern",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:47:10.583Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:52:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "createSwarmSyncBuilder wires a CompositeChannelFactory into ReactorBuilder.withSync(); after buildModule(), registerGqlFactory adds GQL support without disturbing Swarm.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8da51617-248d-40a0-b3dd-2546d2e56d44",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:55:14.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ea906bb3-ec39-46dc-9730-a1ed3f479c44",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:55:14.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

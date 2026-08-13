@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-2642b21e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2642b21e-fc0d-413e-a421-2affae6d6164",
+      "targetTitle": "swarm-feeds-mutable-pointers"
+    },
+    {
+      "id": "lnk-58125cb8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "58125cb8-0b0a-41c4-ba84-c5be8b1e3f3c",
+      "targetTitle": "ddup-pglite-primary-swarm-backup"
+    },
+    {
+      "id": "lnk-bfa544b8-bui",
+      "linkType": "BUILDS_ON",
+      "targetDocumentId": "bfa544b8-e5ec-42c8-9949-1c82b8b1a264",
+      "targetTitle": "swarm-act-access-control-trie"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "ACT replaces the legacy deriveShareKey, which used a publicly derivable SHA-256 of both addresses.",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "topic-76a84b492721",
+      "name": "act-encryption",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-af4ddf49f237",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "topic-7b1d5490fc6d",
+      "name": "document-sharing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "## Vulnerability (fixed)\n\nThe original document-sharing code derived its encryption key as:\n\n```\nkey = SHA-256(sender_address + \":\" + recipient_address)\n```\n\nBoth inputs are public (on-chain, ENS, etherscan). Any third party who knew both addresses could reconstruct the key and decrypt any shared bundle. This was **security theater**, not encryption.\n\n## Fix: Swarm ACT (Access Control Trie)\n\nACT derives its session key via ECDH:\n\n```\nsession_key = SHA-256( ECDH(publisher_privkey, grantee_pubkey) || salt )\n```\n\nThe publisher's **private key** is required \u2014 only their Bee node has it. A third party with both public keys still faces the discrete-log problem.\n\n## Comparison\n\n| | Old (deriveShareKey) | New (ACT) |\n|---|---|---|\n| Key derivation | `SHA-256(public_addr_a + public_addr_b)` | `ECDH(privkey \u00d7 pubkey) + salt` |\n| Third-party attack | Trivial | Impossible \u2014 DLP |\n| Encryption | App-level AES-256-GCM | Bee node native |\n| Grantee management | None | `patchGrantees()` add/remove |\n| Revocation | Impossible | Rebuild ACT with new access key |\n\n## Status\n\nShareManager rewritten, 105/105 tests passing. ACT now protects document sharing, chat history feeds, and multi-party collaboration data.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": "v6.2.2-dev.44",
+  "computes": null,
+  "filePath": null,
+  "noteType": "decision",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "knowledge-agent",
+    "createdAt": "2026-04-21T14:30:37.900Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-13T16:51:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Old share encryption hashed sender_address + recipient_address \u2014 both public values \u2014 so any third party could decrypt. ACT uses ECDH requiring the sender's private key.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b2207c02-4fbd-4b55-94e5-b57c33274003",
+      "actor": "claude",
+      "comment": "Knowledge registered against powerhouse v6.2.2-dev.45 (84ff66a00)",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-13T15:53:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d47f80da-cc00-4351-8826-3b4bc75ada79",
+      "actor": "liberuum",
+      "comment": "Canonical as of powerhouse v6.2.2-dev.45",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-13T15:53:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}
