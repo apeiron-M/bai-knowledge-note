@@ -1,5 +1,12 @@
-// Headless embedding backfill — the CLI counterpart of
-// editors/knowledge-vault/hooks/use-embedding-backfill.ts.
+// Headless embedding backfill — LEGACY ops tool.
+//
+// The graph-indexer processor now embeds server-side: on every content change
+// and via a hash-gated backfill sweep on boot. On any reactor running that
+// code this script is unnecessary — start the server and watch
+// knowledgeGraphMissingEmbeddings drain instead. Keep it for older
+// deployments, or to force-push vectors when the server's embedder is
+// unavailable. It must use the same model as the server (gte-small q8) or
+// search will silently mix incompatible vector spaces.
 //
 // The knowledge-graph subgraph stores and searches embeddings but never
 // computes them; vectors are pushed by clients via the
@@ -93,10 +100,10 @@ for (const id of missing) {
   const embedding = Array.from(output.data);
   await gql(
     endpoint,
-    `mutation($documentId: ID!, $embedding: [Float!]!) {
-       knowledgeGraphUpsertEmbedding(documentId: $documentId, embedding: $embedding) { ok }
+    `mutation($driveId: ID!, $documentId: ID!, $embedding: [Float!]!) {
+       knowledgeGraphUpsertEmbedding(driveId: $driveId, documentId: $documentId, embedding: $embedding) { ok }
      }`,
-    { documentId: id, embedding },
+    { driveId: drive, documentId: id, embedding },
   );
   done++;
   if (done % 50 === 0)

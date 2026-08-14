@@ -41,9 +41,24 @@ export interface GraphOperation {
   signer_app: string | null;
 }
 
+export interface NoteEmbedding {
+  document_id: string;
+  /** JSON-encoded number[] (normalized). bytea/int8 are later escalations. */
+  embedding: string;
+  dims: number;
+  /** Model identity incl. quantization, e.g. "Supabase/gte-small@q8". A row
+   * whose model differs from the active one is treated as stale, exactly like
+   * a stale content_hash — model swaps re-embed incrementally. */
+  model: string;
+  /** sha256 of the embedded text; unchanged notes are never re-embedded. */
+  content_hash: string;
+  updated_at: string;
+}
+
 export interface DB {
   graph_nodes: GraphNode;
   graph_edges: GraphEdge;
   graph_topics: GraphTopic;
   graph_operations: GraphOperation;
+  note_embeddings: NoteEmbedding;
 }

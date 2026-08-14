@@ -6,6 +6,7 @@ import {
   searchSimilar,
   getEmbedding,
   upsertEmbedding,
+  sha256Hex,
 } from "../../processors/graph-indexer/embedding-store.js";
 import { embedQuery } from "./helpers/query-embedder.js";
 
@@ -56,7 +57,8 @@ async function searchWithEmbedding(
   mode: "SEMANTIC" | "HYBRID",
   limit: number,
 ) {
-  const semanticHits = await searchSimilar(embedding, limit * 2);
+  const db = getDb(subgraph, driveId);
+  const semanticHits = await searchSimilar(db, embedding, limit * 2);
   const graphQuery = getQuery(subgraph, driveId);
 
   if (mode === "SEMANTIC") {
@@ -107,9 +109,23 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       knowledgeGraphUpsertEmbedding: (async (
         _: unknown,
-        args: { documentId: string; embedding: number[] },
+        args: { driveId: string; documentId: string; embedding: number[] },
       ) => {
-        await upsertEmbedding(args.documentId, args.embedding);
+        // Legacy client-push path (headless backfill script). The processor
+        // self-embeds now, so this is a manual override. The content hash is
+        // computed from the indexed node text so the processor's hash gate
+        // agrees with pushed vectors instead of re-embedding them on the
+        // next unrelated operation.
+        const db = getDb(subgraph, args.driveId);
+        const graphQuery = getQuery(subgraph, args.driveId);
+        const node = await graphQuery.nodeByDocumentId(args.documentId);
+        const text = node
+          ? [node.title, node.description, node.content?.slice(0, 1500)]
+              .filter((x): x is string => !!x && x.trim().length > 0)
+              .join(" ")
+          : "";
+        const hash = text ? await sha256Hex(text) : "client-pushed";
+        await upsertEmbedding(db, args.documentId, args.embedding, hash);
         return { documentId: args.documentId, ok: true };
       }) as unknown as Resolver,
     }),
@@ -310,10 +326,11 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         _: unknown,
         args: { driveId: string; documentId: string; limit?: number },
       ) => {
-        const embedding = await getEmbedding(args.documentId);
+        const db = getDb(subgraph, args.driveId);
+        const embedding = await getEmbedding(db, args.documentId);
         if (!embedding) return [];
 
-        const results = await searchSimilar(embedding, (args.limit ?? 10) + 1);
+        const results = await searchSimilar(db, embedding, (args.limit ?? 10) + 1);
         const graphQuery = getQuery(subgraph, args.driveId);
 
         const semanticResults = [];

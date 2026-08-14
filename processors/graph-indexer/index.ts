@@ -2,7 +2,36 @@ import { RelationalDbProcessor } from "@powerhousedao/shared/processors";
 import type { OperationWithContext } from "@powerhousedao/shared/document-model";
 import { up } from "./migrations.js";
 import type { DB } from "./schema.js";
-import { deleteEmbedding } from "./embedding-store.js";
+import {
+  ACTIVE_MODEL,
+  deleteEmbedding,
+  getStoredHash,
+  sha256Hex,
+  upsertEmbedding,
+} from "./embedding-store.js";
+
+/**
+ * Embedding is SERVER-only. This processor also runs inside Connect's
+ * in-browser reactor (that's how the browser's local graph_nodes gets
+ * populated), and loading a ~30MB model there is exactly what made semantic
+ * search break the Connect app. The browser instance indexes; the node
+ * instance (local `ph vetra` or a deployed Switchboard) additionally embeds,
+ * and browser searches reach those vectors through the subgraph.
+ */
+const EMBEDDING_ENABLED = typeof window === "undefined";
+
+/** Text a note is embedded from. Content head is capped so growing note
+ * bodies stay inside the model's 512-token window; the hash gate makes any
+ * future change to this recipe an incremental re-embed. */
+function embeddableText(row: {
+  title: string | null;
+  description: string | null;
+  content: string | null;
+}): string {
+  return [row.title, row.description, row.content?.slice(0, 1500)]
+    .filter((part): part is string => !!part && part.trim().length > 0)
+    .join(" ");
+}
 
 function summarizeOperation(
   type: string,
@@ -70,6 +99,86 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
 
   override async initAndUpgrade(): Promise<void> {
     await up(this.relationalDb);
+
+    // Self-healing backfill: embed every indexed note that has no vector for
+    // the active model. Detached on purpose — registration must not block on
+    // ~6s of inference — and hash-gated, so on an already-embedded drive it
+    // costs one SQL round-trip. This is what makes "start the server and
+    // semantic search just works" true for pre-existing documents: the
+    // processor cursor has already consumed their history, so onOperations
+    // alone would never see them again.
+    if (EMBEDDING_ENABLED) {
+      void this.backfillMissingEmbeddings().catch((err) =>
+        console.warn(`[GraphIndexer] Embedding backfill failed:`, err),
+      );
+    }
+  }
+
+  private async backfillMissingEmbeddings(): Promise<void> {
+    const missing = await this.relationalDb
+      .selectFrom("graph_nodes")
+      .leftJoin(
+        "note_embeddings",
+        "note_embeddings.document_id",
+        "graph_nodes.document_id",
+      )
+      .where((eb) =>
+        eb.or([
+          eb("note_embeddings.document_id", "is", null),
+          eb("note_embeddings.model", "!=", ACTIVE_MODEL),
+        ]),
+      )
+      .select([
+        "graph_nodes.document_id as document_id",
+        "graph_nodes.title as title",
+        "graph_nodes.description as description",
+        "graph_nodes.content as content",
+      ])
+      .execute();
+    if (missing.length === 0) return;
+
+    console.log(
+      `[GraphIndexer] Embedding backfill: ${missing.length} note(s) missing vectors`,
+    );
+    let done = 0;
+    for (const row of missing) {
+      try {
+        await this.embedNode(row);
+        done++;
+        if (done % 50 === 0) {
+          console.log(
+            `[GraphIndexer] Embedding backfill: ${done}/${missing.length}`,
+          );
+        }
+      } catch (err) {
+        // Per-document isolation: one bad note must not stall the sweep.
+        console.warn(
+          `[GraphIndexer] Embed failed for ${row.document_id}:`,
+          err instanceof Error ? err.message : err,
+        );
+      }
+    }
+    console.log(
+      `[GraphIndexer] Embedding backfill done: ${done}/${missing.length}`,
+    );
+  }
+
+  /** Embed one node's text and upsert, skipping when hash+model are current. */
+  private async embedNode(row: {
+    document_id: string;
+    title: string | null;
+    description: string | null;
+    content: string | null;
+  }): Promise<void> {
+    const text = embeddableText(row);
+    if (!text) return;
+    const hash = await sha256Hex(text);
+    const stored = await getStoredHash(this.relationalDb, row.document_id);
+    if (stored && stored.contentHash === hash && stored.model === ACTIVE_MODEL)
+      return;
+    const { generateEmbedding } = await import("./embedder.js");
+    const vector = await generateEmbedding(text);
+    await upsertEmbedding(this.relationalDb, row.document_id, vector, hash);
   }
 
   override async onOperations(
@@ -257,6 +366,25 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         // the reactor's DocumentRelationship table, populated via
         // ADD_RELATIONSHIP / REMOVE_RELATIONSHIP and mirrored into
         // graph_edges by `applyAddRelationship` / `applyRemoveRelationship`.
+
+        // Re-embed when the embeddable text changed (server only; the hash
+        // gate inside embedNode makes this a no-op for topic/status/link
+        // churn that doesn't touch title/description/content). Detached so
+        // ~12ms of inference never delays cursor advancement, and failures
+        // never error the processor — a poisoned doc would freeze the cursor.
+        if (EMBEDDING_ENABLED) {
+          void this.embedNode({
+            document_id: documentId,
+            title: (global.title as string) ?? null,
+            description: (global.description as string) ?? null,
+            content,
+          }).catch((err) =>
+            console.warn(
+              `[GraphIndexer] Embed failed for ${documentId}:`,
+              err instanceof Error ? err.message : err,
+            ),
+          );
+        }
       } catch (err: unknown) {
         console.error(
           `[GraphIndexer] Error reconciling document ${documentId}:`,
@@ -357,7 +485,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         .deleteFrom("graph_operations")
         .where("document_id", "=", documentId)
         .execute();
-      deleteEmbedding(documentId).catch((err) =>
+      deleteEmbedding(this.relationalDb, documentId).catch((err) =>
         console.warn(
           `[GraphIndexer] Embedding delete failed for ${documentId}:`,
           err,

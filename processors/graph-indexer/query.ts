@@ -1,7 +1,7 @@
 import type { Kysely } from "kysely";
 import { sql } from "kysely";
 import type { DB, GraphNode, GraphEdge } from "./schema.js";
-import { listEmbeddedDocumentIds } from "./embedding-store.js";
+import { ACTIVE_MODEL } from "./embedding-store.js";
 
 export interface GraphNodeResult {
   id: string;
@@ -672,18 +672,29 @@ export function createGraphQuery(db: Kysely<DB>) {
     },
 
     /**
-     * Returns document IDs that are in graph_nodes but have no stored embedding.
-     * The browser backfill UI uses this to know which documents need embedding.
+     * Document IDs in graph_nodes with no stored embedding for the ACTIVE
+     * model. A stale-model row counts as missing — model swaps re-embed
+     * incrementally. Now a health probe: the processor self-backfills on
+     * boot, so a non-empty result here means the backfill is still running
+     * (or a note failed to embed), not that a client needs to act.
      */
     async documentIdsWithoutEmbeddings(): Promise<string[]> {
-      const [nodeRows, embeddedIds] = await Promise.all([
-        db.selectFrom("graph_nodes").select("document_id").execute(),
-        listEmbeddedDocumentIds(),
-      ]);
-      const embeddedSet = new Set(embeddedIds);
-      return nodeRows
-        .map((r) => r.document_id)
-        .filter((id) => !embeddedSet.has(id));
+      const rows = await db
+        .selectFrom("graph_nodes")
+        .leftJoin(
+          "note_embeddings",
+          "note_embeddings.document_id",
+          "graph_nodes.document_id",
+        )
+        .where((eb) =>
+          eb.or([
+            eb("note_embeddings.document_id", "is", null),
+            eb("note_embeddings.model", "!=", ACTIVE_MODEL),
+          ]),
+        )
+        .select("graph_nodes.document_id as document_id")
+        .execute();
+      return rows.map((r) => r.document_id);
     },
   };
 }

@@ -54,12 +54,77 @@ async function loadOrtAssets(
   return cachedOrtAssets;
 }
 
+/**
+ * Local-filesystem branch: when this module runs from a file:// URL (local
+ * `ph vetra`, tests, or any non-CDN deployment), the fetch()-based CDN
+ * machinery below can't work — Node's fetch rejects file:// URLs. Load the
+ * model straight from disk instead: `models/` shipped next to the chunks in
+ * dist, falling back to the repo's committed `models/` when running from
+ * source. No network, no WASM data-URL dance.
+ */
+async function loadFromLocalFiles(
+  transformers: typeof TransformersModule,
+): Promise<FeatureExtractionPipeline | null> {
+  const { existsSync } = await import("node:fs");
+  const { fileURLToPath } = await import("node:url");
+  const path = await import("node:path");
+  const dirname = (p: string) => path.dirname(p);
+  const join = (...parts: string[]) => path.join(...parts);
+
+  const moduleDir = dirname(fileURLToPath(import.meta.url));
+  const candidates = [
+    join(moduleDir, "models"), // dist/node/models (published package)
+    join(moduleDir, "..", "..", "models"), // repo root when running from source
+    join(moduleDir, "..", "..", "..", "models"), // dist/node/processors/* chunk depth
+  ];
+  const modelPath = candidates.find((p) =>
+    existsSync(join(p, "Supabase/gte-small/onnx/model_quantized.onnx")),
+  );
+  if (!modelPath) return null;
+
+  transformers.env.allowLocalModels = true;
+  transformers.env.localModelPath = modelPath;
+  // Hard guarantee: with local files present we never touch the network.
+  transformers.env.allowRemoteModels = false;
+
+  const ext = await transformers.pipeline(
+    "feature-extraction",
+    "Supabase/gte-small",
+    { dtype: "q8" },
+  );
+  console.log(`[Embedder] Model loaded from local files: ${modelPath}`);
+  return ext;
+}
+
 export async function getExtractor(): Promise<FeatureExtractionPipeline> {
   if (extractor) return extractor;
 
   // Prevent concurrent loads — share the same promise
   if (!loading) {
     loading = (async () => {
+      // Local filesystem first (file:// module URL == not a CDN deployment).
+      if (import.meta.url.startsWith("file:")) {
+        const transformers = await import("@huggingface/transformers");
+        const local = await loadFromLocalFiles(transformers);
+        if (local) {
+          extractor = local;
+          loading = null;
+          return extractor;
+        }
+        // No local model files — fall back to the HF hub (dev machines with
+        // network). The CDN branch below would fail on file:// URLs.
+        const ext = await transformers.pipeline(
+          "feature-extraction",
+          "Supabase/gte-small",
+          { dtype: "q8" },
+        );
+        console.log(
+          "[Embedder] Model loaded from HF hub (no local models/ found)",
+        );
+        extractor = ext;
+        loading = null;
+        return extractor;
+      }
       // Spoof process.release.name to "browser" while transformers'
       // module init runs. Otherwise its IS_NODE_ENV check
       // (`process?.release?.name === "node"`) flips on, and the ONNX

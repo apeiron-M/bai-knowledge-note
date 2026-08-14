@@ -228,6 +228,7 @@ export const schema: DocumentNode = gql`
     Called by browser clients after running the embedding model locally.
     """
     knowledgeGraphUpsertEmbedding(
+      driveId: ID!
       documentId: ID!
       embedding: [Float!]!
     ): UpsertEmbeddingResult!
