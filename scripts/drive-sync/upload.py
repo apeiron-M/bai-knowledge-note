@@ -113,38 +113,62 @@ def topo_sort_folders(folders: list[dict]) -> list[dict]:
 
 def phase_1_create_drive_and_folders(args, manifest: dict, id_map: IdMap) -> tuple[str, str]:
     print("\n━━━ Phase 1: drive + folders ━━━")
+    # Everything here goes over the pooled GraphQL client rather than the
+    # switchboard CLI. Each CLI call is a separate process doing its own TLS
+    # handshake against the ingress, which is the exact cost that makes remote
+    # uploads fail (see lib/gql._connection). The CLI also imposes its own
+    # subprocess timeouts that kill the whole run on one slow call.
     if args.existing_drive:
         drive_id = args.existing_drive
-        out = sb.sb("drives", "get", drive_id)
-        info = json.loads(out)
-        drive_slug = info.get("slug", drive_id)
+        info = gql.get_drive_info(drive_id)
+        drive_slug = info.get("slug") or drive_id
         print(f"  ✓ using existing drive: {info.get('name')} ({drive_id})")
     else:
-        drive_id, drive_slug = sb.drives_create(args.drive_name, preferred_editor=args.preferred_editor)
+        drive_id, drive_slug = gql.create_drive(
+            args.drive_name, preferred_editor=args.preferred_editor
+        )
         print(f"  ✓ created drive: {args.drive_name} ({drive_id}, slug={drive_slug}, editor={args.preferred_editor})")
-    # Wait for drive to be queryable
+    # Wait for the drive to become queryable.
     for attempt in range(5):
-        time.sleep(1)
         try:
-            sb.sb("drives", "get", drive_id)
+            gql.get_drive_info(drive_id)
             break
         except Exception:
             if attempt == 4:
                 raise
-    # Folders, parents-first
+            time.sleep(1)
+    # Folders, parents-first.
+    #
+    # The knowledge-vault drive app seeds the same folder tree (ops/, self/,
+    # knowledge/, sources/, ...) the moment a drive is opened in Connect, so
+    # uploading into a drive that has ever been opened would otherwise create a
+    # second, parallel set of identically-named folders. Reuse any folder that
+    # already exists at the same (name, parent); only create what is missing.
+    existing = [n for n in gql.get_drive_nodes(drive_id) if n.get("kind") == "folder"]
+    by_key = {(n.get("name"), n.get("parentFolder") or None): n["id"] for n in existing}
+
     sorted_folders = topo_sort_folders(manifest["folders"])
     actions = []
+    reused = 0
     for f in sorted_folders:
+        parent = f.get("parentFolder")
+        parent_new = id_map.resolve(parent) if parent else None
+        hit = by_key.get((f["name"], parent_new))
+        if hit:
+            id_map.set(f["id"], hit)
+            reused += 1
+            continue
         new_id = str(uuid.uuid4())
         id_map.set(f["id"], new_id)
         inp: dict = {"id": new_id, "name": f["name"]}
-        parent = f.get("parentFolder")
-        if parent:
-            inp["parentFolder"] = id_map.resolve(parent)
+        if parent_new:
+            inp["parentFolder"] = parent_new
         actions.append({"type": "ADD_FOLDER", "input": inp, "scope": "global"})
+        # Newly created folders are themselves valid parents for later rows.
+        by_key[(f["name"], parent_new)] = new_id
     if actions:
-        sb.apply_actions(drive_id, actions)
-    print(f"  ✓ created {len(actions)} folders")
+        gql.mutate_document(drive_id, actions)
+    print(f"  ✓ folders: {len(actions)} created, {reused} reused")
     return drive_id, drive_slug
 
 
@@ -158,6 +182,29 @@ def phase_2_create_documents(args, manifest: dict, id_map: IdMap, drive_id: str)
     skipped = len(manifest["documents"]) - len(docs)
     if skipped:
         print(f"  (skipping {skipped} doc(s) with no registered handler)")
+
+    # The vault app also seeds one instance of each singleton type
+    # (vault-config, pipeline-queue, health-report) on first open. Those are
+    # one-per-drive by definition, so map the dataset's copy onto the existing
+    # document rather than creating a duplicate the app would then ignore.
+    SINGLETONS = {"bai/vault-config", "bai/pipeline-queue", "bai/health-report"}
+    present: dict[str, str] = {}
+    for n in gql.get_drive_nodes(drive_id):
+        t = n.get("documentType")
+        if t in SINGLETONS and t not in present:
+            present[t] = n["id"]
+    if present:
+        adopted = 0
+        remaining = []
+        for d in docs:
+            t = d.get("type")
+            if t in present and not id_map.get(d["id"]):
+                id_map.set(d["id"], present[t])
+                adopted += 1
+                continue
+            remaining.append(d)
+        docs = remaining
+        print(f"  (adopted {adopted} existing singleton(s): {', '.join(sorted(present))})")
     # Within bai/moc, parent mocs must be created before children. Compute the
     # moc-internal ordering up front using the source state files (parentRef).
     moc_states = {d["id"]: load_state(Path(args.data), d["id"]) or {}

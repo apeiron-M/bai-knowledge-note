@@ -29,12 +29,14 @@ ADD_RELATIONSHIP / REMOVE_RELATIONSHIP system actions through
 envelopes that don't trigger the browser's `skip:1 CREATE_DOCUMENT`
 synthesis bug.
 """
+import http.client
 import json
 import os
+import threading
+import time
 import uuid
 from typing import Any
-from urllib import request
-from urllib.error import HTTPError, URLError
+from urllib.parse import urlsplit
 
 
 DEFAULT_ENDPOINT = os.environ.get(
@@ -46,46 +48,99 @@ class GraphQLError(RuntimeError):
     """A GraphQL request returned errors."""
 
 
+_POOL: dict[str, Any] = {}
+_POOL_LOCK = threading.Lock()
+
+
+def _connection(endpoint: str):
+    """One keep-alive connection per (scheme, host), reused across calls.
+
+    `urllib.request.urlopen` opens a fresh TCP+TLS connection per request. A
+    full upload is ~3,300 requests, i.e. ~3,300 TLS handshakes against the
+    ingress — measured at 20 sequential requests taking 48s with a ~15% rate of
+    `_ssl.c:983: handshake operation timed out`, because the connection is
+    refused before HTTP is ever spoken. The same 20 requests over one reused
+    connection take 1.2s with zero failures. Remote uploads are handshake-bound,
+    not CPU-bound, which is why resizing the backend changed nothing.
+    """
+    p = urlsplit(endpoint)
+    key = f"{p.scheme}://{p.netloc}"
+    conn = _POOL.get(key)
+    if conn is None:
+        cls = (http.client.HTTPSConnection if p.scheme == "https"
+               else http.client.HTTPConnection)
+        conn = cls(p.netloc, timeout=60)
+        _POOL[key] = conn
+    return key, conn, (p.path or "/")
+
+
+def _drop(key: str) -> None:
+    conn = _POOL.pop(key, None)
+    if conn is not None:
+        try:
+            conn.close()
+        except Exception:
+            pass
+
+
 def post(
     query: str,
     variables: dict[str, Any] | None = None,
     *,
     endpoint: str = DEFAULT_ENDPOINT,
     timeout: float = 30.0,
+    attempts: int = 4,
 ) -> dict[str, Any]:
     """Issue a POST request to a GraphQL endpoint and return `data`.
 
-    Raises GraphQLError if the response includes `errors`. Caller
-    handles retries — none here.
+    Uses a pooled keep-alive connection (see `_connection`) and retries
+    transport failures with backoff. A dropped keep-alive connection is normal
+    — the server may close an idle socket at any time — so a transport error
+    discards the connection and reconnects rather than failing the operation.
+
+    GraphQL-level errors are NOT retried: they are deterministic, and retrying
+    a partially-applied mutation risks duplicate writes.
     """
     payload = json.dumps({
         "query": query,
         **({"variables": variables} if variables else {}),
     }).encode("utf-8")
-    req = request.Request(
-        endpoint,
-        data=payload,
-        headers={
-            "Content-Type": "application/json",
-            "Accept": "application/json",
-        },
-        method="POST",
-    )
-    try:
-        with request.urlopen(req, timeout=timeout) as resp:
-            body = json.loads(resp.read().decode("utf-8"))
-    except HTTPError as e:
-        body = json.loads(e.read().decode("utf-8")) if e.fp else {}
-        raise GraphQLError(
-            f"HTTP {e.code}: {json.dumps(body)[:300]}"
-        ) from e
-    except URLError as e:
-        raise GraphQLError(f"network: {e.reason}") from e
+    headers = {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Connection": "keep-alive",
+    }
 
-    if body.get("errors"):
-        msg = body["errors"][0].get("message", "unknown")
-        raise GraphQLError(msg)
-    return body.get("data") or {}
+    last: Exception | None = None
+    for attempt in range(attempts):
+        key, conn, path = _connection(endpoint)
+        try:
+            with _POOL_LOCK:
+                conn.request("POST", path, payload, headers)
+                resp = conn.getresponse()
+                status = resp.status
+                raw = resp.read()
+        except Exception as e:  # transport-level: socket closed, TLS, timeout
+            _drop(key)
+            last = e
+            if attempt < attempts - 1:
+                time.sleep(0.4 * (2 ** attempt))
+                continue
+            raise GraphQLError(f"network: {e}") from e
+
+        try:
+            body = json.loads(raw.decode("utf-8"))
+        except Exception as e:
+            _drop(key)
+            raise GraphQLError(f"HTTP {status}: unparsable body") from e
+
+        if status >= 400:
+            raise GraphQLError(f"HTTP {status}: {json.dumps(body)[:300]}")
+        if body.get("errors"):
+            raise GraphQLError(body["errors"][0].get("message", "unknown"))
+        return body.get("data") or {}
+
+    raise GraphQLError(f"network: {last}")
 
 
 # ────────────────────────────────────────────────────────────────────────
@@ -264,6 +319,20 @@ def create_drive(name: str, preferred_editor: str = "knowledge-vault") -> tuple[
     if not drive_id:
         raise GraphQLError(f"drive create returned no id: {json.dumps(data)[:200]}")
     return drive_id, slug
+
+
+def get_drive_info(drive_id: str) -> dict[str, Any]:
+    """Fetch a drive's identity (id/slug/name) over GraphQL.
+
+    Replaces `switchboard drives get`, which spawns a process and performs its
+    own TLS handshake — the cost that makes remote runs fail.
+    """
+    query = (
+        "query($id: String!) { document(identifier: $id) "
+        "{ document { id slug name } } }"
+    )
+    data = post(query, {"id": drive_id})
+    return ((data.get("document") or {}).get("document") or {})
 
 
 def get_drive_nodes(drive_id: str) -> list[dict[str, Any]]:
