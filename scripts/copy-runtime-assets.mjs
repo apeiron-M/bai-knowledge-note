@@ -116,4 +116,44 @@ for (const deadWasm of globSync(
   console.log(`[runtime-assets] removed dead browser asset ${deadWasm}`);
 }
 
+// 4. Self-contained transformers WEB build → dist/node/transformers.web.bundle.mjs
+//    Deployed Switchboards (Vetra Cloud) import package chunks over HTTPS
+//    from the registry — there is no node_modules to resolve from and the
+//    dist-bundled transformers node build hard-requires a native binding
+//    that can never load there. The embedder's CDN branch instead fetches
+//    this bundle and imports it via a data: URL, which only works if the
+//    file has zero bare imports — so inline its onnxruntime dependencies
+//    here with rolldown.
+const webBuildSrc = join(
+  "node_modules",
+  "@huggingface",
+  "transformers",
+  "dist",
+  "transformers.web.js",
+);
+if (!existsSync(webBuildSrc)) {
+  fail(`missing ${webBuildSrc} — check the @huggingface/transformers install`);
+}
+const { rolldown } = await import("rolldown");
+const webBundleDest = join(distRoot, "node", "transformers.web.bundle.mjs");
+const bundle = await rolldown({
+  input: webBuildSrc,
+  platform: "browser",
+  logLevel: "silent",
+});
+await bundle.write({
+  file: webBundleDest,
+  format: "esm",
+  inlineDynamicImports: true,
+  sourcemap: false,
+});
+await bundle.close();
+const bundled = statSync(webBundleDest).size;
+if (bundled < 1_000_000) {
+  fail(`transformers.web.bundle.mjs suspiciously small (${bundled} bytes)`);
+}
+console.log(
+  `[runtime-assets] transformers web bundle → ${webBundleDest} (${(bundled / 1048576).toFixed(1)}MB)`,
+);
+
 console.log("[runtime-assets] ok");

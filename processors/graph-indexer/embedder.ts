@@ -37,6 +37,63 @@ import type * as TransformersModule from "@huggingface/transformers";
 let extractor: FeatureExtractionPipeline | null = null;
 let loading: Promise<FeatureExtractionPipeline> | null = null;
 
+/** Import an ESM specifier with process.release.name spoofed to "browser"
+ * for the duration of the import. Both the file-path web build and the
+ * CDN-fetched web bundle need this: their env detection runs at module
+ * init, and only browser mode buffers fetched files instead of demanding
+ * filesystem paths. The value is captured into module closures at init;
+ * restoring afterwards leaves the rest of the process untouched. */
+async function spoofedImport(
+  specifier: string,
+): Promise<typeof TransformersModule> {
+  const originalRelease = process.release;
+  Object.defineProperty(process, "release", {
+    value: { ...originalRelease, name: "browser" },
+    configurable: true,
+    writable: true,
+  });
+  try {
+    return (await import(specifier)) as typeof TransformersModule;
+  } finally {
+    Object.defineProperty(process, "release", {
+      value: originalRelease,
+      configurable: true,
+      writable: true,
+    });
+  }
+}
+
+function toJsDataUrl(code: string): string {
+  return `data:text/javascript;base64,${Buffer.from(code, "utf8").toString("base64")}`;
+}
+
+/** Pin ort to single-threaded, non-proxied WASM. Threads and the proxy
+ * spawn Workers from blob: URLs, which Node's ESM loader refuses — this
+ * exact failure cost a debugging session; do not remove. */
+function configureOrtWasm(
+  transformers: typeof TransformersModule,
+  wasmPaths: unknown,
+  wasmBinary?: Uint8Array,
+): void {
+  const onnxWasm = (
+    transformers.env.backends as {
+      onnx?: {
+        wasm?: {
+          numThreads?: number;
+          proxy?: boolean;
+          wasmPaths?: unknown;
+          wasmBinary?: Uint8Array;
+        };
+      };
+    }
+  ).onnx?.wasm;
+  if (!onnxWasm) return;
+  onnxWasm.numThreads = 1;
+  onnxWasm.proxy = false;
+  onnxWasm.wasmPaths = wasmPaths;
+  if (wasmBinary) onnxWasm.wasmBinary = wasmBinary;
+}
+
 /** Serve file:// URLs from disk through fetch(); pass everything else
  * through. Node's fetch rejects the file: scheme outright, so this is
  * strictly additive. Installed once, only when the WASM strategy runs. */
@@ -156,28 +213,7 @@ async function loadWasm(
 
   await installFileFetchShim();
 
-  // Spoofed import: the web build must see a browser environment at module
-  // init so it buffers files instead of demanding fs paths. The value is
-  // captured into its closures; restoring afterwards leaves the rest of
-  // the process untouched.
-  const originalRelease = process.release;
-  Object.defineProperty(process, "release", {
-    value: { ...originalRelease, name: "browser" },
-    configurable: true,
-    writable: true,
-  });
-  let transformers: typeof TransformersModule;
-  try {
-    transformers = (await import(
-      pathToFileURL(webBuild).href
-    )) as typeof TransformersModule;
-  } finally {
-    Object.defineProperty(process, "release", {
-      value: originalRelease,
-      configurable: true,
-      writable: true,
-    });
-  }
+  const transformers = await spoofedImport(pathToFileURL(webBuild).href);
 
   if (modelPath) {
     transformers.env.allowLocalModels = true;
@@ -186,19 +222,7 @@ async function loadWasm(
     transformers.env.allowRemoteModels = false;
   }
   transformers.env.useBrowserCache = false;
-
-  const onnxWasm = (
-    transformers.env.backends as {
-      onnx?: {
-        wasm?: { numThreads?: number; proxy?: boolean; wasmPaths?: unknown };
-      };
-    }
-  ).onnx?.wasm;
-  if (onnxWasm) {
-    onnxWasm.numThreads = 1; // workers would need blob: imports Node refuses
-    onnxWasm.proxy = false;
-    onnxWasm.wasmPaths = `${pathToFileURL(ortDist).href}/`;
-  }
+  configureOrtWasm(transformers, `${pathToFileURL(ortDist).href}/`);
 
   const ext = await transformers.pipeline(
     "feature-extraction",
@@ -211,20 +235,101 @@ async function loadWasm(
   return ext;
 }
 
+/**
+ * CDN branch: deployed Switchboards (Vetra Cloud) import package chunks
+ * over HTTP(S) from the registry — import.meta.url is not file:// and no
+ * node_modules exists to resolve from. The runtime-assets script ships a
+ * SELF-CONTAINED transformers web bundle (bare imports inlined) plus the
+ * ort helper pair next to the chunks, so everything is fetchable relative
+ * to this module's URL:
+ *  - the web bundle and ort helper are imported via data: URLs (Node
+ *    natively imports data:, avoiding any question of https import
+ *    support and any filesystem writes — readOnlyRootFilesystem-safe);
+ *  - the ort WASM binary is passed inline via wasmBinary;
+ *  - the model weights are fetched by transformers itself from
+ *    `<moduleDir>/models/` via remoteHost.
+ */
+async function loadFromCdn(base: string): Promise<FeatureExtractionPipeline> {
+  const fetchText = async (url: string): Promise<string> => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`fetch ${url}: ${res.status}`);
+    return res.text();
+  };
+  const fetchBytes = async (url: string): Promise<Uint8Array> => {
+    const res = await fetch(url);
+    if (!res.ok) throw new Error(`fetch ${url}: ${res.status}`);
+    return new Uint8Array(await res.arrayBuffer());
+  };
+
+  const [webSrc, ortHelper, ortWasm] = await Promise.all([
+    fetchText(`${base}transformers.web.bundle.mjs`),
+    fetchText(`${base}wasm/ort-wasm-simd-threaded.asyncify.mjs`),
+    fetchBytes(`${base}wasm/ort-wasm-simd-threaded.asyncify.wasm`),
+  ]);
+
+  const transformers = await spoofedImport(toJsDataUrl(webSrc));
+
+  transformers.env.allowLocalModels = false;
+  transformers.env.allowRemoteModels = true;
+  transformers.env.remoteHost = `${base}models/`;
+  transformers.env.remotePathTemplate = "{model}/";
+  transformers.env.useBrowserCache = false;
+  // Must stay false: true triggers transformers' blob-URL pre-cache of the
+  // ort helper, and Node cannot import blob: URLs.
+  transformers.env.useWasmCache = false;
+
+  configureOrtWasm(
+    transformers,
+    {
+      // The helper module checks for Node to pick an incompatible branch —
+      // patch the check off, exactly as transformers' own loadWasmFactory
+      // does for browsers.
+      mjs: toJsDataUrl(
+        ortHelper.replaceAll("globalThis.process?.versions?.node", "false"),
+      ),
+      // Kept for completeness; ort uses wasmBinary when present.
+      wasm: `${base}wasm/ort-wasm-simd-threaded.asyncify.wasm`,
+    },
+    ortWasm,
+  );
+
+  const ext = await transformers.pipeline(
+    "feature-extraction",
+    "Supabase/gte-small",
+    { dtype: "q8" },
+  );
+  console.log(`[Embedder] Model loaded (wasm onnxruntime, CDN): ${base}`);
+  return ext;
+}
+
 export async function getExtractor(): Promise<FeatureExtractionPipeline> {
   if (extractor) return extractor;
 
   // Prevent concurrent loads — share the same promise
   if (!loading) {
     loading = (async () => {
-      if (!import.meta.url.startsWith("file:")) {
+      const moduleUrl = import.meta.url;
+      // Test override: point the CDN branch at any static server
+      // (EMBEDDER_CDN_BASE=http://localhost:8000/dist/node/) to exercise
+      // the deployed-Switchboard path without a deployment.
+      const cdnBase =
+        process.env.EMBEDDER_CDN_BASE ??
+        (moduleUrl.startsWith("http")
+          ? moduleUrl.slice(0, moduleUrl.lastIndexOf("/") + 1)
+          : null);
+      if (cdnBase) {
+        extractor = await loadFromCdn(cdnBase);
+        loading = null;
+        return extractor;
+      }
+      if (!moduleUrl.startsWith("file:")) {
         throw new Error(
-          "[Embedder] requires a filesystem deployment (module not loaded from file://)",
+          `[Embedder] unsupported module URL scheme: ${moduleUrl.slice(0, 120)}`,
         );
       }
       const { fileURLToPath } = await import("node:url");
       const path = await import("node:path");
-      const moduleDir = path.dirname(fileURLToPath(import.meta.url));
+      const moduleDir = path.dirname(fileURLToPath(moduleUrl));
       const modelPath = await findModelPath(moduleDir);
 
       try {
