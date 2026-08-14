@@ -66,27 +66,71 @@ env.allowRemoteModels = false;   // hard guarantee: no wire trips, ever
 if the assets are missing — same fail-loudly principle as the pglite copy
 script.
 
-## 2. Durable vector store in relationalDb
+## 2. Durable vector store in relationalDb — designed for growth
 
 Replace the separate `memory://` PGlite (`embedding-store.ts`) with a table in
 the processor's existing namespaced relationalDb, created in
 `migrations.ts` alongside `graph_nodes`:
 
 ```
-note_embeddings(document_id varchar PK, embedding_json text, content_hash varchar, updated_at varchar)
+note_embeddings(
+  document_id  varchar PRIMARY KEY,
+  embedding    bytea,        -- Float32Array bytes; 384 dims = 1536 bytes/row
+  dims         int NOT NULL, -- schema-free dimension changes
+  model        varchar NOT NULL,  -- e.g. "snowflake-arctic-embed-xs@q8"
+  content_hash varchar NOT NULL,  -- sha256 of embedded text; skip unchanged
+  updated_at   varchar NOT NULL
+)
 ```
 
-- **No pgvector dependency**: store 384 floats as JSON, compute cosine in JS.
-  At 521 notes that is ~200k multiply-adds per query — sub-millisecond, and
-  benchmarked faster than the HNSW round-trip at this scale. Revisit a real
-  vector index at ~50k notes.
+The `model` and `dims` columns are the growth insurance: a future model swap
+re-embeds **incrementally** (processor treats a row with a stale `model` value
+exactly like a stale `content_hash`) instead of requiring a stop-the-world
+migration. Mixed-model states never corrupt search because the query path
+filters to rows matching the active model.
+
+**Search strategy: exact brute force over an in-memory matrix, with measured
+headroom.** The store loads all vectors into one contiguous `Float32Array`
+at first query (updated incrementally on upsert/delete — the processor owns
+every write, so the cache is never stale). Measured on this hardware, 384-dim
+dot products over the full corpus:
+
+| notes | query cost | matrix RAM |
+|---|---|---|
+| 521 (today) | 2.1ms | 1MB |
+| 10,000 | 2.4ms | 15MB |
+| 50,000 | 12ms | 73MB |
+| 100,000 | 25ms | 146MB |
+| 500,000 | 124ms | 732MB |
+
+The vault grew 348 → 521 notes over ~3 months; 100k notes is decades of
+headroom at that rate, and 25ms is well under the ~500ms the HNSW round-trip
+costs today. Exact search also means zero recall loss — no index tuning, no
+rebuild jobs, no approximate-neighbour surprises.
+
+**Escalation path, in order, only when measurements demand it:**
+1. **int8 quantization** (4× less RAM, ~4× faster dot products; the
+   arctic-embed family is explicitly designed to quantize well) — same table,
+   `model` column marks the quantization.
+2. **pgvector HNSW** when the deployment's relationalDb is real Postgres with
+   the extension available — detect at startup (`CREATE EXTENSION IF NOT
+   EXISTS vector` in a try/catch) and switch the query path; the bytea column
+   migrates row-by-row.
+The store interface (`upsert / delete / search / missing`) stays fixed so
+neither escalation touches the processor or the resolvers.
+
 - This *removes* the need for `dist/vector.tar.gz` and the separate PGlite
   instance entirely (keep the shipping fix until this lands).
-- `content_hash` = sha256 of the embedded text (`title + " " + description`),
-  so unchanged notes are never re-embedded (the Cookbook's semantic-search
-  recipe pattern).
 - Survives restarts because relationalDb is the reactor's persistent store —
   the same one `graph_nodes` provably persists in.
+
+**Growing note *size* (not just count):** embeddings currently cover
+`title + " " + description`. As note bodies grow, add the head of `content`
+up to the model's 512-token window (`title + description + content[:~1500
+chars]`). Notes are atomic claims by methodology, so the head of the content
+carries the claim; chunked multi-vector embedding is deliberately out of
+scope until a real recall gap is observed — the content-hash mechanism makes
+that future change another incremental re-embed, not a migration.
 
 ## 3. Processor-computed embeddings
 

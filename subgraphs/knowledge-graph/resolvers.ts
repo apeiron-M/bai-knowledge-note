@@ -359,21 +359,28 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
           limit?: number;
         },
       ) => {
-        // The query is embedded HERE so clients never load the model. When
-        // the embedder is unavailable (missing dep, no network for the first
-        // model download) this degrades to keyword fullSearch instead of
-        // erroring — a search box must never be the thing that breaks.
+        // The query is embedded HERE so clients never load the model. Any
+        // failure on the embedding path — model unavailable, embedding store
+        // missing (e.g. a deployment without the pgvector bundle), no vectors
+        // pushed yet — degrades to keyword fullSearch instead of erroring.
+        // A search box must never be the thing that breaks.
         const limit = args.limit ?? 20;
         const embedding = await embedQuery(args.query);
         if (embedding) {
-          return searchWithEmbedding(
-            subgraph,
-            args.driveId,
-            args.query,
-            embedding,
-            args.mode ?? "HYBRID",
-            limit,
-          );
+          try {
+            return await searchWithEmbedding(
+              subgraph,
+              args.driveId,
+              args.query,
+              embedding,
+              args.mode ?? "HYBRID",
+              limit,
+            );
+          } catch (err) {
+            console.warn(
+              `[knowledgeGraph] embedding store unavailable, keyword fallback: ${err instanceof Error ? err.message : String(err)}`,
+            );
+          }
         }
         const graphQuery = getQuery(subgraph, args.driveId);
         const keywordHits = await graphQuery.fullSearch(args.query, limit);
