@@ -16,6 +16,7 @@
  */
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { PHDocument } from "document-model";
+import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 
 const FETCH_CONCURRENCY = 6;
 
@@ -38,20 +39,9 @@ type RawDocResponse = {
   errors?: { message?: string }[];
 };
 
-function reactorEndpoint(): string {
-  const hostname = globalThis.window?.location?.hostname;
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return "http://localhost:4001/graphql";
-  }
-  if (hostname && /^connect\..+\.vetra\.io$/.test(hostname)) {
-    const sbHost = hostname.replace(/^connect\./, "switchboard.");
-    return `https://${sbHost}/graphql`;
-  }
-  return "/graphql";
-}
 
 async function fetchDocState(id: string): Promise<PHDocument | null> {
-  const res = await fetch(reactorEndpoint(), {
+  const res = await fetch(resolveReactorEndpoint(), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ query: DOC_QUERY, variables: { id } }),

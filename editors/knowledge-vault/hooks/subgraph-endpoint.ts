@@ -18,9 +18,50 @@
 const SUBGRAPH_PATH = "/graphql/knowledgeGraph";
 
 const DOMAIN_MAP: Record<string, string> = {
-  "connect-dev.powerhouse.xyz":
-    "https://switchboard-dev.powerhouse.xyz/graphql/knowledgeGraph",
+  "connect-dev.powerhouse.xyz": "https://switchboard-dev.powerhouse.xyz",
 };
+
+/**
+ * Map a Connect hostname to its Switchboard origin, or `null` when the two are
+ * co-hosted (same origin) and a relative path should be used instead.
+ *
+ * Vetra Cloud issues hostnames in two shapes and both must be handled:
+ *   - `connect.<slug>.vetra.io`  → `switchboard.<slug>.vetra.io`  (subdomain)
+ *   - `<slug>-connect.vetra.io`  → `<slug>-switchboard.vetra.io`  (suffix)
+ *
+ * The suffix form is what per-environment cloud deployments actually use
+ * (e.g. `rare-emu-780314b9-connect.vetra.io`). It does NOT match the subdomain
+ * pattern, so before this existed such hosts silently fell through to
+ * same-origin and every subgraph call hit Connect instead of Switchboard.
+ */
+export function resolveSwitchboardOrigin(): string | null {
+  const hostname = globalThis.window?.location?.hostname;
+  if (!hostname) return null;
+
+  if (DOMAIN_MAP[hostname]) return DOMAIN_MAP[hostname];
+
+  // `ph vetra` serves Switchboard on 4001 whatever port Connect is on. Also
+  // covers IDE remote-dev tunnels that forward Connect to a random port.
+  if (hostname === "localhost" || hostname === "127.0.0.1") {
+    return "http://localhost:4001";
+  }
+
+  if (/^connect\..+\.vetra\.io$/.test(hostname)) {
+    return `https://${hostname.replace(/^connect\./, "switchboard.")}`;
+  }
+
+  if (/^.+-connect\.vetra\.io$/.test(hostname)) {
+    return `https://${hostname.replace(/-connect\.vetra\.io$/, "-switchboard.vetra.io")}`;
+  }
+
+  return null;
+}
+
+/** Switchboard's `/graphql` endpoint for the current host. */
+export function resolveReactorEndpoint(): string {
+  const origin = resolveSwitchboardOrigin();
+  return origin ? `${origin}/graphql` : "/graphql";
+}
 
 export function resolveKnowledgeGraphEndpoint(): string {
   const envUrl =
@@ -28,23 +69,6 @@ export function resolveKnowledgeGraphEndpoint(): string {
     (import.meta as { env?: Record<string, string> }).env?.VITE_SUBGRAPH_URL;
   if (envUrl) return envUrl;
 
-  const hostname = globalThis.window?.location?.hostname;
-  if (hostname && DOMAIN_MAP[hostname]) {
-    return DOMAIN_MAP[hostname];
-  }
-
-  if (hostname && /^connect\..+\.vetra\.io$/.test(hostname)) {
-    const sbHost = hostname.replace(/^connect\./, "switchboard.");
-    return `https://${sbHost}${SUBGRAPH_PATH}`;
-  }
-
-  // Any localhost / loopback hostname → use the conventional `ph vetra`
-  // switchboard port (4001), regardless of which port Connect itself is
-  // served on. This covers IDE remote-dev tunnels (Cursor, VS Code
-  // Remote, etc.) where Connect ends up on a random forwarded port.
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return `http://localhost:4001${SUBGRAPH_PATH}`;
-  }
-
-  return SUBGRAPH_PATH;
+  const origin = resolveSwitchboardOrigin();
+  return origin ? `${origin}${SUBGRAPH_PATH}` : SUBGRAPH_PATH;
 }

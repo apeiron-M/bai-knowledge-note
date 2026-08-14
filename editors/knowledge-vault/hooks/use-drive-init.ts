@@ -6,24 +6,8 @@ import {
   addFolder,
 } from "@powerhousedao/reactor-browser";
 import type { Node } from "@powerhousedao/shared/document-drive";
+import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 
-/**
- * Same-origin GraphQL endpoint resolver for the drive document query.
- * Reuses the same logic as `subgraph-endpoint.ts`: any localhost variant
- * (including IDE-tunnel proxy ports) maps to switchboard's :4001.
- */
-function resolveReactorEndpoint(): string {
-  const hostname = globalThis.window?.location?.hostname;
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return "http://localhost:4001/graphql";
-  }
-  // Vetra remote subdomain pattern.
-  if (hostname && /^connect\..+\.vetra\.io$/.test(hostname)) {
-    const sbHost = hostname.replace(/^connect\./, "switchboard.");
-    return `https://${sbHost}/graphql`;
-  }
-  return "/graphql";
-}
 
 /**
  * Authoritatively fetch the drive's tree from the reactor (NOT from

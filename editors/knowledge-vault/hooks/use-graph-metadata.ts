@@ -31,7 +31,10 @@ import {
   useFileNodesInSelectedDrive,
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
-import { resolveKnowledgeGraphEndpoint } from "./subgraph-endpoint.js";
+import {
+  resolveKnowledgeGraphEndpoint,
+  resolveReactorEndpoint,
+} from "./subgraph-endpoint.js";
 
 export type GraphNodeMetadata = {
   documentId: string;
@@ -138,21 +141,9 @@ type DriveTreeRaw = {
 const EMPTY_NODES: GraphNodeMetadata[] = [];
 const EMPTY_EDGES: GraphEdgeMetadata[] = [];
 
-function reactorEndpoint(): string {
-  // Mirror subgraph-endpoint.ts logic for hostname → port mapping.
-  const hostname = globalThis.window?.location?.hostname;
-  if (hostname === "localhost" || hostname === "127.0.0.1") {
-    return "http://localhost:4001/graphql";
-  }
-  if (hostname && /^connect\..+\.vetra\.io$/.test(hostname)) {
-    const sbHost = hostname.replace(/^connect\./, "switchboard.");
-    return `https://${sbHost}/graphql`;
-  }
-  return "/graphql";
-}
 
 async function fetchDriveAllNodes(driveId: string): Promise<DriveTreeNode[]> {
-  const res = await fetch(reactorEndpoint(), {
+  const res = await fetch(resolveReactorEndpoint(), {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
