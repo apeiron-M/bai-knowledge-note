@@ -1,7 +1,7 @@
 {
   "name": "@powerhousedao/knowledge-note",
   "description": "Knowledge Note document model package for Powerhouse",
-  "version": "1.0.46",
+  "version": "1.0.47",
   "license": "AGPL-3.0-only",
   "type": "module",
   "files": [
@@ -63,8 +63,8 @@
     "check-circular-imports": "npx dpdm -T ./index.ts",
     "generate": "ph-cli generate",
     "connect": "ph-cli connect",
-    "build": "ph-cli build",
-    "prepublishOnly": "rm -f tsconfig.tsbuildinfo && ph-cli build",
+    "build": "ph-cli build && node scripts/copy-pglite-assets.mjs",
+    "prepublishOnly": "rm -f tsconfig.tsbuildinfo && ph-cli build && node scripts/copy-pglite-assets.mjs",
     "reactor": "ph-cli reactor",
     "service": "ph-cli service",
     "vetra": "ph-cli vetra",
@@ -74,6 +74,7 @@
     "format:check": "oxfmt --check"
   },
   "dependencies": {
+    "@electric-sql/pglite": "0.3.15",
     "@huggingface/transformers": "^4.0.1",
     "pixi.js": "^8"
   },
