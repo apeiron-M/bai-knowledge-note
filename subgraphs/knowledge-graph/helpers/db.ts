@@ -6,6 +6,7 @@ import type { Kysely } from "kysely";
 import type { ISubgraph } from "@powerhousedao/reactor-api";
 import type { IRelationalDb } from "@powerhousedao/shared/processors";
 import { GraphIndexerProcessor } from "../../../processors/graph-indexer/index.js";
+import { up } from "../../../processors/graph-indexer/migrations.js";
 import { createGraphQuery } from "../../../processors/graph-indexer/query.js";
 import type { DB } from "../../../processors/graph-indexer/schema.js";
 
@@ -21,15 +22,23 @@ export function getDb(subgraph: ISubgraph, driveId: string): Kysely<DB> {
 
 /**
  * Writable namespaced Kysely instance — use for reindex (INSERT/DELETE).
+ *
+ * Runs the processor's migrations first (idempotent — every CREATE is
+ * ifNotExists). The graph-indexer factory only instantiates for
+ * knowledge-vault drives now, so a drive it skipped has no tables at all;
+ * running `up` here keeps the reindex mutation a complete on-demand
+ * recovery path instead of failing with `relation does not exist`.
  */
 export async function getWritableDb(
   subgraph: ISubgraph,
   driveId: string,
 ): Promise<Kysely<DB>> {
   const namespace = GraphIndexerProcessor.getNamespace(driveId);
-  return (await subgraph.relationalDb.createNamespace(
+  const db = (await subgraph.relationalDb.createNamespace(
     namespace,
   )) as unknown as Kysely<DB>;
+  await up(db as unknown as Parameters<typeof up>[0]);
+  return db;
 }
 
 /**
