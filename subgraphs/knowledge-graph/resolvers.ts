@@ -7,6 +7,7 @@ import {
   getEmbedding,
   upsertEmbedding,
 } from "../../processors/graph-indexer/embedding-store.js";
+import { embedQuery } from "./helpers/query-embedder.js";
 
 type Resolver = (
   parent: unknown,
@@ -38,6 +39,49 @@ function withCanonicalDriveIds<T extends Record<string, Resolver>>(
     };
   }
   return out as T;
+}
+
+/**
+ * Shared body of knowledgeGraphSearchByEmbedding (client-supplied vector) and
+ * knowledgeGraphSemanticSearch (server-embedded query). SEMANTIC ranks purely
+ * by cosine similarity; HYBRID fuses semantic + keyword via RRF in
+ * graphQuery.hybridSearch and maps the fused score onto `similarity` for a
+ * uniform SemanticResult shape.
+ */
+async function searchWithEmbedding(
+  subgraph: ISubgraph,
+  driveId: string,
+  query: string,
+  embedding: number[],
+  mode: "SEMANTIC" | "HYBRID",
+  limit: number,
+) {
+  const semanticHits = await searchSimilar(embedding, limit * 2);
+  const graphQuery = getQuery(subgraph, driveId);
+
+  if (mode === "SEMANTIC") {
+    const out = [];
+    for (const hit of semanticHits.slice(0, limit)) {
+      const node = await graphQuery.nodeByDocumentId(hit.documentId);
+      if (node) {
+        out.push({
+          node: { ...node, _driveId: driveId },
+          similarity: hit.similarity,
+        });
+      }
+    }
+    return out;
+  }
+
+  const hybridResults = await graphQuery.hybridSearch(
+    query,
+    semanticHits,
+    limit,
+  );
+  return hybridResults.map((r) => ({
+    node: { ...r.node, _driveId: driveId },
+    similarity: r.score,
+  }));
 }
 
 export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
@@ -296,34 +340,46 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
           limit?: number;
         },
       ) => {
-        const limit = args.limit ?? 20;
-        const semanticHits = await searchSimilar(args.embedding, limit * 2);
-        const graphQuery = getQuery(subgraph, args.driveId);
-
-        if (args.mode === "SEMANTIC") {
-          const out = [];
-          for (const hit of semanticHits.slice(0, limit)) {
-            const node = await graphQuery.nodeByDocumentId(hit.documentId);
-            if (node) {
-              out.push({
-                node: { ...node, _driveId: args.driveId },
-                similarity: hit.similarity,
-              });
-            }
-          }
-          return out;
-        }
-
-        // HYBRID: fuse semantic + keyword via RRF in graphQuery.hybridSearch,
-        // then map the score back to similarity for a uniform SemanticResult shape.
-        const hybridResults = await graphQuery.hybridSearch(
+        return searchWithEmbedding(
+          subgraph,
+          args.driveId,
           args.query,
-          semanticHits,
-          limit,
+          args.embedding,
+          args.mode,
+          args.limit ?? 20,
         );
-        return hybridResults.map((r) => ({
-          node: { ...r.node, _driveId: args.driveId },
-          similarity: r.score,
+      },
+
+      knowledgeGraphSemanticSearch: async (
+        _: unknown,
+        args: {
+          driveId: string;
+          query: string;
+          mode?: "SEMANTIC" | "HYBRID" | null;
+          limit?: number;
+        },
+      ) => {
+        // The query is embedded HERE so clients never load the model. When
+        // the embedder is unavailable (missing dep, no network for the first
+        // model download) this degrades to keyword fullSearch instead of
+        // erroring — a search box must never be the thing that breaks.
+        const limit = args.limit ?? 20;
+        const embedding = await embedQuery(args.query);
+        if (embedding) {
+          return searchWithEmbedding(
+            subgraph,
+            args.driveId,
+            args.query,
+            embedding,
+            args.mode ?? "HYBRID",
+            limit,
+          );
+        }
+        const graphQuery = getQuery(subgraph, args.driveId);
+        const keywordHits = await graphQuery.fullSearch(args.query, limit);
+        return keywordHits.map((node) => ({
+          node: { ...node, _driveId: args.driveId },
+          similarity: 0,
         }));
       },
 

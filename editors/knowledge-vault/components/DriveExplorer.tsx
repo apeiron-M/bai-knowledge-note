@@ -16,7 +16,6 @@ import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
 import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
 import { useAutoHealth } from "../hooks/use-auto-health.js";
-import { useEmbeddingBackfill } from "../hooks/use-embedding-backfill.js";
 import { ThemeToggle } from "../../shared/theme-context.js";
 
 type ViewMode =
@@ -51,9 +50,6 @@ export function DriveExplorer({ children }: EditorProps) {
 
   // Auto-generate health metrics
   useAutoHealth(notes);
-
-  // Background embedding backfill — runs once per drive load when embedder is ready
-  const backfill = useEmbeddingBackfill();
 
   // Count doc types
   const allFiles = fileNodes ?? [];
@@ -332,19 +328,6 @@ export function DriveExplorer({ children }: EditorProps) {
         </div>
       </div>
 
-      {backfill.running && (
-        <div
-          className="fixed bottom-3 right-3 z-30 rounded-md px-2.5 py-1.5 text-[11px] backdrop-blur-sm"
-          style={{
-            backgroundColor:
-              "color-mix(in srgb, var(--bai-bg, #11111b) 90%, transparent)",
-            color: "var(--bai-text-secondary, #d4d4d8)",
-            border: "1px solid var(--bai-border, rgba(255,255,255,0.1))",
-          }}
-        >
-          Building search index — {backfill.done}/{backfill.total}
-        </div>
-      )}
     </div>
   );
 }

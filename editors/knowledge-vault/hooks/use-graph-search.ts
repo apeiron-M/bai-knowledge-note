@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { resolveKnowledgeGraphEndpoint } from "./subgraph-endpoint.js";
-import { useEmbedder } from "./use-embedder.js";
 
 /* ------------------------------------------------------------------ */
 /*  Types                                                             */
@@ -56,9 +55,13 @@ async function graphqlFetch<T>(
 /*  Queries                                                           */
 /* ------------------------------------------------------------------ */
 
-const SEARCH_BY_EMBEDDING_QUERY = `
-  query SearchByEmbedding($driveId: ID!, $query: String!, $embedding: [Float!]!, $mode: SearchMode!, $limit: Int) {
-    knowledgeGraphSearchByEmbedding(driveId: $driveId, query: $query, embedding: $embedding, mode: $mode, limit: $limit) {
+// The query is embedded SERVER-side — the browser never loads the model.
+// This resolver degrades to keyword search internally when the server's
+// embedder or the drive's embeddings are unavailable, so one call covers
+// every deployment state.
+const SEMANTIC_SEARCH_QUERY = `
+  query SemanticSearch($driveId: ID!, $query: String!, $limit: Int) {
+    knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: HYBRID, limit: $limit) {
       node { documentId title description noteType status topics }
       similarity
     }
@@ -116,7 +119,6 @@ export function useGraphSearch() {
   const [error, setError] = useState<string | null>(null);
   const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const endpoint = useMemo(() => resolveKnowledgeGraphEndpoint(), []);
-  const { embed, error: embedderError } = useEmbedder();
 
   // Persist query to sessionStorage
   const setQuery = useCallback((q: string) => {
@@ -138,12 +140,11 @@ export function useGraphSearch() {
     });
   }, [driveId, endpoint]);
 
-  // Debounced search. Always runs hybrid (semantic + keyword fused)
-  // when the embedder is available; falls back to keyword silently
-  // if the embedder fails. Mode is no longer a user choice — hybrid
-  // dominates both other strategies for typical "find me notes about X"
-  // queries, and the keyword fallback handles the rare embedder-unavailable
-  // case without breaking the search box.
+  // Debounced search. One server call: knowledgeGraphSemanticSearch embeds
+  // the query on the Switchboard (hybrid semantic+keyword fusion) and itself
+  // degrades to keyword search when embeddings are unavailable. The browser
+  // never loads the embedding model. The client-side keyword fallback below
+  // only covers deployments too old to have the semanticSearch field.
   const executeSearch = useCallback(
     async (q: string) => {
       if (!driveId || !q.trim()) {
@@ -155,57 +156,37 @@ export function useGraphSearch() {
       setLoading(true);
       setError(null);
 
-      let embedding: number[] | null = null;
-      if (!embedderError) {
-        try {
-          embedding = await embed(q);
-        } catch {
-          embedding = null;
-        }
-      }
-
-      if (!embedding) {
-        // Embedder unavailable — silent keyword fallback
-        const data = await graphqlFetch<{
-          knowledgeGraphFullSearch: SearchResult[];
-        }>(endpoint, KEYWORD_SEARCH_QUERY, { driveId, query: q, limit: 20 });
-        if (data?.knowledgeGraphFullSearch) {
-          setResults(data.knowledgeGraphFullSearch);
-        } else {
-          setResults([]);
-          setError("Search failed.");
-        }
-        setLoading(false);
-        return;
-      }
-
       const data = await graphqlFetch<{
-        knowledgeGraphSearchByEmbedding: Array<{
+        knowledgeGraphSemanticSearch: Array<{
           node: Omit<SearchResult, "similarity" | "matchedBy">;
           similarity: number;
         }>;
-      }>(endpoint, SEARCH_BY_EMBEDDING_QUERY, {
-        driveId,
-        query: q,
-        embedding,
-        mode: "HYBRID",
-        limit: 20,
-      });
+      }>(endpoint, SEMANTIC_SEARCH_QUERY, { driveId, query: q, limit: 20 });
 
-      if (data?.knowledgeGraphSearchByEmbedding) {
+      if (data?.knowledgeGraphSemanticSearch) {
         setResults(
-          data.knowledgeGraphSearchByEmbedding.map((r) => ({
+          data.knowledgeGraphSemanticSearch.map((r) => ({
             ...r.node,
             similarity: r.similarity,
           })),
         );
+        setLoading(false);
+        return;
+      }
+
+      // Older deployment without the field — keyword fallback.
+      const kw = await graphqlFetch<{
+        knowledgeGraphFullSearch: SearchResult[];
+      }>(endpoint, KEYWORD_SEARCH_QUERY, { driveId, query: q, limit: 20 });
+      if (kw?.knowledgeGraphFullSearch) {
+        setResults(kw.knowledgeGraphFullSearch);
       } else {
         setResults([]);
         setError("Search failed.");
       }
       setLoading(false);
     },
-    [driveId, endpoint, embed, embedderError],
+    [driveId, endpoint],
   );
 
   // Trigger debounced search on query change

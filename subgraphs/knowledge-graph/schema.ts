@@ -176,6 +176,18 @@ export const schema: DocumentNode = gql`
       mode: SearchMode!
       limit: Int
     ): [SemanticResult!]!
+    """
+    Semantic/hybrid search from plain query text — the query is embedded
+    SERVER-side, so clients never need the model. Falls back to keyword
+    fullSearch transparently when the embedder or embeddings are unavailable,
+    so it is always safe to call.
+    """
+    knowledgeGraphSemanticSearch(
+      driveId: ID!
+      query: String!
+      mode: SearchMode
+      limit: Int
+    ): [SemanticResult!]!
     knowledgeGraphMissingEmbeddings(driveId: ID!): [ID!]!
 
     knowledgeGraphHistory(
