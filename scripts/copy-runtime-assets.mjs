@@ -12,10 +12,20 @@
 // This script restores those copies after every build. It fails loudly when
 // a source is missing, so a package that would break only once deployed
 // never gets published.
+//
+// It runs from two hooks, and both matter:
+//  - `build`: so a manual build leaves a complete dist.
+//  - `prepack`: so the tarball is complete no matter what rebuilt dist last.
+//    `ph vetra --watch` re-runs a bare `ph-cli build` on any file change,
+//    silently wiping these assets from dist — packing right after would ship
+//    a package whose remote embedder 404s and semantic search degrades to
+//    keyword. prepack runs immediately before the tarball is created (for
+//    both `npm pack` and publish), closing that race.
 import {
   copyFileSync,
   cpSync,
   existsSync,
+  globSync,
   mkdirSync,
   rmSync,
   statSync,
@@ -93,5 +103,17 @@ for (const f of ortFiles) {
   copyFileSync(from, join(wasmDest, f));
 }
 console.log(`[runtime-assets] ort wasm helpers → ${wasmDest}`);
+
+// 3. Strip the browser build's ort WASM asset (~22.8MB). The browser bundle
+//    still carries the embedder chunk because the processor barrel imports
+//    it dynamically, but every call site is behind the server-only
+//    EMBEDDING_ENABLED gate, so the chunk — and therefore this asset — can
+//    never load in a browser. Pure tarball/CDN dead weight.
+for (const deadWasm of globSync(
+  join(distRoot, "browser", "assets", "ort-wasm-*"),
+)) {
+  rmSync(deadWasm);
+  console.log(`[runtime-assets] removed dead browser asset ${deadWasm}`);
+}
 
 console.log("[runtime-assets] ok");
