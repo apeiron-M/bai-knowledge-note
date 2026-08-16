@@ -198,7 +198,10 @@ function ReferencesList({
       {references.length > 0 && (
         <div className="mt-2 space-y-1">
           {references.map((ref, index) => (
-            <div key={`${ref}-${index}`} className="group flex items-center gap-2">
+            <div
+              key={`${ref}-${index}`}
+              className="group flex items-center gap-2"
+            >
               <a
                 href={ref}
                 target="_blank"

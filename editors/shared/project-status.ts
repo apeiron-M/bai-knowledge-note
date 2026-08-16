@@ -2,10 +2,7 @@ import type {
   GoalStatus,
   Goal,
 } from "document-models/work-breakdown-structure";
-import type {
-  ProjectStatus,
-  DeliverableStatus,
-} from "document-models/project";
+import type { ProjectStatus, DeliverableStatus } from "document-models/project";
 
 // Color palette: rgba(r, g, b, alpha)
 // Gray: rgb(156, 163, 175)
@@ -145,9 +142,7 @@ export const DELIVERABLE_STATUS_META: Record<
   },
 };
 
-export function goalRollup(
-  goals: Pick<Goal, "status">[],
-): {
+export function goalRollup(goals: Pick<Goal, "status">[]): {
   total: number;
   finished: number;
   blocked: number;
