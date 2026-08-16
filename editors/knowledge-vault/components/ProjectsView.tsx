@@ -131,11 +131,7 @@ const ProjectCard = memo(function ProjectCard({
     <button
       type="button"
       onClick={() => setSelectedNode(project.id)}
-      className="w-full rounded-lg px-4 py-3 text-left transition-colors hover:bg-white/5"
-      style={{
-        backgroundColor: "var(--bai-bg)",
-        border: "1px solid var(--bai-border)",
-      }}
+      className="w-full rounded-xl border border-[var(--bai-border)] bg-[var(--bai-surface)] px-4 py-3 text-left transition-colors hover:border-[var(--bai-accent)] hover:bg-[var(--bai-hover)]"
     >
       <div className="flex items-center gap-2">
         <p
