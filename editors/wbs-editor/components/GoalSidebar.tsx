@@ -135,7 +135,12 @@ export function GoalSidebar({
             defaultValue={goal.description}
             onBlur={(e) => {
               const value = e.target.value.trim();
-              if (value && value !== goal.description) {
+              if (!value) {
+                // Reset to the document's current description
+                e.currentTarget.value = goal.description;
+                return;
+              }
+              if (value !== goal.description) {
                 dispatch(
                   actions.updateGoalDescription({
                     id: goal.id,
@@ -164,14 +169,17 @@ export function GoalSidebar({
           <input
             type="text"
             defaultValue={goal.assignee ?? ""}
-            onBlur={(e) =>
-              dispatch(
-                actions.assignGoal({
-                  id: goal.id,
-                  assignee: e.target.value.trim() || null,
-                }),
-              )
-            }
+            onBlur={(e) => {
+              const next = e.target.value.trim() || null;
+              if (next !== (goal.assignee ?? null)) {
+                dispatch(
+                  actions.assignGoal({
+                    id: goal.id,
+                    assignee: next,
+                  }),
+                );
+              }
+            }}
             placeholder="Unassigned"
             className="w-full rounded-lg px-3 py-2 text-sm outline-none"
             style={{
@@ -191,14 +199,17 @@ export function GoalSidebar({
           </label>
           <textarea
             defaultValue={goal.outcome ?? ""}
-            onBlur={(e) =>
-              dispatch(
-                actions.setOutcome({
-                  id: goal.id,
-                  outcome: e.target.value.trim() || null,
-                }),
-              )
-            }
+            onBlur={(e) => {
+              const next = e.target.value.trim() || null;
+              if (next !== (goal.outcome ?? null)) {
+                dispatch(
+                  actions.setOutcome({
+                    id: goal.id,
+                    outcome: next,
+                  }),
+                );
+              }
+            }}
             placeholder="No outcome recorded yet"
             rows={2}
             className="w-full resize-none rounded-lg px-3 py-2 text-sm outline-none"
