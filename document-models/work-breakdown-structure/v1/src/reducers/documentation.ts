@@ -1,25 +1,38 @@
 import type { WorkBreakdownStructureDocumentationOperations } from "document-models/work-breakdown-structure/v1";
+import {
+  DuplicateNoteIdError,
+  GoalNotFoundError,
+  NoteNotFoundError,
+} from "../../gen/documentation/error.js";
 
 export const workBreakdownStructureDocumentationOperations: WorkBreakdownStructureDocumentationOperations =
   {
     addNoteOperation(state, action) {
-      // TODO: implement addNoteOperation reducer
-      throw new Error("Reducer for 'addNoteOperation' not implemented.");
+      const g = state.goals.find((g) => g.id === action.input.goalId);
+      if (!g) throw new GoalNotFoundError("Goal not found");
+      if (g.notes.some((n) => n.id === action.input.noteId))
+        throw new DuplicateNoteIdError("Note id already exists");
+      g.notes.push({
+        id: action.input.noteId,
+        note: action.input.note,
+        author: action.input.author || null,
+        timestamp: action.input.timestamp || null,
+      });
     },
     removeNoteOperation(state, action) {
-      // TODO: implement removeNoteOperation reducer
-      throw new Error("Reducer for 'removeNoteOperation' not implemented.");
+      const g = state.goals.find((g) => g.id === action.input.goalId);
+      if (!g) throw new GoalNotFoundError("Goal not found");
+      const i = g.notes.findIndex((n) => n.id === action.input.noteId);
+      if (i === -1) throw new NoteNotFoundError("Note not found");
+      g.notes.splice(i, 1);
     },
     setOwnerOperation(state, action) {
-      // TODO: implement setOwnerOperation reducer
-      throw new Error("Reducer for 'setOwnerOperation' not implemented.");
+      state.owner = action.input.owner || null;
     },
     setReferencesOperation(state, action) {
-      // TODO: implement setReferencesOperation reducer
-      throw new Error("Reducer for 'setReferencesOperation' not implemented.");
+      state.references = action.input.references;
     },
     setProjectRefOperation(state, action) {
-      // TODO: implement setProjectRefOperation reducer
-      throw new Error("Reducer for 'setProjectRefOperation' not implemented.");
+      state.projectRef = action.input.projectRef || null;
     },
   };
