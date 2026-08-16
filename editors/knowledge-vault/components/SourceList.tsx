@@ -111,6 +111,19 @@ const STATUS_COLORS: Record<string, string> = {
 export function SourceList() {
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+  // Work queues start open (small, actionable); the ever-growing terminal
+  // groups start collapsed to a one-line header with the count.
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
+    INBOX: true,
+    EXTRACTING: true,
+    EXTRACTED: false,
+    ARCHIVED: false,
+  });
+  const toggleGroup = useCallback(
+    (status: string) =>
+      setOpenGroups((prev) => ({ ...prev, [status]: !prev[status] })),
+    [],
+  );
   const documents = useDocumentsInSelectedDrive();
   const driveId = useSelectedDriveId();
 
@@ -205,17 +218,31 @@ export function SourceList() {
             (status) => {
               const items = grouped[status];
               if (items.length === 0) return null;
+              const isOpen = openGroups[status] ?? false;
               return (
                 <div key={status}>
-                  <h3
-                    className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-wider"
+                  <button
+                    type="button"
+                    onClick={() => toggleGroup(status)}
+                    aria-expanded={isOpen}
+                    className="mb-2 flex w-full items-center gap-2 rounded-md px-1 py-1 text-xs font-semibold uppercase tracking-wider transition-colors hover:bg-white/5"
                     style={{ color: "var(--bai-text-muted)" }}
                   >
+                    <svg
+                      className={`h-3 w-3 shrink-0 transition-transform ${isOpen ? "rotate-90" : ""}`}
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2.5"
+                    >
+                      <path d="M9 6l6 6-6 6" />
+                    </svg>
                     <span
                       className={`inline-block h-2 w-2 rounded-full ${STATUS_COLORS[status]?.split(" ")[0]}`}
                     />
                     {status.replace("_", " ")} ({items.length})
-                  </h3>
+                  </button>
+                  {isOpen && (
                   <div className="space-y-1">
                     {items.map((source) => (
                       <div
@@ -300,6 +327,7 @@ export function SourceList() {
                       </div>
                     ))}
                   </div>
+                  )}
                 </div>
               );
             },
