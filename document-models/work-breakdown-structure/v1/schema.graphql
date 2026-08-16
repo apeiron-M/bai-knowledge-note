@@ -1,0 +1,123 @@
+scalar Unknown
+scalar DateTime
+scalar Address
+scalar AttachmentRef
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+type WorkBreakdownStructureState {
+  projectRef: PHID
+  owner: String
+  goals: [Goal!]!
+  references: [URL!]!
+}
+
+type Goal {
+  id: OID!
+  description: String!
+  status: GoalStatus!
+  parentId: OID
+  assignee: String
+  dependencies: [OID!]!
+  blockReason: String
+  outcome: String
+  notes: [Note!]!
+}
+enum GoalStatus { TODO IN_PROGRESS BLOCKED IN_REVIEW COMPLETED WONT_DO }
+
+type Note { id: OID!  note: String!  author: String  timestamp: DateTime }
+
+# goals
+
+input CreateGoalInput {
+  id: OID!
+  description: String!
+  parentId: OID
+  assignee: String
+  insertBefore: OID
+}
+
+input UpdateGoalDescriptionInput {
+  id: OID!
+  description: String!
+}
+
+input DeleteGoalInput {
+  id: OID!
+}
+
+input ReorderInput {
+  id: OID!
+  parentId: OID
+  insertBefore: OID
+}
+
+# workflow
+
+input SetGoalStatusInput {
+  id: OID!
+  status: GoalStatus!
+  blockReason: String
+  outcome: String
+}
+
+input AssignGoalInput {
+  id: OID!
+  assignee: String
+}
+
+input SetOutcomeInput {
+  id: OID!
+  outcome: String
+}
+
+input AddDependenciesInput {
+  id: OID!
+  dependencies: [OID!]!
+}
+
+input RemoveDependenciesInput {
+  id: OID!
+  dependencies: [OID!]!
+}
+
+# documentation
+
+input AddNoteInput {
+  goalId: OID!
+  noteId: OID!
+  note: String!
+  author: String
+  timestamp: DateTime
+}
+
+input RemoveNoteInput {
+  goalId: OID!
+  noteId: OID!
+}
+
+input SetOwnerInput {
+  owner: String
+}
+
+input SetReferencesInput {
+  references: [URL!]!
+}
+
+input SetProjectRefInput {
+  projectRef: PHID
+}

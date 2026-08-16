@@ -9,6 +9,7 @@ import { ResearchClaim as ResearchClaimV1 } from "document-models/research-claim
 import { Source as SourceV1 } from "document-models/source/v1";
 import { Tension as TensionV1 } from "document-models/tension/v1";
 import { VaultConfig as VaultConfigV1 } from "document-models/vault-config/v1";
+import { WorkBreakdownStructure as WorkBreakdownStructureV1 } from "document-models/work-breakdown-structure/v1";
 
 /**
  * WARNING: DO NOT EDIT
@@ -27,4 +28,5 @@ export const documentModels = [
   SourceV1,
   TensionV1,
   VaultConfigV1,
+  WorkBreakdownStructureV1,
 ] as const;

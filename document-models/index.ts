@@ -10,3 +10,4 @@ export { Source as SourceV1 } from "./source/v1/module.js";
 export { Tension as TensionV1 } from "./tension/v1/module.js";
 export { upgradeManifests } from "./upgrade-manifests.js";
 export { VaultConfig as VaultConfigV1 } from "./vault-config/v1/module.js";
+export { WorkBreakdownStructure as WorkBreakdownStructureV1 } from "./work-breakdown-structure/v1/module.js";

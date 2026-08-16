@@ -14,6 +14,7 @@ import { researchClaimUpgradeManifest } from "document-models/research-claim/upg
 import { sourceUpgradeManifest } from "document-models/source/upgrades";
 import { tensionUpgradeManifest } from "document-models/tension/upgrades";
 import { vaultConfigUpgradeManifest } from "document-models/vault-config/upgrades";
+import { workBreakdownStructureUpgradeManifest } from "document-models/work-breakdown-structure/upgrades";
 
 export const upgradeManifests: UpgradeManifest<readonly number[]>[] = [
   derivationUpgradeManifest,
@@ -27,4 +28,5 @@ export const upgradeManifests: UpgradeManifest<readonly number[]>[] = [
   sourceUpgradeManifest,
   tensionUpgradeManifest,
   vaultConfigUpgradeManifest,
+  workBreakdownStructureUpgradeManifest,
 ];
