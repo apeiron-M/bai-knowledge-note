@@ -53,7 +53,9 @@ async function spoofedImport(
     writable: true,
   });
   try {
-    return (await import(specifier)) as typeof TransformersModule;
+    // Variable specifier is the point (file URL or data: URL decided at
+    // runtime); Vite SSR can't and shouldn't analyze it.
+    return (await import(/* @vite-ignore */ specifier)) as typeof TransformersModule;
   } finally {
     Object.defineProperty(process, "release", {
       value: originalRelease,
