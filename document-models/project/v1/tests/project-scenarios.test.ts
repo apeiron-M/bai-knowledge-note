@@ -24,8 +24,16 @@ describe("project lifecycle scenario", () => {
     expect(doc.state.global.description).toBe("Projects + WBS in the vault");
     expect(doc.state.global.name).toBe("Vault Projects Tab"); // untouched
 
+    // covers if (action.input.name) true branch
+    doc = reducer(doc, updateProjectInfo({ name: "Vault Projects" }));
+    expect(doc.state.global.name).toBe("Vault Projects");
+    expect(doc.state.global.description).toBe("Projects + WBS in the vault"); // unchanged
+
     doc = reducer(doc, setProjectStatus({ status: "ACTIVE" }));
     doc = reducer(doc, setOwner({ owner: "knowledge-agent" }));
+    // covers action.input.owner || null fallback
+    doc = reducer(doc, setOwner({ owner: null }));
+    expect(doc.state.global.owner).toBeNull();
     doc = reducer(doc, setTargetDate({ targetDate: "2026-09-30T00:00:00.000Z" }));
     doc = reducer(doc, linkWbs({ wbsRef: "wbs-doc-1" }));
     expect(doc.state.global.status).toBe("ACTIVE");
@@ -54,8 +62,14 @@ describe("project lifecycle scenario", () => {
     });
     doc = reducer(doc, setDeliverableStatus({ id: "d1", status: "DELIVERED" }));
     expect(doc.state.global.deliverables[0].deliveredAt).toBe("2026-08-20T10:00:00.000Z");
+
+    // covers deliveredAt fallback chain: input absent + existing null → null
+    doc = reducer(doc, addDeliverable({ id: "d3", title: "Docs" }));
+    doc = reducer(doc, setDeliverableStatus({ id: "d3", status: "DELIVERED" }));
+    expect(doc.state.global.deliverables[2].deliveredAt).toBeNull();
+
     doc = reducer(doc, removeDeliverable({ id: "d2" }));
-    expect(doc.state.global.deliverables).toHaveLength(1);
+    expect(doc.state.global.deliverables).toHaveLength(2);
 
     doc = reducer(doc, addKnowledgeRef({ ref: "note-123" }));
     doc = reducer(doc, removeKnowledgeRef({ ref: "note-123" }));

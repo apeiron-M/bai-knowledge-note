@@ -24,8 +24,10 @@ describe("project errors (state unchanged, error recorded)", () => {
   it("MEMBER_NOT_FOUND on update and remove", () => {
     let doc = reducer(init(), updateMember({ id: "nope", name: "x" }));
     expect(doc.operations.global[1].error).toBeTruthy();
+    expect(doc.state.global.team).toEqual([]);
     doc = reducer(doc, removeMember({ id: "nope" }));
     expect(doc.operations.global[2].error).toBeTruthy();
+    expect(doc.state.global.team).toEqual([]);
   });
   it("DUPLICATE_DELIVERABLE", () => {
     let doc = reducer(init(), addDeliverable({ id: "d1", title: "t" }));
@@ -36,16 +38,21 @@ describe("project errors (state unchanged, error recorded)", () => {
   it("DELIVERABLE_NOT_FOUND on update, setStatus, remove", () => {
     let doc = reducer(init(), updateDeliverable({ id: "nope", title: "x" }));
     expect(doc.operations.global[1].error).toBeTruthy();
+    expect(doc.state.global.deliverables).toEqual([]);
     doc = reducer(doc, setDeliverableStatus({ id: "nope", status: "DELIVERED" }));
     expect(doc.operations.global[2].error).toBeTruthy();
+    expect(doc.state.global.deliverables).toEqual([]);
     doc = reducer(doc, removeDeliverable({ id: "nope" }));
     expect(doc.operations.global[3].error).toBeTruthy();
+    expect(doc.state.global.deliverables).toEqual([]);
   });
   it("DUPLICATE_KNOWLEDGE_REF and KNOWLEDGE_REF_NOT_FOUND", () => {
     let doc = reducer(init(), addKnowledgeRef({ ref: "n1" }));
     doc = reducer(doc, addKnowledgeRef({ ref: "n1" }));
     expect(doc.operations.global[2].error).toBeTruthy();
+    expect(doc.state.global.knowledgeRefs).toEqual(["n1"]);
     doc = reducer(doc, removeKnowledgeRef({ ref: "n2" }));
     expect(doc.operations.global[3].error).toBeTruthy();
+    expect(doc.state.global.knowledgeRefs).toEqual(["n1"]);
   });
 });
