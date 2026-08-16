@@ -400,7 +400,17 @@
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); [print\\(f['name'], '->', f['type'], 'args:', [a['name'] for a in f['args']]\\) for f in d['data']['__schema']['queryType']['fields']]\")",
       "Bash(curl -s -m 30 -X POST https://rare-emu-780314b9-switchboard.vetra.io/graphql -H 'Content-Type: application/json' -d '{\"query\":\"{ documentModels { totalCount items { id name } } }\"}')",
       "Bash(curl -s -m 30 -X POST https://rare-emu-780314b9-switchboard.vetra.io/graphql -H 'Content-Type: application/json' -d '{\"query\":\"query { __type\\(name: \\\\\"Query\\\\\"\\) { fields { name type { kind name ofType { kind name } } } } }\"}')",
-      "Bash(curl -s -m 40 https://registry.dev.vetra.io/@powerhousedao%2fknowledge-note)"
+      "Bash(curl -s -m 40 https://registry.dev.vetra.io/@powerhousedao%2fknowledge-note)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\(json.dumps\\({k:v for k,v in d.items\\(\\) if 'plugin' in k.lower\\(\\) or 'Plugin' in k}, indent=1\\)\\) if any\\('plugin' in k.lower\\(\\) for k in d\\) else print\\('no plugin keys'\\)\")",
+      "Bash(git -C /home/p/Powerhouse/bai-knowledge-note/.claude/plugins/powerhouse-knowledge log --oneline -2)",
+      "Bash(claude plugin *)",
+      "Bash(python3 -)",
+      "Bash(git ls-remote *)",
+      "Bash(git branch *)",
+      "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('manifest keys:', list\\(d.keys\\(\\)\\)\\); print\\('docs:', len\\(d.get\\('documents',[]\\)\\), 'folders:', len\\(d.get\\('folders',[]\\)\\)\\)\")",
+      "Bash(python3 scripts/drive-sync/download.py --endpoint https://light-colt-c497cfbd-switchboard.vetra.io/graphql/r --drive powerhouse-knowledge --out vault-fix-scripts/remote-vault-backup --concurrency 6)",
+      "Bash(curl -s -m 10 http://localhost:4001/graphql -H 'Content-Type: application/json' -d '{\"query\":\"{ drives }\"}')",
+      "Bash(curl -s -m 10 http://localhost:4001/d/knowledge-vault)"
     ]
   },
   "enabledPlugins": {
