@@ -106,12 +106,17 @@ export function HeaderBar({ state, dispatch }: HeaderBarProps) {
         <textarea
           defaultValue={state.description ?? ""}
           onBlur={(e) => {
-            // Description is optional and the reducer only ever assigns a
-            // truthy value (it can't be cleared once set), so an empty
-            // blur is a guaranteed no-op — skip the round trip entirely.
             const value = e.target.value.trim();
-            if (!value || value === (state.description ?? "")) return;
-            dispatch(actions.updateProjectInfo({ description: value }));
+            if (!value) {
+              // updateProjectInfo's reducer only ever assigns description
+              // when truthy (it can't be cleared once set) — reset the DOM
+              // rather than let it look emptied out.
+              e.currentTarget.value = state.description ?? "";
+              return;
+            }
+            if (value !== (state.description ?? "")) {
+              dispatch(actions.updateProjectInfo({ description: value }));
+            }
           }}
           rows={3}
           placeholder="What is this project about? (optional)"

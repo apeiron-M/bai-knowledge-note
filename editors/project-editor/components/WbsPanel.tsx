@@ -69,12 +69,19 @@ export function useLinkedWbs(): LinkedWbsContextValue {
 }
 
 /**
- * Wrap the WbsPanel + DeliverablesSection sections with this. The
- * hook-consuming fetch (`useWorkBreakdownStructureDocumentById`) only
- * mounts when `wbsRef` is set — calling that hook with a real id
- * suspends/throws via React's `use()` on the underlying cache promise
- * (see reactor-browser's document-by-id hook), so an unconditional call
- * would risk a render crash while the project has no linked WBS yet.
+ * Wrap the WbsPanel + DeliverablesSection sections with this.
+ *
+ * Always renders the same `LinkedWbsFetcher` element type, whether or not
+ * `wbsRef` is set. This used to branch between a plain
+ * `<LinkedWbsContext.Provider>` (no ref) and `<LinkedWbsFetcher>` (has
+ * ref) — two different element types at the same position in the tree —
+ * so the instant a freshly created WBS's id landed in `wbsRef`, React
+ * would unmount the entire `children` subtree (WbsPanel + its local
+ * state, including any in-flight `WbsBackLink` write) and mount a fresh
+ * one. Routing both cases through one component type keeps `children`
+ * mounted across that transition; see `LinkedWbsFetcher` below for why
+ * calling the fetch hook unconditionally (rather than guarding the
+ * mount) is safe.
  */
 export function LinkedWbsProvider({
   wbsRef,
@@ -83,23 +90,27 @@ export function LinkedWbsProvider({
   wbsRef: string | null | undefined;
   children: ReactNode;
 }) {
-  if (!wbsRef) {
-    return (
-      <LinkedWbsContext.Provider
-        value={{ wbsRef: null, wbsDoc: undefined, goals: [] }}
-      >
-        {children}
-      </LinkedWbsContext.Provider>
-    );
-  }
-  return <LinkedWbsFetcher wbsRef={wbsRef}>{children}</LinkedWbsFetcher>;
+  return (
+    <LinkedWbsFetcher wbsRef={wbsRef ?? null}>{children}</LinkedWbsFetcher>
+  );
 }
 
+/**
+ * `useWorkBreakdownStructureDocumentById` bottoms out in reactor-browser's
+ * `useDocument`, which only calls React's `use()` on the cached document
+ * promise when `id` is truthy (`id ? documentCache?.get(id) : void 0`) —
+ * with a null id it returns `undefined` directly and `use()` is never
+ * reached, and the WBS-specific wrapper's `isWorkBreakdownStructureDocument`
+ * guard is a zod `safeParse` (never throws) around that `undefined`. So
+ * this never suspends or throws while unlinked, and can be called
+ * unconditionally instead of behind a mount guard — see `LinkedWbsProvider`
+ * above for why that matters.
+ */
 function LinkedWbsFetcher({
   wbsRef,
   children,
 }: {
-  wbsRef: string;
+  wbsRef: string | null;
   children: ReactNode;
 }) {
   const [wbsDoc] = useWorkBreakdownStructureDocumentById(wbsRef);
@@ -118,15 +129,29 @@ function LinkedWbsFetcher({
 
 type WbsPanelProps = {
   dispatch: Dispatch;
-  projectId: string;
   projectName: string;
+  /**
+   * Whether a just-created WBS's back-link write is still in flight.
+   * Owned by `editor.tsx` (not this component) so it — and the
+   * `WbsBackLink` it gates — survive the `LinkedWbsProvider` transition
+   * that happens the moment `onWbsCreated` fires; see the module doc
+   * above `LinkedWbsProvider` for why that transition used to unmount
+   * this component.
+   */
+  pendingWbsId: string | null;
+  /** Called with the new document's id right after `linkWbs` is dispatched. */
+  onWbsCreated: (id: string) => void;
 };
 
-export function WbsPanel({ dispatch, projectId, projectName }: WbsPanelProps) {
+export function WbsPanel({
+  dispatch,
+  projectName,
+  pendingWbsId,
+  onWbsCreated,
+}: WbsPanelProps) {
   const { wbsRef, wbsDoc, goals } = useLinkedWbs();
   const driveId = useSelectedDriveId();
   const nodes = useNodesInSelectedDrive();
-  const [pendingWbsId, setPendingWbsId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
 
   // Folder node named "projects" at the drive root. Falls back to
@@ -151,7 +176,7 @@ export function WbsPanel({ dispatch, projectId, projectName }: WbsPanelProps) {
       );
       if (!result.id) return;
       dispatch(actions.linkWbs({ wbsRef: result.id }));
-      setPendingWbsId(result.id);
+      onWbsCreated(result.id);
     } catch (err) {
       console.error("[WbsPanel] Failed to create WBS:", err);
     } finally {
@@ -197,14 +222,6 @@ export function WbsPanel({ dispatch, projectId, projectName }: WbsPanelProps) {
         </p>
       ) : (
         <LinkedView goals={goals} />
-      )}
-
-      {pendingWbsId && (
-        <WbsBackLink
-          id={pendingWbsId}
-          projectId={projectId}
-          onDone={() => setPendingWbsId(null)}
-        />
       )}
     </div>
   );
@@ -322,8 +339,13 @@ function LinkedView({ goals }: { goals: Goal[] }) {
  * dispatch round-trips) so the back-link can be written as soon as the
  * new document itself becomes fetchable. The `useRef` guard makes the
  * `setProjectRef` dispatch fire exactly once even if this effect re-runs.
+ *
+ * Rendered by `editor.tsx`, not `WbsPanel` — `editor.tsx` never unmounts
+ * across the `wbsRef` transition, so mounting this here (rather than
+ * inside `LinkedWbsProvider`'s children) guarantees the write survives
+ * even if something inside that subtree remounts.
  */
-function WbsBackLink({
+export function WbsBackLink({
   id,
   projectId,
   onDone,

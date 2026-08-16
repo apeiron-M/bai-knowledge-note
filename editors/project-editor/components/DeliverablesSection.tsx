@@ -17,6 +17,20 @@ import { useLinkedWbs } from "./WbsPanel.js";
 
 type Dispatch = DocumentDispatch<ProjectAction>;
 
+// Copied from ReferencesSection.tsx (same reasoning: the generated zod
+// schema validates `url` with `z.url()`, and the action creator parses
+// its input synchronously — an invalid string like "example.com" throws
+// inside the onClick handler instead of surfacing as a normal reducer
+// error, so it must be screened out client-side before dispatching).
+function isValidUrl(value: string): boolean {
+  try {
+    new URL(value);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 const ALL_DELIVERABLE_STATUSES: DeliverableStatus[] = [
   "PLANNED",
   "IN_PROGRESS",
@@ -260,6 +274,8 @@ function AddDeliverableRow({
   const [title, setTitle] = useState("");
   const [goalRef, setGoalRef] = useState("");
   const [url, setUrl] = useState("");
+  const trimmedUrl = url.trim();
+  const urlInvalid = trimmedUrl.length > 0 && !isValidUrl(trimmedUrl);
 
   function reset() {
     setTitle("");
@@ -269,13 +285,13 @@ function AddDeliverableRow({
 
   function handleAdd() {
     const trimmed = title.trim();
-    if (!trimmed) return;
+    if (!trimmed || urlInvalid) return;
     dispatch(
       actions.addDeliverable({
         id: generateId(),
         title: trimmed,
         goalRef: goalRef || undefined,
-        url: url.trim() || undefined,
+        url: trimmedUrl || undefined,
       }),
     );
     reset();
@@ -368,6 +384,11 @@ function AddDeliverableRow({
           }}
         />
       </div>
+      {urlInvalid && (
+        <p className="mt-1 text-[10px] text-red-400">
+          Must be a valid URL (e.g. https://...)
+        </p>
+      )}
       <div className="flex justify-end gap-2">
         <button
           type="button"
@@ -383,7 +404,7 @@ function AddDeliverableRow({
         <button
           type="button"
           onClick={handleAdd}
-          disabled={!title.trim()}
+          disabled={!title.trim() || urlInvalid}
           className="rounded-md px-2.5 py-1 text-xs font-medium disabled:opacity-40"
           style={{
             backgroundColor: "var(--bai-accent)",

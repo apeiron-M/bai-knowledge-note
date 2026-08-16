@@ -100,12 +100,17 @@ function MemberRow({
         defaultValue={member.role ?? ""}
         placeholder="Role"
         onBlur={(e) => {
-          // updateMember's reducer only assigns role when truthy (it can
-          // never be cleared once set), so an empty blur is a guaranteed
-          // no-op at the reducer — skip the round trip entirely.
           const value = e.target.value.trim();
-          if (!value || value === (member.role ?? "")) return;
-          dispatch(actions.updateMember({ id: member.id, role: value }));
+          if (!value) {
+            // updateMember's reducer only assigns role when truthy (it
+            // can never be cleared once set) — reset the DOM rather than
+            // let it look emptied out.
+            e.currentTarget.value = member.role ?? "";
+            return;
+          }
+          if (value !== (member.role ?? "")) {
+            dispatch(actions.updateMember({ id: member.id, role: value }));
+          }
         }}
         className="w-32 shrink-0 rounded-md bg-transparent px-2 py-1 text-xs outline-none"
         style={{ color: "var(--bai-text-tertiary)" }}
