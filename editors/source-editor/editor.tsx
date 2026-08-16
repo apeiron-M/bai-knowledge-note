@@ -264,42 +264,74 @@ export default function Editor() {
                 className="space-y-1.5 text-xs"
                 style={{ color: "var(--bai-text-tertiary)" }}
               >
+                {/* Long unbroken values (sha256 hashes, URLs) cannot wrap;
+                    each row pins the label and lets the value truncate with
+                    the full text on hover. `min-w-0` is required for
+                    truncate to work on a flex child. */}
                 {state.provenance?.author && (
-                  <div className="flex justify-between">
-                    <span style={{ color: "var(--bai-text-faint)" }}>
+                  <div className="flex justify-between gap-2">
+                    <span
+                      className="shrink-0"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
                       Author
                     </span>
-                    <span style={{ color: "var(--bai-text-secondary)" }}>
+                    <span
+                      className="min-w-0 truncate text-right"
+                      style={{ color: "var(--bai-text-secondary)" }}
+                      title={state.provenance.author}
+                    >
                       {state.provenance.author}
                     </span>
                   </div>
                 )}
                 {state.provenance?.url && (
-                  <div className="flex justify-between">
-                    <span style={{ color: "var(--bai-text-faint)" }}>URL</span>
+                  <div className="flex justify-between gap-2">
                     <span
-                      className="truncate max-w-[120px]"
+                      className="shrink-0"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
+                      URL
+                    </span>
+                    <a
+                      className="min-w-0 truncate text-right hover:underline"
                       style={{ color: "var(--bai-text-secondary)" }}
                       title={state.provenance.url}
+                      href={state.provenance.url}
+                      target="_blank"
+                      rel="noreferrer"
                     >
                       {state.provenance.url}
-                    </span>
+                    </a>
                   </div>
                 )}
                 {state.provenance?.method && (
-                  <div className="flex justify-between">
-                    <span style={{ color: "var(--bai-text-faint)" }}>
+                  <div className="flex justify-between gap-2">
+                    <span
+                      className="shrink-0"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
                       Method
                     </span>
-                    <span>{state.provenance.method}</span>
+                    <span
+                      className="min-w-0 truncate text-right"
+                      title={state.provenance.method}
+                    >
+                      {state.provenance.method}
+                    </span>
                   </div>
                 )}
                 {state.createdBy && (
-                  <div className="flex justify-between">
-                    <span style={{ color: "var(--bai-text-faint)" }}>
+                  <div className="flex justify-between gap-2">
+                    <span
+                      className="shrink-0"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
                       Ingested by
                     </span>
-                    <span>{state.createdBy}</span>
+                    <span className="min-w-0 truncate text-right" title={state.createdBy}>
+                      {state.createdBy}
+                    </span>
                   </div>
                 )}
               </div>

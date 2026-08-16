@@ -113,9 +113,12 @@ export function ProvenanceInfo({
 
   return (
     <div className="space-y-1.5 text-xs text-gray-400">
-      <div className="flex justify-between">
-        <span className="text-gray-600">Author</span>
-        <span className="font-medium text-gray-300">
+      <div className="flex justify-between gap-2">
+        <span className="shrink-0 text-gray-600">Author</span>
+        <span
+          className="min-w-0 truncate text-right font-medium text-gray-300"
+          title={provenance?.author ?? undefined}
+        >
           {provenance?.author ?? "Unknown"}
         </span>
       </div>
@@ -135,10 +138,10 @@ export function ProvenanceInfo({
         <span>{updatedDate}</span>
       </div>
       {provenance?.sessionId && (
-        <div className="flex justify-between">
-          <span className="text-gray-600">Session</span>
+        <div className="flex justify-between gap-2">
+          <span className="shrink-0 text-gray-600">Session</span>
           <span
-            className="max-w-[120px] truncate font-mono"
+            className="min-w-0 truncate text-right font-mono"
             title={provenance.sessionId}
           >
             {provenance.sessionId}
