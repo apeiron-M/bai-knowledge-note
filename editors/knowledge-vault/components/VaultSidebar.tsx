@@ -8,11 +8,15 @@ import {
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
+import type { GraphFocus } from "./GraphViewPixi.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 
 type VaultSidebarProps = {
   notes: KnowledgeNoteInfo[];
   mocs: MocInfo[];
+  /** When set, sidebar content is replaced by the graph highlight neighborhood. */
+  graphFocus?: GraphFocus | null;
+  onClearGraphFocus?: () => void;
 };
 
 const STATUS_ORDER = ["CANONICAL", "IN_REVIEW", "DRAFT", "ARCHIVED"] as const;
@@ -35,7 +39,12 @@ const MIN_WIDTH = 200;
 const MAX_WIDTH = 480;
 const DEFAULT_WIDTH = 256;
 
-export function VaultSidebar({ notes, mocs }: VaultSidebarProps) {
+export function VaultSidebar({
+  notes,
+  mocs,
+  graphFocus = null,
+  onClearGraphFocus,
+}: VaultSidebarProps) {
   const [search, setSearch] = useState("");
   const [section, setSection] = useState<SidebarSection>("notes");
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
@@ -129,6 +138,63 @@ export function VaultSidebar({ notes, mocs }: VaultSidebarProps) {
     }
     return groups;
   }, [filtered]);
+
+  const noteMap = useMemo(() => {
+    const map = new Map<string, KnowledgeNoteInfo>();
+    for (const n of notes) map.set(n.id, n);
+    return map;
+  }, [notes]);
+
+  const mocMap = useMemo(() => {
+    const map = new Map<string, MocInfo>();
+    for (const m of mocs) map.set(m.id, m);
+    return map;
+  }, [mocs]);
+
+  const connectionItems = useMemo(() => {
+    if (!graphFocus) return [];
+    const selectedId = graphFocus.selectedId;
+    // Selected node first, then neighbors in stable focusedIds order.
+    const ordered = [
+      selectedId,
+      ...graphFocus.focusedIds.filter((id) => id !== selectedId),
+    ];
+    return ordered.map((id) => {
+      const note = noteMap.get(id);
+      if (note) {
+        return {
+          id,
+          title: note.title ?? note.name,
+          kind: "Note" as const,
+          meta: note.noteType,
+          topics: note.topics,
+          isSelected: id === selectedId,
+        };
+      }
+      const moc = mocMap.get(id);
+      if (moc) {
+        return {
+          id,
+          title: moc.title,
+          kind: "MoC" as const,
+          meta: moc.tier,
+          topics: [] as { id: string; name: string }[],
+          isSelected: id === selectedId,
+        };
+      }
+      return {
+        id,
+        title: id.slice(0, 12),
+        kind: "Unknown" as const,
+        meta: null as string | null,
+        topics: [] as { id: string; name: string }[],
+        isSelected: id === selectedId,
+      };
+    });
+  }, [graphFocus, noteMap, mocMap]);
+
+  const selectedConnectionTitle =
+    connectionItems.find((i) => i.isSelected)?.title ?? "Selected node";
 
   // Collapsed: show a thin strip with toggle button
   if (!sidebarOpen) {
@@ -267,7 +333,10 @@ export function VaultSidebar({ notes, mocs }: VaultSidebarProps) {
           <button
             key={key}
             type="button"
-            onClick={() => setSection(key)}
+            onClick={() => {
+              if (graphFocus) onClearGraphFocus?.();
+              setSection(key);
+            }}
             className={`sidebar-tab flex-1 rounded-md py-1 text-[10px] font-medium transition-colors`}
             style={
               section === key
@@ -290,276 +359,377 @@ export function VaultSidebar({ notes, mocs }: VaultSidebarProps) {
 
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-2 pb-4">
-        {section === "notes" && (
-          <>
-            {STATUS_ORDER.map((status) => {
-              const groupNotes = grouped[status];
-              if (groupNotes.length === 0) return null;
-              const isCollapsed = collapsed[status] ?? false;
-              return (
-                <div key={status} className="mb-1">
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setCollapsed((c) => ({ ...c, [status]: !isCollapsed }))
-                    }
-                    className="sidebar-row flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs"
-                    style={{ color: "var(--bai-text-muted)" }}
+        {graphFocus ? (
+          <div className="space-y-1">
+            <div className="mb-1 flex items-start gap-2 px-2 py-1.5">
+              <div className="min-w-0 flex-1">
+                <p
+                  className="text-[10px] font-semibold uppercase tracking-wider"
+                  style={{ color: "var(--bai-text-faint)" }}
+                >
+                  Connections ({connectionItems.length})
+                </p>
+                <p
+                  className="truncate text-xs font-medium"
+                  style={{ color: "var(--bai-text-secondary)" }}
+                  title={selectedConnectionTitle}
+                >
+                  {selectedConnectionTitle}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => onClearGraphFocus?.()}
+                className="sidebar-collapse-btn shrink-0 rounded p-1 transition-colors"
+                style={{ color: "var(--bai-text-faint)" }}
+                title="Clear selection"
+              >
+                <svg
+                  className="h-3.5 w-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+            {connectionItems.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                onClick={() => setSelectedNode(item.id)}
+                className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
+                style={
+                  item.isSelected
+                    ? {
+                        backgroundColor: "var(--bai-hover)",
+                      }
+                    : undefined
+                }
+              >
+                <span
+                  className="sidebar-note-title truncate text-xs font-medium"
+                  style={{
+                    color: item.isSelected
+                      ? "var(--bai-accent)"
+                      : "var(--bai-text-secondary)",
+                  }}
+                >
+                  {item.isSelected ? "● " : ""}
+                  {item.title}
+                </span>
+                <div className="flex items-center gap-1.5">
+                  <span
+                    className="rounded px-1.5 py-0.5 text-[10px]"
+                    style={{
+                      backgroundColor: "var(--bai-hover)",
+                      color: "var(--bai-text-tertiary)",
+                    }}
                   >
+                    {item.kind}
+                    {item.meta ? ` · ${item.meta}` : ""}
+                  </span>
+                  {item.topics.slice(0, 2).map((t) => (
                     <span
-                      className={`h-2 w-2 rounded-full ${STATUS_COLORS[status]}`}
-                    />
-                    <span className="flex-1 text-left font-medium">
-                      {STATUS_LABELS[status]}
-                    </span>
-                    <span style={{ color: "var(--bai-text-faint)" }}>
-                      {groupNotes.length}
-                    </span>
-                    <svg
-                      className={`h-3 w-3 transition-transform ${isCollapsed ? "" : "rotate-90"}`}
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
+                      key={t.id}
+                      className="text-[10px]"
+                      style={{
+                        color: "var(--bai-accent)",
+                        opacity: 0.6,
+                      }}
                     >
-                      <path d="M9 18l6-6-6-6" />
-                    </svg>
-                  </button>
-                  {!isCollapsed && (
-                    <div className="ml-1 space-y-px">
-                      {groupNotes.map((note) => (
-                        <button
-                          key={note.id}
-                          type="button"
-                          onClick={() => setSelectedNode(note.id)}
-                          className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
+                      #{t.name}
+                    </span>
+                  ))}
+                </div>
+              </button>
+            ))}
+          </div>
+        ) : (
+          <>
+            {section === "notes" && (
+              <>
+                {STATUS_ORDER.map((status) => {
+                  const groupNotes = grouped[status];
+                  if (groupNotes.length === 0) return null;
+                  const isCollapsed = collapsed[status] ?? false;
+                  return (
+                    <div key={status} className="mb-1">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          setCollapsed((c) => ({
+                            ...c,
+                            [status]: !isCollapsed,
+                          }))
+                        }
+                        className="sidebar-row flex w-full items-center gap-2 rounded px-2 py-1.5 text-xs"
+                        style={{ color: "var(--bai-text-muted)" }}
+                      >
+                        <span
+                          className={`h-2 w-2 rounded-full ${STATUS_COLORS[status]}`}
+                        />
+                        <span className="flex-1 text-left font-medium">
+                          {STATUS_LABELS[status]}
+                        </span>
+                        <span style={{ color: "var(--bai-text-faint)" }}>
+                          {groupNotes.length}
+                        </span>
+                        <svg
+                          className={`h-3 w-3 transition-transform ${isCollapsed ? "" : "rotate-90"}`}
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2"
                         >
-                          <span
-                            className="sidebar-note-title truncate text-xs font-medium"
-                            style={{ color: "var(--bai-text-secondary)" }}
-                          >
-                            {note.title ?? note.name}
-                          </span>
-                          <div className="flex items-center gap-1.5">
-                            {note.noteType && (
+                          <path d="M9 18l6-6-6-6" />
+                        </svg>
+                      </button>
+                      {!isCollapsed && (
+                        <div className="ml-1 space-y-px">
+                          {groupNotes.map((note) => (
+                            <button
+                              key={note.id}
+                              type="button"
+                              onClick={() => setSelectedNode(note.id)}
+                              className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
+                            >
                               <span
-                                className="rounded px-1.5 py-0.5 text-[10px]"
-                                style={{
-                                  backgroundColor: "var(--bai-hover)",
-                                  color: "var(--bai-text-tertiary)",
-                                }}
+                                className="sidebar-note-title truncate text-xs font-medium"
+                                style={{ color: "var(--bai-text-secondary)" }}
                               >
-                                {note.noteType}
+                                {note.title ?? note.name}
                               </span>
-                            )}
-                            {note.topics.slice(0, 2).map((t) => (
-                              <span
-                                key={t.id}
-                                className="text-[10px]"
+                              <div className="flex items-center gap-1.5">
+                                {note.noteType && (
+                                  <span
+                                    className="rounded px-1.5 py-0.5 text-[10px]"
+                                    style={{
+                                      backgroundColor: "var(--bai-hover)",
+                                      color: "var(--bai-text-tertiary)",
+                                    }}
+                                  >
+                                    {note.noteType}
+                                  </span>
+                                )}
+                                {note.topics.slice(0, 2).map((t) => (
+                                  <span
+                                    key={t.id}
+                                    className="text-[10px]"
+                                    style={{
+                                      color: "var(--bai-accent)",
+                                      opacity: 0.6,
+                                    }}
+                                  >
+                                    #{t.name}
+                                  </span>
+                                ))}
+                              </div>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </>
+            )}
+
+            {section === "mocs" && (
+              <div className="space-y-1">
+                {mocs.length === 0 ? (
+                  <p
+                    className="px-2 py-4 text-center text-xs"
+                    style={{ color: "var(--bai-text-faint)" }}
+                  >
+                    No MOCs yet
+                  </p>
+                ) : (
+                  <>
+                    {(["HUB", "DOMAIN", "TOPIC"] as const).map((tier) => {
+                      const tierMocs = mocs.filter((m) => m.tier === tier);
+                      if (tierMocs.length === 0) return null;
+                      return (
+                        <div key={tier}>
+                          <p
+                            className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                            style={{ color: "var(--bai-text-faint)" }}
+                          >
+                            {tier}
+                          </p>
+                          {tierMocs.map((moc) => (
+                            <button
+                              key={moc.id}
+                              type="button"
+                              onClick={() => setSelectedNode(moc.id)}
+                              className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+                            >
+                              <svg
+                                className="h-3.5 w-3.5 shrink-0"
                                 style={{
                                   color: "var(--bai-accent)",
                                   opacity: 0.6,
                                 }}
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
                               >
-                                #{t.name}
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                              </svg>
+                              <span
+                                className="sidebar-note-title truncate text-xs"
+                                style={{ color: "var(--bai-text-secondary)" }}
+                              >
+                                {moc.title}
                               </span>
-                            ))}
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              );
-            })}
+                              <span
+                                className="ml-auto text-[10px]"
+                                style={{ color: "var(--bai-text-faint)" }}
+                              >
+                                {moc.noteCount}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      );
+                    })}
+                    {(() => {
+                      const untiered = mocs.filter((m) => m.tier === null);
+                      if (untiered.length === 0) return null;
+                      return (
+                        <div key="untiered">
+                          <p
+                            className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                            style={{ color: "var(--bai-text-faint)" }}
+                          >
+                            UNTIERED
+                          </p>
+                          {untiered.map((moc) => (
+                            <button
+                              key={moc.id}
+                              type="button"
+                              onClick={() => setSelectedNode(moc.id)}
+                              className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+                            >
+                              <svg
+                                className="h-3.5 w-3.5 shrink-0"
+                                style={{
+                                  color: "var(--bai-accent)",
+                                  opacity: 0.6,
+                                }}
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                              >
+                                <circle cx="12" cy="12" r="10" />
+                                <path d="M12 6v6l4 2" />
+                              </svg>
+                              <span
+                                className="sidebar-note-title truncate text-xs"
+                                style={{ color: "var(--bai-text-secondary)" }}
+                              >
+                                {moc.title}
+                              </span>
+                              <span
+                                className="ml-auto text-[10px]"
+                                style={{ color: "var(--bai-text-faint)" }}
+                              >
+                                {moc.noteCount}
+                              </span>
+                            </button>
+                          ))}
+                        </div>
+                      );
+                    })()}
+                  </>
+                )}
+              </div>
+            )}
+
+            {section === "signals" && (
+              <div className="space-y-3">
+                {observations.length > 0 && (
+                  <div>
+                    <p
+                      className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
+                      Observations ({observations.length})
+                    </p>
+                    {observations.map((obs) => (
+                      <button
+                        key={obs.id}
+                        type="button"
+                        onClick={() => setSelectedNode(obs.id)}
+                        className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+                      >
+                        <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />
+                        <span
+                          className="sidebar-note-title truncate text-xs"
+                          style={{ color: "var(--bai-text-secondary)" }}
+                        >
+                          {obs.title}
+                        </span>
+                        {obs.category && (
+                          <span
+                            className="rounded px-1 py-0.5 text-[10px]"
+                            style={{
+                              backgroundColor: "var(--bai-hover)",
+                              color: "var(--bai-text-muted)",
+                            }}
+                          >
+                            {obs.category}
+                          </span>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {tensions.length > 0 && (
+                  <div>
+                    <p
+                      className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
+                      Tensions ({tensions.length})
+                    </p>
+                    {tensions.map((ten) => (
+                      <button
+                        key={ten.id}
+                        type="button"
+                        onClick={() => setSelectedNode(ten.id)}
+                        className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
+                      >
+                        <span className="h-2 w-2 shrink-0 rounded-full bg-red-400" />
+                        <span
+                          className="sidebar-note-title truncate text-xs"
+                          style={{ color: "var(--bai-text-secondary)" }}
+                        >
+                          {ten.title}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {observations.length === 0 && tensions.length === 0 && (
+                  <p
+                    className="px-2 py-4 text-center text-xs"
+                    style={{ color: "var(--bai-text-faint)" }}
+                  >
+                    No pending signals
+                  </p>
+                )}
+              </div>
+            )}
+
+            {section === "folders" && <FolderTreeView nodes={allNodes ?? []} />}
           </>
         )}
-
-        {section === "mocs" && (
-          <div className="space-y-1">
-            {mocs.length === 0 ? (
-              <p
-                className="px-2 py-4 text-center text-xs"
-                style={{ color: "var(--bai-text-faint)" }}
-              >
-                No MOCs yet
-              </p>
-            ) : (
-              <>
-                {(["HUB", "DOMAIN", "TOPIC"] as const).map((tier) => {
-                  const tierMocs = mocs.filter((m) => m.tier === tier);
-                  if (tierMocs.length === 0) return null;
-                  return (
-                    <div key={tier}>
-                      <p
-                        className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        {tier}
-                      </p>
-                      {tierMocs.map((moc) => (
-                        <button
-                          key={moc.id}
-                          type="button"
-                          onClick={() => setSelectedNode(moc.id)}
-                          className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                        >
-                          <svg
-                            className="h-3.5 w-3.5 shrink-0"
-                            style={{ color: "var(--bai-accent)", opacity: 0.6 }}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M12 6v6l4 2" />
-                          </svg>
-                          <span
-                            className="sidebar-note-title truncate text-xs"
-                            style={{ color: "var(--bai-text-secondary)" }}
-                          >
-                            {moc.title}
-                          </span>
-                          <span
-                            className="ml-auto text-[10px]"
-                            style={{ color: "var(--bai-text-faint)" }}
-                          >
-                            {moc.noteCount}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  );
-                })}
-                {(() => {
-                  const untiered = mocs.filter((m) => m.tier === null);
-                  if (untiered.length === 0) return null;
-                  return (
-                    <div key="untiered">
-                      <p
-                        className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                        style={{ color: "var(--bai-text-faint)" }}
-                      >
-                        UNTIERED
-                      </p>
-                      {untiered.map((moc) => (
-                        <button
-                          key={moc.id}
-                          type="button"
-                          onClick={() => setSelectedNode(moc.id)}
-                          className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                        >
-                          <svg
-                            className="h-3.5 w-3.5 shrink-0"
-                            style={{ color: "var(--bai-accent)", opacity: 0.6 }}
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <circle cx="12" cy="12" r="10" />
-                            <path d="M12 6v6l4 2" />
-                          </svg>
-                          <span
-                            className="sidebar-note-title truncate text-xs"
-                            style={{ color: "var(--bai-text-secondary)" }}
-                          >
-                            {moc.title}
-                          </span>
-                          <span
-                            className="ml-auto text-[10px]"
-                            style={{ color: "var(--bai-text-faint)" }}
-                          >
-                            {moc.noteCount}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  );
-                })()}
-              </>
-            )}
-          </div>
-        )}
-
-        {section === "signals" && (
-          <div className="space-y-3">
-            {observations.length > 0 && (
-              <div>
-                <p
-                  className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  Observations ({observations.length})
-                </p>
-                {observations.map((obs) => (
-                  <button
-                    key={obs.id}
-                    type="button"
-                    onClick={() => setSelectedNode(obs.id)}
-                    className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                  >
-                    <span className="h-2 w-2 shrink-0 rounded-full bg-amber-400" />
-                    <span
-                      className="sidebar-note-title truncate text-xs"
-                      style={{ color: "var(--bai-text-secondary)" }}
-                    >
-                      {obs.title}
-                    </span>
-                    {obs.category && (
-                      <span
-                        className="rounded px-1 py-0.5 text-[10px]"
-                        style={{
-                          backgroundColor: "var(--bai-hover)",
-                          color: "var(--bai-text-muted)",
-                        }}
-                      >
-                        {obs.category}
-                      </span>
-                    )}
-                  </button>
-                ))}
-              </div>
-            )}
-            {tensions.length > 0 && (
-              <div>
-                <p
-                  className="px-2 py-1 text-[10px] font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-faint)" }}
-                >
-                  Tensions ({tensions.length})
-                </p>
-                {tensions.map((ten) => (
-                  <button
-                    key={ten.id}
-                    type="button"
-                    onClick={() => setSelectedNode(ten.id)}
-                    className="sidebar-row group flex w-full items-center gap-2 rounded-md px-2 py-1.5 text-left"
-                  >
-                    <span className="h-2 w-2 shrink-0 rounded-full bg-red-400" />
-                    <span
-                      className="sidebar-note-title truncate text-xs"
-                      style={{ color: "var(--bai-text-secondary)" }}
-                    >
-                      {ten.title}
-                    </span>
-                  </button>
-                ))}
-              </div>
-            )}
-            {observations.length === 0 && tensions.length === 0 && (
-              <p
-                className="px-2 py-4 text-center text-xs"
-                style={{ color: "var(--bai-text-faint)" }}
-              >
-                No pending signals
-              </p>
-            )}
-          </div>
-        )}
-
-        {section === "folders" && <FolderTreeView nodes={allNodes ?? []} />}
       </div>
 
       <style>{`

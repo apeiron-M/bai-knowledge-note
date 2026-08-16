@@ -32,6 +32,12 @@ type PersistedGraphState = {
   }[];
 } | null;
 
+/** Selected node + its direct neighbors — same set the graph highlights. */
+export type GraphFocus = {
+  selectedId: string;
+  focusedIds: string[];
+};
+
 type GraphViewProps = {
   notes: KnowledgeNoteInfo[];
   graphState?: PersistedGraphState;
@@ -42,6 +48,10 @@ type GraphViewProps = {
     status: string | null;
     involvedRefs: string[];
   }>;
+  /** Fires when a node is selected/deselected so the sidebar can mirror the highlight set. */
+  onGraphFocusChange?: (focus: GraphFocus | null) => void;
+  /** Incremented by the parent to force-clear selection (e.g. sidebar ✕). */
+  clearFocusNonce?: number;
 };
 
 type SimNode = SimulationNodeDatum & {
@@ -163,6 +173,9 @@ export default function GraphViewPixi(props: GraphViewProps) {
   // True once the user pans/zooms/drags — turns OFF the auto-fit-on-cool
   // behaviour so we don't yank the view out from under them.
   const userInteractedRef = useRef(false);
+  // Keep latest callback without re-initing the PIXI scene.
+  const onGraphFocusChangeRef = useRef(props.onGraphFocusChange);
+  onGraphFocusChangeRef.current = props.onGraphFocusChange;
 
   // Tooltip uses React state (HTML overlay)
   const [hoverInfo, setHoverInfo] = useState<HoverInfo | null>(null);
@@ -177,6 +190,22 @@ export default function GraphViewPixi(props: GraphViewProps) {
     x: number;
     y: number;
   } | null>(null);
+
+  function clearGraphSelection() {
+    selectedIdRef.current = null;
+    setSelectedDetail(null);
+    onGraphFocusChangeRef.current?.(null);
+    simRef.current?.alpha(Math.max(simRef.current.alpha(), 0.01)).restart();
+  }
+
+  // Parent asked to clear (sidebar ✕) — drop metacard + highlight without
+  // re-notifying (parent already nulled graphFocus).
+  useEffect(() => {
+    if (!props.clearFocusNonce) return;
+    selectedIdRef.current = null;
+    setSelectedDetail(null);
+    simRef.current?.alpha(Math.max(simRef.current.alpha(), 0.01)).restart();
+  }, [props.clearFocusNonce]);
 
   useEffect(() => {
     const host = containerRef.current;
@@ -468,9 +497,11 @@ export default function GraphViewPixi(props: GraphViewProps) {
               if (selectedIdRef.current === n.id) {
                 selectedIdRef.current = null;
                 setSelectedDetail(null);
+                onGraphFocusChangeRef.current?.(null);
               } else {
                 selectedIdRef.current = n.id;
                 const nodeData = nodeById.get(n.id);
+                const focused = buildNeighborhood(n.id, adjacency);
                 setSelectedDetail({
                   id: n.id,
                   label: n.label,
@@ -479,6 +510,10 @@ export default function GraphViewPixi(props: GraphViewProps) {
                   linkCount: nodeData?.linkCount ?? 0,
                   x: upEv?.global.x ?? startX,
                   y: upEv?.global.y ?? startY,
+                });
+                onGraphFocusChangeRef.current?.({
+                  selectedId: n.id,
+                  focusedIds: Array.from(focused),
                 });
               }
               sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
@@ -555,6 +590,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
         if (e.target === app.stage) {
           selectedIdRef.current = null;
           setSelectedDetail(null);
+          onGraphFocusChangeRef.current?.(null);
           sim.alpha(Math.max(sim.alpha(), 0.01)).restart();
         }
       });
@@ -679,6 +715,8 @@ export default function GraphViewPixi(props: GraphViewProps) {
       cancelled = true;
       recenterRef.current = null;
       zoomByRef.current = null;
+      // Graph unmounting (e.g. open a document) — restore default sidebar.
+      onGraphFocusChangeRef.current?.(null);
 
       const currentSim = simRef.current;
       if (currentSim) currentSim.stop();
@@ -863,10 +901,7 @@ export default function GraphViewPixi(props: GraphViewProps) {
             </div>
             <button
               type="button"
-              onClick={() => {
-                selectedIdRef.current = null;
-                setSelectedDetail(null);
-              }}
+              onClick={clearGraphSelection}
               className="shrink-0 text-xs opacity-60 hover:opacity-100"
               title="Close"
             >

@@ -1,4 +1,4 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useCallback } from "react";
 import type { EditorProps } from "document-model";
 import {
   setSelectedNode,
@@ -8,7 +8,7 @@ import {
 import type { ProjectStatus } from "document-models/project";
 import { VaultSidebar } from "./VaultSidebar.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
-import GraphViewPixi from "./GraphViewPixi.js";
+import GraphViewPixi, { type GraphFocus } from "./GraphViewPixi.js";
 import { NoteList } from "./NoteList.js";
 import { SourceList } from "./SourceList.js";
 import { ProjectsView } from "./ProjectsView.js";
@@ -34,9 +34,20 @@ type ViewMode =
 
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
+  const [graphFocus, setGraphFocus] = useState<GraphFocus | null>(null);
+  const [graphClearNonce, setGraphClearNonce] = useState(0);
   const { notes } = useKnowledgeNotes();
   const fileNodes = useFileNodesInSelectedDrive();
   const showDocumentEditor = !!children;
+
+  const handleGraphFocusChange = useCallback((focus: GraphFocus | null) => {
+    setGraphFocus(focus);
+  }, []);
+
+  const handleClearGraphFocus = useCallback(() => {
+    setGraphFocus(null);
+    setGraphClearNonce((n) => n + 1);
+  }, []);
 
   // MoCs sourced from the knowledgeGraph subgraph projection — same
   // round-trip the notes sidebar already makes (no extra fetch). Tensions
@@ -101,6 +112,10 @@ export function DriveExplorer({ children }: EditorProps) {
     if (mode === "config" && vaultConfigDocId) {
       setSelectedNode(vaultConfigDocId);
       return;
+    }
+    // Leaving the graph restores the default sidebar list.
+    if (mode !== "graph") {
+      setGraphFocus(null);
     }
     // For list/custom views, deselect any open doc
     if (showDocumentEditor) setSelectedNode(undefined);
@@ -263,7 +278,12 @@ export function DriveExplorer({ children }: EditorProps) {
 
   return (
     <div className="flex h-full relative">
-      <VaultSidebar notes={notes} mocs={mocs} />
+      <VaultSidebar
+        notes={notes}
+        mocs={mocs}
+        graphFocus={graphFocus}
+        onClearGraphFocus={handleClearGraphFocus}
+      />
 
       <div className="flex flex-1 flex-col overflow-hidden">
         {/* Top bar */}
@@ -347,7 +367,13 @@ export function DriveExplorer({ children }: EditorProps) {
           {showDocumentEditor ? (
             <div className="h-full">{children}</div>
           ) : viewMode === "graph" ? (
-            <GraphViewPixi notes={notes} mocs={mocs} tensions={tensions} />
+            <GraphViewPixi
+              notes={notes}
+              mocs={mocs}
+              tensions={tensions}
+              onGraphFocusChange={handleGraphFocusChange}
+              clearFocusNonce={graphClearNonce}
+            />
           ) : viewMode === "search" ? (
             <SearchView />
           ) : viewMode === "activity" ? (
