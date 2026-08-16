@@ -8,7 +8,6 @@ import {
 import type { Node } from "@powerhousedao/shared/document-drive";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 
-
 /**
  * Authoritatively fetch the drive's tree from the reactor (NOT from
  * Connect's local cache) so we can determine init state without
@@ -52,6 +51,7 @@ async function fetchDriveNodes(driveId: string): Promise<Node[] | null> {
  *   /knowledge/inbox/      <- unprocessed captures
  *   /knowledge/insights/   <- synthesized insights
  * /sources/                <- archived source material
+ * /projects/               <- bai/project + bai/wbs documents
  * /ops/                    <- operational coordination
  *   /ops/sessions/         <- session transcripts
  *   /ops/health/           <- health reports
@@ -93,6 +93,7 @@ const FOLDERS: FolderSpec[] = [
   { name: "inbox", parentPath: "knowledge" },
   { name: "insights", parentPath: "knowledge" },
   { name: "sources" },
+  { name: "projects" },
   { name: "ops" },
   { name: "sessions", parentPath: "ops" },
   { name: "health", parentPath: "ops" },

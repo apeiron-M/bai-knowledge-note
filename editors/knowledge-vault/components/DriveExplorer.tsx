@@ -2,13 +2,16 @@ import { useState, useMemo } from "react";
 import type { EditorProps } from "document-model";
 import {
   setSelectedNode,
+  useDocumentsInSelectedDrive,
   useFileNodesInSelectedDrive,
 } from "@powerhousedao/reactor-browser";
+import type { ProjectStatus } from "document-models/project";
 import { VaultSidebar } from "./VaultSidebar.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import GraphViewPixi from "./GraphViewPixi.js";
 import { NoteList } from "./NoteList.js";
 import { SourceList } from "./SourceList.js";
+import { ProjectsView } from "./ProjectsView.js";
 import { HealthDashboard } from "./HealthDashboard.js";
 import { SearchView } from "./SearchView.js";
 import { ActivityView } from "./ActivityView.js";
@@ -22,6 +25,7 @@ type ViewMode =
   | "notes"
   | "graph"
   | "sources"
+  | "projects"
   | "search"
   | "activity"
   | "pipeline"
@@ -59,6 +63,19 @@ export function DriveExplorer({ children }: EditorProps) {
   const pipelineExists = allFiles.some(
     (n) => n.documentType === "bai/pipeline-queue",
   );
+
+  // Project badge counts non-ARCHIVED projects. Unlike sourceCount, this
+  // can't be derived from file nodes alone (FileNode only carries
+  // documentType, not the document's state), so it reads the full
+  // documents here instead.
+  const documents = useDocumentsInSelectedDrive();
+  const projectCount = (documents ?? []).filter((d) => {
+    if (d.header.documentType !== "bai/project") return false;
+    const status = (
+      d.state as unknown as { global: { status?: ProjectStatus } }
+    ).global.status;
+    return status !== "ARCHIVED";
+  }).length;
 
   // Find singleton doc IDs for direct navigation
   const pipelineDocId = allFiles.find(
@@ -160,6 +177,23 @@ export function DriveExplorer({ children }: EditorProps) {
         >
           <path d="M4 19.5A2.5 2.5 0 016.5 17H20" />
           <path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z" />
+        </svg>
+      ),
+    },
+    {
+      key: "projects",
+      label: "Projects",
+      badge: projectCount > 0 ? projectCount : undefined,
+      icon: (
+        <svg
+          className="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <rect x="2" y="7" width="20" height="14" rx="2" ry="2" />
+          <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
         </svg>
       ),
     },
@@ -320,6 +354,8 @@ export function DriveExplorer({ children }: EditorProps) {
             <ActivityView />
           ) : viewMode === "sources" ? (
             <SourceList />
+          ) : viewMode === "projects" ? (
+            <ProjectsView />
           ) : viewMode === "health" ? (
             <HealthDashboard />
           ) : (
@@ -327,7 +363,6 @@ export function DriveExplorer({ children }: EditorProps) {
           )}
         </div>
       </div>
-
     </div>
   );
 }
@@ -350,6 +385,12 @@ const CREATE_ITEMS = [
     type: "bai/moc",
     primary: false,
     hint: "Organize notes by topic",
+  },
+  {
+    label: "Project",
+    type: "bai/project",
+    primary: false,
+    hint: "Track goals, team, and deliverables",
   },
 ];
 

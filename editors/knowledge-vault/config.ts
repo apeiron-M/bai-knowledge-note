@@ -13,5 +13,7 @@ export const editorConfig: PHAppConfig = {
     "bai/derivation",
     "bai/health-report",
     "bai/research-claim",
+    "bai/project",
+    "bai/wbs",
   ],
 };
