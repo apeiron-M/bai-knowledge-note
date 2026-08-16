@@ -1,0 +1,143 @@
+scalar Unknown
+scalar DateTime
+scalar Address
+scalar AttachmentRef
+scalar Amount_Tokens
+scalar EthereumAddress
+scalar EmailAddress
+scalar Amount_Percentage
+scalar Date
+scalar URL
+scalar Amount_Money
+scalar OLabel
+scalar Currency
+scalar PHID
+scalar OID
+scalar Amount_Fiat
+scalar Amount_Currency
+scalar Amount_Crypto
+scalar Amount
+scalar Upload
+
+type ProjectState {
+  name: String
+  description: String
+  status: ProjectStatus!
+  owner: String
+  targetDate: Date
+  wbsRef: PHID
+  team: [TeamMember!]!
+  deliverables: [Deliverable!]!
+  knowledgeRefs: [PHID!]!
+  references: [URL!]!
+  createdAt: DateTime
+}
+
+enum ProjectStatus { PLANNING ACTIVE ON_HOLD COMPLETED ARCHIVED }
+
+type TeamMember { id: OID!  name: String!  role: String  kind: MemberKind }
+enum MemberKind { HUMAN AGENT }
+
+type Deliverable {
+  id: OID!
+  title: String!
+  description: String
+  status: DeliverableStatus!
+  goalRef: OID
+  url: URL
+  deliveredAt: DateTime
+}
+enum DeliverableStatus { PLANNED IN_PROGRESS DELIVERED CANCELLED }
+
+# lifecycle
+
+input CreateProjectInput {
+  name: String!
+  description: String
+  owner: String
+  status: ProjectStatus
+  createdAt: DateTime!
+}
+
+input UpdateProjectInfoInput {
+  name: String
+  description: String
+}
+
+input SetProjectStatusInput {
+  status: ProjectStatus!
+}
+
+input SetOwnerInput {
+  owner: String
+}
+
+input SetTargetDateInput {
+  targetDate: Date
+}
+
+input LinkWbsInput {
+  wbsRef: PHID
+}
+
+# team
+
+input AddMemberInput {
+  id: OID!
+  name: String!
+  role: String
+  kind: MemberKind
+}
+
+input UpdateMemberInput {
+  id: OID!
+  name: String
+  role: String
+  kind: MemberKind
+}
+
+input RemoveMemberInput {
+  id: OID!
+}
+
+# deliverables
+
+input AddDeliverableInput {
+  id: OID!
+  title: String!
+  description: String
+  goalRef: OID
+  url: URL
+}
+
+input UpdateDeliverableInput {
+  id: OID!
+  title: String
+  description: String
+  goalRef: OID
+  url: URL
+}
+
+input SetDeliverableStatusInput {
+  id: OID!
+  status: DeliverableStatus!
+  deliveredAt: DateTime
+}
+
+input RemoveDeliverableInput {
+  id: OID!
+}
+
+# knowledge
+
+input AddKnowledgeRefInput {
+  ref: PHID!
+}
+
+input RemoveKnowledgeRefInput {
+  ref: PHID!
+}
+
+input SetReferencesInput {
+  references: [URL!]!
+}

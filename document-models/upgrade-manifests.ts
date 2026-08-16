@@ -9,6 +9,7 @@ import { knowledgeNoteUpgradeManifest } from "document-models/knowledge-note/upg
 import { mocUpgradeManifest } from "document-models/moc/upgrades";
 import { observationUpgradeManifest } from "document-models/observation/upgrades";
 import { pipelineQueueUpgradeManifest } from "document-models/pipeline-queue/upgrades";
+import { projectUpgradeManifest } from "document-models/project/upgrades";
 import { researchClaimUpgradeManifest } from "document-models/research-claim/upgrades";
 import { sourceUpgradeManifest } from "document-models/source/upgrades";
 import { tensionUpgradeManifest } from "document-models/tension/upgrades";
@@ -21,6 +22,7 @@ export const upgradeManifests: UpgradeManifest<readonly number[]>[] = [
   mocUpgradeManifest,
   observationUpgradeManifest,
   pipelineQueueUpgradeManifest,
+  projectUpgradeManifest,
   researchClaimUpgradeManifest,
   sourceUpgradeManifest,
   tensionUpgradeManifest,

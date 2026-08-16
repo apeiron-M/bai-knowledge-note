@@ -4,6 +4,7 @@ import { KnowledgeNote as KnowledgeNoteV1 } from "document-models/knowledge-note
 import { Moc as MocV1 } from "document-models/moc/v1";
 import { Observation as ObservationV1 } from "document-models/observation/v1";
 import { PipelineQueue as PipelineQueueV1 } from "document-models/pipeline-queue/v1";
+import { Project as ProjectV1 } from "document-models/project/v1";
 import { ResearchClaim as ResearchClaimV1 } from "document-models/research-claim/v1";
 import { Source as SourceV1 } from "document-models/source/v1";
 import { Tension as TensionV1 } from "document-models/tension/v1";
@@ -21,6 +22,7 @@ export const documentModels = [
   MocV1,
   ObservationV1,
   PipelineQueueV1,
+  ProjectV1,
   ResearchClaimV1,
   SourceV1,
   TensionV1,
