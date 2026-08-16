@@ -9,8 +9,10 @@ export const projectTeamOperations: ProjectTeamOperations = {
     if (state.team.some((m) => m.id === action.input.id))
       throw new DuplicateMemberError("Member already exists");
     state.team.push({
-      id: action.input.id, name: action.input.name,
-      role: action.input.role || null, kind: action.input.kind || null,
+      id: action.input.id,
+      name: action.input.name,
+      role: action.input.role || null,
+      kind: action.input.kind || null,
     });
   },
   updateMemberOperation(state, action) {

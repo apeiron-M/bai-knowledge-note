@@ -39,7 +39,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input CreateProjectInput {\n  name: String!\n  description: String\n  owner: String\n  status: ProjectStatus\n  createdAt: DateTime!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'if (state.name) throw new AlreadyInitializedError("Project already initialized");\nstate.name = action.input.name;\nstate.description = action.input.description || null;\nstate.owner = action.input.owner || null;\nif (action.input.status) state.status = action.input.status;\nstate.createdAt = action.input.createdAt;',
               errors: [
                 {
                   id: "3d3f1996-e048-4cb1-9875-2738af3ea1b9",
@@ -59,7 +60,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input UpdateProjectInfoInput {\n  name: String\n  description: String\n}",
               template: "",
-              reducer: "",
+              reducer:
+                "if (action.input.name) state.name = action.input.name;\nif (action.input.description) state.description = action.input.description;",
               errors: [],
               examples: [],
               scope: "global",
@@ -71,7 +73,7 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input SetProjectStatusInput {\n  status: ProjectStatus!\n}",
               template: "",
-              reducer: "",
+              reducer: "state.status = action.input.status;",
               errors: [],
               examples: [],
               scope: "global",
@@ -82,7 +84,7 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input SetOwnerInput {\n  owner: String\n}",
               template: "",
-              reducer: "",
+              reducer: "state.owner = action.input.owner || null;",
               errors: [],
               examples: [],
               scope: "global",
@@ -93,7 +95,7 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input SetTargetDateInput {\n  targetDate: Date\n}",
               template: "",
-              reducer: "",
+              reducer: "state.targetDate = action.input.targetDate || null;",
               errors: [],
               examples: [],
               scope: "global",
@@ -104,7 +106,7 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input LinkWbsInput {\n  wbsRef: PHID\n}",
               template: "",
-              reducer: "",
+              reducer: "state.wbsRef = action.input.wbsRef || null;",
               errors: [],
               examples: [],
               scope: "global",
@@ -123,7 +125,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input AddMemberInput {\n  id: OID!\n  name: String!\n  role: String\n  kind: MemberKind\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'if (state.team.some((m) => m.id === action.input.id))\n  throw new DuplicateMemberError("Member already exists");\nstate.team.push({\n  id: action.input.id, name: action.input.name,\n  role: action.input.role || null, kind: action.input.kind || null,\n});',
               errors: [
                 {
                   id: "41bf1e0d-6814-48b3-a8eb-1bf98f640bf6",
@@ -143,7 +146,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input UpdateMemberInput {\n  id: OID!\n  name: String\n  role: String\n  kind: MemberKind\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const m = state.team.find((m) => m.id === action.input.id);\nif (!m) throw new MemberNotFoundError("Member not found");\nif (action.input.name) m.name = action.input.name;\nif (action.input.role) m.role = action.input.role;\nif (action.input.kind) m.kind = action.input.kind;',
               errors: [
                 {
                   id: "4445ba38-89a8-4f65-80f1-6faca0e69d48",
@@ -162,7 +166,8 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input RemoveMemberInput {\n  id: OID!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const i = state.team.findIndex((m) => m.id === action.input.id);\nif (i === -1) throw new MemberNotFoundError("Member not found");\nstate.team.splice(i, 1);',
               errors: [
                 {
                   id: "bef93688-0451-4af0-9edd-f00048452743",
@@ -189,7 +194,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input AddDeliverableInput {\n  id: OID!\n  title: String!\n  description: String\n  goalRef: OID\n  url: URL\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'if (state.deliverables.some((d) => d.id === action.input.id))\n  throw new DuplicateDeliverableError("Deliverable already exists");\nstate.deliverables.push({\n  id: action.input.id, title: action.input.title,\n  description: action.input.description || null, status: "PLANNED",\n  goalRef: action.input.goalRef || null, url: action.input.url || null,\n  deliveredAt: null,\n});',
               errors: [
                 {
                   id: "8215bf93-aa9a-44bd-8e08-97611d0418a6",
@@ -209,7 +215,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input UpdateDeliverableInput {\n  id: OID!\n  title: String\n  description: String\n  goalRef: OID\n  url: URL\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const d = state.deliverables.find((d) => d.id === action.input.id);\nif (!d) throw new DeliverableNotFoundError("Deliverable not found");\nif (action.input.title) d.title = action.input.title;\nif (action.input.description) d.description = action.input.description;\nif (action.input.goalRef) d.goalRef = action.input.goalRef;\nif (action.input.url) d.url = action.input.url;',
               errors: [
                 {
                   id: "ca863f7b-de6a-4e24-adf8-9f3d16385b3f",
@@ -229,7 +236,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input SetDeliverableStatusInput {\n  id: OID!\n  status: DeliverableStatus!\n  deliveredAt: DateTime\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const d = state.deliverables.find((d) => d.id === action.input.id);\nif (!d) throw new DeliverableNotFoundError("Deliverable not found");\nd.status = action.input.status;\nd.deliveredAt = action.input.status === "DELIVERED"\n  ? action.input.deliveredAt || d.deliveredAt || null\n  : null;',
               errors: [
                 {
                   id: "61d26f67-721b-4ad6-a104-a3a9d993f6e2",
@@ -248,7 +256,8 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input RemoveDeliverableInput {\n  id: OID!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const i = state.deliverables.findIndex((d) => d.id === action.input.id);\nif (i === -1) throw new DeliverableNotFoundError("Deliverable not found");\nstate.deliverables.splice(i, 1);',
               errors: [
                 {
                   id: "996307e8-4a3a-4e24-98bc-7ef6bbd2d931",
@@ -274,7 +283,8 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input AddKnowledgeRefInput {\n  ref: PHID!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'if (state.knowledgeRefs.includes(action.input.ref))\n  throw new DuplicateKnowledgeRefError("Knowledge ref already linked");\nstate.knowledgeRefs.push(action.input.ref);',
               errors: [
                 {
                   id: "426c4c2c-8c65-4b85-a78f-8f7b1b3a29c6",
@@ -293,7 +303,8 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input RemoveKnowledgeRefInput {\n  ref: PHID!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const i = state.knowledgeRefs.indexOf(action.input.ref);\nif (i === -1) throw new KnowledgeRefNotFoundError("Knowledge ref not linked");\nstate.knowledgeRefs.splice(i, 1);',
               errors: [
                 {
                   id: "f3e0da09-65ba-4a70-a585-79f9f6eed857",
@@ -312,7 +323,7 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input SetReferencesInput {\n  references: [URL!]!\n}",
               template: "",
-              reducer: "",
+              reducer: "state.references = action.input.references;",
               errors: [],
               examples: [],
               scope: "global",

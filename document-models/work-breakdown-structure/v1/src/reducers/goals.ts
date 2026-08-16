@@ -68,9 +68,7 @@ export const workBreakdownStructureGoalsOperations: WorkBreakdownStructureGoalsO
       const without = state.goals.filter((g) => g.id !== goal.id);
       let index = without.length;
       if (action.input.insertBefore) {
-        const i = without.findIndex(
-          (g) => g.id === action.input.insertBefore,
-        );
+        const i = without.findIndex((g) => g.id === action.input.insertBefore);
         if (i === -1)
           throw new GoalNotFoundError("insertBefore goal not found");
         index = i;

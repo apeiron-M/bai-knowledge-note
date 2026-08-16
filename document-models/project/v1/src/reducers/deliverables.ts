@@ -1,7 +1,7 @@
 import type { ProjectDeliverablesOperations } from "document-models/project/v1";
 import {
-  DuplicateDeliverableError,
   DeliverableNotFoundError,
+  DuplicateDeliverableError,
 } from "../../gen/deliverables/error.js";
 
 export const projectDeliverablesOperations: ProjectDeliverablesOperations = {
@@ -9,9 +9,12 @@ export const projectDeliverablesOperations: ProjectDeliverablesOperations = {
     if (state.deliverables.some((d) => d.id === action.input.id))
       throw new DuplicateDeliverableError("Deliverable already exists");
     state.deliverables.push({
-      id: action.input.id, title: action.input.title,
-      description: action.input.description || null, status: "PLANNED",
-      goalRef: action.input.goalRef || null, url: action.input.url || null,
+      id: action.input.id,
+      title: action.input.title,
+      description: action.input.description || null,
+      status: "PLANNED",
+      goalRef: action.input.goalRef || null,
+      url: action.input.url || null,
       deliveredAt: null,
     });
   },
@@ -27,9 +30,10 @@ export const projectDeliverablesOperations: ProjectDeliverablesOperations = {
     const d = state.deliverables.find((d) => d.id === action.input.id);
     if (!d) throw new DeliverableNotFoundError("Deliverable not found");
     d.status = action.input.status;
-    d.deliveredAt = action.input.status === "DELIVERED"
-      ? action.input.deliveredAt || d.deliveredAt || null
-      : null;
+    d.deliveredAt =
+      action.input.status === "DELIVERED"
+        ? action.input.deliveredAt || d.deliveredAt || null
+        : null;
   },
   removeDeliverableOperation(state, action) {
     const i = state.deliverables.findIndex((d) => d.id === action.input.id);

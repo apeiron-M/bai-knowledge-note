@@ -12,8 +12,11 @@ export const projectKnowledgeOperations: ProjectKnowledgeOperations = {
   },
   removeKnowledgeRefOperation(state, action) {
     const i = state.knowledgeRefs.indexOf(action.input.ref);
-    if (i === -1) throw new KnowledgeRefNotFoundError("Knowledge ref not linked");
+    if (i === -1)
+      throw new KnowledgeRefNotFoundError("Knowledge ref not linked");
     state.knowledgeRefs.splice(i, 1);
   },
-  setReferencesOperation(state, action) { state.references = action.input.references; },
+  setReferencesOperation(state, action) {
+    state.references = action.input.references;
+  },
 };

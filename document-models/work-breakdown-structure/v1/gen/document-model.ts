@@ -39,7 +39,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input CreateGoalInput {\n  id: OID!\n  description: String!\n  parentId: OID\n  assignee: String\n  insertBefore: OID\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'if (state.goals.some((g) => g.id === action.input.id))\n  throw new DuplicateGoalIdError("Goal id already exists");\nconst parentId = action.input.parentId || null;\nif (parentId && !state.goals.some((g) => g.id === parentId))\n  throw new GoalNotFoundError("Parent goal not found");\nlet index = state.goals.length;\nif (action.input.insertBefore) {\n  const i = state.goals.findIndex(\n    (g) => g.id === action.input.insertBefore,\n  );\n  if (i === -1)\n    throw new GoalNotFoundError("insertBefore goal not found");\n  index = i;\n}\nstate.goals.splice(index, 0, {\n  id: action.input.id,\n  description: action.input.description,\n  status: "TODO",\n  parentId,\n  assignee: action.input.assignee || null,\n  dependencies: [],\n  blockReason: null,\n  outcome: null,\n  notes: [],\n});\nstate.goals = rebuildDepthFirst(state.goals);',
               errors: [
                 {
                   id: "765c8f8a-869e-426c-9a0b-5f7116c72c1a",
@@ -67,7 +68,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input UpdateGoalDescriptionInput {\n  id: OID!\n  description: String!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const g = state.goals.find((g) => g.id === action.input.id);\nif (!g) throw new GoalNotFoundError("Goal not found");\ng.description = action.input.description;',
               errors: [
                 {
                   id: "ce5d06e2-b8ee-4b8c-a060-3cfc2630c02b",
@@ -86,7 +88,8 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input DeleteGoalInput {\n  id: OID!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'if (!state.goals.some((g) => g.id === action.input.id))\n  throw new GoalNotFoundError("Goal not found");\nconst removed = collectSubtreeIds(state.goals, action.input.id);\nstate.goals = state.goals.filter((g) => !removed.has(g.id));\nfor (const g of state.goals)\n  g.dependencies = g.dependencies.filter((d) => !removed.has(d));',
               errors: [
                 {
                   id: "2e9c5b30-5b3e-482b-bb29-95ca3457ada9",
@@ -106,7 +109,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input ReorderInput {\n  id: OID!\n  parentId: OID\n  insertBefore: OID\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const goal = state.goals.find((g) => g.id === action.input.id);\nif (!goal) throw new GoalNotFoundError("Goal not found");\nconst parentId = action.input.parentId || null;\nif (parentId) {\n  if (!state.goals.some((g) => g.id === parentId))\n    throw new GoalNotFoundError("Parent goal not found");\n  if (\n    parentId === goal.id ||\n    collectSubtreeIds(state.goals, goal.id).has(parentId)\n  )\n    throw new InvalidParentError(\n      "Cannot move a goal under itself or its descendant",\n    );\n}\ngoal.parentId = parentId;\nconst without = state.goals.filter((g) => g.id !== goal.id);\nlet index = without.length;\nif (action.input.insertBefore) {\n  const i = without.findIndex(\n    (g) => g.id === action.input.insertBefore,\n  );\n  if (i === -1)\n    throw new GoalNotFoundError("insertBefore goal not found");\n  index = i;\n}\nwithout.splice(index, 0, goal);\nstate.goals = rebuildDepthFirst(without);',
               errors: [
                 {
                   id: "46a3e981-bc47-47d0-9b86-3ace45805452",
@@ -142,7 +146,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input SetGoalStatusInput {\n  id: OID!\n  status: GoalStatus!\n  blockReason: String\n  outcome: String\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const g = state.goals.find((g) => g.id === action.input.id);\nif (!g) throw new GoalNotFoundError("Goal not found");\nif (\n  action.input.status === "BLOCKED" &&\n  !action.input.blockReason?.trim()\n)\n  throw new MissingBlockReasonError("BLOCKED requires a blockReason");\ng.status = action.input.status;\ng.blockReason =\n  action.input.status === "BLOCKED"\n    ? (action.input.blockReason ?? null)\n    : null;\nif (action.input.outcome) g.outcome = action.input.outcome;',
               errors: [
                 {
                   id: "99a43dc6-6c3b-4221-8554-8ab932ae6dd6",
@@ -170,7 +175,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input AssignGoalInput {\n  id: OID!\n  assignee: String\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const g = state.goals.find((g) => g.id === action.input.id);\nif (!g) throw new GoalNotFoundError("Goal not found");\ng.assignee = action.input.assignee || null;',
               errors: [
                 {
                   id: "d1a94956-d3f2-4ac4-ba5e-bc6d073ae49e",
@@ -190,7 +196,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input SetOutcomeInput {\n  id: OID!\n  outcome: String\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const g = state.goals.find((g) => g.id === action.input.id);\nif (!g) throw new GoalNotFoundError("Goal not found");\ng.outcome = action.input.outcome || null;',
               errors: [
                 {
                   id: "b20750e9-2ab2-4b6d-8487-70d3786d886b",
@@ -210,7 +217,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input AddDependenciesInput {\n  id: OID!\n  dependencies: [OID!]!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const g = state.goals.find((g) => g.id === action.input.id);\nif (!g) throw new GoalNotFoundError("Goal not found");\nfor (const dep of action.input.dependencies) {\n  if (dep === g.id)\n    throw new InvalidDependencyError("Goal cannot depend on itself");\n  if (!state.goals.some((o) => o.id === dep))\n    throw new DependencyNotFoundError("Dependency goal not found");\n}\nfor (const dep of action.input.dependencies)\n  if (!g.dependencies.includes(dep)) g.dependencies.push(dep);',
               errors: [
                 {
                   id: "3948cfb9-8cd1-449d-a70d-53791edb84a0",
@@ -244,7 +252,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input RemoveDependenciesInput {\n  id: OID!\n  dependencies: [OID!]!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const g = state.goals.find((g) => g.id === action.input.id);\nif (!g) throw new GoalNotFoundError("Goal not found");\ng.dependencies = g.dependencies.filter(\n  (d) => !action.input.dependencies.includes(d),\n);',
               errors: [
                 {
                   id: "9e41e077-6b08-4c90-9270-6e40853d42d3",
@@ -271,7 +280,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input AddNoteInput {\n  goalId: OID!\n  noteId: OID!\n  note: String!\n  author: String\n  timestamp: DateTime\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const g = state.goals.find((g) => g.id === action.input.goalId);\nif (!g) throw new GoalNotFoundError("Goal not found");\nif (g.notes.some((n) => n.id === action.input.noteId))\n  throw new DuplicateNoteIdError("Note id already exists");\ng.notes.push({\n  id: action.input.noteId,\n  note: action.input.note,\n  author: action.input.author || null,\n  timestamp: action.input.timestamp || null,\n});',
               errors: [
                 {
                   id: "d0d8a7ee-c43d-423e-bdf1-bc06f6d29635",
@@ -298,7 +308,8 @@ export const documentModel: DocumentModelGlobalState = {
               schema:
                 "input RemoveNoteInput {\n  goalId: OID!\n  noteId: OID!\n}",
               template: "",
-              reducer: "",
+              reducer:
+                'const g = state.goals.find((g) => g.id === action.input.goalId);\nif (!g) throw new GoalNotFoundError("Goal not found");\nconst i = g.notes.findIndex((n) => n.id === action.input.noteId);\nif (i === -1) throw new NoteNotFoundError("Note not found");\ng.notes.splice(i, 1);',
               errors: [
                 {
                   id: "304f31ca-b5a6-4643-8257-c33758b419c0",
@@ -324,7 +335,7 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input SetOwnerInput {\n  owner: String\n}",
               template: "",
-              reducer: "",
+              reducer: "state.owner = action.input.owner || null;",
               errors: [],
               examples: [],
               scope: "global",
@@ -335,7 +346,7 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input SetReferencesInput {\n  references: [URL!]!\n}",
               template: "",
-              reducer: "",
+              reducer: "state.references = action.input.references;",
               errors: [],
               examples: [],
               scope: "global",
@@ -346,7 +357,7 @@ export const documentModel: DocumentModelGlobalState = {
               description: "",
               schema: "input SetProjectRefInput {\n  projectRef: PHID\n}",
               template: "",
-              reducer: "",
+              reducer: "state.projectRef = action.input.projectRef || null;",
               errors: [],
               examples: [],
               scope: "global",
