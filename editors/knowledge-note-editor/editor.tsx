@@ -142,13 +142,13 @@ export default function Editor() {
 
   return (
     <div
-      className="min-h-screen"
+      className="h-full overflow-y-auto"
       style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
     >
       <div className="mx-auto max-w-6xl">
         <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
 
-        <div className="flex gap-6 p-6 pb-12">
+        <div className="flex gap-6 p-6 pb-32">
           {/* Main content area */}
           <div
             className="min-w-0 flex-1 space-y-5 rounded-xl p-6"
@@ -479,9 +479,11 @@ export default function Editor() {
             )}
           </div>
 
-          {/* Right sidebar */}
+          {/* Right sidebar — independently scrollable so tall metadata
+              (Provenance + many Metadata fields) stays reachable when the
+              Connect host clips page scroll short of the panel bottom. */}
           <div
-            className="w-64 shrink-0 space-y-6 self-start rounded-xl p-5"
+            className="w-64 shrink-0 space-y-6 self-start rounded-xl p-5 max-h-[calc(100dvh-8rem)] overflow-y-auto pb-8"
             style={{
               backgroundColor: "var(--bai-surface)",
               border: "1px solid var(--bai-border)",

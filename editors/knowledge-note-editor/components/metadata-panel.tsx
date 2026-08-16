@@ -125,18 +125,21 @@ export function MetadataPanel({
       <button
         type="button"
         onClick={() => setExpanded(!expanded)}
-        className="flex w-full items-center justify-between text-xs font-semibold uppercase tracking-wider text-gray-500"
+        className="flex w-full items-center justify-between text-xs font-semibold uppercase tracking-wider"
+        style={{ color: "var(--bai-text-muted)" }}
       >
         <span>
           Metadata
           {hasAnyMetadata && (
-            <span className="font-normal text-gray-600">
+            <span className="font-normal" style={{ color: "var(--bai-text-faint)" }}>
               {" "}
               ({populatedStringFields.length + populatedListFields.length})
             </span>
           )}
         </span>
-        <span className="text-gray-600">{expanded ? "\u25B2" : "\u25BC"}</span>
+        <span style={{ color: "var(--bai-text-faint)" }}>
+          {expanded ? "\u25B2" : "\u25BC"}
+        </span>
       </button>
       {expanded && (
         <div className="mt-3 space-y-3">
@@ -153,7 +156,7 @@ export function MetadataPanel({
               />
             ))}
           </div>
-          <hr className="border-white/10" />
+          <hr style={{ borderColor: "var(--bai-border)" }} />
           <div className="space-y-2">
             {LIST_FIELDS.map((f) => (
               <MetadataListField
@@ -169,6 +172,11 @@ export function MetadataPanel({
               />
             ))}
           </div>
+          <style>{`
+            .metadata-input::placeholder {
+              color: var(--bai-text-faint);
+            }
+          `}</style>
         </div>
       )}
     </div>
@@ -188,13 +196,23 @@ function MetadataStringField({
 }) {
   return (
     <label className="block text-xs">
-      <span className="mb-0.5 block text-gray-600">{label}</span>
+      <span
+        className="mb-0.5 block"
+        style={{ color: "var(--bai-text-muted)" }}
+      >
+        {label}
+      </span>
       <input
         type="text"
         defaultValue={value ?? ""}
         placeholder={placeholder}
         onBlur={(e) => onChange(e.target.value || null)}
-        className="w-full rounded border border-white/10 bg-[#11111b] px-2 py-1 text-xs text-gray-300 outline-none placeholder:text-gray-700 focus:border-[#cba6f7]/50"
+        className="metadata-input w-full rounded border px-2 py-1 text-xs outline-none focus:border-[#cba6f7]/50"
+        style={{
+          backgroundColor: "var(--bai-bg)",
+          color: "var(--bai-text-secondary)",
+          borderColor: "var(--bai-border)",
+        }}
       />
     </label>
   );
@@ -224,18 +242,23 @@ function MetadataListField({
 
   return (
     <div className="text-xs">
-      <span className="text-gray-600">{label}</span>
+      <span style={{ color: "var(--bai-text-muted)" }}>{label}</span>
       <div className="mt-1 flex flex-wrap gap-1">
         {values.map((v, i) => (
           <span
             key={`${v}-${i}`}
-            className="group inline-flex items-center gap-0.5 rounded bg-[#313244] px-1.5 py-0.5 text-gray-400"
+            className="group inline-flex items-center gap-0.5 rounded px-1.5 py-0.5"
+            style={{
+              backgroundColor: "var(--bai-hover)",
+              color: "var(--bai-text-tertiary)",
+            }}
           >
             {v}
             <button
               type="button"
               onClick={() => handleRemove(i)}
-              className="text-gray-600 opacity-0 hover:text-red-400 group-hover:opacity-100"
+              className="opacity-0 transition-opacity group-hover:opacity-100 hover:text-red-400"
+              style={{ color: "var(--bai-text-faint)" }}
             >
               &times;
             </button>
@@ -253,7 +276,12 @@ function MetadataListField({
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder={placeholder}
-            className="w-28 rounded border border-dashed border-white/10 bg-transparent px-1.5 py-0.5 text-xs text-gray-400 outline-none placeholder:text-gray-700 focus:border-[#cba6f7]/40"
+            className="metadata-input w-28 rounded border border-dashed px-1.5 py-0.5 text-xs outline-none focus:border-[#cba6f7]/40"
+            style={{
+              backgroundColor: "transparent",
+              color: "var(--bai-text-secondary)",
+              borderColor: "var(--bai-border)",
+            }}
           />
         </form>
       </div>
