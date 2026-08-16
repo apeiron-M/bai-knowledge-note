@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedProjectDocument } from "document-models/project";
-import { ThemeProvider } from "../shared/theme-context.js";
+import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
 import { InitCard } from "./components/InitCard.js";
 import { HeaderBar } from "./components/HeaderBar.js";
 import {
@@ -27,12 +27,12 @@ export default function Editor() {
 
   return (
     <ThemeProvider>
-      <DocumentToolbar />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
       <div
         style={{
           backgroundColor: "var(--bai-bg)",
           color: "var(--bai-text)",
-          minHeight: "100%",
+          minHeight: "100vh",
         }}
       >
         {!state.name ? (

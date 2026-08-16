@@ -7,7 +7,7 @@ import {
   useSelectedWorkBreakdownStructureDocument,
 } from "document-models/work-breakdown-structure";
 import type { WorkBreakdownStructureAction } from "document-models/work-breakdown-structure";
-import { ThemeProvider } from "../shared/theme-context.js";
+import { ThemeProvider, TOOLBAR_CLASS } from "../shared/theme-context.js";
 import { GOAL_STATUS_META, goalRollup } from "../shared/project-status.js";
 import { GoalTree } from "./components/GoalTree.js";
 import { GoalSidebar } from "./components/GoalSidebar.js";
@@ -33,9 +33,9 @@ export default function Editor() {
 
   return (
     <ThemeProvider>
-      <DocumentToolbar />
+      <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
       <div
-        className="flex h-full"
+        className="flex min-h-screen"
         style={{ backgroundColor: "var(--bai-bg)", color: "var(--bai-text)" }}
       >
         <div className="flex-1 space-y-4 overflow-y-auto p-6">

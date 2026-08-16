@@ -70,7 +70,7 @@ export function StatusChipMenu({ goal, dispatch }: StatusChipMenuProps) {
               on any outside click without a portal or external lib. */}
           <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
           <div
-            className="absolute left-0 z-50 mt-1 w-44 rounded-xl p-1 shadow-2xl"
+            className="absolute right-0 z-50 mt-1 max-h-[60vh] w-44 overflow-y-auto rounded-xl p-1 shadow-2xl"
             style={{
               backgroundColor: "var(--bai-surface)",
               border: "1px solid var(--bai-border)",
