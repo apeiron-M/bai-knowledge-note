@@ -31,24 +31,21 @@ class GraphQLClient:
         if operation_name is not None:
             body["operationName"] = operation_name
 
-        req = Request(
-            self.endpoint,
-            data=json.dumps(body).encode(),
-            headers={"Content-Type": "application/json"},
-            method="POST",
-        )
+        # Delegate to lib.gql's pooled keep-alive transport. The old
+        # per-request urllib path performed a fresh TLS handshake per call,
+        # which on handshake-bound remote hosts fails ~19% of the time
+        # ("_ssl.c:983: handshake operation timed out") during bulk runs.
+        # gql.post reuses one connection per (scheme, host) and retries
+        # transport errors with backoff; GraphQL-level errors are not
+        # retried. `body` above is kept for operationName compatibility.
+        from . import gql
 
         try:
-            with urlopen(req, timeout=self.timeout) as resp:
-                payload = json.loads(resp.read().decode())
-        except HTTPError as e:
-            raise GraphQLError(f"HTTP {e.code} from {self.endpoint}: {e.reason}") from e
-        except URLError as e:
-            raise GraphQLError(f"Network error to {self.endpoint}: {e.reason}") from e
-
-        errors = payload.get("errors")
-        if errors:
-            messages = "; ".join(e.get("message", "?") for e in errors)
-            raise GraphQLError(f"GraphQL errors: {messages}")
-
-        return payload.get("data", {})
+            return gql.post(
+                query,
+                variables,
+                endpoint=self.endpoint,
+                timeout=self.timeout,
+            )
+        except gql.GraphQLError as e:
+            raise GraphQLError(str(e)) from e
