@@ -315,9 +315,9 @@ function LinkedView({ goals }: { goals: Goal[] }) {
               key={g.id}
               className="rounded-lg px-3 py-2 text-xs"
               style={{
-                backgroundColor: "rgba(248, 113, 113, 0.1)",
-                color: "rgba(252, 165, 165, 1)",
-                border: "1px solid rgba(248, 113, 113, 0.3)",
+                backgroundColor: GOAL_STATUS_META.BLOCKED.bg,
+                color: GOAL_STATUS_META.BLOCKED.fg,
+                border: `1px solid ${GOAL_STATUS_META.BLOCKED.border}`,
               }}
             >
               <p className="font-medium">{g.description}</p>

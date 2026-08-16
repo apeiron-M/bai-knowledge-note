@@ -230,3 +230,24 @@
 [data-bai-theme="light"] input[type="date"] {
   color-scheme: light;
 }
+
+/* Native <select> dropdowns (e.g. project-editor's status/goal/kind
+   pickers): the closed control's background/text is themed via inline
+   style, but the OPEN option-list popup is OS-drawn chrome that ignores
+   those inline styles and falls back to the browser's light appearance
+   unless color-scheme says otherwise — fixes a white popup over a dark
+   editor. Mirrors the input[type="date"] fix above. */
+[data-bai-theme="dark"] select {
+  color-scheme: dark;
+}
+[data-bai-theme="light"] select {
+  color-scheme: light;
+}
+
+/* Native checkboxes (e.g. the WBS goal dependencies checklist): tint the
+   checked state with the active bai accent instead of the browser's
+   default blue, so it matches the rest of the accent-colored UI. */
+[data-bai-theme="dark"] input[type="checkbox"],
+[data-bai-theme="light"] input[type="checkbox"] {
+  accent-color: var(--bai-accent);
+}
