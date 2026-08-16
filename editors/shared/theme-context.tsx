@@ -16,10 +16,9 @@ type ThemeContextValue = {
 
 const STORAGE_KEY = "bai-theme";
 
-const ThemeContext = createContext<ThemeContextValue>({
-  theme: "dark",
-  toggle: () => {},
-});
+// null = "no provider above me". Lets nested ThemeProviders detect a parent
+// and pass through instead of forking their own stale copy of the theme.
+const ThemeContext = createContext<ThemeContextValue | null>(null);
 
 function getStoredTheme(): BaiTheme {
   try {
@@ -32,6 +31,11 @@ function getStoredTheme(): BaiTheme {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
+  // Document editors mount their own ThemeProvider so they work standalone,
+  // but when rendered INSIDE the vault drive app (which already provides one),
+  // a second provider would freeze its own data-bai-theme copy and ignore the
+  // nav-bar toggle. Detect the parent and become a pass-through instead.
+  const parent = useContext(ThemeContext);
   const [theme, setTheme] = useState<BaiTheme>(getStoredTheme);
 
   useEffect(() => {
@@ -46,6 +50,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     setTheme((t) => (t === "dark" ? "light" : "dark"));
   }, []);
 
+  if (parent) return <>{children}</>;
+
   return (
     <ThemeContext.Provider value={{ theme, toggle }}>
       <div data-bai-theme={theme} className="bai-theme">
@@ -55,8 +61,8 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
   );
 }
 
-export function useTheme() {
-  return useContext(ThemeContext);
+export function useTheme(): ThemeContextValue {
+  return useContext(ThemeContext) ?? { theme: "dark", toggle: () => {} };
 }
 
 /** Toolbar classes for dark and light themes */
