@@ -1,8 +1,12 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedSourceDocument, actions } from "document-models/source";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
-import { useFileNodesInSelectedDrive } from "@powerhousedao/reactor-browser";
+import {
+  setSelectedNode,
+  useDocumentsInSelectedDrive,
+  useFileNodesInSelectedDrive,
+} from "@powerhousedao/reactor-browser";
 import { generateId } from "document-model/core";
 import { usePipelineQueueDocumentById } from "../../document-models/pipeline-queue/v1/hooks.js";
 import { actions as pipelineActions } from "document-models/pipeline-queue";
@@ -43,6 +47,18 @@ export default function Editor() {
     usePipelineQueueDocumentById(pipelineNodeId);
   const [queued, setQueued] = useState(false);
   const [editing, setEditing] = useState(false);
+
+  // Resolve extracted claim PHIDs → titles (same pattern as MoC core ideas).
+  // reactor-browser 6.0.0-dev.239+ tolerates per-doc fetch failures, so we
+  // can look up knowledge-notes directly without freezing the editor.
+  const allDriveDocs = useDocumentsInSelectedDrive();
+  const noteDocs = useMemo(
+    () =>
+      (allDriveDocs ?? []).filter(
+        (d) => d.header.documentType === "bai/knowledge-note",
+      ),
+    [allDriveDocs],
+  );
 
   if (!initialized) {
     return <IngestForm dispatch={dispatch} />;
@@ -391,16 +407,61 @@ export default function Editor() {
               >
                 Extracted Claims ({(state.extractedClaims ?? []).length})
               </h4>
-              <div className="space-y-1 max-h-48 overflow-y-auto">
-                {(state.extractedClaims ?? []).map((ref, i) => (
-                  <p
-                    key={i}
-                    className="truncate text-[10px] font-mono"
-                    style={{ color: "var(--bai-text-faint)" }}
-                  >
-                    {ref}
-                  </p>
-                ))}
+              <div className="space-y-1.5 max-h-[600px] overflow-y-auto">
+                {(state.extractedClaims ?? []).map((ref) => {
+                  const linkedDoc = noteDocs.find((d) => d.header.id === ref);
+                  const noteTitle = linkedDoc
+                    ? ((
+                        linkedDoc.state as unknown as {
+                          global: { title?: string };
+                        }
+                      ).global.title ?? linkedDoc.header.name)
+                    : null;
+                  return (
+                    <div
+                      key={ref}
+                      className="rounded-lg px-3 py-2.5"
+                      style={{
+                        backgroundColor: "var(--bai-bg)",
+                        boxShadow: "0 0 0 1px var(--bai-ring)",
+                      }}
+                    >
+                      {noteTitle ? (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedNode(ref)}
+                          className="text-left text-sm leading-snug transition-colors hover:underline w-full"
+                          style={{ color: "var(--bai-accent)" }}
+                          title={`Open note: ${noteTitle}`}
+                        >
+                          {noteTitle}
+                          <svg
+                            className="ml-1 inline h-3 w-3 shrink-0"
+                            style={{ color: "var(--bai-text-faint)" }}
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            strokeWidth="2"
+                          >
+                            <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                            <path d="M15 3h6v6" />
+                            <path d="M10 14L21 3" />
+                          </svg>
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => setSelectedNode(ref)}
+                          className="text-left text-xs font-mono transition-colors hover:underline w-full truncate"
+                          style={{ color: "var(--bai-text-faint)" }}
+                          title={`Open document: ${ref}`}
+                        >
+                          {ref.slice(0, 12)}...
+                        </button>
+                      )}
+                    </div>
+                  );
+                })}
               </div>
             </div>
           </div>
