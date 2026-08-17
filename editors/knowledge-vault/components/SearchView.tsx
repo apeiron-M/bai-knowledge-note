@@ -34,9 +34,13 @@ const STATUS_COLORS: Record<string, CSSProperties> = {
   },
 };
 
+// Buckets for the server's 0..1 relevance. A note matched by BOTH the
+// semantic and keyword legs can approach 1.0; one matched by a single leg is
+// judged against that leg's own ceiling and lands around 0.5, so the amber
+// band has to reach below 0.5 or every single-signal hit reads as "poor".
 function similarityColor(score: number): string {
-  if (score >= 0.8) return "#10b981";
-  if (score >= 0.6) return "#f59e0b";
+  if (score >= 0.7) return "#10b981";
+  if (score >= 0.45) return "#f59e0b";
   return "#6b7280";
 }
 

@@ -64,6 +64,7 @@ const SEMANTIC_SEARCH_QUERY = `
     knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: HYBRID, limit: $limit) {
       node { documentId title description noteType status topics }
       similarity
+      matchedBy
     }
   }
 `;
@@ -160,6 +161,7 @@ export function useGraphSearch() {
         knowledgeGraphSemanticSearch: Array<{
           node: Omit<SearchResult, "similarity" | "matchedBy">;
           similarity: number;
+          matchedBy: string[];
         }>;
       }>(endpoint, SEMANTIC_SEARCH_QUERY, { driveId, query: q, limit: 20 });
 
@@ -167,7 +169,10 @@ export function useGraphSearch() {
         setResults(
           data.knowledgeGraphSemanticSearch.map((r) => ({
             ...r.node,
+            // Already a 0..1 relevance for every mode — the server rescales
+            // its fused rank score before returning it.
             similarity: r.similarity,
+            matchedBy: r.matchedBy,
           })),
         );
         setLoading(false);

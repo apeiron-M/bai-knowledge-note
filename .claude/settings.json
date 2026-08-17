@@ -410,7 +410,9 @@
       "Bash(python3 -c \"import json,sys; d=json.load\\(sys.stdin\\); print\\('manifest keys:', list\\(d.keys\\(\\)\\)\\); print\\('docs:', len\\(d.get\\('documents',[]\\)\\), 'folders:', len\\(d.get\\('folders',[]\\)\\)\\)\")",
       "Bash(python3 scripts/drive-sync/download.py --endpoint https://light-colt-c497cfbd-switchboard.vetra.io/graphql/r --drive powerhouse-knowledge --out vault-fix-scripts/remote-vault-backup --concurrency 6)",
       "Bash(curl -s -m 10 http://localhost:4001/graphql -H 'Content-Type: application/json' -d '{\"query\":\"{ drives }\"}')",
-      "Bash(curl -s -m 10 http://localhost:4001/d/knowledge-vault)"
+      "Bash(curl -s -m 10 http://localhost:4001/d/knowledge-vault)",
+      "Bash(curl -s -m 30 --retry 2 https://light-colt-c497cfbd-switchboard.vetra.io/graphql/r -H 'content-type: application/json' -d '{\"query\":\"{ __type\\(name:\\\\\"PagingInput\\\\\"\\){ inputFields{ name type{ name ofType{ name } } } } }\"}')",
+      "Bash(curl -s -m 90 --retry 3 https://light-colt-c497cfbd-switchboard.vetra.io/graphql/r -H 'content-type: application/json' -d '{\"query\":\"query{ documentOperations\\(filter:{ documentId: \\\\\"c5893e1b-854b-49b1-b8aa-6b133ab87969\\\\\" }, paging:{ limit: 3000 }\\){ totalCount hasNextPage items{ index } } }\"}')"
     ]
   },
   "enabledPlugins": {

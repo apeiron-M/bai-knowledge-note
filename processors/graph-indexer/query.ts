@@ -3,6 +3,33 @@ import { sql } from "kysely";
 import type { DB, GraphNode, GraphEdge } from "./schema.js";
 import { ACTIVE_MODEL } from "./embedding-store.js";
 
+/**
+ * Reciprocal Rank Fusion smoothing constant. Exported so that consumers
+ * which need to present a fused score to humans can convert it back onto a
+ * 0..1 scale (see `normalizeFusedScore`) instead of hard-coding 60.
+ */
+export const RRF_K = 60;
+
+/**
+ * Map a raw RRF score onto a 0..1 relevance.
+ *
+ * An RRF score is an ORDINAL weight, not a similarity: each leg contributes
+ * `1 / (RRF_K + rank)`, so with K=60 the best attainable score is
+ * `legs / RRF_K` — 0.0333 for two legs. Rendering that raw number as a
+ * percentage caps every result at "3%", which is why this conversion must
+ * happen anywhere a fused score is shown to a human.
+ *
+ * `legs` is the number of retrieval legs actually in play (2 for
+ * semantic+keyword hybrid, 1 when only one leg ran), so the result reads as
+ * "fraction of the best score attainable given the signals available".
+ * Monotonic in `score`, therefore it never reorders results.
+ */
+export function normalizeFusedScore(score: number, legs = 2): number {
+  if (!(score > 0) || legs < 1) return 0;
+  const max = legs / RRF_K;
+  return Math.min(1, score / max);
+}
+
 export interface GraphNodeResult {
   id: string;
   documentId: string;
@@ -505,6 +532,18 @@ export function createGraphQuery(db: Kysely<DB>) {
       return results;
     },
 
+    /**
+     * Keyword search over title/description/content, ranked by WHERE the
+     * match landed: title beats description beats body.
+     *
+     * The ordering is not cosmetic. This is the keyword leg of
+     * `hybridSearch`, which converts row position into an RRF weight, so an
+     * unordered result set feeds *arbitrary* relevance into the fusion: a
+     * note merely mentioning the term in its body could take rank 0 (the
+     * single largest RRF contribution) while a note with the term in its
+     * title fell outside the `limit` window and scored nothing at all.
+     * `updated_at` breaks ties so paging is deterministic.
+     */
     async fullSearch(query: string, limit = 50): Promise<GraphNodeResult[]> {
       const q = `%${query.toLowerCase()}%`;
       const rows = await db
@@ -517,6 +556,14 @@ export function createGraphQuery(db: Kysely<DB>) {
           ]),
         )
         .selectAll()
+        .orderBy(
+          sql`case
+                when lower(title) like ${q} then 0
+                when lower(description) like ${q} then 1
+                else 2
+              end`,
+        )
+        .orderBy("updated_at", "desc")
         .limit(limit)
         .execute();
       return rows.map(rowToNode);
@@ -565,7 +612,7 @@ export function createGraphQuery(db: Kysely<DB>) {
       semanticResults: Array<{ documentId: string; similarity: number }>,
       limit = 20,
     ): Promise<HybridSearchResult[]> {
-      const K = 60;
+      const K = RRF_K;
       const scores = new Map<
         string,
         { score: number; matchedBy: string[]; node?: GraphNodeResult }

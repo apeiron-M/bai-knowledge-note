@@ -178,9 +178,12 @@ document embedding (processor) uses none.
    browser build emits `new URL(...)` assets, node build silently doesn't.
 2. `@electric-sql/pglite/vector` subpath escapes `nodeNeverBundle`'s exact
    string match, inlining a shim whose relative asset path breaks in dist.
-3. HYBRID mode flattens similarity scores to ~0.016 (RRF scores leak through
+3. ~~HYBRID mode flattens similarity scores to ~0.016 (RRF scores leak through
    the `similarity` field unnormalized) — fine for ranking, wrong for
-   thresholding.
+   thresholding.~~ **FIXED in 1.0.52** — not an upstream issue, it was ours:
+   `similarity` now carries a rescaled 0–1 relevance and the raw fused weight
+   moved to `score`. See `normalizeFusedScore` in the graph-indexer query
+   module.
 
 ## Order of work
 

@@ -55,9 +55,24 @@ export const schema: DocumentNode = gql`
     sharedTarget: KnowledgeGraphNode!
   }
 
+  """
+  A ranked search hit. The 'similarity' field is ALWAYS a 0..1 relevance and
+  is always monotonic with the order results are returned in, so it is safe
+  to render as a percentage in any mode:
+    - SEMANTIC  -> cosine similarity of the query and note embeddings.
+    - HYBRID    -> the fused rank score rescaled onto 0..1 (see 'score').
+  The 'score' field carries the RAW underlying number for callers doing their
+  own maths: cosine in SEMANTIC mode, the Reciprocal Rank Fusion weight in
+  HYBRID mode. An RRF weight is ordinal and tops out at ~0.033, so never
+  render 'score' as a percentage - use 'similarity'.
+  The 'matchedBy' field explains WHY a note matched: "semantic", "keyword",
+  or both.
+  """
   type SemanticResult {
     node: KnowledgeGraphNode!
     similarity: Float!
+    score: Float!
+    matchedBy: [String!]!
   }
 
   type HybridResult {

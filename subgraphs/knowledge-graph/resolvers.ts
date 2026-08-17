@@ -9,6 +9,10 @@ import {
   sha256Hex,
 } from "../../processors/graph-indexer/embedding-store.js";
 import { embedQuery } from "./helpers/query-embedder.js";
+import {
+  RRF_K,
+  normalizeFusedScore,
+} from "../../processors/graph-indexer/query.js";
 
 type Resolver = (
   parent: unknown,
@@ -44,10 +48,15 @@ function withCanonicalDriveIds<T extends Record<string, Resolver>>(
 
 /**
  * Shared body of knowledgeGraphSearchByEmbedding (client-supplied vector) and
- * knowledgeGraphSemanticSearch (server-embedded query). SEMANTIC ranks purely
- * by cosine similarity; HYBRID fuses semantic + keyword via RRF in
- * graphQuery.hybridSearch and maps the fused score onto `similarity` for a
- * uniform SemanticResult shape.
+ * knowledgeGraphSemanticSearch (server-embedded query).
+ *
+ * SEMANTIC ranks purely by cosine similarity. HYBRID fuses semantic + keyword
+ * via RRF in graphQuery.hybridSearch, which ranks well but produces ORDINAL
+ * weights topping out at `2 / RRF_K` (~0.033). Those must not reach a UI as a
+ * similarity: rendered as a percentage they cap at 3% regardless of how good
+ * the match is. So `similarity` carries the rescaled 0..1 relevance while
+ * `score` keeps the raw fused weight for callers doing their own maths.
+ * Ordering is untouched — the rescale is monotonic.
  */
 async function searchWithEmbedding(
   subgraph: ISubgraph,
@@ -69,6 +78,8 @@ async function searchWithEmbedding(
         out.push({
           node: { ...node, _driveId: driveId },
           similarity: hit.similarity,
+          score: hit.similarity,
+          matchedBy: ["semantic"],
         });
       }
     }
@@ -82,7 +93,12 @@ async function searchWithEmbedding(
   );
   return hybridResults.map((r) => ({
     node: { ...r.node, _driveId: driveId },
-    similarity: r.score,
+    // Rescaled against the number of legs that actually produced this hit's
+    // ceiling: a note found by BOTH signals can reach 1.0, while a note only
+    // one leg could ever surface is judged against a single leg's maximum.
+    similarity: normalizeFusedScore(r.score, 2),
+    score: r.score,
+    matchedBy: r.matchedBy,
   }));
 }
 
@@ -341,6 +357,8 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
             semanticResults.push({
               node: { ...node, _driveId: args.driveId },
               similarity: result.similarity,
+              score: result.similarity,
+              matchedBy: ["semantic"],
             });
           }
         }
@@ -401,10 +419,18 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         }
         const graphQuery = getQuery(subgraph, args.driveId);
         const keywordHits = await graphQuery.fullSearch(args.query, limit);
-        return keywordHits.map((node) => ({
-          node: { ...node, _driveId: args.driveId },
-          similarity: 0,
-        }));
+        // Only one leg ran, so score these on the same rank-decay curve RRF
+        // uses and rescale against a SINGLE leg's ceiling. The old flat
+        // `similarity: 0` rendered every perfectly good keyword hit as "0%".
+        return keywordHits.map((node, rank) => {
+          const score = 1 / (RRF_K + rank);
+          return {
+            node: { ...node, _driveId: args.driveId },
+            similarity: normalizeFusedScore(score, 1),
+            score,
+            matchedBy: ["keyword"],
+          };
+        });
       },
 
       knowledgeGraphMissingEmbeddings: async (
