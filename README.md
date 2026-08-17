@@ -360,6 +360,19 @@ Documents are organized into folders within the drive:
 | `/ops/sessions/` | `bai/observation` | Operational signals |
 | `/self/` | `bai/knowledge-graph`, `bai/vault-config` | Singletons |
 
+## Installing the Agent Skills
+
+The agent skills for this vault ship as the `powerhouse-knowledge` plugin — 16 skills (`seed`, `extract`, `connect`, `synthesize`, `verify`, `pipeline`, `health`, `graph`, `search`, `setup`, `import`, `export`, `watch`, `projects`, `skills`, `cli-reference`), the `knowledge-agent` subagent, and the Switchboard preflight hook. To install them in any project, run these in a Claude Code session there:
+
+```
+/plugin marketplace add liberuum/powerhouse-knowledge
+/plugin install powerhouse-knowledge@powerhouse-knowledge
+```
+
+The plugin lives at [liberuum/powerhouse-knowledge](https://github.com/liberuum/powerhouse-knowledge), tracked here as the submodule `.claude/plugins/powerhouse-knowledge`. Restart Claude Code afterwards — skills register at session start.
+
+Installing at project scope writes `extraKnownMarketplaces` + `enabledPlugins` into that project's `.claude/settings.json`; commit it and teammates get the plugin on clone.
+
 ## Development
 
 ```bash
