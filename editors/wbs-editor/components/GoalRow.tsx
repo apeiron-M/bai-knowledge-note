@@ -144,8 +144,6 @@ export function GoalRow({
           {goal.description}
         </button>
 
-        <StatusChipMenu goal={goal} dispatch={dispatch} />
-
         {goal.assignee && (
           <span
             className="shrink-0 text-[10px]"
@@ -163,6 +161,8 @@ export function GoalRow({
             {goal.notes.length} note{goal.notes.length !== 1 ? "s" : ""}
           </span>
         )}
+
+        <StatusChipMenu goal={goal} dispatch={dispatch} />
 
         <div
           className={`flex shrink-0 items-center gap-0.5 transition-opacity ${
