@@ -349,13 +349,17 @@ export default function Editor() {
                 </div>
 
                 {contentMode === "preview" ? (
+                  // Preview is READ-ONLY on purpose: no click-to-edit.
+                  // A click handler here made selecting text or following
+                  // a link swap the rendered note for a textarea, so the
+                  // note could not be read calmly. Only the Edit button
+                  // changes mode.
                   <div
-                    className="min-h-[400px] cursor-text rounded-lg px-4 py-3"
+                    className="min-h-[400px] rounded-lg px-4 py-3"
                     style={{
                       backgroundColor: "var(--bai-deep)",
                       border: "1px solid var(--bai-border)",
                     }}
-                    onClick={() => setContentMode("edit")}
                   >
                     {state.content ? (
                       <MarkdownPreview content={state.content} />
@@ -364,7 +368,7 @@ export default function Editor() {
                         className="text-sm italic"
                         style={{ color: "var(--bai-text-faint)" }}
                       >
-                        Click to start writing...
+                        No content yet — choose Edit to start writing.
                       </p>
                     )}
                   </div>

@@ -1,5 +1,7 @@
 import {
+  Component,
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -8,7 +10,6 @@ import {
   type ReactNode,
 } from "react";
 import {
-  addDocument,
   setSelectedNode,
   useNodesInSelectedDrive,
   useSelectedDriveId,
@@ -27,6 +28,8 @@ import type {
   WorkBreakdownStructureDocument,
 } from "document-models/work-breakdown-structure";
 import { GOAL_STATUS_META, goalRollup } from "../../shared/project-status.js";
+import { createDocumentRemote } from "../../shared/remote-reactor.js";
+import { triggerVaultPull } from "../../shared/vault-pull.js";
 
 type Dispatch = DocumentDispatch<ProjectAction>;
 
@@ -55,12 +58,20 @@ type LinkedWbsContextValue = {
   wbsRef: string | null;
   wbsDoc: WorkBreakdownStructureDocument | undefined;
   goals: Goal[];
+  /**
+   * Set when `wbsRef` pointed at a document the reactor could not
+   * produce — the project is linked to an id that no longer exists
+   * server-side. `wbsRef` is reported as `null` in that case (there is
+   * no usable link), so this carries the broken id for the repair UI.
+   */
+  missingRef: string | null;
 };
 
 const LinkedWbsContext = createContext<LinkedWbsContextValue>({
   wbsRef: null,
   wbsDoc: undefined,
   goals: [],
+  missingRef: null,
 });
 
 /** Read the linked WBS's live goals (empty array when unlinked or still loading). */
@@ -82,6 +93,11 @@ export function useLinkedWbs(): LinkedWbsContextValue {
  * mounted across that transition; see `LinkedWbsFetcher` below for why
  * calling the fetch hook unconditionally (rather than guarding the
  * mount) is safe.
+ *
+ * `LinkedWbsBoundary` sits between the two for the dangling-ref case
+ * and preserves the same property: both of its branches render a
+ * `LinkedWbsFetcher` with `children` in the same position, differing
+ * only in props.
  */
 export function LinkedWbsProvider({
   wbsRef,
@@ -91,8 +107,77 @@ export function LinkedWbsProvider({
   children: ReactNode;
 }) {
   return (
-    <LinkedWbsFetcher wbsRef={wbsRef ?? null}>{children}</LinkedWbsFetcher>
+    <LinkedWbsBoundary wbsRef={wbsRef ?? null}>{children}</LinkedWbsBoundary>
   );
+}
+
+type BoundaryState = { error: Error | null; errorRef: string | null };
+
+/**
+ * Makes a dangling `wbsRef` recoverable instead of fatal.
+ *
+ * A `wbsRef` pointing at a document that does not exist server-side
+ * (e.g. one created by the old local-only `addDocument` path, which
+ * never reached the Switchboard) makes `useWorkBreakdownStructureDocumentById`
+ * throw a rejected fetch promise during render. Without a boundary here
+ * that throw escapes to Connect's `DocumentEditor` boundary and takes
+ * down the whole project editor — permanently, because the remote-first
+ * document cache deliberately keeps rejected promises cached (dropping
+ * them re-triggered an infinite "getSnapshot should be cached" loop).
+ *
+ * On catch, the same `LinkedWbsFetcher` is re-rendered with `wbsRef`
+ * forced to `null` — the one input for which the fetch hook provably
+ * cannot throw (see its doc comment) — and the broken id is handed down
+ * as `missingRef` so `WbsPanel` can offer the repair. Rendering the same
+ * element type in both branches is what keeps `children` mounted; see
+ * `LinkedWbsProvider` above.
+ *
+ * `getDerivedStateFromProps` clears the error as soon as `wbsRef`
+ * changes, so re-linking to a freshly created (real) document recovers
+ * without a remount and without a frame of stale fallback.
+ */
+class LinkedWbsBoundary extends Component<
+  { wbsRef: string | null; children: ReactNode },
+  BoundaryState
+> {
+  state: BoundaryState = { error: null, errorRef: null };
+
+  static getDerivedStateFromError(error: Error): Partial<BoundaryState> {
+    return { error };
+  }
+
+  static getDerivedStateFromProps(
+    props: { wbsRef: string | null },
+    state: BoundaryState,
+  ): Partial<BoundaryState> | null {
+    if (!state.error) return null;
+    // First render after the catch: attribute the failure to the ref
+    // that was in flight when it happened.
+    if (state.errorRef === null) return { errorRef: props.wbsRef };
+    // The project was re-linked (or unlinked) — retry the fetch.
+    if (state.errorRef !== props.wbsRef)
+      return { error: null, errorRef: null };
+    return null;
+  }
+
+  componentDidCatch(err: Error) {
+    console.error(
+      `[WbsPanel] Linked WBS ${this.props.wbsRef ?? "?"} could not be loaded:`,
+      err.message,
+    );
+  }
+
+  render() {
+    const failed = this.state.error !== null;
+    return (
+      <LinkedWbsFetcher
+        wbsRef={failed ? null : this.props.wbsRef}
+        missingRef={failed ? this.props.wbsRef : null}
+      >
+        {this.props.children}
+      </LinkedWbsFetcher>
+    );
+  }
 }
 
 /**
@@ -108,16 +193,22 @@ export function LinkedWbsProvider({
  */
 function LinkedWbsFetcher({
   wbsRef,
+  missingRef,
   children,
 }: {
   wbsRef: string | null;
+  missingRef: string | null;
   children: ReactNode;
 }) {
   const [wbsDoc] = useWorkBreakdownStructureDocumentById(wbsRef);
   const goals = useMemo(() => wbsDoc?.state.global.goals ?? [], [wbsDoc]);
+  const value = useMemo<LinkedWbsContextValue>(
+    () => ({ wbsRef, wbsDoc, goals, missingRef }),
+    [wbsRef, wbsDoc, goals, missingRef],
+  );
 
   return (
-    <LinkedWbsContext.Provider value={{ wbsRef, wbsDoc, goals }}>
+    <LinkedWbsContext.Provider value={value}>
       {children}
     </LinkedWbsContext.Provider>
   );
@@ -149,10 +240,11 @@ export function WbsPanel({
   pendingWbsId,
   onWbsCreated,
 }: WbsPanelProps) {
-  const { wbsRef, wbsDoc, goals } = useLinkedWbs();
+  const { wbsRef, wbsDoc, goals, missingRef } = useLinkedWbs();
   const driveId = useSelectedDriveId();
   const nodes = useNodesInSelectedDrive();
   const [creating, setCreating] = useState(false);
+  const [createError, setCreateError] = useState<string | null>(null);
 
   // Folder node named "projects" at the drive root. Falls back to
   // `undefined` (drive root) when no such folder exists yet — this
@@ -164,25 +256,56 @@ export function WbsPanel({
     )?.id;
   }, [nodes]);
 
-  async function handleCreateWbs() {
+  /**
+   * Create the WBS **on the server**, then link it.
+   *
+   * This must not go through reactor-browser's `addDocument`: the vault
+   * drive runs in remote-first mode (its sync channel is neutralised),
+   * so a local create produces a document that exists only in this
+   * browser tab while the `linkWbs` dispatch below *does* reach the
+   * Switchboard — leaving the project permanently pointing at an id no
+   * one else can resolve. `createDocumentRemote` is the same helper the
+   * vault's own create dialogs use.
+   *
+   * `targetFolderPath` matters as well as `parentFolderId`: the client
+   * node snapshot can still be empty when this fires, and the
+   * server-side path resolution is the fallback that keeps the new
+   * document out of the drive root.
+   *
+   * The link is dispatched only after the remote create resolves, so a
+   * failed create can never produce another dangling ref.
+   */
+  const handleCreateWbs = useCallback(async () => {
     if (!driveId || creating) return;
     setCreating(true);
+    setCreateError(null);
     try {
-      const result = await addDocument(
+      const newId = await createDocumentRemote({
+        documentType: workBreakdownStructureDocumentType,
+        name: `${projectName} — WBS`,
         driveId,
-        `${projectName} — WBS`,
-        workBreakdownStructureDocumentType,
-        projectsFolderId,
-      );
-      if (!result.id) return;
-      dispatch(actions.linkWbs({ wbsRef: result.id }));
-      onWbsCreated(result.id);
+        parentFolderId: projectsFolderId,
+        targetFolderPath: "projects",
+      });
+      triggerVaultPull();
+      dispatch(actions.linkWbs({ wbsRef: newId }));
+      onWbsCreated(newId);
     } catch (err) {
+      const message =
+        err instanceof Error ? err.message : "Unknown error creating the WBS";
       console.error("[WbsPanel] Failed to create WBS:", err);
+      setCreateError(message);
     } finally {
       setCreating(false);
     }
-  }
+  }, [
+    driveId,
+    creating,
+    projectName,
+    projectsFolderId,
+    dispatch,
+    onWbsCreated,
+  ]);
 
   return (
     <div
@@ -211,7 +334,13 @@ export function WbsPanel({
         )}
       </div>
 
-      {!wbsRef ? (
+      {missingRef ? (
+        <MissingView
+          missingRef={missingRef}
+          creating={creating || !!pendingWbsId}
+          onCreate={() => void handleCreateWbs()}
+        />
+      ) : !wbsRef ? (
         <UnlinkedView
           creating={creating || !!pendingWbsId}
           onCreate={() => void handleCreateWbs()}
@@ -223,6 +352,74 @@ export function WbsPanel({
       ) : (
         <LinkedView goals={goals} />
       )}
+
+      {createError && (
+        <p
+          className="mt-3 rounded-lg px-3 py-2 text-xs"
+          style={{
+            backgroundColor: GOAL_STATUS_META.BLOCKED.bg,
+            color: GOAL_STATUS_META.BLOCKED.fg,
+            border: `1px solid ${GOAL_STATUS_META.BLOCKED.border}`,
+          }}
+        >
+          Could not create the WBS: {createError}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/**
+ * Shown when the project's `wbsRef` resolves to nothing on the server.
+ * The project document model has `LINK_WBS` but no `UNLINK_WBS`, so
+ * re-linking to a freshly created (real) document is the only repair
+ * available — hence the same create action as the unlinked state.
+ */
+function MissingView({
+  missingRef,
+  creating,
+  onCreate,
+}: {
+  missingRef: string;
+  creating: boolean;
+  onCreate: () => void;
+}) {
+  return (
+    <div
+      className="rounded-lg px-4 py-3"
+      style={{
+        backgroundColor: GOAL_STATUS_META.BLOCKED.bg,
+        border: `1px solid ${GOAL_STATUS_META.BLOCKED.border}`,
+      }}
+    >
+      <p
+        className="text-sm font-medium"
+        style={{ color: GOAL_STATUS_META.BLOCKED.fg }}
+      >
+        Linked WBS not found
+      </p>
+      <p
+        className="mt-0.5 break-all font-mono text-[10px]"
+        style={{ color: GOAL_STATUS_META.BLOCKED.fg, opacity: 0.8 }}
+      >
+        {missingRef}
+      </p>
+      <p className="mt-1.5 text-xs" style={{ color: "var(--bai-text-faint)" }}>
+        It may have been deleted, or created before this drive switched to
+        server-side writes. Creating a new one re-links this project.
+      </p>
+      <button
+        type="button"
+        onClick={onCreate}
+        disabled={creating}
+        className="mt-3 rounded-lg px-3 py-1.5 text-xs font-semibold disabled:opacity-40"
+        style={{
+          backgroundColor: "var(--bai-accent)",
+          color: "var(--bai-accent-text)",
+        }}
+      >
+        {creating ? "Creating…" : "Create replacement WBS"}
+      </button>
     </div>
   );
 }
@@ -344,8 +541,58 @@ function LinkedView({ goals }: { goals: Goal[] }) {
  * across the `wbsRef` transition, so mounting this here (rather than
  * inside `LinkedWbsProvider`'s children) guarantees the write survives
  * even if something inside that subtree remounts.
+ *
+ * The exported component is the fetch wrapped in `WbsBackLinkBoundary`,
+ * so a failed fetch abandons the back-link instead of crashing the
+ * editor — see that class for why.
  */
-export function WbsBackLink({
+export function WbsBackLink(props: {
+  id: string;
+  projectId: string;
+  onDone: () => void;
+}) {
+  return (
+    <WbsBackLinkBoundary onDone={props.onDone}>
+      <WbsBackLinkFetcher {...props} />
+    </WbsBackLinkBoundary>
+  );
+}
+
+/**
+ * `WbsBackLinkFetcher` fetches the just-created document by id, and
+ * `editor.tsx` renders it outside `LinkedWbsProvider` — so without a
+ * boundary here a failed fetch (a network blip on an id the server
+ * genuinely has) escapes to Connect's `DocumentEditor` boundary and
+ * kills the editor, exactly like a dangling `wbsRef` used to.
+ *
+ * The back-link is a convenience write (`projectRef` on the WBS), not a
+ * correctness requirement, so on error it is abandoned: `onDone` clears
+ * `pendingWbsId` in `editor.tsx`, which also unmounts this boundary and
+ * releases the "Creating…" state. The project→WBS link itself is
+ * already committed by then.
+ */
+class WbsBackLinkBoundary extends Component<
+  { onDone: () => void; children: ReactNode },
+  { failed: boolean }
+> {
+  state = { failed: false };
+
+  static getDerivedStateFromError() {
+    return { failed: true };
+  }
+
+  componentDidCatch(err: Error) {
+    console.error("[WbsPanel] WBS back-link write abandoned:", err.message);
+    this.props.onDone();
+  }
+
+  render() {
+    if (this.state.failed) return null;
+    return this.props.children;
+  }
+}
+
+function WbsBackLinkFetcher({
   id,
   projectId,
   onDone,
