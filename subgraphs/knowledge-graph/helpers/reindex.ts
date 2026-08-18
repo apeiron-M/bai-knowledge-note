@@ -2,8 +2,14 @@
  * Reindex mutation: backfill the graph index by reading all bai/knowledge-note
  * and bai/moc documents in the drive.
  */
+import type { Kysely } from "kysely";
 import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getWritableDb } from "./db.js";
+import type { DB } from "../../../processors/graph-indexer/schema.js";
+import {
+  KNOWLEDGE_LINK_TYPES,
+  KNOWLEDGE_LINK_TYPE_LIST,
+} from "../../../processors/graph-indexer/link-types.js";
 import {
   collectRelationshipIds,
   type RelationshipPage,
@@ -23,15 +29,35 @@ type RecoveredEdge = {
   updated_at: string;
 };
 
-const RELATIONSHIP_TYPES = [
-  "RELATES_TO",
-  "BUILDS_ON",
-  "CONTRADICTS",
-  "SUPERSEDES",
-  "DERIVED_FROM",
-  "CORE_IDEA",
-  "CHILD_MOC",
-] as const;
+/**
+ * Drop rows that are not knowledge edges — in practice the reactor's
+ * drive→document `child` containment relationships, which the processor
+ * mirrored into `graph_edges` before it learned to filter them out.
+ *
+ * A reindex is a full rebuild of the drive's projection, so it is the right
+ * place to clear that debt: the analytics queries filter these rows out
+ * anyway, but leaving them makes `knowledgeGraphDebug` and any direct SQL
+ * misleading, and they are pure dead weight (their source is the drive, which
+ * never has a `graph_nodes` row, so they dangle by construction).
+ *
+ * NULL `link_type` is pruned too, matching `isKnowledgeLinkType` — an untyped
+ * relationship is not a knowledge link. Written as `is null or not in (...)`
+ * because a bare `not in` never matches a NULL.
+ *
+ * Returns the number of rows removed.
+ */
+export async function pruneNonKnowledgeEdges(db: Kysely<DB>): Promise<number> {
+  const result = await db
+    .deleteFrom("graph_edges")
+    .where((eb) =>
+      eb.or([
+        eb("link_type", "is", null),
+        eb.not(eb("link_type", "in", KNOWLEDGE_LINK_TYPE_LIST)),
+      ]),
+    )
+    .executeTakeFirst();
+  return Number(result.numDeletedRows);
+}
 
 export async function reindexDrive(
   subgraph: ISubgraph,
@@ -44,8 +70,7 @@ export async function reindexDrive(
   // for at least one document. Populated in pass 1, consumed by pass 2.
   const saturatedTypes = new Set<string>();
   // Edge ids written by pass 1, so pass 2 counts only what pass 1 could
-  // not reach. Counting rows in the table instead would fold in the
-  // processor's own `child` containment edges and overstate the result.
+  // not reach — a target-side read re-derives edges pass 1 already wrote.
   const writtenEdgeIds = new Set<string>();
 
   try {
@@ -105,6 +130,19 @@ export async function reindexDrive(
         // the per-op processor logic in
         // processors/graph-indexer/index.ts so reindexed and
         // live-indexed rows look identical.
+        // Mirror the processor: `updated_at` is the DOCUMENT's modification
+        // time, never the indexer's wall clock. Stamping `now` here is what
+        // flattened all 1,502 nodes to a single instant on every reindex,
+        // which silently broke `knowledgeGraphRecent` and STALE_NOTES.
+        const documentUpdatedAt =
+          (doc as unknown as { header?: { lastModifiedAtUtcIso?: string } })
+            .header?.lastModifiedAtUtcIso ?? now;
+        // Notes carry `createdAt` in provenance; MoCs carry it at the top
+        // level (which is why MoC rows had a null created_at). Read both,
+        // matching processors/graph-indexer/index.ts.
+        const documentCreatedAt =
+          (global.createdAt as string) ?? provenance?.createdAt ?? null;
+
         const isMoc = node.documentType === "bai/moc";
         const noteType = isMoc
           ? `MOC (${(global.tier as string) ?? "TOPIC"})`
@@ -126,8 +164,8 @@ export async function reindexDrive(
             content,
             author: provenance?.author ?? null,
             source_origin: provenance?.sourceOrigin ?? null,
-            created_at: provenance?.createdAt ?? null,
-            updated_at: now,
+            created_at: documentCreatedAt,
+            updated_at: documentUpdatedAt,
           })
           .onConflict((oc) =>
             oc.column("document_id").doUpdateSet({
@@ -138,8 +176,8 @@ export async function reindexDrive(
               content,
               author: provenance?.author ?? null,
               source_origin: provenance?.sourceOrigin ?? null,
-              created_at: provenance?.createdAt ?? null,
-              updated_at: now,
+              created_at: documentCreatedAt,
+              updated_at: documentUpdatedAt,
             }),
           )
           .execute();
@@ -166,7 +204,7 @@ export async function reindexDrive(
                   id: `${node.id}-topic-${idx}`,
                   document_id: node.id,
                   name,
-                  updated_at: now,
+                  updated_at: documentUpdatedAt,
                 };
               }),
             )
@@ -197,7 +235,10 @@ export async function reindexDrive(
           }
         >();
 
-        for (const relType of RELATIONSHIP_TYPES) {
+        // Fan out over exactly the knowledge types the projection indexes —
+        // one definition, shared with the processor's write path and the
+        // analytics queries (processors/graph-indexer/link-types.ts).
+        for (const relType of KNOWLEDGE_LINK_TYPES) {
           try {
             const { ids, saturated, truncated, pages } =
               await collectRelationshipIds((paging) =>
@@ -342,10 +383,11 @@ export async function reindexDrive(
     // reindex is a full rebuild of this drive's projection, so it is the
     // right place to drop rows whose document is gone.
     //
-    // Edges are pruned only where a *stale* node is an endpoint. A blanket
-    // delete by source would remove the processor's `child` containment
-    // edges, whose source is the drive itself and therefore never appears
-    // in `noteNodes`.
+    // Edges are pruned by endpoint — any row where a *stale* node is either
+    // end. (A blanket "delete everything whose source isn't a live note"
+    // would reach the same rows here, but scoping it to stale endpoints keeps
+    // the delete proportional to what actually changed.) Non-knowledge rows
+    // are handled separately by `pruneNonKnowledgeEdges` below.
     try {
       const liveIds = new Set(noteNodes.map((n) => n.id));
       const existing = await db
@@ -380,6 +422,19 @@ export async function reindexDrive(
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : String(err);
       errors.push(`prune: ${msg}`);
+    }
+
+    // ── Prune non-knowledge (containment) edges ─────────────────────
+    try {
+      const removed = await pruneNonKnowledgeEdges(db);
+      if (removed > 0) {
+        console.log(
+          `[KnowledgeGraphSubgraph] Reindex pruned ${removed} non-knowledge edge(s) (reactor containment)`,
+        );
+      }
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : String(err);
+      errors.push(`prune-containment: ${msg}`);
     }
 
     console.log(

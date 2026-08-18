@@ -1,7 +1,49 @@
-import type { Kysely } from "kysely";
+import type { ExpressionBuilder, Kysely } from "kysely";
 import { sql } from "kysely";
 import type { DB, GraphNode, GraphEdge } from "./schema.js";
 import { ACTIVE_MODEL } from "./embedding-store.js";
+import { KNOWLEDGE_LINK_TYPE_LIST } from "./link-types.js";
+
+/**
+ * `graph_edges` holds only knowledge edges going forward (the processor stopped
+ * mirroring the reactor's `child` containment relationships — see
+ * `link-types.ts`), but this projection is long-lived: a drive indexed before
+ * that change keeps its containment rows until a reindex prunes them. So every
+ * query that derives a *knowledge* fact from `graph_edges` filters by link type
+ * as well. That makes the fix effective immediately, without waiting on a
+ * reindex, and keeps each query honest about what it counts.
+ */
+function isKnowledgeEdge(eb: ExpressionBuilder<DB, "graph_edges">) {
+  return eb("link_type", "in", KNOWLEDGE_LINK_TYPE_LIST);
+}
+
+/**
+ * "This node has no incoming knowledge edge" — the orphan predicate, shared by
+ * `orphanNodes()` and `stats().orphanCount` so the list and the count can
+ * never disagree.
+ *
+ * NOT EXISTS, not `document_id not in (select target_document_id ...)`: in
+ * Postgres, `x NOT IN (subquery)` evaluates to NULL — i.e. matches nothing —
+ * the moment the subquery yields a single NULL row. `target_document_id` is
+ * NOT NULL today, so the old form was latently rather than actively broken,
+ * but a correlated NOT EXISTS is null-safe by construction and doesn't depend
+ * on that column constraint holding forever.
+ */
+function hasNoIncomingKnowledgeEdge(eb: ExpressionBuilder<DB, "graph_nodes">) {
+  return eb.not(
+    eb.exists(
+      eb
+        .selectFrom("graph_edges")
+        .select(sql<number>`1`.as("one"))
+        .whereRef(
+          "graph_edges.target_document_id",
+          "=",
+          "graph_nodes.document_id",
+        )
+        .where("graph_edges.link_type", "in", KNOWLEDGE_LINK_TYPE_LIST),
+    ),
+  );
+}
 
 /**
  * Reciprocal Rank Fusion smoothing constant. Exported so that consumers
@@ -153,8 +195,19 @@ export function createGraphQuery(db: Kysely<DB>) {
       return rows.map(rowToNode);
     },
 
+    /**
+     * Every knowledge edge in the drive. Backs `knowledgeGraphEdges`, which
+     * the graph views and the drive-sync/atlas exporters read — none of them
+     * has any use for a drive→document containment row (atlas-sync went as far
+     * as filtering `child` out on its own side). `knowledgeGraphDebug` remains
+     * the unfiltered escape hatch onto the raw table.
+     */
     async allEdges(): Promise<GraphEdgeResult[]> {
-      const rows = await db.selectFrom("graph_edges").selectAll().execute();
+      const rows = await db
+        .selectFrom("graph_edges")
+        .where(isKnowledgeEdge)
+        .selectAll()
+        .execute();
       return rows.map(rowToEdge);
     },
 
@@ -178,16 +231,16 @@ export function createGraphQuery(db: Kysely<DB>) {
       return rows.map(rowToNode);
     },
 
+    /**
+     * Notes nothing links TO. "Nothing" means no incoming *knowledge* edge:
+     * containment doesn't count, otherwise every node in the drive has an
+     * incoming edge from the drive and this can only ever return [].
+     */
     async orphanNodes(): Promise<GraphNodeResult[]> {
-      // Nodes that have zero incoming edges
       const rows = await db
         .selectFrom("graph_nodes")
         .selectAll()
-        .where(
-          "document_id",
-          "not in",
-          db.selectFrom("graph_edges").select("target_document_id"),
-        )
+        .where(hasNoIncomingKnowledgeEdge)
         .execute();
       return rows.map(rowToNode);
     },
@@ -197,20 +250,19 @@ export function createGraphQuery(db: Kysely<DB>) {
         .selectFrom("graph_nodes")
         .select(sql<number>`count(*)`.as("cnt"))
         .executeTakeFirstOrThrow();
+      // Knowledge edges only — this number is what `density()` divides and
+      // what the health report presents as the vault's link count.
       const edgeCountResult = await db
         .selectFrom("graph_edges")
+        .where(isKnowledgeEdge)
         .select(sql<number>`count(*)`.as("cnt"))
         .executeTakeFirstOrThrow();
 
-      // Orphans: nodes not targeted by any edge
+      // Orphans: nodes no knowledge edge points at.
       const orphanResult = await db
         .selectFrom("graph_nodes")
         .select(sql<number>`count(*)`.as("cnt"))
-        .where(
-          "document_id",
-          "not in",
-          db.selectFrom("graph_edges").select("target_document_id"),
-        )
+        .where(hasNoIncomingKnowledgeEdge)
         .executeTakeFirstOrThrow();
 
       return {
@@ -233,9 +285,14 @@ export function createGraphQuery(db: Kysely<DB>) {
       for (let depth = 1; depth <= maxDepth; depth++) {
         if (frontier.length === 0) break;
 
+        // Traverse knowledge links only. A note's own outgoing set never
+        // contained containment edges (their source is the drive), so this is
+        // consistency rather than a live bug fix — but called with a drive id
+        // the unfiltered version walked the entire vault at depth 1.
         const edges = await db
           .selectFrom("graph_edges")
           .where("source_document_id", "in", frontier)
+          .where(isKnowledgeEdge)
           .selectAll()
           .execute();
 
@@ -267,15 +324,25 @@ export function createGraphQuery(db: Kysely<DB>) {
       return results;
     },
 
+    /**
+     * Who links to this note. User-visible, and containment made every note
+     * show a phantom backlink from the drive with no title.
+     */
     async backlinks(documentId: string): Promise<GraphEdgeResult[]> {
       const rows = await db
         .selectFrom("graph_edges")
         .where("target_document_id", "=", documentId)
+        .where(isKnowledgeEdge)
         .selectAll()
         .execute();
       return rows.map(rowToEdge);
     },
 
+    /**
+     * Directed graph density over knowledge edges. Must use the same edge
+     * population as `stats().edgeCount`, or the two disagree about how
+     * connected the same vault is.
+     */
     async density(): Promise<number> {
       const nodeCountResult = await db
         .selectFrom("graph_nodes")
@@ -283,6 +350,7 @@ export function createGraphQuery(db: Kysely<DB>) {
         .executeTakeFirstOrThrow();
       const edgeCountResult = await db
         .selectFrom("graph_edges")
+        .where(isKnowledgeEdge)
         .select(sql<number>`count(*)`.as("cnt"))
         .executeTakeFirstOrThrow();
       const nodeCount = Number(nodeCountResult.cnt);
@@ -307,10 +375,12 @@ export function createGraphQuery(db: Kysely<DB>) {
       return rows.map(rowToNode);
     },
 
+    /** The mirror of `backlinks` — a note's own outgoing knowledge links. */
     async forwardLinks(documentId: string): Promise<GraphEdgeResult[]> {
       const rows = await db
         .selectFrom("graph_edges")
         .where("source_document_id", "=", documentId)
+        .where(isKnowledgeEdge)
         .selectAll()
         .execute();
       return rows.map(rowToEdge);
@@ -323,8 +393,16 @@ export function createGraphQuery(db: Kysely<DB>) {
         sharedTarget: GraphNodeResult;
       }>
     > {
-      // Find pairs (A,B) that both link to C but A doesn't link to B
-      const edges = await db.selectFrom("graph_edges").selectAll().execute();
+      // Find pairs (A,B) that both link to C but A doesn't link to B.
+      // Knowledge edges only. Containment made the drive a co-source of every
+      // note here; that stayed invisible purely because the drive has no
+      // `graph_nodes` row, so `nodeMap.get(drive)` dropped the pair. Filtering
+      // makes the intent explicit instead of relying on that accident.
+      const edges = await db
+        .selectFrom("graph_edges")
+        .where(isKnowledgeEdge)
+        .selectAll()
+        .execute();
       const nodeRows = await db.selectFrom("graph_nodes").selectAll().execute();
       const nodeMap = new Map(
         nodeRows.map((n) => [n.document_id, rowToNode(n)]),
@@ -378,8 +456,15 @@ export function createGraphQuery(db: Kysely<DB>) {
     },
 
     async bridges(): Promise<GraphNodeResult[]> {
-      // Find articulation points using a simplified DFS approach
-      const edges = await db.selectFrom("graph_edges").selectAll().execute();
+      // Find articulation points using a simplified DFS approach.
+      // Knowledge edges only: containment joins every node to the drive, so
+      // the graph is trivially one component whose sole articulation point is
+      // the drive — the analysis returns nothing about the knowledge itself.
+      const edges = await db
+        .selectFrom("graph_edges")
+        .where(isKnowledgeEdge)
+        .selectAll()
+        .execute();
       const nodeRows = await db.selectFrom("graph_nodes").selectAll().execute();
       const nodeMap = new Map(
         nodeRows.map((n) => [n.document_id, rowToNode(n)]),

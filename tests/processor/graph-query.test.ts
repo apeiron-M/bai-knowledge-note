@@ -57,15 +57,25 @@ async function seedNodes(...nodes: SeedNodeInput[]): Promise<void> {
     .execute();
 }
 
+/**
+ * Seeds one edge. The default `link_type` is a real knowledge type because
+ * that is what the projection now stores — only the canonical knowledge
+ * relationship types are indexed, and every analytics query filters on them
+ * (see processors/graph-indexer/link-types.ts). Tests that care about
+ * containment pass `"child"` explicitly.
+ *
+ * The id mirrors the processor's own `source-target-type` scheme so a
+ * containment edge and a knowledge edge over the same pair can coexist.
+ */
 async function seedEdge(
   source: string,
   target: string,
-  linkType: string | null = null,
+  linkType: string | null = "RELATES_TO",
 ): Promise<void> {
   await db
     .insertInto("graph_edges")
     .values({
-      id: `${source}-${target}`,
+      id: `${source}-${target}-${linkType ?? "_"}`,
       source_document_id: source,
       target_document_id: target,
       link_type: linkType,
@@ -211,13 +221,13 @@ describe("backlinks()", () => {
       { id: "n1", document_id: "a", title: "Node A" },
       { id: "n2", document_id: "b", title: "Node B" },
     );
-    await seedEdge("a", "b", "references");
+    await seedEdge("a", "b", "BUILDS_ON");
 
     const links = await query.backlinks("b");
     expect(links).toHaveLength(1);
     expect(links[0].sourceDocumentId).toBe("a");
     expect(links[0].targetDocumentId).toBe("b");
-    expect(links[0].linkType).toBe("references");
+    expect(links[0].linkType).toBe("BUILDS_ON");
   });
 
   it("returns empty array when no edges point to the document", async () => {

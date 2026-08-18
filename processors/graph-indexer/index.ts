@@ -9,6 +9,7 @@ import {
   sha256Hex,
   upsertEmbedding,
 } from "./embedding-store.js";
+import { isKnowledgeLinkType } from "./link-types.js";
 
 /**
  * Embedding is SERVER-only. This processor also runs inside Connect's
@@ -280,7 +281,16 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           global?: Record<string, unknown>;
         };
         const global = (parsed.global ?? parsed) as Record<string, unknown>;
+        // `updated_at` must be the time the DOCUMENT changed, not the time
+        // the indexer happened to touch the row. Using wall-clock here made
+        // every reindex stamp all nodes with one identical instant, which
+        // silently destroyed `knowledgeGraphRecent` ordering and left
+        // STALE_NOTES with nothing but DRAFT counts to work from. The last
+        // operation for this document carries the real edit time, and
+        // because a reindex replays operations it reconstructs true history
+        // rather than flattening it.
         const now = new Date().toISOString();
+        const documentUpdatedAt = entry.operation.timestampUtcMs ?? now;
         const isMoc = entry.context.documentType === "bai/moc";
 
         // Extract provenance (knowledge notes only)
@@ -316,7 +326,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
             source_origin: provenance?.sourceOrigin ?? null,
             created_at:
               (global.createdAt as string) ?? provenance?.createdAt ?? null,
-            updated_at: now,
+            updated_at: documentUpdatedAt,
           })
           .onConflict((oc) =>
             oc.column("document_id").doUpdateSet({
@@ -329,7 +339,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
               source_origin: provenance?.sourceOrigin ?? null,
               created_at:
                 (global.createdAt as string) ?? provenance?.createdAt ?? null,
-              updated_at: now,
+              updated_at: documentUpdatedAt,
             }),
           )
           .execute();
@@ -355,7 +365,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
                   id: `${documentId}-topic-${idx}`,
                   document_id: documentId,
                   name,
-                  updated_at: now,
+                  updated_at: documentUpdatedAt,
                 };
               }),
             )
@@ -399,6 +409,14 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
    * `target_title` from `graph_nodes` if the target is already indexed;
    * otherwise leaves it null (rendering falls back to the target's slug
    * until the target's own state reconciles).
+   *
+   * Only KNOWLEDGE relationship types are indexed. The reactor reuses
+   * ADD_RELATIONSHIP for its own containment bookkeeping — adding a file to
+   * a drive emits `(drive, document, "child")` — and indexing those gave the
+   * drive an outgoing edge to every document in the vault, which made orphan
+   * detection structurally impossible and inflated every edge-derived
+   * metric. See `link-types.ts` for the full rationale; drive membership
+   * still comes from the drive document's own node tree.
    */
   private async applyAddRelationship(input: {
     sourceId: string;
@@ -406,9 +424,10 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     relationshipType?: string;
   }): Promise<void> {
     if (!input.sourceId || !input.targetId) return;
-    const now = new Date().toISOString();
     const relType = input.relationshipType ?? null;
-    const edgeId = `${input.sourceId}-${input.targetId}-${relType ?? "_"}`;
+    if (!isKnowledgeLinkType(relType)) return;
+    const now = new Date().toISOString();
+    const edgeId = `${input.sourceId}-${input.targetId}-${relType}`;
 
     let targetTitle: string | null = null;
     try {
@@ -442,6 +461,12 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       .execute();
   }
 
+  /**
+   * Deletes unconditionally — including for non-knowledge types, which
+   * `applyAddRelationship` no longer indexes. A projection that predates that
+   * change still holds `child` rows, and a REMOVE_RELATIONSHIP is a free
+   * chance to drop one; deleting a row that isn't there costs nothing.
+   */
   private async applyRemoveRelationship(input: {
     sourceId: string;
     targetId: string;
