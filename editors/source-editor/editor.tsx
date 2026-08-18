@@ -1,12 +1,12 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedSourceDocument, actions } from "document-models/source";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import {
   setSelectedNode,
-  useDocumentsInSelectedDrive,
   useFileNodesInSelectedDrive,
 } from "@powerhousedao/reactor-browser";
+import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { generateId } from "document-model/core";
 import { usePipelineQueueDocumentById } from "../../document-models/pipeline-queue/v1/hooks.js";
 import { actions as pipelineActions } from "document-models/pipeline-queue";
@@ -48,17 +48,9 @@ export default function Editor() {
   const [queued, setQueued] = useState(false);
   const [editing, setEditing] = useState(false);
 
-  // Resolve extracted claim PHIDs → titles (same pattern as MoC core ideas).
-  // reactor-browser 6.0.0-dev.239+ tolerates per-doc fetch failures, so we
-  // can look up knowledge-notes directly without freezing the editor.
-  const allDriveDocs = useDocumentsInSelectedDrive();
-  const noteDocs = useMemo(
-    () =>
-      (allDriveDocs ?? []).filter(
-        (d) => d.header.documentType === "bai/knowledge-note",
-      ),
-    [allDriveDocs],
-  );
+  // Resolve extracted claim PHIDs → titles via the lightweight index
+  // (subgraph + drive tree) instead of loading full document states.
+  const { byId } = useVaultDocIndex();
 
   if (!initialized) {
     return <IngestForm dispatch={dispatch} />;
@@ -409,14 +401,7 @@ export default function Editor() {
               </h4>
               <div className="space-y-1.5 max-h-[600px] overflow-y-auto">
                 {(state.extractedClaims ?? []).map((ref) => {
-                  const linkedDoc = noteDocs.find((d) => d.header.id === ref);
-                  const noteTitle = linkedDoc
-                    ? ((
-                        linkedDoc.state as unknown as {
-                          global: { title?: string };
-                        }
-                      ).global.title ?? linkedDoc.header.name)
-                    : null;
+                  const noteTitle = byId.get(ref)?.title ?? null;
                   return (
                     <div
                       key={ref}

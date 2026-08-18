@@ -1,11 +1,11 @@
-import { useState, useCallback, useMemo } from "react";
+import { useState } from "react";
 import { generateId } from "document-model/core";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import {
   setSelectedNode,
-  useDocumentsInSelectedDrive,
   dispatchActions,
 } from "@powerhousedao/reactor-browser";
+import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { useSelectedMocDocument, actions } from "document-models/moc";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 import { useKnowledgeMocs } from "../knowledge-vault/hooks/use-knowledge-mocs.js";
@@ -26,24 +26,23 @@ export default function Editor() {
   // Core ideas + child refs live in the reactor's DocumentRelationship
   // table now — read this MoC's outgoing edges from the subgraph
   // projection rather than from inline state.
-  const { mocMap } = useKnowledgeMocs();
+  const { mocs, mocMap } = useKnowledgeMocs();
   const mocProj = mocMap.get(document.header.id);
   const coreIdeas: { noteRef: string; contextPhrase: string }[] =
     mocProj?.coreIdeas ?? [];
-  // reactor-browser 6.0.0-dev.239+ makes `useDocumentsInSelectedDrive`
-  // tolerant of per-doc fetch failures (no whole-promise reject on
-  // orphan ids), so we use it directly and filter to the types this
-  // editor looks up.
-  const allDriveDocs = useDocumentsInSelectedDrive();
-  const allDocs = useMemo(
-    () =>
-      (allDriveDocs ?? []).filter(
-        (d) =>
-          d.header.documentType === "bai/knowledge-note" ||
-          d.header.documentType === "bai/moc",
-      ),
-    [allDriveDocs],
+  // MoC hierarchy: children from this MoC's outgoing CHILD_MOC edges,
+  // parents from other MoCs whose childRefs include this one. A HUB
+  // typically has zero note core-ideas — without this section it looks
+  // relationship-less even though the whole vault hangs off it.
+  const childMocs = (mocProj?.childRefs ?? [])
+    .map((ref) => mocMap.get(ref))
+    .filter((m): m is NonNullable<typeof m> => !!m);
+  const parentMocs = mocs.filter((m) =>
+    m.childRefs.includes(document.header.id),
   );
+  // Lightweight id→title index (subgraph + drive tree) instead of
+  // loading every document's full state just to resolve titles.
+  const { byId } = useVaultDocIndex();
   const [newQuestion, setNewQuestion] = useState("");
   const [newIdeaRef, setNewIdeaRef] = useState("");
   const [newIdeaPhrase, setNewIdeaPhrase] = useState("");
@@ -62,6 +61,7 @@ export default function Editor() {
         <DocumentToolbar toolbarClassName={TOOLBAR_CLASS} />
         <div className="p-6 space-y-6">
           {/* Header */}
+
           <div
             className="rounded-xl p-6"
             style={{
@@ -181,16 +181,7 @@ export default function Editor() {
               </h3>
               <div className="space-y-2">
                 {coreIdeas.map((idea) => {
-                  const linkedDoc = (allDocs ?? []).find(
-                    (d) => d.header.id === idea.noteRef,
-                  );
-                  const noteTitle = linkedDoc
-                    ? ((
-                        linkedDoc.state as unknown as {
-                          global: { title?: string };
-                        }
-                      ).global.title ?? linkedDoc.header.name)
-                    : null;
+                  const noteTitle = byId.get(idea.noteRef)?.title ?? null;
                   const ideaKey = `${document.header.id}-${idea.noteRef}`;
                   return (
                     <div
@@ -463,6 +454,86 @@ export default function Editor() {
               </div>
             </div>
           </div>
+          {/* MoC hierarchy — parents and children */}
+          {(childMocs.length > 0 || parentMocs.length > 0) && (
+            <div
+              className="rounded-xl p-6"
+              style={{
+                backgroundColor: "var(--bai-surface)",
+                border: "1px solid var(--bai-border)",
+              }}
+            >
+              {parentMocs.length > 0 && (
+                <div className="mb-4">
+                  <h3
+                    className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--bai-text-muted)" }}
+                  >
+                    Part of
+                  </h3>
+                  <div className="flex flex-wrap gap-2">
+                    {parentMocs.map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setSelectedNode(m.id)}
+                        className="rounded-lg px-3 py-1.5 text-xs transition-colors hover:opacity-80"
+                        style={{
+                          backgroundColor: "var(--bai-bg)",
+                          boxShadow: "0 0 0 1px var(--bai-ring)",
+                          color: "var(--bai-accent)",
+                        }}
+                      >
+                        ↑ {m.title}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {childMocs.length > 0 && (
+                <div>
+                  <h3
+                    className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--bai-text-muted)" }}
+                  >
+                    Child MoCs ({childMocs.length})
+                  </h3>
+                  <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                    {childMocs.map((m) => (
+                      <button
+                        key={m.id}
+                        type="button"
+                        onClick={() => setSelectedNode(m.id)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:opacity-80"
+                        style={{
+                          backgroundColor: "var(--bai-bg)",
+                          boxShadow: "0 0 0 1px var(--bai-ring)",
+                        }}
+                      >
+                        <span
+                          className={`shrink-0 rounded-full border px-1.5 py-0.5 text-[9px] font-semibold ${TIER_COLORS[m.tier ?? ""] ?? "bg-gray-500/20 text-gray-400 border-gray-500/30"}`}
+                        >
+                          {m.tier ?? "MOC"}
+                        </span>
+                        <span
+                          className="truncate text-xs"
+                          style={{ color: "var(--bai-text-secondary)" }}
+                        >
+                          {m.title}
+                        </span>
+                        <span
+                          className="ml-auto shrink-0 text-[10px]"
+                          style={{ color: "var(--bai-text-faint)" }}
+                        >
+                          {m.noteCount} notes
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -574,6 +645,7 @@ function InitForm({
               Create MOC
             </button>
           </div>
+
         </div>
       </div>
     </div>

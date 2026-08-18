@@ -1,9 +1,7 @@
 import { useState, useMemo, useRef, useEffect } from "react";
 import { generateId } from "document-model/core";
-import {
-  setSelectedNode,
-  useDocumentsInSelectedDrive,
-} from "@powerhousedao/reactor-browser";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { useVaultDocIndex } from "../../shared/use-vault-doc-index.js";
 import type { LinkType } from "../../../document-models/knowledge-note/v1/gen/schema/types.js";
 
 // Links now come from the subgraph projection of DocumentRelationship
@@ -63,45 +61,25 @@ export function LinksSection({
   const [isAdding, setIsAdding] = useState(false);
   const [editingLinkId, setEditingLinkId] = useState<string | null>(null);
 
-  // reactor-browser dev.239+ — useDocumentsInSelectedDrive is now
-  // tolerant of per-doc fetch failures (orphan ids no longer reject
-  // the whole promise). Filter to knowledge-notes client-side.
-  const allDriveDocs = useDocumentsInSelectedDrive();
+  // Picker candidates from the lightweight index (subgraph + drive
+  // tree) — real titles, no full-state loads.
+  const { knowledgeDocs } = useVaultDocIndex();
   const allDocs = useMemo(
-    () =>
-      (allDriveDocs ?? []).filter(
-        (d) => d.header.documentType === "bai/knowledge-note",
-      ),
-    [allDriveDocs],
+    () => knowledgeDocs.filter((d) => d.documentType === "bai/knowledge-note"),
+    [knowledgeDocs],
   );
 
   const docOptions: DocOption[] = useMemo(() => {
     const linkedIds = new Set(links.map((l) => l.targetDocumentId));
     return allDocs
-      .filter(
-        (d) => d.header.id !== currentDocId && !linkedIds.has(d.header.id),
-      )
-      .map((d) => ({
-        id: d.header.id,
-        title:
-          (d.state as unknown as { global?: { title?: string } }).global
-            ?.title ??
-          d.header.name ??
-          d.header.id,
-      }));
+      .filter((d) => d.id !== currentDocId && !linkedIds.has(d.id))
+      .map((d) => ({ id: d.id, title: d.title }));
   }, [allDocs, currentDocId, links]);
 
   const allDocOptions: DocOption[] = useMemo(() => {
     return allDocs
-      .filter((d) => d.header.id !== currentDocId)
-      .map((d) => ({
-        id: d.header.id,
-        title:
-          (d.state as unknown as { global?: { title?: string } }).global
-            ?.title ??
-          d.header.name ??
-          d.header.id,
-      }));
+      .filter((d) => d.id !== currentDocId)
+      .map((d) => ({ id: d.id, title: d.title }));
   }, [allDocs, currentDocId]);
 
   function handleAdd(

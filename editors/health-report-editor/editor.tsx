@@ -1,10 +1,7 @@
-import { useMemo } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedHealthReportDocument } from "../../document-models/health-report/v1/hooks.js";
-import {
-  setSelectedNode,
-  useDocumentsInSelectedDrive,
-} from "@powerhousedao/reactor-browser";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 
 const STATUS_BADGE: Record<string, string> = {
@@ -16,18 +13,9 @@ const STATUS_BADGE: Record<string, string> = {
 export default function Editor() {
   const [document] = useSelectedHealthReportDocument();
   const state = document.state.global;
-  // reactor-browser dev.239+ — useDocumentsInSelectedDrive is now
-  // tolerant of per-doc fetch failures; filter client-side.
-  const allDriveDocs = useDocumentsInSelectedDrive();
-  const documents = useMemo(
-    () =>
-      (allDriveDocs ?? []).filter(
-        (d) =>
-          d.header.documentType === "bai/knowledge-note" ||
-          d.header.documentType === "bai/moc",
-      ),
-    [allDriveDocs],
-  );
+  // Lightweight id→title index (subgraph + drive tree) instead of
+  // loading every document's full state just to resolve titles.
+  const { byId } = useVaultDocIndex();
 
   const isEmpty = !state.generatedAt;
 
@@ -245,25 +233,19 @@ export default function Editor() {
                               {check.affectedItems
                                 .slice(0, 5)
                                 .map((item, i) => {
-                                  const noteDoc = (documents ?? []).find(
+                                  const noteDoc = [...byId.values()].find(
                                     (d) =>
-                                      (d.header.documentType ===
+                                      (d.documentType ===
                                         "bai/knowledge-note" ||
-                                        d.header.documentType ===
-                                          "bai/source") &&
-                                      ((
-                                        d.state as unknown as {
-                                          global: { title?: string };
-                                        }
-                                      ).global.title === item ||
-                                        d.header.name === item),
+                                        d.documentType === "bai/source") &&
+                                      d.title === item,
                                   );
                                   return noteDoc ? (
                                     <button
                                       key={i}
                                       type="button"
                                       onClick={() =>
-                                        setSelectedNode(noteDoc.header.id)
+                                        setSelectedNode(noteDoc.id)
                                       }
                                       className="rounded px-1.5 py-0.5 text-[10px] cursor-pointer"
                                       style={{

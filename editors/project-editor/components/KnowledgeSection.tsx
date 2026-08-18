@@ -1,8 +1,6 @@
 import { useMemo, useState } from "react";
-import {
-  setSelectedNode,
-  useDocumentsInSelectedDrive,
-} from "@powerhousedao/reactor-browser";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { useVaultDocIndex } from "../../shared/use-vault-doc-index.js";
 import type { DocumentDispatch } from "@powerhousedao/reactor-browser";
 import { actions } from "document-models/project";
 import type {
@@ -12,13 +10,9 @@ import type {
 
 type Dispatch = DocumentDispatch<ProjectAction>;
 
-// Candidate documents for linking are knowledge notes and MOCs. This
-// mirrors editors/knowledge-note-editor/components/links-section.tsx's
-// established pattern of filtering `useDocumentsInSelectedDrive()`
-// client-side rather than calling a subgraph search hook — see the
-// KnowledgeSection route decision in the task report for why the
-// vault's `useGraphSearch` hook was not reused here.
-const KNOWLEDGE_DOC_TYPES = new Set(["bai/knowledge-note", "bai/moc"]);
+// Candidate documents for linking are knowledge notes and MOCs,
+// served by the lightweight vault doc index (subgraph + drive tree)
+// rather than full-state loads of the whole drive.
 const MAX_RESULTS = 8;
 
 type KnowledgeSectionProps = {
@@ -27,30 +21,17 @@ type KnowledgeSectionProps = {
 };
 
 export function KnowledgeSection({ state, dispatch }: KnowledgeSectionProps) {
-  const allDriveDocs = useDocumentsInSelectedDrive();
+  const { knowledgeDocs, byId } = useVaultDocIndex();
   const [query, setQuery] = useState("");
   const [adding, setAdding] = useState(false);
 
   const titleById = useMemo(() => {
     const map = new Map<string, string>();
-    for (const d of allDriveDocs ?? []) {
-      const title =
-        (d.state as unknown as { global?: { title?: string | null } }).global
-          ?.title ??
-        d.header.name ??
-        null;
-      if (title) map.set(d.header.id, title);
-    }
+    for (const d of byId.values()) map.set(d.id, d.title);
     return map;
-  }, [allDriveDocs]);
+  }, [byId]);
 
-  const candidates = useMemo(
-    () =>
-      (allDriveDocs ?? []).filter((d) =>
-        KNOWLEDGE_DOC_TYPES.has(d.header.documentType),
-      ),
-    [allDriveDocs],
-  );
+  const candidates = knowledgeDocs;
 
   const linkedSet = useMemo(
     () => new Set(state.knowledgeRefs),
@@ -61,16 +42,14 @@ export function KnowledgeSection({ state, dispatch }: KnowledgeSectionProps) {
     const q = query.trim().toLowerCase();
     if (!q) return [];
     return candidates
-      .filter((d) =>
-        (titleById.get(d.header.id) ?? d.header.id).toLowerCase().includes(q),
-      )
+      .filter((d) => d.title.toLowerCase().includes(q))
       .slice(0, MAX_RESULTS)
       .map((d) => ({
-        id: d.header.id,
-        title: titleById.get(d.header.id) ?? d.header.id,
-        alreadyLinked: linkedSet.has(d.header.id),
+        id: d.id,
+        title: d.title,
+        alreadyLinked: linkedSet.has(d.id),
       }));
-  }, [candidates, query, titleById, linkedSet]);
+  }, [candidates, query, linkedSet]);
 
   function handlePick(id: string) {
     dispatch(actions.addKnowledgeRef({ ref: id }));

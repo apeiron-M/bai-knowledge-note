@@ -169,9 +169,14 @@ export default function Editor() {
               </p>
             ) : (
               <div className="space-y-1">
-                {tasks.map((task) => (
+                {tasks.map((task, index) => (
                   <div
-                    key={task.id}
+                    // Composite key: ADD_TASK has no duplicate-id guard in
+                    // the model, so a queue can legitimately carry two
+                    // tasks with the same id (the second is unreachable by
+                    // every other operation). The editor must render such
+                    // data without React key collisions.
+                    key={`${task.id}-${index}`}
                     className="flex items-center gap-3 rounded-lg px-4 py-3"
                     style={{
                       backgroundColor: "var(--bai-bg)",

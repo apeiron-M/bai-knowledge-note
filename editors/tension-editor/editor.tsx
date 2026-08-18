@@ -1,10 +1,8 @@
-import { useState, useMemo } from "react";
+import { useState } from "react";
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedTensionDocument, actions } from "document-models/tension";
-import {
-  setSelectedNode,
-  useDocumentsInSelectedDrive,
-} from "@powerhousedao/reactor-browser";
+import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 
 const STATUS_COLORS: Record<string, string> = {
@@ -20,18 +18,9 @@ function ts() {
 export default function Editor() {
   const [document, dispatch] = useSelectedTensionDocument();
   const state = document.state.global;
-  // reactor-browser dev.239+ — useDocumentsInSelectedDrive is now
-  // tolerant of per-doc fetch failures; filter client-side.
-  const allDriveDocs = useDocumentsInSelectedDrive();
-  const allDocs = useMemo(
-    () =>
-      (allDriveDocs ?? []).filter(
-        (d) =>
-          d.header.documentType === "bai/knowledge-note" ||
-          d.header.documentType === "bai/moc",
-      ),
-    [allDriveDocs],
-  );
+  // Lightweight id→title index (subgraph + drive tree) instead of
+  // loading every document's full state just to resolve titles.
+  const { byId } = useVaultDocIndex();
   const initialized = !!state.title;
 
   if (!initialized) {
@@ -40,12 +29,8 @@ export default function Editor() {
 
   // Resolve involved refs to note titles
   const involvedNotes = (state.involvedRefs ?? []).map((ref) => {
-    const doc = (allDocs ?? []).find((d) => d.header.id === ref);
-    const title = doc
-      ? ((doc.state as unknown as { global: { title?: string } }).global
-          .title ?? doc.header.name)
-      : ref.slice(0, 12);
-    return { ref, title, exists: !!doc };
+    const doc = byId.get(ref);
+    return { ref, title: doc?.title ?? ref.slice(0, 12), exists: !!doc };
   });
 
   return (
