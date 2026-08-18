@@ -132,3 +132,69 @@ def test_fetch_edges_drops_reactor_containment_edges():
 
 def test_fetch_edges_tolerates_an_empty_graph():
     assert fetch_edges(EdgeGql([]), "http://stub/graphql", "drive") == {}
+
+
+# --- clear_stale_snapshot -------------------------------------------------
+#
+# Regression: `download` used to write into whatever was already in the
+# output directory. Snapshotting a second drive into a used directory left
+# 3061 state files (the union of both drives), and the leftover
+# `id-map.json` from an earlier rebuild made `verify` report 0/1528
+# matched — a false total-loss result on a perfectly good snapshot.
+
+
+def _snapshot_dir(tmp_path, states=(), artifacts=()):
+    (tmp_path / "states").mkdir(parents=True, exist_ok=True)
+    for name in states:
+        (tmp_path / "states" / f"{name}.json").write_text("{}")
+    for name in artifacts:
+        (tmp_path / name).write_text("{}")
+    return tmp_path
+
+
+def test_clear_stale_snapshot_removes_previous_state_files(tmp_path):
+    from atlaslib.snapshot import clear_stale_snapshot
+
+    out = _snapshot_dir(tmp_path, states=[A, B])
+    removed, artifacts = clear_stale_snapshot(out, log=lambda _m: None)
+
+    assert removed == 2
+    assert artifacts == []
+    assert list((out / "states").glob("*.json")) == []
+
+
+def test_clear_stale_snapshot_removes_rebuild_artifacts(tmp_path):
+    """`id-map.json` is the one that silently breaks `verify`."""
+    from atlaslib.snapshot import clear_stale_snapshot
+
+    out = _snapshot_dir(
+        tmp_path, states=[A], artifacts=["id-map.json", "upload-summary.json"]
+    )
+    removed, artifacts = clear_stale_snapshot(out, log=lambda _m: None)
+
+    assert removed == 1
+    assert sorted(artifacts) == ["id-map.json", "upload-summary.json"]
+    assert not (out / "id-map.json").exists()
+    assert not (out / "upload-summary.json").exists()
+
+
+def test_clear_stale_snapshot_keeps_files_download_rewrites(tmp_path):
+    """drive-info/tree/manifest are overwritten wholesale; leave them be."""
+    from atlaslib.snapshot import clear_stale_snapshot
+
+    out = _snapshot_dir(tmp_path, artifacts=["drive-info.json", "tree.json"])
+    clear_stale_snapshot(out, log=lambda _m: None)
+
+    assert (out / "drive-info.json").exists()
+    assert (out / "tree.json").exists()
+
+
+def test_clear_stale_snapshot_is_quiet_and_safe_on_a_fresh_dir(tmp_path):
+    from atlaslib.snapshot import clear_stale_snapshot
+
+    out = _snapshot_dir(tmp_path)
+    messages: list[str] = []
+    removed, artifacts = clear_stale_snapshot(out, log=messages.append)
+
+    assert (removed, artifacts) == (0, [])
+    assert messages == []

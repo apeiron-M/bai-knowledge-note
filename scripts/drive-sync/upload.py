@@ -341,12 +341,22 @@ def phase_4_apply_crossrefs(deferred: dict[str, list[dict]]) -> None:
         for a in actions:
             if a.get("type") == "ADD_RELATIONSHIP":
                 inp = a.get("input") or {}
-                try:
-                    gql.add_relationship(
-                        doc_id,
-                        inp["targetId"],
-                        inp.get("relationshipType") or "child",
+                # A cross-ref that reaches here without an explicit type
+                # is a caller bug. Defaulting to "child" (the reactor's
+                # drive-containment type) would silently exclude the edge
+                # from the knowledge graph, since the graph indexer only
+                # projects the seven knowledge relationship types. Fall
+                # back to the weakest knowledge type and say so loudly.
+                rel_type = inp.get("relationshipType")
+                if not rel_type:
+                    rel_type = "RELATES_TO"
+                    print(
+                        f"  WARN {doc_id} -> {inp['targetId']}: "
+                        "ADD_RELATIONSHIP had no relationshipType; "
+                        "defaulting to RELATES_TO"
                     )
+                try:
+                    gql.add_relationship(doc_id, inp["targetId"], rel_type)
                     doc_applied += 1
                 except Exception as e:
                     doc_failed += 1

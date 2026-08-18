@@ -188,6 +188,41 @@ def fetch_drive(gql, drive: str) -> dict:
     return doc
 
 
+def clear_stale_snapshot(out: Path, log: Callable[[str], None] = print) -> tuple[int, list[str]]:
+    """Empty a snapshot directory before writing a fresh snapshot into it.
+
+    A snapshot directory describes ONE drive at ONE moment. Writing into a
+    directory left over from a previous run corrupts it in two ways, both
+    observed in practice:
+
+      * state files for documents that no longer exist survive, so the
+        directory accumulates the union of every drive ever snapshotted
+        (1533 stale + 1528 fresh = 3061 files);
+      * `id-map.json` and `upload-summary.json` describe a *rebuild* into
+        some other reactor. `verify` loads `id-map.json` when present and
+        only falls back to identity when it is absent, so a leftover map
+        makes "verify a drive against a snapshot of itself" report
+        0/1528 matched — a false failure that looks like total data loss.
+
+    Returns `(states_removed, artifacts_removed)`.
+    """
+    stale_states = list((out / "states").glob("*.json"))
+    for path in stale_states:
+        path.unlink()
+    artifacts = [
+        p for p in (out / "id-map.json", out / "upload-summary.json") if p.exists()
+    ]
+    for path in artifacts:
+        path.unlink()
+    if stale_states or artifacts:
+        names = ", ".join(p.name for p in artifacts)
+        log(
+            f"[download] cleared {len(stale_states)} stale state files"
+            + (f" and {names}" if names else "")
+        )
+    return len(stale_states), [p.name for p in artifacts]
+
+
 def download(
     gql,
     endpoint: str,
@@ -199,6 +234,8 @@ def download(
     out = Path(out)
     (out / "states").mkdir(parents=True, exist_ok=True)
     start = time.time()
+
+    clear_stale_snapshot(out, log)
 
     drive_doc = fetch_drive(gql, drive)
     nodes = (state_global(drive_doc).get("nodes")) or []
