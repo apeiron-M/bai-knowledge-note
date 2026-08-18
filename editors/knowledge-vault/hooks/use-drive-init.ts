@@ -2,11 +2,14 @@ import { useEffect } from "react";
 import {
   useSelectedDrive,
   useNodesInSelectedDrive,
-  addDocument,
-  addFolder,
 } from "@powerhousedao/reactor-browser";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
+import {
+  createDocumentRemote,
+  createFolderRemote,
+} from "../../shared/remote-reactor.js";
+import { triggerVaultPull } from "../../shared/vault-pull.js";
 
 /**
  * Authoritatively fetch the drive's tree from the reactor (NOT from
@@ -145,7 +148,16 @@ export function useDriveInit() {
   }, [driveId]);
 }
 
-// ─── Single sequential init: folders then singletons ───
+/**
+ * ─── Single sequential init: folders then singletons ───
+ *
+ * Every write here goes to the Switchboard, not to reactor-browser's
+ * local `addFolder`/`addDocument`. This drive runs in remote-first mode
+ * (`hooks/use-remote-first.ts`): its sync channel is neutralised, so a
+ * local create materialises a node in this browser tab's replica and
+ * nowhere else — the vault would look initialised until the next reload
+ * and be empty for every other client.
+ */
 async function initDrive(driveId: string, existingNodes: Node[]) {
   try {
     // Phase 1: Create folders
@@ -166,16 +178,16 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
         : undefined;
 
       try {
-        const result = await addFolder(driveId, folder.name, parentId);
-        folderIds.set(path, result.id);
-        await new Promise((r) => setTimeout(r, 500));
+        const newId = await createFolderRemote({
+          driveId,
+          name: folder.name,
+          parentFolderId: parentId,
+        });
+        folderIds.set(path, newId);
       } catch (err) {
         console.error(`[VaultInit] Failed to create folder /${path}/:`, err);
       }
     }
-
-    // Wait for reactor to process all folder operations
-    await new Promise((r) => setTimeout(r, 1500));
 
     // Phase 2: Create singletons
     const existingTypes = new Set(
@@ -195,17 +207,20 @@ async function initDrive(driveId: string, existingNodes: Node[]) {
       const parentFolderId = folderIds.get(singleton.folderPath);
 
       try {
-        await addDocument(
+        await createDocumentRemote({
+          documentType: singleton.type,
+          name: singleton.name,
           driveId,
-          singleton.name,
-          singleton.type,
           parentFolderId,
-        );
-        await new Promise((r) => setTimeout(r, 1000));
+          targetFolderPath: singleton.folderPath,
+        });
       } catch (err) {
         console.error(`[VaultInit] Failed to create ${singleton.name}:`, err);
       }
     }
+
+    // Nothing synced these nodes into the browser — pull the tree.
+    triggerVaultPull();
   } catch (err) {
     console.error("[VaultInit] Drive initialization failed:", err);
   }
