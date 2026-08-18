@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Multisigs are classified on two independent axes \u2014 potential impact and required response speed \u2014 with ties rounded up",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a159dcb2-cdf3-4e55-816a-4ee06fd1dc03",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a45a2ff2-55aa-42ae-8210-77a5591d3ae9",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e02a8f4-0227-47e8-9147-7e7ac325006e",
+      "name": "multisig",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.1.1.1.1 defines an Impact Assessment producing one of four levels \u2014 Low (<$100k), Medium ($100k\u2013$1M), High ($1M\u2013$10M), Critical (>$10M) \u2014 each also characterized by decision context (from \"[m]inimal disruption, alternative paths exist\" to \"[p]rotocol-wide failure\") and reputational damage. A.2.11.1.3.2.1.1.1.2 defines a separate Operational Assessment producing Routine (24\u201348 hours, \"[f]ull verification protocols\"), Time-Sensitive (2\u201312 hours, \"[s]treamlined but thorough\"), or Emergency (<2 hours, \"[m]inimal delays, risk-appropriate\").\n\nSeparating the axes is the substantive insight. Blast radius and urgency are independent properties, and collapsing them into one \"criticality\" score forces a false trade: a high-value multisig that is never urgent should carry maximum verification, while an emergency pause key with no financial exposure should be fast and lightly gated. Only a two-dimensional grid lets security requirements be strict on one axis and permissive on the other.\n\nBoth provisions carry the same tie-break: \"[w]hen a Multisig falls between two classification levels, the higher security classification must be selected.\" Since the Multisig Administrator self-assesses and reports to Core GovOps (A.2.11.1.3.2.1.1.8), the round-up rule removes the discretion that self-classification would otherwise create at every boundary \u2014 the classifier cannot resolve their own borderline case in favour of less work.\n\nAccountability is attached before use: A.2.11.1.3.1.1 requires each Multisig to have a designated Administrator \"communicated to the Protocol Security Workstream Lead and Core GovOps prior to the Multisig's activation or operational use.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Impact is graded Low to Critical by exposure, decision context and reputation; Operational is graded Routine to Emergency by response window, and borderline cases must take the higher classification.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

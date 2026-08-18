@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-b25976a1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b25976a1-e82c-4b6b-acad-9080d0adecdf",
+      "targetTitle": "Funds borrowed on an Agent Credit Line are ring-fenced to th"
+    },
+    {
+      "id": "lnk-95f4a260-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "95f4a260-686c-4e83-934b-dae337001e0a",
+      "targetTitle": "A Prime Agent borrowing at a Subsidized Rate has its Agent R"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky Savings Rate earned on borrowed liquidity is netted against interest owed, closing the internal carry trade",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b8795e7b-58b7-4515-a270-fe83de787759",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1aa8edd7-7747-4e16-8acd-dbb24f42cb41",
+      "name": "settlement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "25ce4d9b-23b0-475c-a8d2-94ffe29ba520",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.4.2.1.3 states that a Prime holding sUSDS earns the Sky Savings Rate on it, and \"Where that sUSDS is funded by liquidity borrowed from Sky, the Sky Savings Rate earned and the interest owed to Sky are netted, and the net amount is the interest expense of the Prime Agent and revenue of Sky.\"\n\nWithout netting the position would be circular. A Prime borrows USDS from Sky at the Agent Credit Line Borrow Rate, deposits it into sUSDS, and earns the Sky Savings Rate \u2014 both legs paid by Sky. If the savings rate exceeded the borrow rate the Prime would earn a riskless spread funded entirely by the protocol; if it were lower, Sky would be collecting a spread on money it lent to itself. Either way the gross flows misrepresent what happened.\n\nNetting makes the accounting reflect the economic substance: a single net interest amount in one direction. It also removes any strategy value from the round trip, since the two rates cancel by construction rather than by coincidence of calibration.\n\nThe important qualifier is the funding test \u2014 netting applies only \"where that sUSDS is funded by liquidity borrowed from Sky.\" sUSDS a Prime holds from its own capital is a genuine investment and earns the savings rate outright, with no interest to offset. Applying netting there would penalise a Prime for saving its own money.\n\nThis makes tracing the *source* of funds a live requirement of settlement, not an accounting nicety. It is the same discipline the risk-capital rules apply when distinguishing internal from rented capital: the identity of a position's funding changes how it is treated.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:37:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Where a Prime's sUSDS is funded by liquidity borrowed from Sky, the SSR earned and the interest owed offset, and only the net is revenue to Sky.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

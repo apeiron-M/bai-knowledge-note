@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-621be458-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "621be458-3ae9-4498-b319-bbad2691807c",
+      "targetTitle": "doc-0f385757"
+    },
+    {
+      "id": "lnk-87b19457-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87b19457-fb13-40a0-9814-f77ac954a05f",
+      "targetTitle": "Bug bounty rewards above one million USD are paid in monthly"
+    },
+    {
+      "id": "lnk-aae381d4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aae381d4-861f-49c5-a769-649a33ebb565",
+      "targetTitle": "Peg defense may be funded by generating new USDS and borrowi"
+    },
+    {
+      "id": "lnk-6b4cb7e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6b4cb7e6-61ef-4f52-a650-f08d899c2aa5",
+      "targetTitle": "USDS and Dai amounts are always rounded up so that residual "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Bounties are denominated in USD but paid in USDS at par, with adjustment only past a one percent deviation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a573e6dc-4156-458d-ac56-50989f89ac72",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d5dc992-7415-4ccc-8ace-7fdd0673154b",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "efc9d3fd-518d-42d8-aa7b-73ce0ab56794",
+      "name": "stablecoin",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.1.3.3.1 states that \"[p]ayments are denominated in USD. However, payouts are done in USDS assuming a full 1:1 ratio with the USD. However, if the price of USDS deviates from the USD value by more than 1%, the amount of USDS will be adjusted.\"\n\nThree things are happening at once. The obligation is a dollar obligation, so the researcher is promised value not tokens. Settlement is in Sky's own liability, so Sky pays in an instrument it issues rather than in acquired dollars. And a 1% tolerance band means the par assumption is not corrected for small deviations.\n\nInside that band, the payee bears the loss. A researcher paid at par while USDS trades at 0.995 receives 0.5% less than promised, and there is no symmetry argument that helps them \u2014 the adjustment is described as a response to deviation, not as a two-sided mark.\n\nThe band is a reasonable operational simplification: recomputing every payment against an oracle price adds process for immaterial amounts. It is also a small but real transfer of Sky's own peg risk to the people it is paying for finding peg-threatening bugs. On the largest bounties, tranched over months under A.2.11.1.1.3.3.2, the payee is exposed to that band repeatedly.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Inside the 1% band the whitehat absorbs any USDS depeg; beyond it the USDS amount is adjusted, making the peg tolerance an explicit allocation of currency risk to the payee.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

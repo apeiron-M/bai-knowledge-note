@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Multisig rules constrain structure rather than identities, letting signers rotate keys without an Atlas edit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2b64d119-5550-46fd-bb3a-9c11d00d367b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9feda80a-6063-41e1-8777-3945a36c4d39",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2285635f-2bc5-488c-9661-32c04f883cfb",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.2.2.2.1.5 lets the signers of the Core Council Buffer change the signer set \"so long as\" three conditions hold: exactly six signers, exactly five required to execute, and the split of two Core Facilitator / three Core GovOps / one Operational GovOps Soter Labs. A.2.3.1.2.2.2.2.5 states the Aligned Delegates Buffer's version more loosely \u2014 \"at least four (4) signers,\" \"a majority of signers... required,\" and \"an equal number of signers... controlled by the Core Facilitator and Core GovOps.\"\n\nThe design separates two things that are usually conflated. **Who** holds a key is operational: keys get compromised, staff change, hardware fails, and rotating them must be fast. **What the arrangement guarantees** is constitutional: the collusion threshold and the balance of power between parties are exactly what the Atlas is protecting.\n\nBy writing the invariants instead of the addresses, the Atlas keeps its guarantees while delegating churn. A self-amending signer set would be alarming if the guarantee were membership \u2014 here it is safe because any valid amendment reproduces the same power structure.\n\nThe two formulations differ instructively. The Core Council Buffer is pinned exactly, so its distinctive 5-of-6 balance cannot drift. The Aligned Delegates Buffer is specified as a floor plus a parity rule, so it can grow while preserving the property that matters \u2014 neither Core Facilitator nor Core GovOps can ever reach a majority without the other.\n\nThe residual exposure is that these rules are enforced socially rather than by contract: the multisig itself will accept any change five signers agree to, so compliance depends on the same parties the rules are meant to bind.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Signers may change the signer set provided the count, threshold and per-party distribution invariants hold, so operational key management never requires amending the Atlas.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

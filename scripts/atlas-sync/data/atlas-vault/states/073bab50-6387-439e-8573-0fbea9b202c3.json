@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The DAI-USDS migrator is the one Liquidity Layer swap with neither a rate limit nor a slippage check, because the exchange is 1:1 by construction",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "25d0cc31-4463-47d1-b470-872b4b364e7c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "129b88bf-738d-4285-bfbc-8ee59487fc2b",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "44ee54d5-3739-4ee1-8ef6-990dde101b3d",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fade74ca-b782-483e-866a-14411d88e05c",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.12.1 and A...12.2 are the shortest procedures in the module: check `onlyRole(RELAYER)`, approve the `daiUsds` migrator, call `usdsToDai` or `daiToUsds`. No `_rateLimited`, no minimum output, no balance-delta verification, no configured slippage.\n\nThe justification is stated in the steps themselves \u2014 `daiUsds` \"facilitates a **1:1** swap between USDS and DAI\" (A...12.1.2) and the swap is executed \"in a 1:1 ratio\" (A...12.1.3). A fixed-parity conversion has no execution price, so slippage protection has nothing to protect against, and it moves value between two representations of the same unit, so a rate limit would meter an action that changes no exposure.\n\nThis clarifies what Grove's controls are actually for. Rate limits are not a generic activity throttle \u2014 they bound **exposure to a counterparty or market**. Where an operation creates none, applying one would only add a failure mode and a governance parameter to maintain.\n\nThe assumption doing the load-bearing work is that parity is structural rather than market-determined. It is inherited from the migrator contract, so if that contract ever became fee-bearing or path-dependent, these two functions would be the ones with no defence \u2014 and, like the other unguarded paths in this chunk, their only remaining control would be the relayer role.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "swapUSDSToDAI and swapDAIToUSDS carry only the RELAYER gate; a fixed-parity conversion between two Sky-issued units changes no economic exposure, so there is nothing to meter.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove outsources its day-to-day execution to a separate Executor Agent, Amatsu, through the Executor Accord Primitive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c0a2b1f5-34bb-4489-abcc-9d84f8825629",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "28392ad5-e1c4-4066-b5e1-013a9fed8f49",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7c4d1195-37eb-412f-a9e6-69c331383c0b",
+      "name": "agent-architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "02d875b9-cbe7-43af-a949-1ad51849dd91",
+      "name": "executor-agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.2.1 records an **Active** Executor Accord Primitive for Grove with a single live Instance named Amatsu (A.6.1.1.2.2.2.1.2.1). Its parameters section A.6.1.1.2.2.2.1.2.1.1.1 does not define the roles inline; it points outward: \"The Operational Facilitator and Operational GovOps for Amatsu are specified in [A.6.1.2.1 - Operational Executor Agent Amatsu].\"\n\nThat indirection is the architecture. Grove, a Prime Agent, does not staff its own execution functions \u2014 it enters an Accord with a purpose-built **Executor Agent** whose own Artifact holds the role assignments. Grove's Artifact specifies *that* execution is delegated and under what process; Amatsu's specifies *who* executes.\n\nThe separation lets one Executor Agent serve multiple Primes with a shared operational apparatus, and lets Grove change executors by opening a new Accord Instance rather than rewriting its own governance. Because the Executor Accord is an Operational Primitive rather than a Genesis Primitive, it remains re-invocable \u2014 the delegation is intentionally reversible.\n\nThe corresponding exposure is that Grove's day-to-day integrity depends on a document it does not control. A change to Amatsu's Artifact changes who can act for Grove, so Grove's risk surface extends into another Agent's governance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Amatsu supplies Grove's Operational Facilitator and Operational GovOps roles, so a Prime Agent's operational authority is defined in another Agent's Artifact rather than its own.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

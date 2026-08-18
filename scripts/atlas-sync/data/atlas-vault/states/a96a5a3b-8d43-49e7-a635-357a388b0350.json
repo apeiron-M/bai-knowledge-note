@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Genesis Capital Backstop mutualizes one Prime Agent's excess losses pro-rata across every Genesis Agent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "91a42536-a7d1-4c13-aec7-f7b27434c60c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1aa103a-329e-4422-819e-1d3b822181a3",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "390ad7cc-245c-4814-b8ae-d5a207b1d212",
+      "name": "genesis-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5f877fe9-5ca2-4da3-b19b-29a141717668",
+      "name": "loss-absorption",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.6 provides that \"if losses exceed a Prime Agent's capital and cannot be absorbed by the Sky Surplus Buffer, the Sky Protocol must apply a pro-rata haircut across each Genesis Agent's Genesis Capital, implemented as a transfer of eligible assets from each Agent to the Sky Surplus Buffer,\" sized to cover the excess \"up to a maximum of the Aggregate Backstop Capital.\"\n\nThe structure is mutual insurance among Agents, and the ordering matters: the failing Agent's own capital goes first, then Sky's Surplus Buffer, then *everyone else's* Genesis Capital. Agents that took no part in the loss pay for it in proportion to the capital Sky contributed to them.\n\nThat is a defensible bargain \u2014 Genesis Capital is money Sky gave the Agents to bootstrap them (A.3.7.1.6.6.1), so making it loss-absorbing prices the subsidy. But it creates a cross-Agent externality: a prudent Agent's balance sheet is exposed to a reckless peer's risk-taking, and no provision here charges the risk-taker more. The discipline has to come from elsewhere in the Risk Framework, not from this mechanism.\n\nThe cap is the second structural feature. The haircut cannot exceed Aggregate Backstop Capital, which A.3.5.3.1.2 defines as Genesis Capital minus Allocated Genesis Capital \u2014 so the ceiling is arithmetically what the pool actually contains, and any residual loss is pushed onward to the SKY Backstop rather than pursued from Agents.\n\nA.3.7.1.6.3 softens the aftermath without weakening the obligation: transfers may leave Agents short under the Risk Framework, and Sky \"will work in good faith with such Agents to waive penalties for a reasonable period\" \u2014 a discretionary remedy answering a mechanical levy.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Losses beyond the Agent's own capital and the Surplus Buffer trigger a proportional haircut on each Genesis Agent's Genesis Capital, transferred as assets into the Surplus Buffer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

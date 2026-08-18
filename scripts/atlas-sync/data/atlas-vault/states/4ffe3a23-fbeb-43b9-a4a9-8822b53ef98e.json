@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spell Reviewers may not introduce code by any route \u2014 directly, via pull request, via suggestion, or after deployment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a104386f-377a-44cf-a8c5-3491d8f5ad3f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11dfa38a-bdea-4e34-9308-c62ac90248cc",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    },
+    {
+      "id": "19fe068f-fc1f-4f9e-987e-f256e4de03c5",
+      "name": "code-review",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Atlas spends four provisions closing one hole. A.1.10.2.4.9.2.3 bans Reviewers from \"*directly* committing, adding, contributing, or modifying code to a Spell they are reviewing.\" A.1.10.2.4.9.2.4 extends the ban to \"*indirectly*\" doing so, and gives the case: \"If a Reviewer added code via a Pull Request (**even from a trusted party such as an Agent**), this would be indirectly modifying the Spell code.\" A.1.10.2.4.9.2.5 confirms Reviewers \"can make suggestions, but cannot commit those suggestions.\" A.1.10.2.4.9.2.9 forbids them from merging the Spell's pull request. A.1.10.2.4.9.2.10 forbids leaving GitHub suggestions after deployment or archival.\n\nEnumeration rather than a single principle is deliberate. Each item is a mechanism that produces the same outcome \u2014 code in the Spell that the Reviewer put there \u2014 while feeling different in practice. Relaying an Agent's pull request feels like courier work, not authorship. Committing your own suggestion feels like accepting your own accepted advice. Naming each route removes the room for a good-faith reading that lands in the same place.\n\nThe parenthetical about trusted parties is the key clause: the origin of the code is irrelevant. What the rule protects is not code quality but the *structural* independence of the reviewer. A Reviewer who has contributed any line can no longer give an outside opinion on the whole, however good that line was.\n\nThe post-deployment ban (A.1.10.2.4.9.2.10) covers a subtler risk: a suggestion on a deployed or archived Spell cannot improve anything, but it can muddy the record of what was reviewed and approved at the time, which is the artifact future audits depend on.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Four separate provisions enumerate every channel, and the ban holds even for a pull request from a trusted party such as an Agent, so the prohibition is on the effect rather than the intent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

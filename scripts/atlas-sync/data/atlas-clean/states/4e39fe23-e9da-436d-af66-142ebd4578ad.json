@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-cbb6be22-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb6be22-536e-48af-909a-9daae6f9d687",
+      "targetTitle": "doc-db2857df"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every technical issue must be classified as collusion or genuine accident, with evidence captured in a tamper-proof form",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "dc7027a2-ade8-4d1c-8e75-22d4438da846",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "150da4ba-980c-4e09-8937-1f1f34822573",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "458e572e-3d3e-42bf-ae8f-a56d7e463824",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.7.3.1 requires two orthogonal classifications from whoever discovers a technical issue: whether it is \"a mistake, a bug, or an exploit,\" and \u2014 separately \u2014 whether it is \"either a result of collusion or a genuine accident.\"\n\nThe second axis is the unusual one. Most engineering processes treat bugs as accidents by default and escalate to malice only on suspicion. Here the intent question is asked every time, even for a trivial mistake, which normalizes it: raising the possibility of collusion is a checklist field rather than an accusation someone must find the nerve to make.\n\nA.1.10.2.4.7.3.2 follows through on the implication. Where the issue \"may be non-technical in nature \u2014 such as possible instances of collusion \u2014 supporting evidence should be captured... in a manner that does **not permit bad actors to manipulate or erase the evidence through methods such as editing or deleting messages**.\"\n\nThat is the provenance framework from A.1.10.2.4.5.1 turned toward forensics: the same mutability concern that disqualifies a Discord message as authorization also makes it useless as evidence. If a colluding party is a participant in the channel, they can edit or delete their own traces \u2014 so evidence must be pulled into an immutable form at capture time, not when the investigation opens.\n\nThe two provisions together mean the moment of discovery is also the moment of evidence preservation. By the time anyone decides an issue was suspicious, the record must already be beyond the reach of whoever might want it gone.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:25:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.7.3.1 makes insider intent a standing question for even routine bugs, and A.1.10.2.4.7.3.2 requires evidence stored where bad actors cannot edit or delete it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

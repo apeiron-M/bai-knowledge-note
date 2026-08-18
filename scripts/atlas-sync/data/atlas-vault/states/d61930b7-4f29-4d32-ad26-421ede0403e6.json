@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An unconfigured pool is inert: missing slippage or TWAP settings revert rather than fall back to a default",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "94130402-5ca3-4cf1-97b8-8c98f0dd993b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "606bf216-a367-4de4-8105-652a7118d751",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e6688ebb-d82a-49aa-8e2a-9b725f53075f",
+      "name": "fail-safe-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "de775d84-4a6f-4a62-bca5-30600138e8d5",
+      "name": "slippage-protection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three distinct revert reasons in this chunk exist purely to reject *absent* configuration: `CurveLib/max-slippage-not-set` when `params.maxSlippage == 0` (A...8.1.2, A...8.2.2, A...8.3.2), `UniswapV3Lib/zero-twap-seconds` when `twapSecondsAgo == 0` (A...9.1.2, A...9.2.2), and `UniswapV3Lib/min-amount-not-set` when `minAmountOut == 0` (A...9.1.2).\n\nEach is a fail-closed default. The natural implementation shortcut \u2014 treat an unset `maxSlippage` as \"no slippage constraint\" \u2014 would silently make the least-configured pool the least protected one, exactly inverting the risk gradient you want. Reverting instead means a zero value can never be mistaken for a permissive value.\n\nOperationally this splits pool enablement into two independent acts: making a pool reachable, and giving it parameters. A pool that has been added but not parameterised cannot be used at all, so a partially-completed governance change degrades into inaction rather than into unbounded exposure.\n\nIt also makes zero unusable as a legitimate setting, which is the accepted cost: there is no way to express \"this pool intentionally has no slippage bound\", and that is the point.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "max-slippage-not-set, zero-twap-seconds and min-amount-not-set make governance parameterisation a precondition of use, so whitelisting a pool is not by itself enough to trade it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

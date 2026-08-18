@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "During the manual phase the Risk Advisor's dashboard is the operative source of parameter values, and may deviate from the documented methodology",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "cdb5ab36-c5fe-4030-969e-e27b32d881b8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ca2765db-c35f-41bb-867d-5f80b0d084fa",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3f45fc5a-6ac8-46d4-b54f-a243f650fe63",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b335d39-cc04-4cc6-acb6-82c68f0d1299",
+      "name": "specification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.8.5.2.1 assigns the Core Council Risk Advisor to \"develop and maintain a stUSDS Dashboard\" that \"must display the recommended values for each of the stUSDS parameters as of any point in time,\" and gives its location as an external site. A.4.4.1.3.8.5.2.2 then obliges Operators to \"prepare and execute changes so that the stUSDS parameters reflect the recommended values in the stUSDS Dashboard.\"\n\nThis creates a three-role separation that is genuinely useful: the Risk Advisor *recommends*, the Operators *execute*, and A.4.4.1.3.8.5.2.3 has the Core Facilitator and Risk Advisor *review* the Operators, escalating to the Core Council if recommended values are not being applied on a timely basis. Nobody both sets and applies the numbers, and failure to act is itself a reportable event.\n\nTwo consequences deserve flagging. First, the operative specification lives **off-Atlas and off-chain**: what the parameters should be at any moment is whatever a hosted dashboard says, so the dashboard's availability and integrity become part of the system's trust surface.\n\nSecond, the methodology is advisory rather than binding. Recommended values \"should be based on the methodology specified in [A.4.4.1.3.8.6]\" but \"the Core Council Risk Advisor may deviate from this methodology if they determine that another methodology is advisable to support the growth of USDS and the interests of the Sky Protocol.\" A.4.4.1.3.8.6.1 repeats the licence for the short-term process.\n\nSo during the manual phase, the elaborately specified formulas function as a default that a single named role may override on judgment. The binding constraints are the BEAM envelope and the review-and-escalate loop \u2014 not the mathematics.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.4.4.1.3.8.5.2.1 names an external URL as where recommended values live and lets the Risk Advisor depart from the Atlas methodology in the interest of USDS growth.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

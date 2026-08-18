@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Genesis Capital is capped at an Agent's total capital, so the backstop shrinks exactly when Agents are impaired",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9f41286f-ab2a-40a5-8ec4-f77747974227",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4c981703-3f24-477b-9cf5-18cd58e4693e",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "46b5845c-f2a1-49fe-baa8-ce991af748c8",
+      "name": "genesis-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e52f8084-a7a6-4f9c-9ca8-13e86c3508f5",
+      "name": "solvency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.6.6 defines the Genesis Capital of an Agent as \"the lesser of (1) the Eligible Genesis Capital of the Agent and (2) the total capital of the Agent,\" where Eligible Genesis Capital is what Sky contributed minus what has been phased out.\n\nThe lesser-of construction is honest accounting: Sky cannot claw back capital an Agent no longer has, so counting the full contribution as available backstop would overstate the safety net. The measure reports claimable value, not historical generosity.\n\nBut it makes the backstop procyclical. Aggregate Backstop Capital sums Genesis Capital across Agents (A.3.5.3.1.2), so a market event that impairs several Agents at once mechanically reduces the pool \u2014 and a Prime Agent loss large enough to reach the Genesis Capital Backstop is exactly the kind of event likely to impair peers simultaneously. Capacity is lowest when demand on it is highest.\n\nA second-order effect follows through the phase-out rules. A.3.7.1.6.6.2.1.1 pauses Genesis Capital phase-out whenever Aggregate Backstop Capital falls below 125 million USDS, so impairment automatically halts the release of Agents from backstop duty. That is the correct direction \u2014 the system stops shrinking its safety net when the net is thin \u2014 but it is a brake, not a refill: nothing in this document restores Genesis Capital once Agent capital is lost.\n\nAnyone modelling Sky's solvency should therefore treat Aggregate Backstop Capital as a correlated, state-dependent quantity rather than a fixed buffer.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Defined as the lesser of Eligible Genesis Capital and the Agent's total capital, the measure falls as an Agent loses money \u2014 reducing available backstop in the conditions that call for it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

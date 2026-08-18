@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Risk obligations are inherited by reference too, so Sky can tighten an Agent's Total Risk Capital rules without its consent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "032b32e7-0609-483e-83f9-d322e3519162",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "010723be-0133-48a7-ab04-de5e484edd36",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ad657bf-ce1a-414e-ab8c-685740799d92",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c2c66c4-1633-415c-84f9-50aa7067fcbe",
+      "name": "inheritance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.1.3.2 applies the inheritance mechanism to duties rather than procedures: \"as operators of the Keel Liquidity Layer, Keel automatically inherits, and is subject to, the base class of operational requirements related to Total Risk Capital management defined in A.2.2.10.1.1.3.2.1.2 - Primes' Total Risk Capital (TRC) Management. Modifications to the base operational logic automatically propagate to the Keel Artifact.\"\n\nElsewhere in the Artifact inheritance saves duplication \u2014 every Agent runs the same Integration Boost protocol, so writing it once is tidy. Here it does something stronger. Sky can raise capital requirements on every Prime Agent simultaneously, with immediate effect, without any Agent's governance participating and without an Artifact edit in any Agent's document.\n\nThat is a significant asymmetry of power, and it is arguably necessary. Risk rules that could only be tightened Agent by Agent would be tightened last where they were needed most, since the Agent closest to a breach has the strongest incentive to delay. Making the requirements a propagating base class removes consent from the loop precisely where consent would be self-serving.\n\nThe corresponding hazard for KEEL holders is that their downside constraints are not fixed at the time they invest. A reader assessing an Agent's risk profile from its Artifact alone is reading a pointer, not a promise \u2014 the binding text lives upstream and can move.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Keel 'automatically inherits, and is subject to' the Core Atlas base class of TRC management requirements, with modifications to the base logic propagating into the Keel Artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

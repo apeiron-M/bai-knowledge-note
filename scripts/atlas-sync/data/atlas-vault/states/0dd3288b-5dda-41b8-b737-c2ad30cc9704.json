@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every individual credit position is its own Allocation System Instance, so onboarding an asset is a governance act",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d15405c3-e2c6-4813-a3a1-7c35c6480065",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ec125ed-2973-4f27-ae42-74b96b978d2f",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1bb86689-f978-41c8-978e-88554c9b27b2",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "63fd7efe-d85b-4256-8d12-70b9709c204c",
+      "name": "risk-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.1.2 organizes Grove's live allocations as a three-level tree: network (A.6.1.1.2.2.6.1.1.2.1, \"Ethereum Mainnet\"), then protocol (A.6.1.1.2.2.6.1.1.2.1.1 \"Centrifuge\", A.6.1.1.2.2.6.1.1.2.1.2 \"Blackrock\"), then one entry per asset \u2014 Centrifuge JTRSY, JAAA, ACRDX, and a JTRSY USDS Vault, each pointing to its **own** Instance Configuration Document.\n\nThe granularity is the claim. Grove does not hold a single \"Centrifuge allocation\" configured at the protocol level; it holds a separately instantiated, separately configured Primitive Instance per asset. Each therefore has its own parameters, its own operational process definition, and its own data repository.\n\nThe governance consequence is direct: because Instances live in the Artifact, **adding a new asset requires amending the Artifact**. Asset onboarding is not an operational decision made inside a risk mandate \u2014 it runs through Root Edit, and if it increases on-chain risk it also runs through the Core Council Risk Advisor (A.6.1.1.2.2.2.2.2.1.2.4). This is precisely why that section's exemptions are written per-asset-class rather than per-protocol.\n\nIndexing by network at the top level also anticipates multi-chain deployment: the same protocol on a different chain is a different Instance under a different branch, so chain risk is never collapsed into asset risk.\n\nThe cost is throughput. An institutional credit platform that must pass a governance cycle per position is structurally slower than a fund with a mandate \u2014 which is the trade the Atlas accepts in exchange for having every exposure individually visible and individually approved.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:37:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Active Instances are indexed network, then protocol, then asset \u2014 Centrifuge JTRSY, JAAA, ACRDX each get a separate Instance Configuration Document rather than sharing a protocol-level entry.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-eef82f0a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eef82f0a-4f7d-4618-a5d9-816fd69ab448",
+      "targetTitle": "doc-9d215bf6"
+    },
+    {
+      "id": "lnk-54367c9e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "54367c9e-56e2-475b-addc-a54590a96931",
+      "targetTitle": "Only the routine Root Edit path is specified \u2014 non-routine c"
+    },
+    {
+      "id": "lnk-7b0eb8b4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7b0eb8b4-3847-4687-9d26-3f5ae8718afc",
+      "targetTitle": "Several Distribution Reward Instances are Active while lacki"
+    },
+    {
+      "id": "lnk-c6b0f9e5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c6b0f9e5-e69f-4056-94fb-321cf579125b",
+      "targetTitle": "The Atlas embeds a runnable reference implementation to disa"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Distribution Reward's Non-Routine and Emergency Protocols are declared but contain no provisions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "33b13807-a4dd-4c4b-91d6-df1815f5115f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3d0d9349-4763-410d-8cc5-7857a609c6bd",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "448a5cf8-9304-467d-b341-4034d604faf0",
+      "name": "implementation-gap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.1.2.4 splits ongoing management of a Distribution Reward Instance into three protocols. The Routine Protocol (A.2.2.9.1.2.4.1) is fully elaborated across four chained Process Definitions covering calculation, payment, quarterly review and reimbursement. The other two are headings only: A.2.2.9.1.2.4.2 states that \"The documents herein define the protocol for non-routine ongoing management,\" and A.2.2.9.1.2.4.3 that \"The documents herein define the protocol for handling emergency situations\" \u2014 with nothing herein.\n\nThe result is that the most fully specified Primitive in the Atlas has a complete happy path and no defined behaviour for anything else. Suspending a misbehaving Instance, handling a compromised Integrator, pausing payments during a dispute, or responding to a discovered double-count all fall into the two empty sections.\n\nThe placeholders are nonetheless informative. Their existence records that the authors regard non-routine and emergency handling as *required* components of a Primitive's specification, not optional extras, which sets an expectation against which the gap is visible. The same three-way split can be expected as the Process Definition schema is extended to the other fifteen Primitives (A.2.2.2).\n\nRead alongside the TBD in the inaccurate-payment branch (A.2.2.9.1.2.4.1.3.4.1), a consistent pattern emerges: the Atlas's Primitive specifications are most complete where things go right and thinnest where they go wrong.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Only the routine happy path is specified; the two headings meant to cover exceptional and emergency instance management are placeholders with no content.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

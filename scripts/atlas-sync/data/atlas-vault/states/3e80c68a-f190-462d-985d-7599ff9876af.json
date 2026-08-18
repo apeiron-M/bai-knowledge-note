@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel holds one of five keys on the multisig that can freeze its own Liquidity Layer, and the 2-of-5 threshold excludes it entirely",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2f6e0007-2c1c-4fd1-8aea-f0e890d86f90",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc946ef4-9c37-429d-bcc0-cdd8a8bff1ac",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2dd1c938-6323-4e69-b40e-32b28802b566",
+      "name": "separation-of-powers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "606c747d-3b15-4f56-9b0f-ff512e2ea30c",
+      "name": "emergency-powers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.1.2.2.3.3 (and its Solana twin \u20262.3.4.4) sets the Freezer Multisig's composition: \"two (2) addresses controlled by Operational GovOps Soter Labs, two (2) addresses controlled by Operational Facilitator Endgame Edge, and one (1) address controlled by Keel,\" at a 2/5 threshold.\n\nThe arithmetic is the design. Two of the three parties can freeze without Keel; Keel's single key can neither trigger a freeze alone nor prevent one, since 2 of the remaining 4 external keys suffice. The Agent is a participant in its own kill switch without holding a veto over it \u2014 and the two external parties are the same roles that separately review its proposals for alignment and validate its rebate calculations.\n\nThe trigger explains why. Signers \"should exercise their authority to freeze the Keel Liquidity Layer in the event that Keel is not complying with rules regarding Risk Capital or Asset Liability Management, or in the event of another emergency.\" The mechanism's primary purpose is enforcing risk rules *against* the Agent, so giving the Agent a blocking stake would defeat it.\n\nA low threshold favours acting fast over acting carefully, and the counterweight is disclosure rather than pre-approval: \"each action executed by the Freezer Multisig, including any function calls and their parameters, must be reported to the Sky community within a reasonable time frame through a post on the Sky Forum.\" Two people can stop the system; both must then explain exactly what they called.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Signers are two from Operational GovOps Soter Labs, two from Operational Facilitator Endgame Edge and one from Keel, so any two outsiders can halt Keel while Keel alone can neither freeze nor block.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-f9cf6392-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9cf6392-1e72-4978-bcaa-482637178026",
+      "targetTitle": "Each Primitive Invocation records three workflow stages: ini"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Invoking one Primitive Instance runs a chain of six Process Definitions, each triggered by the previous one's document status change",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "10eb96ea-6b96-4eba-9961-25f05edf12e9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3dce55f2-a1df-4ff8-baab-38e58d4a2b38",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1bc1464d-a4ce-42ba-abde-3ea8c215e252",
+      "name": "process-definition",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.1.2.3 says an Agent Invokes its first Distribution Reward Instance \"by following the sequential process specified herein,\" and the subdocuments spell out six separate Process Definitions: Initial Opportunity Identification and Planning (.3.1), Operational GovOps Review (.3.2), Artifact Update Draft (.3.3), Operational Facilitator Review (.3.4), Offchain Vote (.3.5), and Artifact Update (.3.6).\n\nWhat makes this the canonical worked example of the schema is that **no stage invokes the next**. Each stage's Required Outputs write an `Invocation Status` value into `Primitive Hub Document/In Progress Invocations Directory/Instance Name`, and the following stage names that document update as its Document Update Trigger. The status values trace the whole path: `Planning` \u2192 `Pending GovOps review` \u2192 `Proposal drafting in progress` \u2192 `Proposal Pending Facilitator Review` \u2192 `Poll Approved`/`Poll Rejected` \u2192 `Proposal Approved`.\n\nThe design consequence is that the workflow's state lives entirely in the Artifact rather than in any engine. Anyone reading the Primitive Hub Document knows exactly where an Invocation stands and what happens next, and a stalled Invocation is visible as a status that stopped advancing rather than as a lost message.\n\nIt also means the process is composed of independently replaceable parts. A stage can be redefined without touching its neighbours as long as it consumes and produces the same status values \u2014 the same property that makes the two conforming Primitives (A.2.2.2) automatable at all.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Planning, GovOps review, draft, Facilitator review, off-chain vote, Artifact update \u2014 no step calls the next; each writes an Invocation Status that the next names as its Document Update Trigger.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

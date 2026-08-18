@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Base Morpho vault is documented one layer deeper, naming each lending market and its own supply cap",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "351b3f19-c053-4388-8c06-342f7812acf0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68b01e81-623d-4eca-92f2-0d42922cf71b",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1261d857-b809-43e0-8416-ef05ba3da45d",
+      "name": "risk-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0e644f2-7189-44db-bed7-31ebe2a0193a",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Base Morpho Blue USDC vault carries a section no mainnet instance has: `Market Exposure`, which \"contains exposure details for this Instance\" (A.6.1.1.1.2.6.1.3.2.1.1.4.1). Its children name individual Morpho markets with their own Pool IDs and caps \u2014 \"ETH/USDC 86% LLTV Pool \u2014 Pool ID: 0x8793cf30\u2026, Supply cap: 1,000,000,000\" (.4.1.1) and \"cbETH/USDC 86% LLTV Pool \u2014 Pool ID: 0x1c21c59d\u2026, Supply cap: 50,000,000\" (.4.1.2). The same instance also records the shared Curator and Guardian addresses and the 240-hour timelock (.4.2.1/.2, .4.3).\n\nThis is the answer to the problem the mainnet Morpho instances leave open. There, Spark documents that a curator can reallocate its capital and mitigates the risk with a timelock \u2014 a reactive control. Here it additionally documents *which* markets the capital may reach and how much each may absorb, which is a prospective control.\n\nThe caps also carry a risk view, not just a bound. A 1,000,000,000 cap on ETH/USDC against 50,000,000 on cbETH/USDC \u2014 same 86% liquidation LTV, same quote asset \u2014 says the collateral is what differs: ETH is the deep, liquid base case and cbETH a wrapped derivative worth a twentieth of the allowance.\n\nThe caveat is that these caps live where the timelock lives: in the vault's own configuration, set by its curator, not in Spark's contracts. Documenting them makes the authorised market set reviewable and any change detectable, but as with Maximum Exposure on the Arkis instance, enforcement is by observation rather than by code.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A Market Exposure block lists the ETH/USDC 86% LLTV pool capped at 1,000,000,000 and cbETH/USDC 86% LLTV at 50,000,000 \u2014 the vault is not treated as an opaque venue.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

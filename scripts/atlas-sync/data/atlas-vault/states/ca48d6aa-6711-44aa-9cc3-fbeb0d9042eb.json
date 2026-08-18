@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Multi-Instance Coordinator Document holds strategy that no single Instance can express",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "707b99de-0111-48af-92e0-e5b5a128a11f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a2734ee-1ea0-43c7-863a-e6db8188f118",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "46672344-6a8a-4e9d-bfe6-d6ea0dbd56ec",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ae95f1b1-5dba-4b49-aaa6-4678499c66c1",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2 introduces a document type absent from the other Primitives in Keel's Artifact: a Multi-Instance Coordinator Document, which \"provides general specifications of the Keel Liquidity Layer and defines Keel's overarching strategy and operational framework for managing across all Instances.\"\n\nThe need for it is structural. Incentive Primitives decompose cleanly \u2014 a Kamino boost and a Drift boost share nothing but a template. Allocation positions do not: they draw on the same Allocator Vault, the same ALM contracts, the same relayer multisigs, and the same pool of capital, so exposure is a property of the *portfolio*, not of any Instance.\n\nSo the Coordinator holds exactly what is irreducibly shared \u2014 contract addresses (A.6.1.1.3.2.6.1.2.1.1.1), rate limits (\u20261.1.3), off-chain operational parameters (\u20261.1.2), and the governance processes for invoking new Instances (\u20261.2.1). Per-Instance documents keep only what is genuinely local to one position.\n\nThis is the Atlas conceding that a purely Instance-shaped model cannot represent an aggregate risk budget. Where the earlier Primitives push all substance down into Instances, the Allocation System pulls the binding constraints up into a layer where they can be enforced across everything at once.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Above Keel's per-position Instances sits a document defining the Liquidity Layer's shared contracts, rate limits, off-chain parameters and cross-Instance management framework.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

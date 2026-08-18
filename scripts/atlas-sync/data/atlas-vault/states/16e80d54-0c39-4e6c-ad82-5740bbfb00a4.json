@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Automating BEAM updates requires tightening step and tau, trading blast radius for frequency",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f1ab9a07-a6d0-4ac5-abd9-f77faad8a1b2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e859ef5-55e4-470a-a615-638e23589682",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "745c9ded-cc3c-4cfb-843e-acd8e54f1654",
+      "name": "automation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "edadc972-f455-4258-aca1-3b15b751b30b",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.8.4.2 introduces the Operator Hot Wallet \u2014 \"a hot wallet controlled by a bot that will update stUSDS parameters on an automated basis\" \u2014 and A.4.4.1.3.8.4.2.2 makes its admission conditional on retuning the envelope: \"The `step` parameters for the `str` and `duty` parameters must be reduced to 400 basis points; and the `tau` parameter must be reduced to 4 hours.\"\n\nThis is a precise statement of how much a bot should be trusted relative to humans. The per-action authority is cut by roughly a factor of four while the permitted cadence quadruples, so the *maximum sustained rate of change* is approximately preserved \u2014 but the damage any single erroneous action can do falls sharply.\n\nThe reasoning behind the asymmetry is sound. A hot wallet is by definition a lower-security key than a multisig: it must sign unattended, so it cannot be protected by human review, and its compromise probability is higher. Meanwhile a bot's comparative advantage is exactly the thing humans are bad at \u2014 reacting promptly and consistently to a formula. So the design gives the machine what it is good for (frequency) and withholds what makes it dangerous (large single moves).\n\nSmaller steps also suit automation functionally, not just defensively: a controller that adjusts often in small increments tracks a moving target more smoothly than one that jumps, and it reduces the chance of overshooting past the target utilization.\n\nThe general principle worth extracting: when substituting automation for human operators, hold the rate limit roughly constant and shrink the per-action limit. Then a runaway bot degrades gracefully instead of catastrophically.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "When the bot hot wallet becomes an Operator, `step` drops from 1,500 to 400 basis points and `tau` from 16 hours to 4 \u2014 a machine gets smaller moves in exchange for acting four times as often.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

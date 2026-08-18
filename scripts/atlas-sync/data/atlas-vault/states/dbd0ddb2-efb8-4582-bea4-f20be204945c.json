@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Uniswap V3 price bounds are anchored to the pool's TWAP tick rather than its spot price",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a7452082-1787-480e-9bd2-3392daddc036",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "22b5c524-5993-402b-8978-774157c792f4",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b52a29b-df45-4a9c-88b3-0899c5819ec6",
+      "name": "oracle-manipulation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d6a2023f-32be-4c57-a82e-be06e624b9c2",
+      "name": "slippage-protection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.9.1.3 has the operator \"consult the pool's TWAP tick, and compute the `sqrtPriceLimitX96` bound from the TWAP tick offset by `tickDelta` and bounded to the `TickMath` minimum and maximum, so the swap cannot move the price beyond the configured limit.\"\n\nThe reference price is time-averaged, and this is the whole defence. A concentrated-liquidity pool's spot price is cheap to push within a single transaction; its TWAP over `twapSecondsAgo` is not. Bounding execution against the average means an attacker who moves the pool immediately before Grove's swap has not moved the yardstick Grove measures against.\n\nTwo bounds stack on top. The relayer's requested `tickDelta` must not exceed the pool's governance-set `swapMaxTickDelta` (A...9.1.2, `UniswapV3Lib/invalid-max-tick-delta`), so how far from the TWAP the swap may travel is a governance parameter, not a caller parameter. And the result is clamped to `TickMath` extremes so arithmetic cannot produce an out-of-range limit.\n\nThe same TWAP tick is reused for liquidity provision in A...9.2.4, where expected token amounts for the target liquidity are computed from it and each `min` amount must clear the expected amount scaled by `maxSlippage`. One price oracle therefore governs both swapping and minting, which keeps the two operations from being played against each other.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "sqrtPriceLimitX96 is derived from the TWAP tick offset by a governance-capped tickDelta and clamped to TickMath bounds, so a spot price manipulated in the same block cannot authorise a swap.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

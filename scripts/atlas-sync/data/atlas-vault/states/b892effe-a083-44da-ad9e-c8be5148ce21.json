@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "High-frequency payment records are Active Data edited directly by a named party, outside the Root Edit process",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "227d9285-98f6-4d94-8a7a-8ebf90da6b9d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c99b0c67-4e25-4f45-ada3-14b0b41335f2",
+      "name": "active-data",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d428941d-afbf-44a5-8b60-042c4c73c2e9",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "70c89fd2-6032-4992-9101-8cd599f859d3",
+      "name": "governance-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.5.1.2.1.3.4 and A.6.1.1.1.2.5.2.2.1.3.4 mark the payment lists for Spark's Distribution Reward and Integration Boost Instances as **Active Data**, with an identical control block: \"The Responsible Party is Operational GovOps. The Update Process must follow the protocol for 'Direct Edit'.\"\n\nThis is a second write path into the Artifact. Everything discussed under the Root Edit Primitive \u2014 1% proposal threshold, risk council review, facilitator alignment review, weekly poll \u2014 governs the *rules*. Active Data is the ledger those rules produce, and it is updated by a named operational role without any of that machinery.\n\nThe separation is necessary rather than a shortcut. Integration Boost payments run weekly (A.6.1.1.1.2.5.2.2.1.1.4); routing each week's figures through a governance vote would be absurd, and treating them as ungoverned off-document data would break the Artifact's claim to be the complete specification.\n\nThe design cost is a class of Artifact content that a single accountable party can change unilaterally. The safeguards are structural rather than procedural: the Responsible Party is named in advance, the update protocol is fixed, and the data is the output of formulas defined in the governed sections \u2014 so a Direct Edit that does not follow from those formulas is checkable against them.\n\nFor readers of any Atlas document, the practical lesson is that document sections are typed. `[Core]` text and `[Active Data]` content are amendable by entirely different processes, and the tag is the only signal of which applies.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Distribution Reward and Integration Boost payment lists carry an Active Data Controller naming Operational GovOps as Responsible Party under a 'Direct Edit' protocol \u2014 no proposal or vote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The same JTRSY credit exposure is reached through two structurally different conduits with independent limits ten times apart",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f09c48dd-b9b3-46f4-9fe7-cf195c42af4d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c0736e5-be71-4cc8-b80e-febb8081743b",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f696beea-bedf-4321-ae82-9b2149c11d16",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "25fd9052-9d39-4ada-a25e-2bbc04a460fc",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "JTRSY appears twice in this chunk. On Ethereum Mainnet (A.6.1.1.2.2.6.1.3.1.14.1) it is a \"Tokenized Treasury JTRSY\" Instance: Target Protocol Centrifuge, Asset Supplied **USDS**, with seven addresses including a Centrifuge ERC-7540 Vault, a Rate Provider, a Pocket Contract, a Token Redeemer, an Owner Timelock and a Basin Contract \u2014 plus Interim Deployment status, 100% CRR, and a 5,000,000 USDS inflow limit.\n\nOn Avalanche (A.6.1.1.2.2.6.1.3.2.1.1) it is a \"Centrifuge JTRSY\" Instance: Target Protocol Centrifuge, Asset Supplied **USDC**, with two addresses \u2014 token and underlying asset \u2014 no Basin, no Pocket, no Redeemer, no timelock, no interim status, and an inflow `maxAmount` of **50,000,000 USDC** (.2.1.1.2.4.1).\n\nSame issuer, same fund, same underlying credit risk; a tenfold difference in authorized inflow and an entirely different control apparatus. The Ethereum route is treated as an unproven deployment requiring full capital backing and a five-contract scaffold; the Avalanche route is treated as a routine conduit at ten times the size.\n\nThe defensible reading is that the *deployment* is what is being tested on Ethereum \u2014 the Basin architecture, the Pocket/Redeemer split, the timelock \u2014 not JTRSY itself, and that the Avalanche Instance predates it. But that reading has a consequence the documents do not address: nothing aggregates the two. Credit exposure to one Centrifuge fund is bounded twice, per-network, with no ceiling spanning them, so the conservatism of the interim 5,000,000 cap is undermined by a 50,000,000 path to the same risk on another chain.\n\nThis is the cross-network form of the aggregation gap: Grove's Instance boundary is *(venue, network, operation)*, while credit risk is a property of the issuer, and the schema provides no slot where issuer-level exposure is summed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Ethereum JTRSY routes USDS through an ERC-7540 vault, Pocket, Redeemer and Basin with a 5m interim cap; Avalanche JTRSY routes USDC through a bare token address with a 50m inflow limit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

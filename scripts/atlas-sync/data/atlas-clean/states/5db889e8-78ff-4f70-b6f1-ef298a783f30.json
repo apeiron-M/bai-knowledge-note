@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-da9fa40d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da9fa40d-b045-4b05-afac-60a4b72dc993",
+      "targetTitle": "Primitive Instances inherit a base class of operational logi"
+    },
+    {
+      "id": "lnk-c0fdd278-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c0fdd278-e34a-4338-b5cc-e1f3b8120af3",
+      "targetTitle": "Agent Primitive Instances inherit a base class of operationa"
+    },
+    {
+      "id": "lnk-d5e4153e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d5e4153e-c2a1-41cc-93cd-def8e416dccf",
+      "targetTitle": "Agent Primitive Instances inherit operational logic from the"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent Primitive Instances inherit Sky Core operational logic live, so upstream changes propagate automatically",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7868d3e1-9f65-4131-9e0a-2262dc36a54e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0dd7db3f-f254-4376-a783-e3f82a434db1",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "73d7dcaa-2717-4aa5-80ba-58c9ec7796c0",
+      "name": "inheritance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ac113fd-f392-4bb7-867c-f2006936d22b",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Routine Protocols of Spark's Distribution Reward and Integration Boost Instances (A.6.1.1.1.2.5.1.2.1.2.1 and A.6.1.1.1.2.5.2.2.1.2.1) both state that the Instance \"inherits the base class of operational logic\" defined in the Sky Core Atlas, subject to named qualifications, and then add the decisive sentence: \"Modifications to the base operational logic automatically propagate to this Instance.\"\n\nThis is inheritance by reference, not by copy. The Agent's Artifact holds a pointer to Core logic, so a change made once at the Core level takes effect across every Agent Instance without any Agent-level amendment \u2014 no Root Edit, no Agent vote, no per-Agent drift.\n\nThe benefit is consistency at scale: with many Agents each running many Primitive Instances, copied process text would diverge silently and the ecosystem would lose the ability to reason about how a Primitive behaves in general.\n\nThe cost is that an Agent's operating rules can change without the Agent's participation. Spark Governance controls its Artifact (A.6.1.1.1.2.2.2.2.1.2.1.6) but not the inherited logic that Artifact points at, which is a further respect in which Agent sovereignty is bounded.\n\nBoth provisions also note that \"in future iterations of the Spark Artifact, a version of the full process definition customized to Spark will be included herein\" \u2014 the inheritance is partly a bootstrapping shortcut, expected to be replaced by explicit local text later.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Instances reference a base class in the Core Atlas rather than copying it: 'modifications to the base operational logic automatically propagate to this Instance', with local text deferred to",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

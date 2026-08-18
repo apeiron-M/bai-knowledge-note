@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SkyLink rate limits use net accounting so round-trip flow does not consume capacity",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0345b849-78a4-4d6b-a1d0-5db5c4b5ac2c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c87cf47-90e1-4783-8f0a-0a878644269c",
+      "name": "skylink",
+      "topicDocumentId": null
+    },
+    {
+      "id": "37244f8e-45ce-46e1-8a35-166d9777477c",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3067e0b-9ad3-4ac6-92d9-430c07639e75",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every SkyLink bridge in this chunk specifies net accounting in identical terms (A.4.2.2.2.3.2.1, A.4.2.2.3.3.2.1, A.4.2.2.4.3.2.1): \"the rate limit applies to the net amount of tokens transferred from one side of the bridge to the other,\" with the worked example that 25,000,000 USDS out against 15,000,000 USDS back counts as 10,000,000 USDS.\n\nThe choice targets the right risk variable. What a bridge cap is meant to bound is how much value can be newly stranded or drained on the far side within a window \u2014 a change in exposure. Gross accounting would instead throttle *activity*, so ordinary two-way user flow, arbitrage, and market making would eat the allowance and legitimate users would hit the cap while net exposure sat flat.\n\nThe trade-off is real, though. Under net accounting an attacker who can also push tokens *back* can create headroom on demand: the cap does not limit how many tokens cross per day, only the imbalance. A design that mints on one side and burns on the other makes this coherent, since the return leg genuinely reverses the exposure \u2014 but it means the limit is not a throughput brake and should not be relied on as one.\n\nThe practical consequence is that a daily cap of a few million USDS bounds worst-case *new* exposure per day, giving responders a bounded loss per day and time for the freeze path to be invoked. It caps the bleed rate, not the traffic.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Inbound transfers offset outbound ones before the daily cap applies, meaning the limit constrains net exposure change rather than gross throughput or user activity.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

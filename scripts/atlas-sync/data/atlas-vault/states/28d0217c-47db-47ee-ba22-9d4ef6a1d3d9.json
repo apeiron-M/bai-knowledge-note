@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are linearly recharging buckets capped at a maximum, not per-window quotas",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f41d20d1-5bf7-4eb2-8845-483d78b9dfd0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc843d19-8a0c-47e9-ab6c-334f5da68f79",
+      "name": "risk-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ad77c506-6352-4bfe-9b10-2f88db96f1ce",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.5.3.1 gives the query implementation, and the formula defines the whole model: `getCurrentRateLimit` returns `_min(d.slope * (block.timestamp - d.lastUpdated) + d.lastAmount, d.maxAmount)`.\n\nThis is a token bucket, not a fixed window. Available capacity refills continuously at `slope` per second from whatever remained at the last update, and is clamped at `maxAmount`. Two parameters therefore express two independent risk statements: `maxAmount` bounds the largest single burst, and `slope` bounds the sustained rate over any longer horizon. A fixed-window quota cannot separate these, and permits a double-size burst across a window boundary.\n\nTwo sentinel values carry meaning. `maxAmount == type(uint256).max` short-circuits every path as unlimited, both in the query and in the trigger functions. `maxAmount == 0` is not a zero allowance but a *disabled key*: `triggerRateLimitDecrease` in A.2.2.10.1.1.1.2.5.3.4 opens with `require(maxAmount > 0, \"RateLimits/zero-maxAmount\")`, so an unconfigured limit blocks the operation entirely rather than permitting nothing-sized calls.\n\nThat distinction is the practical safety property: forgetting to configure a limit fails closed. It also explains the hedge attached elsewhere to capacity-restoring behaviour \u2014 restoration applies only \"where that rate limit is configured,\" because an unconfigured key has no bucket to refill.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "getCurrentRateLimit returns min(slope x elapsed time + lastAmount, maxAmount), so capacity regenerates continuously; maxAmount of zero disables a key and uint256 max marks it unlimited.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

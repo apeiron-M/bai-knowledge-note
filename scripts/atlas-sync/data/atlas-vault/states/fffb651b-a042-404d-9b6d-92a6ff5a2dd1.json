@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Emergency readiness is verified by scheduled drills rather than by assertion",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ce32c0e3-77e5-46a1-99af-11142baffef0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e649036a-f1ad-4e68-8c33-529a9cb7cefb",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "10470159-bbd7-4322-b735-d46e415b1e6a",
+      "name": "incident-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.2.1.3.2 requires that multisigs classified Time-Sensitive or Emergency conduct \"[p]eriodic operational drills,\" \"[q]uarterly testing of emergency communication and alerting systems,\" \"[s]emi-annual paging system tests to verify alert functionality,\" and \"[a]n annual full emergency simulation involving all signers,\" with the Administrator documenting \"the completion and outcome\" and providing testing reports to Core GovOps.\n\nThe premise is that an untested emergency capability is an assumption, not a control. A <2 hour response window depends on a chain of things that decay silently \u2014 a paging integration whose API key expired, a signer whose phone number changed, a procedure nobody has executed since onboarding. None of these produce any symptom until the one moment they must work.\n\nThe staffing requirement behind it is demanding: A.2.11.1.3.2.2.1.1.5.1 requires Emergency Response Multisigs to \"maintain 24/7 availability of a number of signers equal to or greater than the Multisig signing threshold,\" with geographic distribution \"encouraged ... to support 24/7 operational coverage.\" A low threshold like the recommended 2/4 is what makes round-the-clock coverage feasible at all \u2014 high thresholds and 24/7 availability are close to mutually exclusive for a volunteer-scale signer set.\n\nReporting outcomes to Core GovOps rather than keeping them internal is what makes the requirement auditable: a failed drill is a finding, not a private embarrassment. Capital Allocation multisigs carry a parallel competence duty \u2014 signers must \"possess sufficient protocol expertise\" (A.2.11.1.3.2.2.1.1.5.2).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:06:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Quarterly communication and alerting tests, semi-annual paging tests, an annual full simulation with all signers, plus 24/7 availability of signers at or above threshold",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

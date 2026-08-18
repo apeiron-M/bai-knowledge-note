@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CCTP transfers are split across messages at runtime using the bridge's own per-message burn limit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3b181611-d66c-4e99-9806-a03143b2243b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a8dcb44c-2f53-4ef7-8ce9-192ce36fecd7",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a08bbfbb-e60d-4172-876a-66291de9656f",
+      "name": "cctp",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fecba1d7-d658-4975-9a70-d35152015d83",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.15.1.4 reads the cap from the counterparty rather than hardcoding it \u2014 `cctp.localMinter().burnLimitsPerMessage(address(usdc))` \u2014 and A...15.1.5 loops on it:\n\n```\nwhile (usdcAmount > burnLimit) {\n    _initiateCCTPTransfer(burnLimit, destinationDomain, mintRecipient);\n    usdcAmount -= burnLimit;\n}\n```\n\nA...15.1.6 then sends the remainder if non-zero. Three properties follow.\n\nThe cap is read live, so a change on Circle's side is picked up without a Grove deployment or a governance parameter update. The whole requested amount either goes or the transaction reverts, so a relayer never has to discover the cap, compute a split, and submit N transactions \u2014 which would leave partial states between them. And crucially the rate limits were already charged once, for the full `usdcAmount`, in A...15.1.2, before splitting: the accounting is denominated in economic intent while the messaging is denominated in Circle's mechanics, and the two are kept from contaminating each other.\n\nThe trade-off is gas cost that scales with the number of messages and is invisible in the function signature, plus a loop bound that depends entirely on an externally controlled value. A burn limit set pathologically low by the counterparty would turn a legitimate transfer into an out-of-gas revert \u2014 a liveness dependency, though not a safety one.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The controller reads burnLimitsPerMessage and loops depositForBurn until the remainder fits, so a counterparty's message cap never becomes the relayer's problem or a partial transfer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

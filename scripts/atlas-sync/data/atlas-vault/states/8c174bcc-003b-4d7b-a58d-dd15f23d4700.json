@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "New Uniswap V3 positions may only be minted inside governance-set tick bounds aligned to the pool's tick spacing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3dedfc21-8667-45b0-89bd-31dc47658030",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd6a4b16-44bf-4c49-900f-e86d6f3e51b3",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5f5282d5-785a-415b-9e77-896d1daa777a",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b866caba-7c4d-45c6-80ff-aa2225f6f89b",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.9.2.5 branches on a sentinel: when `tokenId` is zero the operator mints a new position \"after checking the requested `tick` range is within the governance-set bounds and aligned to the pool's tick spacing\"; otherwise the operator \"must increase liquidity on the existing position owned by the `proxy`\".\n\nBoth halves constrain the relayer. Minting is the only path that can create a new price range, and it is bounded by parameters governance sets \u2014 so the relayer chooses *where within* an approved band to concentrate liquidity, not which bands Grove is willing to hold. Increasing is restricted to positions the proxy already owns, so a relayer cannot direct Grove capital into a third party's NFT position.\n\nTick-spacing alignment is not cosmetic: Uniswap V3 only permits initialisable ticks at multiples of the pool's spacing, so an unaligned range would revert deeper in the call stack with a less legible error. Checking at Grove's boundary converts an external failure into a local, named one.\n\nThe consequence for concentrated liquidity risk is that the set of ranges Grove can ever occupy is enumerable from governance configuration alone, without inspecting the relayer's transaction history.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "tokenId = 0 selects mint, and only then is the tick range checked; a non-zero tokenId may only add to a position already owned by the proxy, so relayers cannot create arbitrary ranges.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

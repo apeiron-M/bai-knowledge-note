@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-1d888b95-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1d888b95-01fe-4bb5-abc9-1754d142d417",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The emergency unwind runbook terminates in burning USDS, prioritizing repayment of Sky over holding recovered cash",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "50d5ed5f-24d2-460d-b66e-5d6000c13cd6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8cd6ad01-77b3-42b4-b0e0-8756de5a3866",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69d571c0-456a-4436-ab0b-ffa6e7c63ca0",
+      "name": "emergency-powers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "41a348d4-9cfe-4149-b26e-25fcb65c63a1",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Emergency Protocol defines a three-step liquidation sequence, each step written as a total sweep rather than a sized action. First, recover positions: \"in order to withdraw all ERC-4626 balances, the operator must call the `redeemERC4626` function\" with `token.balanceOf(address(proxy))` (A.6.1.1.6.2.6.1.2.2.3.2.1). Second, consolidate: `swapUSDCToUSDS(usdc.balanceOf(address(proxy))` to \"centralize all recovered liquidity in USDS\" (A.6.1.1.6.2.6.1.2.2.3.3). Third, repay: `burnUSDS(usds.balanceOf(address(proxy))` to \"repay and then burn Pattern's USDS debt\" (A.6.1.1.6.2.6.1.2.2.3.4).\n\nThe ordering encodes a priority. The terminal state of an emergency is not Pattern holding a pile of stablecoins \u2014 it is Pattern's vault debt extinguished and its balance sheet collapsed back toward zero. Sky's exposure is retired before anything else is considered, which is consistent with the Liquidity Layer being a credit facility rather than the Agent's own treasury.\n\nWriting each call against a live balance rather than a fixed amount is a deliberate operational choice: the runbook stays correct regardless of position size, and an operator under time pressure has no quantity to compute or mistype.\n\nNote also what the sequence relies on: step two funnels through the PSM path, which the same document shows can require iterative `psm.fill` refills and can revert with \"DssLitePsm/nothing-to-fill\" (A.6.1.1.6.2.6.1.2.2.1.2.1.2.6.2.1). The unwind is therefore dependent on PSM liquidity being available at the moment it is most likely to be strained.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:49:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Redeem ERC-4626 positions, swap all recovered USDC to USDS, then burn the Proxy's full USDS balance to wipe vault debt \u2014 each step specified as a balance-sweeping call.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

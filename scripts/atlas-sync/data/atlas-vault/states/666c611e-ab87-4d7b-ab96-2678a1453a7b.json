@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The ERC-4626 process definitions ship with unresolved template placeholders, including addresses copied from a Morpho template",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7aeed1cc-b158-4fe2-883b-8cee362edcf3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3de95a20-6423-4faa-aae9-99d61963f30c",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7b119c20-c868-45ae-abf6-575ef440abd8",
+      "name": "documentation-quality",
+      "topicDocumentId": null
+    },
+    {
+      "id": "da2993dc-5c68-46bd-89ab-13273c60d76f",
+      "name": "operational-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Fluid sUSDS instance's process definitions are written against placeholders rather than values. The deposit steps reference \"`[Instance_Fluid_USDS_Vault_Address_Placeholder]`\" and \"`[Instance_RateLimitID_Deposit_Placeholder]`\" (A.6.1.1.1.2.6.1.3.1.5.1.3.1.3), the withdraw steps use \"`[Instance_RateLimitID_Withdraw_Placeholder]`\" (.5.1.3.2.3), and the ALM Proxy check names \"`[Instance_USDS_Address_Placeholder]`\" (.5.1.3.1.2).\n\nThe leakage is worse than incompleteness. The decoded deposit call targets \"`[Instance_Morpho_Fluid_Vault_Address_Placeholder]`\" (.5.1.3.1.5.3), the withdraw call the same (.5.1.3.2.4.3), and the redeem step references \"`[Instance_Morpho_USDS_Vault_Address_Placeholder]`\" (.5.1.3.2.5.1) \u2014 a different protocol entirely. The quoted Solidity also carries doubled commas (`...Placeholder]),,`) that would not compile.\n\nThis is direct evidence of how the generic-plus-instance structure is actually produced: a protocol-family template was cloned and only partly instantiated, and the Morpho names are the fossil of the source it was cloned from.\n\nThe practical cost is that this instance's runbook is not executable as written \u2014 an operator cannot follow it without knowing which addresses the placeholders stand for, and the instance's own `Rate Limit IDs` document (.5.1.2.3) defers exactly those identifiers to a future iteration. The Instance Configuration Document format guarantees that a slot exists for every parameter; it does not guarantee the slot is filled, and here the unfilled slots are the ones the procedure depends on.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:03:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Fluid's deposit and withdraw runbooks reference [Instance_Fluid_USDS_Vault_Address_Placeholder], [Instance_RateLimitID_Deposit_Placeholder] and stray [Instance_Morpho_...] names, alongside syntax",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

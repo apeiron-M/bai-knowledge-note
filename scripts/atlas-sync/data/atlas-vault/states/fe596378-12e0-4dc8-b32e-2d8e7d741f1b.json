@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Withdrawals above the buffer run through signed intents whose fulfillment is explicitly not guaranteed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1dae2693-30b5-442d-8241-5ed58ba3761e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4c3e6d7a-d1ed-4810-b6cd-f18590443454",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aeaf55c8-cfd6-4306-8acc-04dcef0a1154",
+      "name": "liquidity-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.5.3.1.2.1 defines the second tier of Spark's withdrawal promise. Users \"may submit signed withdrawal intents indicating their intent to redeem Spark Savings vault tokens in amounts exceeding the standard Target Liquidity buffer,\" and \"subject to available liquidity within the Spark Liquidity Layer and underlying asset allocations, the Spark Liquidity Layer planner **may** automatically trigger transactions through the Spark Prime Relayer infrastructure to fulfill such intents.\"\n\nThen the disclaimer, stated as a Core provision rather than buried: \"**Fulfillment of withdrawal intents is not guaranteed.**\"\n\nThis is the honest architecture for a vault that lends out its deposits. The alternatives are worse: promising instant redemption at any size is a promise that fails exactly when it matters, and hard-blocking withdrawals above the buffer would make large deposits unattractive. An intent queue lets a large holder express demand, gives the planner time to unwind allocations to meet it, and never commits to a timeline it cannot control.\n\nThe mechanics are borrowed from off-chain order systems and matter for fairness. Intents carry a **nonce** \u2014 \"intents may be replaced or cancelled by submitting a superseding signed intent with the same nonce\" \u2014 so a user can resize or withdraw a request without it lingering. They carry a **deadline** \u2014 \"intents that have passed their deadline timestamp may not be executed\" \u2014 so a stale request cannot be filled long after the user's circumstances changed.\n\nWhat the Artifact does not specify is ordering or priority among competing intents. In a stress scenario where the queue exceeds available liquidity, who gets filled first is left to the planner, and that discretion is where the fairness of the whole tier ultimately sits.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Savings Liquidity Intents let users request redemptions exceeding Target Liquidity, filled at the planner's discretion subject to Spark Liquidity Layer availability, with nonces and deadlines.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

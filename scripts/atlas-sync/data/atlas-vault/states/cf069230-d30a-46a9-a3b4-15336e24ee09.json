@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every new MOM contract must ship with its own Standby Spell or factory to prevent technical debt",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a3020833-8ea0-4799-b019-77d3e4ad9776",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c552af9-3743-47f8-9cfe-91c52a7b9bd7",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "068cc2f7-ed79-4a75-a4b0-c45dfc492e5b",
+      "name": "circuit-breakers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.5.2.1.1 requires that \"Each new MOM contract created must incorporate a Standby Spell or Standby Spell factory, which can be used to create new Standby Spells that can trigger the MOM contract,\" and gives the reason: \"With a Standby Spell per every MOM contract, the generation of technical debt can be avoided.\"\n\nThis turns a discretionary optimization into a construction rule. Left optional, Standby Spells would be written reactively \u2014 after the first incident where their absence hurt \u2014 and coverage would be permanently uneven, with the newest and least-understood breakers being exactly the ones lacking a fast trigger.\n\nCalling the gap \"technical debt\" is the interesting framing. A MOM contract without a Standby Spell is not missing a feature; it is a safety mechanism that silently fails its latency requirement. It appears complete in the codebase and only reveals the shortfall during the emergency it was built for.\n\nThe rule generalizes: where a capability's value depends on how fast it can be invoked, the invocation path is part of the capability, not an accessory to it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Coupling the circuit breaker to its trigger at creation time stops the codebase accumulating breakers that cannot be fired quickly when they are actually needed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

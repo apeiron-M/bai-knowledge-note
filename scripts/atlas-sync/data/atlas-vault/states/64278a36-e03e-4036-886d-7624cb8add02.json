@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Cancellation is a first-class operation for asynchronous positions, and a pending cancellation blocks new requests",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "bcc88f3f-7152-4b54-bd94-24f2ca516fb5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dfe5c92a-4540-4162-aac3-24fb21ba2c6b",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2d159ceb-de5b-47b6-9350-8de9dd4607dc",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "460becd3-c43a-4629-9bfd-9f4616609c9a",
+      "name": "counterparties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.6 gives Centrifuge V3 vaults four operations devoted purely to reversing intent: `cancelCentrifugeDepositRequest`, `claimCentrifugeCancelDepositRequest`, `cancelCentrifugeRedeemRequest` and `claimCentrifugeCancelRedeemRequest`. Cancelling and then **claiming back** what the cancellation released are separate transactions, mirroring the two-phase shape of the request itself.\n\nA.6.1.1.2.2.6.1.2.2.1.2.1.2.6.1.3 adds the constraint that makes this a real state machine: \"These cancelation methods are compatible with **ERC-7887**, and **while the cancelation is pending no new deposit request can be submitted**.\" A.6.1.1.2.2.6.1.2.2.1.2.1.2.6.3.3 states the same for redemptions.\n\nSo a position in an async vault has at least four states \u2014 none, requested, cancellation-pending, and fulfilled-unclaimed \u2014 and the cancellation-pending state is **blocking**. An operator who cancels cannot immediately re-enter; they must wait for the cancellation to resolve and claim the returned assets first.\n\nThe practical implication is that cancellation is not a cheap change of mind. It commits the position to a round trip through a state where no new action of that type is possible, so an operator reacting to fast-moving conditions can be left unable to act at all on that venue for the duration.\n\nThat the Artifact specifies these paths at all is the broader point. An allocator into real-world credit needs a documented way to withdraw an unfulfilled subscription, because the issuer may take days to act and circumstances change in the interim. The four functions exist so that abandoning a request is a governed, rate-limit-gated operation rather than an improvised one.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:49:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Centrifuge V3 vaults expose ERC-7887-compatible cancel and claim-cancel calls for both deposits and redemptions; while a cancellation is pending, no new request of that type can be submitted.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

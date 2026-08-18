@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Dai is being retired by rate: the DSR must be driven to 0% while the SSR keeps a 200-basis-point floor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c7f8e7eb-52c8-4545-8573-8ee8c5178c8a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ed078e2-a604-4a66-a104-019a28def94e",
+      "name": "usds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "13f19045-9dd8-4c4b-9eb0-8d9663d8786e",
+      "name": "dai-migration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.4.1 contains a one-line strategic commitment: \"The Dai Savings Rate must gradually be reduced to 0% over time.\" A.3.1.1.2 carves it out of the rate ladder explicitly \u2014 every other Core Stability Parameter must maintain its specified relationship to the Base Rate, and \"the only exception is the Dai Savings Rate.\"\n\nSo Dai is deliberately decoupled from the system's key rate and walked to zero yield, while USDS holders continue to receive Base Rate minus fees. Migration is driven by opportunity cost rather than by any forced conversion or deadline: holders are never prevented from holding Dai, they are simply progressively unpaid for it.\n\nThe access-module bounds make the asymmetry structural rather than merely intended. The DSR module permits a `min` of 0 basis points (A.3.1.2.4.1.1); the SSR module's `min` is 200 basis points (A.3.1.2.2.2.1). An operator acting within delegated authority can therefore take Dai yield to zero but cannot take USDS yield below 2%, and cannot reverse the Dai decline beyond what governance-set bounds allow. The ratchet is in the contract configuration.\n\nThe \"gradually\" is the load-bearing word: an abrupt cut to 0% would be a de facto redenomination event and a peg risk for Dai, whereas a slow grind lets the stock migrate without a run.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:18:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The asymmetry is encoded in the access module bounds \u2014 DSR min is 0 bp, SSR min is 200 bp \u2014 so the deprecation cannot be reversed by an operator without escalating to governance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

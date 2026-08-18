@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-9211d280-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9211d280-e6b0-4121-89f5-82e407cc050f",
+      "targetTitle": "Asynchronous ERC-7540 vaults break the immediacy of an emerg"
+    },
+    {
+      "id": "lnk-1d8cd32c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1d8cd32c-e890-4205-ad17-39da1606ab7f",
+      "targetTitle": "Atlas treasury text states intent only; on-chain effect requ"
+    },
+    {
+      "id": "lnk-922b25cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "922b25cc-75d3-48e9-ab9f-5ecb04d636a8",
+      "targetTitle": "Settlement migrates in three stages from simplified accounti"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Two-leg operations shift attribution only on completion, keeping value attributed to exactly one place at all times",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "048c3dab-79a8-4462-8402-ac890f1fbb0c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2383113a-12ae-494f-976d-9b5406a21376",
+      "name": "settlement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71f309a9-70c5-49d2-9749-f7cec4a07828",
+      "name": "accounting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.4.2.3 defines an asynchronous transaction as one settling in two legs and rules that it \"changes the value attributed to an Allocation System Instance only when the second leg completes.\" It spells out both directions: a redeemed position's value \"remains attributed to the Allocation System Instance from the burning of the corresponding shares until the redemption proceeds settle,\" and a deposit's value is attributed \"only when the corresponding shares are minted.\"\n\nA.2.4.2.4 applies the identical rule across chains: an asset in transit \"remains attributed to the source blockchain, at the value it held before transit, from the time it is locked or burned on the source blockchain until the corresponding tokens are minted or released,\" and closes with the invariant \u2014 \"The asset is attributed to exactly one (1) blockchain at all times.\"\n\nThe shared principle is conservation across an interval where the asset is, in some literal sense, nowhere. Naive accounting would either drop it \u2014 shares burned, proceeds not yet arrived, value vanishes \u2014 or double it, if both legs were recognised independently. Both errors are consequential when a Prime's capital adequacy and settlement are computed from these figures, and both would be worst during exactly the conditions that slow bridges and redemption queues down.\n\nFreezing the pre-transit valuation is the additional choice in the cross-chain case. Holding the old value avoids inventing a mark for an asset with no live market on either side during transit, at the cost of recognising any price movement in a lump when the second leg lands.\n\nThe rule also pairs with the requirement that TRC accounting track \"capital in transit... locked in Cross-Chain Transfer Protocol (CCTP) messages awaiting finality\" \u2014 the settlement layer and the risk-capital layer treat in-flight assets the same way.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Asynchronous transactions change an Instance's value only when the second leg settles, and a bridging asset stays on the source chain at its pre-transit value until minted at the destination.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

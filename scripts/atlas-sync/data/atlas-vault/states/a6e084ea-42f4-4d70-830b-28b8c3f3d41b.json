@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A per-chain minimum operation size stops the Liquidity Layer making transactions too small to be worth their cost",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4efe377b-30ca-4287-b609-64f695e309c0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "21e4921b-b0af-448a-8752-27fb01edc698",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b64cfe1b-455e-482a-b0c0-a8e3e3417b2f",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9b15969a-e530-461b-b99f-9de521074f77",
+      "name": "cost-efficiency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.1.1.2.1.1 sets `MAINNET_MIN_OPERATION_SIZE` at 500,000; A.6.1.1.1.2.6.1.2.1.1.2.2.1 sets `BASE_MIN_OPERATION_SIZE` at 100,000.\n\nThe mechanism is a floor on action rather than a cap. Every rebalancing transaction costs gas and consumes operator attention, and below some size the cost of moving capital exceeds the benefit of having it in the better place. The minimum operation size makes that threshold explicit instead of leaving it to operator judgment.\n\nSetting it per chain is the substantive part. Ethereum Mainnet's floor is five times Base's because execution there costs materially more \u2014 so the same rebalance that is worth doing on Base is not worth doing on Mainnet. A single global parameter would either permit uneconomic Mainnet transactions or forbid worthwhile Base ones.\n\nThe parameter also does quiet work elsewhere. It provides the tolerance that makes the zero-width USDC balance band on Base operable, and it limits transaction-level griefing: an adversary cannot force the Layer into a stream of tiny, costly rebalances by nudging balances slightly off target.\n\nThe trade-off is precision. A high floor means the Layer tolerates larger deviations from its target allocation before acting, so cost efficiency is bought with allocation drift.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Ethereum Mainnet requires at least 500,000 per operation against 100,000 on Base, scaling the floor to each chain's execution cost rather than applying one global rule.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

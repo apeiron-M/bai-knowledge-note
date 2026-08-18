@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reviewer approval is a defined assertion that the Spell performs exactly the Executive Document's actions, with none omitted and none added",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "341fe27c-c54e-4558-9ef4-a273fdf936f6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3cfcfbff-eaed-4f95-b15f-859354eab257",
+      "name": "code-review",
+      "topicDocumentId": null
+    },
+    {
+      "id": "09b6c089-6c90-4d77-98d6-7974db6da1f7",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.9.2.8 draws the consequence of the authoring bans: \"As the Reviewers are prohibited from modifying the contents of a Spell via commits or authoring, **the most important power they possess is whether to approve the progression of a Spell** to its next stage.\"\n\nIt then defines what approval asserts. A Reviewer approving the final deployed Spell for handover \"represents confirmation that they believe... that the Spell has fulfilled the Spell Team's role of creating a smart contract that performs **the exact set of actions described in the Executive Document, with no actions omitted or additional actions present**.\"\n\nThe assertion is bidirectional, and both directions are load-bearing. Nothing missing is what most reviews check. Nothing extra is the security-critical half \u2014 the failure mode of a malicious Spell is not an absent action but a present one, and it is far harder to notice, since spotting an unexpected addition requires understanding all the code rather than ticking off a list.\n\nThe powerlessness and the power are connected. Because a Reviewer cannot fix what they find, approval cannot be a negotiated \"good enough after my edits\" \u2014 it is a clean claim about an artifact they had no hand in shaping. That is what makes it meaningful evidence rather than a co-author's self-assessment, and it is why the four authoring bans exist to protect it.\n\nThe language is also honest about its epistemic status: \"confirmation that they believe.\" Approval is a sincere professional judgment, not a proof, which is why the framework layers further independent checks after it (the Governance Point's review, Ecosystem Spell Validation) rather than treating a signature as the end of verification.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.9.2.8 identifies approval as the Reviewers' only power precisely because they cannot modify anything, and gives it a bidirectional completeness meaning.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

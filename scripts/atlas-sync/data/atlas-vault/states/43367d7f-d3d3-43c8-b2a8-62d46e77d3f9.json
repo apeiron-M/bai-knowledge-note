@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Exiting sUSDe is a time-gated two-step, so Grove cannot unwind the position within a single transaction",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c0be447e-b1df-40e0-89f5-7c4e11c8b4e2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "757105e8-530b-4dc5-8fb6-6784a63ea2ac",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "828a117c-c2da-46ba-8c7f-6e862d7b0e61",
+      "name": "ethena",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d8cbe2d7-f403-4dbb-b795-475318239781",
+      "name": "liquidity-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.10.5 describes cooldown as \"initiating a cooldown on sUSDe held by the Grove ALM Proxy for a specified amount of USDe assets to be received **once the cooldown period elapses**\", and A...10.7 defines `unstakeSUSDe` as withdrawing \"the USDe assets to the Grove ALM Proxy once the sUSDe cooldown period has elapsed.\"\n\nThe two calls are separated by wall-clock time, not by a further authorisation. That makes the sUSDe leg categorically different from every other position in the Liquidity Layer: Aave withdrawals, Curve removals and Uniswap decreases all settle atomically in the transaction that requests them.\n\nThe consequence for risk management is that the *decision* to exit and the *ability* to exit are decoupled. A relayer who correctly identifies deterioration in the Ethena position can only start a clock; the position remains exposed until it runs out. Rate limits, which throttle per period, compose badly with this \u2014 a limit sized for orderly operation does not shorten a cooldown.\n\nNote also that `unstakeSUSDe()` takes no arguments and no rate limit (A...10.7.1, A...10.7.2). Metering happens at cooldown initiation, which is the only point where the amount is choosable; by unstake time the amount is already fixed, so a second control would be redundant.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "cooldownAssets or cooldownShares starts a waiting period and unstakeSUSDe can only withdraw once it has elapsed, making the staked leg structurally illiquid for the cooldown duration.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

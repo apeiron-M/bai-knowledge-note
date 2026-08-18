@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove caps how fast capital can enter an allocation but leaves withdrawal limits unlimited or unset",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "07df2103-5c24-4928-8102-13dfe3e7e821",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "51ce1ce5-9634-4dc6-b342-9370afb426fd",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07f5860a-b386-43f6-87e8-79ecc5506cb2",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64684b0b-4c71-4899-98b3-1f6c28b29996",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The asymmetry recurs across unrelated venues. A.6.1.1.2.2.6.1.3.1.9.2.2.4.2 gives a withdrawal `maxAmount` of \"N/A\" against a 50,000,000 USDC deposit limit; A.6.1.1.2.2.6.1.3.1.12.2.2.4.2 gives \"Unlimited\" withdrawals against a 25,000,000 deposit cap; A.6.1.1.2.2.6.1.3.1.12.3.2.4.2 gives \"Unlimited\" on the aggregate *and* both per-asset withdrawal limits.\n\nThe implied doctrine is that rate limits exist to bound the *rate of risk accumulation*, not to control Grove's balance sheet generally. A deposit limit answers \"how fast can we become exposed to a counterparty we may have mis-assessed?\" \u2014 a question about the speed of an irreversible mistake. A withdrawal limit would answer \"how fast can we stop being exposed?\", and throttling that is straightforwardly harmful.\n\nThis is the opposite of the convention in the protocols Grove allocates *into*, where withdrawal throttling protects a pool from a run. Grove is the depositor, not the pool, so the risk it is managing points the other way.\n\nThe non-obvious consequence: rate limits provide no protection against Grove exiting a position badly \u2014 dumping size, realizing losses, or draining a venue Sky depends on. Whatever governs exit quality lives elsewhere (slippage bounds, operational processes), not in the rate-limit layer. Where an Instance *does* bound withdrawals, as at A.6.1.1.2.2.6.1.3.1.10.1.2.4.2, that is a deliberate departure worth reading as a venue-specific concern rather than the norm.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Withdrawal maxAmount reads N/A or Unlimited across most Instances while deposits are strictly bounded, making rate limiting a risk-accumulation brake rather than an exit control.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

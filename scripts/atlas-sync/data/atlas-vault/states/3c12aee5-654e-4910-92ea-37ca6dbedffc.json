@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The DC-IAM makes debt ceiling increases permissionless but rate-limited, so exposure can only grow at a governance-sanctioned speed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "12375bba-6ea6-4631-a40b-940c8c957827",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ef058e95-37c1-4cc9-9ec3-1c38a2ccc0df",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "10726aae-ef93-4e32-acac-d35dfc497ca9",
+      "name": "debt-ceiling",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5e7c1730-cfed-4b2c-b5e1-dc40505615f6",
+      "name": "risk-parameters",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.1.2.4 states that the Debt Ceiling Instant Access Module \"allows **any user** to adjust the Debt Ceiling of a supported vault type according to the rules defined in the DC-IAM smart contract logic and parameters set by the Core Facilitator.\" Governance sets three bounds per vault type: `line` (maximum ceiling), `gap` (target available debt), and `ttl` (ceiling increase cooldown).\n\nThe division of labour is the design. Governance decides the *envelope*; anyone may move the ceiling inside it, so no vote is needed to accommodate ordinary demand. A.3.7.1.1.2.4.1 notes that under this arrangement `line` \"essentially replaces the Debt Ceiling parameter\" \u2014 governance stops setting the operative value and sets only its ceiling-of-the-ceiling.\n\nWhat makes it safe is that `gap` and `ttl` together bound a *rate*, not a level: A.3.7.1.1.2.4.3 states the two \"in combination enforce a maximum rate at which debt usage can increase over time using a given vault type.\" A.3.7.1.1.2.2 gives the purpose plainly \u2014 the methodology \"limits the rate at which exposure can increase in a short period of time in the event of an unexpected emergency.\" An attacker cannot draw the entire `line` at once, however large it is.\n\nA.3.7.1.1.2.4.2 states the trade-off without hedging: \"The higher this value, the more risk there is from large collateral drops in very short amounts of time. The smaller this value, the more vault use is negatively affected.\" `gap` is a direct dial between safety and usability, and the Atlas asks that it accommodate \"all reasonable usage\" \u2014 no more.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Any user may raise a vault type's ceiling within the line cap, but gap sets the target headroom and ttl the cooldown, together fixing a maximum rate of debt growth per vault type.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

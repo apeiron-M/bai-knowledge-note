@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The maxExchangeRate protection was retrofitted and one active Morpho instance still lacks it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7d5bdd74-471c-405e-8bc6-c0424705aeb1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "12fb3a79-fb42-4498-bad1-b02223ff9b7f",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b3f6b6ad-bc97-43f7-b15d-979f16c98bc5",
+      "name": "morpho",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d32007a1-f5b1-454e-9472-c4dd9e8c2488",
+      "name": "governance-gap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two of the three Morpho instances in this chunk carry a \"Max Exchange Rate\" sub-document: the Grove x Steakhouse USDC Morpho Vault v2 (A...7.2.2.4.3) and the Steakhouse PYUSD Morpho Vault (A...7.3.2.4.3). The first Morpho instance \u2014 Grove x Steakhouse High Yield Vault USDC (A...7.1) \u2014 has no such document. Its Rate Limits section (A...7.1.2.4) contains only deposit and withdrawal children.\n\nThe phrasing in the other two tells you why: \"Controllers **now** have protections that **require** a `maxExchangeRate` to be set for deposits.\" That is the language of a change applied to a running system, and the Artifact records the migration action per instance rather than as a single global step.\n\nSo either the v1 vault is no longer deposited into and the parameter is moot, or it is an active instance missing a protection the controller documentation describes as required. The Artifact does not say which, and the instance is listed under Active Instances with a live 20,000,000 USDC deposit limit (A...7.1.2.4.1) and a published inflow RateLimitID (A...7.1.2.3.1) \u2014 which together suggest deposits are still possible.\n\nIf the requirement is enforced in code, an unset `maxExchangeRate` should fail closed the way unset `maxSlippage` and unset `twapSecondsAgo` do (A...2.1.2.8.1.2, A...2.1.2.9.1.2), in which case the v1 instance is inert and the gap is cosmetic. If it is enforced only by convention, the gap is real. Determining which requires the controller code, not the Artifact \u2014 and that ambiguity is the finding: a protection described as mandatory should not be inferable only from whether a documentation sub-section happens to exist.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:53:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The word now in Controllers now have protections marks a change made after instances existed; the v1 Grove x Steakhouse USDC vault has no Max Exchange Rate document while v2 and the PYUSD vault do.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

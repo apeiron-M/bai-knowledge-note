@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad391ba3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ad391ba3-5d45-49e9-88ee-c745aa961906",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An upkeep rebate can exceed the fee it offsets, and the surplus is returned to Agent token holders",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "5ec1cda2-57d8-4d98-8051-7f0cb8de25c8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "62a72a2a-9fcc-4135-8fc1-830209e94fc7",
+      "name": "upkeep-rebate",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3fade143-9688-4733-a9f5-d126295e0c9c",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.8.2.3.2.2.1.2.1.3 refers, almost in passing, to \"executing a return of surplus to token holders.\" The phrasing implies a state the rest of the section never spells out: the rebate can be larger than the Ecosystem Upkeep Fee it is deducted from, and when it is, the excess does not sit with the Agent \u2014 it flows out to holders of the Agent's own token.\n\nThat converts the upkeep system from a pure cost into a potential transfer. An Agent whose holdings of other Prime Agents' tokens are large relative to its own market capitalization can be net-positive on ecosystem upkeep, with the surplus reaching AGENT7 holders directly.\n\nThe incentive this creates is strong and worth flagging: the cheapest route to a surplus is a *low own market cap* combined with *large cross-holdings*, which is an odd gradient for a fee meant to charge Agents for the ecosystem they consume. It rewards being small relative to what you hold.\n\nIt also explains why the review gate at this step is so strict \u2014 GovOps reviewing a rebate is not merely checking a discount, it is authorizing an outbound distribution to token holders, which is why \"any issues\" is enough to stop it and why the surplus path is the only part of the rebate protocol with an escalation route attached.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The protocol's trigger is \"a return of surplus to token holders\", so cross-holding other Prime Agents' tokens can turn an ecosystem cost into a distribution to AGENT7 holders.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

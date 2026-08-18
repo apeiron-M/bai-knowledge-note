@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The emergency brake on Grove's Liquidity Layer is held by a signer set Grove does not control",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7b239226-17c7-4e9a-87ba-95d672ff22e0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e1f996b9-7d4a-459d-a769-2e5a3aee5e43",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64802bd4-7c11-4d0d-a567-5a35b4043dce",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df92049d-5f91-4145-a9ed-99b26e43a640",
+      "name": "risk-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.1.2.2.4.3 gives the Freezer Multisig's composition: \"two (2) addresses controlled by Operational GovOps Soter Labs, two (2) addresses controlled by Operational Facilitator Endgame Edge, and one (1) address controlled by Grove.\" A.6.1.1.2.2.6.1.2.1.2.2.4.2 sets the threshold at 2 of 5.\n\nThe arithmetic is the design. Either external party can reach the threshold **alone**, since each holds two signatures. Grove holds one, so it can neither trigger a freeze by itself nor block one \u2014 its single key is arithmetically irrelevant to whether the brake is pulled.\n\nThis is the opposite of how the Relayer multisigs are constituted (A.6.1.1.2.2.6.1.2.1.2.2.1, .2), which Grove controls outright. The split is deliberate: **the power to act is Grove's, the power to stop Grove is not**. An Agent that could veto its own freeze would have no meaningful external control at all.\n\nThe low threshold reinforces it. A 2-of-5 requirement is easy to reach by design, because a freeze is reversible and cheap relative to the loss it prevents, whereas a high threshold would delay exactly the response that needs to be fast.\n\nGrove's single seat is not decorative, though. It guarantees Grove is present in the room, sees a freeze coming and can raise the alarm \u2014 participation without a veto.\n\nBecause the same address holds the Freezer Role on every chain (A.6.1.1.2.2.6.1.2.1.1.1.2), this composition is what actually governs the emergency stop across Grove's entire multi-chain deployment.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Freezer Multisig is 2-of-5 with two signers from Operational GovOps, two from the Operational Facilitator and only one from Grove, so either external pair can freeze without Grove's consent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

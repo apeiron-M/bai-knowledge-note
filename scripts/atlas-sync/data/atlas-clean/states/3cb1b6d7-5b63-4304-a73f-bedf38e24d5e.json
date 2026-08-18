@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-3fbd8b7e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3fbd8b7e-76f1-4d8a-8cfa-b1ebf1747575",
+      "targetTitle": "Grove interposes a five-contract scaffold between itself and"
+    },
+    {
+      "id": "lnk-fce48689-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fce48689-e8e1-45a6-8853-ba0fe8602ec3",
+      "targetTitle": "Grove's Freezer can cancel the issuer's queued Timelock chan"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Control of a Tokenized Treasury Instance is split between Grove and the credit token issuer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0a39d61d-6ecf-4383-b475-486dc8221a1a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ceed499-c83e-42b2-9bcc-067f33cca21e",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be7e9311-2029-47f6-aaca-7f6d1eb0b77b",
+      "name": "counterparties",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2e368523-494c-4aa4-ac38-acb1e573b271",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.1.2 divides authority over each Tokenized Treasury Instance between two organizations. The `OWNER_ROLE`, which sets fee rates and can \"grant or revoke any role in the contract,\" is \"held by an OpenZeppelin `TimelockController` **operated by the credit token issuer**\" (.2.1). The `REDEEMER_ROLE`, which initiates redemption back into collateral, is likewise \"controlled by the credit token issuer\" (.2.5).\n\nGrove holds the administrative middle. The `MANAGER_ADMIN_ROLE` \u2014 configuring rate providers, swap-size bounds, oracle staleness, fees, the Pocket contract and authorized redeemers, and managing assignment of the Manager, Pauser and Redeemer roles \u2014 \"is held by the Grove SubProxy Account across all Tokenized Treasury Instances\" (.2.2). The narrower `MANAGER_ROLE`, adjusting swap size and oracle staleness **within** those bounds, is held by the Prime Primary Relayer Multisig (.2.3).\n\nThe result is a genuine **two-key structure over a shared asset**. The issuer owns the instrument and can ultimately reconfigure it; Grove controls the operating parameters and who may touch them day to day. Neither can unilaterally do everything, which is the appropriate shape when an onchain fund is jointly operated by its originator and its largest allocator.\n\nThe internal layering on Grove's side repeats a pattern seen throughout the Artifact: **bounds are set by the slower, more privileged holder (the SubProxy, reachable only through governance) and adjustments within those bounds are made by the faster operational holder (the relayer multisig)**. The same separation appears between the Manager Admin and Manager roles as between the admin and relayer roles in the ALM.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The issuer owns the contract through a Timelock and holds the Redeemer Role, while Grove's SubProxy holds Manager Admin and its relayer multisig holds Manager",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

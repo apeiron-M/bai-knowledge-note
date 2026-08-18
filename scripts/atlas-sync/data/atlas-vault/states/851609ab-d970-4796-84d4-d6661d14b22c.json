@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "On Arbitrum the savings vault's Taker is the ALM Proxy itself, collapsing the product into the balance sheet",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "33b2e591-cff5-4d42-a14e-e795718b95f9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "85408d0e-cb99-40f0-85c5-0796a5b3fd74",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "602a5575-cdb0-46a6-b94a-7d4a8eb2defc",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2739295e-73a3-4bb2-a474-ce4fe1afef7a",
+      "name": "savings",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Arbitrum Spark Savings v2 USDT instance lists its `Taker` as \"`0x92afd6F2385a90e44da3a8B60fe36f6cBe1D8709` (ALM_PROXY)\" (A.6.1.1.1.2.6.1.3.3.3.1.4.1.4). The mainnet savings instances name a different, unannotated address for the same role.\n\nThe annotation matters because the ALM Proxy is the account every other instance in the Artifact treats as the perimeter \u2014 the sole holder of positions, the hardcoded recipient of every Aave and ERC-4626 call, the thing whose balance the operational checks verify. Naming it as Taker means the operation that pulls deposits out of the savings vault deposits them directly into the Liquidity Layer's own account, with no intermediate holder.\n\nThat removes a hop and any ambiguity about custody: there is exactly one address holding value on this chain, and user deposits join it immediately. It also removes any separation between the savings product's liabilities and the allocation engine's assets. Depositor funds are not staged anywhere reviewable \u2014 they become working capital as soon as `take` is called, which the same instance leaves unlimited.\n\nWhether mainnet works differently or simply documents the same address without the annotation cannot be determined from these documents, and that ambiguity is itself the finding. A parenthetical comment is carrying an architecturally significant fact that the schema has no field for.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The instance records Taker as 0x92afd6F2\u2026 annotated (ALM_PROXY), where mainnet savings vaults name a separate Taker address \u2014 user deposits are swept straight into the Liquidity Layer account.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

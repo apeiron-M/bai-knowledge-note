@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The SKY Borrow Minimum Rate is a no-arbitrage floor equal to the Savings Rate plus the distribution incentive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9a34f2fc-561a-4f96-a322-acb0b24be7a3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2d155ed1-31d1-4f14-8108-3dfea1e855d9",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "422b138e-75cd-4a60-a06e-697a87b58f50",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "37cb63ae-3b09-4b8d-a95e-5cb49d71d1cb",
+      "name": "arbitrage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.5.2 gives both the formula and, unusually, its rationale: `SKY Borrow Minimum Rate = Sky Savings Rate + stUSDS Distribution Reward`, because \"the formula ensures the SKY Borrow Minimum Rate covers the baseline cost of capital (Sky Savings Rate) plus the incentive cost (stUSDS Distribution Reward), preventing value-draining arbitrage where users could borrow below the Sky Savings Rate.\"\n\nThe attack it forecloses is elementary and unbounded. If borrowing USDS cost less than the Sky Savings Rate paid, any borrower could take USDS, deposit it into savings, and collect the difference risk-free \u2014 a strictly profitable loop limited only by collateral and the debt ceiling. Because both legs are protocol obligations, the protocol funds the entire spread, so the loop drains the treasury at a rate proportional to how much capital can be pushed through it.\n\nThe floor eliminates it structurally rather than by monitoring. And it is defined *relationally*, not as a number: because the floor tracks the Savings Rate, no future Savings Rate change can accidentally open the arbitrage. This is the important design property \u2014 the invariant survives parameter drift, which a hardcoded minimum would not.\n\nIncluding the Distribution Reward in the floor extends the same logic to incentive costs, and it is why the floor is genuinely a *cost recovery* line: below it, the facility is not merely unprofitable but actively subsidizing a loop. The floor also has a visible knock-on effect elsewhere \u2014 since only the spread *above* this floor is passed to stUSDS lenders, everything embedded in the floor is retained by the system.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "`Sky Savings Rate + stUSDS Distribution Reward` exists to prevent \"value-draining arbitrage where users could borrow below the Sky Savings Rate\" \u2014 borrowing cheaper than saving would be a money pump.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

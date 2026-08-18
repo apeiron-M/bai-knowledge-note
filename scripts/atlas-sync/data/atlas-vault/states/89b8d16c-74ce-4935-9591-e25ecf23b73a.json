@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Executive Vote executes only by out-polling every other active proposal, not by reaching a threshold",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0c77835e-075d-423f-973b-d337d49ba931",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf921212-a55d-4834-94d7-baa5aa144c7f",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45f34951-d7dd-439d-9fb3-4489bd34b989",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.1.4 specifies an unusual approval condition: \"For an Executive Vote to be executed, it must accumulate more SKY token support than any other active proposal, including the current leading proposal, ensuring it reflects the highest level of community backing at the time of approval.\"\n\nThis is a continuous king-of-the-hill mechanism, not a vote with a close. Several consequences follow that a threshold rule would not produce.\n\nThere is no expiry, so a proposal remains contestable indefinitely \u2014 the standing leader can be displaced whenever a rival accumulates more support. That makes the mechanism a **live defence** rather than a one-time gate: the community can always displace an approved-but-not-yet-executed proposal by backing something else, which is precisely the property needed if a malicious Spell ever reaches the front.\n\nThe requirement is also relative, not absolute. There is no quorum or supermajority to satisfy; a proposal wins by out-weighing the alternatives at that moment. That keeps governance functional at low turnout, at the cost of allowing execution on modest absolute support if nothing competes.\n\nThis mechanism is what makes the standing-Spell and emergency machinery coherent. Out-of-schedule Spells (A.1.10.2.1.7) and pre-deployed standby Spells votable through the custom Spell voting page (A.1.10.2.1.6) can be surfaced and executed without waiting for a cycle, because approval does not depend on a scheduled voting window.\n\nIt also explains why Tier 2 breach item 6 in A.1.6.6.1.2 \u2014 voting against a Spell containing only already-approved content \u2014 is treated as obstruction. Under a continuous contest, withheld or contrary support does not merely register dissent; it can indefinitely prevent execution of a decision governance already made.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:43.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.1.4 requires more SKY support than any other active proposal including the current leader, so approval is a continuous contest rather than a one-time majority.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

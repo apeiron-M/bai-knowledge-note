@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Security incidents are priced into a Prime's borrow rate and insurance fees rather than only punished administratively",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3f99bd8b-2296-4883-ad49-69f3bc7e3663",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0300035f-6de6-421e-af71-debf822f448c",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "972f8eaf-d424-4b7d-9b79-9c8a1216e6ef",
+      "name": "risk-pricing",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two provisions turn the Incident Registry into a financial input. A.1.10.2.3.2.2.1.4.2.1: \"the Registry shall serve as a critical input to the Prime Agent Credit Rating system and will determine Primes' Agent Credit Line Borrow Rate when variable pricing is activated.\" A.1.10.2.3.2.2.1.4.2.2: insurance-related fees charged by a Prime's Operational Executor \"shall also be calculated using risk-based pricing informed by the Prime Spell Security Incident Registry, including the severity, frequency, and recency of incidents.\"\n\nA one-off fine is a bounded, budgetable cost that a well-capitalized actor can absorb as a licence fee for sloppiness. Pricing incidents into the borrow rate makes the consequence *continuous and proportional to activity*: a Prime with a poor security record pays more for every unit of capital it deploys, for as long as the record is recent.\n\nThe inclusion of **recency** matters as much as severity and frequency. It supplies a rehabilitation gradient \u2014 the penalty decays with clean operation \u2014 which keeps the mechanism from becoming a permanent brand and preserves the incentive to improve after a bad quarter.\n\nStructurally this is the Atlas doing alignment engineering rather than rule enforcement: it narrows the gap between what is cheap and what is safe, so a Prime's self-interested cost minimization pushes toward better security process without anyone needing to police it case by case.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:17:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Registry feeds the Prime Agent Credit Rating and risk-based insurance pricing weighted by severity, frequency and recency \u2014 converting process compliance into an ongoing cost of capital.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

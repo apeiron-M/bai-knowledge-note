@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Deployment verification requirements scale with whether the deployment holds capital from Sky's Collateral Portfolio",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3adc6cb7-7660-4412-9e0d-afac71fa019b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1371f86b-cbdb-4842-8263-e1188c73151d",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "46ef2605-ae22-4410-aaa4-0abe630bbf48",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.5.2.1.1 draws a bright line for factory deployments. Where a vault or market \"is deployed through a smart contract factory and **holds no capital from Sky's Collateral Portfolio**, a developer on the deploying team who did not perform the deployment must review the Technical Scope and conduct deployment verification, and must confirm the completed review and verification as a public reply to the Technical Scope Forum post.\" Where such a deployment \"**holds capital from Sky's Collateral Portfolio**, deployment verification is instead performed through the Executive Process\" under A.1.10.2.3.2.1.\n\nThe two tiers differ enormously in cost. The light path is one non-author colleague plus a public confirmation \u2014 hours of work. The heavy path is the full Executive machinery: Atlas Edit Proposal, Governance Poll, Executive Sheet entry, Spell Team review, Ecosystem Validation \u2014 weeks.\n\nThe discriminator is Sky's own capital at risk, not technical complexity, contract novelty or transaction volume. That is a defensible choice: factory deployments reuse audited code, so the marginal technical risk is low, and what actually varies is how much Sky loses if something is wrong.\n\nEven the light path retains the non-negotiables that appear throughout the Atlas: the verifier must not be the deployer, and the confirmation must be public. Rigor is dialled down in scope, not in structure \u2014 a cheaper process is still an independent, attributable one.\n\nThe residual question is who determines that a deployment holds no Collateral Portfolio capital, and what happens if such a vault later receives Sky capital. The provision keys the requirement to a state that can change after the verification is complete.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.5.2.1.1 routes factory-deployed vaults holding no Sky capital to an independent developer on the deploying team, while any Sky capital triggers full Executive Process verification.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

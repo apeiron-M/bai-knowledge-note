@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The ALM Proxy is a generic call executor, so every safety property must be enforced by the controller before doCall is reached",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f79b1d67-79d7-44b5-823a-766c047939e0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "77aabf6a-5c2d-43d6-8691-c26eb7da0c11",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "22d4f751-c2a0-4834-af41-ce594b4ea386",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d20c1f22-ca87-4b38-869e-92ac77b807d2",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Both Aave flows execute through the same primitive. The operator must \"encode the `approve` function call, using `abi.encodeCall`\" and then \"send the encoded call using `proxy.doCall()` specifying the `address` of the `asset` contract\" (A.6.1.1.1.2.6.1.3.1.2.1.3.1.6.1/.6.2); the supply call, and the withdraw call on the pool, follow the identical encode-then-`doCall` shape (.3.1.7.2, .3.2.6.2).\n\n`doCall` is therefore an arbitrary-call fa\u00e7ade: given a target address and a calldata blob it will execute it from the proxy's account. It contributes no validation of its own.\n\nThat places the entire security boundary in the controller function that constructs the payload. `onlyRole(RELAYER)`, `isActive`, the `rateLimited` modifier and the hardcoded `address(proxy)` recipient are all properties of `depositAave` / `withdrawAave`, not of the proxy. The proxy is powerful and unopinionated; the controller is the thing that makes it safe.\n\nThe practical implication for review and for governance is sharp: auditing the proxy tells you almost nothing about Spark's risk posture. What matters is the exhaustive set of controller functions permitted to call `doCall` and the guards each one carries. Any newly added controller function is a new hole in the perimeter unless it independently reimplements all four constraints \u2014 which is exactly why the Artifact documents these process definitions guard-by-guard rather than as a single 'call Aave' instruction.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Deposits and withdrawals are abi.encodeCall payloads relayed through proxy.doCall, meaning the proxy itself imposes no semantics",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

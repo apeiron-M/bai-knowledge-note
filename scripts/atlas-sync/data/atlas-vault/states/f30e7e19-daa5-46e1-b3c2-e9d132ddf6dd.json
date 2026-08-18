@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Each pool's tick bounds are pinned to the same tolerance as its slippage limit, expressing one risk view twice",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "70c46ffb-6003-4286-85cb-4aed979ee1a1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71d18e49-6824-40ab-b3d5-81a79f746dde",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54df3749-d675-44f0-a495-f795b947ab5d",
+      "name": "slippage",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3c505131-9660-4d9f-b753-6c5a18b162d2",
+      "name": "liquidity-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The four Uniswap v4 instances line their two price parameters up exactly. PYUSD/USDS: \"Max slippage: 0.1%\" with tick limits annotated \"(-0.1%)\" and \"(+0.1%)\" (A.6.1.1.1.2.6.1.3.1.11.1.2.4.4/.5). USDT/USDS: \"Max slippage: 0.2%\" with ticks at \"(-0.2%)\" and \"(+0.2%)\" (.11.2.2.4.4/.5). USDG/USDS and rlUSD/USDS both return to 0.1% on both parameters (.11.3.2.4.4/.5, .11.4.2.4.4/.5).\n\nThe two parameters govern different actions \u2014 slippage bounds a swap's execution price, ticks bound where an LP position may be placed \u2014 yet they are set to the same number in every case, including the one instance that deviates from the house default.\n\nRead together they encode a single judgement: the band within which this pair is considered fairly priced. Inside it, Spark is willing both to trade and to hold liquidity; outside it, the pair is dislocated, swaps should fail and the position should not be earning fees on prices Spark does not believe in.\n\nThis is a stronger property than either parameter alone. If the tick range were wider than the slippage tolerance, Spark would be providing liquidity at prices at which it refuses to trade \u2014 quoting a market it does not accept. If it were narrower, the position would fall out of range while swaps still executed. Matching them keeps the LP book and the trading policy consistent, and it means the pair's tolerance can be reasoned about as one number rather than two, with USDT/USDS's doubled band the only place a different view is being expressed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PYUSD/USDS, USDG/USDS and rlUSD/USDS pair \u00b10.1% ticks with 0.1% max slippage; USDT/USDS pairs \u00b10.2% ticks with 0.2% slippage \u2014 liquidity sits only where Spark would also trade.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

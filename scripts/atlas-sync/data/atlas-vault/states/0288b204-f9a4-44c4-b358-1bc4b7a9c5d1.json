@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Uniswap v3 liquidity is metered by three limits, one of which assumes both pool tokens are worth the same",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6f950d01-2bf7-4ac3-b21b-79716b8c6ffb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be6277e6-9a0f-4562-9477-cedddf234350",
+      "name": "risk-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a58ead3-9d50-4258-be39-3c9c19c35c7a",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.5.2.5.1.2 states that adding liquidity is subject to three limits under `LIMIT_UNISWAP_V3_DEPOSIT`: one aggregate limit \"metered in a normalized unit summed across both pool tokens,\" plus \"two per-token limits, one for each of the pool's two tokens, each metered in that token's own unit.\" Any one of the three exceeding its allowance reverts the call. A.2.2.10.1.1.1.2.5.2.5.2.2 mirrors this exactly for withdrawals.\n\nThe Atlas then states the limitation of its own control outright: \"The aggregate deposit limit sums one unit of either pool token as equivalent, so it is only meant to work with a stable-stable pool. Using it on a pool with two tokens of different value would produce a cap unrelated to actual exposure.\"\n\nThis is a rare and valuable admission. The aggregate limit's correctness is conditional on an assumption about the pool that the limit itself does not enforce \u2014 nothing in the metering rejects a volatile pair, so the guard silently degrades from a risk cap to an arbitrary number rather than failing loudly. Applying the same key to a WETH-pair pool would let a large ETH-denominated position pass a limit calibrated for stablecoin units.\n\nThe two per-token limits are what keep the arrangement usable, because they are denominated in the tokens actually moved and stay meaningful whatever the pair. The practical reading: the aggregate limit is a convenience for the stable case, and the per-token limits carry the real enforcement burden.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:18:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "An aggregate limit sums one unit of either token as equivalent, so it only bounds real exposure in a stable-stable pool; two per-token limits in native units run alongside it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

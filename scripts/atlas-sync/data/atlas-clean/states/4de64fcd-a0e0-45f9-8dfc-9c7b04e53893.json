@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-d062270b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d062270b-15f7-42fd-b23a-697c02c0ad05",
+      "targetTitle": "Each SkyLink bridge can be frozen independently from either "
+    },
+    {
+      "id": "lnk-d4d840ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4d840ce-4bb9-402f-86b3-929f24771db8",
+      "targetTitle": "Token Bridges run a 2-of-2 validator quorum while Governance"
+    },
+    {
+      "id": "lnk-9f014705-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f014705-7d8d-4d61-87d8-6a3b493c6423",
+      "targetTitle": "Every SkyLink bridge pairs a Token Bridge with a Governance "
+    },
+    {
+      "id": "lnk-69113e19-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "69113e19-131c-42fe-ac4d-a11aa5f16c4f",
+      "targetTitle": "doc-56215362"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "All three SkyLink bridges share one security template, trading independent review for correlated risk",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7935d429-1ad9-478e-b91f-30d3e080ae8f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "de276b8c-8d4a-4391-bdd5-3bdeec24025b",
+      "name": "skylink",
+      "topicDocumentId": null
+    },
+    {
+      "id": "130dd93e-3944-4b1a-b8f7-cf6a4987bb08",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f3ca5bc-ea63-43b9-b03e-31afc9585615",
+      "name": "multichain",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Solana (A.4.2.2.2), Avalanche (A.4.2.2.3) and Plasma (A.4.2.2.4) sections are structurally identical: same Token/Governance split, same dual-sided freezer arrangement, word-for-word identical Usage Standards, same net accounting definition, same 2/2 and 4/7 validator quorums, same 2-of-N freezer thresholds. The only genuine variation is which organizations hold freezer seats and what the numeric rate limits are.\n\nThat uniformity is a deliberate asset. Adding a chain becomes an instantiation rather than a design exercise; reviewers, responders and integrators learn one model and apply it everywhere; and the Atlas can state a security property once and have it hold across the fleet. It also makes the shared Ethereum freezer coherent, since a single switch over heterogeneous bridges would be far harder to reason about.\n\nThe cost is correlation. Each deployment is not an independent bet: a defect in the template \u2014 in the net-accounting logic, in the 2/2 assumption, in the LayerZero dependency common to every validator set \u2014 is present on every chain at once. The bridges are diversified across ecosystems but not across designs.\n\nThe Atlas partially acknowledges this with the fleet-wide Ethereum freezer, which is exactly the tool a correlated failure needs. What it does not do is vary the design between chains to reduce the correlation, which is a defensible choice \u2014 heterogeneous bridges would multiply the number of distinct things that can be wrong \u2014 but one worth stating explicitly when assessing SkyLink's aggregate risk.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:20:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:20:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Solana, Avalanche and Plasma repeat the same freezer design, usage standards, net accounting and validator quorums verbatim, so a flaw in the template is a flaw in every deployment.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

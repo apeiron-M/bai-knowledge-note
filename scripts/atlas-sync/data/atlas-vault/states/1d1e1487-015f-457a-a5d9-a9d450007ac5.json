@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Governance messages bridged to Avalanche wait three days and a Guardian may only cancel them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "acfd44ab-5539-4dcf-9772-c7e02ea5a574",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e58d1ec8-1e3e-46fd-bed1-d7e1d5d13053",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "36703e99-324f-46ab-a34f-b86940947227",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ed01491-5fe6-4690-9116-efbcb23290e3",
+      "name": "governance-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.1.1.1.2.6.9 sets out Governance Bridge Protection for the Avalanche deployment. Actions \"delivered to the Avalanche deployment via the governance bridge are subject to a timelock delay of three (3) days between scheduling and execution.\" A Guardian Multisig (the Spark Operations Multisig) holds five or more signers with a quorum of \"half of the signer set, rounded up.\" And critically: \"The guardian mechanism power is strictly limited to cancelling pending actions during the timelock period. It does not have admin control over the Avalanche deployment at any time.\"\n\nThe threat being addressed is a cross-chain message that appears valid but is not \u2014 a compromised bridge, a forged payload, or a legitimate action that turns out to be catastrophic. On the home chain, governance and execution share a trust domain. Across a bridge they do not, so the bridge's output is treated as a proposal rather than a command.\n\nThe timelock creates the window and the Guardian is the party who can use it. The design decision is to make the Guardian's power **purely negative**. A guardian who could also act would be a second admin, and compromising it would be as damaging as compromising the bridge. A guardian who can only cancel can, at worst, censor governance \u2014 a denial of service, not a theft.\n\nThe asymmetry is deliberate and worth generalizing: emergency powers are far safer when they can only subtract. The residual exposure is that a captured Guardian could indefinitely block legitimate governance from reaching Avalanche, which is precisely the failure the Atlas has chosen to accept in exchange.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Guardian Multisig's power is strictly negative \u2014 cancelling pending actions inside the timelock, with no admin control at any time \u2014 which makes a compromised bridge survivable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

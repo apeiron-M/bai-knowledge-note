@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Off-cycle emergency powers are granted only in exchange for mandatory public disclosure of every action taken",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "45e79e30-91f5-403b-a95d-6251a359165b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45f27804-61d3-4909-a6cd-d6dde7e4c2fd",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "184c562c-86bd-4b7b-95a8-f5b86c91fe82",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.3.2.14 through A.1.10.3.2.17 define freezer multisigs for the Ethereum, Solana, Avalanche and Plasma SkyLink bridges, and A.1.10.4.1.1 defines the SparkLend Security Access Multisig. Each grants the ability to freeze or pause a component \"without the need for inclusion in a Spell through the standard Executive Vote process.\"\n\nEvery one of the five carries the same countervailing clause in near-identical wording: \"Each action executed by the multisig, including any function calls and their parameters, must be reported to the Sky community within a reasonable time frame through a post on the Sky Forum,\" explicitly including activation *and* deactivation of the freeze.\n\nThe repetition is the finding. Sky's emergency design does not remove accountability when it removes the vote \u2014 it moves accountability from *ex ante* approval to *ex post* disclosure. The community cannot pre-approve the action, but it can always reconstruct exactly what was done, at call-and-parameter granularity.\n\nThe trade this makes explicit: speed is bought with transparency, not with trust. An emergency actor who freezes correctly but silently has still violated the Atlas, because the disclosure obligation is what keeps the standing power reviewable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The four SkyLink Freezer Multisigs and the SparkLend Security Access Multisig all bypass Executive Votes, and each must report every call and its parameters on the Sky Forum.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

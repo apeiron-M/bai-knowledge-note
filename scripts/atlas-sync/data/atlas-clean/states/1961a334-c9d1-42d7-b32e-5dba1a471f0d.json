@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-801b4cfb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "801b4cfb-d7ed-4568-926a-ac04718c3475",
+      "targetTitle": "SparkLend prices Dai administratively as a spread over the S"
+    },
+    {
+      "id": "lnk-55eec676-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "55eec676-6e8d-4e4d-a656-1373c6186411",
+      "targetTitle": "doc-309b79b7"
+    },
+    {
+      "id": "lnk-9ca71c26-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9ca71c26-fbf3-47a9-8832-2779f3d61ed7",
+      "targetTitle": "SparkLend's kinked interest rate curve is a self-correcting "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SparkLend indexes the WETH borrow rate to the stETH staking yield rather than to utilization",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6356fa07-4031-4e1b-b49c-0bee55c1524a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a6ae895-fbc6-4c2c-baab-bffe69f74709",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a274377b-5079-4920-8922-97b8f75f2b78",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "WETH is the second market in SparkLend that escapes the standard utilization curve. Its parameters (A.6.1.1.1.3.2.1.1.2.1.4) record `Slope 1: N/A` and instead a `Slope 1 Spread: -0.10%`, with the formula given directly: **slope 1 = stETH yield + slope 1 spread \u2212 base rate**. A.6.1.1.1.3.2.1.1.1.16 defines the spread as \"the difference between the WETH interest rate at optimal utilization... and the staking yield on stETH,\" and notes it \"is only defined for WETH.\"\n\nThe economics being managed are the leveraged staking loop: deposit wstETH, borrow WETH, stake it, repeat. That loop is the dominant source of WETH borrow demand on a protocol that also lists wstETH at 83% LTV in an ETH e-mode. Its profitability is exactly the gap between the staking yield and the borrow rate \u2014 so leaving the borrow rate to utilization means the loop's return swings with pool conditions, and can become wide enough to attract leverage that unwinds violently.\n\nPinning the rate to stETH yield minus 10 basis points fixes that margin. Looping stays marginally profitable \u2014 enough to keep the market functioning and utilization near target \u2014 but never lucrative enough to reward aggressive leverage, regardless of how full the pool gets.\n\nThis is the same move as pricing Dai off the Sky Savings Rate: where a market exists only because of an external yield, SparkLend indexes to that yield instead of discovering a price. In both cases the protocol accepts an administrative input in exchange for structurally closing an arbitrage it would otherwise be on the wrong side of.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Slope 1 = stETH yield + slope 1 spread \u2212 base rate, with the spread at \u22120.10%, pinning ETH borrowing costs a fixed hair below the staking return that motivates the borrowing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

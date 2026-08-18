@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Late Integration Boost data delays payment by a full week, and that delay is the only sanction",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b33accd2-6622-48e0-bd87-507c0f37af60",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "34cecabc-edfe-4b80-adc0-1e15fce51bba",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "25834db8-8acd-4136-80da-3dc535042cda",
+      "name": "settlement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.2.2.1.2.3 fixes both the measurement window and the consequence of missing it: \"Data is calculated on a weekly basis from Monday to Sunday for payment the following Monday. Failure to submit data on time will result in a delay of payment of the Integration Boost until the following week.\"\n\nThe sanction is purely a timing penalty. Nothing is forfeited, no eligibility is lost, and no fee is charged \u2014 the reward simply arrives a week later. That is a proportionate design for a recurring operational obligation: the party harmed by lateness is the one that was late, and the ecosystem's exposure is unchanged because the underlying balances still qualify.\n\nIt also keeps the settlement machinery simple. A forfeiture rule would require adjudicating whose fault the lateness was, which matters here because the submitting party is often not the beneficiary \u2014 currently the Core Council Risk Advisor computes the data (A.2.2.9.2.2.1.2.2), and long term it may be a contractor, the partner, the Prime Agent, or Operational GovOps. Penalizing the beneficiary for a third party's lateness would be unjust; a delay affects everyone in the chain equally and self-corrects.\n\nThe weekly window also explains why the fastest available distribution Cadence is weekly (A.2.2.9.2.2.1.3.1): payment cannot outpace the data cycle that feeds it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Data is computed Monday-to-Sunday for payment the following Monday; missing the window pushes payment to the next week rather than forfeiting it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

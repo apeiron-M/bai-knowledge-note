@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Superstate USTB instance is listed as Active with no addresses and no rate limits specified at all",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2174bfe9-7502-4878-9142-56f94b1cbacd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "78d679c3-e5ec-48fc-b640-88aec8906a65",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3dc416ce-a9f7-414c-949c-9511f8ed28e2",
+      "name": "governance-gap",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec8f6de0-3a5d-4017-8b60-1c5eb51e562f",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.3.1 files the Superstate USTB Instance Configuration Document under Active Instances, and then defers essentially all of it: the token address (A...3.1.2.2.1) and underlying asset address (A...3.1.2.2.2) \"will be specified in a future iteration of the Grove Artifact\", as will the `RateLimitID`s (A...3.1.2.3) and every field of both the inflow and outflow rate limits (A...3.1.2.4.1, A...3.1.2.4.2).\n\nCompare the Ethena USDe instance in the same chunk, which publishes a token address, an `ethenaMinter` address and four concrete limit parameters. The contrast shows this is not the Artifact's standard \u2014 it is an instance recorded before its configuration existed.\n\nThe reassuring half is that the code makes an unconfigured instance inert. `triggerRateLimitDecrease` begins with `require(maxAmount > 0, \"RateLimits/zero-maxAmount\")` (A...1.3.4), so an unset limit reverts every metered operation against it. The same fail-closed property that makes a zero limit a deliberate kill switch also means USTB cannot actually be transacted.\n\nThe unreassuring half is what \"Active\" then denotes. If a status can be Active while nothing about the instance is specified or operable, the status field is tracking an intention rather than a state, and a reader cannot use the Active list to determine where Grove's capital can currently go. Several other instances in this chunk are partially deferred in the same way \u2014 Blackrock BUIDL-I's outflow slope (A...3.1.2.1.2.4.2) and the USDe instance's underlying asset address (A...3.1.4.1.2.2.2) among them.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:49:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Token address, underlying address, RateLimitIDs and both inflow and outflow maxAmount and slope are all deferred to a future iteration, leaving an Active instance with no usable configuration.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

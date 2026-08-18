@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove imposes key-hygiene requirements on Delegates and makes a 48-hour compromise response grounds for removal",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "778ef349-4e3e-477d-945c-ac57568feda0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54e6f647-ba93-4f23-bf6a-5c7f7086b06e",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a3ab6d9-2a71-4704-a4ea-fa9a8b01e680",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c878829c-17ae-4587-b491-c4e78d7af358",
+      "name": "operational-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.3.1.4.7.1 obliges Delegates to sign votes from \"a hardware wallet or an equivalent secure device,\" to \"use **unique signing keys that are never reused for personal transactions**,\" and to enable MFA on any platform accounts used for governance communication.\n\nThe key-reuse prohibition is the substantive one. A hardware wallet protects the key; key separation limits what a compromise reaches. A delegate signing governance votes with a wallet they also use to interact with arbitrary contracts exposes Grove's governance to every risk that wallet takes on \u2014 a malicious approval in an unrelated transaction becomes a governance incident. Separation makes the delegate's personal risk-taking their own problem.\n\nThe response procedure at A.6.1.1.2.3.1.4.7.2 is a three-step containment: the Delegate notifies the Foundation on discovery; the Foundation flags the registry entry \"Suspended - Security Review,\" notifies the Forum, and annuls all voting power to the address; the Delegate may then submit a new verified address, and on approval \"delegations migrate at the next snapshot-block.\" Migration is the notable detail \u2014 recovery restores the *existing* delegations to a new address rather than requiring every delegator to redelegate, which is a materially better outcome than the offboarding path offers.\n\nA.6.1.1.2.3.1.4.7.3 supplies the enforcement: failing to execute those steps \"within **48 hours** constitutes grounds for emergency removal.\"\n\nThe 48-hour clock is doing something specific. The dangerous interval in a key compromise is between the delegate realizing and the system reacting, and that interval depends entirely on self-reporting \u2014 nobody else can observe it. Attaching removal to the delay rather than to the compromise itself makes concealment costlier than disclosure, which is the only lever available for a fact only the delegate knows.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:55:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:06:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Delegates must sign from hardware wallets with keys never reused for personal transactions and MFA on governance accounts;",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Whether a rate limit meters gross flow or net exposure depends on whether an integration calls triggerRateLimitIncrease",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a559d0f1-012e-40cf-81ad-2ac2120414dd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e9dafed2-b25f-4277-aba2-39a0f123bd1a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ff31d96e-d834-433c-9464-52a17e2c5477",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eb5c3254-6e64-40a2-99f3-3c1e7a2e9f7f",
+      "name": "accounting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.3.5 provides `triggerRateLimitIncrease(key, amountToIncrease)`, the mirror of the decrease used throughout the integrations. Both are `CONTROLLER`-gated, both short-circuit on the unlimited sentinel, and the increase is clamped to `maxAmount`.\n\nThe existence of the increase changes what a limit can mean. If a deposit decreases key K and the matching withdrawal *increases* K, then K's remaining balance tracks **currently outstanding exposure** \u2014 round-tripping capital does not consume budget, and the limit behaves like a position cap. If instead the withdrawal decreases its own separate key, as the Aave and Curve integrations do (`LIMIT_AAVE_WITHDRAW`, `LIMIT_CURVE_WITHDRAW` in A...2.1.2.7.2.4 and A...2.1.2.8.3.6), then each key tracks **cumulative directional activity** and a round trip consumes budget in both directions.\n\nNeither is wrong, but they answer different questions and are not interchangeable. A position cap prevents holding too much; an activity cap prevents doing too much too fast, including churn that a position cap would not notice.\n\nReading an instance's limits therefore requires knowing which convention its integration follows, and the Atlas documents this per function rather than declaring one global rule. The instance configuration documents reinforce the ambiguity by naming their two limits \"inflow\" and \"outflow\" \u2014 directional language that implies the second convention.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:05:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The primitive supports both spending and restoring capacity, so paired operations that restore on the return leg measure outstanding position while those that only decrease measure cumulative",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

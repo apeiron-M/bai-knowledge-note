@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "New Tracking Methodologies are permitted only if double counting is impossible and the data is on-chain or independently verifiable",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b1ba19a9-9484-417d-9ae3-8e79f7d13bc3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "169bf70d-4c99-4f0f-80bc-65120aab99f3",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "78ed8685-6e78-4084-a1d3-b573fb39aad8",
+      "name": "measurement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "After specifying methodologies for Ethereum Mainnet, CoW Swap, and Base, A.2.2.9.1.2.1.1.2.4 opens the set: \"The Tracking Methodologies specified above are not exclusive. Prime Agents and Operational GovOps can develop additional Tracking Methodologies, so long as those methodologies reasonably estimate USDS balances that are attributable to the holder of the Reward Code and **there is no possibility that the same USDS balances could be 'double counted'** for multiple Reward Code holders. Tracking methodologies must be based on either (1) on-chain data or (2) off-chain data that can be independently verified or attested to by a third party.\"\n\nThe structure is invariants over implementations. Rather than enumerating an approved list that would need governance amendment for every new chain or venue, the Atlas states the two properties any method must preserve and lets Agents build the rest. This is what allows Distribution Rewards to follow USDS wherever it goes without the Atlas becoming a catalogue of integrations.\n\nThe no-double-counting requirement is stated at the strongest available level \u2014 \"no possibility,\" not \"reasonable safeguards.\" Given the ten-year eligibility window and monthly automated settlement, a methodology that could double count would silently multiply Sky's liability for years, and the errors would surface as overpayments recoverable only through A.2.2.9.1.2.1.3.4.\n\nThe verifiability requirement admits off-chain measurement \u2014 necessary for real-world integrations \u2014 while refusing self-reported data. Attestation by a third party is the minimum bar, which keeps the reward from becoming a claim an Integrator can simply assert.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Measurement is deliberately extensible, but bounded by two invariants \u2014 no balance can be attributed to two Reward Codes, and off-chain data needs third-party verification or attestation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

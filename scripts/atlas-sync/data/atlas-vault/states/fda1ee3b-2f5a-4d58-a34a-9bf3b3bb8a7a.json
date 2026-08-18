@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "PAS lets designated actors operate rate limits and pre-approved actions without administrative control over the PAU",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ede6fec9-7134-429d-a05b-28ff3bf75fb8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64e6e5c7-0699-487e-80bf-f9824c2f2f2b",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "099dbe72-5d90-4271-919e-80cc2ca5d0e3",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.4 defines the PAS (Parallelized Allocation System) as \"a permissioned layer that lets designated actors operate a Diamond PAU's rate limits and pre-approved controller actions, within governance-set ceilings, without direct administrative control over the Diamond PAU.\"\n\nThe last clause is the design claim. Rate limits are themselves a privileged control \u2014 the Controller Role can \"update the Rate Limits contract\" per A.2.2.10.1.1.1.2.2.2 \u2014 so delegating their day-to-day operation would normally mean handing over the ability to relax them. PAS resolves this by making delegation ceiling-bounded: an actor may move a limit within a range governance has already approved, and cannot reach past it or reconfigure the Instance.\n\nTwo contracts implement the split. The Configurator (A.2.2.10.1.1.1.2.3.6) is the entry point through which those actors operate limits and pre-approved actions, and BeamState (A.2.2.10.1.1.1.2.3.7) \"records which actors, rate limits, and controller actions are authorized.\" Authorization is therefore explicit on-chain state rather than an implication of holding a role.\n\nAll three sections close with \"Further details will be specified in a future iteration of the Atlas\" \u2014 the boundary is committed to while the mechanics remain open, which is worth tracking as a known gap rather than reading as a complete specification.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:06:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Parallelized Allocation System is a permissioned layer bounded by governance-set ceilings, with BeamState recording which actors, limits and actions are authorized;",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

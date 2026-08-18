@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky Core's relayer can step in when Spark's own relayer fails to maintain vault liquidity",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8843b88c-026a-4989-ba89-b1e211905674",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "877952e7-8ed2-4c54-9853-a80208d1086f",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f01c7b2a-07a7-4422-8a9b-de1b0c2bad14",
+      "name": "operational-processes",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.5.3.1.2 assigns buffer maintenance to \"the Spark Prime Relayer Multisig,\" acting \"via control of the taker role in the vault and transferAsset rate limit from Spark Liquidity Layer ALM Proxy to the vault,\" and notes that \"in normal conditions, this will be automated via the ALM Planner software.\" Then the fallback: \"**If the Prime Relayer Multisig fails** to maintain Spark Savings vault liquidity in alignment with the Target Liquidity configurations, the **Core Operator Relayer Multisig** is empowered to effectuate transactions to achieve this.\"\n\nThree layers, degrading in order: software automation, then the Agent's own multisig, then Sky Core's multisig.\n\nThe design recognises that user-facing liquidity is not really the Agent's private business. A Spark Savings depositor who cannot withdraw experiences a failure of Sky, and the reputational and stability damage lands on the ecosystem regardless of which entity's relayer was asleep. Giving Sky Core standing authority to act \u2014 rather than a right to complain, or an escalation procedure \u2014 means the failure of one operator does not become a failure of the product.\n\nIt is a different shape from a normal permission grant, because the backstop is *conditional on non-performance* rather than co-equal. Sky Core does not routinely operate Spark's vaults; it acquires the ability to when Spark does not.\n\nThe cost is that \"fails to maintain\" is not defined \u2014 no timeout, no threshold, no notice requirement. In practice the Core Operator's authority activates on someone's judgment that Spark has dropped the ball, which makes it a fast and un-adjudicated intervention power over an Agent's own infrastructure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Spark Prime Relayer Multisig normally refills buffers via automated ALM Planner software; on failure the Core Operator Relayer Multisig is empowered to execute the transactions instead.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

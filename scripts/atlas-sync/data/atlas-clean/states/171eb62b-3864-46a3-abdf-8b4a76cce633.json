@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-c95f8048-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c95f8048-7021-404f-94eb-5e388245cf64",
+      "targetTitle": "Reversing an operation credits its rate limit rather than co"
+    },
+    {
+      "id": "lnk-ad521530-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad521530-f2c5-468f-9400-a59cc5805f96",
+      "targetTitle": "USDC-to-DAI swaps are all-or-nothing and loop the PSM's own "
+    },
+    {
+      "id": "lnk-32227c27-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "32227c27-7ae4-4dce-aee7-a747ec0b55c2",
+      "targetTitle": "doc-863959b8"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The PSM rate limit is a single bidirectional counter, so converting USDC back to USDS consumes no allowance at all",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e244bec1-0ee2-41d0-b1fb-cba24ae5ad24",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "86e3b922-3001-43a8-b64f-43f05b9d625a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eed1b5f7-99be-4baa-b889-4c8462c8b766",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "045f710c-caea-4155-90a5-d8f8d1da956c",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.3.2.2 states the behaviour plainly: \"The operator **does not consume a rate limit in this direction**. Instead, `PSMLib.swapUSDCToUSDS` cancels usage of the opposite direction's limit: it increases the `LIMIT_USDS_TO_USDC` rate limit by `usdcAmount`, refunding capacity that a prior USDS-to-USDC swap had consumed.\"\n\nSo the two PSM directions are not two limits \u2014 they are **one counter that moves in both directions**. `LIMIT_USDS_TO_USDC` tracks how much USDS Grove currently has sitting in USDC form, not how much swapping it has done. Converting back reduces that outstanding figure and restores headroom.\n\nThe consequence is that the inbound direction is **structurally unlimited**. There is no allowance for `swapUSDCToUSDS` to exhaust, so Grove can always convert USDC back to USDS regardless of size or frequency. This is the same \"unwinding is never blocked\" principle as burning USDS (A.6.1.1.2.2.6.1.2.2.1.2.1.2.1.2.2) and the uncapped homeward bridging path \u2014 the controls constrain taking on exposure, never shedding it.\n\nOne notable inconsistency across Grove's two execution architectures: the Diamond PAU **does** define a distinct `LIMIT_USDC_TO_USDS` limit with its own maxAmount and slope (A.6.1.1.2.2.6.1.2.1.1.3.2.4), while the monolithic controller documented here has no such parameter and charges nothing in that direction. The two paths into the same PSM therefore have materially different control surfaces, so a statement about Grove's PSM limits is only true of one of them.\n\nThe refund pattern also means the counter can be manipulated in ordering terms: a large inbound swap creates outbound headroom immediately, so the practical outbound capacity in a day exceeds the nominal figure whenever round trips occur.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "swapUSDCToUSDS refunds LIMIT_USDS_TO_USDC instead of charging its own limit, meaning the monolithic controller has no independent cap on the inbound direction",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

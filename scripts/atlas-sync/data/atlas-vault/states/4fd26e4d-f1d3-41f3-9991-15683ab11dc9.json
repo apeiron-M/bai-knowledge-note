@@ -1,0 +1,96 @@
+{
+  "tier": "HUB",
+  "title": "The Sky Ecosystem Atlas",
+  "version": null,
+  "tensions": [
+    {
+      "id": "bc848775-06e4-41b3-bc95-bec72946796c",
+      "addedAt": "2026-08-17T23:05:11.000Z",
+      "description": "A 1-of-2 multisig fails the majority rule that governs changes to it",
+      "involvedRefs": [
+        "d9f0cda7-5c15-457f-a0a3-09e1b38c7bd4",
+        "280aac88-16c8-4e67-8430-168c66f82561",
+        "23d902b1-209c-451d-973c-99c7a45a0722",
+        "bd6eb934-874c-46fe-8092-fa15e813839b",
+        "163bde3e-0c19-45e8-b724-480fb47ad95b",
+        "fbff8905-3bac-415f-b574-b589bd0a716a"
+      ]
+    },
+    {
+      "id": "5dbdc084-7e7d-47c8-8c32-85b285dce3f2",
+      "addedAt": "2026-08-17T23:05:11.000Z",
+      "description": "A cap of 30 on the Smart Contract Risk Rating makes the High and Extreme bands unreachable",
+      "involvedRefs": []
+    },
+    {
+      "id": "581d89a2-2a2d-4ff0-a29e-81d486a4c38d",
+      "addedAt": "2026-08-17T23:05:12.000Z",
+      "description": "An aggregate cap is written in prose but nothing enforces it",
+      "involvedRefs": [
+        "1f35eb88-1ad1-4a1a-90f9-93c57a01e400",
+        "7157746f-27e6-467f-8c2f-04f836e423ff",
+        "53c9c69e-4a21-4715-a78e-4981d1b01cfc",
+        "ae64ec88-938c-4b1e-8e06-04f6d8227426"
+      ]
+    },
+    {
+      "id": "a011c9f0-828c-4a15-9cf8-1f9754cd2f8c",
+      "addedAt": "2026-08-17T23:05:12.000Z",
+      "description": "LGD formula evaluates to zero, nulling every capital requirement",
+      "involvedRefs": [
+        "60de49dd-a2bc-4b96-8094-5028f28b9ed8",
+        "fa0d1087-a12f-49ad-9d17-6308a807e2fb",
+        "dfaeaf3d-df98-454f-8217-8973583618a4"
+      ]
+    },
+    {
+      "id": "85861022-a9c8-4b3f-af5d-25955daffda3",
+      "addedAt": "2026-08-17T23:05:14.000Z",
+      "description": "The voter-facing document has the weakest independence guarantee in the Executive chain",
+      "involvedRefs": [
+        "94258614-cb83-42df-974b-2dd9de4cf698",
+        "3c403bb0-e7ca-4a60-b06b-b1a97434105e",
+        "bc9de178-a861-4562-9bee-1da7f2298d3b",
+        "de7d124f-7e34-4dc6-8dbf-252795c679b5",
+        "4ffe3a23-fbeb-43b9-a4a9-8822b53ef98e",
+        "fd3d563c-658e-4b59-8880-5bcc3a67d629"
+      ]
+    }
+  ],
+  "childRefs": [
+    "7583c8f9-3e08-4503-b872-e646054e515c",
+    "e67f5cd0-6f0e-4833-bc37-bb81f411b760",
+    "fe7c3aa1-1086-4c62-a8ea-67ef7e88922b",
+    "81c2e273-0d32-4bcf-bae7-e352fbed3b6f",
+    "741f1730-178c-45d0-b44e-9a280373a3f5",
+    "2dd1f668-f3bd-46e3-99c6-bc850890c750",
+    "16407930-e86f-4e52-83bf-0665bbe54d21",
+    "14345d2f-e2cf-44a8-8cc1-d4166ac04795",
+    "9802cab0-9d63-4491-bef2-4d34ed10d405",
+    "dbedf307-992c-4f00-a7a4-32674fc2dd19",
+    "ae64ec88-938c-4b1e-8e06-04f6d8227426",
+    "6e18d6eb-0ece-498d-95f1-bcf00428edba",
+    "6d37bd31-b0c8-4ccf-8d5e-9eb71be0a450",
+    "2017fb8b-18bd-4ce3-a78b-644cc47191f5",
+    "39a7bf39-e7df-4eba-8548-93fac9339b83"
+  ],
+  "coreIdeas": [],
+  "createdAt": "2026-08-17T22:20:25.000Z",
+  "noteCount": 0,
+  "parentRef": null,
+  "updatedAt": "2026-08-17T22:20:25.000Z",
+  "agentNotes": [],
+  "description": "The Atlas is Sky's foundational rulebook: six Scopes plus a per-Agent Artifact layer, split into Immutable Documents that enshrine its spirit and Adaptive Documents that operationalize it. This hub is",
+  "orientation": "The Atlas is Sky's foundational rulebook: six Scopes plus a per-Agent Artifact layer, split into Immutable Documents that enshrine its spirit and Adaptive Documents that operationalize it. This hub is the entry point to 1,480+ claims extracted from the full 3.6MB corpus. Start with the Governance Scope for how the Atlas interprets and amends itself, the Stability Scope for how solvency is defined, or Agent Artifacts for how the Prime Agents actually deploy capital. The cross-cutting MOCs are where the most valuable findings live \u2014 patterns that only appear when several Artifacts are read against each other.",
+  "openQuestions": [
+    "Is LGD = min(1 - recovery, 0) a live defect in deployed risk calculations, or does implementation follow the reference code that clamps with max(0, ...)?",
+    "Is the SCRR cap of 30 a deliberate interim conservatism, and is the ~7x discontinuity at the medium/high boundary understood before it is lifted?",
+    "Which Prime Relayer and Core Operator multisig configurations were intended to be exempt from the majority-of-signers rule, and which are oversights?",
+    "When will the three Executor Agent Artifacts be specified? Until then, what constrains Soter Labs, which holds GovOps for all three simultaneously?",
+    "Which of the many 'will be specified in a future iteration' provisions are scheduled, and which are load-bearing today \u2014 particularly the absent Agent-level and ecosystem-level emergency response protocols?",
+    "Does any deployed system enforce the prose-only aggregate caps (JTRSY/BUIDL $5m combined, 'Maximum Exposure 0 USD'), or are prose and enforced limits maintained independently by design?",
+    "If rate limits ARE the venue whitelist, how is a de-listing sequenced safely when an asynchronous redemption is pending and the claim call would revert?",
+    "Is the base-class propagation of Total Risk Capital obligations into Agent Artifacts \u2014 with no proposal, review or token-holder vote \u2014 an accepted exception to the Root Edit process or an unintended bypass?"
+  ],
+  "links": []
+}

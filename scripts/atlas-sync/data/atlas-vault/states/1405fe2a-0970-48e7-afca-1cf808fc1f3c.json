@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark nets its Upkeep Rebate against the fees it owes rather than claiming it as a separate payment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b68aee26-310b-41e0-9e9b-74d0c8d9a580",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3874fd29-438f-4bf4-988d-2a5a07c7a116",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d417ac7-957f-47a1-846e-6fa0b9335fda",
+      "name": "upkeep-fee",
+      "topicDocumentId": null
+    },
+    {
+      "id": "15c4c183-fddb-4429-8798-12c7e256578e",
+      "name": "operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two short provisions define how the rebate is actually taken. A.6.1.1.1.2.3.2.2.1.2.1.1: \"Spark keeps all tokens of other Agents it holds in its SubProxy account.\" A.6.1.1.1.2.3.2.2.1.2.1.2: \"When paying Ecosystem Upkeep fees, Spark deducts the rebate from the fees it pays.\"\n\nThe first makes the rebate base observable. Because peer-Agent holdings are concentrated in one known on-chain account, the quantity the rebate depends on can be verified by anyone rather than asserted by Spark. Custody discipline is doing accounting work here.\n\nThe second chooses netting over a separate claim. A rebate paid out as its own transfer would require a disbursement process, a budget line and an approval; deducting it at payment time avoids all three. The cost is that the paying party computes its own reduction, so the fee arrives already net of a number Spark chose.\n\nThat is precisely why the next provision installs a reviewer: the rebate calculation is checked by Operational GovOps before surplus is returned to token holders. Self-assessment is made workable by after-the-fact verification against a publicly inspectable account, not by trust.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "All peer-Agent tokens are held in Spark's SubProxy account and the rebate is deducted at payment time, making the rebate a self-calculated reduction that must be checked afterwards.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

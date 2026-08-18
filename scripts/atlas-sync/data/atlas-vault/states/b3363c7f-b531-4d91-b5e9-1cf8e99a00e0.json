@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SparkLend risk parameters can be changed by Executive Vote without a Governance Poll",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f30ffdb2-d517-48fe-aecb-b78589e5e203",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f23c60e9-754b-4649-9391-88ae2e0c7284",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a18158b1-c60a-4847-a730-62cd7bcdeb36",
+      "name": "governance-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.2.1.2.1 states the fast path plainly: \"As a general rule, the modification of said parameters is pursuant to the Operational Weekly Cycle and can be effected **directly via an Executive Vote, without requiring a Governance Poll**.\" Its scope is broad \u2014 any parameter in the SparkLend Risk Parameters Definitions or in the Cap Automator definitions \u2014 and the initiating step is a recommendation from the Core Council Risk Advisor in consultation with Phoenix Labs.\n\nThe justification is a mismatch of clocks. Liquidation thresholds, slopes and caps must respond to market conditions on a weekly or faster cadence; a two-stage poll-then-execute process cannot. Requiring the full path for every LTV tweak would either paralyze risk management or, more likely, cause it to happen off-books.\n\nWhat makes the shortcut defensible is that the *space* of changes is already bounded. Every parameter it covers is defined and enumerated in the Artifact, so an Executive Vote can only move a known dial \u2014 it cannot onboard an asset, change a definition, or invent a control. That is why collateral onboarding and offboarding is separated into its own section (A.6.1.1.1.3.2.1.2.2) rather than swept into the same fast lane.\n\nThe exposure is that dials are enough. Nothing in the parameter set is individually structural, but LTV, liquidation threshold, reserve factor and cap `max` moved together can effectively retire an asset or reshape the protocol's risk profile \u2014 as the deprecation patterns visible elsewhere in this Artifact demonstrate. The fast path bounds the vocabulary, not the outcome.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "As a general rule modifications run on the Operational Weekly Cycle and skip the polling stage, trading deliberation for the cadence a lending market's risk parameters actually require.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

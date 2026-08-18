@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The startup capital and creation fee gating all Agent creation are left unspecified in the current Atlas",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "fd75333e-38bd-45bf-a06c-86dc17aa822d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "51026fd6-0380-48c3-bfa8-4f386314fc2c",
+      "name": "agent-lifecycle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f74dc92e-c74f-4d3a-a96c-f68664cd4b1c",
+      "name": "implementation-gap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Agent lifecycle's entry condition is the deployment of startup capital and payment of a creation fee. Both are currently blank. A.2.2.3.1.1 on Capital Injection: \"The required capital and the process for deploying it will be specified in a future iteration of the Atlas.\" A.2.2.3.1.2 on the Creation Fee: \"The required fee and the process for paying it will be specified in a future iteration of the Atlas.\"\n\nThis leaves a structurally complete but unactuated gate. Everything downstream is fully specified \u2014 Proto-Agent creation, Scaffold Artifact setup, Founder Access assignment to the funding address, the ordered Primitive Invocation sequence \u2014 while the single precondition that admits anyone to that pipeline has no value.\n\nIt is worth recording because these two parameters carry most of the sybil- and quality-control weight in Agent formation. The Atlas's structural defences against frivolous Agents are thin by design; the capital and fee are where selectivity was meant to live. Until they are set, selectivity rests entirely on Core GovOps' validation that Founder documents are \"well-specified\" and \"Aligned\" (A.2.2.5.1.1.1.2) \u2014 a qualitative judgment rather than an economic filter.\n\nThe pattern matches the Founder Access suspension (A.2.2.1.1.3.2.1): the Atlas ships the full mechanism description with the not-yet-operational parts flagged in place, so specification and implementation state are read from the same document.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both A.2.2.3.1.1 and A.2.2.3.1.2 defer amount and process to a future iteration, so the first gate in the Agent lifecycle has a defined role but no operative value.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

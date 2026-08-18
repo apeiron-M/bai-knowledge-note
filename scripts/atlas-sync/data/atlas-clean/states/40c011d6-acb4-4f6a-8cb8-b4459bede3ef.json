@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-9211d280-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9211d280-e6b0-4121-89f5-82e407cc050f",
+      "targetTitle": "Asynchronous ERC-7540 vaults break the immediacy of an emerg"
+    },
+    {
+      "id": "lnk-7d125b63-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d125b63-0cfc-426f-a2e1-9d5a92102313",
+      "targetTitle": "The allowance consumed by a redemption request is priced by "
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel's async-vault support splits deposits and redemptions into request and claim, creating an in-flight state",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "cfc0a370-d97f-418c-bea0-9437b6953f4a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "176f027e-30d5-4de5-9c42-4b4300e7816e",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5c921ec-f160-4780-8938-1585f946745f",
+      "name": "allocation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ad30e1a1-9747-40ea-b05e-701275bb4a78",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.1.1.2.1.2.4 introduces ERC-7540 support, and the four functions come in pairs. `requestDepositERC7540` checks the rate limit, approves and submits the request, but \"shares will not be received immediately; they must be claimed in a separate step after the vault processes the deposit.\" `requestRedeemERC7540` mirrors it: \"assets will not be received immediately.\" The claim calls take no amount at all \u2014 `claimDepositERC7540(address token)` and `claimRedeemERC7540(address token)` each \"determine the maximum number of shares\" or \"maximum amount of assets that can be claimed\" and take that.\n\nBetween the two calls the value sits in a third state: not held by the ALM Proxy and not represented as a share position. Every other operation in the Liquidity Layer is atomic \u2014 one relayer call, one settled outcome \u2014 so async vaults are the one place where Keel's on-chain position does not fully describe its exposure, and where an accounting or risk process reading balances alone would understate what is at stake.\n\nThe amountless claim signature is a sensible adaptation: the vault, not the relayer, decides how much has been processed, so asking for a specific number would only invite reverts. But it also means the rate limit is charged at request time on the intended amount rather than at settlement on the actual one.\n\nThe deferred design cost is that a request whose claim never happens \u2014 a vault that stalls or halts \u2014 leaves consumed limit capacity and stranded value with no operation in this chunk to reverse it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "For ERC-7540 vaults, requestDeposit and requestRedeem consume the rate limit but return nothing; a later claim call takes whatever maximum the vault has since made available.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

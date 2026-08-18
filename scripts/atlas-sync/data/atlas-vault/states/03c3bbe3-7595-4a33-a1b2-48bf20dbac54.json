@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The TRC Report attests to continuous compliance, not an end-of-period snapshot",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "05874fd0-8015-405c-89df-6d2a4c9fa6bf",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b2be7fc4-84dc-4ff0-af60-250d0b83d97c",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8308aeb4-d70b-4b7d-86ce-5bdc2d634974",
+      "name": "reporting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.3.2.1.2.3.1 gives the report a \"dual purpose\": a verifiable snapshot of composition and ratios at period end, and \"a formal attestation regarding the Prime Agent's maintenance of TRC at or above its dynamically changing Aggregate Required Risk Capital (RRC) throughout the entire reporting period.\"\n\nThe second purpose exists because the requirement it certifies is itself continuous. Aggregate RRC moves with exposure and market conditions, so a period-end comparison can pass while the Prime was undercapitalised for days in between \u2014 the classic window-dressing failure of point-in-time solvency reporting.\n\nA.2.2.10.1.1.3.2.1.2.3.2 turns the attestation into a specific disclosure duty covering \"any events, Prime-initiated off-chain contractual obligations, impairments to the value or redeemability of held assets... encumbrances, or other conditions that occurred at any point during the reporting period which materially affected its TRC, **even if such conditions were temporary or not continuously visible to on-chain monitoring systems**,\" with \"the nature of the event/condition, its precise timing and duration, and its quantified impact.\"\n\nRequiring timing and duration is what makes the disclosure actionable rather than narrative: those are exactly the inputs the per-second penalty schedule consumes, so a Prime effectively computes its own retroactive liability. And demanding disclosure of what monitoring cannot see converts an undetectable failure into a reportable one \u2014 shifting the violation from \"was undercapitalised\" to \"failed to declare it,\" which is provable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Because Aggregate RRC changes dynamically, a Prime must confirm it held TRC at or above RRC at all times in the period and disclose intra-period events even if temporary or invisible on-chain.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

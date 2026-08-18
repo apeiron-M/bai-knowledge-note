@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4eef6a4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4eef6a4-005f-4856-abad-ffd316af8d61",
+      "targetTitle": "Facets measure what actually moved by diffing balances inste"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Aave deposit slippage is verified by differencing the proxy's own aToken balance, not by trusting the pool's reported output",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e6c3f0ad-6cbd-4acb-8a29-3adf90124f76",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "26017143-58b4-4a44-9d40-7472ff9cc34d",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df84f4f3-9d8d-4372-87d6-3be9bab98bdf",
+      "name": "slippage-protection",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f460a44-7feb-4f6f-8315-eed56001f066",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.7.1.4 has the operator \"snapshot the `proxy` current `aToken` balance so the amount of newly minted `aToken` can be measured after the deposit\". A...7.1.7 then closes the loop:\n\n```\nuint256 newATokens = IERC20(aToken).balanceOf(address(proxy)) - aTokenBalance;\nrequire(newATokens >= amount * maxSlippages[aToken] / 1e18, \"MainnetController/slippage-too-high\");\n```\n\nThe operative choice is measuring **received value as an observed balance delta**. Aave's `supply` returns nothing useful, and even where an external protocol does report an amount, that report is produced by the counterparty being checked. Differencing a balance the proxy itself owns turns the assertion into one about state Grove can verify directly.\n\nThe same technique recurs for Uniswap V3 in A...9.1.4 through A...9.1.7, where `startingBalance` and `endingBalance` of `tokenIn` are recorded so the rate limit is decreased by `startingBalance - endingBalance` \u2014 the amount actually spent \u2014 rather than by the `amountIn` that was requested. Balance-delta accounting is used both to *reject* bad executions and to *bill* good ones accurately.\n\nWhat it trades off is composability: the pattern only works when the proxy's balance in that asset cannot change for other reasons inside the same call, so it implicitly assumes single-purpose, non-reentrant transactions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The controller snapshots the balance before supply and requires the delta to clear amount scaled by maxSlippages[aToken], making the check independent of anything the external pool returns.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

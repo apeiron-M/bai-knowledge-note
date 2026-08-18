@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-a1dda45c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a1dda45c-427c-48a6-8bf7-4a582ced2d09",
+      "targetTitle": "A Primitive Invocation has exactly two exits: graduate to th"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Failed Invocations and Suspended Instances get permanent archive locations, making failure a recorded state rather than an absence",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b46a2c60-2793-4d44-b290-03979881756c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0f4d94b6-7a9d-474d-bd93-f4ef256a0c7c",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "afab5ab2-8abb-4630-a1d8-ac70bbf0be5d",
+      "name": "auditability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every Hub Data Repository in this chunk reserves the same two archive subtrees: \"the subtrees for failed Invocations of the [X] Primitive are stored here\" and \"the subtrees for Instances of the [X] Primitive with `Suspended` Status are stored here\" (e.g. A.6.1.1.3.2.1.1.1.5.1.1 and A.6.1.1.3.2.1.1.1.5.1.2).\n\nA.6.1.1.3.2.2.1.1.4 makes the routing explicit for the Executor Accord Primitive: \"Invocations that are completed successfully are moved to Active Instances, whereas failed Invocations are Archived in the Hub Data Repository.\"\n\nSo an Invocation has three terminal outcomes and all three are addressable: promoted to Active, archived as failed, or held as Suspended. Nothing is deleted. A reader auditing an Agent can therefore ask what was *attempted* and rejected, not only what currently exists \u2014 which is the difference between a state snapshot and a governance record.\n\nThis matters for accountability specifically because Invocations carry a paper trail (Initial Planning, Operational GovOps Review, Artifact Edit Proposal). Archiving the failed attempt preserves the review that killed it, so a subsequent attempt at the same thing can be recognized as a retry rather than a novelty.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Hub Data Repository reserves subtrees for failed Invocations and Suspended Instances, so an Instance that never reached Active still leaves an addressable record.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

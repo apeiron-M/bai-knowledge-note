@@ -1,0 +1,97 @@
+{
+  "links": [
+    {
+      "id": "lnk-6338431d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6338431d-b3c8-43b0-a210-406ea68e0193",
+      "targetTitle": "Risk Capital is tranched into Junior and Senior layers with "
+    },
+    {
+      "id": "lnk-771ad853-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "771ad853-14e6-4101-a3ff-bad7ea1b7e03",
+      "targetTitle": "Aggregate Backstop Capital is USDS's excess-capital safety n"
+    },
+    {
+      "id": "lnk-831ec886-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "831ec886-6c70-48fa-9fdf-a23aea6e4b45",
+      "targetTitle": "Liquidation shortfalls on SKY-backed loans are absorbed by a"
+    },
+    {
+      "id": "lnk-5f0476a6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5f0476a6-4a06-48cb-9be7-669781341a08",
+      "targetTitle": "Senior risk capital is repriced every month by a uniform-pri"
+    },
+    {
+      "id": "lnk-99f64149-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "99f64149-2cdb-4872-b27c-6544855199df",
+      "targetTitle": "Backstop capital retention tapers continuously to zero near "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky reinvests all excess backstop capital and a third of the buffer below target as Senior Risk Capital",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f32b9426-6d32-478d-a41e-9e2d23453879",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8d21830d-3e7b-4f6d-aa97-be32a0fe7b83",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eb99ef88-6b23-441c-bd80-a486824d53d1",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.3 defines Internal Senior Risk Capital as \"a portion of the excess capital of the Sky Protocol that is reinvested in providing Senior Risk Capital to Prime Agents,\" sourced from Aggregate Backstop Capital in two components: \"one hundred percent (100%) of any Aggregate Backstop Capital in excess of the Target... plus one third (1/3) of Aggregate Backstop Capital up to the Target.\"\n\nThe first component is uncontroversial \u2014 capital above the target is by definition surplus to the backstop's purpose, and leaving it idle earns nothing. The second is the substantive decision: a third of the capital held *for* solvency is simultaneously deployed as Senior Risk Capital to Primes.\n\nThis is defensible because SRC is the senior, last-to-lose tranche: it sits behind each Prime's junior capital, so it is only impaired after that junior layer is exhausted. Backstop capital is meant to absorb exactly such tail losses, so lending it senior is arguably not much of a change in its risk profile \u2014 while it converts a dormant reserve into revenue that A.2.3.1.2.1.2.2 recognises as ISRC Income.\n\nThe honest description of the trade is that a portion of the backstop is no longer immediately liquid and its value is now correlated with the very Prime failures it exists to cover. A shock large enough to need the backstop is also a shock likely to impair senior capital lent into it. The one-third fraction is the calibration of that correlation risk, and it is a parameter worth watching: it converts a solvency question into a yield question, and the Atlas offers no derivation of why one third is the right line.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ISRC is sourced as 100% of Aggregate Backstop Capital above the Target plus one third of the amount up to it, so even reserves held for solvency are partly put to work earning from Primes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

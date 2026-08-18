@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-da0ae689-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da0ae689-b3e5-4ece-a22c-e404c341bd71",
+      "targetTitle": "Rate limits accrue continuously and are computed at call tim"
+    },
+    {
+      "id": "lnk-e84ef90f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e84ef90f-7397-44e2-8a10-8120a6d24463",
+      "targetTitle": "Unlimited is a reserved sentinel value that short-circuits a"
+    },
+    {
+      "id": "lnk-30154959-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "30154959-abc4-4fed-96aa-89d34aa0abc5",
+      "targetTitle": "Retuning a rate limit refills it: the two-argument setter gr"
+    },
+    {
+      "id": "lnk-443c6ac0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "443c6ac0-4236-42de-aa67-5a371b5fc775",
+      "targetTitle": "doc-76a7ee65"
+    },
+    {
+      "id": "lnk-897fcf37-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "897fcf37-664f-47ef-aa95-fea8a4e8bc1e",
+      "targetTitle": "doc-10b2adc4"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A rate limit's available capacity is min(slope x elapsed time + last amount, maxAmount), with 'unlimited' encoded as a sentinel maximum",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d71e4d82-7379-41e6-96ef-b808905b7c83",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "207a4e4e-94fa-47f4-ac8f-22b21e33eef3",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "43418568-b77b-4769-be89-37ddcff5cd6e",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2552c4f3-c525-4263-af5d-2221d074f245",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.1.1.3.4 gives the exact rule for `getCurrentRateLimit`: if `maxAmount` is `type(uint256).max` the contract returns that sentinel, \"otherwise, the contract will calculate and return the minimum of (slope * time elapsed since lastUpdated + lastAmount) and maxAmount.\"\n\nThis is a continuous leaky bucket, not a periodic quota. Capacity begins refilling the instant after use, so there is no reset boundary to camp on \u2014 the exploit of draining a daily allowance at 23:59 and again at 00:01 does not exist here. A relayer that consumes the full limit must wait proportionally to the amount consumed, which is what turns `slope` into a genuine flow ceiling.\n\nThe `min(...)` is the invariant guard: accrued capacity can never exceed `maxAmount`, no matter how long the limit has gone unused. Idle time does not bank exposure.\n\nThe sentinel encoding is the other design choice worth keeping. \"Unlimited\" is not a separate flag or a bypass path but the extreme value of the same field, and `setUnlimitedRateLimitData` (\u20263.3) simply calls the normal setter with `type(uint256).max` and slope 0. `triggerRateLimitDecrease` (\u20263.5) then returns unchanged in that case. One code path serves both bounded and unbounded limits, so the unlimited case cannot diverge in behaviour from the limited one \u2014 which matters because the unbounded limits are exactly the emergency exits.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Capacity accrues linearly from the last use rather than resetting on a schedule, and the unlimited case is expressed as maxAmount = type(uint256).max with slope 0, short-circuiting the arithmetic.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

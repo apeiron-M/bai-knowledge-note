@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-e3da8d2c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e3da8d2c-e615-4e60-b838-601e5013a817",
+      "targetTitle": "Uniswap V3 price bounds are anchored to the pool's TWAP tick"
+    },
+    {
+      "id": "lnk-eb364c7e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb364c7e-874f-4878-8c3c-c7e0dd71a9b0",
+      "targetTitle": "Each pool's tick bounds are pinned to the same tolerance as "
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove guards stable-stable LP positions with a TWAP oracle check and a narrow tick band rather than with a value limit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ee751ddf-3353-4bf3-b9e5-f7c5905f489d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8635fdc-25a7-4ffb-b8c9-3cf18fd19908",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7946b980-6088-41a9-98c6-d4142e472806",
+      "name": "uniswap",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4c6e11a8-5a13-4ede-b1b9-b31b24d2fab9",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "All three Uniswap v3 AUSD/USDC Instances carry an identical *Instance-specific Operational Parameters* block titled \"Parameters For Stable Stable Pools\" (A.6.1.1.2.2.6.1.3.1.12.1.4.1, .12.2.4.1, .12.3.4.1) with four fields: `twapSecondsAgo`, `maxTickDelta`, `lowerTickBound` and `upperTickBound`.\n\nThe four split cleanly into two controls. `twapSecondsAgo` plus `maxTickDelta` form a **manipulation check**: compare the pool's spot tick against a time-weighted average over the preceding window and refuse to act if they diverge by more than the allowed tick delta. Because moving a TWAP costs an attacker capital for the whole window, this makes a flash price push insufficient to trick Grove into transacting. `lowerTickBound` and `upperTickBound` form a **concentration bound**: the LP range is confined to a tight band around parity, which for a stable-stable pair is where the assets are supposed to trade.\n\nWhat matters is that neither control is a value limit. The rate limits elsewhere in the Instance answer \"how much,\" while these answer \"under what price conditions, and across what price range.\" An LP position's dominant risk is not size but adverse selection when the pair depegs, and no `maxAmount` addresses that.\n\nThat the same block is reproduced verbatim in three Instances also reveals it as a reusable venue archetype \u2014 a *stable-stable pool profile* \u2014 even though the Atlas schema forces it into a per-Instance appendix rather than a shared definition. Copies drift; a reader comparing the three blocks is checking for exactly that.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "twapSecondsAgo, maxTickDelta and lowerTickBound/upperTickBound repeat identically across all three Uniswap Instances: manipulation resistance is enforced by position shape, not position size.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

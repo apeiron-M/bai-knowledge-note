@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Transaction verification requires three independent views of the same transaction",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "33483b98-ef80-4d25-9ab8-06e834ec1403",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "59250400-d2f0-4351-bf61-9d15dbac3b0d",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cbe1b5d5-8a44-4bce-8cc1-381bce47be15",
+      "name": "multisig",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.2.2.2.2 stacks three mandatory checks. The hash must match one derived from the transaction parameters (.2.2.1). A simulation must be reviewed \"[w]here available\" to confirm \"that the expected events, asset transfers, and state changes match the intended transaction\" (.2.2.2). And decoded calldata must be reviewed \"to confirm that the function calls, recipient addresses, and transferred amounts match the intended action\" (.2.2.3).\n\nThe three are not redundant \u2014 they fail in different directions. A hash proves the bytes are the ones you expected but says nothing about what those bytes do. Calldata review shows what is being called but requires the reviewer to reason about intent. A simulation shows the actual effects but depends on a simulator that may not reflect real chain state or may itself be attacker-influenced. Only the combination catches both \"the interface swapped the transaction\" and \"the transaction is exactly what was proposed, and what was proposed is malicious.\"\n\nA.2.11.1.3.2.2.2.2.2.4 closes the last gap: signers \"are encouraged to verify transaction hashes and decoded calldata using independent verification tools ... and should avoid relying on a single verification interface.\" Running three checks inside one compromised tool provides one check's worth of assurance.\n\nThe framework's underlying stance is that the signing UI is untrusted infrastructure \u2014 which is also why backup interfaces, redundant RPC providers, and multiple explorers appear elsewhere in the same framework.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Hash match, simulation of resulting state changes, and decoded calldata each answer a different question, and signers are told not to rely on a single verification interface.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

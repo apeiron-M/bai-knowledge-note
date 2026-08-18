@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark and Grove contract around the protocol's own loss-allocation mechanism to hold true 50/50 exposure",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6dcaa40a-a412-4ca2-b79f-6f436f2915d5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a396d7e0-09a6-4448-9b17-ff37c811a893",
+      "name": "ecosystem-accords",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fb314210-8ab9-46a7-a4b0-8cdf261b8708",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.1.2.9.1 has Spark and Grove \"share 50% of all revenue and expenses associated with Spark's Allocation System investments in USDe and sUSDe,\" enumerating both sides \u2014 protocol yield, OTC arrangements and rebates on one; mint/burn fees, swap fees and \"costs of borrowing funds from Sky\" on the other. A.2.8.2.1.2.9.2 pairs it with Grove renting Spark 50% of the associated Required Risk Capital as Junior Risk Capital.\n\nA.2.8.2.1.2.9.2.1 is where it gets interesting, because the protocol's default loss allocation does not produce what the parties intend. They state the intent \u2014 \"Grove shares in 50% of the risks of Spark's investment in USDe and sUSDe and not in the risk of any other investments by Spark\" \u2014 and then write two corrective transfers.\n\nIf the TIP JRC mechanism allocates Spark more than 50% of USDe losses, \"Grove will transfer funds to Spark so that Grove and Spark each bear 50%.\" If losses on Spark's *other* investments land on Grove's rented JRC, \"Spark shall reimburse Grove for those losses.\"\n\nThe general lesson is about the limits of pooled risk capital. Rented JRC is fungible at the protocol level \u2014 once Grove's capital backs Spark, it backs whatever Spark's loss-absorption mechanism directs it at, with no notion of which position it was meant for. Earmarking capital to a specific investment is a *contractual* construct the protocol cannot express.\n\nThe parties therefore accept the mechanism's allocation and settle the difference bilaterally, in both directions. The residual exposure is counterparty risk: the correction is a promise to transfer, enforceable through the Ecosystem Accord dispute process rather than by the protocol itself, and it lands precisely when one party has just taken losses.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:02:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Where the TIP JRC mechanism assigns Spark more than half the losses on USDe positions, Grove transfers funds to restore parity;",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's Artifact treats unfinished parameters as a declared state rather than omitting them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e210f038-dcde-4243-836c-00bbd612dae9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c2d546ca-bd35-494f-a891-962fe721809d",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "36b87051-76f1-4c61-85ea-1959e88ae909",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4493617c-35f3-43a8-ba81-126f5ea440ed",
+      "name": "governance-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Several of Spark's parameter documents exist but are deliberately empty of values. A.6.1.1.1.2.1.1.3.1.1.3 says the Genesis Account address \"will be specified in a future iteration of the Spark Artifact.\" A.6.1.1.1.2.1.4.2.1.1.7.1 says SPK holders can stake, but \"the rewards for staking will be specified in a future iteration.\" A.6.1.1.1.2.1.4.2.1.2.4 says the amount and nature of token-launch distributions \"will be specified in a future iteration.\"\n\nThe pattern is that a pending decision gets its own addressable slot. The alternative \u2014 leaving the parameter out until it is decided \u2014 would make the Artifact look complete while hiding the gap, and would give a future amendment no fixed place to land.\n\nThis interacts directly with the Executor Transformation Primitive's Global Activation Status of `Inactive` (A.6.1.1.1.2.1.3.1.1): capability that has not yet been used is present in the document tree with a status marking it dormant, not absent from it.\n\nThe consequence for anyone reading an Agent Artifact is that presence of a section is not evidence of an operative rule. Status values and \"future iteration\" placeholders must be read as part of the specification, because a live-looking subtree can be entirely inert.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Genesis Account, staking rewards and token-launch distributions each appear as named documents whose content is 'will be specified in a future iteration', keeping the gap visible and addressable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

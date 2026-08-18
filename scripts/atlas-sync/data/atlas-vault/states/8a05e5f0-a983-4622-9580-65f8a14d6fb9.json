@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-1d888b95-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1d888b95-01fe-4bb5-abc9-1754d142d417",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Allocation Instances are modeled as bidirectional conduits with a four-part identity and separate rate limit IDs per direction",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e470deb4-4b59-4398-b167-90f3444196b7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1da724e8-2963-4df2-a917-85be0aa9e629",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "24a7b3fd-4819-4aa8-8885-2e7e7199aa75",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e70438ec-ad14-4e8d-909e-f25e9f4ef409",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Maple USDC Instance Configuration Document defines its identity as four fields: Network (Ethereum Mainnet), Target Protocol (Maple), Asset Supplied By Pattern Liquidity Layer (USDC), and Token (syrupUSDC) \u2014 A.6.1.1.6.2.6.1.3.1.1.1.2.1. It then records two distinct rate limit keys, described as \"the specific `RateLimitID`(s) for **this conduit's** inflow and outflow\" (A.6.1.1.6.2.6.1.3.1.1.1.2.3).\n\nThe conduit framing is the useful abstraction. An allocation is not a static holding but a two-way pipe between the ALM Proxy and a venue, and the four identifiers fully determine what flows through it: which chain, which protocol, what goes in, what comes back as the position token.\n\nGiving each direction its own `RateLimitID` is what makes the inflow/outflow asymmetry expressible at all. Because the limits are separate keyed entries rather than one bidirectional setting, deposit and withdrawal can be tuned, zeroed, or set unlimited independently \u2014 and de-whitelisting new deposits into a venue is possible without touching the ability to withdraw from it.\n\nThe distinction between the supplied asset and the received token also makes the position's true exposure explicit: Pattern hands over USDC and holds syrupUSDC, so its risk is to the vault share's redeemability, not merely to the stablecoin it deposited. Recording both fields prevents that layer from being invisible in the Artifact.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Network, target protocol, supplied asset and received token identify the instance, while distinct inflow and outflow RateLimitIDs let each direction be governed independently.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

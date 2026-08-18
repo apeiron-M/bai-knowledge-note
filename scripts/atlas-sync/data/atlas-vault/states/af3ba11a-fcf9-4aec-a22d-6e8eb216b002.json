@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Interim Deployments let a Prime allocate real capital before its risk assessment exists, but never before its audit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "05c09e1b-50ab-4bad-b9d5-9f817d307dc0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e65d562-6460-42ed-a1e9-aa26e8562e65",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d14d7047-8e33-43c1-96a0-5f054f890134",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.3.2.2.2 permits Prime Agents \"to deploy a new Allocation Instance on-chain and allocate capital through it under constrained testing conditions, **prior to completing a full risk assessment**.\"\n\nWhat is *not* deferred is the security review. A.1.10.2.3.2.2.2.1.1 requires the technical implementation to \"successfully complete all required external audits... before the Prime can post its Interim Deployment proposal to the Forum.\" The concession is purely about financial risk modelling, not code correctness \u2014 which is the right seam, since audit findings are binary and cheap to obtain while a Capital Ratio Requirement needs empirical exposure data that only live operation produces.\n\nThe deferral is bounded three ways. The Core Council Risk Advisor specifies \"testing parameters... including maximum exposure and rate limits\" (A.1.10.2.3.2.2.2.1.2); the Prime \"must maintain 100% Instance Capital Ratio Requirement for all Interim Deployments\"; and a public dashboard showing current exposure is mandatory (A.1.10.2.3.2.2.2.1.6).\n\nThe 100% ratio is the load-bearing term: it means the Prime posts capital equal to its exposure, so any loss during the unassessed period falls on the Prime and not on Sky. Risk is not accepted, it is internalized \u2014 which is what makes it coherent to skip the assessment rather than merely reckless. A.1.10.2.3.2.2.2.1.8 closes the loop: once a real ratio can be calculated, an Atlas Edit Proposal lifts the constraints and reduces the requirement to the Atlas-calculated value.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:17:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The deferred gate is risk modelling, not code review: the Risk Advisor sets exposure and rate limits, and a 100% Instance Capital Ratio makes the Prime absorb all loss until a real ratio is derived.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

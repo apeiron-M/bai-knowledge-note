@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove operates live instances without a specified process for onboarding, offboarding, or upgrading controllers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a4a6dde1-0fad-4144-8d9d-cffb560d27cd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "20868eb3-a216-4a46-b692-ee8312275b50",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec61554b-e049-4ab2-a124-06341a47bb75",
+      "name": "governance-gap",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a4c28f50-c12a-4827-9384-1dc9b2904880",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Four structurally important sections in this chunk are placeholders. A.6.1.1.2.2.6.1.2.2.1.4 (Instance Lifecycle Management) covers \"invoking (onboarding) new Grove Liquidity Layer Instances and offboarding existing ones\" and states \"This process will be specified in a future iteration of the Grove Artifact.\" A...1.5 (Upgrading Controller) says the same of deploying new controller contracts. A...2.3 (Allocation Strategy) defers the logic for allocating capital between instances. And several instances \u2014 Centrifuge JTRSY (A...3.1.1.1.2.3), Centrifuge JAAA (A...3.1.1.2.2.3), Blackrock BUIDL-I (A...3.1.2.1.2.3) \u2014 defer their `RateLimitID`s too.\n\nThe pattern is consistent: **runtime mechanics are specified in exhaustive, line-by-line detail while lifecycle governance is not.** Grove's Artifact tells you precisely how a Curve swap validates its minimum output, and does not tell you how an instance holding 500 million USDC comes to exist or ceases to.\n\nThat matters because the deferred items are exactly the high-consequence, low-frequency decisions where an ad-hoc process is most dangerous, and where a documented one is most valuable. Adding an instance sets a new counterparty exposure; upgrading a controller replaces the contract holding every policy check documented elsewhere in the Artifact.\n\nThe missing `RateLimitID`s compound the gap in a concrete way: without them, a reader of the Artifact cannot verify that the on-chain limits match the documented ones for those instances. Two of the four Centrifuge instances do publish their IDs (A...3.1.1.3.2.3, A...3.1.1.4.2.3), which shows the intended standard and how far the current state is from it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:02.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Instance Lifecycle Management, Upgrading Controller, Allocation Strategy and several instance Rate Limit IDs are all deferred to a future iteration of the Grove Artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

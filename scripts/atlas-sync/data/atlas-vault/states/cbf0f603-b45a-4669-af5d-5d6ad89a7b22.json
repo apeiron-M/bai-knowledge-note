@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-e1c7655e-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e1c7655e-3e28-4646-8085-97cb6872fa5e",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Obex's Liquidity Layer can mint 100 million USDS while its burn limit, offboarding process and allocation strategy remain unspecified",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "aae7928f-34dd-4078-9f66-532be26591c7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3d1b9fce-8dec-43e3-9c08-93a285c07fe2",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "280ae4e7-c00a-4e82-96ae-0c2760ab7bd7",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "55a8e6ec-55da-492a-afb5-677c23d4ae66",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two rate limits in this chunk are set: `LIMIT_USDS_MINT` at maxAmount 100,000,000 USDS with slope 50,000,000 per day (A.6.1.1.5.2.6.1.2.1.1.3.1.1.1), and `LIMIT_USDS_TO_USDC` at the same figures (\u20263.1.1.3). Every other listed limit defers: USDS burn (\u20263.1.1.2), sUSDS deposit and withdrawal (\u20263.1.2.1 and \u20263.1.2.2), `LIMIT_USDC_TO_DOMAIN` (\u20263.1.3.1) and `LIMIT_USDC_TO_CCTP_ETH` (\u20263.1.3.1.1). So do the off-chain parameters `MAINNET_MIN_OPERATION_SIZE` and `DEBT_CEILING_BUFFER` (A.6.1.1.5.2.6.1.2.1.1.2.1).\n\nThe pattern of what is set is coherent rather than random: the two configured limits are exactly the pair needed to mint USDS and convert it to USDC \u2014 the minimum viable path for putting capital to work. The unset limits govern winding down, yield-vault positions, and cross-chain movement.\n\nThat ordering is worth flagging. The burn limit in particular is the parameter used by the emergency runbook's final step. An unset limit is not necessarily a blocked one \u2014 `setUnlimitedRateLimitData` exists, and unlimited would be the sensible setting for repayment \u2014 but the Artifact does not say which state applies, so the document does not let a reader confirm that the emergency path is open.\n\nThe same deferral extends to process. \"Instance Lifecycle Management\" covering onboarding and offboarding \"will be specified in a future iteration\" (A.6.1.1.5.2.6.1.2.2.1.4), as will \"Upgrading Controller\" (\u20261.5), and the Allocation Strategy section contains only a promise of future logic (A.6.1.1.5.2.6.1.2.3). Obex can borrow and deploy 100 million USDS under documented rules; how it would retire a venue, upgrade its controller, or decide between venues is not yet written down.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Only the USDS mint and USDS-to-USDC swap limits carry values; burn, sUSDS deposit and withdrawal, USDC-to-domain and CCTP limits all defer to \"a future iteration of the Obex Artifact\".",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

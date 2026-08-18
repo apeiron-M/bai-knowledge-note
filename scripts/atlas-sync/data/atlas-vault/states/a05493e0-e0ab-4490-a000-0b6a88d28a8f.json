@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Bridging limits are deliberately asymmetric: sending capital away from Ethereum is capped, bringing it home is not",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ad2f8694-f03f-4133-8e67-3702aa83cfc5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "70812f59-5618-4255-be64-4e4892bcd829",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c29e8a08-1638-4e58-8f01-8d7d1ace9f19",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b1ff3fa3-d3ef-4a88-a86b-0830ca28bd4a",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Comparing the CCTP entries in A.6.1.1.2.2.6.1.2.1.1.3.1 shows an intentional directionality. Outbound flows are bounded: USDC bridged from Ethereum Mainnet to Avalanche is capped (A...3.1.2.2) and to Base is capped (A...3.1.3.2), each with a matching daily slope. The homeward leg from Avalanche is recorded as \"`maxAmount`: Unlimited\" with \"`slope`: Unlimited\" (A...3.1.2.3), and the Ethereum-side record for inbound CCTP (A...3.1.1.5) likewise reads \"Unlimited.\" The same asymmetry appears for SkyLink USDS transfers, where the outbound Ethereum-to-Avalanche allowance is larger than the Avalanche-to-Ethereum allowance is small \u2014 but the CCTP return path is uncapped.\n\nThe logic is that **rate limits exist to bound exposure, and coming home reduces exposure**. Throttling a retreat would be actively harmful: in an incident on a foreign chain, a cap on the withdrawal path would trap capital exactly when speed matters. So the control is applied only to the direction that increases risk, mirroring the Core Council Risk Advisor gate (A.6.1.1.2.2.2.2.2.1.2.4), which likewise attaches only to risk-*increasing* changes.\n\nTwo details are worth flagging. First, the Base return leg (A...3.1.3.3) is **capped**, unlike the Avalanche one \u2014 so the \"retreat is unlimited\" principle is not applied uniformly across chains, and Base capital cannot be recalled faster than its cap allows. Second, the mainnet inbound record pairs \"`maxAmount`: Unlimited\" with \"`slope`: 0,\" a combination that is only coherent because an unlimited bucket never needs refilling; read literally as a token bucket it would be a bucket that never replenishes.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Outbound USDC to Avalanche and Base is rate-limited while the Avalanche-to-Ethereum return leg is Unlimited \u2014 retreat is never throttled, so a freeze cannot trap capital on a foreign chain.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

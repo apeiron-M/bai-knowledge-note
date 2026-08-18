@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Agent Rate is a ceiling that tops balances up, never a reward paid on top of an existing one",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f44114fb-d0a7-4ff0-bd35-e84f4d085f7f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11dd0769-727a-4d9d-934c-1f1bb4debf1c",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f64552b1-3b9d-4da5-a297-2c27c1b6fbec",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.3.7 states the rule directly: \"A Prime Agent's total reward on a USDS, Dai, or sUSDS balance shall not exceed the Agent Rate... The Agent Rate is therefore never paid on top of an existing base reward.\"\n\nTwo worked cases show what that means operationally. An sUSDS balance already earns the Sky Savings Rate by construction, so per A.3.1.2.3.3 only the remaining Distribution Reward Rate is paid through the Monthly Settlement Cycle, \"bringing the total up to the Agent Rate\" \u2014 a top-up of the gap, not a second full payment. A plain USDS or Dai balance earns nothing natively, so the full Agent Rate is settled (A.3.1.2.3.2). And a balance already receiving Integration Boost or USDS Token Rewards earns no Agent Rate at all.\n\nThe pattern is *reward as a ceiling rather than a stream*. Sky commits to a target total yield per balance and pays only the difference between that target and whatever the balance already receives from any other program.\n\nThis matters because Sky runs many overlapping incentive programs across the same token balances. Under an additive design, an Agent could stack SSR plus Agent Rate plus Integration Boost on one deposit and the ecosystem's total incentive spend would become the uncontrolled sum of independently-governed programs. Ceiling semantics make each program's marginal cost bounded and knowable, at the cost of making new incentives non-motivating for anyone already at the ceiling.\n\nA.3.1.2.3.4 carves out the one exception: Spark earns an Agent Rate equal to the full Base Rate on USDS and sUSDS held in Peg Stability Modules \u2014 a higher ceiling, not an exemption from having one.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:18:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No Double Counting: an sUSDS balance already earning SSR gets only the Distribution Reward Rate difference; a balance receiving Integration Boost or USDS Token Rewards earns no Agent Rate.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

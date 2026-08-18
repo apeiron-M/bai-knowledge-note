@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b7e73739-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b7e73739-0c02-4734-9402-f343b81e2e74",
+      "targetTitle": "Operational GovOps can refuse to execute a rebate distributi"
+    },
+    {
+      "id": "lnk-c882b7e9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c882b7e9-0f83-4bd4-8738-8ac0df244ac8",
+      "targetTitle": "Keel calculates its own rebate but Operational GovOps must v"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Obex calculates its own rebate but Operational GovOps holds a hard block on distributing the resulting surplus",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "737bd112-9758-45cf-aec2-ef9c28165531",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0fea0b01-d10c-4ca2-b869-db0b310e6a3c",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2edb67c6-6508-4f51-a3bb-30a0e13b36b8",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1cbae919-b224-4c43-8fdb-78c790ce2a42",
+      "name": "checks-and-balances",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Upkeep Rebate routine protocol runs in three steps. Obex \"keeps all tokens of other Agents it holds in its SubProxy account\" (A.6.1.1.5.2.3.2.2.1.2.1.1); \"When paying Ecosystem Upkeep fees, Obex deducts the rebate from the fees it pays\" (A.6.1.1.5.2.3.2.2.1.2.1.2); and then A.6.1.1.5.2.3.2.2.1.2.1.3: \"Operational GovOps reviews Obex's calculation of the rebate before executing a return of surplus to token holders. In the event of any issues, Operational GovOps **cannot** execute the distribution.\"\n\nThe separation of duties is exact. The party with the incentive to overstate the rebate computes it; a different party verifies it; and the verifier's power is a hard block, phrased as an incapacity rather than a discretion. \"Cannot execute\" leaves no room for GovOps to proceed under protest.\n\nThe holding requirement in step one is what makes verification tractable. Concentrating all other-Agent tokens in the SubProxy account gives the reviewer a single, publicly observable address to check the claimed holdings against, turning an audit into an on-chain lookup.\n\nThe deadlock rule completes the mechanism: GovOps \"must post an explanation on the Sky Forum \u2026 and work with Obex to resolve the disagreement,\" and unresolved disputes \"must be escalated to Core GovOps.\" A block therefore cannot become a silent, permanent freeze \u2014 it must be explained publicly and has a defined route out at the ecosystem level. This is the only dispute-escalation path spelled out anywhere in Obex's Primitives, and it is notably more complete than the Root Edit veto, which has none.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GovOps reviews the calculation and cannot execute distribution if it finds issues; it must then post a public explanation and, if disagreement persists, escalate to Core GovOps.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

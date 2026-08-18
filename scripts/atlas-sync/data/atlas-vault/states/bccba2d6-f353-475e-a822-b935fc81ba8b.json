@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Morpho instance splits Curator and Guardian roles behind a 240-hour timelock",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "17ec1c6b-8234-4283-8e6b-64238ca8eb44",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e4df3fc-455b-440a-9978-2a8927f600ce",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6575dc70-b7ec-457d-ab93-7a23a3e50238",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Morpho USDT instance publishes exactly two role addresses \u2014 a `Curator Role Address` (A.6.1.1.1.2.6.1.4.3.1.1.4.2.1) and a `Guardian Role Address` (.4.2.2) \u2014 plus a bare `Timelock: 240 hours (10 days)` (.4.3).\n\nThe three parameters only make sense together. The Curator proposes changes to the vault's market allocation; the timelock delays them; the Guardian can cancel during the delay. Neither role alone can act unilaterally against depositors: the Curator's power is slowed, the Guardian's power is purely negative.\n\nTen days is a deliberately long window, and it is chosen against a human constraint rather than a technical one. It must exceed the time for a compromise to be *noticed* \u2014 including across weekends, holidays and timezone gaps \u2014 because the Guardian is presumably a human-operated key. A 24-hour timelock protects against nothing an attacker cannot wait out unobserved.\n\nThe cost is symmetric: legitimate risk reductions are also delayed ten days. If a collateral asset starts failing, the Curator cannot pull the allocation faster than the veto window allows. The design therefore accepts slower defence in exchange for guaranteed reviewability \u2014 a trade only worth making when the Guardian is genuinely watching.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:32:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:32:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A 10-day delay on Curator actions gives the separately-keyed Guardian a standing window to veto, converting a fast permissioned change into a reviewable one.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

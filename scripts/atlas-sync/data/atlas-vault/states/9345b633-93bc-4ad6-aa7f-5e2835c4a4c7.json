@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's compensation is indexed to both the Base Rate and deposit volume, so Sky's cost auto-scales with monetary policy",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "804fa1f6-5815-4e41-aee4-eb866b759e9b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e1d7f84-fbd3-4b32-81fb-bc1326fc75f1",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "390264b2-2f76-469a-8458-42a0f5e2b1ce",
+      "name": "ecosystem-accords",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.10.2.1.2 sets Grove's ongoing compensation as `Chronicle_Point_Reward_Instance_USDS_Deposited x 20% x Base_Rate`, where the Base Rate is Sky's governance-set rate from A.3.1.2.1. The stated justification is that it \"recognizes Grove's role in promoting and supporting Chronicle across integrations within the Sky Ecosystem.\"\n\nStructurally this is a revenue share, not a fee. Both inputs float: deposit volume floats with adoption, and the Base Rate floats with Sky's monetary policy. The 20% is the only negotiated constant.\n\nThat design has a real advantage \u2014 the Accord never needs amending when conditions change, which matters given that amendment requires an Atlas Edit. It also aligns Grove with growth in Chronicle-integrated deposits.\n\nThe cost is that Grove's income is exposed to a variable Sky itself controls. When governance cuts the Base Rate for stability reasons, Grove's compensation falls proportionally with no reference to the work it performed that month. Indexing a service fee to a policy lever means the service provider bears policy risk, which is a different bargain from bearing adoption risk alone.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:17:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Deposits in the Chronicle Point Reward Instance x 20% x Base Rate: a fee expressed as a share of yield rather than a fixed amount, which needs no renegotiation when rates or TVL move.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

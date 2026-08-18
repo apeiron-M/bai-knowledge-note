@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-c85fc41b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c85fc41b-efc0-4751-88a7-756c9384ee47",
+      "targetTitle": "doc-a15ea0d0"
+    },
+    {
+      "id": "lnk-274f5a77-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "274f5a77-594e-4c69-b2c8-a9d13d3e27b0",
+      "targetTitle": "Permissionless circuit-breaker activation silently stops wor"
+    },
+    {
+      "id": "lnk-95a7a3eb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "95a7a3eb-e9d1-4b4f-950c-66d56c41671e",
+      "targetTitle": "Sky Core Governance keeps control of Spark's most consequent"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Anyone can trigger SparkLend's kill switch, but only Sky Governance can reset it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8b73b205-866a-4202-9c4e-cc97fd36b45d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5b065685-8d13-42d5-bc5f-129445e81d94",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "84f6ce24-f876-4d9f-b5b7-f1b5fe9512ea",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.2.1.1.4 describes a global circuit breaker: \"If the ratio of the price of a specified asset to its peg is equal to or less than the threshold, then **any user** can trigger the kill switch to disable borrowing across all SparkLend markets.\" Recovery runs the other way: \"markets can be reactivated by Sky Governance after resetting the kill switch,\" and that reset \"is subject to the Governance Security Delay\" (A.1.10.3).\n\nThe asymmetry is the design. Triggering is permissionless because the failure mode being defended against is *nobody with authority being awake*. A depeg that lets borrowers drain good assets against a collapsing collateral plays out in minutes; a multisig, a council, or a vote cannot convene inside that window. Making the switch public means the defence fires as soon as any single observer \u2014 an arbitrageur, a bot, a competitor \u2014 notices, and they need no permission and no relationship with Spark.\n\nThe safety of that arrangement rests entirely on the trigger being *objective*. No judgment is delegated: the switch only arms when an oracle price ratio crosses a published number, so a griefer cannot fire it at will. The cost of a false positive is also bounded and one-directional \u2014 borrowing halts, but supply, repayment and liquidation continue.\n\nRecovery is deliberately slow for the mirror reason. Turning borrowing back on is the dangerous direction, so it is gated by governance *and* a mandatory delay, guaranteeing a public window between the decision and its effect. Cheap to stop, expensive to restart \u2014 the opposite of how most protocol permissions are arranged, and the correct arrangement for a control whose failure modes are asymmetric.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A depeg past threshold lets any user disable borrowing across all markets; reactivation requires a governance action subject to the Governance Security Delay.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

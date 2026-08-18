@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Undercollateralized USDS is recapitalized by automatically minting and selling SKY, making holder dilution the programmatic loss absorber",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "51180467-e27c-4186-9519-c347df7978e5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65ac394a-428e-429c-8a0f-17cb56adee51",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "75cc3a46-043a-4243-b040-4f400323ff19",
+      "name": "sky-backstop",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8d59f6f0-af2f-4f02-89d8-bb8efb7b015b",
+      "name": "loss-absorption",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.6 states that \"if the USDS Stablecoin becomes undercollateralized, the Sky Protocol will **automatically** generate and sell SKY to recapitalize the system,\" and names the period during which that mechanism is actively minting and selling to close the shortfall a \"SKY Backstop Event.\"\n\nThe design places the governance token in the equity position: SKY holders control the protocol and, in exchange, absorb its losses through dilution. This is what makes governance-token value a solvency resource rather than merely a claim on revenue \u2014 and it is the reverse side of the Smart Burn Engine, which uses surplus to retire SKY. The same token expands in bad states and contracts in good ones.\n\nMaking recapitalization *automatic* is a deliberate removal of discretion. A shortfall does not wait on a vote, which avoids the failure mode where holders facing dilution delay the action that would protect the peg. The cost is that the mechanism sells into exactly the market conditions where SKY is weakest, so the amount of SKY required to raise a given sum rises with the severity of the event \u2014 the reflexivity that A.3.6.1's demand for an emission rate \"that prevents risk of sudden failure\" is meant to address.\n\nNaming the state (a \"Backstop Event\") also gives other provisions something to reference, such as halt and override conditions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:17:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas names the active minting-and-selling period a 'SKY Backstop Event', so recapitalization is a protocol behaviour triggered by shortfall rather than a discretionary rescue.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

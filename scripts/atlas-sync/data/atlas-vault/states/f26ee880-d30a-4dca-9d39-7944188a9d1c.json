@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Setting a conduit's rate limits to zero keeps an Instance registered as Active while rendering it operationally inert",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "92e10de8-0f45-4343-86f7-f7d267c1ceb3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6330f193-bc88-4c84-a4bb-180f74cd55df",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3d024b59-6fb3-40e7-b633-64307463202e",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Avalanche instance at A.6.1.1.1.2.6.1.3.4.1.1.2.4.1 and .4.2 records inflow `maxAmount: 0`, `slope: 0` and outflow `maxAmount: 0`, `slope: 0` \u2014 yet it is filed under a parent stating that instances \"with `Active` Status are stored herein.\"\n\nWith both the ceiling and the refill rate at zero, the leaky bucket never fills: no capital can move in either direction. The instance is fully specified, contract addresses published, processes defined \u2014 and completely unusable.\n\nThis reveals two independent levers rather than one. `Status` describes whether an integration is *sanctioned and maintained*; rate limits describe whether it is *funded*. Separating them lets governance pre-approve and pre-audit a venue in advance of allocating to it, and lets an operator throttle a live venue to a standstill without deregistering it or losing the reviewed configuration.\n\nThe practical implication for anyone reading the Artifact: `Active` is not evidence of activity. Judging Spark's real exposure requires reading the rate limits, not the status headings \u2014 an easy misreading given how the document is organized.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Avalanche Aave-type conduit sits under Active Status with maxAmount 0 and slope 0 on both inflow and outflow \u2014 deployment status and usable capacity are decoupled controls.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

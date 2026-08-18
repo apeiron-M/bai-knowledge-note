@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove deploys much of its capital through named third-party curators rather than direct positions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c0a2930b-9a86-45df-a083-13f50f9e0fd6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "153057a6-1e0c-4db9-9340-8c0330c4153d",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "26ae4f01-3e8b-4b3d-bdeb-2e17cff30cb1",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ff768f50-1e8a-43c2-b6fd-49f708bbe920",
+      "name": "counterparties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Morpho directories name their curators explicitly. On Ethereum Mainnet (A.6.1.1.2.2.6.1.1.2.1.7): \"Morpho Grove x Steakhouse High Yield Vault USDC\", \"Grove x Steakhouse USDC Morpho Vault v2\", \"Steakhouse PYUSD Morpho Vault\", \"Grove x Steakhouse AUSD Morpho Vault V2\", \"Grove x Steakhouse RLUSD Morpho Vault V2\", plus \"Sentora PYUSD\" and \"Sentora RLUSD\" vaults. The pattern repeats on Base (\"Grove x Steakhouse High Yield Vault USDC\", \"Steakhouse Prime Instant USDC\") and Robinhood Chain (\"Grove x Steakhouse USDG Morpho Vault V2\").\n\nThe **curator model** splits the job in two. Grove decides how much capital goes to a vault and under what terms; the curator decides which markets inside Morpho that vault lends into, and adjusts continuously. Grove buys ongoing credit judgment it does not have to staff, at the price of delegating the decisions that actually determine loss.\n\nCo-branding is the mechanism that makes this tolerable. \"Grove x Steakhouse\" is a jointly identified product, so the curator's reputation is bonded to the outcome \u2014 a purely anonymous mandate would offer no such alignment.\n\nUsing **two** curators for overlapping currencies (Steakhouse and Sentora both run PYUSD and RLUSD vaults) is a deliberate hedge against curator failure rather than a redundancy. It also creates a live comparison between two managers on the same asset.\n\nWhat the Artifact does not do is bring the curator inside its governance. The curator is a counterparty named in an Instance, not a role with duties defined in the Atlas \u2014 so the accountability for their decisions runs through the vault's own terms, not through Root Edit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:02:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Co-branded 'Grove x Steakhouse' Morpho vaults recur across Ethereum, Base and Robinhood Chain in four currencies, alongside Sentora vaults",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

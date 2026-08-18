@@ -412,7 +412,22 @@
       "Bash(curl -s -m 10 http://localhost:4001/graphql -H 'Content-Type: application/json' -d '{\"query\":\"{ drives }\"}')",
       "Bash(curl -s -m 10 http://localhost:4001/d/knowledge-vault)",
       "Bash(curl -s -m 30 --retry 2 https://light-colt-c497cfbd-switchboard.vetra.io/graphql/r -H 'content-type: application/json' -d '{\"query\":\"{ __type\\(name:\\\\\"PagingInput\\\\\"\\){ inputFields{ name type{ name ofType{ name } } } } }\"}')",
-      "Bash(curl -s -m 90 --retry 3 https://light-colt-c497cfbd-switchboard.vetra.io/graphql/r -H 'content-type: application/json' -d '{\"query\":\"query{ documentOperations\\(filter:{ documentId: \\\\\"c5893e1b-854b-49b1-b8aa-6b133ab87969\\\\\" }, paging:{ limit: 3000 }\\){ totalCount hasNextPage items{ index } } }\"}')"
+      "Bash(curl -s -m 90 --retry 3 https://light-colt-c497cfbd-switchboard.vetra.io/graphql/r -H 'content-type: application/json' -d '{\"query\":\"query{ documentOperations\\(filter:{ documentId: \\\\\"c5893e1b-854b-49b1-b8aa-6b133ab87969\\\\\" }, paging:{ limit: 3000 }\\){ totalCount hasNextPage items{ index } } }\"}')",
+      "Bash(pkill -f \"remote-debugging-port=9223\")",
+      "Bash(rm -rf /home/p/.cache/brave-mcp-probe)",
+      "Bash(curl -s -m 5 -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{__typename}\"}')",
+      "Bash(curl -s -m 5 -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(curl -s -m 3 -o /dev/null http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{__typename}\"}')",
+      "Bash(curl -s -m 3 -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(timeout 580 npx -y puppeteer@latest browsers install chrome)",
+      "Bash(curl -s -m 4 -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:4001/graphql -X POST -H 'content-type: application/json' -d '{\"query\":\"{__typename}\"}')",
+      "Bash(curl -s -m 4 -o /dev/null -w \"%{http_code}\\\\n\" http://localhost:3001/)",
+      "Bash(curl -s -m 3 http://127.0.0.1:9222/json/version)",
+      "Bash(pkill -f \"chrome-wsl-profile\")",
+      "Bash(timeout 200 python3 -u -)",
+      "Bash(grep -o \"PollSyncEnvelopes\\\\|availableOffline\\\\|syncFilter\\\\|documentType[s]*:.\\\\{0,40\\\\}\\\\|SyncChannel\\\\|createChannel\" node_modules/@powerhousedao/connect/dist/reactor.worker.js)",
+      "Bash(grep -vE \"\\\\.map$|\\\\.d\\\\.ts$|\\\\.d\\\\.mts$\")",
+      "Bash(xargs -I{} sh -c 'printf \"%s %s\\\\n\" \"$\\(du -m {} | cut -f1\\)MB\" \"{}\"')"
     ]
   },
   "enabledPlugins": {

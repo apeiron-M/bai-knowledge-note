@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Token transfer totals are summed independently by the Governance Point and Technical Point, and only after the sheet is complete",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ab47054f-8e47-4a31-b8bf-64f9b3bec67d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8fcbd95d-6043-4510-8684-9689fb9e969f",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "75f59d00-25af-49eb-8ea0-156153b9b73f",
+      "name": "error-prevention",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.3.2.3 requires that \"the total amount of token transfers must always be summed up in the Executive Sheet. **The Governance Point and Technical Point independently sum up the value.**\" It closes with a sequencing rule: \"All summations must occur only after the Executive Sheet is complete to avoid missing any transfers.\"\n\nA total computed once is a convenience. A total computed twice by different parties is a control: it cannot catch an error both make, but it reliably catches the dominant failure mode here \u2014 one person mistyping, misreading or overlooking a row. Disagreement between two numbers is loud in a way that a single wrong number never is.\n\nThe timing clause defends against the subtler failure. A total computed mid-assembly is correct for a sheet that no longer exists, and it then looks like verification while covering nothing added afterwards. A stale checksum is worse than none, because it converts an unchecked sheet into an apparently checked one.\n\nThe pattern is the same one the Atlas uses for novel-item design (both Spell Teams must agree, A.1.10.2.3.3.2.3) and for forum-post confirmation: where an error is cheap to make, expensive to suffer and hard to see, Sky buys a second independent computation rather than asking for more care on the first.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:21:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:21:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Duplicate arithmetic by two parties turns a silent transcription error into a visible mismatch; deferring summation until the sheet is final prevents a stale total from validating a changed sheet.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

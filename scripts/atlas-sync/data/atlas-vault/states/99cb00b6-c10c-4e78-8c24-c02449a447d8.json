@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-95dd9023-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "95dd9023-73a3-46ab-b5ce-860b5ab5ce08",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Upkeep Rebate is an automatic entitlement of every Prime Agent for the other Prime Agents' tokens it holds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b6dafa06-1da1-4a80-81e7-cc31a834385f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "52c05588-9b21-4f0e-a701-8a1b0c9a221a",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4f71b0c9-646e-4b85-b98f-229ddbd44dbe",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "32e28bf6-36c9-4879-bf9d-361c48cdc952",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.4.2.3.2.2.1.1 is unusually terse for a Parameters document: \"Every Prime Agent is entitled to the Upkeep Rebate Primitive for tokens of other Prime Agents that they hold. Because this right automatically applies, there are no parameters.\"\n\nThat sentence does two things. It establishes the entitlement as universal and non-negotiable \u2014 nothing about it is per-Agent configurable, so it cannot be bargained away or tuned in an Artifact edit \u2014 and it explains an empty configuration document, which is otherwise indistinguishable from an unfinished one.\n\nThe economic logic follows from the Upkeep Fee being charged on market capitalization. If Agent A holds Agent B's tokens, B's market cap is already being charged upkeep at B's level; charging A upkeep on a valuation that partly consists of B's already-charged tokens would tax the same ecosystem value twice. The rebate nets that out.\n\nThe behavioural consequence is a deliberate cross-holding incentive: holding sibling Agents' tokens is cheaper than holding equivalent value in other forms, which pushes Prime Agents toward mutual stakes and aligns them with each other's success. Operationally, A.6.1.1.4.2.3.2.2.1.2.1.1 requires Skybase to keep \"all tokens of other Agents it holds in its SubProxy account\" \u2014 one auditable location \u2014 and A.6.1.1.4.2.3.2.2.1.2.1.2 has Skybase \"deduct the rebate from the fees it pays\" rather than claim it back, so the rebate never becomes a receivable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The right applies without configuration, so the Instance has no parameters; the rebate is netted against Upkeep Fees, which rewards Agents for holding each other's tokens.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "USDC-to-DAI swaps are all-or-nothing and loop the PSM's own refill until the full amount clears",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "5c57b38d-b9e4-477f-b2ce-910b0da56600",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c7df4a4-4603-4824-8182-952345f69d9f",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c7540459-3630-4561-80c3-5952377e0fd2",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "41957e07-ebf2-40e9-b807-27c925d0e7d0",
+      "name": "stablecoins",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.3.2.4 documents a control-flow detail with real operational consequences: \"The PSM can only supply as much DAI as it currently holds, so the operation first computes the maximum USDC swappable in one call as the PSM's DAI balance divided by `psmTo18ConversionFactor`. If `usdcAmount` fits within that limit, a single swap is performed. Otherwise the operation **repeatedly calls `psm.fill()`** to top up the PSM's DAI, recomputes the limit, and swaps in chunks until the full `usdcAmount` is exchanged. If the PSM cannot be filled enough to cover the full amount, `psm.fill()` reverts with `DssLitePsm/nothing-to-fill`, so the operation **only succeeds when the entire `usdcAmount` can be swapped**.\"\n\nThree properties are being asserted. The operation is **atomic in intent**: there is no partial fill, so an operator never ends up half-converted with the remainder stranded in the wrong asset. It is **self-servicing**: rather than failing when the PSM is short, Grove triggers the PSM's own replenishment mechanism and continues. And it is **liquidity-dependent**: success is contingent on a third-party contract being fillable, so a large conversion can fail for reasons entirely outside Grove's system.\n\nThe loop is unbounded in the source as quoted \u2014 it runs `while (remainingUsdcToSwap > 0)`, terminating either by completing or by `fill()` reverting. That makes gas cost a function of how fragmented the PSM's liquidity is, which is an availability consideration for large operations rather than a safety one, since the revert path is clean.\n\nThe deeper point is about **dependency**. Grove's route from USDC into USDS runs through a Maker-era PSM whose depth Grove does not control and whose refill it can only request. The Artifact records the workaround in detail precisely because this hop is the fragile one.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The operation computes what the PSM's DAI balance can cover, then repeatedly calls psm.fill() and swaps in chunks; if it cannot be filled enough, fill reverts and the whole operation fails.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

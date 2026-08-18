@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The initialization library must be importable by a compliant Spell without modification, so the audited artifact is the executed artifact",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c7a58657-e2ef-4ddf-8a74-d0518e5057d7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c362a16-e942-4a26-99b4-ade99f18da75",
+      "name": "audit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aa093afe-c087-4c04-8800-5d7c05226bc8",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.7.1.1.2.3 states that \"the initialization library must be **directly importable by a compliant Spell without modifications**. The execution context of the library is expected to be the relevant Governance proxy. Every initialization function must be audited. Top-level initialization scripts that exist solely for test environments must not be included in the audit scope.\"\n\nThe no-modification requirement closes a gap that is easy to miss. Ordinarily code is audited, then adapted to fit the calling context \u2014 a wrapper here, a signature change there \u2014 and those adaptations are exactly what the audit did not cover. Requiring drop-in importability means the Spell consumes the audited code verbatim.\n\nDeclaring the execution context matters because initialization runs by delegatecall from the Pause Proxy (A.1.10.2.4.13.4.2). Code behaves differently depending on whose storage and authority it executes in, so an audit is only meaningful if the auditor knows the context. Stating it in the Atlas makes that assumption explicit rather than inferred.\n\nExcluding test-only top-level scripts from audit scope is the complementary discipline: audit budget goes to code that will run in production, and test scaffolding is not dressed up as reviewed artifact.\n\nTaken with the extcodehash pinning at scheduling (A.1.10.2.4.13.3) and the deployed-versus-repository diff at validation (A.1.10.2.4.12.3.1.4), the chain is deliberate: what was audited, what was reviewed, what was deployed and what executes are all required to be the same bytes, with a separate check at each seam.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.7.1.1.2.3 fixes the library's execution context as the Governance proxy and requires every initialization function to be audited, eliminating adaptation between audit and use.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

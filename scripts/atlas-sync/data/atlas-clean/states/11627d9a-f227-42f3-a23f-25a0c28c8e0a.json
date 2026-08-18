@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-675e61cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "675e61cc-6d2a-4ae3-b00b-928aad81d81a",
+      "targetTitle": "The Diamond PAU runs at a hundredth of the monolithic contro"
+    },
+    {
+      "id": "lnk-5a264486-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5a264486-ad75-4d21-b70a-5f790ade8ecd",
+      "targetTitle": "Grove separates execution authority from asset custody by ro"
+    },
+    {
+      "id": "lnk-ff184d7c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ff184d7c-fc78-471a-af05-fede521a02b3",
+      "targetTitle": "The Multi-Instance Coordinator centralizes the Liquidity Lay"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Grove Liquidity Layer segregates capital into two Allocator Vaults, one for general ALM and one for the Diamond PAU",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "359946ae-10a0-48a5-a68d-5fa0fc39cc80",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "15caa60d-ceca-425d-8215-c185ef7c2d4b",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d2498272-e0de-4bd6-a519-2547d6f10177",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ffae0fc6-6d04-4b80-81d6-b7ed083a5642",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.1.1.1.1.1.1 gives the Liquidity Layer's capital structure in three sentences: \"The Grove Liquidity Layer operates two Allocator Vaults, each with an associated Allocator Buffer. The ALLOCATOR-BLOOM-A Allocator Vault and Buffer serve the monolithic ALM Controller for general allocation activity. The ALLOCATOR-GROVE-A Allocator Vault and Buffer serve the Diamond PAU.\"\n\nThe **vault/buffer pairing** is the primitive unit. A vault holds the position; a buffer holds working balance against it, so allocation activity does not require touching the vault on every operation. Pairing them one-to-one means a buffer is never shared across strategies, and a drain on one cannot starve the other.\n\nThe **two-vault split** is a strategy-level firewall. General allocation runs through a single \"monolithic ALM Controller\" against BLOOM-A; the Diamond PAU \u2014 which surfaces elsewhere as its own Uniswap Instance (A.6.1.1.2.2.6.1.1.2.1.12.3, \"Grove Diamond PAU Uniswap v3 AUSD/USDC\") \u2014 runs against GROVE-A. A specialized, presumably more active strategy is therefore capitalized separately from the main book, so its failure mode is bounded by its own vault's balance.\n\nCalling the general controller \"monolithic\" is a candid architectural admission: one controller mediates all general allocation activity across every protocol and chain listed in the Instance directory. That is a single point of both control and failure, and it is the counterpart to the per-Instance granularity of the governance layer \u2014 many governed positions, one execution path.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ALLOCATOR-BLOOM-A serves the monolithic ALM Controller while ALLOCATOR-GROVE-A serves the Diamond PAU; each vault is paired with its own Allocator Buffer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

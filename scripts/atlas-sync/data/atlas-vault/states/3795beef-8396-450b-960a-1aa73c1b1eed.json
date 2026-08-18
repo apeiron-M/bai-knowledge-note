@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Ethena caps both legs because the conduit is an asset conversion, not a deposit that can be simply withdrawn",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3b24bf85-4dba-496e-8837-ddf730cb348f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c0f0d5a4-8249-4036-93c5-5eee31defa87",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45be64a6-c464-4e8b-ba9a-66a2145f79fc",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "53c7aa69-ef75-4cd5-847c-e3642f4386ac",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across the lending venues the outflow leg is unbounded: SparkLend, Aave USDe (A.6.1.1.1.2.6.1.3.1.2.5.2.4.2) and Maple USDT (.3.2.2.4.2) all publish outflow \"`maxAmount`: Unlimited\". The Ethena USDe instance breaks the rule: outflow \"`maxAmount`: 500,000,000 USDe, `slope`: 200,000,000 USDe per day\" (.4.1.2.4.2).\n\nThe instance identifiers explain why. The asset supplied is USDC (.4.1.2.1.3) but the token received is USDe (.4.1.2.1.4), and the flow is executed through an `EthenaMinter` contract (.4.1.2.2.3) via `prepareUSDeMint(uint256 usdcAmount)` (.4.1.3.4.1). This is not a deposit that yields a receipt claim on the same asset \u2014 it is a **mint**, converting one asset into a structurally different one.\n\nIn a lending instance, the outflow direction strictly reduces exposure, which is why capping it would be perverse. In a conversion instance neither direction is de-risking: minting takes on USDe exposure, and redeeming USDe back to USDC pushes size through Ethena's redemption machinery, which has its own liquidity and cooldown constraints. Both legs can therefore fail badly at scale, so both are throttled.\n\nThe generalisable rule the two cases imply: outflow may be left unlimited only where the outflow is a claim redemption on the same asset. Wherever the conduit changes what the ecosystem holds, the rate limit must be two-sided. Reading Spark's limits without that distinction makes Ethena look inconsistently conservative when it is in fact the only instance sized correctly for what it does.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:02:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Unlike lending instances whose outflow is Unlimited, Ethena's outflow carries a 500,000,000 USDe maxAmount and 200,000,000 per day slope",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

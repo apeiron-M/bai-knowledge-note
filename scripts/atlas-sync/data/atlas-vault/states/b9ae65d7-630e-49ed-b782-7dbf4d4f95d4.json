@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Protocol Security Workstream Lead owns the operational guides, keeping procedure out of the Atlas",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d154183c-edf6-4a3a-9b0c-638eb68aa625",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b94781d7-974d-4710-86a5-6a8d02ec4f93",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c1eec064-7df7-452f-8d6a-e070ba8f58af",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.3 assigns the Protocol Security Workstream Lead a standing duty to \"maintain and make available operational guides to support Multisig Administrators in complying with the requirements,\" covering \"at minimum, Multisig registration, signer rotation and replacement, signer onboarding and offboarding, incident reporting, and any other processes where standardized documentation is required,\" and to keep them \"current and accessible to all Multisig Administrators.\"\n\nThe division of labour is deliberate and appears repeatedly in the Support Scope. The Atlas fixes *what must be true* \u2014 thresholds, classifications, reporting clocks \u2014 because those are governance commitments that should change only through governance. How to actually execute a signer rotation in a particular wallet interface is operational knowledge that changes with tooling, and encoding it in the Atlas would make routine tool upgrades require an Atlas Edit.\n\nIt is the same move as defining bug bounty scope by reference to Immunefi's listings and pinning the Chronicle reward base to a Chainlog key: keep the mutable layer outside the immutable-ish document, and name a role responsible for it.\n\nThe cost is the same too. A Multisig Administrator's actual obligations are the union of the Atlas and a guide nobody votes on, whose currency depends entirely on one role holder. \"Accessible to all Multisig Administrators\" is the only stated quality bar, and there is no review cycle attached to the guides comparable to the quarterly review applied to the multisigs themselves.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Registration, signer rotation, onboarding and incident reporting are documented in guides the Lead keeps current \u2014 the Atlas states obligations, the guides state methods.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

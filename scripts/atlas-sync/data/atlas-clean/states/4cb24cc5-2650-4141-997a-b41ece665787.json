@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-51525b04-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "51525b04-4b2c-428a-8fea-ca37e0dfc617",
+      "targetTitle": "doc-892e8a06"
+    },
+    {
+      "id": "lnk-dcde2e29-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dcde2e29-d825-4999-8046-beb953d0c1e4",
+      "targetTitle": "doc-07ebaa4b"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Powerhouse is the exclusive gateway for submitting and updating Sky Primitive inputs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1fff29e3-881d-48cf-a3fc-f07d30b6fc93",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ffd0953-f9cd-4eb7-ab34-f7353cf7d483",
+      "name": "powerhouse",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f0b1360f-9f90-4648-9bf3-c7577fcc1dc4",
+      "name": "data-infrastructure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.1.4.2 requires that an Agent supply all required inputs to Invoke a Primitive, under a data model standardized at Sky Core level. A.2.2.1.4.2.1 then names the channel and closes it: \"The actual submission and handling of these data inputs occurs **exclusively** through the Powerhouse interface, which serves as the Sky ecosystem's shared data infrastructure. Powerhouse thus becomes the canonical gateway for exchanging information with the Primitive, enforcing consistency in both the format of the data and the steps taken to Invoke (and later update) the Primitive.\"\n\nThe word doing the work is *exclusively*. A standardized data model alone would be advisory \u2014 Agents could conform to varying degrees through varying channels. Making one interface the only route converts the standard from a specification into an enforced invariant: non-conforming data has nowhere to enter.\n\nThis buys a real property. Because A.2.2.1.4.3 through A.2.2.1.4.5 route every Invocation through validation by designated actors and then a token holder vote, having all inputs arrive in one canonical shape is what makes those reviews comparable across Agents at all.\n\nThe trade-off is explicit concentration. A single mandated interface for all Primitive Invocations and updates across all Agents is a systemic dependency: its availability, correctness, and governance become preconditions for any Agent changing its capabilities. The Atlas states the exclusivity plainly without naming a fallback path.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Routing all Primitive data through one shared interface enforces format and process consistency across every Agent \u2014 and makes that interface a systemic dependency.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

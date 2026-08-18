@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-b5ab5635-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b5ab5635-258c-403c-bc25-f3f5bd6f8bee",
+      "targetTitle": "A.6 - The-Agent-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Per-Agent Artifacts keep governance amendments local instead of touching a shared rulebook",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1b90b510-3b91-43d4-94ca-53055b540186",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "73adf62d-23b9-4174-b1cf-d538affbd72b",
+      "name": "agent-governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5aae21f7-4304-4b5e-bace-d98022de4e31",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6 establishes that each Agent Artifact governs the operations of a particular Agent, and A.6.1 collects those Artifacts per Agent.\n\nThe consequence is isolation. A shared rulebook makes every amendment a system-wide event: changing one Agent's parameters means editing a document binding all of them, so each change risks unintended effect elsewhere. Per-Agent Artifacts make the unit of amendment identical to the unit of authority.\n\nThe cost is duplication \u2014 common rules must be restated or cross-referenced across Artifacts, and can drift. The Atlas accepts that cost, relying on explicit cross-references (such as A.5.2.1.2's pointer to the shared Moderation policy) to re-share rules only where consistency actually matters.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Because each Artifact governs exactly one Agent's operations, amending one Agent's rules affects no other \u2014 bounding the blast radius of any change, at the cost of duplication.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

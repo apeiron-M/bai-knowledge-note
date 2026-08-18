@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Emergency roles in the Liquidity Layer are strictly subtractive: they can stop and revoke but never grant or restart",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e6111551-2435-4fc8-94ba-77f5cdea8024",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4730c245-dbb4-4a6b-9222-d247b9e88544",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "431864c7-ea8f-4654-97b8-eb0f2f3db446",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbbe0cd7-3c01-40a3-96d3-0fbc6f448ccf",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The same asymmetry appears in two unrelated role hierarchies, which marks it as a design rule rather than a coincidence.\n\nIn the monolithic ALM (A.6.1.1.2.2.6.1.2.2.1.1.1.2): \"The Relayer Role **may be granted** to an address by any address holding the `DEFAULT_ADMIN_ROLE`. The Relayer Role **may be removed** from an address by any address holding the `DEFAULT_ADMIN_ROLE` **or the `FREEZER_ROLE`**.\" The Freezer appears on the removal side only.\n\nIn the Tokenized Treasury hierarchy (A.6.1.1.2.2.6.1.2.2.1.1.2.4): the `PAUSER_ROLE` can pause \"individual swap directions, credit token deposits and withdrawals, or all contract operations,\" and can \"revoke the `MANAGER_ROLE` and the `REDEEMER_ROLE` directly, **bypassing the standard role-admin requirement**\" \u2014 but \"**unpausing requires the `MANAGER_ADMIN_ROLE`**.\"\n\nThe principle is that **emergency powers are ratchets**. A role that can only reduce capability can be given a low threshold and a fast trigger, because its worst-case abuse is a denial of service that a slower, more authoritative role can reverse. A role that could also restore capability would be a route to seizing the system, and would have to be as guarded as the admin \u2014 which would make it useless in an emergency.\n\nThe deliberate bypass in the Pauser's revocation power is the sharpest expression of it: the normal role-admin requirement is waived specifically because the action is subtractive. Speed is granted exactly to the extent that the action cannot be used to take control.\n\nThis is why the Freezer Multisig can sit at 2-of-5 (A.6.1.1.2.2.6.1.2.1.2.2.4.2) while the admin sits with Sky Governance behind an Executive Vote.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Freezer may remove a Relayer but only the Admin may grant one; the Tokenized Treasury Pauser may pause and revoke roles directly, but unpausing requires the Manager Admin.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

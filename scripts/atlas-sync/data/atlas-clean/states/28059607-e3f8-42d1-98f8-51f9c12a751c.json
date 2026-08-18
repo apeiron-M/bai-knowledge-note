@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-977282df-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "977282df-248c-461c-a5b6-87b2dbaaaa85",
+      "targetTitle": "Spark Liquidity Layer rate limits are deliberately asymmetri"
+    },
+    {
+      "id": "lnk-b5a3e305-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5a3e305-0030-452a-8629-631c07995905",
+      "targetTitle": "Spark's emergency lane is distinguished by permission to reo"
+    },
+    {
+      "id": "lnk-f390f324-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f390f324-ac63-4648-8917-9cd49da8310f",
+      "targetTitle": "Confidential deployments carry a dual cap on both monthly re"
+    },
+    {
+      "id": "lnk-b6b9bb7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b6b9bb7b-90a8-42b6-b112-376e1ef3a139",
+      "targetTitle": "doc-90e15350"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Returning capital to the Spark Liquidity Layer is unrestricted while deploying it is procedurally gated",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "370e1d87-bb61-4d45-b89d-648aa2ba1261",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e5c5bbec-3fb6-48f5-b4ce-ab08544a0e4c",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ffcdb5a3-eb4f-45ba-8c8b-7c37b024b3be",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.7.2.7.4 gates outbound deployment tightly: \"Funds may only be transferred to a collateral agent after confirmation that all necessary steps proceeding loan origination have been completed, including execution of final MLA and provision of configuration file for the loan to the custodian and/or collateral agent.\" The offchain version (A.6.1.1.1.3.8.2.7.4) requires Spark Asset Foundation confirmation that all pre-disbursement steps are complete.\n\nBoth then add the same exemption: \"Funds may be transferred to the designated address for **Spark Liquidity Layer at any time without restriction**.\"\n\nThe asymmetry is the point, and it recurs throughout the Spark Artifact. Cap Automator cooldowns throttle increases but never decreases. The kill switch can be triggered by anyone but reset only by governance under a delay. Here, sending capital *into* risk requires legal execution, configuration delivery and a confirmation step; bringing it *home* requires nothing.\n\nThe justification is that the constrained direction is the one where mistakes are unrecoverable. A premature transfer to a collateral agent \u2014 before the master loan agreement is signed or the loan configuration is loaded \u2014 puts assets in a third party's control with no enforceable claim attached and possibly no correct margin logic applied. A transfer back to the Spark Liquidity Layer, by contrast, cannot cause a loss: it is the address the funds originated from and where Spark's own controls apply.\n\nThe operational consequence is that the safe action is always available at full speed. In a stress event, whoever holds signing authority can repatriate everything reachable without waiting for confirmations, quorum on a new destination, or a governance decision \u2014 because the destination is pre-blessed and the direction is provably risk-reducing.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Transfers to collateral agents require confirmation that loan origination steps are complete, but funds may move to the Spark Liquidity Layer address 'at any time without restriction'.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

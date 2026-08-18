@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-aa5c88ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa5c88ec-ce4e-4885-88de-668845146243",
+      "targetTitle": "doc-6d7c0d80"
+    },
+    {
+      "id": "lnk-ccc2a6cf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ccc2a6cf-9fb8-4ec9-b6e5-7a13b3fb855a",
+      "targetTitle": "Grove models two-way convertibility through a centralized is"
+    },
+    {
+      "id": "lnk-e9f8904d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9f8904d-ed94-4ee7-9f40-5f82ad86ebd6",
+      "targetTitle": "The PT-USDe instance carries three separate rate limits beca"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Paxos conduit has only an outbound transferAssets rate limit because its return leg is an off-chain issuer obligation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a8627098-04b4-4e96-aac4-11ed4e85431a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3aa2907d-1293-4325-a557-54b6df499d1c",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ab78827-a5c4-4828-8e23-f3d18ca6326e",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4b9ee49-0df0-4683-abd1-bbc7af4c3d87",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The USDC To USDG Via Paxos Instance breaks the schema every other Instance follows. A.6.1.1.2.2.6.1.3.1.15.1.2.3 declares a single identifier \u2014 \"The **transferAssets** `RateLimitID` for this conduit is `0x4139045d\u2026`\" \u2014 where other Instances declare an inflow/outflow pair. The identifier field at .15.1.2.1.4 is renamed from \"Token\" to \"**Token to Receive**: USDG.\" And .15.1.2.2.1 and .15.1.2.2.2 give the Token Address and the Underlying Asset Address as the *same* USDC contract, with the only other address being a \"Paxos Deposit Address\" (.15.1.2.2.3).\n\nRead together, these describe an operation that is not an on-chain conduit at all: Grove transfers USDC to an address Paxos controls and receives USDG through Paxos's own issuance process. There is no vault, no share token, and nothing on-chain that Grove can call to reverse the transfer.\n\nThat explains the missing outflow limit without any special pleading. A rate limit constrains an action Grove can take; the return leg is an action **Paxos** takes. There is nothing on Grove's side to throttle, so the schema's outflow slot has no referent and is simply absent rather than marked \"Unlimited\" or deferred to a future iteration.\n\nThe consequence is worth stating plainly. For this Instance the rate limit is not a risk control on the position \u2014 it is a cap on how much unsecured credit Grove can extend to Paxos per day. Once the USDC leaves, Grove holds an obligation, and the 50,000,000 USDC `maxAmount` (.15.1.2.4.1) measures exactly the size of that obligation it can create.\n\nThis is where a uniform configuration schema costs the most: an Instance that is economically a counterparty credit exposure is documented in the same shape as one that is a smart-contract position, and the difference shows up only as a missing field.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:02.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "USDC To USDG replaces the usual inflow/outflow pair with a single transferAssets limit and lists identical token and underlying addresses, so the received USDG is secured by counterparty trust",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

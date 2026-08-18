@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark Savings v2 is deployed on Robinhood Chain and X Layer in those venues' native stablecoins",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7bcb27d1-90b8-4688-840b-582a488346c2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "76da32b4-ac9e-4fe0-b773-063c0d0a974e",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa63a18e-9aae-4b19-88dc-4e40bc8fb1b4",
+      "name": "distribution-strategy",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8dc46306-c362-44d6-a79f-6df2d7783352",
+      "name": "savings",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The allocation directory extends past the familiar L2s. A.6.1.1.1.2.6.1.1.2.5 registers an Active Spark Savings v2 Instance for **USDG on Robinhood Chain**, and A.6.1.1.1.2.6.1.1.2.6 registers one for **USDT on X Layer**; the corresponding ForeignController, proxy and rate-limit contracts for both chains are listed in A.6.1.1.1.2.6.1.2.1.1.1.2.7 and A.6.1.1.1.2.6.1.2.1.1.1.2.8.\n\nTwo things stand out. The chains are operated by incumbents from outside DeFi \u2014 a consumer brokerage and an exchange \u2014 rather than by crypto-native rollup teams. And the asset in each case is the stablecoin native to that venue, not USDS or sUSDS.\n\nRead against the mandate, this is Spark Savings positioning itself as yield infrastructure for other people's distribution. Where users already hold USDG or USDT on a chain their broker or exchange controls, the product meets them in that asset instead of requiring a swap into Sky's own stablecoin first.\n\nThe strategic cost is that these Instances grow deposits in assets Sky does not issue, which builds the savings franchise without directly building USDS supply \u2014 the same subordination of protocol-level capture to reach that shows up in paying Aave to hold USDS. The strategic gain is access to retail flow that would never route through a DeFi front end, and the presence of full ALM contract sets on both chains shows this is treated as production infrastructure rather than an experiment.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Savings product follows distribution rather than assets it controls \u2014 USDG on Robinhood Chain and USDT on X Layer, on chains run by a consumer broker and an exchange incumbent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

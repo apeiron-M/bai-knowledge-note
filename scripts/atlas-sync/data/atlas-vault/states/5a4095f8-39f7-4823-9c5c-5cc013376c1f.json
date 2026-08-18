@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Under whitelist-by-rate-limit, a deferred limit and a zero limit are indistinguishable on-chain",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6e8203fc-c53d-40a3-82b0-14243aacbe40",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b2723f1f-884d-45d4-bf9c-f0a6bc3deddf",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f0e63d3-4d9f-456e-b050-879a5e2d698e",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2e8c6d08-dcfa-40b4-b275-ba10ae9c96a6",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two instances in this chunk defer an entire leg. Superstate USTB's inflow limits give both parameters as \"This parameter will be specified in a future iteration of the Spark Artifact\" (A.6.1.1.1.2.6.1.3.1.6.1.2.4.1), with the outflow `maxAmount` set to `Unlimited` and its slope also deferred (.6.1.2.4.2). Morpho Dai inverts it: inflow fully specified at 200,000,000 DAI with a 100,000,000 per day slope, both outflow parameters deferred (.8.1.2.4.1/.2).\n\nElsewhere the Artifact states that whitelisting is performed by the rate limits themselves. Combining the two facts collapses a distinction the documents appear to draw. If a venue's capability exists only where a non-zero limit has been configured, then a leg whose limit is 'not yet specified' confers exactly what a leg whose limit is zero confers: nothing. The prose difference between \"will be specified later\" and \"0\" has no on-chain counterpart.\n\nThat is reassuring in one direction \u2014 an undocumented parameter is fail-closed, not fail-open, so deferral cannot accidentally authorise anything. It is confusing in the other: a reader cannot tell from the Artifact whether Morpho Dai currently has an exit route at all, and the deferred leg is the *outflow*, the direction every other instance treats as never to be constrained.\n\nThe general lesson is that in a system where configuration is capability, documentation gaps are not neutral. An unwritten limit is a decision \u2014 the most restrictive one \u2014 whether or not anyone intended to make it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Superstate USTB defers both inflow parameters and Morpho Dai defers both outflow parameters; since capability derives from a configured limit, an unwritten limit grants nothing regardless of intent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The 8.75% capital ratio in the RRC formula currently has no effect, because it appears once as a divisor and once as a multiplier",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b7ce6eb4-e9d1-4afa-9ae5-90f249f5557c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ca5f9272-0e38-4985-8643-7258229153dc",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a03d7a37-23e3-49fa-b9c9-efd571a7b5c9",
+      "name": "basel",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.1.1.5 specifies the final step of the lending-market capital calculation as `RRC = K \u00d7 (1/CR) \u00d7 EAD \u00d7 ECR`, where `CR` is \"the capital ratio without additional buffers\" set to 8.75% and `ECR` is \"the capital ratio included additional capital buffers established by Sky Governance.\" A.3.2.2.1.1.1.1.1.5.3 then states: \"There are currently no additional capital buffers so the ECR is equal to the CR, which is 8.75%.\"\n\nWhen ECR = CR the two terms cancel exactly, and RRC is simply the Basel capital requirement K times exposure at default. The reference implementation confirms this reading: its final line is `rrc = credit_risk * ead`, with no capital ratio appearing anywhere.\n\nSo the 8.75% figure \u2014 the most recognizably Basel-flavoured number in the Article \u2014 is currently inert. It is not a scaling factor on required capital; it is a *placeholder denominator* whose only function is to give governance a lever. Setting ECR above CR raises requirements by the ratio ECR/CR, uniformly, across every lending-market Instance at once.\n\nThis is worth recording because the formula reads as though a capital-ratio calibration is doing work when it is not. Anyone reasoning about how conservative the framework is should look at K (which embeds the 99.9% quantile and the 0.13/0.33 correlation bounds), not at 8.75%. And anyone wanting to tighten the framework system-wide has exactly one dial that does not require re-deriving any model: the ECR/CR spread.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:24:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "RRC = K \u00d7 (1/CR) \u00d7 EAD \u00d7 ECR, and ECR equals CR while no buffers exist \u2014 so the terms cancel and the reference implementation correctly reduces to RRC = credit risk \u00d7 EAD.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

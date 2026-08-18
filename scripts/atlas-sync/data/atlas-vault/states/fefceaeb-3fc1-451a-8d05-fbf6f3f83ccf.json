@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas treats the pull-request workflow itself as an attack surface, not merely as tooling",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "96ca3637-d165-4ed2-a4f5-63d0f7f218c4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9bc86618-89bf-4847-a391-4f841b54cd61",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dd9d8763-1776-4abe-9cb5-441aa4422710",
+      "name": "supply-chain",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three provisions in different steps point at the same surface. A.1.10.2.4.7.2.4 has the Crafter confirm that master's latest commit is the one that merged the last Spell, explicitly \"to ensure that no malicious maintenance pull requests have been merged.\" A.1.10.2.4.9.2.4 classes a Reviewer relaying a pull request \u2014 \"even from a trusted party such as an Agent\" \u2014 as indirectly modifying the Spell. A.1.10.2.4.10.10 has the Crafter conduct \"a final set of checks to guard against **Pull Request attack vectors**\" before merging, and A.1.10.2.4.10.11 requires a squash-and-merge.\n\nThe common insight is that review scrutinizes a *diff*, while what ships is a *branch state*. Everything that affects the branch without appearing in the reviewed diff \u2014 the base commit, a force-push, a merge from elsewhere, a commit added after approval, an approval attached to an earlier revision \u2014 is outside the thing reviewers actually looked at.\n\nThat is why the countermeasures sit at the boundaries rather than in the review itself: verify the base before starting, restrict who may commit and merge, re-approve after deployment against a concrete address (A.1.10.2.4.10.8), and re-verify deployed bytecode against the repository (A.1.10.2.4.11.1.1). Each pins a different part of the workflow that a diff review takes on trust.\n\nSquash-and-merge fits the same logic: it collapses the branch into a single commit, so the archived history shows exactly one reviewable unit per Spell and the invariant behind the master-branch check \u2014 one commit per Spell, nothing else \u2014 stays true for the next cycle.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Named threats include malicious maintenance merges, PR-relayed code from trusted parties, and unspecified 'Pull Request attack vectors' checked before the Crafter squashes and merges.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Governance Point independently re-verifies the Spell against the Executive Sheet in both directions after deployment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ae2a2ffb-8875-4deb-887a-d4ee0c05ee3c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c8117a0-8806-4cc0-adeb-05869f2a5cc6",
+      "name": "verification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "af225eaf-82e3-46ae-87c0-fc2b4386aaf7",
+      "name": "executive-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "After handover, A.1.10.2.4.11.1.1 requires the Governance Point to run six checks: that all Executive Sheet items \"are accurately reflected in the Spell code\"; that all values match; that \"no items are present in the Spell code that are not included in the Executive Sheet, **with limited exceptions such as approvals or other predefined standard actions**\"; that reviews were submitted by the designated reviewers; that \"the deployed code matches the corresponding code in the GitHub repository\"; and that \"reviewers have approved the deployed code at the specified handover address.\"\n\nThis is a fourth independent pass over the same correspondence \u2014 after the Crafter built it, the Reviewers approved it twice, and the Content Liaisons confirmed the values \u2014 and it is performed by the governance role rather than an engineering one. It is also anchored to the Executive Sheet, complementing the Reviewers' Document-anchored check, so both reference artifacts get tested against the code by different parties.\n\nThe negative check is again the security-relevant one, and its exception deserves attention. \"Limited exceptions such as approvals or other predefined standard actions\" is the single place in this chain where code may legitimately exist without a corresponding sheet entry. Any smuggled action would have to look like a routine approval to survive here, which is a narrow but real gap \u2014 and it is unclear who maintains the list of what counts as \"predefined standard.\"\n\nThe last two checks are about the chain rather than the content: deployed bytecode versus repository source, and approvals attached to the specific handover address. Together they prevent a correct review of correct code from being redirected onto a different deployed contract.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.11.1.1 adds a non-Spell-Team check that nothing is missing and nothing extra is present, with a carve-out for approvals and other predefined standard actions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

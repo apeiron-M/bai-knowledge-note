@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Instance-specific operational processes exist only to deviate from or supplement shared protocol-type procedures",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "fd9eced2-cef1-4878-b126-11589a7be15b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "584fd7b7-e56f-4116-987e-1fc3f91a586e",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45cec303-813b-4782-993d-43695edf1345",
+      "name": "operational-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every instance carries an `Instance-specific Operational Processes` document whose standing text is identical: it contains \"operational procedures or monitoring requirements unique to this Instance that deviate from or otherwise supplement the general Spark Liquidity Layer processes\" (A.6.1.1.1.2.6.1.3.1.1.3.3, .1.4.3, .1.5.3, .1.6.3).\n\nThe Aave Prime USDS instance (A.6.1.1.1.2.6.1.3.1.2.1.3) makes the inheritance explicit by pointing outward: \"For the general operational procedures applicable to all Aave-type instances. See A.6.1.1.1.2.6.1.2.2.1.2.1.2.3 - Aave Functions and A.6.1.1.1.2.6.1.2.2.3.2.3 - Aave AToken Withdrawal Action.\"\n\nThis is a three-level operational hierarchy: general Spark Liquidity Layer processes, then per-protocol-family procedures, then per-instance deltas. Procedures that apply to all Aave venues are written once and referenced, so a correction to the Aave deposit flow propagates to every Aave instance without editing each instance document.\n\nThe risk this structure creates is the usual one for inheritance: a reader who consults only the instance document sees a nearly empty page and may conclude no procedure applies, when in fact the operative steps live two levels up. The correctness of an operator's actions therefore depends on resolving the reference chain, not on reading the leaf.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:04:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Generic procedures live once per protocol family (e.g. Aave Functions, Aave AToken Withdrawal Action) and instance documents inherit them, carrying only the differences",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

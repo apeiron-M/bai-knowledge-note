@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-5d2f8285-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5d2f8285-50db-412f-8440-cda83cc392ab",
+      "targetTitle": "Cross-chain instances carry malformed numbers and slipped un"
+    },
+    {
+      "id": "lnk-4b9987e7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4b9987e7-ad5d-4503-a059-2d1973dc820d",
+      "targetTitle": "Curve instances extend the rate-limit schema with a third le"
+    },
+    {
+      "id": "lnk-aa85b441-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa85b441-0230-4ca9-b14e-5366bc4b7802",
+      "targetTitle": "The four Uniswap v4 pools apply contradictory outflow polici"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Curve rate limits drop their unit suffix, leaving the denomination ambiguous for a two-asset pool",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "04001987-c2a5-4701-89de-c1b373a0cc45",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e5edcd71-ff32-466d-82d6-e10d8589fa5d",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e69f0630-0a5b-409c-8af0-6da736be1b56",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "25ea5b80-bbcb-4673-86df-51fe81d6615b",
+      "name": "documentation-quality",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Lending instances always name the unit: \"`maxAmount`: 100,000,000 USDC\", \"`slope`: 50,000,000 DAI per day\". Every Curve instance drops it. The sUSDS/USDT pool reads \"`maxAmount`: 5,000,000, `slope`: 20,000,000 per day\" (A.6.1.1.1.2.6.1.3.1.7.1.2.4.1); pyUSD/USDS reads \"`maxAmount`: 5,000,000, `slope`: 50,000,000 per day\" (.7.4.2.4.1); the weETH/WETH-ng swap limit reads \"`maxAmount`: 1,000, `slope`: 50,000 per day\" (.7.5.2.4.3).\n\nFor the dollar pools the omission is recoverable by assumption. For weETH/WETH-ng it is not merely stylistic: 1,000 of something with a 50,000 per day refill is obviously ETH-denominated rather than dollar-denominated, but the document never says so, and the pool's two legs \u2014 weETH and WETH \u2014 are not the same asset even though they trade near parity.\n\nThe deeper problem is structural rather than cosmetic. A swap has an input asset and an output asset. A limit of 5,000,000 on a pyUSD/USDC pool could bind the pyUSD side, the USDC side, or whichever asset is being sold, and the three readings give different exposures once the pair dislocates \u2014 precisely the state in which the limit matters most.\n\nBecause the Curve instances also defer their RateLimitIDs to a future iteration, there is no on-chain key to resolve the ambiguity against. The unit is knowable only from the implementation, which means these particular numbers cannot be verified from the Artifact alone in the way the SparkLend figures can.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Where SparkLend writes 100,000,000 USDC, Curve instances write bare figures like maxAmount 5,000,000",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

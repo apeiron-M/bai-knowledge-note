@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove removes non-performing Delegates automatically on quantified triggers while admitting them only by discretion",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "efe0c9db-f459-4fe7-92c5-1afeec0a1d35",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "257bb41f-c16b-45db-a508-9a80d2146d7b",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c7d8fd1c-32df-49fe-9ae5-b4bde95c3f87",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d252d287-0bc2-43ac-8f44-1df71c7ef4b3",
+      "name": "delegation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.3.1.4.5.2 states that \"A Delegate is **automatically offboarded** if they: fail to vote on at least three (3) proposals in a row; or maintain a voting percentage less than 85%.\"\n\nSet against A.6.1.1.2.3.1.4.4.2.6, where admission is at sole discretion for any reason or none, the framework runs two opposite standards at its two gates. Entry is a judgement no one has to justify; exit for non-performance is arithmetic no one has to authorize.\n\nThe asymmetry is well-matched to what each gate must assess. Admission turns on things that cannot be measured in advance \u2014 trustworthiness, undisclosed affiliations, legal risk \u2014 where a rule would either be gameable or wrong. Continued performance turns on something the system observes directly, and there a rule is strictly better: it applies without anyone having to act, cannot be selectively enforced against unpopular delegates, and gives every delegate advance notice of exactly where the line is.\n\nThe two triggers are also doing different work rather than duplicating each other. A **three-in-a-row** rule catches abandonment fast \u2014 a delegate who has stopped participating is removed within three proposals regardless of a strong prior record. An **85% rate** rule catches chronic partial engagement that no streak rule would ever fire on: a delegate skipping every fifth vote never misses three consecutively but is absent for a fifth of governance. Either test alone leaves a gap the other closes.\n\nThe automatic construction also removes a specific failure mode. Discretionary removal for poor attendance requires someone to decide to act against a named individual, which is precisely the kind of decision that gets deferred. Making it automatic means non-enforcement is not an available outcome.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:55:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:55:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Missing three consecutive proposals or falling below an 85% voting rate offboards a Delegate with no decision required, inverting the sole-discretion standard that governs entry.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

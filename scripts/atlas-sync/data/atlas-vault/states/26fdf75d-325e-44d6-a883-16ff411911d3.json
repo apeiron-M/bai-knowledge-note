@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Keel Primitive Instance moves through a fixed lifecycle of In Progress Invocation, Active, then Completed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b9e8201c-8f7e-48dc-baa7-8f198b1ffcab",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f32a8506-a4a6-42ac-987f-47e7ac483237",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a027ea43-3df9-4547-9ba2-5afe50e9056f",
+      "name": "primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba2d61a7-ba61-4d7c-b1af-c216f587623e",
+      "name": "lifecycle",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across every Primitive in Keel's Operational Artifact \u2014 the Allocation System Primitive (A.6.1.1.3.2.6.1), Risk Capital Rental (A.6.1.1.3.2.6.2), Asset Liability Management Rental (A.6.1.1.3.2.6.3) and the Core Governance Reward Primitive (A.6.1.1.3.2.7.1) \u2014 the same four-slot structure repeats: a **Primitive Hub Document**, **Active Instances**, **Completed Instances**, and **In Progress Invocations**.\n\nThe transitions are stated explicitly and identically for each Primitive: \"Once an Invocation is successfully completed, its subtree will be moved to \u2026 Active Instances,\" whereas \"failed Invocations are Archived in \u2026 Hub Data Repository\" (A.6.1.1.3.2.6.2.1.4). The Hub Data Repository in turn holds two archive branches: **Failed Invocations** and **Suspended Instances**.\n\nWhat makes this load-bearing is that *state is expressed as location*. An Instance's status is not a field to be read but a position in the document tree, and status changes are subtree moves. That makes the current state of the Agent's balance sheet enumerable by walking the tree, and makes it structurally impossible for an Instance to be simultaneously Active and Completed.\n\nThe archival rule is the second half of the design: an Invocation that fails does not disappear from the record, it relocates. A failed attempt to deploy capital into a venue remains as durable evidence, which is what allows later review of Keel's decision history rather than only its surviving positions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:02:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Primitive Hub Document holds three parallel Directories plus a Data Repository;",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

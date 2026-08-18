@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-9c4cca54-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9c4cca54-35fe-40ee-a4e4-a59d6cb9e0a5",
+      "targetTitle": "The entire capital-penalty regime currently runs in shadow m"
+    },
+    {
+      "id": "lnk-133a94b2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "133a94b2-ff38-42af-a40e-24db0d8670c0",
+      "targetTitle": "Prime Agents may run Allocation Instances with secret propri"
+    },
+    {
+      "id": "lnk-f961b99f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f961b99f-0fb6-41b2-96c5-2f603f17e2ce",
+      "targetTitle": "Operational Executor Agents are eventually meant to post col"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Prime Agents fund and own the data pipelines that compute their own capital requirements, and stale data is penalized with a buffer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3f24a6a4-d635-40f1-891d-2671c48c5988",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b335eb5b-6e48-4dd6-afed-57faac9203fd",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6aa34905-0c95-40bf-bd26-eb89d668fd15",
+      "name": "data-integrity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.5.1.1 requires market-driven inputs to Risk Capital calculations to be \"updated in real time or immediately after the underlying data is updated.\" A.3.2.2.5.1.1.1 assigns the burden: \"Each Prime Agent is responsible, at its own expense, for providing the required data and developing and maintaining the data feeds that update the Atlas with its data,\" and although the Agent may retain another party including its Operational Executor Agent, \"the ultimate responsibility always remains with the Prime Agent.\"\n\nThe arrangement has an obvious tension \u2014 the party whose capital requirement the data determines is the party supplying the data \u2014 and the Atlas addresses it with two controls rather than by taking the function away. A.3.2.2.5.2.2: \"If Operational GovOps does not perform the data updates, it must verify their accuracy.\" A.3.2.2.5.2.3: Operational GovOps \"must reduce exposure to any Asset Allocation Conduit if the Prime Agent responsible for that Conduit fails to provide the timely information necessary to calculate the required Risk Capital,\" with monetary penalties to be developed later.\n\nThe most interesting provision is the treatment of latency as a priced defect. A.3.2.2.5.1.2 permits less-than-real-time updates in the near term, but then \"Operational GovOps must apply a buffer to each variable that is not updated in real time to account for the fact that the variable may change in a way that increases Required Risk Capital between update frequencies.\"\n\nThis is the fail-closed principle applied to time rather than to modelling: uncertainty about a *current* value is charged for, per variable, in proportion to how stale it may be. It also makes better data economically rational rather than merely required \u2014 an Agent that invests in real-time feeds pays less capital than one that does not, so the compliance burden funds itself.\n\nA.3.2.2.5.1.1.1.1 notes the interim shortcut: the Core Council Risk Advisor supplies real-time data for major lending markets on Ethereum Mainnet and L2s, compensated through its existing relationship \u2014 meaning much of the ecosystem currently depends on one shared data source rather than on per-Agent pipelines.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Agent must build and pay for real-time feeds and may delegate the work but never the responsibility; where updates lag real time, Operational GovOps applies a conservative buffer per variable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

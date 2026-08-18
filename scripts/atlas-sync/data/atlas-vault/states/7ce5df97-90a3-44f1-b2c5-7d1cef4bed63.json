@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark runs one MainnetController and replicates a ForeignController on every other chain",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "cfa0bfde-6176-450e-99bf-981725f88306",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b839a6d1-30ec-4318-bd9b-2fbeded50836",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "de3ddf0d-f7c4-42f9-92e5-464936021ee9",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d0773e65-2bf4-4b3c-98c8-6cbc9bee8b44",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The ALM contract listings in A.6.1.1.1.2.6.1.2.1.1.1.2 name two controller implementations. Ethereum Mainnet runs `ALM_CONTROLLER (MainnetController)` at version 1.10; every other chain \u2014 Base, Arbitrum, Unichain, Optimism, Avalanche, Robinhood Chain, X Layer \u2014 runs `ALM_CONTROLLER (ForeignController)`, and each chain additionally has its own ALM_PROXY and ALM_RATE_LIMITS contracts.\n\nThe asymmetry encodes where authority lives. Ethereum is where USDS is issued and where the Allocator Vault sits, so the home controller can do things a remote one cannot \u2014 mint against the vault, interact directly with Sky's core. Foreign controllers operate on tokens that have already arrived, within limits set from home.\n\nUsing a single ForeignController implementation across seven chains is the other half of the choice. One audited contract replicated per chain means a new chain is a deployment rather than a design exercise, and a fix or upgrade applies to a known set of identical deployments. That is what makes the observed expansion rate \u2014 including chains as unusual as Robinhood Chain and X Layer \u2014 operationally plausible.\n\nThe concentration risk is the flip side: a defect in ForeignController is a defect on every non-Ethereum chain simultaneously, which is why per-chain rate limits and freeze capability are configured separately even though the controller code is shared.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:27.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:03:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The ALM contract set is deliberately asymmetric: Ethereum hosts the distinct home-chain controller while Base, Arbitrum, Unichain, Optimism, Avalanche, Robinhood Chain and X Layer share one",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SKY staking has no lockup: unstaking is penalty-free unless the stake is encumbered by borrowed USDS",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "be56f746-bcbf-40e9-b6e0-832a4fc4ff6e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "89242575-a9af-4055-9d65-e731682ae8e8",
+      "name": "sky-staking",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dc0ef02c-4305-4e99-b48b-2d5f5a721541",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e14799e0-036e-4ec4-9ed8-46e1f01033fa",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.1 is a single sentence with large consequences: \"SKY stakers can unstake their staked SKY at any time without penalty, provided the SKY is unencumbered by any borrowed USDS.\"\n\nMost governance-token staking systems buy commitment with time \u2014 lockups, cooldown queues, or slashing on early exit \u2014 on the theory that voters and reward recipients should have skin in the game. Sky declines all of that. Staking is a free action with a free reversal, so the only cost of participating is the transaction itself.\n\nThe lock that does exist is *earned*, not imposed: a staker who borrows USDS against their stake has encumbered it and cannot withdraw the collateral. Exit friction becomes something the user opts into in exchange for liquidity, rather than a toll charged to everyone for the privilege of staking.\n\nThe trade-off is that stake tells you very little about conviction. Because there is no cooldown, staked SKY can be assembled and dissolved quickly, which matters if staking ever gates voting weight or reward eligibility in a way that a short-term holder could exploit. Sky evidently prefers maximum participation and clean UX over the weak sybil-resistance a lockup would provide \u2014 and the encumbrance rule means the system still holds a hard lien exactly where real credit risk exists.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Debt, not time, is the only thing that locks SKY. Governance participation and rewards therefore cost no liquidity, and the exit friction is opt-in via borrowing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

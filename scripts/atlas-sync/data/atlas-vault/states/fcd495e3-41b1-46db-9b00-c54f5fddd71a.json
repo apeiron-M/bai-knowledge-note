@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Relayer Role is exercised by an off-chain ALM Planner, so multisig signers are keyholders for an automated strategy engine",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "25993058-c0c9-4d02-b14c-5f985241a9e5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "321b0016-9daf-4e6d-be82-354772efc2e7",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "979e67ec-6a37-4043-9a05-117a1a813098",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b607145b-6203-4e7c-a309-a9a1df5f89ae",
+      "name": "automation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.1.1.1.2 defines the relayer not as a person or a committee but as a system endpoint: \"the `RELAYER_ROLE` is the address for the Keel Liquidity Layer ALM Planner off-chain system that calls functions on `Controller` contracts to perform actions on behalf of the `ALMProxy` contract.\"\n\nThat recasts every relayer multisig in the Artifact. The Prime Relayer and Core Operator Relayer signers are not deliberating each mint, transfer or vault deposit on the merits; they are the human authorization layer over an automated asset-liability planner that decides what should move and when.\n\nIt explains several otherwise puzzling settings. A 1-of-2 Keel multisig makes sense for signing a machine's routine instructions and much less sense for discretionary treasury decisions. Rate limits enforced in a contract are essential rather than belt-and-braces, because the entity generating transactions is software whose bugs would otherwise be unbounded. And the Freezer's subtract-only power is aimed at exactly this: \"removing a compromised Relayer\" covers a compromised *system*, not only a compromised person.\n\nThe accountability question the definition leaves open is who is answerable when the planner is wrong rather than compromised. The Usage Standards clauses require signers to act \"in accordance with the instructions specified in the Keel Artifact,\" which places the burden on the Artifact's own operational logic being correct.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:06:07.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The role is defined as the address for the Liquidity Layer's off-chain planning system that calls Controller functions on behalf of the ALMProxy",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-1d888b95-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1d888b95-01fe-4bb5-abc9-1754d142d417",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Pattern's activated Primitive set confines it to Ethereum Mainnet despite the Artifact provisioning cross-chain capability",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2a8c237c-9bfd-421e-835a-8f4328c563c8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ff7a71ff-edb5-4d73-853c-e360bb1835c4",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2d11b540-4693-4d2d-a37e-68b1281b2003",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec51ebb6-f8cd-4417-a327-36009bf37754",
+      "name": "multi-chain",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three independent signals in this section point the same way. The Token SkyLink Primitive \u2014 Pattern's instance of the mechanism for linking its token across chains \u2014 has Global Activation Status `Inactive` (A.6.1.1.6.2.4.1.1.1). The Pioneer Chain Primitive is likewise `Inactive` (A.6.1.1.6.2.5.3.1.1). And the Allocation System Primitive, which *is* `Active` (A.6.1.1.6.2.6.1.1.1), partitions its Active Instances Directory by chain and contains exactly one chain: Ethereum Mainnet (A.6.1.1.6.2.6.1.1.2.1).\n\nBy contrast the two other Demand Side Stablecoin Primitives Pattern holds \u2014 Distribution Reward (A.6.1.1.6.2.5.1.1.1) and Integration Boost (A.6.1.1.6.2.5.2.1.1) \u2014 are both `Active`.\n\nThe reading is that Pattern's current operating surface is a single chain, and that this is a *choice recorded in status fields* rather than a limitation of the framework. Every structure needed to operate elsewhere is already present and merely switched off.\n\nThis matters for how an Agent Artifact should be read. The presence of a Primitive section proves nothing about capability in use; only the activation status and the contents of the Active Instances Directory do. A reader summarizing Pattern from headings alone would credit it with cross-chain token distribution and new-chain pioneering that it is not currently doing.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Token SkyLink and Pioneer Chain are both Inactive while the Allocation System's only chain sub-directory is Ethereum Mainnet \u2014 multi-chain reach exists as structure, not as activity.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

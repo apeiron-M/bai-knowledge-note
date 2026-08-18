@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Cross-chain USDC movement depends on Circle's CCTP under a dedicated bridge limit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7f90442d-b092-4a80-b2d7-f5da7f816cf2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c4b037e0-5436-46e6-86b3-a216abb2db13",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d2743b34-5ff0-44cd-b3b3-b96f913026cf",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1b9db741-2c1d-45d6-8ef1-aa9774e161ce",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three rate-limit entries govern bridging specifically: `LIMIT_USDC_TO_CCTP_ETH` (200,000,000 with a 500,000,000/day slope), `LIMIT_USDC_TO_CCTP_BASE` (same values) and `LIMIT_USDC_TO_CCTP_AVALANCHE` (100,000,000 with a 50,000,000/day slope) \u2014 each described as the maximum USDC that can be bridged \"using the Circle Cross-Chain Transfer Protocol.\"\n\nTwo structural facts follow. First, cross-chain USDC in the Liquidity Layer moves through Circle's own burn-and-mint protocol rather than a third-party lock-and-mint bridge. That is a deliberate reduction of bridge risk: CCTP's trust assumption is the USDC issuer itself, which USDC holders already depend on, rather than an additional bridge validator set.\n\nSecond, the bridging path gets its **own** limit, separate from the `LIMIT_USDC_TO_DOMAIN` limit on sending USDC to a chain's ALM Proxy. The transport and the destination are rate-limited independently, so a failure or compromise in one does not consume the other's capacity.\n\nThe bridge limits are also strikingly larger than the domain limits \u2014 200M via CCTP against 4M to the Mainnet ALM Proxy \u2014 which says the Atlas treats moving USDC between chains as much lower risk than parking it in an operational account. The residual dependency is honest and unavoidable: if Circle pauses CCTP, Spark's cross-chain USDC rebalancing stops, and no alternative transport is specified here.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Separate LIMIT_USDC_TO_CCTP parameters for Ethereum, Base and Avalanche name Circle's protocol as the transport, making one issuer's bridge a load-bearing dependency of the Liquidity Layer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

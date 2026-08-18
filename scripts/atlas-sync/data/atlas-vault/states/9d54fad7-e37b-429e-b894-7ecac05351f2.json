@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel's Solana relayers are single-signer addresses while its Ethereum relayer is a multisig, with redundancy replacing quorum",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e6007c1c-c1c9-46fb-be5b-9d5832407629",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0184355e-43bb-4fdb-9087-7fdc9ccaf55b",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "987e63fe-cd00-450f-a226-2486346a8352",
+      "name": "operational-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5643aed0-481e-4ac4-9c3e-4ae211ef80af",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.1.2.3.1 and \u20262.3.2 define Keel's two Solana relayers as plain addresses, each with a single \"Signer... controlled by Keel\" and its own state address holding \"permission configurations.\" There is no signing threshold, because there is nothing to threshold. Meanwhile Sky's own Core Operator Relayer runs 2-of-3 on both chains (\u20262.2.2.2, \u20262.3.3.3), and the Freezer is 2-of-5 on both.\n\nSo Keel's operational key hygiene is weakest on exactly the chain where its risk budget is smallest and its remedies are furthest away. The pattern chosen instead of quorum is *redundancy*: a Primary and a Secondary relayer, so the loss or failure of one key does not stop operations. That is availability engineering, not compromise resistance \u2014 two single-signer keys double the number of keys an attacker may target while ensuring the planner can always reach the chain.\n\nThe compensating control is where modification authority sits: \"changes to the Prime Relayer Addresses is a controller action which must be invoked by a Default Admin Role\" (\u20262.3.1.5). Keel cannot rotate its own Solana relayer keys; Sky Governance must, which slows recovery from a compromise as much as it prevents a quiet substitution.\n\nCombined with the 25M/10M-per-day Solana limits and the subtract-only Freezer, the design reads as an explicit acceptance of weaker key control on the frontier, bounded by smaller limits rather than stronger signing.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "On Solana, Keel controls a Prime Primary and a Prime Secondary Relayer Address each held by one signer; changing them is a controller action requiring the Default Admin Role.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

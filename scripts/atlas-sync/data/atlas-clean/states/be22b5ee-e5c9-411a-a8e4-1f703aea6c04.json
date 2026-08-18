@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Centrifuge cross-chain share transfers resolve the bridging contract from the counterparty's own vault at call time",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4c411fa5-b41f-41b0-a7c6-6df14cfc78f4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6562cd28-ca82-455a-b40d-beaec94b4e13",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3729d85e-2c8d-4f65-84c2-9ededa1d326b",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b58cb4c6-306a-45b3-a427-d070f60b5f32",
+      "name": "counterparties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.6.5.5 resolves the transfer path through two hops of the counterparty's own contracts: \"The operator must resolve the `spoke` contract that initiates the cross-chain transfer, obtained from the vault's async redeem `manager`\" \u2014 implemented as `IAsyncRedeemManagerLike(ICentrifugeV3VaultLike(token).manager()).spoke()`.\n\nThis is a different trust posture from the rest of the controller. Bridge recipients are pinned in admin-only mappings (A.6.1.1.2.2.6.1.2.2.1.2.1.1.1), pool parameters are admin-set, and venues are enabled by governance-written rate limits. Here the **contract that will actually execute the cross-chain send is discovered at call time from the vault**, so if Centrifuge changes its manager or spoke, Grove's transfer routes through the new contract with no governance action.\n\nThat is a reasonable engineering choice \u2014 hardcoding a counterparty's internal topology would break on every upgrade \u2014 but it means the integration's security depends on Centrifuge's own access control over `manager()` and `spoke()`, not only on Grove's.\n\nTwo guards remain in place. The **recipient** is still governance-pinned: A...2.6.5.4 requires `recipient != 0`, reverting with `centrifuge-id-not-configured`, so even a substituted spoke can only send to the address Grove's admin registered for that chain. And the rate limit still bounds the amount per token and destination.\n\nThe `payable` function forwarding `msg.value` as the messaging fee (A...2.6.5.1) is a further small departure: the relayer supplies ETH from outside the proxy to pay for the cross-chain message, so this operation has an external funding dependency the other controller functions do not.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:49:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The spoke that executes the transfer is read dynamically from the vault's async redeem manager rather than from governance configuration, and the relayer forwards the messaging fee as msg.value.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

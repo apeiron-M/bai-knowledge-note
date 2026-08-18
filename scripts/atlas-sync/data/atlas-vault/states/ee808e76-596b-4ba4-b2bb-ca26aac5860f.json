@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Integration Boost payment found inaccurate by Core GovOps still proceeds to reimbursement",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8571992e-b4a2-48d2-bdb0-7f80abe6fc9c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b8b4dffa-fd8a-4133-b981-1dc780f29cad",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0faea5cc-9d14-43c7-900f-fe600c489f41",
+      "name": "schema-consistency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.2.2.4.1.3.3 has Core GovOps populate `Core GovOps Review/Confirmation` with \"yes or no\" and give reasoning \"(required if confirmation value is `No`)\" \u2014 a single input block, not the two mutually exclusive pathways the Distribution Reward uses at the same point (A.2.2.9.1.2.4.1.3.3).\n\nThe outputs then ignore the answer entirely. A.2.2.9.2.2.4.1.3.4.1.1 unconditionally sets the Sky Core Integration Boost Reimbursement document's Status to `Pending Payment`, populates the Confirmed Reimbursement Due, and triggers the Executive Vote Reimbursement process. There is no alternative branch and no condition on the confirmation value.\n\nRead literally, a payment Core GovOps has just declared inaccurate still flows to reimbursement of the Operational Executor Agent's Buffer via Executive Vote. The Distribution Reward at least branches \u2014 its inaccuracy pathway triggers a distinct output, even if that output is marked TBD (A.2.2.9.1.2.4.1.3.4.1). The Integration Boost does not branch at all.\n\nThis is a stronger version of the same gap. Both Primitives pay first and verify later, so the verification step's value depends entirely on what a negative finding causes; in one specification that consequence is unwritten, and in the other the specification actively routes past it. The recorded `No` and its required commentary remain as evidence, which is presumably what a later correction would rest on \u2014 but the Process Definition itself does not act on them.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its review records a yes-or-no confirmation but the outputs branch on nothing: the reimbursement document is set to Pending Payment and the Executive Vote triggered regardless of the answer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

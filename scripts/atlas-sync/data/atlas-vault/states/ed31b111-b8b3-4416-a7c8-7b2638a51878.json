@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Core Council Buffer expenses are booked to Core Council Executor Agent 1 regardless of which account funded them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "49f00175-81ac-4f88-ac69-7a1666817629",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4ef529a0-97fa-4527-8eb0-646a375f5a2d",
+      "name": "accounting",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab25fe3d-9656-4b05-b59b-7fe329146ed6",
+      "name": "core-council",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.5.2.2 splits Core Council Executor Agent 1's Genesis Capitalization: 20,000,000 USDS to its SubProxy and 5,000,000 USDS directly to the Core Council Buffer, the latter described as going \"directly to its operational payment account.\" A.2.8.2.5.2.3 then adds the attribution rule: expenses paid through the Buffer \"shall be recorded as operational expenses of Core Council Executor Agent 1, whether funded by the Genesis Capital Allocation deposited directly to the Core Council Buffer or by subsequent transfers from the Core Council Executor Agent 1 SubProxy.\"\n\nThe design problem being solved is that the Core Council Buffer is a *shared* facility \u2014 \"[t]he Core Council Executor Agents holding seats on the Core Council maintain operational authority over the Core Council Buffer\" \u2014 while accountability must land on a single legal counterparty. The rule severs attribution from funding path: money route is an operational detail, expense ownership is fixed.\n\nIt is also framed as a transitional device, permitted \"prior to its establishment of dedicated payment infrastructure\" / \"prior to the establishment of independent payment infrastructure.\" The shared buffer is scaffolding for the first Core Executor Agent, not the intended steady state.\n\nThe risk this accepts is that as further Core Council Executor Agents take seats and gain authority over the same Buffer, an attribution rule written for a single occupant will need to distinguish spenders \u2014 otherwise one agent's books absorb another's spending.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:05:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Whether paid from Genesis Capital deposited directly into the Buffer or from later SubProxy transfers, spending is recorded as CCEA1 operational expense",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-75b6a94a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75b6a94a-5e59-4a13-a32c-614ff4cbe4b5",
+      "targetTitle": "Ethena exposure capacity is allocated to two named Agents by"
+    },
+    {
+      "id": "lnk-5b14d573-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5b14d573-ae3a-4912-b597-2b3b9e35732f",
+      "targetTitle": "Required Risk Capital decomposes into three additive risk ty"
+    },
+    {
+      "id": "lnk-c4d69916-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c4d69916-75dd-4ff9-a0f2-4937e3893fee",
+      "targetTitle": "Administrative Risk is capitalized as its own risk class: lo"
+    },
+    {
+      "id": "lnk-c78e6e71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c78e6e71-0b23-4ca3-bd0b-c6124367284e",
+      "targetTitle": "Responsibility for identifying which contracts are in scope "
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Smart contract and administrative capital charges scale with concentration, and count the whole ecosystem's exposure, not just the Agent's",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ce659fc1-52bd-4f71-8b6e-dfc800aec7a4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3daf4bd1-5b46-49fc-a4b1-6e7df13774d6",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac40fa3c-8f38-4133-b681-068cc0db6fe9",
+      "name": "concentration-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.1.1.5.3 and A.3.2.1.1.6.3 are near-identical paragraphs applied to smart contract risk and administrative risk respectively, and their shared argument is the interesting part.\n\nThe premise: \"The risk of a technical exploit in one protocol is unlikely to be correlated with the risk of a technical exploit in an unrelated protocol. Therefore, the risks from small exposures to even relatively risky protocols are likely to be diversified away. In contrast, very large exposures to even relatively safe protocols can create a risk to a Prime Agent and potentially to Sky itself.\"\n\nThe conclusion is that the capital charge cannot be a function of the protocol's risk rating alone. It must take into account three things: \"the risk rating, the level of exposure of the Prime, and the level of exposure of the Sky Ecosystem.\"\n\nThat third input is the load-bearing one. It makes an individual Agent's capital requirement depend on what *other* Agents are doing \u2014 the clause \"especially if multiple Prime Agents have the same exposure\" names the crowding problem directly. Two Agents each holding a prudent-looking position in the same protocol create a systemic exposure that neither's own book reveals, so the framework internalizes the externality by charging both more as the ecosystem's aggregate exposure grows.\n\nOperationally this means a Prime Agent cannot compute its own requirements in isolation; it needs ecosystem-wide exposure data, which implies a shared measurement authority. It also creates a first-mover advantage in capacity: whoever enters a protocol early faces a lower charge than a later Agent adding to an already-crowded exposure, which is a soft mechanism for dispersing the ecosystem's positions without anyone allocating them centrally.\n\nA.3.2.1.1.5.2 gives the rating inputs for technical risk: code complexity measures such as cyclomatic complexity, decision points, external calls and lines of code; the number, quality and recency of audits; and the \"Lindiness\" of the contracts \u2014 survival time as evidence of safety.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Identical reasoning in both: exploit risks are uncorrelated across unrelated protocols so small exposures diversify away, while large or ecosystem-wide shared exposures threaten Sky itself.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

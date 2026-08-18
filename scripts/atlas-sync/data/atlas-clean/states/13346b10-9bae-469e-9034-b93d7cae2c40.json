@@ -1,0 +1,97 @@
+{
+  "links": [
+    {
+      "id": "lnk-6d7fd202-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6d7fd202-6247-4c82-87fb-9e792de044fa",
+      "targetTitle": "Grove's Artifact documents inherited Sky Core infrastructure"
+    },
+    {
+      "id": "lnk-bd57c466-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd57c466-c291-4dc3-a204-661f22a48ef6",
+      "targetTitle": "Grove takes accounting ownership of the Peg Stability Module"
+    },
+    {
+      "id": "lnk-16eed9bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "16eed9bb-14c5-41a7-8bf8-8160ffab29bc",
+      "targetTitle": "Sky Core can place a Prime Agent into conservatorship to mak"
+    },
+    {
+      "id": "lnk-709d2006-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "709d2006-33f0-445e-8035-fd2eba9413a9",
+      "targetTitle": "doc-db03e4e4"
+    },
+    {
+      "id": "lnk-f14aa461-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f14aa461-6831-48d4-9a06-126811771f85",
+      "targetTitle": "doc-6b9d9473"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky Core is exiting Asset Liability Management entirely, with legacy positions offboarded on an expedited governance path",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1f88c7e1-f111-4cd2-b83d-aa8b0954aa63",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e610c406-4e5c-40d1-b181-81f9ad1f839f",
+      "name": "peg-stability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b2b33b3b-5603-48f0-bde4-f35e25cb564a",
+      "name": "migration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.3 states the destination: the ALM framework \"replaces Sky Core's historical Asset Liability Management mechanisms which will be offboarded entirely or transitioned to Prime Agents.\" A.3.3.1.4 defines the interim: \"While its legacy ALM infrastructure is being transferred to Prime Agents, Sky Core manages the portion of the Sky Collateral Portfolio not deployed by Prime Agents,\" allocating it to the Lite PSM per A.3.3.2.6.\n\nSo Sky Core's ALM role is defined residually \u2014 it manages whatever the Primes have not yet taken, and shrinks as they take more. There is no steady state in which Sky Core retains a treasury function.\n\nThe two named legacy mechanisms both go to the same Agent. The Lite PSM transitions to Grove, after which \"Grove will manage the Lite PSM as an ASC asset pursuant to the rules defined in this Article\" (A.3.3.2.7.1.1). Andromeda \u2014 historically the mechanism that \"balanced Sky Core's Cash Stablecoin liquidity by allocating excess into low-risk treasury strategies and replenishing shortages\" \u2014 also transitions to Grove, but reclassified: \"Post-transition, Grove will manage Andromeda as a **non-ASC** asset within its Collateral Portfolio, subject to JRC requirements\" (A.3.3.2.7.2.1). It is currently non-operational with a zero debt ceiling.\n\nThe reclassification is the interesting detail. The same position that served as central liquidity management under Sky Core does not qualify as peg-stabilizing collateral under the new rules, and instead attracts risk capital requirements. The framework is not merely relocating legacy holdings \u2014 it is applying tests they were never built to pass, and some fail.\n\nA.3.3.2.7.2.2 handles the remainder pragmatically: pre-Endgame RWA exposure \"must stay for as long as necessary, and optimized for yield if possible,\" with the Core Facilitator winding it down when possible. Notably, \"governance actions related to optimizations, wind down and offboardings can be done directly in Executive Votes with no prior Governance Poll needed\" \u2014 a deliberate procedural shortcut, on the reasoning that exiting a legacy position needs no fresh mandate because the direction of travel is already decided.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Lite PSM and Andromeda both transition to Grove, Sky Core manages only what Primes have not taken, and legacy RWA wind-downs may proceed by Executive Vote with no prior Governance Poll.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

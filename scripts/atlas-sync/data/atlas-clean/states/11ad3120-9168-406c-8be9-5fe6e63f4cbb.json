@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-709223fe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "709223fe-bf40-4dad-b043-066663d03045",
+      "targetTitle": "The RateLimits contract splits setting a limit from consumin"
+    },
+    {
+      "id": "lnk-c79d0818-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c79d0818-b073-44cf-8091-f8ab2f005313",
+      "targetTitle": "Keel cannot raise its own rate limits: writing them is admin"
+    },
+    {
+      "id": "lnk-a2ceb308-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a2ceb308-49d2-404e-a6c2-28fa9094397b",
+      "targetTitle": "Only admin can set a rate limit's envelope; Controllers may "
+    },
+    {
+      "id": "lnk-1840de68-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1840de68-1a94-4a43-902d-f902a8778e8b",
+      "targetTitle": "PAS lets designated actors operate rate limits and pre-appro"
+    },
+    {
+      "id": "lnk-30154959-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "30154959-abc4-4fed-96aa-89d34aa0abc5",
+      "targetTitle": "Retuning a rate limit refills it: the two-argument setter gr"
+    },
+    {
+      "id": "lnk-c36b274a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c36b274a-134d-4b9a-9c40-6d203cc3d897",
+      "targetTitle": "Cap Automators hold a constant headroom above current usage "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Setting a rate limit's ceiling and moving its meter are separated into governance and Controller roles",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a0a6aef5-d6d2-4d6c-a3a0-ab03bfc72984",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e533370-95fe-40a4-a26c-2674f41304f6",
+      "name": "risk-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "563b7fbf-a911-4522-8a84-295942df7d88",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.5.3.2 restricts `setRateLimitData` with `onlyRole(DEFAULT_ADMIN_ROLE)` \u2014 Sky Governance acting through the Prime Agent's SubProxy \u2014 as does the unlimited variant in A.2.2.10.1.1.1.2.5.3.3. A.2.2.10.1.1.1.2.5.3.4 and A.2.2.10.1.1.1.2.5.3.5 restrict `triggerRateLimitDecrease` and `triggerRateLimitIncrease` with `onlyRole(CONTROLLER)`, called \"as allocations consume the limit\" and \"as allocations return the limit.\"\n\nThe split is between *policy* and *bookkeeping*. Governance decides `maxAmount` and `slope`; the Controller can only walk the current balance within the ceiling governance set, and the code enforces that: the decrease path requires `amountToDecrease <= currentRateLimit`, and the increase path clamps to `_min(currentRateLimit + amountToIncrease, maxAmount)`.\n\nThe clamp is the load-bearing detail. It means capacity-restoring behaviour can never manufacture allowance above the ceiling, so a bug or abuse in the restore path cannot inflate a limit \u2014 the worst case is refilling to a level governance already approved.\n\nThe convenience overload matters too: `setRateLimitData(key, maxAmount, slope)` initialises `lastAmount` to `maxAmount` and `lastUpdated` to now, so a newly configured limit starts full. Governance sets policy in two numbers, and every subsequent state change is mechanical.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "setRateLimitData is restricted to DEFAULT_ADMIN_ROLE held by Sky Governance through the Prime Agent's SubProxy, while only the CONTROLLER may trigger the decreases and increases of routine operation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Prime and Executor Transformation are mutually exclusive, so the unused Primitive stays permanently Inactive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "31ca6542-83ef-4a1e-a8c2-af2e4c0a31b9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1cc78e86-6a43-404d-b2db-502aafb486fb",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a6212b9a-53e1-490d-b223-3c8059005404",
+      "name": "primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "99e08a4d-7433-4e05-a27d-ce5ab4439b3d",
+      "name": "agent-types",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Obex's Genesis Primitives carry three different Global Activation Statuses. Prime Transformation is `Completed` (A.6.1.1.5.2.1.2.1.1) and its Instance records that \"Obex is a Prime Agent\" (A.6.1.1.5.2.1.2.3.1.1.1). Executor Transformation is `Inactive` (A.6.1.1.5.2.1.3.1.1), has no Instance Configuration Document at all, and \u2014 like every Genesis Primitive \u2014 declares that no further Instances can ever be Invoked (A.6.1.1.5.2.1.3.1.4).\n\nThe combination is terminal. The Primitive that would have made Obex an Executor Agent is both unused and permanently unusable, because its single Invocation opportunity was not taken. Agent type is therefore not a mutable attribute but a fork resolved once at genesis.\n\nThat the branch is retained rather than deleted is itself informative. Reading Obex's Artifact tells you not only what Obex is, but which alternative it declined and that the alternative is now foreclosed \u2014 the road not taken remains visible in the structure.\n\nIt also clarifies what `Inactive` means in this framework. For a re-Invocable Operational Primitive, `Inactive` means \"not yet switched on\" and is reversible. For a one-shot Genesis Primitive, `Inactive` means \"never used and never usable\" \u2014 the same token denoting a pause in one place and a permanent exclusion in another.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Obex's Prime Transformation Primitive reads `Completed` while Executor Transformation reads `Inactive` and can never be Invoked \u2014 an Agent's type is fixed by choosing one of two one-shot Primitives.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

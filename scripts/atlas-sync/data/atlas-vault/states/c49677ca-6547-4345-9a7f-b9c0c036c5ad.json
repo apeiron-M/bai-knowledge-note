@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Guardian independence is specified at five levels and justified by an explicit threat model",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c7066d40-554a-436c-8493-20346cc5535b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9b25cf35-9bb7-4caa-bd47-e6c33ef12268",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd917823-fc57-471f-969a-79e124d0aff3",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.9.6.3.1 is the most rigorous independence clause in the Spark Artifact: \"The Guardian must be independent from the Curator for each specific smart contract instance, meaning there must be **no overlap between approvers, signers, contributors, role owners, or entities** between the two roles. Compromise or misalignment of the Curator role should not in itself create risk of the Guardian role also becoming compromised.\"\n\nMost separation-of-duties requirements name one dimension \u2014 usually \"different entities\" \u2014 and are satisfied on paper by two legal wrappers sharing staff, infrastructure, or a signing device. Enumerating five overlapping categories closes those gaps individually: the entity, the people who own the role, the contributors who work on it, the signers who hold keys, and the approvers in the workflow must all differ.\n\nThe second sentence states *why*, and it is the correct formulation. The requirement is not that the two roles be adversarial or unaffiliated in every sense \u2014 Soter Labs and the Spark Foundation both work for Spark's success. It is that the **failure of one must not propagate to the other**. Independence is defined as a property of the compromise graph, not of organizational charts or incentives.\n\nThat framing makes the clause testable. For any proposed pair, one can ask which single event \u2014 a phished signer, a breached CI pipeline, a compromised hardware wallet, a coerced individual \u2014 would affect both roles, and any such event is a violation regardless of how separate the entities look.\n\nIt is also the only place in this Artifact where independence is *derived from* a threat model rather than asserted. The Delegate and Risk Council independence requirements state the obligation and leave the mechanics to appointment discretion; here the obligation is spelled out at the level where it can actually be verified.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:53:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No overlap of approvers, signers, contributors, role owners or entities is permitted, because compromise of the Curator must not by itself put the Guardian at risk.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

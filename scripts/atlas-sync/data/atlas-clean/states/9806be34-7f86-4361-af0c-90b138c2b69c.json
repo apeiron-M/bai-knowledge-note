@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-a9c09416-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a9c09416-0867-4eaa-b4a7-a020a3e0c43b",
+      "targetTitle": "Only capital that is presently deployable counts as Risk Cap"
+    },
+    {
+      "id": "lnk-e1d71a1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e1d71a1e-87e0-4275-aa75-b39e43faf3a3",
+      "targetTitle": "The Tip JRC mechanism makes an Agent's own capital absorb th"
+    },
+    {
+      "id": "lnk-ed8ed7ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed8ed7ce-1f2c-4630-acd3-2641cc55149f",
+      "targetTitle": "doc-406ed72b"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rented Junior Risk Capital never moves: PEJRC counts for the borrower while staying in the lender's treasury",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b68daa16-c0bd-47a5-a4a7-281a74e93cec",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d9e85b89-74cd-4bda-9817-3e24055b1292",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a7267d14-d3f5-4674-a5dc-36c40583282c",
+      "name": "capital-efficiency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.1.2.2.1.1.2 describes Prime-External Junior Risk Capital as capital \"rented from another Prime Agent via the Risk Capital Rental Primitive,\" and specifies the unusual custody arrangement: \"The capital remains in the lender's treasury but counts towards the borrower's JRC amount.\" The instrument is \"a registered Ecosystem Accord signifying that a specified amount of the lending Agent's JRC ... is designated to count towards the borrowing Agent's JRC requirement for the duration and terms specified in the Accord.\"\n\nThis makes loss-absorbing capital a *contractual designation* rather than a balance under the borrower's control \u2014 which sits in visible tension with A.3.2.1.2.1's own definition of Total Risk Capital as \"verifiably under the Prime's control\" and \"currently deployable.\" The reconciliation is that verifiability attaches to the Accord's registration rather than to custody, which is exactly why A.3.2.1.2.1 insists an Accord agreed by counterparties but \"not yet formally codified within the Atlas\" counts for nothing: formalization *is* the asset.\n\nThe upside is capital efficiency across the Agent set. An Agent with surplus junior capital and few Instances can rent capacity to an Agent with the opposite position, so the ecosystem's aggregate junior capital is used closer to fully without anyone transferring funds or taking custody risk.\n\nThe exposure it creates is that a lender's designated capital is simultaneously its own first-loss layer and someone else's. A.3.2.1.2.2.1.1.1 notes IJRC must be \"eligible assets held in the Prime Agent's designated treasury account (e.g., SubProxy), controlled by the Prime's root governance\" \u2014 so the same treasury balance faces claims from two Agents' loss events. The framework's answers are the EPI cap on how much rented capital any borrower may rely on, and the Tip JRC mechanism ensuring the borrower's own capital absorbs small losses before the rented layer is ever touched.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A registered Ecosystem Accord designates part of the lender's own junior capital as covering the borrower's requirement, making risk capital a contractual claim rather than a held balance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e9f8904d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9f8904d-ed94-4ee7-9f40-5f82ad86ebd6",
+      "targetTitle": "The PT-USDe instance carries three separate rate limits beca"
+    },
+    {
+      "id": "lnk-43626e17-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "43626e17-b2fe-4ad4-9075-e04f9bf1d8e4",
+      "targetTitle": "An EVM Instance binds to its on-chain limits through bytes32"
+    },
+    {
+      "id": "lnk-efb67372-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "efb67372-98ec-4c41-b29a-c95cc3a99c18",
+      "targetTitle": "Each leg of a rate limit is denominated in the token that ac"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The two Pendle PT instances share a single inflow rate-limit key while keeping separate outflow keys",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "dc10b683-f004-4f51-bbd8-c24368f7b99a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "99b45900-ac8a-4cc8-8f00-590e5254b132",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "20269272-0add-4712-bff2-cfbdf519b031",
+      "name": "pendle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "23d90915-5988-4339-8c82-64296ea11a28",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The PT-sUSDe instance publishes its inflow RateLimitID as `0x098ad67dc41c1a5892ec3ef5fd411198dc11962475e9ef2e0362e6cb7f5a2174` (A...4.4.2.3.1) \u2014 byte-for-byte the inflow ID of the PT-USDe instance (A...4.3.2.3.1). Their outflow IDs differ: `0x027191d7\u2026be67` for PT-sUSDe versus `0x6dd53d41\u2026d42e` for PT-USDe.\n\nThe divergence in the outflow keys is what makes this worth reading as structure rather than as a copy-paste. Had the block simply been duplicated, both keys would match.\n\nRead as intentional, it is a coherent risk statement: a **shared** entry budget caps Grove's combined exposure to Pendle principal tokens regardless of which PT it buys, so the two instances cannot be used in sequence to accumulate twice the intended position. **Separate** exit budgets then let each position be unwound on its own schedule without one competing for the other's capacity \u2014 the same generosity-on-exit principle visible in the unlimited withdrawal limits elsewhere.\n\nBoth instances also declare 50 million caps with 50 million slopes on the FalconX legs and `Unlimited` on Pendle redemption (A...4.4.2.4.1\u20133), matching PT-USDe exactly, so the shared inflow key is consistent with the two positions being treated as one asset class entering through one broker.\n\nThe caveat: A...4.4.2.3 introduces the RateLimitIDs section by saying they \"will be specified in a future iteration of the Grove Artifact\" and then its two child documents specify them anyway. Alongside the instance's token and underlying addresses both being recorded as USDC `0xA0b869\u2026eB48` (A...4.4.2.2.1, A...4.4.2.2.2) \u2014 which cannot be right for a Pendle PT \u2014 this section is not in a state where a reader should treat any single field as authoritative without on-chain confirmation.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PT-USDe and PT-sUSDe both use inflow ID 0x098ad67d\u2026, capping combined entry into PT positions, but exit through distinct outflow keys \u2014 asymmetric aggregation of entry and exit budgets.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

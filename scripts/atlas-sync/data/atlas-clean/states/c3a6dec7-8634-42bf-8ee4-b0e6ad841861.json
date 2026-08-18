@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-e9894e4e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9894e4e-f65a-4371-a084-01ec2237e9c0",
+      "targetTitle": "An Executive Proposal that fails to move the hat is not reje"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Executive Vote expires after thirty days and can never again affect the Protocol",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "35a4708d-ceb5-4f03-8fdc-98fc0cad34f4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b5793b8-73ad-4074-8d80-485a6c363c71",
+      "name": "governance-cycles",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8fe4e42-d290-42ff-8442-ab15cbdcb652",
+      "name": "governance-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.11.1.3 attaches a hard lifetime to every Executive Vote: it \"has an expiration of thirty (30) days; if an Executive proposal does not pass within this timeframe, it expires and can no longer have any effect on the Sky Protocol.\"\n\nThe security value is in what this forecloses. An Executive that stays votable indefinitely is a dormant, pre-drafted change that could be activated long after the circumstances justifying it have gone \u2014 including by an attacker who accumulates enough voting weight to pass an old proposal whose content nobody is still scrutinizing. Expiry means that authorization is always contemporaneous with the conditions it was reasoned about.\n\nThe cost is churn: a proposal that stalls on turnout must be re-prepared and re-published rather than left to accumulate votes. The Atlas accepts that, and A.1.11.1.3.0.3.3 sets the matching expectation upstream \u2014 successfully polled changes are \"included in an Executive Vote that is typically conducted within approximately 30 days of the poll passing.\"\n\nThe general principle: governance authorizations should decay, because an unexpired mandate is a standing option that someone else may eventually exercise.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A passed-but-unexecuted mandate does not linger; if the Executive proposal fails to pass within the window it is void, forcing re-approval under current conditions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The launch supply rate is set at an explicitly unsustainable ~40% with a written commitment to lower it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "815c25ce-1822-4e89-bfa1-f4b015615a65",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fcef934d-92f2-4910-9d2e-3c6427cf50fd",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "80aa506a-64be-4e0e-be36-1d02028cf336",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c833930-ae5f-4e5c-ba0e-45cd1f0f94f9",
+      "name": "bootstrapping",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.8.6.1.1 states that \"the initial value of the `str` parameter must be set extraordinarily high to a value of approximately 40% initially to incentivize deposits. This rate is not sustainable and must be lowered.\" A.4.4.1.3.8.6.1.2 makes the taper conditional on progress \u2014 the rate \"must be gradually lowered to a more sustainable level as the market approaches the optimal target of 90% utilization\" \u2014 and A.4.4.1.3.8.6.1.3 sets a size milestone: \"By the time the market reaches 300,000,000 USDS the `str` parameter must be normalized to a level that is in line with the Interest Rate Model.\"\n\nThe honesty is the point. Bootstrap yields are ubiquitous in DeFi and almost always presented as though they were sustainable, which produces mercenary capital that leaves in surprise and anger when the rate normalizes. Writing \"this rate is not sustainable\" into the governing document sets expectations correctly and removes any later argument that holders were misled.\n\nThe taper is also *state-contingent rather than calendar-based*, which matters. Tying reduction to utilization and market size means the subsidy is withdrawn as the mechanism becomes self-sustaining \u2014 once genuine borrowing demand can pay the supply rate, the subsidy is no longer needed. A date-based schedule would cut the incentive whether or not the market had arrived.\n\nNote the interaction with the rest of the model: `str` is normally an output of the stUSDS Rate formula, so this phase deliberately overrides the formula from above, with the BEAM's `max` of 5,000 bps as the outer bound. Bootstrap mode is formally a suspension of the pricing model, and A.4.4.1.3.8.6.1.3 defines the condition for the model to resume.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rather than pretending the bootstrap incentive is a real yield, the Atlas records that it \"is not sustainable\" and ties its reduction to utilization approaching 90% and the market reaching 300M USDS.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-ab1fb567-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab1fb567-42b4-4299-9654-1604d8d24d3b",
+      "targetTitle": "A rate-limit parameter can be left unspecified while its pai"
+    },
+    {
+      "id": "lnk-edd898b6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "edd898b6-03a8-40f6-a9a7-158b4e2bda32",
+      "targetTitle": "Outflow rate limits are deliberately looser than inflow limi"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Unlimited outflow rate limit describes only Spark's own throttle, not whether the position can actually be exited",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "aeaa986b-a8d3-4884-bd78-59bba98fbfc4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cdc8c681-7d98-4705-b812-8f61060cb2e4",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "507de5a3-41c8-465f-a45d-845019d6a65b",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5982016-666d-4ef9-9a4d-4cf11539cc22",
+      "name": "liquidity-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Ethena sUSDe instance sets outflow rate limits to \"`maxAmount`: unlimited, `slope`: unlimited\" (A.6.1.1.1.2.6.1.3.1.4.2.2.4.2). Read against the rest of the Artifact, that looks like the standard 'exit is never throttled' posture.\n\nThe instance's own operational processes contradict the impression. Exiting sUSDe is a two-phase procedure: `cooldownAssetsSUSDe` or `cooldownSharesSUSDe` initiates a cooldown on the staked position (.4.2.3.1, .4.2.3.2), and only afterwards can `unstakeSUSDe()` move tokens back to the ALM Proxy (.4.2.3.3). The instance description itself lists \"cooldown functionality\" as one of the things its processes manage (.4.1.3).\n\nSo the outflow field measures the wrong thing for this venue. `Unlimited` states that Spark imposes no throttle; it says nothing about the cooldown the staking contract imposes, during which the assets are neither earning-and-exitable nor available. A risk model that reads outflow capacity from the Artifact would score sUSDe as instantly exitable when it is structurally not.\n\nThis is the general limitation of the two-parameter schema: it captures self-imposed rate, not venue liquidity. Every conduit's true exit speed is min(own limit, venue's redemption mechanics), and only the first term appears in the configuration document. The presence of a dedicated emergency withdrawal procedure for exactly this instance is the clearest evidence that the second term is the one that actually binds.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:24.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Ethena sUSDe publishes unlimited outflow, yet exiting requires initiating a cooldown and then unstaking",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

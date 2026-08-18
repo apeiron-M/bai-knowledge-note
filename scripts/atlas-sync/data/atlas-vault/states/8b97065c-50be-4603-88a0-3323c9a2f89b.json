@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Each direction of an issuer conversion is a separate instance with its own deposit address",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ee60fb4b-e6f0-4540-a20f-a0291ea7505f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6a382eaf-6fdf-4042-8b01-26949bb2e57d",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "95c2e872-7755-4b05-abbb-a06559e0efa6",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30f3bc5c-2a45-476c-b3bd-eee9e17e4606",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Paxos section holds one Instance Configuration Document per conversion direction: USDC to PYUSD, PYUSD to USDC (A.6.1.1.1.2.6.1.3.1.12.2), PYUSD to USDG (.12.3) and USDG to PYUSD (.12.4). Each names an `Asset Supplied By Spark Liquidity Layer` and a `Token to Receive`, and each carries a **different** `Paxos Deposit Address` \u2014 `0x2f7BE67e...` for PYUSD\u2192USDC (.12.2.2.2.3), `0x227B1912...` for PYUSD\u2192USDG (.12.3.2.2.3), `0x035b322D...` for USDG\u2192PYUSD (.12.4.2.2.3).\n\nThe addresses are what make the routes distinguishable. On-chain, all Spark does is transfer an ERC-20 to an address; the instruction 'convert this to USDG rather than USDC' is carried entirely by *which* address receives it. Paxos infers intent from destination, so the deposit address is not a contact detail but the operative parameter of the whole conduit.\n\nNote that PYUSD\u2192USDC and PYUSD\u2192USDG send the same asset from the same source to different addresses. A transposition between the two would produce a completed, valid, unreverted transfer that returns the wrong stablecoin \u2014 a failure mode with no on-chain guard, since the rate limits are keyed per instance and both would be satisfied.\n\nModelling direction as a first-class object is the right response: it gives each leg its own limit, its own approval and its own audit trail. It also means the count of `Active` instances overstates the count of relationships \u2014 four documents describe one commercial arrangement with one counterparty, viewed from four directions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Paxos routes USDC\u2192PYUSD, PYUSD\u2192USDC, PYUSD\u2192USDG and USDG\u2192PYUSD are four documents with four distinct deposit addresses \u2014 the address, not a parameter, encodes what will be minted.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

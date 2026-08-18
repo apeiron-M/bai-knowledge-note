@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel calculates its own rebate but Operational GovOps must validate it before any surplus reaches token holders",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3b80219a-9a44-4447-8b29-4d52fd13a03b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "095b3466-1273-49ca-a4bc-9d8fcdce11bf",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0687fb8-af74-4dbe-8099-7b51b9c70f6b",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "156ce9bc-b703-43a2-876c-7afef7e34064",
+      "name": "separation-of-powers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.3.2.2.1.2.1.2 lets Keel self-net: \"when paying Ecosystem Upkeep fees, Keel deducts the rebate from the fees it pays.\" A.6.1.1.3.2.3.2.2.1.2.1.3 supplies the check: \"Operational GovOps reviews Keel's calculation of the rebate before executing a return of surplus to token holders. In the event of any issues, Operational GovOps cannot execute the distribution.\"\n\nThe leverage point is well chosen. Rather than policing the fee payment itself, the check is attached to the thing Keel's holders want most \u2014 the surplus distribution \u2014 and the block is stated as an incapacity (\"cannot execute\"), not a discretion. An Agent that inflates its rebate does not get away with a smaller fee; it gets a frozen payout to its own tokenholders.\n\nThe dispute path is then specified rather than left to negotiation: GovOps \"must post an explanation on the Sky Forum under the 'Keel Prime' category and work with Keel to resolve the disagreement,\" and \"if Operational GovOps and Keel cannot resolve the disagreement, it must be escalated to Core GovOps.\" Publication is mandatory, so a standoff is visible to the holders whose distribution is being withheld, and the escalation ends at a Core-level body outside Keel entirely.\n\nThe residual risk is symmetric: the same clause that stops Keel over-claiming lets GovOps stall distributions by declaring \"issues,\" with only public reasoning and escalation as the corrective.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The rebate is self-netted against fees owed; GovOps holds a hard block on distribution, must publish its reasoning on the forum, and unresolved disagreements escalate to Core GovOps.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad391ba3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ad391ba3-5d45-49e9-88ee-c745aa961906",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Launch Agent 7's Ecosystem Upkeep Fee is charged on market capitalization, not on revenue or assets",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1c9e0dec-b61f-4719-ae82-24b973c9cb61",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f1c2e5c7-37ed-4065-b7bc-1117f4d00048",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05e55c04-7de8-49f8-9f25-e3dc92ef1e89",
+      "name": "fee-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.8.2.3.1.2.1.1.1 states the entire terms of the Ecosystem Upkeep Fee in one line: \"Launch Agent 7 will pay 0.50% of its market capitalization per year in USDS.\"\n\nThe choice of base is the substantive decision. A market-cap levy is a charge for *existing at a valuation*, not for earning. It scales automatically with the Agent's perceived success without requiring Sky to audit the Agent's books \u2014 no revenue definition, no cost allocation, no accounting standard to litigate. That is a large simplification for an ecosystem that must charge many heterogeneous Agents on comparable terms.\n\nThe trade-offs run in both directions. A pre-revenue Agent with a high token price pays real USDS out of reserves for value it has not yet realized; a profitable Agent whose token is cheap pays little. The fee is therefore pro-cyclical with sentiment rather than with cash flow, and it puts a floor under how thinly an Agent can be capitalized relative to its valuation.\n\nDenominating in USDS ties the obligation to Sky's own stablecoin, creating recurring structural demand for USDS from every Agent \u2014 the fee is a revenue line and a demand driver at once.\n\nNotably the obligation exists while its mechanics do not: A.6.1.1.8.2.3.1.2.1.2.1.1 states that \"the process to pay 0.50% of Launch Agent 7's market capitalization per year in USDS will be specified in future iterations.\" Neither the measurement window for market cap nor the payment cadence is fixed, and for a volatile token those choices materially change the amount owed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "0.50% of market cap per year, payable in USDS \u2014 a valuation-indexed levy that bites hardest when the token is highly valued and eases when it falls, regardless of the Agent's earnings.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

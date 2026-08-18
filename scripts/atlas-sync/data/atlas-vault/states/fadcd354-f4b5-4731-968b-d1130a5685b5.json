@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas separates a type's rules from a document's data by making Type Specifications Primary Documents",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "513f693f-37e6-4eb9-8933-6cd4a3533bf2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2730fb94-77ed-496c-9387-58be3188048e",
+      "name": "atlas-documents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "077cf170-729c-4d57-9e91-9e4219e7cada",
+      "name": "schema",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.2.2.2.1 specifies the Type Specification Type \u2014 the document type whose instances define every other Document Type. Its components are fixed: Type Name, Type Overview, Type Components, Type Category, Document Identifier Rules, and Additional Logic. Its Additional Logic clause asserts universal reach: \"The rules specified in Type Specification Documents must be followed for all Atlas Documents.\"\n\nThe consequential line is its Type Category: **Primary Document**. The Atlas's schema layer therefore sits in the amendable half of the tree, not the immutable half. Types can be added, retyped, or have their component requirements changed through ordinary governance, subject only to the Primary Document constraints (four layers or deeper, no zeros, and after Endgame the minimum-change duty).\n\nThis is a real trade. Locking the schema into the Immutable layers would guarantee that the meaning of \"Core Document\" or \"Annotation\" never drifts, at the price of never being able to introduce a document type the framework later needs. Leaving it Primary keeps the Atlas extensible \u2014 new types like Element Annotation and Facilitator Action Precedent exist because it is \u2014 but means the vocabulary in which immutable rules are expressed is itself mutable.\n\nA.1.2.1.2.4 and A.1.2.1.2.5 show why that matters: a document's Type determines what data it must contain, since \"the Type determines the data that must be contained in the Components Property.\" Changing a Type Specification retroactively changes what counts as a valid document of that type across the entire tree.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.2.2.2.1 defines the type that defines all other types; because Type Specifications are Primary rather than Immutable, the Atlas's own schema is amendable through governance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every ALM fund movement is gated by three independent checks: the RELAYER role, an isActive contract flag, and a rate limit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3a42c95a-1778-4fcc-ad23-813bdafab983",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "06f7d9a3-a52a-4f1d-9156-303ff383060e",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "115a182a-30b2-40fe-a8dc-2e0cd4f90192",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "81d534e2-1b5d-4ffc-9bdb-a4f42f25d69c",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The deposit and withdraw process definitions state the guards in the function signature itself. A.6.1.1.1.2.6.1.3.1.2.1.3.1.1: \"Only the `RELAYER` role is allowed to `depositAave`. Also, they must ensure the contract `isActive` i.e. can process the request\", shown as `function depositAave(address aToken, uint256 amount) external onlyRole(RELAYER) isActive`. The withdrawal path (.3.2.1) repeats it verbatim for `withdrawAave`.\n\nA third guard sits alongside: the operator \"must ensure the `deposit` amount is allowed within the `RateLimits`\", implemented as a `rateLimited(RateLimitHelpers.makeAssetKey(LIMIT_AAVE_DEPOSIT, aToken), amount)` modifier (.3.1.3), with the mirrored `LIMIT_AAVE_WITHDRAW` key on the withdraw side (.3.2.3).\n\nThe three guards fail independently and that is the point. `onlyRole(RELAYER)` answers *who*; `isActive` is a system-wide kill switch answering *whether the system should be moving at all*; the rate limit answers *how much*. An attacker holding the relayer key still faces a per-asset amount ceiling and can be halted globally by flipping `isActive` without needing to revoke keys.\n\nThe design consequence is that the Relayer can be a relatively hot, frequently-used operational role rather than a high-ceremony one. Its blast radius is bounded by parameters that governance sets, so operational convenience and custody risk are decoupled \u2014 the standard justification for putting throughput limits in code rather than in policy.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "depositAave and withdrawAave both carry onlyRole(RELAYER) and isActive modifiers plus a rateLimited check, so compromising the operator key alone does not grant unbounded movement of capital.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

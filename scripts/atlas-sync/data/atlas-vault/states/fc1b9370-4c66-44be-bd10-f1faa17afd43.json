@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The PSM is priced as a zero-capital-requirement route to ASC compliance, making it a make-or-buy decision",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9239a4ea-b832-4959-9a2a-cac99380357b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07d95145-b822-42a1-9a48-966781291237",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4fbb1e8-7626-458b-867f-90f5f24de6d1",
+      "name": "ecosystem-accords",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.2.2.6.2.3 states the logic without decoration: \"Grove will pay the Base Rate on the PSM for the purpose of meeting ASC requirements, if there are no better alternatives available. Unlike other alternatives, USDC in the PSM will have no capital requirement. If other, better options for ASC are available, Grove should empty the PSM and allocate the assets to those options.\"\n\nThis reframes a regulatory-style obligation as a procurement problem. Meeting Actively Stabilizing Collateral requirements can be done several ways, and each carries a different cost of *capital* rather than only a different yield. A.2.8.2.2.2.6.4.2 names the comparison: Aave USDC and Curve LP positions are \"likely alternatives to direct PSM usage, albeit potentially with higher JRC requirements.\"\n\nSo the PSM's distinguishing feature is not its yield \u2014 A.2.8.2.2.2.6.4.1 notes carry is positive only \"if the USDC yield exceeds the Base Rate\" \u2014 but that it consumes no junior risk capital. A Prime short of JRC will rationally use the PSM even at negative carry, because the alternative consumes a scarcer input. A Prime with spare JRC should do exactly what the Atlas instructs and empty it.\n\nThe forward-looking sentence is the most interesting: \"It is anticipated that other protocols will also be willing to rent ASC 'points', potentially allowing for the management of ASC needs across several Prime Agents for a profit.\" Compliance capacity becomes a tradeable product, and a Prime with cheap access to it can serve others \u2014 the same unbundling logic as the Risk Capital and ALM Rental Primitives, applied to a third obligation.\n\nThe design also builds in its own obsolescence: A.2.8.2.2.2.6.3.2 expects the PSM's relevance to \"gradually decline\" as ASC matures, so this facility is priced to be outcompeted.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "USDC in the PSM carries no capital requirement, so Grove pays the Base Rate for compliance capacity and is told to empty it whenever better ASC options exist.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

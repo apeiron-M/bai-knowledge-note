@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Curve add-liquidity is charged against the swap rate limit as well as the deposit limit, because an imbalanced deposit is economically a swap",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2fb375ae-de49-4463-8951-47fea4e5e9a5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec49b10c-2469-4dd6-befd-89ca952f2284",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4d5e2664-1d2e-487e-abf3-39a32551fb31",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f60ece10-9bb2-4d3a-afa4-aa85ce00a077",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.8.2.5 decreases `LIMIT_CURVE_DEPOSIT` by the aggregated `valueDeposited` before liquidity is added. Then A...8.2.7 does something less obvious: it also decreases `LIMIT_CURVE_SWAP`, by an amount it calls `averageSwap`, computed *after* the deposit from the difference between what was deposited and the pro-rata pool composition the minted shares entitle the proxy to:\n\n```\ntotalSwapped += MathLib._absSubtraction(\n    curvePool.balances(i) * rates[i] * shares / curvePool.totalSupply(),\n    params.depositAmounts[i] * rates[i]\n);\nuint256 averageSwap = totalSwapped / 2 / 1e18;\n```\n\nThe insight is that a single-sided or skewed deposit into a StableSwap pool is a swap wearing a deposit's clothes: you hand over one asset and end up with a claim on a basket. Without this second charge, a relayer with an exhausted `LIMIT_CURVE_SWAP` could keep converting assets indefinitely by depositing imbalanced and later withdrawing balanced.\n\nThe division by two is the tell that the quantity is deliberately an *average* of the two legs \u2014 the same notional is counted once as sold and once as bought, so charging the full `totalSwapped` would double-bill.\n\nThis is the strongest general lesson in the chunk: rate limits must be keyed to **economic effect**, not to function name. Any limit taxonomy organised by entry point rather than by outcome is bypassable by choosing a differently-named door to the same result.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The imbalance between deposits and the pro-rata value of minted shares is computed as an implied averageSwap, closing a route that would let a relayer swap without touching the swap limit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

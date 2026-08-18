@@ -1,0 +1,103 @@
+{
+  "links": [
+    {
+      "id": "lnk-efda5da4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "efda5da4-ce11-44ad-a8b6-55972a4449cf",
+      "targetTitle": "Aligned Delegates currently serve as the primary Ecosystem S"
+    },
+    {
+      "id": "lnk-b9a526c6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b9a526c6-9664-4cd0-a4c6-c7358a666375",
+      "targetTitle": "Deployment and handover each require both Spell Reviewers to"
+    },
+    {
+      "id": "lnk-ba257f36-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba257f36-c008-4700-a781-39bea3e71e05",
+      "targetTitle": "Validators must not trust the Spell repository's own tooling"
+    },
+    {
+      "id": "lnk-c99c7f8d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c99c7f8d-be7b-4d7a-bc9c-01c4f85335dc",
+      "targetTitle": "doc-216d0662"
+    },
+    {
+      "id": "lnk-ced39c1b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ced39c1b-0db4-4daf-9f19-856bc487b3c1",
+      "targetTitle": "Chainlog values must be retrieved from multiple independent "
+    },
+    {
+      "id": "lnk-f636d30f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f636d30f-e44c-497b-8aa9-aa1e42a1ff1f",
+      "targetTitle": "Instant actions and MOM or IAM contract calls are excluded f"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Ecosystem Spell Validation deliberately checks less than development review, targeting only the deployed bytecode",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e1cc6586-337a-4e89-a608-30787b4e51ee",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9f421fe-4cb0-4b8f-998b-63c1703555e6",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f5dbadf-12e6-4474-be47-09448eab7b81",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.1.8 defines Ecosystem Spell Validation as \"the process of performing a set of checks and high-level review of a specific Spell's code as it exists on the blockchain (referred to as a 'deployed Spell'),\" and then states its limits directly: \"This process applies only to the deployed Spell and is not as comprehensive as the reviews conducted during the Spell development process by the Spell Reviewers. The purpose of Spell validation is to validate the safety of the current Spell in respect to its security impacts in relation to Sky Protocol smart contracts.\"\n\nThe explicit disclaimer of comprehensiveness is the valuable part. Validation is answering a *different question* from review, not doing a weaker version of the same job. Review asks whether the code correctly implements the intended actions; validation asks whether the thing actually on chain is safe with respect to the protocol's contracts. One is a correctness check on a draft; the other is a safety check on the artefact that will execute.\n\nThat distinction is what makes the Atlas's other rules about validation legible. Tier 2 breach item 6 (A.1.6.6.1.2) conditions its prohibition on a Spell that \"does not fail Spell validation\" \u2014 a delegate is expected to check validation status, which is achievable, rather than to have independently audited the code, which is not. And A.1.10.2.2.4.1 says Aligned Delegates \"validate and vote on Executive Votes, and should inform the community about their validation of a Spell.\"\n\nThe honesty here also marks a limit worth remembering. Between the reviewed source on GitHub and the deployed bytecode sits a gap that validation only partly covers; the Governance Point's code-matching duty (A.1.10.2.2.1.2) and the Executive Document hash embedded in the Spell (A.1.10.2.1.3) cover the rest. No single control spans it, which is why the framework stacks three partial ones.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.1.8 scopes validation to a set of checks and high-level review of the Spell as it exists on chain, explicitly less comprehensive than what Spell Reviewers performed earlier.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

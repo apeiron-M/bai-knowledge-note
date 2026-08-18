@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Custody is separated from control: the ALM Proxy holds the funds but only executes what the Controller directs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "da913be8-070c-44ad-9a82-d751e5991628",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a7e03b4-5945-4bdf-9336-7212d1834f69",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "884df4bc-e585-464e-89fb-2f9946bcc382",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5dbbff9e-f8a9-4949-b0c4-237787cfc03c",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.1.1.1.4.1 describes each Diamond PAU contract by function, and the division is precise. The **ALM Proxy** \"custodies the Instance's funds and routes calls to external contracts as directed by the Controller contract.\" The **Controller** \"is the entry point for all allocator operations; it synchronizes integration configurations from the Beacon contract and dispatches calls to the appropriate facet contract.\" **AccessControls** \"manages the roles and permissions.\" **ALM Rate Limits** \"enforces the rate limits on operations performed through the Controller contract.\"\n\nThe security property is that **value and authority live in different contracts**. The contract holding the assets has no decision logic of its own \u2014 it is a passive executor. The contract with the decision logic never holds assets. Compromising the Proxy yields custody of funds with no way to direct them; compromising the Controller yields direction with no direct access to funds, and any instruction it issues still has to pass the rate limiter.\n\nMaking Rate Limits a **separate contract** rather than a modifier inside the Controller matters for the same reason: the cap is not something the Controller can waive as part of its own logic. It is an external check on the path every operation takes.\n\nThe residual concentration is the Controller as \"the entry point for **all** allocator operations.\" It is a chokepoint by design \u2014 which is what makes the Freezer Role meaningful, since halting one contract halts everything, but also means a Controller-level flaw is not compartmentalized by the split.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:02:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Four contracts split the job \u2014 Proxy custodies and routes, Controller decides and dispatches, AccessControls grants roles, RateLimits caps throughput",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-f636d30f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f636d30f-e44c-497b-8aa9-aa1e42a1ff1f",
+      "targetTitle": "Instant actions and MOM or IAM contract calls are excluded f"
+    },
+    {
+      "id": "lnk-f02d3401-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f02d3401-6302-4fc9-b0c9-c483fdb29796",
+      "targetTitle": "A change to the GSM Pause Delay is itself subject to the pre"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Sky Protocol has exactly one GSM Pause Delay, so any faster path requires engineering a documented exception",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e66871be-9439-4267-af89-23a6913dc678",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f7a393e0-7d49-46dc-8f2d-f9b023931a17",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "86449c11-17ee-4cea-bb32-eefeb71df4e3",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.3.1 defines the GSM Pause Delay as the parameter that \"sets the minimum amount of time after an Executive Vote has passed before changes will come into effect,\" and adds the structural fact: \"**The Sky Protocol only has one GSM Pause Delay, and all parameter changes are subject to it.**\" Bypassing is possible but costly: \"It is possible to move functionality outside of the GSM Pause Delay; however, this requires additional engineering work.\"\n\nOne global delay is a strong simplification. Every action gets the same review window regardless of its risk, and there is no dial for making routine changes fast or dangerous ones slow. That is what makes the validation process coherent \u2014 Ecosystem Validators always have the same period, and a voter reading \"48 hours\" knows it applies to everything in the Spell.\n\nThe cost is that the single parameter must satisfy incompatible requirements at once: long enough to catch a governance attack, short enough to respond to a market crisis. It cannot be both, which is why the Atlas ends up with twelve documented exceptions at A.1.10.3.2.\n\nCrucially, each exception has to be *built*: a MOM contract, a breaker, a BEAM. That is a real and useful friction. Because a bypass is a deployed artifact rather than a configuration flag, it must be designed, audited, onboarded through a Spell and documented in the Atlas \u2014 so exceptions accumulate visibly and deliberately rather than by discretionary exemption.\n\nThe architecture therefore trades flexibility for enumerability. You cannot ask what delay applies to an action; you ask whether an exception exists, and every exception is on a list.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.3.1 makes the delay a single global parameter applying to all parameter changes; per-action agility cannot be tuned, only bypassed via purpose-built contracts.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

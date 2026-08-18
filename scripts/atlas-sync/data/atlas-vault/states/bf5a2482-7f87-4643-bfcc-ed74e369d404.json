@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Multi-asset venues are represented by repeating the singular Underlying Asset Address slot rather than by a list",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4bd7e277-533c-4e56-a52a-ae4e3142725c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "584769b2-3197-4000-9fcf-d1a7b955c8e0",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c0e2c5cd-9a9b-4f24-9161-82dfab2d068b",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d229373-d885-400b-8d32-138ac25ec946",
+      "name": "documentation-quality",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Curve sUSDS/USDT instance has two children both titled `Underlying Asset Address`: A.6.1.1.1.2.6.1.3.1.7.1.2.2.2 holding the USDT address and .7.1.2.2.3 holding the sUSDS address. USDC/USDT (.7.2.2.2.2, .7.2.2.2.3), weETH/WETH-ng (.7.5.2.2.2, .7.5.2.2.3) and rlUSD/USDC (.7.6.2.2.2, .7.6.2.2.3) repeat the pattern.\n\nThe slot was designed for single-asset conduits, where one supplied asset maps to one receipt token. A Curve pool has two underlying assets and no single 'underlying', so the template accommodates it by instantiating the same named slot twice with different numeric suffixes.\n\nThis costs referential clarity. The Atlas addresses content by path, and here the path is the only thing distinguishing the two entries \u2014 a reference to \"the Underlying Asset Address\" of a Curve instance is ambiguous, and nothing in either document says which leg of the pair it is or which position it occupies in the pool. A reader must recognise the token from the raw address.\n\nThe inconsistency runs further: pyUSD/USDC (.7.3.2.2) and pyUSD/USDS (.7.4.2.2) omit underlying addresses altogether and list only a Token Address, while weETH/WETH-ng and rlUSD/USDC add a `Pool Address` equal to their Token Address that the other Curve instances lack. Six instances of the same protocol carry four different field layouts \u2014 the schema's uniformity holds for the venue types it was designed around and degrades quietly for the ones it was not.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:02.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Curve two-asset pools carry two sibling documents with the identical title Underlying Asset Address, so the pool's composition is expressed by duplication in a schema designed for one asset.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

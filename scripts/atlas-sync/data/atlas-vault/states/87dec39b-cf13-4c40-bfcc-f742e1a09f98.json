@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Loan enforcement is delegated to a collateral agent that may be an affiliate of the custodian holding the collateral",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3ca290dd-9e3a-4b40-9d88-d58865db549e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1552badd-2943-4be9-8e66-e1a5a9474f91",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5e067194-eedc-43d6-adc7-dbaf55a8f493",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "873be8b6-52a1-406c-8689-f3a91e6abfe6",
+      "name": "governance-tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.8.2.3.1.2 defines the collateral agent as performing \"certain critical loan servicing functions on behalf of Spark Asset Foundation as lender, including issuing margin calls, performing liquidations, returning loan proceeds to the lender and excess collateral or liquidation proceeds to borrowers.\" It then permits the arrangement Spark actually uses: \"This service may be provided by **an affiliate of the venue/custodian**, or by a third party. One venue may have multiple approved collateral agents, each with their own maximum exposure limit.\"\n\nThe live configuration (A.6.1.1.1.3.8.2.3.2.1) is a single venue: Anchorage, \"approved to hold collateral as well as lending liquidity related to such loans,\" venue exposure limit $1 billion, with one collateral agent \u2014 **Anchorage Innovations** \u2014 also at $1 billion.\n\nThree things follow. First, every enforcement action Spark relies on is executed by someone else: Spark does not call margin, does not liquidate, and does not control the return of proceeds. Second, the party enforcing is affiliated with the party holding, so the separation the definition contemplates is not realized in practice \u2014 a dispute over whether a liquidation was timely or correctly priced is a dispute with one corporate group that sits on both sides of it. Third, the two limits being equal means the per-agent cap adds no diversification: there is no second agent to fall back to, and the entire program's capacity is concentrated in one relationship.\n\nThe structure is not unusual for institutional crypto lending \u2014 qualified custodians with in-house agency services are the norm, and Anchorage's federal charter is presumably the reason it is the sole venue. But the Artifact's own vocabulary anticipates multiple venues and multiple agents with separate limits, and that machinery is currently unused. The concentration is a fact about today's configuration rather than a limit of the framework.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The agent issues margin calls, performs liquidations and returns proceeds; Spark's sole approved venue is Anchorage with Anchorage Innovations as agent, both at identical 1 billion limits.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

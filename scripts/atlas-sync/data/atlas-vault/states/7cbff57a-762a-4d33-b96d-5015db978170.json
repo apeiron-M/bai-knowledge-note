@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "On-chain Verifiable Risk Capital is deliberately not equivalent to Total Risk Capital",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1f7f166f-16df-41d5-a605-f0c7c58ea55a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "14e52952-ece0-4a33-9cd4-357ae54b872f",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "411c34cf-840e-4230-89b3-6acd957412a4",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.3.2.1.3.1 defines OVRC as the on-chain, verifiable risk-capital components a near-real-time monitor can track, then states plainly: \"OVRC is not necessarily equivalent to Total Risk Capital (TRC). A Prime Agent's actual TRC cannot be determined definitively without accounting for off-chain agreements, encumbrances or other relevant conditions affecting capital eligibility or availability.\"\n\nA.2.2.10.1.1.3.2.1.2.3.1 gives the concrete failure modes: \"On-chain data alone... cannot definitively prove the full eligibility and unimpaired availability of a Prime Agent's capital position,\" naming Prime-initiated off-chain contractual pledges, bridged assets whose \"economic value or redeemability... is compromised by issues with their originating bridge,\" and assets \"encumbered by derivative structures or other off-chain commitments.\"\n\nThe important direction is that the error is one-sided. Every named failure mode makes visible capital *less* usable than it appears, so OVRC systematically overstates rather than understates a Prime's true position. A monitor reading only chain state is therefore not conservative \u2014 it is optimistic, which is the wrong bias for a solvency control.\n\nNaming the residual gap rather than claiming on-chain verifiability is what justifies keeping a human attestation regime alongside automation. A.2.2.10.1.1.3.2.1.2.3.1 extends this even to the fully-automated future state: the TRC Report \"may remain necessary to cover elements of TRC verification that are not fully able to be automated or require explicit Prime Agent declaration.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "OVRC is what an autonomous monitor can see; off-chain pledges, impaired bridged assets and derivative encumbrances can make real TRC lower, so the gap must be closed by Prime attestation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

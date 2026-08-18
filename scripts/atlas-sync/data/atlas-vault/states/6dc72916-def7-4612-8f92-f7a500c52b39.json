@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Shadow Delegates hold real delegated voting power with none of the Aligned Delegate requirements",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "db35b850-2bce-407d-bff3-fbba857938c2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c0d3d43-a391-4145-83cb-0bdb652a0ee5",
+      "name": "aligned-delegates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5de6639-58a6-4e93-984c-a289f092c707",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.2.4.2 introduces a second delegation channel in three sentences: \"Shadow Delegates serve as alternative representatives for SKY holders who delegate their tokens. They are not officially recorded in the Atlas and do not receive any compensation from Sky. They may participate in governance decisions and vote on behalf of their delegators.\"\n\nThe consequence deserves stating plainly. Every constraint the Governance Scope places on delegated voting power applies only to **Aligned** Delegates: mandatory anonymity and opsec (A.1.5.7, A.1.6.7), the single-role prohibition (A.1.5.5), 75% participation with vote timeliness (A.1.6.2.1), substantive vote explanations (A.1.6.2.2), the kickback ban (A.1.6.5), the two-tier breach framework and estoppel rule (A.1.6.6), 51% derecognition on misalignment (A.1.5.4.0.4.1), and the inverted burden of proof (A.1.5.9.0.4.2). A Shadow Delegate is subject to none of it, while casting votes with the same mechanical weight.\n\nThe design logic is defensible: the requirements are enforced through *recognition and compensation*, which are the only levers the ecosystem holds. There is no way to prevent a SKY holder delegating to whoever they like \u2014 delegation is a smart-contract capability, and A.1.6.3.0.3.1 confirms holders retain full ownership throughout. Rather than pretend to forbid unrecognized delegation, the Atlas names it and declines to fund it.\n\nBut it means the AD regime is a **voluntary premium tier**, not a gate on delegated power. Its severity applies precisely to those who opted into accountability in exchange for budget. An actor unwilling to accept the 51% standard, the anonymity requirement, or the single-role restriction can operate as a Shadow Delegate with no compliance burden at all \u2014 forgoing pay and Atlas listing, keeping the votes.\n\nThe kickback ban is the sharpest illustration: it constrains only delegates who receive Sky compensation to rebate. Nothing in this Section addresses a Shadow Delegate compensating delegators from other sources.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.2.4.2 defines them as unlisted, uncompensated representatives who may vote for delegators \u2014 outside the entire Alignment Conserver regime of opsec, participation and derecognition rules.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

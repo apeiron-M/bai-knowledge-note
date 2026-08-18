@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove states some exposure ceilings at asset level across Instances while filing them inside a single Instance's document",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "663f003d-bf57-4b15-a0f4-0026aaf985ab",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c17c54b-da0b-4702-8d66-f2c6876a02d2",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d46e9dd1-80c0-4f9f-a949-e629be64e202",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9986b07d-1a3a-4be0-b56d-cb1d677f2466",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.7.1.1.2.5.1 reads in full: \"**Total USDG exposure** may not exceed 100 million USDS.\"\n\nThe scope is the notable part. Elsewhere the same field is Instance-bounded \u2014 the Grove Diamond PAU Instance says \"total exposure **through this Instance**.\" Here it is stated over an *asset*, so it binds every route by which Grove can come to hold USDG, including the Morpho vault it is filed under and the two Paxos conduits that mint and redeem USDG.\n\nThis is the aggregation mechanism whose absence is conspicuous elsewhere in the Artifact. Where JTRSY exposure is bounded twice with no cross-network total, and the Tokenized Treasury Instances share a $5 million cap that no aggregate limit enforces, USDG gets a genuine ceiling spanning conduits.\n\nBut the placement undercuts it. A ceiling with cross-Instance scope sits inside one Instance's *Off-chain Operational Parameters*, at the same depth as parameters that bind only that Instance. A reader working through the USDG To USDC Via Paxos Instance (A.6.1.1.2.2.6.1.3.7.2.1) encounters a 50,000,000 USDG transferAssets limit and nothing indicating that a 100 million USDS asset-level ceiling also applies to it.\n\nSo the Artifact does have aggregate limits; it has no place to put them. The same field name carries two different scopes depending on how the sentence is phrased, and only prose distinguishes \"through this Instance\" from \"total.\" Any reliable reading of Grove's real ceilings therefore requires reading every Instance's off-chain parameters, not just the ones for the asset in question \u2014 the structure gives no index of cross-cutting constraints.\n\nNote also the unit: a USDG ceiling denominated in USDS, extending the denomination inconsistency that runs through the rate limits.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "'Total USDG exposure may not exceed 100 million USDS' governs every USDG conduit, but appears only under the Morpho vault Instance where a reader scanning other USDG Instances would not find it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

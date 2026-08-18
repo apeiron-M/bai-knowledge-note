@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-f1455e1e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1455e1e-054f-4eeb-a917-30c1e207d4d5",
+      "targetTitle": "The Curve and Morpho Integration Boost Instances name an ide"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Integration Boost and Distribution Reward stack on the same balances, with a no-double-payment rule and a shared measurement",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b9f93a47-103b-4cc6-806c-263506c45a0a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5bc045a5-2031-48f0-b8b3-0c434c5c9a5d",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "67951da0-8c78-4597-8bfd-684b3a2ede71",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.2.2.1.4 makes the two Demand Side Primitives composable: \"Net USDS balances held in a DeFi protocol that is receiving an Integration Boost also receive the Distribution Reward.\" Two subdocuments then make the combination safe and cheap.\n\nSafe: A.2.2.9.2.2.1.4.2 restricts stacking \u2014 \"Distribution Reward may only be paid on net USDS balances of an Integration Boost partner **to the extent that a Distribution Reward is not already being paid on those balances**.\" This is the same no-double-count invariant that governs Tracking Methodologies generally (A.2.2.9.1.2.1.1.2.4), applied at the point where two Primitives could each claim the same balance.\n\nCheap: A.2.2.9.2.2.1.4.1 reuses the measurement \u2014 \"The methodology used to report net USDS balances in the protocol for the Integration Boost is itself an acceptable Tracking Methodology for purposes of the Distribution Reward.\" A partner that has already satisfied the Boost's on-chain verifiability requirement does not have to build or get approval for a second measurement to receive the Reward.\n\nThe combination is what makes the two Primitives economically coherent. The Boost replaces the yield an integrated user would have had; the Reward pays the party that brought the balance in. They compensate different things about the same deposit, so stacking is correct \u2014 and the shared methodology means the incremental cost of collecting both is close to zero, which is why A.2.2.9.2.2.3.1.2 has Prime Agents weigh Distribution Reward earnings against the cost of funding the Boost as a single decision.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Net USDS in a boosted protocol also earns the Distribution Reward \u2014 but only where one is not already paid \u2014 and the Boost's net-balance reporting is itself a valid DR Tracking Methodology.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

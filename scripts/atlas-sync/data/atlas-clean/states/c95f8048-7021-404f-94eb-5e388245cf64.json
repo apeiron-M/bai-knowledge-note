@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Reversing an operation credits its rate limit rather than consuming a separate one",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1e6211e0-ab50-4297-841d-3f9033a61d1b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3fb4dd09-0bc1-44e6-846d-3185ab5d9f4a",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf6b91ee-6a1c-4af0-bef3-6ac4043b7abe",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "55a59704-6b96-4ff5-ae85-675c24973513",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two forward operations consume capacity: `mintUSDS` is `rateLimited(LIMIT_USDS_MINT, usdsAmount)` and `swapUSDSToUSDC` is `rateLimited(LIMIT_USDS_TO_USDC, usdcAmount)`. Their inverses do the opposite. `burnUSDS` calls `cancelRateLimit(LIMIT_USDS_MINT, usdsAmount)` (A.6.1.1.1.2.6.1.2.2.1.2.1.2.1.2.2) and `swapUSDCToUSDS` calls `cancelRateLimit(LIMIT_USDS_TO_USDC, usdcAmount)` (A.6.1.1.1.2.6.1.2.2.1.2.1.2.4.2.2).\n\nA rate limit therefore tracks a **net position**, not gross throughput. Minting draws down the bucket; burning refills it immediately rather than waiting for the daily slope. A round trip that ends where it started leaves capacity unchanged.\n\nThis resolves what looks like a contradiction in the parameters. `LIMIT_USDS_BURN` is set to `maxAmount`: 0 with `slope`: 0, which reads as \"burning is forbidden\" \u2014 yet burning is a documented Relayer operation. Burning is not governed by the burn limit at all; it is governed as a credit to the mint limit. The zero burn limit is simply an unused parameter.\n\nThe design consequence is significant for operations: unwinding a position is never blocked by rate limits, and cannot be. Only expanding exposure consumes capacity. That is the correct asymmetry for a risk control \u2014 the limits throttle growth of risk while leaving the exit path unrestricted, so a de-risking operator is never rate-limited out of reducing exposure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:54:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:54:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "burnUSDS calls cancelRateLimit(LIMIT_USDS_MINT) and swapUSDCToUSDS calls cancelRateLimit(LIMIT_USDS_TO_USDC), so unwinding restores capacity \u2014 which is why the USDS burn limit can safely be zero.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

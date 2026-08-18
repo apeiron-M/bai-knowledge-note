@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Contracts added to the Chainlog should be validated when added, even if they will not execute for months",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9521e28e-e1b7-4d07-91cd-1cbeb644014a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f074c79-42ce-4d1b-b8cc-cb02ea6e3362",
+      "name": "verification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b6fed0d1-963e-4e6e-9051-632da90b3a5b",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Beyond the mandatory scope, A.1.10.2.4.12.1.3 adds a recommendation: \"Validators should also consider validating the source code or associated audits for contracts added to the Chainlog as part of a Spell, even if these contracts are not immediately executed or fall outside the standard validation scope. **This includes pre-deployed emergency Spell contracts, ensuring that their integrity and security are assessed at the time of addition** to the Chainlog for potential future use.\"\n\nThe timing argument is the substance. An emergency Spell is deployed in advance precisely so it can be fired without the normal cycle. When it is eventually used, there will be no validation window, no GovOps meeting and no deliberation \u2014 that is the point of having it ready.\n\nSo the only moment at which such a contract can receive unhurried, independent scrutiny is the calm moment when it is quietly added to the Chainlog as one line in an ordinary Spell. That is also the moment when attention is lowest, because nothing appears to be happening.\n\nThe general pattern is that an artifact's review should happen when its *future* use will be unreviewable, not when it is used. The same reasoning underlies validating the whitelist rather than the execution for StarGuard Agent Spells: scrutiny attaches to the moment authority is granted, because the moment it is exercised may not permit any.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:27.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.1.3 names pre-deployed emergency Spell contracts specifically \u2014 their eventual use will be under conditions that leave no time for review.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

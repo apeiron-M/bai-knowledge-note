@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The BEAM Operator Multisig is controlled entirely by one organization because the envelope, not the signer set, is the safeguard",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "18181470-0d4e-42dc-a7c9-c1abc1ac21f2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07ec842d-a323-443c-a733-6dccee01e23f",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f22a92cc-e8ce-440a-9fbf-848e19e84c93",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "13a88bf1-7b6b-4e61-b9da-fc723bbb6bad",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.8.4.1 makes the Operator Multisig \"an Operator of the stUSDS BEAM ... controlled by Core GovOps,\" with a 2/3 threshold (A.4.4.1.3.8.4.1.2) and \"three (3) addresses controlled by Core GovOps\" (A.4.4.1.3.8.4.1.3). Core GovOps may change the signers \"at any time, so long as there are at least three (3) signers and at least a majority of signers are required to execute transactions\" (A.4.4.1.3.8.4.1.5).\n\nThe contrast with the SkyLink freezer multisigs is instructive. Those are specified down to how many seats each *distinct organization* holds, and modification clauses preserve that split. Here there is no inter-organizational requirement at all: one entity holds every key and may rotate them freely, subject only to a floor on set size and a majority rule.\n\nThe difference is what the key can do. A freezer key exercises discretionary emergency power over the whole bridge fleet. A BEAM operator key can only move four parameters, only within governance-set `min`/`max`, only by one `step`, and only once per `tau` \u2014 with revocation available by Executive Vote. Its worst case is a bounded, slow, reversible parameter drift.\n\nSo Sky spends its multi-organization requirements where they buy something, and accepts single-organization control where the mathematics already contains the risk. The corollary is a dependency worth stating: the safety of this arrangement rests entirely on the BEAM bounds being set correctly. Widen `step`, lengthen the `min`/`max` range, or shorten `tau`, and a single organization's key compromise becomes materially more damaging without any change to the signer structure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A 2-of-3 with all three addresses held by Core GovOps would be unacceptable for open-ended power, but is adequate for authority already bounded by min, max, step and tau.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

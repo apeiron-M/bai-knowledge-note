@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limit configuration doubles as the vault whitelist, so permission and sizing are one mechanism",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "158854b9-4bfb-404d-a19d-d94ffc7dc4fc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0559973-ad1b-45dd-8b93-267345f6ac77",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "debb0da7-7858-455f-b021-3f718afe2f2a",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "db97f5e5-ce53-41a4-8daf-5e16c3605fe0",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.1.1.2.1.2.3.1.1, specifying `depositERC4626`, contains a one-line design decision: \"the rate limit configuration serves as whitelisting for vaults.\"\n\nCollapsing two controls into one is elegant. There is no separate allowlist contract to keep synchronized, and no possibility of the two disagreeing \u2014 a vault Keel may use is exactly a vault with a configured limit, and a vault with no configured limit is unreachable because the deposit fails the limit check. Permission becomes a special case of sizing, where zero capacity means no permission.\n\nThe cost is expressive: revoking access and setting a limit to zero are the same action, so the Artifact cannot distinguish \"this venue is forbidden\" from \"this venue is temporarily full.\" Intent has to be recorded in the document rather than in the contract state.\n\nThis also explains why the Allocation System's Instance-per-(chain, venue, asset) structure matters operationally. Each Instance corresponds to a rate limit entry, so invoking a new Instance through the Root Edit process is what ultimately produces the configuration that whitelists a venue \u2014 the governance act and the technical permission are the same act viewed from two levels.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The ERC-4626 deposit spec states plainly that 'the rate limit configuration serves as whitelisting for vaults': an unconfigured vault has no limit, so any deposit into it reverts.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

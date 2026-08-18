@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-95dd9023-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "95dd9023-73a3-46ab-b5ce-860b5ab5ce08",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Curve and Morpho Integration Boost Instances name an identical reward address",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f51b509e-d038-46af-bccb-53645d79562f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7c637633-63bf-4f53-82bd-8089d82d928f",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d7e188f6-bf13-4f3c-acec-bc26086d2d3a",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5deaa975-ad72-4da5-b195-b0e22cec7e31",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.4.2.5.2.2.2.1.2 gives the Curve reward address as `0xa7843f843d29ca33ba48d9d1335b774eecc328dc`. A.6.1.1.4.2.5.2.2.3.1.2 gives the Morpho reward address as the same string. The two Base-chain Instances, Euler and Compound, each have distinct addresses.\n\nTwo readings are possible, and the Artifact does not disambiguate. Either the field names a Sky-side distribution contract that fans rewards out to Mainnet integrations \u2014 in which case the label \"Integration Partner Reward Address\" is misleading, since it is not the partner's address \u2014 or it is a copy-paste error in a `[Core]` parameter that determines where money goes.\n\nEither way it complicates a reader's ability to audit payments per partner. The Payment Details schema used in the Distribution Reward primitive ties each payment to a Payment Address, which only distinguishes payees if addresses are unique per payee. Two Instances sharing an address means on-chain transfers to it cannot be attributed to Curve versus Morpho from the Artifact alone.\n\nThe pattern \u2014 distinct addresses on Base, one shared address on Mainnet \u2014 is at least suggestive of a routing contract rather than an error, since a mistake would be unlikely to respect the chain boundary so cleanly. But that is inference, not something the document states, which is itself the finding: a parameter this load-bearing should not require inference.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both record `0xa7843f843d29ca33ba48d9d1335b774eecc328dc`, so on Mainnet the Integration Partner Reward Address designates a shared payment route rather than a partner-controlled wallet.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

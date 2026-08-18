@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rewards are paid monthly but verified quarterly, so the Executor carries the outlay until an Executive Vote reimburses it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ec66f1c6-8cf5-4570-8cb9-f045d27969d2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a336216-6b9a-4d7c-b821-1ba66f843be2",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ff2a1ae8-2263-4dd7-ba6d-fd1e7ca1acdf",
+      "name": "settlement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Routine Protocol chains four Process Definitions in a specific order: calculation (A.2.2.9.1.2.4.1.1) triggered on the 1st of each month, payment from the Operational Executor Agent Buffer (A.2.2.9.1.2.4.1.2) triggered by the calculation being recorded, Settlement Cycle and Core GovOps review (A.2.2.9.1.2.4.1.3) triggered \"at the beginning of every calendar quarter,\" and Executive Vote Reimbursement (A.2.2.9.1.2.4.1.4) triggered by the confirmed reimbursement being written to Sky Core Active Data.\n\nThe ordering means **money moves before it is checked**. Operational GovOps pays the recipient from its own Buffer on a monthly cadence; Core GovOps reviews \"underlying data and calculation of balances and rewards due\" only quarterly; and the funds return to the Executor's Buffer only after a standard Executive Vote passes.\n\nThe Executor is therefore financing up to a quarter of reward payments plus the Executive Vote lag, on its own balance sheet, for calculations that Sky may subsequently find inaccurate. That is a substantial working-capital requirement and a real credit exposure to Sky Core, and it is the concrete content of the claim in A.2.2.9.1.2.1.3.3.2 that this arrangement \"minimizes the role of Sky Core.\"\n\nThe upside is recipient experience: an Integrator's reward arrives on a monthly rhythm that no governance vote can delay, because the vote sits behind the payment rather than in front of it. Verification and funding are moved off the critical path, which is exactly what makes routine payments routine.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operational GovOps pays from its own Buffer each month; Core GovOps reviews accuracy at the start of each quarter; only then does reimbursement enter a standard Executive Vote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

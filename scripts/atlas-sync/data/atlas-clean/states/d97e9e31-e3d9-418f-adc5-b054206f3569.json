@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Administered flat CRRs increasingly displace the modelled calculation for named venues, with exposure caps doing the real limiting",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "71af506a-1181-4584-9902-ebcf00a5ff36",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b66bf4e-e8ce-41c0-b509-73506a670abc",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2667c228-c47b-45b1-862b-6896d4382b87",
+      "name": "risk-modeling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.1 defines an elaborate five-step model for lending-market capital: probability of default from a structural collateral/debt model, loss given default from liquidation penalty and slippage, a stress-interpolated asset correlation, a 99.9%-quantile capital requirement and an 8.75% capital ratio. A.3.2.2.1.1.1.1.3 then lists ten exceptions, and the exceptions are where much of the real capital allocation happens.\n\nMaple SyrupUSDC, Fluid, Anchorage offchain BTC lending and the AUSD/USDC Uniswap v3 pool via FalconX each simply receive a 3% CRR; Galaxy Warehouse gets 2%; Kamino and Drift get per-market tables ranging from 0.75% to 4.98%. These are stated values, not model outputs, and several come paired with hard ceilings \u2014 25,000,000 USDS each for Kamino and Drift, 500,000,000 USD for Anchorage and for Galaxy Warehouse, 100,000,000 USDS combined for FalconX allocations.\n\nThe observation worth recording is the division of labour this implies. Where the model applies, risk is controlled by *price* (a capital charge that scales with exposure). Where it does not, risk is controlled by *quantity* (a flat charge plus an absolute cap). The cap is doing the work the model cannot, because a flat CRR by construction does not increase as a position grows \u2014 precisely the concentration effect A.3.2.1.1.5.3 identifies as the dangerous one.\n\nSome exceptions are genuine model refinements rather than substitutions. A.3.2.2.1.1.1.1.3.4 adjusts an input rather than the output: because \"Aave and SparkLend liquidate a maximum of 50% of a user's position,\" the slippage parameter should reflect liquidating half the position, not all of it. A.3.2.2.1.1.1.1.3.3 applies look-through treatment, carving Ethena-backed collateral out of the lending-market calculation and routing it to the Ethena-specific CRR, \"calculated based on the proportional debt amount backed by Ethena-related assets, weighted by the collateral amount times liquidation threshold\" \u2014 refusing to let a wrapper hide the underlying risk.\n\nA.3.2.2.1.1.1.1.2 keeps the boundary permissioned and public: the model covers Aave v2/v3, SparkLend, Morpho and Maple, and applying it to any other protocol requires Core Executor Agent approval after consulting the Core Council Risk Advisor, \"posted to the Sky Forum under the category for the Prime Agent.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Maple, Fluid, Anchorage, Galaxy, Kamino, Drift and a Uniswap pool all receive stated CRRs plus hard exposure ceilings instead of the Basel-style model output for lending markets.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

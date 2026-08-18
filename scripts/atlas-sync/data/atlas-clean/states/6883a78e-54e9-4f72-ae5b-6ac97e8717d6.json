@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-799eb130-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "799eb130-f85f-4f2e-ba03-48585b32fe4b",
+      "targetTitle": "Triggering an Atlas Edit Proposal requires posting a bond th"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The AD Buffer withholds a delegate's earnings until a one-month reserve accumulates",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "808900a4-b70f-416a-8bbe-a931b237ee37",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9aea734d-1957-4e89-8759-40af5cc2a6fb",
+      "name": "aligned-delegates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1713574c-6eb5-4a65-bcff-fbd484b0e9f4",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.6.4.4 defines the AD Buffer as \"an account of USDS that begins accumulating funds when an Aligned Delegate attains Ranked Delegate status.\" Budget is credited to it continuously (A.1.6.4.2), but \"funds within the AD Buffer cannot be accessed or spent until they reach a minimum threshold equivalent to one (1) month's budget allocation based on the current level of the Ranked Delegate.\" Payouts then go \"to the address that controls the AD Delegate Contract,\" and may fund \"personal compensation, compensation for team members, research expenses, and other relevant activities.\"\n\nThree properties follow from routing pay through a locked buffer rather than paying directly.\n\nFirst, it creates an **always-present balance**. Because the delegate can never draw the account below one month of allocation, there is permanently something at stake \u2014 which is what makes A.1.6.4.4.3 workable: \"if the Core Facilitator finds that an AD has conducted a misaligned act warranting financial penalties or derecognition, such penalties may be deducted from the AD's Buffer.\" The buffer is a bond as much as a payroll account.\n\nSecond, it ties compensation to the **cryptographic identity** established at recognition. Payouts land at the address controlling the Delegate Contract, so money cannot be separated from the voting apparatus it is paid for \u2014 consistent with the two-signature recognition process in A.1.6.1.3.2.\n\nThird, the threshold scales with rank, so promotion increases the locked amount and demotion releases part of it. A.1.6.4.4.2 handles exit: if an AD is unranked for a whole month, the buffer contents \"can be paid out in the next monthly compensation cycle\" \u2014 the lock is on ongoing service, not a forfeiture.\n\nNR-10 flags the open edge: the listed permissible uses \"indicate[] implicitly constraints, or disallowed expenditures\" and asks \"how would compliance with these guidelines be monitored?\" Spending discretion is broad and its boundary is unmonitored.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.6.4.4 credits budget to a buffer that cannot be accessed until it holds one month's allocation at the delegate's current level, with payouts going to the Delegate Contract's controlling address.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

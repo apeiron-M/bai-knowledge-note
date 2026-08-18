@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Triggering eligibility is judged only at the instant of triggering, so later loss of rank is irrelevant",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7d19682b-d535-4c56-a488-66eae8ca3f40",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "51c2b631-8ba8-40eb-98a6-53582932333b",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "845ec442-72e7-4ecc-9abc-e916c9b60e14",
+      "name": "aligned-delegates",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Action Tenet at A.1.11.2.1.3.0.4.1 fixes the test to a moment: \"A Weekly Cycle Proposal is considered correctly triggered when the triggering Aligned Delegate is a Ranked Delegate with at least the Triggering Threshold in their AD Buffer **at the time of triggering**... It is inconsequential if, after triggering the Proposal, the Ranked Delegate loses their Ranked Delegate rank.\"\n\nThe scenario at A.1.11.2.1.3.0.4.1.1.1 confirms both parties act correctly in exactly that case \u2014 the delegate for triggering, and the Core Facilitator for continuing to prepare the Governance Poll.\n\nThis is a point-in-time qualification rather than a continuing condition, and the choice buys determinacy. A continuing requirement would make every in-flight proposal contingent on its sponsor's fluctuating rank, letting a proposal die for reasons unrelated to its merits and giving adversaries a way to kill amendments by attacking sponsors rather than arguments.\n\nNote the asymmetry it creates with the stake itself. Rank is tested once, but the staked USDS remains locked and forfeitable \"until the triggered Proposal is fully resolved\" per A.1.11.2.1.3.0.4.2. A delegate can therefore lose the status that entitled them to trigger while still bearing the full downside of having done so \u2014 the obligation outlives the qualification.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A proposal triggered by a qualified Ranked Delegate stays validly triggered even if the delegate immediately loses their rank; the Core Facilitator still prepares the Poll.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

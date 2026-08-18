@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "One-shot Primitives are structurally sealed after use rather than left available for re-invocation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b93c6fe8-9f9c-4f91-aaba-8ddac7663b13",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f7088638-5988-4422-aa37-9b03fd1b3e82",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3615348f-6af6-4c8f-82db-fcd5e0097926",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d05dd7e5-df5f-4747-8f5c-6f3a60f99039",
+      "name": "governance-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Four of Spark's Primitives repeat the same closing statement in both their In Progress Invocations directories and their Operational Process Definitions: because the Primitive \"is deployed solely for the one-time creation / transformation of the Agent\" (or \"the one-time deployment of the Agent's token\"), \"no further Instances of the Primitive can be Invoked\" and \"no further operational process is needed post-deployment\" \u2014 see A.6.1.1.1.2.1.1.1.4, A.6.1.1.1.2.1.2.1.4, A.6.1.1.1.2.1.3.4 and A.6.1.1.1.2.1.4.4.\n\nThis distinguishes **Genesis Primitives** from **Operational Primitives**. The Genesis set describes acts that constitute an entity \u2014 creating the Agent, typing it as a Prime Agent, deploying its token. Those acts are not repeatable without producing a different entity, so the Artifact closes the door explicitly instead of relying on nobody trying.\n\nBy contrast the Executor Accord Primitive (A.6.1.1.1.2.2.1) keeps a live In Progress Invocations Directory, because accords are ongoing operational instruments that get renewed and replaced.\n\nThe useful generalization: a governance framework needs to state which of its mechanisms are constitutive and therefore single-use, or a later actor can re-run a founding act and create ambiguity about which instance is authoritative.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Agent Creation, Prime Transformation, Executor Transformation and Agent Token all declare that no further Instances can ever be Invoked, and that no post-deployment process is needed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

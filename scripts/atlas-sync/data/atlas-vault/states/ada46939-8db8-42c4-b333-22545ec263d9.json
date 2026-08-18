@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every input to the Target SubDAO Proxy Value is a high-water mark rather than a current reading",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ca7490d9-3e30-4eaa-b2c0-ba744669160c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3c0b54d5-9c23-46f1-a198-03a8b0214b6e",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0f313f17-107b-4cc4-a316-43f421f06b4a",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.4.2.2.2 computes the Target SubDAO Proxy Value as \"the greater of Required Risk Capital (RRC) plus Spark Product Backstop, or Operational Expense Reserve\" \u2014 and each of those components is itself a maximum.\n\nRRC is \"the higher of current RRC or highest RRC incurred within the RRC Lookback Period\" (3 months), divided by the Risk Tolerance Ratio. The operational expense reserve is \"the higher of past month's operating expenses multiplied by Target Runway, or total operating expenses incurred in trailing period equal to Target Runway\" (12 months). The outer combination is a maximum too.\n\nFour `max` operations stacked on one figure is a deliberate posture, not redundancy. Each one closes a way the requirement could be understated by a favourable instantaneous reading:\n\n- A momentarily low RRC \u2014 because positions were briefly unwound \u2014 cannot drop the reserve floor; the trailing peak holds it up for three months.\n- A single cheap month cannot annualize into a low runway requirement; the trailing twelve-month total catches it.\n- Conversely a single *expensive* month is caught by the annualization, so the reserve rises immediately when spending accelerates rather than waiting a year for the trailing figure.\n\nThe consequence is a floor that ratchets up quickly and comes down slowly, and it matters because this number is the gate on buybacks: the excess available for SPK purchases is whatever sits above it. Every conservative choice in the formula is a choice to buy back less and hold more, which is precisely the direction a treasury policy should be biased when the alternative failure is insolvency.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:02.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "RRC takes the higher of current or trailing three-month peak, and the opex reserve the higher of last month annualized or the trailing twelve-month total, ratcheting the treasury floor upward.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

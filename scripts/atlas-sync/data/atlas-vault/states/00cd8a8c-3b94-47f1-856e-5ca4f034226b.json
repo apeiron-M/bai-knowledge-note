@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad391ba3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ad391ba3-5d45-49e9-88ee-c745aa961906",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Primitive Invocation must retain its planning, GovOps review and Artifact Edit Proposal materials inside the Artifact",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7b9e2c6d-81f6-44fe-a76c-138eb6d9a5a2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0ac98f2b-6c37-44df-95c7-26b3a7acb45e",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2cc09016-0a05-475f-b55e-34005b587e1b",
+      "name": "auditability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Instance Configuration Document contains a Data Repository whose subtrees are fixed and identical across primitives: Initial Planning, Operational GovOps Review, and Artifact Edit Proposal (A.6.1.1.8.2.1.1.3.1.3.1\u2013.3, mirrored at A.6.1.1.8.2.1.2.3.1.3.1\u2013.3 and A.6.1.1.8.2.1.4.2.1.3.1\u2013.3).\n\nRead as a sequence, these three slots describe the sanctioned route by which anything happens to an Agent: someone plans an Invocation, GovOps reviews it operationally, and the result is enacted as an edit to the Artifact. Nothing changes the Agent except by amending the document that specifies it.\n\nThe non-obvious part is where the evidence lives. Rather than keeping review records in an external process log, the Artifact reserves space for them beside the parameters they justify. Provenance is co-located with state, so a reader inspecting a parameter can reach the review that approved it without leaving the tree.\n\nThe trade-off is that the slots exist whether or not they are filled \u2014 the structure guarantees a place for the audit trail, not that the trail is complete.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:24.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Instance Configuration Document reserves the same three Data Repository slots, so the governance path that produced an Invocation stays auditable from the Artifact itself.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

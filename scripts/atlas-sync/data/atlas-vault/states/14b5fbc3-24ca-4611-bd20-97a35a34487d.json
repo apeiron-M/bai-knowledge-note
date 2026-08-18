@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Emergency multisig use is gated by a two-part test that turns on Executive Vote latency, not on severity alone",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8fcfaa2d-f03f-4cf5-ade8-a7cdea4dcb9c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0183c98d-20e1-4eff-bc48-44ee396774a5",
+      "name": "emergency-powers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f40843a4-0d7e-4a06-b95c-ae06b629fa19",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "227d17e2-32a2-4285-8ae6-9ac5fc0422aa",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The identical Usage Standards text appears for every freezer multisig (A.4.2.2.1.4, A.4.2.2.2.3.1.1.4, A.4.2.2.3.3.1.1.4, A.4.2.2.4.3.1.1.4). Use is confined to \"urgent or emergency situations (e.g., potential code exploits),\" and such situations are \"characterized by the fact that 1) they have the potential to harm the Sky Ecosystem or its users; and 2) the preparation time required for an Executive Vote would leave the ecosystem vulnerable to harm.\"\n\nCondition (2) is the interesting one. A severity-only test would license the multisig whenever the stakes were high \u2014 which is exactly when unilateral action is most tempting and most dangerous. By making the second condition a statement about *governance latency*, the Atlas defines emergency powers as a remedy for a timing gap rather than as a superior authority. If an Executive Vote could be prepared in time, the multisig is not authorized no matter how serious the issue.\n\nThe permitted purposes narrow it further: prevent technical vulnerabilities; prevent unwanted functionality of the smart contracts or corresponding parts of the system (price oracles are the given example); or prevent \"unwanted usage ... which deviates from intended behavior.\" All three are defensive and all three are about *preventing*, never about achieving an outcome.\n\nOversight is deliberately retrospective: \"The Core Council must ensure that use of the multisig is generally aligned and specifically accords with these requirements.\" Nobody pre-approves a freeze \u2014 that would reintroduce the latency the power exists to escape \u2014 so accountability lands after the fact, on a named body, against a written test.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A situation qualifies only if it can harm the ecosystem AND the preparation time for an Executive Vote would leave the ecosystem vulnerable \u2014 urgency, not seriousness, is what unlocks the bypass.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

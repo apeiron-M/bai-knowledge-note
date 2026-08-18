@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-f7433611-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7433611-7b88-42c2-9c74-eb9853d27991",
+      "targetTitle": "Cancellation is the one governance power Sky is willing to m"
+    },
+    {
+      "id": "lnk-aef96c92-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aef96c92-52ac-4bc2-9a38-a8fbc15213f3",
+      "targetTitle": "doc-6c43fa49"
+    },
+    {
+      "id": "lnk-137bc2f5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "137bc2f5-e31a-497f-8d54-ed072078e060",
+      "targetTitle": "The GSM Pause Delay's value is a dial between governance-att"
+    },
+    {
+      "id": "lnk-db294f6b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "db294f6b-a85b-457a-8992-06ad69d05408",
+      "targetTitle": "Cancellation parameters must be read from the Pause contract"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The GSM Pause Delay is a cancellation window, not merely a waiting period",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "da11ba01-7ba4-4cc7-ba1a-3da16bc7cc46",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "82af643e-d17c-42f5-81fe-3b91858b6bcd",
+      "name": "governance-security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a0fffa1-bef7-426a-aa96-cb4e382164f2",
+      "name": "pause-delay",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.5.3 defines Protego as \"a contract that allows Sky Governance to cancel the execution of planned governance actions that are awaiting the expiration of the Governance Security Module Pause Delay.\" A.1.10.5.3.1 spells out the sequence: changes are implemented as Spells approved by Executive Vote, those Spells have a time delay before taking effect, and \"in this period between approval and execution, the Protego contract allows for planned governance actions to be canceled.\"\n\nThis reframes what the GSM Pause Delay is for. Read as a delay, it merely slows governance down and gives observers time to notice a problem. Read with Protego, it becomes a *revocation interval*: the window exists so that a decision which has already passed can still be stopped.\n\nThat completes the security model. A delay without a cancellation mechanism only helps people who can exit the system before the change lands \u2014 it warns victims rather than preventing harm. Protego converts the same waiting period into an actionable veto, so noticing a malicious or defective Spell during the delay is sufficient to defeat it.\n\nThe cost is a new class of governance action to be secured, which is why A.1.10.5.3.2 mirrors the entire Standby Spell authorization process \u2014 Core Facilitator initiation, Core GovOps authenticity validation, AD preconditions, and the same derecognition penalty \u2014 around the power to cancel.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Protego lets Sky Governance drop planned governance actions after approval but before execution, turning the delay into an interval in which a passed vote can still be revoked.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Deposit slippage is checked against a TWAP-derived expectation, but withdrawal slippage only against post-execution amounts",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "5b2a50c0-0f06-4e98-a971-88a3592d395d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3328a158-eb52-456f-903b-b4b7c7362e06",
+      "name": "risk-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "10ff7c50-79bb-4acb-a4e6-b9d28bb9264f",
+      "name": "price-manipulation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.5.2.5.1.3 specifies the deposit-side check: \"Before depositing, the Uniswap v3 Facet checks the specified minimums against expected amounts derived from the pool's time-weighted average price, not its current spot price. Those minimums must in turn satisfy the configured maximum slippage for the pool.\"\n\nA.2.2.10.1.1.1.2.5.2.5.2.3 then names the contrast explicitly: \"Unlike the deposit-side check on adding liquidity, this check is against the amounts actually withdrawn, measured after the decrease and both collections have already executed; it is not checked against an independent price reference computed before execution.\"\n\nThe difference matters because the two checks defend against different things. A TWAP-anchored pre-check catches a caller-supplied minimum that is unreasonable relative to fair value \u2014 it constrains the *operator's judgment* and resists spot-price manipulation, since a flash-manipulated spot price cannot move a time-weighted average cheaply. A post-execution check only verifies that the caller's own minimum was met, whatever that minimum was worth.\n\nSo on withdrawals the only economic floor is the relayer's own number plus the configured maximum slippage applied to it. That is meaningfully weaker, and the Atlas's decision to document the asymmetry rather than paper over it makes it a tracked design gap rather than an accident of implementation.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas flags the asymmetry itself: the add-liquidity check has an independent price reference computed before execution, while remove-liquidity validates whatever the pool actually returned.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

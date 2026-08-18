@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-f1a6ad39-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1a6ad39-f60f-41c2-8c48-7b087679c412",
+      "targetTitle": "Sky retains the majority of each Prime's token supply and sp"
+    },
+    {
+      "id": "lnk-3ee72d45-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3ee72d45-41a6-4a89-8b59-0d5fc2e870a2",
+      "targetTitle": "doc-14435e44"
+    },
+    {
+      "id": "lnk-a349054d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a349054d-f01e-4557-836c-d2927ebf79fe",
+      "targetTitle": "SKY staking rewards are paid from Treasury revenue rather th"
+    },
+    {
+      "id": "lnk-b510648f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b510648f-606b-4295-a991-d50465f9f643",
+      "targetTitle": "doc-177e4775"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SKY rewards to USDS users are switched off while Agent-token rewards continue",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "27c854e1-367a-4ae0-986a-d576fd70bc74",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "031eba09-c6f8-4896-805a-81c6c83affc1",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a4f872de-1428-4c34-8265-90a8e337e00d",
+      "name": "token-rewards",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a7fd16cf-cc03-4716-9c92-080a7104e8b3",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.3.2 keeps the Token Rewards Mechanism in place as the way \"USDS users [may] potentially earn SKY and Agent token rewards,\" but the subdocuments split sharply. A.4.3.2.1: \"SKY token rewards are not currently available to USDS users.\" A.4.3.2.2 and A.4.3.2.3: SPK and GROVE rewards *are* available, on their own distribution schedules.\n\nRead against the tokenomics Article, this is the visible consequence of eliminating SKY emissions. SKY rewards were previously funded by minting; when that funding route was closed and the past emissions burned back, the SKY reward stream stopped rather than being re-funded from the protocol's holdings. The mechanism remains defined and wired up \u2014 \"not *currently* available\" \u2014 so it can be switched back on if a non-emissive funding source is chosen.\n\nMeanwhile the user-facing incentive did not disappear, because the same distribution machinery is now carrying Agent tokens. Spark's SPK and Grove's GROVE do the work SKY rewards used to do, and their issuance sits with the Agents rather than on Sky's own supply.\n\nThat is the structurally interesting part: holding USDS still earns tokens, but the dilution now happens on an Agent's balance sheet instead of the core token's. Sky preserved the growth incentive while moving its cost off SKY \u2014 worth noticing before concluding that closing SKY emissions removed reward-driven dilution from the ecosystem.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:20:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:20:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.4.3.2.1 records SKY rewards as unavailable, yet SPK and GROVE rewards remain live \u2014 the reward channel survives the removal of SKY emissions by paying in Agent tokens instead.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

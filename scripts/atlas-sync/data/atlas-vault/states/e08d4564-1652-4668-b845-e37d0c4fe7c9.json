@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Core Council Buffer's 5-of-6 threshold gives every signer group a veto but none unilateral control",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "49b896b9-9bef-440e-9995-b9b76a812bb7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c87406c3-2773-40fa-98ae-485074736420",
+      "name": "treasury",
+      "topicDocumentId": null
+    },
+    {
+      "id": "638d1a21-4c85-44cf-bd61-c2faea826e72",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.2.2.2.1 defines the Core Council Buffer as \"a multisig used to transfer funds on behalf of the Core Council,\" and A.2.3.1.2.2.2.1.4 requires signers to use it for Council disbursements. A.2.3.1.2.2.2.1.2 sets a 5/6 signing requirement, and A.2.3.1.2.2.2.1.3 gives the composition: \"two (2) addresses controlled by the Core Facilitator, three (3) addresses controlled by Core GovOps, and one (1) address controlled by Operational GovOps Soter Labs.\"\n\nThe arithmetic produces a specific balance of power. No group reaches the threshold alone \u2014 Core GovOps' three is the largest bloc and still two short \u2014 so every disbursement requires at least two of the three parties to act together. Conversely, any two withheld signatures block, which gives the Core Facilitator's pair and Core GovOps' trio an independent veto, while the single Soter Labs address has none.\n\nA 5/6 threshold is unusually tight for a spending multisig: only one signer may be unavailable before funds are frozen. That prioritises collusion resistance over operational resilience, which is a coherent choice for a buffer that disburses on a monthly settlement cadence rather than responding to emergencies.\n\nThe asymmetric lone signer is the interesting part. Including one outside operational party makes every payment observable to a participant who cannot obstruct it \u2014 a witness seat rather than a swing vote, keeping the audit benefit of an outside eye without giving one address the power to halt Council spending.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:26:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:26:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Signers are 2 Core Facilitator, 3 Core GovOps and 1 Operational GovOps addresses, so no group reaches 5 alone while any two refusals block a disbursement.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

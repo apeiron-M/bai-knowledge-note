@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-dbe6b922-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dbe6b922-491b-4254-9cd5-82548466f7cf",
+      "targetTitle": "The Atlas's Immutable Documents are amendable right up until"
+    },
+    {
+      "id": "lnk-fdfa3148-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fdfa3148-85fd-44e3-9faf-975bc5deb2a7",
+      "targetTitle": "Discretion beyond the documented list is permitted but must "
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Atlas updates after a Spell must not introduce any change beyond what the Spell outcome requires",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "5d2688a7-0dfe-499c-8864-ff155ea50e1b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0a31ebb6-b72f-40f6-b437-98b9dab5952e",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a966d985-9300-4033-aa9d-eff5ae39479d",
+      "name": "change-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.13.5 requires that after a Spell executes, \"the Atlas must be updated to accurately reflect the resulting changes,\" with the Core Facilitator responsible for Sky Core documents and the Operational Facilitator for the relevant Agent Artifacts. It then constrains the edit: \"The updates must be completed in a timely manner following Spell execution, and **must not introduce changes beyond those necessitated by the Spell outcome**.\"\n\nThe restriction matters because this edit is unusual: it is the one Atlas change that requires no proposal and no vote. Its authority comes from the vote that already happened, and it is a transcription of an accomplished fact rather than a decision.\n\nThat makes it an attractive place to smuggle. Post-execution updates are reviewed lightly precisely because they are supposed to be mechanical \u2014 nobody expects to find a policy change in a bookkeeping commit. Stating the limit explicitly turns any additional edit into a rule violation rather than a judgment call about scope.\n\nThe timeliness requirement guards the other direction. Between execution and update, the Atlas and the protocol disagree \u2014 the documented rate is not the live rate. Since the Atlas is itself a provenance source authorizing future actions (A.1.10.2.4.5.1.4), a stale Atlas can authorize an action against superseded facts. The drift window must be short.\n\nThe split of responsibility by artifact \u2014 Core Facilitator for the Atlas, Operational Facilitator for Agent Artifacts \u2014 keeps a single Spell's consequences flowing to whoever owns each affected document, which matters increasingly as Prime Agents move onto independent governance paths.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.13.5 makes post-execution synchronization purely mechanical, closing a route by which unvoted edits could enter the Atlas under cover of routine bookkeeping.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

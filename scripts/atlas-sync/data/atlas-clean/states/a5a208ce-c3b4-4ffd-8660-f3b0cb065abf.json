@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-ed99a5d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed99a5d7-4c51-44ec-b946-a1d5c91a8933",
+      "targetTitle": "Undercapitalization is penalized by the minute at annualized"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Low Yield collateral penalty multiplies excess by ten, so a ten-point overshoot erases all allocation profit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3779de4d-3a90-42e4-b97a-f7cfc0a2b227",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fb1811e4-35ab-408a-8a9a-05c3f8eb9167",
+      "name": "settlement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b7a59573-b034-429d-bdc4-208a1301ced7",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.4.1.2.2.1.1.2.3.2 sets the Low Yield Actively Stabilizing Collateral Penalty, \"as a percentage of the Total Allocation System Profit,\" at \"the lesser of (1) ten times the Excess Low Yield Actively Stabilizing Collateral Percentage and (2) 100%.\" A.2.4.1.2.2.1.1.2.3.2.1 defines that excess as the amount by which Low Yield ASC as a share of the Collateral Portfolio exceeds the Minimum Actively Stabilizing Collateral requirement as a share of the same portfolio, and A.2.4.1.2.2.1.1.2.3.2.1.1 defines Low Yield ASC as stabilizing collateral \"that earns less than the Agent Credit Line Borrow Rate.\"\n\nThe 10x multiplier is the design. A one-percentage-point overshoot costs 10% of allocation profit; ten points costs everything. The gradient is steep enough that holding excess low-yield collateral is never a marginally bad decision \u2014 it is quickly catastrophic to the Prime's earnings.\n\nThe behaviour being deterred is subtle. Stabilizing collateral is *required* up to a minimum, so a Prime cannot be penalised for holding it; the penalty targets holding **more** than required in instruments that earn less than the cost of the money funding them. Under the asymmetric profit floor that would otherwise be nearly free \u2014 the shortfall lands on Sky \u2014 so parking capital in safe, low-yielding assets while keeping upside elsewhere would be a rational play. This penalty prices it.\n\nCapping at 100% of profit rather than allowing a charge beyond it keeps the whole regime one-sided: penalties can zero out a Prime's earnings but never turn settlement into a net loss, preserving the same no-downside property the Distortion Penalty was written to counteract.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The penalty is the lesser of ten times the Excess Low Yield Actively Stabilizing Collateral Percentage and 100% of Total Allocation System Profit, making small excesses disproportionately expensive.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

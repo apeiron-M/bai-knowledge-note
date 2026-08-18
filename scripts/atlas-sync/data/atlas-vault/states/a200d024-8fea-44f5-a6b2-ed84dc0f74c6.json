@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The monthly reward calculation is time-triggered per Active Instance and splits into three separate fee components",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ebb0ada8-8301-49ff-9b4a-c80ff3b50738",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f295440-4e75-4577-86ed-d978f8802afe",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9eb3f7ad-0576-45ac-a8ac-6834681313a7",
+      "name": "settlement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every stage of the Invocation chain has \"None\" for Time-Based Triggers and advances on document updates. Ongoing management inverts that: A.2.2.9.1.2.4.1.1.1.1.1 fires the reward calculation \"on the 1st of every month for each Instance of the Distribution Reward Primitive with an Instance Status of `Active`,\" with no Document Update Triggers and no dependencies.\n\nThe split is coherent \u2014 setup is event-driven because it depends on human decisions arriving in unpredictable order, while settlement is calendar-driven because it must happen whether or not anything else did. The `Active` filter is also what makes instance status operationally meaningful: suspending an instance stops its payments simply by removing it from the trigger's scope, with no separate cancellation step.\n\nA.2.2.9.1.2.4.1.1 then reveals a reward structure not visible in the headline rate. The calculation \"includes the calculation of the **Fees for Unrewarded USDS Balances**, the **Fees for Rewarded USDS Balances**, and the **Prime Agent Management Fee**,\" all paid to the Prime Agent under A.2.2.4.2.\n\nThe distinction between rewarded and unrewarded balances implies the two are priced differently \u2014 balances that already earn a yield elsewhere are not compensated on the same terms as those that do not \u2014 and the separate Management Fee confirms that the Prime Agent is paid for administering the relationship in addition to whatever it passes on to the Integrator. That makes the Prime's own economics independent of its negotiated split, which is the piece A.2.2.4.2's bilateral-sharing rule leaves open.\n\nThe process flow itself (A.2.2.9.1.2.4.1.1.2) is deliberately transparent: GovOps computes eligible balances using the Instance's Tracking Methodology, applies the formulas, and \"updates the Powerhouse system with both the underlying data and their calculations\" \u2014 inputs as well as results, so a figure can be checked rather than merely trusted.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Fired on the 1st for every `Active` Instance, it computes Fees for Unrewarded USDS Balances, Fees for Rewarded USDS Balances, and a Prime Agent Management Fee.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

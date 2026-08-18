@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Administrative Risk is capitalized as its own risk class: loss through legitimate privileged access rather than through a bug",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "266d2a70-8a41-4312-9db8-ad39a6dc815f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0bfbdb90-580d-4d3d-8e44-3e8cc2d5eb32",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "835aa77e-2557-4464-a19d-ee7a3a11a2b9",
+      "name": "governance-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.1.1.6.1 defines Administrative Risk as \"the risk that an investment through the Allocation System will experience a loss of funds due to abuse of privileged access to a protocol,\" arising \"from a multisig or another actor that has the ability to modify the protocol or access funds without going through a governance process.\"\n\nSeparating this from Smart Contract Risk (A.3.2.1.1.5.1, loss \"due to a bug or technical exploit\") is a genuinely DeFi-native addition to the Basel-derived framework. The failure mode is not code behaving unexpectedly \u2014 it is code behaving exactly as designed, operated by someone who should not have used it that way. Audits, formal verification and code-complexity metrics say nothing about it, so it needs both a separate rating and a separate capital charge.\n\nThe rating inputs are correspondingly non-technical: \"(1) the level of privileged access that exists, (2) the security delay that such access is subject to, and (3) the 'Lindiness' of the system.\" The middle factor is the actionable one \u2014 a timelock does not remove privileged access but converts a silent theft into a publicly visible pending action, giving depositors a window to exit. Under this framework, adding a delay measurably reduces an integrating counterparty's capital cost.\n\nThe practical effect is to put a price on trust assumptions that DeFi integrations usually treat as a binary disclosure. A protocol with an unlimited-power multisig and no delay is not disqualified; it is simply more expensive for a Prime Agent to hold, and the difference is quantified in the same units as credit risk.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Defined as abuse of multisig or other powers that can move funds or modify a protocol outside governance; rated on the level of access, the security delay on it, and the system's Lindiness.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

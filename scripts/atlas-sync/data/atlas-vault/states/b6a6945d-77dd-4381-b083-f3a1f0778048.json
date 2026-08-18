@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-95dd9023-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "95dd9023-73a3-46ab-b5ce-860b5ab5ce08",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Genesis Primitives are single-shot: once Invoked, no further Instances of them can ever exist",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "bdc8c7ca-366c-428e-a11b-2ce6abfe6de1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ef31fcd8-6041-49ff-be0e-f4079a26a105",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c0289e69-9787-48a5-80fc-bbab57495095",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "12efdf11-a68e-4f6b-b7ad-75c15e8953e3",
+      "name": "lifecycle",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across all four Genesis Primitives in A.6.1.1.4.2.1, the In Progress Invocations Directory carries the same declaration rather than a list. For Agent Creation (A.6.1.1.4.2.1.1.1.4): \"Because the Agent Creation Primitive is deployed solely for the one-time creation of the Agent, no further Instances of the Primitive can be Invoked.\" Prime Transformation and Executor Transformation repeat it verbatim for transformation; Agent Token (A.6.1.1.4.2.1.4.1.4) repeats it for \"the one-time deployment of the Agent's token.\"\n\nThe Operational Process Definitions confirm the same shape from the other side: \"no further operational process is needed post-deployment\" (A.6.1.1.4.2.1.1.3.1.2, A.6.1.1.4.2.1.2.3.1.2).\n\nThis draws a hard line through the Primitive catalogue. Genesis Primitives are *constitutive* \u2014 they bring an entity into existence or change what kind of entity it is \u2014 and are exhausted by their first use. Operational Primitives (A.6.1.1.4.2.2 onward) are *recurring* and keep live In Progress directories that actually route work.\n\nThe practical consequence is that an Agent's identity cannot be quietly re-run. There is no legitimate path to a second Agent Creation or a second Prime Transformation for Skybase, so changing what Skybase fundamentally is would require editing the Artifact itself rather than invoking a process \u2014 which routes the change through Sky Governance instead of Agent operations.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Agent Creation, Prime Transformation, Executor Transformation and Agent Token each declare further Invocation impossible, so their empty In Progress directories are structural rather than incidental.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

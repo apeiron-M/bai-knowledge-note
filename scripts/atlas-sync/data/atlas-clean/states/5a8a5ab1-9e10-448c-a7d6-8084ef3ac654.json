@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-6cf78728-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6cf78728-c190-493a-a638-ce8944628eb5",
+      "targetTitle": "A Spell deployed with CREATE2 automatically fails validation"
+    },
+    {
+      "id": "lnk-ba257f36-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba257f36-c008-4700-a781-39bea3e71e05",
+      "targetTitle": "Validators must not trust the Spell repository's own tooling"
+    },
+    {
+      "id": "lnk-b283e092-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b283e092-519c-4a48-9d74-db6746d7b8f1",
+      "targetTitle": "Ecosystem Spell Validation deliberately checks less than dev"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Compiler version, EVM version and optimization settings are validated as part of the Spell artifact",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c7a65d3c-0a4c-47da-a179-99a0a99b6a21",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "20f1bca1-2300-41d1-8f8a-ec3c329b5a8b",
+      "name": "verification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a974616-aebc-4d2b-8b30-3f3c852c6f15",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three checks cover the build environment. Optimization (A.1.10.2.4.12.3.1.7) must read `No with 200 runs`, \"unless explicitly required due to contract size constraints\"; if enabled, `Yes with 200 runs` unless the Instruction Document specifies a run count that \"must be a multiple of 100 other than 0.\" Anomalous values such as \"`No with 13767 runs`\" or \"`Yes with 0 runs`\" fail validation. The EVM version (A.1.10.2.4.12.3.1.8) must show \"Default\" or the compiler's correct default \u2014 for Solidity 0.8.16, \"London.\" The compiler version (A.1.10.2.4.12.3.2.2) should match the pragma in `DssSpell.sol`, with only the major version needing to match.\n\nWhy metadata is treated as security-relevant: identical Solidity source can produce different bytecode under different compiler versions, EVM targets or optimizer settings. A source-level diff \u2014 the check most validators would consider decisive \u2014 is therefore not sufficient to establish that the deployed contract behaves like the reviewed source.\n\nThe approach is to insist on *canonical, boring* settings rather than to reason about which deviations are dangerous. A multiple of 100 other than zero, a default EVM target, the pragma's compiler: values that make anomalies self-announcing. The specific examples given as failures \u2014 an oddly precise run count, or zero runs with optimization enabled \u2014 are unusual rather than obviously exploitable, and that is the point. They indicate something non-standard happened, which is enough to stop the Spell without anyone having to prove intent.\n\nThis is the same anomaly-detection logic the Executive Sheet applies to prose (A.1.10.2.4.2.1.3): keep everything identical to last time so that whatever differs is worth a question.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.3.1.7 and .8 fail a Spell on non-standard optimization runs or a non-default EVM version, treating build metadata as security-relevant rather than incidental.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

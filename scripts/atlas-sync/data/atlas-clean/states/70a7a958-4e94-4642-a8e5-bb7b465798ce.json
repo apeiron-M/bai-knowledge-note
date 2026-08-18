@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-eff423ca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eff423ca-5040-45ed-a760-ba11d055b31e",
+      "targetTitle": "A primitive marked Globally Active with no Instances is auth"
+    },
+    {
+      "id": "lnk-edb22716-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "edb22716-fd75-4e83-86ae-dc75ca022050",
+      "targetTitle": "The Sky Primitive catalogue applies to every Agent regardles"
+    },
+    {
+      "id": "lnk-9d85d180-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9d85d180-7a94-4ed7-88f3-58b0b8766466",
+      "targetTitle": "Pattern's activated Primitive set confines it to Ethereum Ma"
+    },
+    {
+      "id": "lnk-e1c48f95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e1c48f95-7e40-4388-9257-7702cd3214a0",
+      "targetTitle": "Grove has activated its allocation and distribution Primitiv"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Primitive can be globally Active with zero Instances, so Active means enabled rather than in use",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "873bd199-f419-4352-8420-853d8d6ddac7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e39ad04b-3b04-4a40-882f-c627a73c5c48",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c1b09fe-1998-4388-b1d2-429f86ae162e",
+      "name": "osero",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three Demand Side Stablecoin Primitives in the Osero Artifact all carry Global Activation Status `Active`, but they are not in the same condition. Distribution Reward (A.6.1.1.7.2.5.1.1.1) and Integration Boost (A.6.1.1.7.2.5.2.1.1) have `Active` status with no Instance Configuration Document Location under their Active Instances Directory \u2014 nothing has been invoked. Pioneer Chain (A.6.1.1.7.2.5.3.1.1) has `Active` status and a live Plasma Instance.\n\nThe three-way comparison fixes the semantics. Global Activation Status describes whether the Agent may use the Primitive at all, not whether it currently does. `Inactive` \u2014 as on the Token SkyLink and Light Agent Primitives \u2014 means the door is shut; `Active` means the door is open, whether or not anyone has walked through.\n\nThat separation is what makes the directory structure informative. Capability and usage are tracked on different axes: the Hub status answers \"is this permitted,\" the Instance directories answer \"is this happening.\" Reading only one gives a wrong picture of an Agent \u2014 an Agent with many `Active` Primitives may be doing nothing with most of them.\n\nFor Osero specifically it means the demand-side toolkit is provisioned ahead of use: two of three reward mechanisms are switched on and waiting, which is a statement of intent rather than of activity.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Osero's Distribution Reward and Integration Boost Primitives are both `Active` with empty directories, while Pioneer Chain is `Active` with a live Instance \u2014 the status marks availability.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

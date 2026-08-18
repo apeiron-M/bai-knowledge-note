@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel's Ethereum emergency protocol is a pre-written three-step unwind: redeem every position, consolidate into USDS, burn the debt",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "349d620d-9c07-4bea-9155-052f33cf7fa2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b362ce73-05dd-49f6-b6f1-4eb8ba46ce82",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e78aad8-d8fc-4306-8a47-5fcd3499cdcc",
+      "name": "emergency-powers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ef123ac2-8f3a-41bd-a33c-4ab88ee8ed9f",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.1.3 does not describe emergency principles; it gives the calls. Redeem all ERC-4626 positions with `redeemERC4626(address(token), token.balanceOf(address(proxy)))` (\u20263.2.1), consolidate with `swapUSDCToUSDS(usdc.balanceOf(address(proxy))` (\u20263.3), and repay with `burnUSDS(usds.balanceOf(address(proxy))` (\u20263.4). Alongside sits the Freezer's own tool, `removeRelayer(address relayer)` (\u20263.1).\n\nThe notable feature is that every argument is a balance lookup. An operator executing the playbook makes no sizing decisions, chooses no venues, and needs no view about market conditions \u2014 the sequence is mechanical and reproducible under stress by whoever holds the keys, which is exactly what an emergency procedure must be.\n\nThe order encodes the goal: positions first (out of third-party protocols), then currency consolidation (out of USDC into USDS), then debt extinction (`wipe` against the Allocation Vault). The end state is that Keel owes Sky nothing and holds nothing anywhere else \u2014 the maximally de-risked configuration, reached by moving exposure inward one layer at a time.\n\nThis is also the clause that justifies the asymmetric rate limits elsewhere in the Artifact. Every step of the playbook is an unwinding operation, and every unwinding operation is Unlimited; had withdrawal or burn been capped, the documented emergency procedure would be unexecutable in a large emergency, which is the only kind that matters.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The playbook calls redeemERC4626 with the full share balance, swapUSDCToUSDS with the full USDC balance, then burnUSDS with the full USDS balance \u2014 each parameterized by balance, not by judgment.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

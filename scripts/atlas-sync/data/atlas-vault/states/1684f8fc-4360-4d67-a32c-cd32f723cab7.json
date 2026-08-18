@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Instance-specific operational processes may deviate from Keel's general Liquidity Layer processes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "12c26112-afc9-4f47-8a22-4b1d011f3cbc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c769515-09e7-43be-8f75-be4e81595e59",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49e2be25-4440-481b-836e-662d0aeec4fa",
+      "name": "operational-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf3d8e35-fe43-4db2-83ab-6abf3a4c4d6d",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Instance Configuration Document closes with an **Instance-specific Operational Processes** section, worded identically every time: \"The documents herein contain operational procedures or monitoring requirements unique to this Instance that deviate from or otherwise supplement the general Keel Liquidity Layer processes\" (e.g. A.6.1.1.3.2.6.1.3.1.1.5.3).\n\nThe operative word is **deviate**. This is not only an extension point for extra monitoring \u2014 it explicitly contemplates per-Instance procedure that departs from the general rule. General Keel Liquidity Layer process therefore functions as a *default* that Instance-level configuration can override, rather than as a minimum standard every Instance must meet.\n\nThat is a real design trade-off. It buys the ability to integrate a venue whose mechanics genuinely do not fit the general process \u2014 a new chain, an unusual withdrawal path \u2014 without amending the general process for everyone. The cost is that the effective operating rules for any given position cannot be read off the general document alone; you must also read that Instance's override slot.\n\nPaired with the equally uniform **Off-chain Operational Parameters** slot, the Instance Configuration Document is best read as a per-venue override surface layered over shared defaults.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:02:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every Instance Configuration Document reserves a slot for procedures or monitoring that \"deviate from or otherwise supplement\" the general processes, making general process a default rather than",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

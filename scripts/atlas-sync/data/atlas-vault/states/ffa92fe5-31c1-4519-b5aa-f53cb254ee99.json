@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-e1c7655e-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "e1c7655e-3e28-4646-8085-97cb6872fa5e",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Global Activation Status of a one-shot Primitive distinguishes acts that finish from acts that leave a persisting object",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0f761bb3-2ae9-4f6b-ac16-f664d420f93a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dfaa8e80-aeb5-4086-bd5d-5ca9c4e50110",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "32ccf1c8-a87a-4b5e-a192-a4ea50d1f2f6",
+      "name": "primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9002561d-a823-401e-b2ce-fc456044109f",
+      "name": "lifecycle",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "All four of Obex's Genesis Primitives are one-shot, yet their Global Activation Statuses differ. Agent Creation is `Completed` (A.6.1.1.5.2.1.1.1.1), Prime Transformation is `Completed` (A.6.1.1.5.2.1.2.1.1), Executor Transformation is `Inactive` (A.6.1.1.5.2.1.3.1.1), and the Agent Token Primitive is `Active` (A.6.1.1.5.2.1.4.1.1).\n\nThe difference tracks whether the Invocation leaves behind something that still needs managing. Creation and transformation are events: once the Agent exists and is a Prime, the Primitive's Operational Process Definition can honestly say \"no further operational process is needed post-deployment\" (A.6.1.1.5.2.1.2.3.1.2). Its Instance moves to Completed Instances.\n\nThe Agent Token Primitive is Invoked once but produces a durable object. Its Operational Process Definition is not empty \u2014 it covers \"minting and initial distribution of the tokens from the Genesis Supply\" \u2014 and its Instance stays under Active Instances. The Invocation is unrepeatable while the Instance remains live.\n\nThis separates two ideas that could easily be conflated: whether a Primitive can be Invoked again, and whether the resulting Instance is still operating. `Completed` describes an Instance with nothing left to do; the closure notice on In Progress Invocations describes a Primitive that can never be Invoked again. A single Primitive can be `Active` and permanently closed to new Invocations at the same time, and reading either status as implying the other will mislead.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Agent Creation and Prime Transformation read `Completed`, while the equally one-time Agent Token Primitive reads `Active` \u2014 because a deployed token remains under ongoing management.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

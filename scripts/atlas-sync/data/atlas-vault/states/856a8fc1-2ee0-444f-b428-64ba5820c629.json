@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Zeroing maxAmount while leaving a non-zero slope distinguishes a paused conduit from a retired one",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "745d434a-3877-450e-a7aa-114be177e0a8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "752185d1-7867-47ce-83e5-4b28ddec0874",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c87a2ac7-ced7-4f76-8dc9-9308e18d3cc4",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c41db011-7ca6-4d49-a23c-069aae2567f3",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three consecutive Aave Core instances are dormant but not identically so. Aave Core USDC (A.6.1.1.1.2.6.1.3.1.2.2.2.4.1) publishes inflow \"`maxAmount`: 0, `slope`: 25,000,000 USDC per day\"; Aave Core USDS (.2.3.2.4.1) is the same with USDS. Aave Core USDT (.2.4.2.4.1/.2) publishes \"`maxAmount`: 0, `slope`: 0\" on **both** legs.\n\nBecause `maxAmount` is the hard ceiling, all three are equally unable to move capital today. The difference is entirely in intent recorded through the second parameter. A zero ceiling with a live refill rate is a conduit whose sizing has already been agreed and only needs the ceiling raised; a double zero is a conduit with no agreed sizing at all.\n\nThis gives the parameter pair an expressive range the status taxonomy lacks. `Active` versus absent from the tree is binary; (`maxAmount`, `slope`) encodes at least three operational states \u2014 running, ceiling-suppressed, and fully zeroed \u2014 without any change to the document hierarchy or to governance status labels.\n\nThe cost is that this distinction is a convention readable only by comparing two numbers, and nothing in the documents states it. An operator or risk reviewer scanning `Active` instances has no labelled way to tell a temporarily suppressed venue from one that was zeroed and forgotten, which is exactly the kind of ambiguity that lets a stale configuration sit unexamined.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Aave Core USDC and USDS hold maxAmount 0 with a 25,000,000/day slope, while Aave Core USDT is zeroed on both parameters \u2014 two visibly different dormant states inside the same Active container.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

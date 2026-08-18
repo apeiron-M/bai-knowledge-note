@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove will only redeem Pendle principal tokens after market expiry, eliminating market-price risk from the operation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "54d159fe-a0c2-4007-92fd-34e0785450a8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5809a0e1-ebff-49da-8d55-7d14cc554ed3",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "de82edb4-d837-48b9-933a-e92641cdd94b",
+      "name": "pendle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f796338d-0473-438d-9231-7e0516621522",
+      "name": "slippage-protection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.11 scopes the whole Pendle module to \"redeem **expired** Pendle Principal Tokens (PT) for their underlying token\", and A...11.1.2 enforces it: `require(params.pendleMarket.isExpired(), \"PendleLib/market-not-expired\")`.\n\nThe restriction is what makes the rest of the procedure simple. Before expiry a PT trades on an AMM at a discount that varies with time and implied yield, so selling it would require a price oracle, a tick or slippage bound, and all the machinery the Curve and Uniswap paths carry. After expiry a PT is redeemable at its accrued value, computed from `IYT(yt).pyIndexCurrent()` (A...11.1.3) \u2014 an index, not a market price.\n\nSo Grove deliberately declines the ability to exit a Pendle position early through this function. The trade-off is stark and worth naming: it removes execution-price risk entirely, at the cost of removing the early-exit option. Any pre-expiry exit must go through a general swap route instead, where the normal slippage controls apply.\n\nThe pattern generalises: narrowing a function's admissible state until the risky variable disappears is cheaper and more auditable than defending against the risky variable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PendleLib reverts with market-not-expired unless pendleMarket.isExpired(); at expiry PT converts at the PY index, so redemption needs no AMM, oracle or price bound.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

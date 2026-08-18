@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel throttles capital entering a venue but never throttles its exit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d62666d2-5baf-4b43-965e-dd555369e119",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "63e44799-3058-4942-a08c-4d4af4b3de46",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e646a2c-29cd-40e8-88fd-1c019dcc00ae",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "10f321af-babf-4945-88cb-ba9796fcc91b",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Instance Configuration Document defines rate limits as a pair: \"The current `maxAmount` and `slope` for this conduit's deposit and withdrawal\" (A.6.1.1.3.2.6.1.3.1.1.5.2.4). For every Instance in this chunk \u2014 Kamino PYUSD, Drift USDS, Drift USDC, Drift USDT, Drift PYUSD \u2014 the deposit side carries both a ceiling and a slope, while the withdrawal side states only `maxAmount`: **Unlimited**.\n\nThe deposit pair behaves as a leaky bucket: `maxAmount` is the most that can flow in before the allowance is exhausted, and `slope` is the rate at which that allowance refills per day. This bounds not the total position but the *speed* at which a position can be built.\n\nThe asymmetry is the actual decision. A compromised or mistaken deployment path can only drain capital into a venue at a bounded rate, giving human oversight a window to intervene. But nothing stands between Keel and its own money on the way out \u2014 in a crisis, an exit is never gated by a governance parameter that someone must first raise.\n\nThe trade-off is deliberate and one-directional: the mechanism accepts that withdrawal limits could otherwise trap capital during exactly the events they would be tested by, and prices that as strictly worse than the attack surface an unlimited exit leaves open.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:05:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every Solana Allocation Instance caps deposits with a maxAmount ceiling plus a per-day replenishment slope, while withdrawal maxAmount is set to Unlimited",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

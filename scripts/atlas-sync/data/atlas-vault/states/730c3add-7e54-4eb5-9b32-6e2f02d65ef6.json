@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Atlas Document's category is encoded in its identifier, so its mutability is machine-inferable",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "79df0b1c-7f7a-4103-83b7-146d18497747",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "09763459-ec93-4d04-a56b-15e68e79601f",
+      "name": "atlas-documents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8715eb27-3b53-44fe-8c01-ed8fa9947af9",
+      "name": "document-identifiers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.2.2.1 states that the four document categories have \"unique and non-overlapping rules for validity of their Document Identifiers,\" so \"the category of an Atlas Document can be inferred from its Document Identifier.\" The specific partitions are:\n\n- **Immutable** (A.1.2.2.1.1): at most three layers deep.\n- **Primary** (A.1.2.2.1.2): four layers or deeper, and cannot contain zeros.\n- **Supporting** (A.1.2.2.1.3): always contains at least one zero.\n- **Accessory** (A.1.2.2.1.4): always contains letters beyond the leading 'A'.\n\nThis is a deliberate collapse of two things most systems keep separate: an item's *address* and its *governance class*. Because depth determines category and category determines how a document may be modified, position in the tree **is** the mutability rule. You cannot move a document without changing what may be done to it, and you cannot smuggle a permanent principle into an easily-amended slot or vice versa.\n\nThe non-overlap requirement is what makes it a real constraint rather than a naming convention \u2014 every valid identifier belongs to exactly one category, so there is no ambiguous middle where a document's amendability could be argued. The trade-off is rigidity: reorganizing the tree is not a cosmetic refactor, it is a governance act, and A.1.2.1.1.1 concedes that in early iterations formal identifiers will not yet be implemented for all Document Types.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:15:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:15:43.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Immutable \u22643 layers deep; Primary \u22654 layers with no zeros; Supporting contains at least one zero; Accessory contains letters. Non-overlapping rules make category derivable from the ID alone.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

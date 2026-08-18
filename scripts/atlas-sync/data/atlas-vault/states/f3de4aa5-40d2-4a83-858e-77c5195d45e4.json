@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SKY-backed borrowing is funded exclusively by stUSDS so the protocol never lends against its own governance token",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "24a75e92-0c9c-4c2c-b2fe-d4bbb334a224",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90c2c700-df70-4981-9650-b239be31377f",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a16c74e6-c2d0-4ca2-987a-d3ec66ec1fe1",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "83f39124-1736-4cd9-a6b1-bf4723fd9204",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3 permits stakers to borrow USDS against staked SKY, then immediately constrains how: \"This borrowing will be facilitated **exclusively** by the stUSDS system which will provide protocol-independent, or segregated, risk capital.\"\n\nThe reason this exclusivity matters is reflexivity. Lending USDS against SKY using the protocol's own balance sheet would tie the solvency of the stablecoin to the price of the governance token that controls it. A SKY drawdown would simultaneously impair collateral, degrade liquidation prospects, and weaken the governance body expected to respond \u2014 a doom loop with a well-documented history in this asset class. The SKY Backstop already makes SKY the recapitalization asset of last resort; using it as collateral for USDS as well would mean the same token secures the debt and insures it.\n\nSegregating the capital breaks that circuit. Losses from SKY-backed loans land on stUSDS depositors, who chose that exposure and are paid the stUSDS Rate for taking it. USDS holders and the core protocol are structurally insulated from a risk they never underwrote.\n\nThe trade-off is capacity and reliability. Because the funding is voluntary third-party capital rather than protocol credit, borrowing against SKY is only available to the extent depositors show up, and it can dry up precisely when SKY is stressed and depositors want out. Sky accepts a facility that may be unavailable when most wanted in exchange for one that cannot take the stablecoin down with it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "stUSDS supplies \"protocol-independent, or segregated, risk capital\" from opt-in depositors, keeping the reflexive SKY-collateral risk off the core balance sheet.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

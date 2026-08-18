@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-5a264486-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5a264486-ad75-4d21-b70a-5f790ade8ecd",
+      "targetTitle": "Grove separates execution authority from asset custody by ro"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove never claims Merkl rewards itself; it authorises an external operator to claim on the proxy's behalf",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "dff41f50-a210-4872-8fa0-c12c835d17aa",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f61ee62d-daa2-4a6e-824f-d469d5851ae8",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8b8b3919-eb19-41ae-b313-bbdc4463d847",
+      "name": "merkl",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c8a5dad-3edb-45d0-b564-602ae82bc3e0",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.14 scopes the entire Merkl module to \"manage the **operators authorized** to claim Merkl rewards on behalf of the Grove ALM Proxy\" \u2014 there is no `claimMerkl` function at all. A...14.1.2 calls `toggleOperator` on the `MERKL_DISTRIBUTOR` through the proxy, and A...14.1.1 gates it on `RELAYER`.\n\nDelegation rather than direct claiming reflects how Merkl works: entitlements are computed off-chain and claimed with a merkle proof, so the claim transaction needs data Grove's controller has no way to hold or validate on-chain. Rather than build a proof-passing interface, Grove grants a third party the right to claim into the proxy.\n\nThe layering is the interesting part. **Which distributor contract** is trusted is set by `DEFAULT_ADMIN_ROLE` via `setMerklDistributor` (A...3.1.9) \u2014 a governance decision, since the distributor could in principle be malicious. **Which operator** may act at that distributor is a relayer decision, revocable by the same toggle. Venue trust is governed; agent trust is operated.\n\nAs with the Ethena delegated signer (A...10.1), this is a capability grant with no quantitative control attached: `toggleOperator` carries no amount, so no rate limit can apply. The saving grace is that a Merkl operator can only claim rewards *into* the proxy, not move existing holdings out \u2014 the delegation is narrower than the Ethena one, which is why it warrants less concern despite the identical shape.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "toggleOperatorMerkl is relayer-gated with no amount and no rate limit, while the distributor address it trusts is set only by DEFAULT_ADMIN_ROLE \u2014 trust in the venue and in the agent are separated.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

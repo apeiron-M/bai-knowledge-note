@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas defines bounty scope, severity and rewards by reference to Immunefi's external listings rather than fixing them in text",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3ce47dbe-0ce7-4eda-ada9-d0f91a894a28",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "57bf7a24-5333-4e24-b5f7-a18cb9f2cca7",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0f794b62-b371-4cdf-b339-2b7e5eba4f60",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across A.2.11.1.1.2.1 through A.2.11.1.1.3.2 the Atlas repeatedly declines to state the substance. Assets in Scope, Impacts in Scope, out-of-scope vulnerabilities, feasibility limits, PoC requirements, researcher eligibility restrictions, and the reward tables per threat level are all \"specified on Sky's listing on the Immunefi platform,\" with URLs. Severity uses \"[t]he Immunefi Vulnerability Severity Classification System,\" and A.2.11.1.1.2.2 authorizes the Protocol Security Workstream Lead \"to adopt a new severity system ... in consultation with relevant technical stakeholders.\"\n\nThis is deliberate incorporation by reference to a mutable external source, and the reason is operational tempo. Scope changes with every deployment; a severity table amended by Atlas Edit would lag reality and turn routine security maintenance into a governance queue.\n\nThe cost is that the Atlas ceases to be a complete statement of the program. A reader cannot determine from the Atlas what is covered or what a critical finding pays, and the effective terms can change without any Sky governance action \u2014 Immunefi \"is the party responsible for conducting the Bug Bounty Program; its setup and operations are based on standards set by Immunefi\" (A.2.11.1.1.1).\n\nThe accountability that remains is role-based: the Protocol Security Workstream Lead \"is responsible for maintaining these lists of Assets In Scope, in consultation with the relevant stakeholders.\" Note the asymmetry the same provisions create \u2014 for Sky Core, scope includes \"smart contracts, frontend applications, data infrastructure and oracles,\" while for SparkLend it \"only include[s] smart contracts.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Assets, impacts, exclusions, severity classification and reward tables all live on the Immunefi platform, and the Protocol Security Workstream Lead may adopt an entirely new severity system.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

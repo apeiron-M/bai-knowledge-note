@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SBE-BEAM guardrails are deliberately one-sided: a delegated operator can slow SKY accumulation freely but never raise it beyond a governance-sanctioned rate",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4f3e0cf7-0de4-4ed7-a4a2-37cd0ef6c452",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "66e45d50-0b81-47f8-b6d8-903fcda0424f",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "961f4ffc-38d9-4fce-8596-34fe0b34503e",
+      "name": "smart-burn-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "18a66034-0fe8-4fc2-a656-25822118c91b",
+      "name": "delegated-authority",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.5.2.4 gives a Governance-whitelisted Operator the power to change three Smart Burn Engine parameters without a Governance Poll, and describes the constraints on that power precisely: \"Those bounds are one-sided guardrails on the rate of accumulation... The rate of accumulation therefore cannot be raised beyond the maximum that Sky Governance has sanctioned, while no corresponding bound limits reductions to it.\"\n\nThree bounds implement this. `maxKbump` caps the lot size, `minHop` floors the interval, and `maxRate` caps the *combined* throughput expressed as `kbump / hop` (A.3.5.2.4.1.3) \u2014 the third is necessary because the first two can each be satisfied while their ratio still produces an excessive spend rate. Bounding a derived quantity, not just its inputs, is what closes the loophole.\n\nThe asymmetry encodes a specific risk model: over-spending the Surplus Buffer is the harm to prevent, and under-spending is recoverable through normal governance. Delegation therefore fails toward inaction.\n\nOne constraint is *not* one-sided. `tau` (A.3.5.2.4.1.4) imposes a minimum interval between consecutive SBE-BEAM operations and \"applies to every operation regardless of whether it raises or lowers the affected parameters.\" Direction-blind rate limiting is what prevents a compromised operator from thrashing the engine, an attack that one-sided value bounds alone would permit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:17:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "maxKbump, minHop and maxRate cap only throughput (kbump divided by hop); nothing bounds reductions, while the tau interval rate-limits every operation in either direction.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

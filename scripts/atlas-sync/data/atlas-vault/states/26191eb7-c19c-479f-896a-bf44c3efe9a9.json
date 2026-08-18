@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark batches approved proposals into a weekly Monday governance cycle with a Friday cut-off",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1a0ce6b0-032a-4f20-b4dc-f6b84a0b6467",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3cd8ae46-4550-4167-b944-2ea4acaefc66",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "399890a6-b656-4691-84d2-cd2482cb4e38",
+      "name": "governance-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2ed50c52-4063-4121-a59b-7782a009b012",
+      "name": "voting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.2.2.2.1.2.1.4 sets the voting mechanics: a Snapshot poll open for three days, where \"a poll must have more than 50% of votes cast, excluding abstentions, in favor to be approved,\" and token holders may vote directly or through Delegates.\n\nThe scheduling layer is the more interesting part. \"Spark's governance runs in a weekly cycle that begins every Monday. Upon receiving all approvals, the proposal is automatically included in the next cycle. The cut-off time is Friday 8:00 am UTC to ensure the Operational Facilitator has sufficient time to prepare the needed polls for the following Monday.\"\n\nBatching decisions into a fixed weekly cadence buys predictability for everyone: participants know when to pay attention, and the Facilitator gets a bounded preparation window instead of a continuous queue. The counting rule \u2014 majority of votes cast excluding abstentions, with no quorum stated here \u2014 favours decidability over a mandate threshold: a poll cannot fail merely from low turnout.\n\nOne discretionary seam remains: after the cut-off, \"it is at the discretion of the Operational Facilitator whether the proposal can be included in the immediate next cycle, or the following cycle.\" Timing power over a week's delay sits with the Facilitator, which is minor for routine edits and material for time-sensitive ones.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A three-day Snapshot poll needing >50% of non-abstaining votes feeds a fixed weekly cadence; proposals arriving after Friday 08:00 UTC slip at the Facilitator's discretion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

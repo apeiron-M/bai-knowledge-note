@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Audit findings above low severity must be fixed and re-audited, while low findings may be acknowledged with a written rationale",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c7b5e373-15a2-42ce-9225-bbba0870dbe4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c34de7c1-f235-40df-b4c5-0dd140620fc4",
+      "name": "audit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05d4e453-ad30-4a22-9d64-05d402e00fcc",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.7.5 splits remediation by severity. \"Findings of low severity or below may be fixed or acknowledged. **An acknowledged response must explain why the finding is accepted as-is, including the rationale and any mitigating factors.**\" Findings of \"medium severity or higher **must be fixed**,\" and \"the updated code must be re-audited through a new audit request\" that must complete before the artifact can proceed. \"Where the code was submitted by a Prime Agent, the Prime Agent is responsible for the cost of the re-audit.\"\n\nThe mandatory re-audit is the strong part. Fixing a medium-severity finding means changing code that has already been reviewed, and a patch is exactly where a new defect enters \u2014 the fix is unreviewed by construction. Requiring a fresh audit request treats the amended code as new code rather than as the audited code plus a correction.\n\nThe acknowledgment path is carefully bounded. Low-severity findings can be accepted, but only with a recorded justification and mitigating factors, so acceptance becomes an argument on the record rather than a silent decision. A.1.10.2.7.5 requires that \"the resolution status of each finding must be recorded in the final audit report or in a supplementary document referenced from the final audit report\" \u2014 the acknowledgment travels with the report, permanently.\n\nCost allocation supplies the incentive. Making a Prime Agent pay for its own re-audit means sloppy submissions are expensive for the party that produced them, aligning the incentive to get it right the first time with the party best able to. It also prevents re-audit costs from becoming a shared ecosystem expense that no individual submitter feels.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.7.5 forces a new audit cycle for medium-or-higher findings and charges a Prime Agent for its own re-audit, so severity determines both process and who pays.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

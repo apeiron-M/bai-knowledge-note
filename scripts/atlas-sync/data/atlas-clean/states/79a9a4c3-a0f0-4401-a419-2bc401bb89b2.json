@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-9059d6b5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9059d6b5-fadd-4eed-9161-171bff1a7e6f",
+      "targetTitle": "Allocation decisions are made by an off-chain planner; the o"
+    },
+    {
+      "id": "lnk-dc0ffce7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc0ffce7-8c92-4589-9087-72c34106efd5",
+      "targetTitle": "doc-fcd495e3"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Relayer role belongs to an off-chain ALM Planner system rather than a human trader",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6f758bc2-2fc6-4b83-97b6-078905cdb6b8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54d3b73c-d66c-43c9-8d76-3155c903def3",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3a29e4dd-9961-4acd-969d-4c5321c3346f",
+      "name": "automation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be748910-a866-4104-9e87-4ba8d5896bfe",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.2.1.1.2 defines the role precisely: \"The `RELAYER_ROLE` is the address for the Spark Liquidity Layer **ALM Planner off-chain system** that calls functions on `Controller` contracts to perform actions on behalf of the `ALMProxy` contract.\"\n\nThe privileged actor in day-to-day capital movement is therefore a program. Allocation decisions are computed off-chain by the Planner \u2014 which can read positions, rates and target balances across every chain \u2014 and executed on-chain within the ALM contracts' limits.\n\nThis explains several design choices elsewhere. Rate limits as replenishing buckets are the natural way to bound an automated agent that acts continuously. Minimum operation sizes make sense as a rule given to a planner that would otherwise optimize away small differences at uneconomic cost. And target balance bands are inputs to a planning algorithm, not instructions to a person.\n\nIt also relocates the trust question. The relevant risk is not primarily a rogue operator but a faulty or manipulated planner: bad input data, a mis-specified objective, or a compromised deployment producing well-formed but harmful transactions. The on-chain answer is that the Planner's authority is a bounded envelope, and the Freezer \u2014 which can revoke the Relayer role outright \u2014 is the kill switch when the automation misbehaves.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "RELAYER_ROLE is defined as the address for the Spark Liquidity Layer ALM Planner, which calls Controller functions on behalf of the ALMProxy \u2014 automation acting inside on-chain limits.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

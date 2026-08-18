@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The RateLimits contract splits setting a limit from consuming it: admin sets, controller may only spend",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "50b30112-f9de-4eb4-9ca4-13918c5ec3a3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b07e4c03-7448-4691-8944-6c11d609bca1",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "15065f1e-8017-4109-b7d3-2fd6fad94051",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f3d5ed44-856b-4ba1-ac7c-8b514f4714a6",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.3.2 gates `setRateLimitData` on `DEFAULT_ADMIN_ROLE`. A...1.3.4 and A...1.3.5 gate `triggerRateLimitDecrease` and `triggerRateLimitIncrease` on `CONTROLLER`.\n\nThe separation is what makes the limit a limit. If the controller could write `maxAmount`, every constraint it enforces on itself would be advisory \u2014 a compromised or buggy controller would simply raise the ceiling before spending. Instead the controller's only writes are movements of `lastAmount` **within** a ceiling it cannot touch, and `triggerRateLimitIncrease` is explicitly clamped: `newLimit = _min(currentRateLimit + amountToIncrease, maxAmount)`.\n\nStacked with the controller's own roles this yields four distinct authority levels: `DEFAULT_ADMIN_ROLE` sets the envelope, `CONTROLLER` (the controller contract itself) consumes and restores within it, `RELAYER` triggers controller functions, and `FREEZER` can revoke the relayer. No single one of them can both widen a constraint and act under it.\n\nThe residual concentration is that `DEFAULT_ADMIN_ROLE` on the RateLimits contract is the real seat of power in the whole Liquidity Layer \u2014 it can set any key to unlimited in one call \u2014 which is why it belongs to Sky governance rather than to Grove's operators.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "setRateLimitData is onlyRole(DEFAULT_ADMIN_ROLE) while triggerRateLimitDecrease and triggerRateLimitIncrease are onlyRole(CONTROLLER), so a compromised controller can never raise its own ceiling.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

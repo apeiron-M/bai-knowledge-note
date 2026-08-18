@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-d3b41e46-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d3b41e46-a1f4-4b32-bbd8-4828f0a6c5e6",
+      "targetTitle": "An AdministeredAgent lets a compromised relayer be revoked w"
+    },
+    {
+      "id": "lnk-dc0ffce7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc0ffce7-8c92-4589-9087-72c34106efd5",
+      "targetTitle": "doc-fcd495e3"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The AdministeredAgent holds the Allocator Role so that a compromised operator can be revoked without disturbing the Agent's permissions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "96933ce7-7d79-4b8e-8501-b46b15eef746",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dad6829b-f772-44f7-b9ea-8728753ecba6",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00176c0b-cf4d-43e9-b7a6-5f64597e8a08",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.6.1.2.1.1.1.2.1.5 describes the indirection: the AdministeredAgent contract \"holds the Allocator Role ... and mediates relayer access to the Controller: the Relayer Multisigs are registered as its Actors ... and submit operations through it, while the Freezer Multisig is registered as a Revoker ... authorized to remove a compromised Actor.\"\n\nA.6.1.1.7.2.6.1.2.2.3.1 states the payoff explicitly: revoking an Actor \"prevents it from submitting further operations, while the Allocator Role itself remains with the AdministeredAgent.\"\n\nThat sentence is the design. If a multisig held the Allocator Role directly, revoking it would strip the Agent of its own permission and require a re-grant \u2014 a privileged operation, probably a governance action, at exactly the worst moment. Interposing the AdministeredAgent turns key compromise into a cheap, local, reversible-by-addition change to an Actor list.\n\nThe generalizable pattern: keep durable authority in a contract, keep replaceable identity in a list that contract consults. Emergency response then never has to touch the authority layer.\n\nThe residual concentration is the AdministeredAgent itself. It is the sole holder of the Allocator Role and the sole gate on relayer access, so a defect there is unmitigated by the Actor/Revoker machinery built on top of it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Relayer Multisigs are Actors submitting through the AdministeredAgent, never role holders themselves; removing one stops its operations while the Allocator Role stays in place.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

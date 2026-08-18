@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Element Annotations bound the meaning of individual words, turning ambiguity into a document-level fix",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c50937ec-a803-4e52-ab21-c6364fe681f2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aeac0307-0b83-435b-ada3-7b7d62e0e7c3",
+      "name": "atlas-documents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c31c05a-c0fb-4d8b-8816-c7107c9a6722",
+      "name": "interpretation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.2.2.2.10 defines the Element Annotation Type. Its two components are the **Element** (\"the unique word or phrase from the Target Document that is being annotated\") and the **Annotation**, which \"should concisely disambiguate and bound the semantic meaning of problematic terms.\"\n\nThe design insight is granularity. Ambiguity in a rule system is almost always lexical \u2014 a single word like \"where feasible\", \"operationally active\", or \"extrapolated\" carries the uncertainty \u2014 but the usual remedies operate at rule level: rewrite the provision, or issue a ruling about the whole clause. Element Annotations make the *word* the unit of repair, so a term can be tightened without touching the surrounding text. This matters enormously in the Immutable layers, where the surrounding text cannot be touched at all after Endgame.\n\nThe constraints keep it from becoming a backdoor rewrite. Annotations \"should not contradict [their] Target Document or other context data of the Target Document,\" they should be \"as concise as possible,\" and the Atlas explicitly compares them to footnotes: context and commentary, not new rules. The Name property is templated (\"Element\" then hyphen then \"Element Annotation\"), which makes annotations mechanically discoverable rather than something a reader must hunt for.\n\nCombined with A.1.1.2.1's authorization for the Core Facilitator to provide \"expanded definitions for problematic terms,\" this is the type where that power lands. Interpretation of a term is not a memo \u2014 it becomes a numbered document under the annotated rule.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:28.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.2.2.2.10 makes every vague term or jargon phrase separately addressable at .0.3.X, with a name template of 'Element - Element Annotation' and a rule against contradicting the Target.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

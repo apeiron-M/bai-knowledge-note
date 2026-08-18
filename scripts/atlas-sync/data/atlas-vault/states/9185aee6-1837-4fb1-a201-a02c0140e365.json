@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Executive Document's hash is computed twice with independent tools and verified by a second person before merge",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ab6933ae-0fc3-4936-8adb-1a75d14b7e80",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5034ecac-828c-43b4-b5be-4f8de75e220f",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cf654379-94fb-4718-9707-d370b80baf21",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.8.5.1 requires the Core Facilitator to generate the hash of the Executive Document, have it \"verified by another member of the Core Facilitator team,\" and record it \"as a comment in GitHub under the 'Conversation' tab.\" The comment typically includes \"the command used to generate the hash,\" \"the resulting hash,\" and \"a secondary tool used to validate the locally generated hash\" \u2014 commonly an online Keccak-256 tool.\n\nThree independent checks are stacked on a single value: two people, two tools, and a published record of the command so anyone can reproduce it. The stated purpose is that \"potential hash mismatches or validation errors are identified and resolved early in the process.\"\n\nThe reason for a *second tool* rather than a second run is that the failure mode is not typing but environment. A local script can hash the wrong file, hash a version with trailing whitespace, or use the wrong algorithm variant \u2014 and it will do so consistently every time it runs. Only an independent implementation catches a systematically wrong pipeline, which is the same reasoning behind two Spell Teams agreeing on novel designs and two parties independently summing transfers.\n\nWhy it matters this much: the hash is what binds the human-readable document to the on-chain action. A.1.10.2.4.8.5.4 requires the Core Facilitator to share \"the link to the merged Executive Document on GitHub and its hash with the Technical Point,\" in public. A wrong hash would leave the Spell pointing at something other than the text voters read \u2014 the whole document-to-execution link failing silently, since neither artifact looks wrong on its own.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.8.5.1 pairs a local command with an online Keccak-256 tool so a toolchain error surfaces early; the hash is then recorded in GitHub and handed to the Technical Point.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

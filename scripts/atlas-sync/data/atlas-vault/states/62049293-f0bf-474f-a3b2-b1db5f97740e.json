@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark Liquidity Layer rate limits are deliberately asymmetric: inflows are capped and throttled while outflows are unlimited",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1fa49ef9-079d-44e7-b54e-683b7991e400",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c09849b8-007f-406d-9d54-9c7fc804b30f",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a55e489c-dd7f-4d2d-b98e-12ddb16fa926",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ff3e247-2b7b-4b4c-808c-7c0a7b205a96",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every SparkLend Instance Configuration Document in this chunk pairs a bounded inflow with an unbounded outflow. The USDC instance (A.6.1.1.1.2.6.1.3.1.1.2.2.4.1/.2) sets inflow `maxAmount`: 100,000,000 USDC and `slope`: 200,000,000 USDC per day, and then states the outflow rate limits are \"`maxAmount`: Unlimited\" and \"`slope`: Unlimited\". Dai (.1.3.2.4), USDT (.1.4.2.4), pyUSD (.1.5.2.4) and wETH (.1.6.2.4) all repeat the same shape: a finite inflow, an `Unlimited` outflow `maxAmount`.\n\nThe asymmetry encodes a directional risk judgement. Sending Spark Liquidity Layer capital *into* an external lending venue creates new exposure, so it is throttled. Pulling capital *back* into the ALM Proxy reduces exposure, so throttling it would be actively harmful \u2014 a rate limit on withdrawal would become a hard ceiling on how fast the ecosystem can de-risk during a venue failure or depeg.\n\nThe trade-off is that the safety valve is one-directional by construction: the rate-limit machinery cannot be used to slow an exit even if a fast exit were itself destabilising (for example a withdrawal large enough to drain an external pool's liquidity and strand other lenders). Spark accepts that externality in exchange for guaranteeing its own escape velocity.\n\nRead together with the per-instance keying of limits, this means the rate-limit system is best understood not as a risk *budget* but as an onboarding brake: it governs the speed at which new exposure can be built, and says nothing about the speed at which it is unwound.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Across every SparkLend instance the inflow leg carries both a maxAmount and a daily slope while the outflow leg is Unlimited, so recall of capital is never the binding constraint.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

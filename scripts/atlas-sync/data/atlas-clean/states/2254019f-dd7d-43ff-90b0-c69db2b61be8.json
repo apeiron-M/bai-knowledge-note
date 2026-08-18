@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-79a9a4c3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "79a9a4c3-a0f0-4401-a419-2bc401bb89b2",
+      "targetTitle": "The Relayer role belongs to an off-chain ALM Planner system "
+    },
+    {
+      "id": "lnk-52d081ca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "52d081ca-805e-42d9-8392-a32452f95235",
+      "targetTitle": "Every Relayer operation is gated by the same three precondit"
+    },
+    {
+      "id": "lnk-2a16ecf8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2a16ecf8-6a35-4063-b0ae-2a44f8f7b9dd",
+      "targetTitle": "Emergency authority over the Liquidity Layer is strictly sub"
+    },
+    {
+      "id": "lnk-9059d6b5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9059d6b5-fadd-4eed-9161-171bff1a7e6f",
+      "targetTitle": "Allocation decisions are made by an off-chain planner; the o"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Liquidity Layer operations are split between a Relayer that can act and a Freezer that can only stop",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "bc9fafd7-7872-4705-a07f-8e44ea86b0e3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d0ae717e-f971-45bf-af7d-95a52cb624b9",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9aefd9ba-75fb-4bda-a2e9-07b245e42a77",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dbdf481d-e923-4370-bbc3-a9aab1562a14",
+      "name": "operational-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "For each chain, A.6.1.1.1.2.6.1.2.1.1.1.2 lists an ALM Freezer Multisig, one or more ALM Relayer Multisigs, an `ALM_RATE_LIMITS` contract and, on several chains, an `ALM_PROXY_FREEZABLE` contract.\n\nThe separation of powers is the mechanism. The Relayer role moves capital between venues and chains as part of normal operations \u2014 it must be fast, so it cannot wait on governance. The Freezer role has exactly one capability: stop. Splitting them means the fast key cannot be used to halt the system and the emergency key cannot be used to move funds.\n\nWhat makes delegating the Relayer role tolerable is the rate limits contract. Rather than approving each transaction, governance sets on-chain bounds on how much can move, and the Relayer operates freely inside them. Authority is constrained by code at the boundary instead of by human review of every action \u2014 the standard trade in treasury operations between agility and control, resolved by moving control from the transaction to the envelope.\n\nThe residual risk is bounded but real: a compromised Relayer key can do damage up to the rate limit before the Freezer intervenes. Rate limit calibration, not key security alone, sets the maximum loss.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every chain names separate multisigs for the two roles alongside a dedicated rate-limits contract, so routine capital movement is bounded in code rather than approved case by case.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

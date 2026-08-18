@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-eef82f0a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eef82f0a-4f7d-4618-a5d9-816fd69ab448",
+      "targetTitle": "doc-9d215bf6"
+    },
+    {
+      "id": "lnk-54367c9e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "54367c9e-56e2-475b-addc-a54590a96931",
+      "targetTitle": "Only the routine Root Edit path is specified \u2014 non-routine c"
+    },
+    {
+      "id": "lnk-b08925e2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b08925e2-c3d2-4d6f-99fd-feb19c45f1f4",
+      "targetTitle": "'Deployed only once' seals further Invocations while the sin"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every ongoing Primitive splits its operational process into Routine, Non-Routine and Emergency protocols",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a9c66e01-cc34-47b6-a2a3-92bf3dfda8c1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a5e2c14-d7d6-48db-94b6-b11bc0dffe29",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6adebe1f-1958-4724-a9a8-c7ad06d69266",
+      "name": "primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "24daff64-cb65-41e5-a4ed-3f6dc18e0f71",
+      "name": "operational-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Wherever a Primitive has ongoing activity, its Operational Process Definition subdivides identically into **Routine Protocol**, **Non-Routine Protocol** and **Emergency Protocol** \u2014 visible at A.6.1.1.5.2.2.2.2.1.2.1\u20133 (Root Edit), A.6.1.1.5.2.3.1.2.1.2.1\u20133 (Ecosystem Upkeep Fee) and A.6.1.1.5.2.3.2.2.1.2.1\u20133 (Upkeep Rebate). The Routine branch is described as covering \"routine or normal conditions (i.e., non-emergency situations).\"\n\nThe pattern's value is that it forces the abnormal case to be considered at design time rather than improvised. A Primitive cannot be documented as complete while leaving unstated what happens when its normal path fails, because the empty branch is visible in the tree.\n\nThe three-way split is also finer than the usual normal/emergency binary. **Non-Routine** captures the large middle ground \u2014 unusual but not dangerous circumstances \u2014 that binary schemes tend to force into whichever branch is closer, typically escalating ordinary irregularities into emergency handling where oversight is weakest.\n\nAcross this chunk, only the Routine branches carry content. Root Edit's Emergency Protocol is populated (A.6.1.1.5.2.2.2.2.1.2.3.1), but its Non-Routine branch is a bare heading, as are both abnormal branches for the two Upkeep Primitives. The structure is fully in place while most of its slots are empty \u2014 the same build-the-frame-first habit seen in the pre-provisioned Primitive scaffolding, with the same caveat that an empty emergency branch is discovered to be empty only under pressure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The same three-branch structure recurs across Root Edit, Ecosystem Upkeep Fee and Upkeep Rebate, so each Primitive answers in advance how it behaves under abnormal conditions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

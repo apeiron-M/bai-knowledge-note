@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The recommended threshold table assigns the lowest signing threshold to the highest-impact use case",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "322918a5-4813-4960-8dd9-3ff70ce0583c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "41a239da-66e6-496a-a174-162415497f95",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "37606e41-6ccf-4313-abfe-d7e57ed32ede",
+      "name": "multisig",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.1.1.4 tabulates recommended thresholds against both classification axes: Treasury-Large (High / Routine) 4/7; Treasury-Small (Medium / Routine) 3/5; Emergency Freeze (Critical / Emergency) 2/4; Capital Allocation (High / Time-Sensitive) 3/5; Protocol Parameters (High / Routine) 4/7; Constrained DeFi (Medium / Time-Sensitive) 2/3.\n\nRead down the Impact column alone, the table looks backwards. The only use case graded Critical carries the second-lowest threshold in the set, and Constrained DeFi at merely Medium impact sits at 2/3. Any framework that mapped criticality monotonically onto threshold would produce the opposite ordering.\n\nThe pattern resolves once the Operational axis is read as the dominant term. Every Routine case gets a majority-of-seven or majority-of-five; every Time-Sensitive or Emergency case is relaxed to a bare two-signer requirement. Impact grades the *consequence* of failure, but the threshold is set by the *time available* to assemble signatures \u2014 and a <2 hour response window cannot wait for five of seven people.\n\nThe compensating controls are what make this defensible rather than reckless: Emergency Freeze multisigs cannot move assets (A.2.11.1.3.2.1.1.2.3.2), and Constrained DeFi is bounded on-chain. So the table only appears to invert risk. It is really applying the substitution principle \u2014 where capability is limited, threshold can be too.\n\nThese are labelled recommendations that \"serve as guidance to the Multisig Administrator,\" not requirements, which means the self-assessed classification chosen under A.2.11.1.3.2.1.1.1.1 selects the row and therefore the threshold.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Emergency Freeze is graded Critical impact yet recommended at 2/4, while Treasury-Large at High impact gets 4/7 \u2014 because the Operational axis, not the Impact axis, drives the threshold.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

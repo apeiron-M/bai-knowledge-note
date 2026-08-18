@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-6116bfbd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6116bfbd-55ae-4970-a5c3-341ae46646bf",
+      "targetTitle": "The only Grove Instance with complete RRC Framework coverage"
+    },
+    {
+      "id": "lnk-8b58f1bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8b58f1bb-e6a6-4e37-91e4-f1d66478cbe7",
+      "targetTitle": "RRC framework coverage is Pending for every venue outside th"
+    },
+    {
+      "id": "lnk-fb977115-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fb977115-c1ff-42c5-a8a9-caa9ee7cf225",
+      "targetTitle": "Spark instances go live before the RRC Framework is fully im"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove deploys live capital through Instances whose RRC Framework implementation coverage is still marked Pending",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d1f5aa69-eaef-4caf-af35-ba5a0ce786e3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "06fea996-332a-4359-8a7d-7feb65a91207",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e27abfc-0129-4282-87aa-caee635ba066",
+      "name": "risk-framework",
+      "topicDocumentId": null
+    },
+    {
+      "id": "538b85a5-5733-44ce-b104-1c1f1f089d1e",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Instance Configuration Document opens with a field titled \"RRC Framework Full Implementation Coverage.\" In this chunk it reads **`Pending`** for the Ripple RLUSD Instance (A.6.1.1.2.2.6.1.3.1.10.1.1), the Agora AUSD Instance (.11.1.1), and all three Uniswap v3 AUSD/USDC Instances (.12.1.1, .12.2.1, .12.3.1). It reads **`Covered`** only for Maple syrupUSDC (A.6.1.1.2.2.6.1.3.1.13.1.1).\n\nThe surrounding text is unambiguous that these are not proposals. Each parent section states that the Instances \"with `Active` Status are stored herein,\" and the Instances carry concrete pool addresses, live RateLimitIDs, and eight-figure deposit allowances.\n\nThe tension is therefore explicit on the face of the document: capital is allocated through five of six Instances before the risk framework's coverage of them is complete. The field's existence is a point in the Atlas's favour \u2014 the gap is disclosed in a structured, machine-readable slot rather than buried \u2014 but disclosure is not mitigation. A reader can enumerate exactly which live allocations are un-covered, and that enumeration is the finding.\n\nIt also gives the field a useful second life as a coverage backlog: the ratio of `Covered` to `Pending` across all Instances is a directly observable measure of how far Grove's actual book has run ahead of its formal risk process.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Ripple, Agora and all three Uniswap Instances read Pending while Maple syrupUSDC reads Covered, so active allocations run ahead of the risk framework meant to govern them.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

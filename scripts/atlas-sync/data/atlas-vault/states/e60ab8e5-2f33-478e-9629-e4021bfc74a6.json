@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "BEAMs delegate parameter authority to whitelisted operators within vote-set bounds, backed by a MOM kill switch that never disables governance itself",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "dd1bb427-69c5-488f-a77a-c5f8bbb7b298",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0baa2eaa-e135-4580-bde3-a315e9af863e",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "021bfb47-9745-401a-bee3-d0bd00c9e431",
+      "name": "delegation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.3.2.10 defines Bounded External Access Modules as \"contracts that allow whitelisted operators to manage parameters in the Sky Ecosystem without needing to use the standard Executive Vote process,\" and therefore outside the pause delay. \"The actions of BEAMs are limited by risk parameters, which are set by Sky Core Governance and require an Executive Vote to change.\"\n\nThe risk disclosure at A.1.10.3.2.10.1 is candid \u2014 operators \"are able to bypass the Executive Vote process\" \u2014 and names two mitigations: \"limiting the frequency and size of modifications that can be made by operators,\" and that \"**all BEAMs should also have a related MOM contract that can deactivate the relevant BEAM in the event of an operator acting in a misaligned manner**.\"\n\nSo the structure has three layers: an operator who can act immediately, mathematical bounds on how far and how often, and a governance kill switch. Rate limits are what make the worst case survivable \u2014 an operator moving parameters within narrow bands per period cannot reach a catastrophic value before the kill switch can be used.\n\nThe kill switches are carefully non-destructive. A.1.10.3.2.11: once SPBEAM_MOM fires, \"the SP-BEAM will not be able to change any rates,\" but \"it will still be possible to modify rates through the usual Executive Vote process.\" A.1.10.3.2.12 says the same for stUSDS. Disabling a delegate never disables the underlying capability, so an emergency shutdown cannot be used to lock governance out of its own protocol.\n\nA.1.10.3.2.10.1 closes with an alignment framing rather than a procedural one: \"Any operator that fails to follow the defined procedures for a BEAM they are operating **should be considered misaligned**.\" Procedural deviation is not an operational lapse to be corrected \u2014 it puts the operator into the Atlas's misalignment category, with the consequences that attach to it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.3.2.10 trades the Executive Vote for operator speed while capping frequency and size; a paired MOM can disable the BEAM, leaving the normal delayed path intact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

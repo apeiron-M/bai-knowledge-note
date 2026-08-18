@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-5c79d739-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5c79d739-123e-401c-a4f0-5424d5753833",
+      "targetTitle": "SparkLend deprecates a collateral asset by stacking Frozen s"
+    },
+    {
+      "id": "lnk-a3d726df-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a3d726df-cf21-4ce8-a513-e1e6337f5582",
+      "targetTitle": "The 24-hour margin call cure period is only safe because the"
+    },
+    {
+      "id": "lnk-d6cb6b8e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d6cb6b8e-9a23-4601-9d11-589301929dcb",
+      "targetTitle": "doc-2f6ea3c5"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Offchain lending uses three LTV thresholds, and a margin call must restore the position all the way to Initial LTV",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "155cd21f-63ca-48ac-aee8-3ba26f457639",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "497ed617-1996-43ff-bf80-ccccb64eb5df",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cae5b455-56fa-4788-945a-8cec3fd1a4c1",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three separate ratios govern each offchain loan. **Initial LTV** (A.6.1.1.1.3.8.2.2.1.1) is \"the maximum ratio of loan amount to collateral value permitted when a new loan is issued\" \u2014 and does two more jobs: \"when a margin call is triggered, the borrower must return the position to an LTV ratio **equal or less than the Initial LTV**,\" and collateral may only be withdrawn if the position stays below it afterwards. **Maintenance LTV** (.1.2) is the level \"above which a margin call is triggered.\" **Liquidation LTV** (.1.3) is the level \"above which a position may be liquidated immediately.\"\n\nFor BTC the ladder is 80% / 85% / 90%; for ETH 70% / 85% / 90%; for XRP and HYPE 60% / 70% / 80% (A.6.1.1.1.3.8.2.2.2.1 through .2.5).\n\nThe over-correction requirement is the design's most important feature. If curing a call only required dropping back below the *maintenance* level, a borrower at 85.1% could post a token amount of collateral, return to 84.9%, and be called again on the next tick \u2014 an oscillation that consumes operational attention indefinitely and leaves the position permanently at the edge. Forcing a return to Initial LTV rebuilds the whole buffer, so each call is resolved once.\n\nThe ETH ladder shows the buffers being tuned independently: a 15-point gap between initial and maintenance versus BTC's 5, meaning ETH borrowers get more room to move before being called but the same 90% liquidation line. Initial LTV governs how much leverage is *offered*; the maintenance gap governs how often borrowers are *disturbed*; the liquidation line governs when Spark stops negotiating.\n\nApplying Initial LTV to withdrawals closes the last gap \u2014 otherwise a borrower could drain collateral down to the maintenance edge and manufacture the fragile state the ladder exists to prevent.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Initial LTV gates issuance and withdrawals, Maintenance LTV triggers the call, Liquidation LTV permits immediate seizure \u2014 so curing requires over-correcting past the trigger, not just back under it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

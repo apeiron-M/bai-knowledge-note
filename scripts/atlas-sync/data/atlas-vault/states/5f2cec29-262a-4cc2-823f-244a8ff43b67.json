@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Signers must be able to operate on independent backup infrastructure and must have practiced doing so",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "367d4177-28a7-4947-b2bd-31e26980762c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a1e937ac-01a3-4d7f-9c40-e8347d45904b",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ee31336a-9cab-4c0e-935a-c5880c507664",
+      "name": "resilience",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.1.1.5 through .5.2 require the Administrator to ensure signers can \"continue to monitor, verify, and execute transactions if primary user interfaces, RPC providers, or block explorers become unavailable\": alternative interfaces \"accessible through independent infrastructure\" including \"self-hosted or locally runnable alternatives,\" and \"multiple RPC providers for each supported network\" chosen to \"minimize shared infrastructure dependencies.\" A.2.11.1.3.2.2.2.2.1 extends the same logic to explorers.\n\nThe threat here is not an attacker but a dependency. Emergency response runs entirely on third-party infrastructure that the protocol does not control, and outages correlate with exactly the market conditions that create emergencies. A pause key is useless if the interface used to sign is down, and \"minimize shared infrastructure dependencies\" recognizes that nominally distinct providers often sit on the same cloud region.\n\nCommunication redundancy follows the same rule: A.2.11.1.3.2.1.1.6.2 requires a backup channel \"established on a different platform from the primary,\" under identical access constraints. Different platform, not merely a second room.\n\nThe requirement that lifts this above a paper plan is rehearsal. A.2.11.1.3.2.2.1.3.1 demands \"verifying that signers have practiced using backup interfaces, testing backup RPC providers during non-emergency periods, and maintaining documented procedures describing how to switch.\" An untested fallback is a fallback that fails on first use, and a signer learning a self-hosted interface during a live exploit will not finish in time.\n\nThe corresponding hygiene duty is revocation: removed signers must be \"promptly removed from all Multisig communication channels and communication systems\" including backups (A.2.11.1.3.2.1.1.6.4), and departing signers must relinquish access to shared resources with locally stored sensitive information \"securely deleted\" (A.2.11.1.3.2.2.1.1.4.2). Every redundant channel is another place access can be forgotten.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Alternative multisig interfaces, multiple RPC providers with minimal shared dependencies, and redundant explorers \u2014 plus rehearsal during non-emergency periods and documented switchover procedures.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-87b19457-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87b19457-fb13-40a0-9814-f77ac954a05f",
+      "targetTitle": "Bug bounty rewards above one million USD are paid in monthly"
+    },
+    {
+      "id": "lnk-776bc1ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "776bc1ea-f510-4135-8909-52205da9834f",
+      "targetTitle": "Grove has no emergency response protocol at either ecosystem"
+    },
+    {
+      "id": "lnk-8364d99d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8364d99d-665a-4bd6-be7c-f45903816e01",
+      "targetTitle": "Skybase is the Agent that operates Sky.money as a non-custod"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Bug Bounty Program exists to make disclosure more profitable than exploitation for the same actor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e3220eab-8993-429a-b37c-bc8e089f5a0a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e033eca-7fe8-4e1d-85d3-7307c1dcec06",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "73541d37-dbf4-46b6-84c8-15d27e2cc74a",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.1 opens with the threat model rather than the policy: \"[a]s one of the most important DeFi protocols with a high TVL, the Sky Protocol is a honeypot for hackers and other nefarious actors. The Sky Protocol must always be protected by an active Bug Bounty Program.\" A.2.11.1.1.1 states the mechanism: to \"create incentives for hackers to contribute to the resilience of the Sky Protocol as opposed to exploiting vulnerabilities for personal gain.\"\n\nThe framing is worth noticing because it does not treat researchers and attackers as distinct populations. It treats them as one population facing a choice between two payoffs, and buys the honest branch. That is why the program's economics matter more than its existence \u2014 a bounty materially below exploit value converts nobody.\n\nThe continuity requirement (\"must always be protected by an active\" program) follows from the same logic. A lapse does not merely pause a service; it flips the payoff comparison for anyone holding an undisclosed finding, and disclosure decisions are made in the moment the bug is found.\n\nThe obligation extends past Sky's own perimeter: \"[t]he Sky Ecosystem must continue to maintain a Bug Bounty Program for SparkLend until the launch of the Spark Agent.\" Security coverage follows the assets users are exposed to, not the org chart, and hands off only when a successor Agent exists to carry it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Framed from the premise that a high-TVL protocol is a honeypot, the program buys vulnerabilities from the population that would otherwise exploit them, and must be continuously active.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

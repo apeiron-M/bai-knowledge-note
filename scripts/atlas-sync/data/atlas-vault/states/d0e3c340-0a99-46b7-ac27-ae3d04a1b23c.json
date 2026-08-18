@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove caps inflows to every Centrifuge instance but leaves outflows unlimited, so risk controls never impede exit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "517f7d7c-f563-4387-b793-8537121eee78",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "26a18e0c-327d-4b79-b589-6acef3891af2",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "20a6bc42-ce5b-4ab9-a88a-403f6b1d3ad4",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d18c0e10-f55b-4d0b-91f3-94a3d54093e4",
+      "name": "liquidity-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The pattern holds across every instance documented in this chunk. Centrifuge JTRSY: inflow 500,000,000 USDC with a 500,000,000-per-day slope, outflow `Unlimited` (A...3.1.1.1.2.4.1\u20132). Centrifuge JAAA: inflow 100,000,000 with a 50,000,000-per-day slope, outflow `Unlimited` (A...3.1.1.2.2.4.1\u20132). Centrifuge ACRDX: deposit 20,000,000 with a 20,000,000-per-day slope, withdrawal `Unlimited` (A...3.1.1.3.2.4.1\u20132). Centrifuge JTRSY USDS Vault: inflow 500,000,000 USDS, outflow `Unlimited` (A...3.1.1.4.2.4.1\u20132).\n\nThe asymmetry encodes a principle that is easy to state and easy to get wrong: **a rate limit is a control on taking risk, not a control on activity.** Throttling withdrawals would throttle de-risking, and would bind hardest in exactly the scenario the limits exist to survive \u2014 a counterparty deteriorating while Grove tries to get out.\n\nIt also composes with the emergency protocol in A...2.2.3.2, which instructs an operator to redeem *all* positions and centralise liquidity in the proxy. That instruction is only executable because no outflow limit stands in its way; a symmetric limit design would have made the documented emergency procedure impossible to complete in one action.\n\nThe cost accepted is that a compromised relayer can pull everything out of a protocol in one transaction. Grove judges that acceptable because the funds land in the ALM Proxy, not with the attacker \u2014 the proxy is the safe destination, so unlimited movement *toward* it is not an exposure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each instance config pairs a finite inflow maxAmount and slope with an outflow maxAmount of Unlimited \u2014 throttling only the direction that increases exposure.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

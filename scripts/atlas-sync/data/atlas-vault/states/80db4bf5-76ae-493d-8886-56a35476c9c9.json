@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The zero floor is applied per Instance before summing, so a Prime's losing Instances never offset its winners",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "bae5418c-8301-4032-a7fb-6819b631ddfe",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7591daf-5202-4fd6-a0cf-40bc72309ee7",
+      "name": "settlement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7147cf0a-4824-487e-89df-b53738bbfb62",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.4.1.2.2.1.1.2.2 defines Total Allocation System Profit as \"the sum of Instance Profit for each Active Instance,\" and A.2.4.1.2.2.1.1.2.2.1 applies the zero floor inside each Instance Profit. The order of operations matters: flooring happens per Instance, then the floored values are added.\n\nThe consequence is that the option is granted per Instance, not per Prime. A Prime running one Instance that beats the borrow rate and one that falls short keeps the full profit from the winner while the shortfall on the loser is simply dropped. Had the sum been taken first and floored afterwards, the loss would have reduced the retained profit \u2014 the Prime would keep only its net performance.\n\nThis magnifies the incentive distortion in a specific direction: it rewards **running many independent bets** rather than managing a portfolio. Each additional Instance is another free option, and the marginal Instance is worth adding even if its expected return is below the borrow rate, provided its outcome is uncertain.\n\nIt also explains why the Distortion Penalty in A.2.4.1.2.2.1.1.2.3.1 is assessed against Total Allocation System Profit rather than per Instance. The remedy has to be able to reach the aggregate, because the aggregate is where the accumulated benefit of per-Instance flooring shows up, and because attributing distortion to one particular Instance would be far harder to justify than observing that a Prime's overall decisions were shaped by the structure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Total Allocation System Profit sums Instance Profits that have each already been floored at zero, making the option asymmetry hold at every Instance rather than across a Prime's portfolio.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

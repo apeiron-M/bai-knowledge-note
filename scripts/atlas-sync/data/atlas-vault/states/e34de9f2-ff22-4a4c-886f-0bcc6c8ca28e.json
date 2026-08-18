@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SPK delegation moves a wallet's entire voting power and only to a whitelisted Active Delegate",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0a29ffff-390d-4f6e-b8af-21809401fb6c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "402b1e4c-9c78-4d18-9ed6-e86838945040",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c737023-033b-4a10-804b-5192f3393afc",
+      "name": "delegation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.1.3.2 states that SPK holders may delegate \"the full voting power of their wallet\" to an Active Delegate \u2014 there is no partial delegation. A.6.1.1.1.3.1.3.2.4 then adds the restriction: holders \"may only assign their voting power to Active Delegates. This also means Delegators cannot delegate to another wallet they themselves control, unless it is an Active Delegate wallet.\"\n\nThe second sentence is the interesting one, because it names the circumvention it exists to block. Without the whitelist, a holder could delegate to their own alias and appear as an independent delegate; or route power through intermediate wallets to obscure its origin. Confining valid targets to a registry the Spark Foundation controls (A.6.1.1.1.3.1.3.8) means every unit of delegated power terminates at an identity-verified, responsibility-bound actor.\n\nAll-or-nothing delegation per wallet is the complementary constraint. A holder wanting to split influence across delegates must split their tokens across wallets \u2014 which is possible but costly and visible, rather than free and invisible.\n\nThe combined effect: delegated voting power in Spark is always attributable to a named, offboardable delegate, at the cost of expressiveness for holders who would prefer to spread their trust.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:32:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:32:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Delegation is all-or-nothing per wallet and restricted to registry-listed Active Delegates, which blocks delegating to another wallet you control as a way of splitting or laundering votes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

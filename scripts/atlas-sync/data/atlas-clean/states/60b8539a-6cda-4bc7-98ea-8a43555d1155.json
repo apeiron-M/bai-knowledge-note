@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-aa27e845-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa27e845-1b45-47c1-8fad-0ac62301d1b2",
+      "targetTitle": "Two independent Relayer multisigs let Operational GovOps ope"
+    },
+    {
+      "id": "lnk-dc0ffce7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc0ffce7-8c92-4589-9087-72c34106efd5",
+      "targetTitle": "doc-fcd495e3"
+    },
+    {
+      "id": "lnk-9ea0b36b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9ea0b36b-c34e-4382-8005-cda9f12dc70a",
+      "targetTitle": "The Core Operator Relayer's 2-of-5 threshold lets either two"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Three separate multisigs hold the same Relayer Role at wildly different security thresholds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b5e6264d-3c8b-4294-ba35-7b5cb0a1c389",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d430399a-5f48-4aef-b2bd-d55fc2b39a23",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "279e252e-f174-43db-a1b9-c8cb95c703a7",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "35c21d0a-0710-46dd-a560-32680e9f4007",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.1.2.2 lists three holders of `RELAYER_ROLE`. The **Prime Primary Relayer Multisig** is controlled by Grove with a 4-of-7 requirement across seven Grove-controlled addresses. The **Prime Secondary Relayer Multisig** is also controlled by Grove but requires only 1 of 2. The **Core Operator Relayer Multisig** is controlled by \"Operational GovOps Soter Labs\" at 2 of 3.\n\nTwo observations follow. First, **the role is not exclusively Grove's**. Soter Labs \u2014 the Operational GovOps function, an external operator \u2014 holds independent relayer authority over Grove's Liquidity Layer. Execution capability is deliberately not monopolized by the Agent, so operations can continue if Grove's own signers are unavailable or compromised.\n\nSecond, and more consequentially, **security is only as strong as the weakest holder**. `RELAYER_ROLE` per A.6.1.1.2.2.6.1.2.2.1.1.1.2 lets its holder call functions on the Controller contracts to act on behalf of the ALM Proxy. A 1-of-2 multisig grants that power to any single one of two keys. An attacker facing a 4-of-7 set and a 1-of-2 set with identical privileges will always attack the latter.\n\nWhat bounds the damage is not the key set but the surrounding machinery: rate limits cap what any relayer can move per day (A.6.1.1.2.2.6.1.2.1.1.3), and the Freezer can remove a compromised relayer without governance (A.6.1.1.2.2.6.1.2.2.1.1.1.4). The tiering is coherent only under that assumption \u2014 the system is designed to tolerate a relayer compromise rather than to prevent one, which is a legitimate but load-bearing choice.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A 4-of-7 Grove multisig, a 1-of-2 Grove multisig and a 2-of-3 multisig controlled by Operational GovOps all exercise RELAYER_ROLE, so the weakest key set commands the same powers as the strongest.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

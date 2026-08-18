@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "CCTP refuses to bridge to a domain with no configured mint recipient, while the LayerZero path has no equivalent check",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1c7e9bcf-45ae-4a4d-98d0-47f7d2d37a10",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "566c1151-b41c-47df-84f4-884909d11fa1",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "220b78fd-624b-45d2-b132-3239a0af9813",
+      "name": "cctp",
+      "topicDocumentId": null
+    },
+    {
+      "id": "99752ea9-a806-443a-8085-a8d869605a27",
+      "name": "layerzero",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.15.1.3 makes destination configuration an explicit precondition:\n\n```\nbytes32 mintRecipient = mintRecipients[destinationDomain];\nrequire(mintRecipient != 0, \"CCTPLib/domain-not-configured\");\n```\n\nThe LayerZero path solves the same problem \u2014 the relayer chooses a destination endpoint, governance chooses the recipient \u2014 but A...13.1.4 simply reads `layerZeroRecipients[destinationEndpointId]` into `SendParam.to` with no assertion. An unconfigured endpoint therefore yields the zero recipient and the transfer is attempted rather than rejected at Grove's boundary.\n\nThis is a real inconsistency between two structurally identical integrations, and it matters because it is exactly the class of defect that fail-closed conventions exist to prevent. Elsewhere Grove is emphatic on this point: unset slippage, unset TWAP window and unset minimum output all revert by name (A...8.1.2, A...9.1.2, A...11.1.2).\n\nIn practice the LayerZero gap is masked by the mandate in A...13.1.2 that its rate limit stay at `0` until the integration is tested, and possibly by the OFT itself rejecting a zero recipient. But the guarantee then lives in a configuration value and a counterparty's validation rather than in Grove's own code \u2014 which is weaker than the CCTP path and is a concrete item to close before the LayerZero limit is ever raised.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "CCTPLib/domain-not-configured reverts on a zero mintRecipient; the LayerZero send reads layerZeroRecipients without asserting it is set, so the two bridges fail differently on an unconfigured route.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

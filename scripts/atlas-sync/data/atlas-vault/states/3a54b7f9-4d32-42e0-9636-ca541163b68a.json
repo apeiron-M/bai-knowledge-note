@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "When a balance is marked by several Reward Codes, the most recent marking event takes the whole attribution",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "569b5b57-af05-4157-8586-8dbf2e3a416e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90ab966b-2313-4566-ad1e-c14edd30e9d9",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71d3043f-63e4-4c75-8a8e-b5c0c5225167",
+      "name": "attribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.1.2.1.1.2.1 describes the Ethereum Mainnet Tracking Methodology \u2014 the Reward Code passed as a parameter when depositing USDS into the Sky Savings Rate or Token Rewards contracts, combined with withdrawal data and processed by Operational GovOps into net deposits \u2014 and then resolves the conflict case: \"Where a balance has been marked with more than one Reward Code, the balance is attributed to the Reward Code specified in the **most recent marking event**.\"\n\nThis is last-touch attribution, and it has strong competitive consequences. Attribution is winner-take-all rather than shared, so there is no partial credit for the Integrator that originally acquired a deposit. And because the ten-year eligibility window (A.2.2.9.1.2.1.1.2.5) attaches to the marking event, a later marking transfers a claim that could have run for years.\n\nThe result is a contestable market in existing balances. An Integrator can grow revenue either by attracting new USDS or by inducing existing holders to re-transact through its own frontend \u2014 the second being cheaper. That keeps Integrators competing for users continuously rather than collecting rent on a one-time acquisition, but it also spends real resources moving balances that were already in the system.\n\nThe rule's virtue is that it is unambiguous and computable from on-chain data, which matters far more than fairness for a mechanism Operational GovOps must settle monthly across many Agents. Proportional or first-touch attribution would require history reconstruction and invite disputes; last-touch needs only the latest event.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Last-touch attribution makes reward claims winner-take-all and displaceable: a competing Integrator can capture a rival's ten-year claim by triggering a fresh marking event.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "With nested multisigs the device shows an approval hash, not the transaction, so signers must verify both layers",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "23d87c36-e67a-4766-bb02-97b190ca1e0f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "da970004-71f5-4978-97b6-d0a1ff789cc9",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a6d361ff-58d5-49a1-86dd-773cf2ba36fd",
+      "name": "multisig",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.2.2.2.2.1 requires signers to check \"that the transaction hash displayed on the signing device matches the expected transaction hash derived from the transaction parameters,\" then names the trap: \"[w]hen signing transactions involving nested Multisigs, the hash displayed on the signing device may correspond to an approval hash rather than the underlying transaction. In such cases, signers must verify both the nested transaction and the parent Multisig approval.\"\n\nThis matters because hash verification is the control signers trust most. The whole point of comparing a hardware wallet display against an independently derived hash is that a compromised interface cannot lie about what is being signed. With nesting, that guarantee silently narrows: the hash is genuine, the device is honest, and the signer has still confirmed only that they are approving *something* on behalf of the parent \u2014 not what that something does.\n\nA signer who follows the standard procedure correctly therefore gets a false sense of completion. This is a failure mode of a security control working exactly as designed, which is the hardest kind to notice, and it is specific to the layered multisig structures a protocol like Sky naturally accumulates.\n\nThe remedy is stated as a two-part obligation rather than better tooling \u2014 verify the inner transaction *and* the outer approval \u2014 which means the cost of nested architectures is paid in signer diligence on every signature.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A signer confirming the hash on their hardware wallet may be confirming only the parent multisig's approval; the underlying nested transaction has to be verified separately.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

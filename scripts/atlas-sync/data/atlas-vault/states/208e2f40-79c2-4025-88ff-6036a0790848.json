@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "sUSDe cooldown has two entry points because a share-denominated exit only learns its asset amount after the fact",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d9c3b6bd-3c2d-4436-a846-e13684b5414c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2734c594-e6e2-41b3-a152-0c2c6b0be55c",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "08b99e4b-09c7-4940-b46a-4ccbc2ac39cb",
+      "name": "ethena",
+      "topicDocumentId": null
+    },
+    {
+      "id": "300c6a1b-c55c-48d4-aee0-0e4429a5f9c7",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.10.5 and A...10.6 expose the same economic action twice: `cooldownAssetsSUSDe(usdeAmount)` names the USDe you want out, `cooldownSharesSUSDe(susdeAmount)` names the sUSDe shares you want to burn.\n\nBoth debit the **same** rate-limit key, `LIMIT_SUSDE_COOLDOWN`, and both debit it in **USDe assets** \u2014 never in shares. For the assets variant that is trivial and the limit is decreased before the call (A...10.5.2). For the shares variant A...10.6.3 spells out the constraint: \"Because the resulting `cooldownAmount` of USDe is only known after the cooldown is initiated, the rate limit ... is decreased at the end of the function using the resulting `cooldownAmount`.\"\n\nThe forcing function is the shared key. Two entry points charging one limit must agree on the unit, or the limit means different things depending on which door was used \u2014 and because sUSDe accrues value, a share is a drifting quantity while USDe is a stable one. Denominating in the asset is what keeps the budget interpretable over time.\n\nThis is why `cooldownShares` bothers to `abi.decode` its result at all: the return value is not needed for the operation, only for the accounting.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "cooldownAssetsSUSDe charges LIMIT_SUSDE_COOLDOWN up front from the requested USDe; cooldownSharesSUSDe must decode the returned cooldownAmount and charge the same key afterwards.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

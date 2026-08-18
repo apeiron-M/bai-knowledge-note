@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Within an Executor Agent, interpretation and privileged access must be held by the Facilitator rather than GovOps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "5cc0903d-fd1b-4fef-8026-a65b36178df4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d81b09f-f680-425e-a291-d82d4e21a3f8",
+      "name": "agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "468a7e8f-5f95-43a1-b3ff-9ff19c9db5a3",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.14.4.6.1 states that \"Executor Agents act exclusively through their associated GovOps and Facilitator actors\" \u2014 the Executor is not itself an actor but a structure composed of two.\n\nA.1.14.4.6.1.1 makes GovOps the general operator: \"With the exception of specific activities reserved for Executor Agent Facilitators, all activities of Executor Agents are carried out by GovOps.\" A.1.14.4.6.1.2 then reserves precisely two things to the Facilitator, and they are the two that matter most: \"Whenever an Executor Agent must interpret an Artifact, that interpretation must be done by the Facilitator. Whenever an Executor Agent has privileged access to smart contracts of Sky or an Agent, that access must be held by the Facilitator.\"\n\nInterpretation and keys are therefore separated from operations. The party that decides what the text means and the party that can act on-chain is the same, and it is *not* the party running day-to-day business \u2014 which limits how much damage operational pressure can do, since GovOps must ask for every privileged action rather than perform it.\n\nThe final clause is a conscience clause: Facilitators \"use this access to carry out the Executor Agent's operational responsibilities as directed by GovOps, **unless the Facilitator believes that GovOps is misaligned**.\" The Facilitator is normally an instrument of GovOps' direction and becomes a check only on suspicion of misalignment \u2014 a standing internal veto held by the keyholder.\n\nThis is the same architecture Sky applies to itself, where the Core Facilitator interprets alignment while other actors operate. Reproducing it inside every Executor means the pattern holds at every layer where privileged access exists, rather than only at the top.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Executors act exclusively through GovOps and Facilitator actors; GovOps directs operations, but the Facilitator holds contract access and may decline direction it believes is misaligned.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

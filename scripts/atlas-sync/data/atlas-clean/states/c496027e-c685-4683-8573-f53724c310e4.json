@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce489442-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce489442-e388-4522-b71d-df27162d0d3a",
+      "targetTitle": "Sky deploys new modules on-chain seven to eight days before "
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Deployment and initialization scripts are treated as protocol code: library-structured, free of hardcoded addresses, and targeting 100% test coverage",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "eda83c2c-6c84-4587-94b7-8a8e20172d07",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "118a03e7-d070-4f36-a162-85cfc1cfcc6c",
+      "name": "audit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "93422360-f62e-4b9d-bdcf-5c8407b4cea2",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.7.1.1.1 imposes a structure: \"Deployment logic must be extracted into a Solidity library that accepts constructor arguments and deploys the contract. Initialization logic must be extracted into a Solidity library that performs post-deployment configuration, including granting roles and setting state. The deployment script must orchestrate the deployment by calling the deployment and initialization libraries\" \u2014 combined into one library \"unless there is reasonable justification for separation.\"\n\nA.1.10.2.7.1.1.2.1 adds two general requirements: \"**Libraries must not contain hardcoded addresses. All addresses and configuration values must be passed as parameters**,\" and \"All library functions must be tested. Test coverage must target 100%.\"\n\nThis elevates deployment from operations to protocol. Deployment scripts usually live outside the reviewed artifact \u2014 written quickly, run once, discarded \u2014 yet they determine constructor arguments, role grants and initial state, which is to say most of what a module actually does in practice. A perfectly audited contract deployed with the wrong role grant is a compromised contract.\n\nBanning hardcoded addresses is the sharpest of these rules. It separates *logic* from *configuration*, so the audited artifact is a reusable mechanism and every address becomes a visible input reviewable at the call site rather than a constant buried in code where a single wrong character reads as normal.\n\nA.1.10.2.7.1.1.2.2 completes it by requiring deployment scripts to \"yield ownership of deployed contracts to the relevant Governance proxy\" and putting top-level deployment scripts in audit scope, with auditors verifying constructor parameters at minimum.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.7.1.1 forces deployment logic out of ad hoc scripting into auditable Solidity libraries where every address is a parameter, so configuration is reviewable rather than embedded.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

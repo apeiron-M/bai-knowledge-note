@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Uniswap v3 swap that hits its price bound stops without reverting and leaves part of the order unsold",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e98be376-0d88-44d8-8c5b-3277e2ca9fab",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b07b4bd8-e766-4bab-8c4e-7684f25eebbb",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2eb73dbf-bdc7-4eb4-adaf-2db4050fc884",
+      "name": "risk-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.5.2.5.3.3 specifies that a swap's execution price is bounded against the pool's time-weighted average price by a caller-supplied maximum tick deviation, and then: \"If the swap reaches this price limit before selling the full specified amount, execution stops without reverting, and part of the specified amount goes unsold.\"\n\nChoosing partial fill over revert is a real design choice with a clear rationale \u2014 an operator rebalancing a position usually prefers moving some of it at an acceptable price to moving none \u2014 but it changes what a successful transaction means. Success no longer implies the requested action completed, so any process that treats a non-reverting call as confirmation of the intended state change will be wrong at exactly the moments the market is stressed.\n\nThe rate-limit accounting is made consistent with this: the limit is applied against the balance-diffed amount actually sold, not the amount specified, so unsold size does not consume allowance.\n\nThe residual risk is operational rather than economic. Repeated partial fills against a moving price mean an intended unwind can silently stall while every transaction reports success, which is precisely the scenario where an emergency procedure would need to know the position is still open.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Execution halts at the maximum tick deviation from TWAP rather than failing, so a partially filled swap is a success; the rate limit is charged only for the amount measured as sold.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

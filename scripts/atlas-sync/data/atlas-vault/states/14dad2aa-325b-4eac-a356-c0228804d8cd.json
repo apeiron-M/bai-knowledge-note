@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An action taken through a Scope-defined process is valid only if Core GovOps was properly notified",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d6235a85-f0ec-4595-a17d-7a7e6794dc09",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b46e3b6a-79f7-42b0-b6e0-68a0dd4cc6b8",
+      "name": "core-govops",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00b7c91b-4473-468d-bb37-e95825f66150",
+      "name": "governance-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.1.1.2 notes that the Scopes each establish specialized processes \u2014 for submitting governance proposals, for modifying the Atlas \u2014 and assigns Core GovOps the duty of \"monitoring and ensuring that these processes are executed in accordance with the established rules.\" It then adds the enforcement clause: \"An action carried out through a Scope-defined process is considered valid only if Core GovOps has been properly notified.\"\n\nThat sentence does the work. Instead of trying to police six Scopes' worth of divergent procedures after the fact, the Atlas makes notification a **precondition of validity**. An unnotified action is not a rule violation to be litigated; it is simply void. The annotation at A.2.1.1.2.0.3.2 tightens it further \u2014 \"properly notified\" means informed in accordance with prescribed timing, method, and content, as the relevant Scope requires \u2014 so procedurally sloppy notice fails too.\n\nThe design pattern is worth naming: rather than centralizing *authority* over Scope processes, the Atlas centralizes *visibility* and makes visibility mandatory. Scopes keep the freedom to design their own procedures; Core GovOps keeps a complete view of what those procedures produce.\n\nThe cost is a single point of procedural failure. If Core GovOps is unavailable, backlogged, or disputes that notice was proper, otherwise-legitimate Scope actions have no valid existence.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:15:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:15:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Notification is a validity condition, not a courtesy: it gives Core GovOps one monitoring chokepoint over every Scope's specialized proposal and Atlas-edit processes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

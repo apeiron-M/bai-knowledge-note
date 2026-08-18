@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-f13ad371-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f13ad371-72d7-4361-be0f-c861b555e3de",
+      "targetTitle": "Sky owes offboarded vault users advance notice because force"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Tokens misdirected to DssBlow2 are unrecoverable and do not discharge an obligation owed to Sky",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e50db3c6-1928-4ef2-80f5-7bf5a5824ecb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb3072cc-385c-4442-86fa-3d634df35512",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbfb6440-4024-4453-af38-583b6b4d5b2e",
+      "name": "accounting",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbcf24e9-35b7-482e-aaa7-0fecb076bfe6",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.6.1.1.1.1.1.1 is unusually blunt: \"Only Dai or USDS are supported by DssBlow2. Any other tokens sent to DssBlow2 are not recoverable by Sky. Senders bear full responsibility; such transfers are not considered a valid receipt of funds owed.\"\n\nThe first half is a technical fact \u2014 the contract has no rescue function, so anything it cannot process is stranded permanently, and not even governance can retrieve it. The second half is the load-bearing part, and it is a claim about obligations rather than about code. A payer who sends the wrong asset to the right address has not paid. They still owe the money, and they have also lost the tokens.\n\nStating this in the ruleset closes a dispute that would otherwise be genuinely arguable. A debtor could reasonably contend they performed by sending value to Sky's published address and that the loss is a shared misfortune, or that the protocol should be estopped from claiming twice. Pre-declaring where the risk of misdirection sits removes the argument and, more importantly, aligns incentives: the party choosing what to send bears the consequence of getting it wrong, which is the only party able to prevent the error.\n\nThe broader pattern for on-chain systems: irreversibility means payment instructions are safety-critical documentation, and the accompanying rule must say what happens when they are not followed. Sky chooses documented strictness over a recovery mechanism \u2014 no admin escape hatch on the contract, and no forgiveness of the underlying debt.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:31:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas states that non-Dai/USDS sent to the contract is lost, senders bear full responsibility, and such a transfer is \"not considered a valid receipt of funds owed\" \u2014 the debt survives the loss.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's Curators are execution agents with no discretion \u2014 every action must be pre-approved by a governance poll",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "09f35129-70a4-4a8e-9a6b-8047c107205a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69f86b7d-142d-4394-a2bd-9cd468655e41",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c25142b-e3d0-4b19-9b91-872ffb5f4635",
+      "name": "delegated-authority",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.9.2 states the framework's purpose as defining \"the conditions under which Spark governance may authorize external contributors to **execute** approved changes onchain, while preserving governance oversight, timelock protections, and cancellation authorities.\" The scope clause is categorical: \"Curators may only execute actions that have been explicitly approved by Spark governance via polling\" (A.6.1.1.1.3.9.3.2), and A.6.1.1.1.3.9.4.1 repeats that all curator-executed changes \"must be approved **in advance**.\"\n\nA Curator is defined (A.6.1.1.1.3.9.3.1) as \"a specific admin role defined within the Morpho smart contract system\" \u2014 and this is where the design becomes interesting. In Morpho's own model, a curator is an active manager: it selects markets, sets allocation caps, and adjusts risk in response to conditions, which is the entire value proposition of a curated vault. Spark takes the contract role and strips the discretion out of it.\n\nWhat remains is a division of labour. Governance retains every decision; the Curator supplies the operational capability \u2014 key custody, transaction construction, monitoring, availability \u2014 that a token-holder vote cannot itself provide. The Artifact is delegating *hands*, not judgment.\n\nThe trade-off is real. A vault whose parameters can only change at the speed of a governance poll cannot respond to a fast-moving market the way a discretionary curator can, and the Artifact accepts that cost in exchange for a mandate an observer can verify: every curator transaction should map to a specific prior poll, which is exactly what the reporting requirement forces the Curator to demonstrate.\n\nIt also means the Curator's misalignment risk is bounded to *unauthorized* action rather than *bad* action \u2014 a much easier thing to detect, and the thing the timelock and guardian exist to catch.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:04:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The framework separates deciding from signing: governance approves changes in advance and the Curator may only submit the corresponding transactions, inverting Morpho's usual active-management",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

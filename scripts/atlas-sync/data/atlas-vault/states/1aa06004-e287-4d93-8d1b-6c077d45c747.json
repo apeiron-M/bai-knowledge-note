@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-1d888b95-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1d888b95-01fe-4bb5-abc9-1754d142d417",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent Artifacts ship with explicitly deferred parameters rather than waiting until every value is known",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a6e1718c-3191-42c9-b7db-ca45aa7f2ca6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c3bbe16-d809-4b46-a1ac-5617708169c3",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30bfd9a0-c6ae-4397-8a6a-33f372cb7ac9",
+      "name": "artifact-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Several of Pattern's parameters are present as headings with no value. The Genesis Account \"will be specified in a future iteration of the Pattern Artifact\" (A.6.1.1.6.2.1.1.3.1.1.4); so will the PATTERN token address (A.6.1.1.6.2.1.4.2.1.1.4) and the token Admin (A.6.1.1.6.2.1.4.2.1.1.5). The minting and initial distribution processes for the Genesis Supply are likewise deferred (A.6.1.1.6.2.1.4.2.1.2).\n\nThe pattern worth noting is that the Artifact is published in an incomplete state *with the incompleteness itself recorded as content*. A missing section and a section that says \"not yet specified\" look identical in effect but not in accountability: the latter creates a named slot that a future edit must fill, and makes the gap enumerable.\n\nThis is a deliberate trade of completeness for operability. An Agent can be created, typed, and given a token cap before its accounts and distribution mechanics exist, letting the identity-defining Genesis Primitives close early while economic details are still being worked out.\n\nThe risk it carries is that a deferred parameter is an unbounded promise \u2014 nothing in these sections states a deadline or a default, so \"a future iteration\" can be indefinite, and a reader must treat the surrounding guarantees as conditional on values that do not yet exist.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Pattern records its Genesis Account, token address, token Admin and Genesis Supply distribution process as 'to be specified in a future iteration', naming each gap instead of omitting it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

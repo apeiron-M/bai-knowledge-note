@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-c378b13b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c378b13b-b805-4451-a32b-a3306f27cd0b",
+      "targetTitle": "Only borrow interest above the SKY Borrow Minimum Rate is pa"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The SKY borrowing debt ceiling is identically the USDS held in the stUSDS contract, so lending cannot exceed supplied capital",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3d51f369-f7c0-485f-b04c-d64b0c904c68",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "85cc6e3a-3e23-4df7-b3c7-94dc61cf2e6b",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "63ab0f0f-ff90-4e00-ae4d-892a1ce420f8",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b86545d-ddd8-4d6e-85da-43e5bceda70d",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.4 defines the limit without a parameter: \"The maximum amount of USDS that can be borrowed against staked SKY is dynamically determined by, and equal to, the total amount of USDS currently held within the stUSDS contract. This dynamic ceiling will replace the static `DC-IAM` module and parameters associated with protocol-dependent, SKY-backed borrowing.\"\n\nUnder the old model, a debt ceiling was a governance-chosen number representing how much fresh USDS the protocol was willing to create against a collateral type. It could be too high (latent risk), too low (unused demand), and it always required someone to keep it current.\n\nMaking the ceiling *equal to* supplied capital converts a policy question into an accounting identity. Every borrowed dollar is a dollar a lender actually deposited, so utilization is bounded at 100% by construction, no maturity or quantity mismatch can open up, and there is no configuration under which the facility lends money that does not exist. It is the difference between a credit facility and an intermediated loan book.\n\nThe implication for the rest of the model is large: because the ceiling moves with deposits, the *rate* is the only lever that clears the market. Demand cannot be met by raising a ceiling; it must be met by attracting supply, which is precisely what a utilization-linked stUSDS Rate does. The `line` parameter in the BEAM therefore acts as an additional cap beneath this identity, never above it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A dynamic ceiling replaces the static DC-IAM module: borrowing capacity is defined as an identity with lender deposits rather than as a governance-set number that could drift from reality.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

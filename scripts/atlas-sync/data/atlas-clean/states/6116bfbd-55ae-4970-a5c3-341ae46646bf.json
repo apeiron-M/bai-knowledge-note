@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The only Grove Instance with complete RRC Framework coverage is the one authorized to hold zero exposure",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "988475da-3731-48eb-bff4-868e03b19161",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "02eb21a8-e3c5-4b86-b470-b419af8b5481",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "daeff553-344d-42a8-9ea8-dec2e2d760b7",
+      "name": "risk-framework",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90762e0e-1146-4692-9d5a-dd426ac9465e",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every Instance Configuration Document opens with an \"RRC Framework Full Implementation Coverage\" field. In this chunk it reads **`Pending`** for Tokenized Treasury JTRSY (A.6.1.1.2.2.6.1.3.1.14.1.1), Tokenized Treasury BUIDL (.14.2.1), USDC To USDG Via Paxos (.15.1.1), Avalanche Centrifuge JTRSY (.2.1.1.1), Avalanche Centrifuge JAAA (.2.1.2.1) and Avalanche Curve USDS/USDC Swaps (.2.2.1.1).\n\nThe single `Covered` Instance across this material is Maple syrupUSDC \u2014 and A.6.1.1.2.2.6.1.3.1.13.1.2.5.2 caps its Maximum Exposure at **0 USD** with rate limits of zero in both directions.\n\nSo the correlation runs backwards from what a risk process is meant to produce. Coverage has been completed for the one conduit that cannot be used, while conduits carrying 5,000,000 to 50,000,000 of authorized inflow are still awaiting it. Nothing in the text says this is causal, and the benign reading is plausible \u2014 Maple is an older, previously-live allocation whose coverage work finished before it was wound down to zero. But the benign reading has an uncomfortable implication of its own: coverage is being completed on Grove's *past* rather than its present.\n\nThe practical test this suggests is a coverage-weighted-by-exposure metric rather than a count. Six `Pending` and one `Covered` sounds like partial progress; six `Pending` holding all of the exposure and one `Covered` holding none is a different finding entirely, and the Atlas records exactly the data needed to tell them apart.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Maple syrupUSDC reads Covered but is capped at 0 USD, while every Instance in this chunk holding real capital reads Pending \u2014 coverage and deployment are inversely arranged.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

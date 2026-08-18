@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky Governance, not Spark Governance, holds the admin role over the Spark Liquidity Layer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9319f85b-9e91-4c7c-b6e6-364fc50800fc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "81a7ff03-d0f3-4053-a818-77f33ad2b47d",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9225fa50-b76e-4123-b55d-563670dace50",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "50de1b3e-321a-466c-81e7-d295d73bab0f",
+      "name": "hierarchy",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.2.1.1.1 describes the root of the permission tree: the `DEFAULT_ADMIN_ROLE` \"is the role that can grant and revoke any role, including itself and all other roles defined in the contract,\" is \"also used for general admin functions in all contracts,\" and is \"fully controlled by Sky Governance via the Spark Proxy.\"\n\nEvery other permission discussed in the Liquidity Layer \u2014 Relayer, Freezer, and the multisigs holding them \u2014 exists because admin granted it and persists only while admin allows it. That root sits with the parent ecosystem, not with the Agent.\n\nThis is the on-chain counterpart to the governance limits in the Artifact's text. Spark Governance can amend its own Artifact within bounds; it cannot rewrite the contract permissions its operations run on. And it aligns with the transitional provision placing Allocation System and SparkLend parameters under Sky Core Governance until SPK is judged sufficiently decentralized \u2014 in the contracts, that control was never Spark's to begin with.\n\nThe consequence for reading the Agent model correctly: an Agent is a delegated operator of ecosystem capital with its own token, governance and strategy, not a sovereign entity that happens to cooperate with Sky. The admin key marks the boundary, and it is held upstream.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:27.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "DEFAULT_ADMIN_ROLE can grant and revoke every role including itself and is 'fully controlled by Sky Governance via the Spark Proxy' \u2014 so all delegated operational authority derives from Sky.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

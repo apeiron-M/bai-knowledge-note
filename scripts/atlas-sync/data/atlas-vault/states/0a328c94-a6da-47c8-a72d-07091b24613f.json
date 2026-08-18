@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The GSM Pause Delay's function is to create the window in which a Spell can be independently validated",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e910cd57-b071-40ed-98da-3013056300da",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "50934ac8-ed9c-4b5e-bddb-861695af1fab",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d5035802-fad2-44d7-9f26-976b617881f0",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.12.1.2 defines the Ecosystem Spell Validation Window as running from when \"the Spell becomes visible and is available for voting on the Voting Portal\" until \"the Spell's actions become executable, which occurs when the `GSM Pause Delay` elapses.\" Its duration \"is determined by the value of the GSM Pause Delay.\"\n\nThe reasoning for both bounds is given, and it is what makes this more than a schedule. Before the start, \"the Spell may still be subject to changes\" \u2014 validating a moving artifact proves nothing about what finally ships. After the end, \"the Spell may already be executable\" \u2014 a finding then arrives too late to prevent anything, converting validation from a control into a post-mortem.\n\nThis reframes the pause delay itself. A timelock is usually described as protection for users, giving them time to exit before a change takes effect. Here it is described as a *review budget*: the delay exists so that independent parties have a period in which the artifact is final but not yet live, and its length directly sets how much scrutiny is possible.\n\nThe practical consequence is that shortening the pause delay shortens validation, and any action exempt from the delay is effectively unvalidatable \u2014 which is exactly the exclusion A.1.10.2.4.12.1.3 goes on to make explicit. The delay is not a safety margin around validation; it *is* validation's operating window.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.1.2 bounds validation by publication and by executability: earlier the Spell may still change, later it can already execute, so review outside the window is ineffective.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

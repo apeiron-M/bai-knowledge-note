@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-ba1ed452-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba1ed452-bae4-4e30-8043-8ad25374737c",
+      "targetTitle": "The emergency brake on Grove's Liquidity Layer is held by a "
+    },
+    {
+      "id": "lnk-d901d297-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d901d297-1870-49ca-bcb3-3caf552a8aa1",
+      "targetTitle": "Freezer signers must justify freezing against Risk Capital r"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Freezer's stated purpose is to police Grove's own Risk Capital and ALM compliance, not only to respond to attacks",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "cc0aeca4-653b-4151-8dba-d44337db1c77",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4167373-2f59-4f7b-9013-0218c8773a9a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c701741-0454-4ac5-ad03-86edc2719110",
+      "name": "risk-governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fcf863ed-6f84-45a8-8dce-328962ee0f5a",
+      "name": "transparency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.1.2.2.4.4 states when the brake should be used: \"The signers of the Freezer Multisig should exercise their authority to freeze the Grove Liquidity Layer in the event that Grove is not complying with rules regarding Risk Capital or Asset Liability Management, or in the event of another emergency.\"\n\nThe ordering matters. **Non-compliance is named first**, and generic emergency second. The Freezer is therefore not primarily an anti-hacker measure \u2014 it is a **compliance enforcement mechanism aimed at the Agent itself**. Grove breaching its own risk rules is treated as an event of the same class as an exploit, and the response is the same: stop the machine.\n\nThat reframes the composition in A.6.1.1.2.2.6.1.2.1.2.2.4.3. If the Freezer's job is to stop Grove from misbehaving, then Grove obviously cannot hold a controlling share of it, and the two external parties holding four of five keys is the necessary consequence rather than an incidental arrangement.\n\nThe disclosure requirement is unusually specific: \"Each action executed by the Freezer Multisig, including any **function calls and their parameters**, must be reported to the Sky community within a reasonable time frame through a post on the Sky Forum.\" Reporting at the level of calldata rather than narrative means the community can verify exactly what was done, not merely be told a freeze happened.\n\nThe softness is in the verbs. Signers \"should\" freeze, and reporting is \"within a reasonable time frame.\" Neither is a hard trigger, so the mechanism still depends on the judgment of the five signers \u2014 which is why who they are is specified so carefully.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:43:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Signers should freeze where Grove is not complying with Risk Capital or Asset Liability Management rules, and every action taken \u2014 including function calls and parameters",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

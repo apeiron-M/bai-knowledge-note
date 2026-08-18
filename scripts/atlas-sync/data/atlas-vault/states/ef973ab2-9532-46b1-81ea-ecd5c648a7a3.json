@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Chronicle Point Reward Instance is identified by a Chainlog key rather than a hardcoded address",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1fa77b90-06f7-4ae1-ba95-315f2e2b7e97",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0ef76de4-0231-4837-8c7a-b92e76947fd6",
+      "name": "onchain-references",
+      "topicDocumentId": null
+    },
+    {
+      "id": "275cbf39-b47b-420a-a180-6fc0d950d993",
+      "name": "ecosystem-accords",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.10.2.1.1 defines the Chronicle Point Reward Instance as the Ethereum mainnet mechanism through which USDS is deposited in Sky's Rewards contract to accrue Chronicle Points, and pins it onchain as \"the verified `StakingRewards` contract at the address corresponding to the `REWARDS_USDS_01` key in the Chainlog.\"\n\nThe indirection is the interesting part, and it contrasts sharply with the rest of the chunk, which is full of literal addresses \u2014 Keel's Solana wallet, Core Council Executor Agent 1's SubProxy, Osero's Foundation multisig, Amatsu's and Ozone's SubProxies. Those are bound to a specific deployment; this one is bound to a *name*.\n\nThe consequence is that if the rewards contract is redeployed or migrated, the Chainlog entry is repointed and Grove's compensation base follows automatically. No Atlas Edit is needed, which matters because an Atlas Edit is the only way to change Accord terms (A.2.8.2.10.1.2).\n\nThe corresponding risk is that whoever controls the Chainlog key can redefine the payment base of a live Accord without touching Atlas text. Naming a mutable registry entry inside a contract moves a piece of that contract's meaning outside the document \u2014 a deliberate flexibility-for-auditability trade that hardcoded addresses do not make.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:17:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Defined as the verified StakingRewards contract at the address corresponding to REWARDS_USDS_01, so the referent can be rotated through the Chainlog without amending the Accord in the Atlas.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

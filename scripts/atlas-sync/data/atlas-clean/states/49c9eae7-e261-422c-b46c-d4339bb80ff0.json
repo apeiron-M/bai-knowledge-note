@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-ba1ed452-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba1ed452-bae4-4e30-8043-8ad25374737c",
+      "targetTitle": "The emergency brake on Grove's Liquidity Layer is held by a "
+    },
+    {
+      "id": "lnk-a4937777-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4937777-e2ec-4f89-8101-20f235546bd9",
+      "targetTitle": "doc-150f53f4"
+    },
+    {
+      "id": "lnk-a077859e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a077859e-3fd8-4c72-8e59-d5076e310769",
+      "targetTitle": "Freezer thresholds are low enough that most single signing o"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A single Freezer multisig address holds the emergency brake on every chain Grove operates on",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6254cc49-0593-4818-bac2-eca7708efb8b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0a067846-2493-4e69-8eb8-e501f8c8b367",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "82799f76-376d-4f96-94a3-4f311fecbdb3",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "66998bf1-6034-432d-b210-1cafa01ead35",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across all six chain sections under A.6.1.1.2.2.6.1.2.1.1.1.2 \u2014 Ethereum Mainnet (.2.1.3), Avalanche (.2.2.3), Base (.2.3.3), Plasma (.2.4.3), Plume (.2.5.3) and Robinhood Chain (.2.6.3) \u2014 the ALM Freezer Multisig is recorded as the **same address**, `0xB011...40e5`. The Relayer multisigs, by contrast, differ: one set on Ethereum, a shared address across several foreign chains, and a second additional relayer on Base and Robinhood Chain.\n\nThe design intent is clear and defensible. An emergency response must be **fast and uniform**; requiring a different quorum of signers per chain would slow the halt exactly when speed matters, and would make it possible to freeze some chains and not others during an unfolding incident. One signer set means one decision propagates everywhere.\n\nThe consequence is equally clear: that signer set is a **single point of compromise for the entire multi-chain deployment**. Whoever controls it can halt Grove's operations on every chain at once. The Atlas mitigates the risk by making the power purely negative \u2014 the Freezer can stop activity, not direct it \u2014 plus the narrower revocation power described in A.6.1.1.2.2.6.1.2.1.1.1.4.1.5.\n\nThe split is worth naming as a pattern: **the halting power is centralized while the acting power is distributed**. Relayers vary by chain because execution is chain-specific and a compromised relayer should have bounded blast radius; the Freezer is uniform because stopping should never be partial.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The same address appears as the Freezer Role holder on Ethereum Mainnet, Avalanche, Base, Plasma, Plume and Robinhood Chain, while Relayer multisigs vary by chain.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

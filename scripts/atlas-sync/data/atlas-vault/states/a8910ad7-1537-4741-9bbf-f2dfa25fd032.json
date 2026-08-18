@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swapping through a pool and providing liquidity to it are separate Instances requiring separate authorization",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e8ea9b75-e452-4dbf-a4be-701114e9d8bd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4dd2516a-6abb-4f8e-85bf-8629752a85cb",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c4354c90-6a97-4c14-bc3a-4c1671df16f4",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1882d949-589c-4a83-8a72-7567cfeac664",
+      "name": "risk-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Ethereum Mainnet directory pairs the same venue and pair under two different Instances. Curve carries \"RLUSD/USDC Pool\" (A.6.1.1.2.2.6.1.1.2.1.6.1) alongside \"RLUSD/USDC Pool LP Deposits\" (.6.2), and \"AUSD/USDC Swaps\" (.6.3) alongside \"AUSD/USDC LP\" (.6.4). Uniswap repeats the split with \"v3 AUSD/USDC Swaps\" (A.6.1.1.2.2.6.1.1.2.1.12.1) and \"v3 AUSD/USDC LP\" (.12.2). Avalanche does the same for Curve USDS/USDC.\n\nThe distinction is economically real even though the venue is identical. **Swapping** is a transient exposure: Grove crosses the spread once and holds the output asset, taking slippage and execution risk. **Providing liquidity** is a standing exposure: Grove holds an LP position with divergence loss, pool-parameter risk and dependence on the pool's other side.\n\nBy instantiating them separately, the Artifact makes each independently authorizable, independently parameterizable and independently revocable. Grove can be permitted to route trades through a pool it is not permitted to capitalize \u2014 or be forced to exit an LP position while retaining the ability to swap.\n\nThis is the granularity principle from the Allocation System applied one level deeper than asset selection: the governed unit is not the venue and not even the pair, but **the specific action taken with them**. It also means the count of Instances overstates the count of distinct counterparties, which matters when reading the directory as a measure of diversification.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Curve and Uniswap appear twice for the same pair \u2014 once as 'Swaps', once as 'LP' or 'LP Deposits' \u2014 so routing trades and taking impermanent-loss exposure are distinct governed activities.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

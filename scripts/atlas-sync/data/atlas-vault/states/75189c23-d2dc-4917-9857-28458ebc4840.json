@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The destination address a payer uses encodes the accounting treatment of the payment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9f4de36e-a58c-4788-bff7-01d31ce43e70",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8355b547-c5d5-414b-a095-3942720dcb51",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "245e443e-2937-4d2e-807f-5609cdefd7ee",
+      "name": "accounting",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ee474a8e-0781-459c-80cc-fcf2d3298d8f",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.6.1.1 establishes a two-destination convention: \"the DssBlow2 contract for adding Dai and USDS to the Surplus Buffer, and the Pause Proxy contract for non-stablecoins.\" A.4.6.1.1.1.2 routes third-party stablecoins to either path \u2014 convert to Dai/USDS and send to DssBlow2, or send unconverted to the Pause Proxy \u2014 while noting that \"receipt of Dai or USDS is Sky's preferred method of receiving stablecoins.\" A.4.6.1.1.2.1.1 describes the Pause Proxy as \"under the direct control of Sky Governance,\" which \"may take actions through Executive Votes to interact with the tokens held by the Pause Proxy, including selling these tokens.\"\n\nThe two paths differ in what happens after arrival, not just in where value lands. DssBlow2 is **automatic and terminal**: the asset is a unit the protocol's own ledger understands, so it is burned and recognized as surplus with no human decision required. The Pause Proxy is **custodial and pending**: the asset is something the ledger cannot value natively, so it waits under governance control until a vote decides what to do with it \u2014 typically selling it.\n\nThat is why the routing rule is a function of the asset rather than of the payer or purpose. Native stablecoins can be recognized as income immediately; anything else carries price risk and requires a disposal decision, which is exactly the kind of judgment an Executive Vote exists to make.\n\nThe stated preference for Dai or USDS follows directly: a payment in the protocol's own unit needs no vote, no market operation, and no interim risk-bearing. Paying in anything else converts a settlement into an open governance item.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:03:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Dai and USDS route to DssBlow2 and become Surplus Buffer equity automatically; everything else goes to the Pause Proxy, where it sits as a governance-custodied asset requiring an Executive Vote",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

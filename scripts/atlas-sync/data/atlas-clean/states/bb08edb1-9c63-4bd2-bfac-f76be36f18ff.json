@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-daaa94ba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "daaa94ba-3e03-467c-b26c-02d9794b4c4a",
+      "targetTitle": "A multisig must be registered and security-approved before i"
+    },
+    {
+      "id": "lnk-f4b41dda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4b41dda-9a74-4a12-8f29-58d5f5ad9301",
+      "targetTitle": "Emergency-response multisigs are exempt from signer and thre"
+    },
+    {
+      "id": "lnk-bf0e450d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bf0e450d-6679-43e2-a0cc-168e57428a69",
+      "targetTitle": "Location Resilience splits geo-restriction into feature-hidi"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Treasury multisigs must grant the Pause Proxy a maximum allowance, so governance can always sweep them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "83924b60-9c43-450a-891c-e08913c20ab0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b13379d7-d701-4b8c-9fdb-a2fb21960674",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "25f92656-dfdc-4e72-aa70-f2c3458a4b70",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.1.1.3.2.1 states the one mandatory module in the framework: \"[t]reasury Multisigs must use an allowance module that grants the Sky Pause Proxy allowance equal to the maximum amount of each token held by the Multisig.\"\n\nThe Pause Proxy is the contract Executive Votes act through, so this is a standing, pre-authorized claim by Sky Governance on the entire contents of every treasury multisig. Day to day, the multisig's signers operate normally; if they are compromised, go rogue, or simply become unreachable, governance can recover the funds by Spell without needing any signer's cooperation.\n\nThis resolves a structural problem that otherwise has no good answer. Delegating funds to a small operational multisig is necessary for speed, but it creates an entity whose keyholders can hold protocol assets hostage. The allowance module makes the delegation revocable at the asset level rather than only at the personnel level.\n\nIt is a deliberate concentration of risk, and worth stating plainly: every treasury multisig is only as secure as the Pause Proxy and the governance process that drives it. The framework treats that as acceptable because the Pause Proxy is already the root of protocol authority \u2014 adding this dependency introduces no new trusted party, whereas leaving multisigs unrecoverable would add many.\n\nIt also explains why the modules ban (A.2.11.1.3.2.1.1.3.1) is written as default-deny with an allowlist rather than a blanket prohibition: the framework needs exactly this one module to work.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The required allowance module gives the Sky Pause Proxy an allowance equal to the maximum amount of every token held, making treasury multisigs operationally autonomous but never sovereign over",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

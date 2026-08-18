@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fc3f7b8c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fc3f7b8c-da3c-4c9c-875a-cc7d0ae55c76",
+      "targetTitle": "Sky Governance can re-enable an Agent's token emissions when"
+    },
+    {
+      "id": "lnk-e65cef1f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e65cef1f-d37a-4055-98a4-d145e3297f3b",
+      "targetTitle": "doc-117a9cdf"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "OBEX emissions are permanently disabled beyond Genesis Supply, but Sky Governance alone can revert this to satisfy Risk Capital requirements",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ca4eb128-de0a-4a17-8581-1662b0a88bf1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3f6e974b-5114-459d-b7d3-14f7657dd852",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "024f8bf9-db07-4575-8ab8-ba0c4d9d52a7",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7c4bc51-7016-4d7f-8784-97ce2f798ae2",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.5.2.1.4.2.1.1.6 states that \"Token emissions beyond the Genesis Supply are permanently disabled; this cannot be reverted by Obex Governance. Sky Governance retains the ability to revert where Obex is in violation of Risk Capital requirements and emissions are required by the Risk Framework.\"\n\nThe provision is a carefully asymmetric commitment. Toward token holders it is a hard supply cap that the Agent itself cannot undo \u2014 the Agent has disarmed its own ability to dilute. Toward Sky it is not a cap at all: one party retains a key, and that party is the one the Agent owes Risk Capital to.\n\nThe override's condition is what makes it coherent rather than arbitrary. Emissions can be restored only where Obex has **breached** Risk Capital requirements and the Risk Framework requires issuance to restore them. In other words, dilution is reserved as a recapitalisation tool of last resort: the Agent's own token is the collateral backstop for its obligations to the ecosystem.\n\nThis also reveals the seniority ordering. \"Permanently\" is qualified against exactly one counterparty, so OBEX holders are structurally junior to Sky's Risk Capital claim \u2014 a holder who reads only the first clause materially misunderstands their position. It is worth flagging as a tension in the drafting: a provision announcing permanence in its first sentence and naming its own reversal in the second.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Obex Governance cannot re-enable minting; Sky Governance retains an override reserved for cases where Obex violates Risk Capital requirements and the Risk Framework demands emissions.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

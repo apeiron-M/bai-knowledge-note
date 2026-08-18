@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Invoking the Executor Accord Primitive transfers Primitive input validation from Core GovOps to the Executor's Operational GovOps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "93594e8c-cb60-4e89-bcf6-90a5e0f9ab27",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d6140839-3c93-4e9a-90c7-490f266500cc",
+      "name": "agent-lifecycle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4323986c-203c-4f60-aa23-3b448a4021c2",
+      "name": "core-govops",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Through the early lifecycle, Core GovOps validates everything: Agent Creation inputs and Scaffold edits (A.2.2.1.1.4), Transformation inputs (A.2.2.1.1.7), Agent Token inputs (A.2.2.1.1.10). A.2.2.1.1.13 then marks the handover. Once the Executor Accord Primitive is validated and Invoked, \"Now that the Agent has a documented relationship with an Executor Agent, Core GovOps will no longer perform validation of the Agent's Primitive inputs. Instead, Operational GovOps associated with the Executor Agent specified in the Executor Accord will carry out certain operational tasks on behalf of the Prime Agent.\"\n\nThe trigger is precise and non-discretionary: **the existence of a documented Executor relationship**, not elapsed time, size, or track record. Core GovOps validates that the Accord exists and that \"the terms of the Executor Accord are reasonably specific\" \u2014 and that single check is what discharges it from all subsequent per-Agent validation. Consistently, A.2.2.1.1.15 has Operational GovOps, not Core GovOps, validate the final Root Edit inputs.\n\nThis is how the ecosystem's central body stays constant-cost as the number of Agents grows. Oversight is not eliminated, it is *delegated to a party with a named, accountable counterparty relationship to the Agent being overseen*.\n\nThe trade-off is visible in the same clause. Core GovOps' remaining leverage is entirely front-loaded into judging whether Accord terms are \"reasonably specific\" \u2014 a soft standard applied once, after which the quality of ongoing validation depends on the Executor Agent rather than on Sky Core.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Validation duty follows the documented operating relationship, letting the ecosystem's central body shed per-Agent oversight once an Agent has an accountable operator.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

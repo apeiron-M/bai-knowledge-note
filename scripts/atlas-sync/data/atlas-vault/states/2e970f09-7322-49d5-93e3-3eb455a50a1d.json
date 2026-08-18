@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Sky Primitive Instance is tracked through the same four-directory lifecycle regardless of what it does",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d6be5ab5-4bae-4012-abf8-539e8ec3b2cb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a488e1e1-c1d2-4f03-b8ea-213148e2156f",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bfdd78bb-8d02-4639-a473-0321a2cbcb4c",
+      "name": "governance-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65a8958e-62a2-44fc-8503-f77c02598c52",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across A.6.1.1.1.2.1 and A.6.1.1.1.2.2, every Primitive Spark uses \u2014 Agent Creation, Prime Transformation, Executor Transformation, Agent Token, Executor Accord \u2014 is represented by an identical document skeleton: a Primitive Hub Document carrying a Global Activation Status, then Active Instances, Completed Instances and In Progress Invocations directories, plus a Hub Data Repository holding archived subtrees for **Failed Invocations** and **Suspended Instances**.\n\nThe repetition is the finding, not noise. The Atlas is imposing one lifecycle state machine on every governance mechanism: a prospective Instance is *invoked*, and per A.6.1.1.1.2.2.1.1.4 successful Invocations move into the Active Instances Directory while \"failed Invocations are Archived\" in the Data Repository.\n\nTwo properties follow. First, an Instance's status is always readable from **where** its document sits, so state is a location rather than a field that could disagree with reality. Second, failure is a first-class outcome with a designated home \u2014 failed Invocations are retained rather than deleted, which preserves an audit trail of governance attempts that did not complete.\n\nThe cost is verbosity: most of Spark's Artifact by volume is this scaffolding, with a large majority of units being directory stubs that carry no claim. That is the price of making every Primitive navigable by the same rules.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:28:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:28:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Hub Document plus Active, Completed and In Progress Invocations directories, with failed and suspended subtrees archived in a Data Repository \u2014 one uniform state machine across all Primitives.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

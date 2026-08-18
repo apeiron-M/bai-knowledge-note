@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Net Revenue is defined so it can never be negative, and recognised on a cash basis at a single account",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "12c92710-a82e-42c5-8ae4-8679b1355f02",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "98174e43-9c71-4b4d-9e50-5556b2321a4c",
+      "name": "treasury",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f7a8ed8a-a926-4d2e-a246-bea72e217d61",
+      "name": "accounting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.2.1.1 defines Net Revenue as Income minus Expenses and adds the constraint: \"Income and Expenses are defined such that Net Revenue must always be positive.\" A.2.3.1.2.1 adds the recognition rule: \"All items of Income and Expense are recognized on a 'cash basis' based on when USDS/DAI enter or leave the Sky Surplus Buffer,\" and \"Transfers out of accounts other than the Sky Surplus Buffer are not recognized as Expenses,\" with one named exception for legacy account consolidation.\n\nThe positivity constraint is what makes the waterfall well-defined. Every downstream step takes a percentage of what it receives, and a negative input would have no coherent interpretation \u2014 20% of a loss is not a security budget. Losses are therefore not routed through Treasury Management at all; they are absorbed by risk capital and buffers, and Treasury Management distributes only surplus.\n\nCash-basis recognition tied to one specific account is the second simplification, and a deliberate trade. Its virtue is objectivity: whether something is an Expense is answered by observing one balance, which is checkable by anyone and cannot be argued into a different period.\n\nThe cost is that timing and location both become gameable in principle. Accrued-but-unpaid obligations are invisible until they clear the Surplus Buffer, and spending that flows out of another account is not an Expense at all \u2014 which is precisely why the exception in A.2.3.1.2.2.2.1.6.4 had to be written for legacy account consolidation. Reading Net Revenue as an economic profit figure would be a mistake; it is a distributable-cash figure.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:26:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:26:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Income and Expenses are constructed such that Net Revenue must always be positive, with items recognised only as USDS/DAI enter or leave the Sky Surplus Buffer, so the waterfall never receives a loss.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

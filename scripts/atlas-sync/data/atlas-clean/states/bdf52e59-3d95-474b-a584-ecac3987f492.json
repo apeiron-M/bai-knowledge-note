@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Primitive Instance is tracked through a Hub Document with an activation status and status-partitioned directories",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0f9593ad-095b-4a05-ba6f-a0541a78dc2f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c1db6670-2217-42cb-bd13-0a9ccc737481",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc984080-1f31-40b3-af47-326d1c903d6d",
+      "name": "osero",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every Primitive in the Osero Artifact repeats an identical document skeleton. The Primitive Hub Document (e.g. A.6.1.1.7.2.1.1.1) \"organize[s] all base information relevant to Osero's usage of\" that Primitive and always contains: a Global Activation Status (`Completed`, `Active`, or `Inactive`), an Active Instances Directory, a Completed Instances Directory, an In Progress Invocations Directory, and a Hub Data Repository.\n\nThe Data Repository in turn always holds an Archived Invocations/Instances subtree with two fixed children: \"the subtrees for failed Invocations\" and \"the subtrees for Instances ... with `Suspended` Status\" (A.6.1.1.7.2.1.1.1.5.1.1 and .2).\n\nThis is a state machine expressed as a directory layout. An Instance's lifecycle position is encoded by *where the document lives*, not by a status field someone must remember to update \u2014 moving an Instance between Active, Completed, Suspended and Failed is a structural edit, visible in the Artifact's shape.\n\nThe uniformity has a practical payoff: a reader who learns the skeleton once can navigate any Primitive of any Agent, and tooling can enumerate every failed or suspended Invocation across the ecosystem by path convention alone. The cost is heavy boilerplate \u2014 most of these documents exist empty, and the Artifact carries the full skeleton even where a Primitive was invoked exactly once.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:27.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Hub carries a Global Activation Status, Active/Completed/In-Progress directories, and an archive for failed Invocations and Suspended Instances \u2014 one uniform state machine per Primitive.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

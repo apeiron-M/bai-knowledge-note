@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every signer of the Demand Side Buffer multisig is controlled by a single Operational GovOps entity that can replace them at will",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "eca16162-9bf9-4078-b1e8-571ee8fd920a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "864dafbb-f4ee-416a-852b-1796486a0cba",
+      "name": "treasury",
+      "topicDocumentId": null
+    },
+    {
+      "id": "306bfd33-08c4-4761-9522-a58732325592",
+      "name": "centralization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.4.3 makes the Demand Side Buffer the disbursement account for all Distribution Reward and Integration Boost payments, controlled by a multisig and topped up by Executive Vote. The composition then undercuts the usual reading of a multisig: it has a 2/3 signing requirement (A.2.2.4.3.2), and \"the signers... are three (3) addresses controlled by Operational GovOps Soter Labs\" (A.2.2.4.3.3).\n\nA 2/3 threshold across three keys held by one party protects against **key loss and single-device compromise**, not against unilateral action by that party. There is no second organization in the quorum, so the multisig provides operational resilience rather than a check on discretion.\n\nA.2.2.4.3.5 confirms the point: Soter Labs \"can change the signers of the Demand Side Buffer Multisig at any time,\" bounded only by keeping at least three signers and a two-thirds threshold. A.2.2.4.3.6 extends the same arrangement across chains \u2014 auxiliary accounts may be established elsewhere, funds moved to them as needed, subject to the identical rules including that \"all signers are controlled by Operational GovOps Soter Labs.\"\n\nThe constraint that does bite is purpose-based rather than structural: A.2.2.4.3.4 requires signers to disburse \"in accordance with the Atlas,\" and inflows require an Executive Vote. Control over *how much* enters the buffer is governance-held; control over *where it goes* rests on one entity's compliance with the Atlas.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:20:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:20:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The 2/3 threshold guards against key loss, not against unilateral action: Soter Labs controls all three signers, may change them anytime, and may open auxiliary accounts on other chains.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

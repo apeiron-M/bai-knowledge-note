@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-cdb79716-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cdb79716-b052-42cf-8bdc-d1ddece93690",
+      "targetTitle": "The decision to fire an emergency power and the attestation "
+    },
+    {
+      "id": "lnk-fcfde764-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fcfde764-3d06-4039-9dc4-22118c5f382d",
+      "targetTitle": "Every Instance must ship with a pre-authorised path to drain"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "When Core GovOps is unresponsive, the emergency decision-maker may appoint the validator of their own spell",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a1c3ab16-7e9d-481e-bb7d-007c1c862f25",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e61a6c9-0551-4087-9f4c-1e0281d8b532",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39f165a9-1084-4a2f-b1de-46514d8063d5",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.5.2.3.3.1 and A.1.10.5.3.2.3.1 create matching exceptions to the two-validator rule: where the Authorized Representatives \"have failed to respond to the emergency situation, the Core Facilitator may temporarily grant an Operational Facilitator the sole authority to validate the authenticity\" of the spell, communicating that grant in writing in the secure channel.\n\nThis is a liveness fix with a real cost, and the tension is worth naming. A.1.10.5.2.3.2.1 separates the decision to act from the attestation that the artifact is genuine (see the two-key structure). The fallback collapses both halves of that separation at once: two validators become one, and that one is selected by the very party whose spell is being validated.\n\nThe Atlas's containment is procedural rather than structural \u2014 the delegation must be temporary, must be written, and must be in the same secure channel where the decision and validation are already recorded, so the substitution is visible to every AD who must confirm it before voting.\n\nThe underlying trade is unavoidable in any emergency design: a verification requirement that cannot be waived becomes a denial-of-service vector, since an absent or captured validator would freeze all emergency response. Sky chooses to keep the system live and make the weakened check conspicuous, rather than to keep the check absolute and risk paralysis.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The fallback drops two independent validators to one Operational Facilitator chosen by the Core Facilitator \u2014 restoring liveness by collapsing the separation of duties it replaces.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

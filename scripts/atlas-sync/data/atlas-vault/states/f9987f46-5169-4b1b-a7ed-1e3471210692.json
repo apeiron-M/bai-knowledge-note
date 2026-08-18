@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove throttles each conduit's inflow and outflow through separate on-chain RateLimitIDs, so deposits and withdrawals are governed independently",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4d6a6617-6e13-4935-8ac6-b7dd1ed7b653",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9efb81a-146a-4e8a-8621-e619cfd2392e",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9a4bd854-dbc6-48ae-b5a7-1697ecd02fbd",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dcc89ec5-7664-443a-a4c6-3d3128e037c5",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every Instance in this chunk declares its rate limits as *pairs* of opaque on-chain identifiers. A.6.1.1.2.2.6.1.3.1.10.1.2.3 states that \"the specific `RateLimitID`(s) for this conduit's inflow and outflow are defined in the subdocuments herein,\" and the subdocuments then give one hash for inflow (e.g. `0x1fd0baaf\u2026`) and a separate one for outflow (`0x786ff17c\u2026`).\n\nDirectional separation is the load-bearing detail. Because the limit is keyed by direction, capacity consumed on the way in cannot deplete capacity on the way out. Filling a deposit bucket does not impair Grove's ability to unwind the position, and conversely governance can set an inflow limit to zero \u2014 freezing new exposure to a venue \u2014 without touching the exit path.\n\nThe identifiers are content-addressed hashes rather than human-readable names, which means the Atlas text is the only mapping from a governance intent (\"the Agora AUSD deposit limit\") to the on-chain slot it controls. That makes the configuration document itself a piece of critical infrastructure: an error in the recorded hash silently retargets a governance change at the wrong conduit.\n\nA.6.1.1.2.2.6.1.3.1.12.3.2.3 extends the same pattern to a third direction \u2014 swaps get their own RateLimitIDs alongside deposit and withdrawal \u2014 confirming that the axis is *operation type*, not merely in/out.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Instance registers distinct inflow and outflow rate-limit hashes, so an exhausted deposit budget never blocks exits and a closed inflow can coexist with an open outflow.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

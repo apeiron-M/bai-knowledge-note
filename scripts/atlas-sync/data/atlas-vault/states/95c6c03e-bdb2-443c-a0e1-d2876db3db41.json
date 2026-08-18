@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are replenishing buckets: a maximum amount plus a daily refill slope",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ea0ef32a-0863-4782-8f67-84c648a077bc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b3ad942-b202-43da-b605-a9fbb30a3871",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b8e762a2-c0e3-4d42-bfe6-9ec94953a9b1",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b137dd24-0ffe-409e-b624-ac6ea2399c81",
+      "name": "operational-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every entry in A.6.1.1.1.2.6.1.2.1.1.3 is expressed as a pair. `LIMIT_USDS_MINT`, for example, has `maxAmount`: 1,000,000,000 USDS and `slope`: 1,000,000,000 USDS per day; `LIMIT_USDC_TO_DOMAIN` on Base has maxAmount 4,000,000 USDC with slope 2,000,000 USDC per day.\n\nThe two numbers describe a replenishing bucket, not a cap. `maxAmount` is the largest amount available at any instant; `slope` is how fast spent capacity is restored. A Relayer that exhausts the bucket must wait for it to refill, so the limit bounds both a single action and the sustained rate of actions.\n\nThis is what makes delegating operational authority safe enough to be useful. A per-transaction cap can be defeated by repetition; a daily quota with no instantaneous bound permits one catastrophic move. The bucket bounds both, so the worst case from a compromised Relayer key is `maxAmount` immediately plus `slope` per day until the Freezer intervenes \u2014 a computable, time-bounded loss.\n\nThe ratio between the two numbers is itself a policy statement. Where slope is smaller than maxAmount (Base USDC: 4M available, 2M/day refill) the design tolerates a large one-off move but throttles repetition, so recovery takes days. Where slope equals maxAmount the full capacity returns every day, which favours operational freedom over containment.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every limit carries both maxAmount and slope, so authority is a capacity that drains with use and refills over time rather than a static per-transaction cap.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

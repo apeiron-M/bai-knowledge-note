@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-54dd60dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "54dd60dc-26fe-4e44-ada3-65f6c9e0a82a",
+      "targetTitle": "Unexplained changes to the Freezer Multisig signers must be "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An unratified change of Freezer signers must be treated as malicious by default",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "03528481-70d1-4959-acce-1b099a113430",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "712b0e3a-7404-4550-acd4-3823b1209e08",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f94b1448-7981-45d0-a28b-1cdae3c57058",
+      "name": "governance-security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65dcc412-b151-4434-aa54-af1c6b68af98",
+      "name": "incident-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.1.2.2.3.5 governs changes to the Freezer Multisig's signers. The default is a Governance Poll with no Executive Vote required. Two exceptions bypass the poll: a signer self-reporting loss of private key access, or a signer asking to be removed \u2014 in both cases via a public Sky Forum post, with replacement \"as soon as possible.\"\n\nThen the decisive sentence: \"Any changes to the multisig signers that do not fall within the two exceptions listed above, or that have not been ratified by Sky Governance, **should be questioned immediately and treated as malicious**. Where malicious activity is suspected, the Core Facilitator must prepare an expedited Executive Vote so that Sky Governance can vote on removing external security access from the multisig.\"\n\nThis pre-commits the interpretation and the response. The hardest problem during an attack is not detection but decision-making: an unexpected signer change has innocent explanations, and the instinct is to investigate before acting, which is exactly the delay an attacker needs. By classifying any unratified change as malicious in advance and naming the Core Facilitator's obligation to prepare an expedited Executive Vote, the Artifact removes the deliberation from the critical path.\n\nThe self-report exceptions are what make the strict default workable. Key loss and resignation are the legitimate reasons a signer set changes at short notice, and both are given a fast, public path \u2014 so the strict rule does not have to bend for ordinary operational events.\n\nThe cost is accepted openly: a legitimate but poorly communicated change will be treated as an attack. Given that the alternative failure is a silently captured emergency key, that is the right side to err on.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Signer changes need a Governance Poll except self-reported key loss or resignation; anything else 'should be questioned immediately' and triggers an expedited Executive Vote to cut access.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

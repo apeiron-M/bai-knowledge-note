@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel runs live Allocation Instances while their RRC Framework implementation coverage is still Pending",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0196606a-9b2f-430f-bbf0-b2a04acb09a2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d15afb81-1b4d-40f4-8de8-f60bc2d5b7a3",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1c9a3f8-2129-47ed-9420-f6140b21ecfc",
+      "name": "risk-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a9ff4f48-1bd2-4e15-a612-367b84a4ed93",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The first field of every Instance Configuration Document is **RRC Framework Full Implementation Coverage**, and in all five Instances in this chunk its value is `Pending`: Kamino PYUSD (A.6.1.1.3.2.6.1.3.1.1.5.1), Drift USDS (A.6.1.1.3.2.6.1.3.1.2.1.1), Drift USDC (A.6.1.1.3.2.6.1.3.1.2.2.1), Drift USDT (A.6.1.1.3.2.6.1.3.1.2.3.1) and Drift PYUSD (A.6.1.1.3.2.6.1.3.1.2.4.1).\n\nThese documents sit under **Active Instances** \u2014 the branch reserved for \"Instances of the Keel Liquidity Layer with `Active` Status\". So the Atlas simultaneously records that these conduits are live and that their risk-framework coverage is incomplete.\n\nThe tension is worth stating plainly rather than resolving: either full RRC coverage is a precondition for deployment, in which case these Instances are out of compliance, or it is not, in which case the field documents an aspiration rather than a gate. The Atlas's own structure \u2014 putting the field *first*, above parameters \u2014 suggests it is meant to be read as a gate.\n\nWhat makes the observation useful is that the deficiency is disclosed uniformly and machine-readably. The pending status is not hidden in prose; it is a named field with a consistent value, which means the gap between deployed exposure and completed risk coverage is measurable at any time.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every Instance Configuration Document in the Active Instances branch marks RRC Framework Full Implementation Coverage as `Pending`, so capital is deployed ahead of complete risk-framework coverage.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

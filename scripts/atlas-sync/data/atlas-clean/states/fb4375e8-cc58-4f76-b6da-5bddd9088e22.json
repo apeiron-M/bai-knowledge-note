@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-fbe01e4b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fbe01e4b-5ad7-4b99-824c-f5ef11ed7d40",
+      "targetTitle": "The Operational Facilitator's alignment finding is a hard ga"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Facilitator rejection ends an Invocation before token holders ever see the proposal",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "05b2d51a-5893-4cd0-9ab5-e34da32985c0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f57e8255-3a8a-48f2-94ed-81f52a9a2b15",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "292f9de4-a1ae-4b28-ad62-12f6e11e63d8",
+      "name": "separation-of-powers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "In the Facilitator Review stage, only the approval pathway carries a `Trigger-Process` \u2014 it initiates the Offchain Vote (A.2.2.9.1.2.3.4.3). The rejection pathway sets `Review Decision` to `Rejected` and `Status` to `Proposal Rejected By Facilitator`, and stops there. A.2.2.9.1.2.3.4.4.2 confirms the terminus: \"No Agent Artifact documents are updated as the output of this process. The requirements specified in Required Primitive Inputs fully complete the Process.\"\n\nSo the Invocation dies without reaching the Agent's token holders. Alignment review is positioned **upstream** of the vote, not as a check on its result. Holders never get to weigh in on whether a proposal the Facilitator considers misaligned should proceed.\n\nThe design rationale is consistent with the rest of the Atlas: token holders are not assumed to be aligned, so the mechanism keeps misaligned options off the ballot rather than trusting voters to reject them. It also avoids the worse failure of holders approving something the Facilitator must then refuse to action, which would put the two authorities in direct conflict.\n\nThe cost is that this Process Definition contains no appeal path. The required rejection commentary (A.2.2.9.1.2.3.4.3) documents the ground, and the wider Atlas provides the Governance Scope for contested documents and Conflict Resolution \u2014 but nothing inside the Primitive lets an Agent escalate. Practically, an Agent's recourse is to revise and resubmit, which is why the earlier GovOps review stage is collaborative: disagreements are meant to be resolved before this gate.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The rejection pathway produces no outputs and triggers no further process, so alignment review sits upstream of the vote rather than beside it \u2014 with no appeal route in the Primitive.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

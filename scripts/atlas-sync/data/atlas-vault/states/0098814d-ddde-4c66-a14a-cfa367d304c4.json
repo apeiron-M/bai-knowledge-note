@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The emergency contact mechanism must bypass do-not-disturb while requiring no personal information or KYC",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9bb9f036-2892-471c-a2a1-da4bad9b36a6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b8dfeb3a-cf28-4d91-9600-0eddbfd3f200",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9698337-4cac-465c-a53c-8435b68934c4",
+      "name": "operational-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.9.1.3.2.1 lists what an emergency contact mechanism must do. Required: \"enterprise grade infrastructure with correspondingly high levels of uptime\"; \"should not require personal information or KYC from users\"; \"should allow segmenting of target user groups, so that required individuals are only notified when necessary\"; and \"should be able to bypass silent / do not disturb mode on devices to achieve an immediate response any time of day.\" Recommended but not required: minimal data tracking, and open source.\n\nThe interesting engineering constraint is the pairing of the second and fourth requirements. The system must be able to force a device to ring at 4am \u2014 the most intrusive capability a notification system can have \u2014 while knowing nothing personally identifying about the person holding it. Under normal assumptions, reliable paging implies identity; the anonymity regime for ACs and the non-disclosure rule for ERG members (A.1.9.1.2.3) make that unacceptable, so the mechanism must deliver urgency without identification.\n\nSegmentation serves a subtler purpose than efficiency. If every alert reaches everyone, responders habituate and stop reacting \u2014 alarm fatigue destroys exactly the immediacy the bypass requirement buys. Restricting notifications to those actually needed preserves the signal's meaning.\n\nThe surrounding provisions treat the mechanism as critical infrastructure rather than a tool choice. It is \"selected and validated by the Protocol Security Workstream Lead\" (A.1.9.1.3.2), the currently approved option is PagerDuty (A.1.9.1.3.2.2), and changing it requires the Core Facilitator to act \"in consultation with the Protocol Security Workstream Lead\" with the recommendation \"subject to a poll through the Operational Weekly Cycle\" (A.1.9.1.3.2.3). No single role can swap it out.\n\nFire drills test it \u2014 \"the results of firedrills shall be published to maintain transparency\" (A.1.9.1.3.2.4) \u2014 and A.1.6.10 makes correct use mandatory for all ADs on pain of derecognition.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.9.1.3.2.1 sets criteria including enterprise uptime, user-group segmentation, and no KYC \u2014 resolving the conflict between paging anonymous responders and knowing who they are.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

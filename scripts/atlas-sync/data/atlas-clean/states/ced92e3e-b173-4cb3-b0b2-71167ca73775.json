@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Operational GovOps rejects a Tracking Methodology it cannot itself operationalize, however accurate the method is",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2e4d2fad-ab9a-4699-a3ba-58312b828d17",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "35ea7523-3454-448a-81f6-e2d7c66a9d73",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9db71e5f-3d4d-449f-9a8f-d733ee986cba",
+      "name": "measurement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.1.2.3.2.2 gives Operational GovOps two things to check in the Prime Agent's Initial Planning Document: \"Operational GovOps has the ability to operationalize the proposed tracking mechanism, and the proposed tracking mechanism accurately reflects USDS usage attributable to the actor and there is no possibility that rewards could be 'double counted' (i.e. multiple actors being paid for the same USDS balance).\"\n\nThe first test is the one worth noticing. A.2.2.9.1.2.1.1.2.4 already permits Agents to invent new Tracking Methodologies subject to accuracy and no-double-counting; this review adds **operability by the specific party that will run it monthly**. A methodology that is verifiable, honest, and impossible to double count can still be refused because Operational GovOps cannot execute it at settlement cadence.\n\nThat is a defensible constraint rather than gatekeeping. Distribution Rewards are recalculated every month for a decade per marked balance (A.2.2.9.1.2.1.1.2.5), so a clever one-off measurement is worthless \u2014 the mechanism must be repeatable by the operator indefinitely.\n\nThe review is also collaborative rather than binary. GovOps records feedback and suggested changes in an `Operational GovOps Review Document` (A.2.2.9.1.2.3.2.3), the Prime Agent revises its Planning Document, and A.2.2.9.1.2.3.2.4.2.1 has GovOps update the Tracking Methodology field to reflect \"changes agreed to between the Prime Agent and Operational GovOps.\" The agreed methodology is jointly authored before any vote occurs, which is why the later stages have no methodology dispute path.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The review applies two tests \u2014 GovOps' own ability to run the mechanism, and impossibility of double counting \u2014 so measurement design is constrained by the operator's capability, not just correctness.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

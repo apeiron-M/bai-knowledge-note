@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Replacing minting with transfers from preminted supply removes the emission capability rather than restraining its use",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "eb910d28-2de2-42c2-afff-0b61fcb5afee",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e999c25-f966-4266-be1a-87134d0b3ef7",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba6384ae-1313-4006-aee1-0995e7497ed9",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.1.2.2.4.2 contrasts two implementations of the same user-facing function. The Legacy Conversion Contract \"burned MKR and minted new SKY.\" The New Conversion Contract \"instead burns MKR and issues SKY from the existing supply of preminted SKY.\" A.4.1.2.2.4.2.1 records that the legacy contract was disabled in the June 26, 2025 Executive Vote.\n\nBoth designs deliver an identical result to the user at the same 1:24,000 rate. The difference is entirely in what authority the contract holds. A minting contract permanently carries the power to expand supply, and the no-new-emissions rule of A.4.1.2.2.2 then depends on that power never being misused or exploited. A contract that pays from a fixed preminted balance cannot expand supply even if compromised \u2014 the worst case is exhausting its allocation.\n\nThis is the general engineering move behind the whole Deprecated Emissions Mechanisms Article: convert a governance commitment into a capability that does not exist. Removing the mint authority from live contracts and then disabling the old ones means the constraint no longer relies on the honesty or correctness of future governance.\n\nThe residual risk shifts rather than vanishing: the preminted balance is a finite resource that must be sized, custodied and topped up by an authorized process, and running it dry breaks conversions. Sky evidently prefers that failure mode \u2014 a stalled feature \u2014 over the failure mode of a standing mint permission.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The New Conversion Contract burns MKR and pays out existing preminted SKY; the legacy minting contract was disabled outright, converting a policy promise into a contract-level constraint.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

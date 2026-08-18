@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Secondary Relayer Multisig's 1-of-2 threshold contradicts the majority rule the same section imposes on changes to it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c23fb46b-3cdc-40c9-bee0-08efab69f4f0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4da96b21-9326-431b-af31-2b6ebe97f2a4",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1ee4b0c4-4410-4022-a1d2-cd3acdf4bf95",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0dc694d0-7e76-4bb3-904b-32cf0aa91739",
+      "name": "contradiction",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two adjacent provisions in the Grove Artifact do not agree. A.6.1.1.2.2.6.1.2.1.2.2.2.2: \"The Prime Secondary Relayer Multisig currently has a **1/2** signing requirement.\" A.6.1.1.2.2.6.1.2.1.2.2.2.5: \"Grove can change the signers of the Prime Secondary Relayer Multisig at any time, so long as there are at least two (2) signers and **at least a majority of signers are required to execute transactions**.\"\n\nA majority of two is two. A 1-of-2 threshold is therefore below the floor the modification rule sets, and the recorded current state does not satisfy the constraint the Artifact places on future states of the same multisig.\n\nThere are two readings and neither is comfortable. If the modification rule binds only *changes*, the multisig is grandfathered into a configuration that could not be legally created today \u2014 and any future signer change would have to raise the threshold to 2 of 2, which is a fact no one reading the current entry would infer. If the rule states a standing invariant, the multisig is currently out of compliance with its own Artifact.\n\nThe identical clause appears at A.6.1.1.2.2.6.1.2.1.2.2.1.5 for the Primary Relayer Multisig, where 4 of 7 satisfies it comfortably. That the same boilerplate was applied to both suggests the constraint was written generically and not checked against the Secondary's actual configuration.\n\nThe practical significance is not pedantic. A 1-of-2 multisig is effectively a single key holding `RELAYER_ROLE`, and the majority rule appears to be precisely the safeguard intended to prevent that.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Modification requires that 'at least a majority of signers are required to execute transactions', yet the configuration recorded two entries earlier is 1 of 2 \u2014 one signature short of a majority.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

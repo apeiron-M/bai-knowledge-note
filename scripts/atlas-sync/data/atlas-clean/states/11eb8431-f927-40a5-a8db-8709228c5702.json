@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-fce48689-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fce48689-e8e1-45a6-8853-ba0fe8602ec3",
+      "targetTitle": "Grove's Freezer can cancel the issuer's queued Timelock chan"
+    },
+    {
+      "id": "lnk-3cb1b6d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3cb1b6d7-5b63-4304-a73f-bedf38e24d5e",
+      "targetTitle": "Control of a Tokenized Treasury Instance is split between Gr"
+    },
+    {
+      "id": "lnk-3fbd8b7e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3fbd8b7e-76f1-4d8a-8cfa-b1ebf1747575",
+      "targetTitle": "Grove interposes a five-contract scaffold between itself and"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every privileged role over Grove's Tokenized Treasury Instances is held by the token issuer itself, with a timelock as the only structural protection",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d1d924e2-6c5d-42bf-863b-4818d9d2e464",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df49e996-a11f-4db1-93d3-11a3d98f3def",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f109b6a-1933-4e9a-8303-0be6376f8fe3",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f772c7dc-f893-48a6-8a3b-dc9916f32195",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.14.1.4.2.1 records that the `OWNER_ROLE` over the JTRSY Instance \"is held by **Anemoy** via an OpenZeppelin `TimelockController`,\" .14.1.4.2.1.1 that the timelock's `PROPOSER_ROLE` is also held by Anemoy, and .14.1.4.2.2 that the `REDEEMER_ROLE` is held by Anemoy. A.6.1.1.2.2.6.1.3.1.14.2.4.2.1\u2013.2 record the identical arrangement for BUIDL with **Securitize** in all three positions.\n\nGrove holds none of them. It is a depositor into a structure whose ownership, proposal rights and redemption authority all rest with its counterparty.\n\nThe `TimelockController` is therefore doing something narrower than it may appear. A timelock does not divide authority \u2014 the issuer can still take any action it could take before. What it changes is *timing and visibility*: a queued action is publicly observable for the delay period before it executes. Grove's protection is not a veto but a window in which to exit.\n\nThat reframes the requirement it imposes. A timelock only protects a party that is watching, and only if the delay exceeds the time needed to unwind. Both Instances' outflow limits are \"Unlimited\" (.14.1.2.4.2, .14.2.2.4.2), which is exactly what makes the window usable \u2014 a throttled exit would render the delay decorative. The two provisions are complements, and the *Instance-specific Operational Processes* sections that would define the monitoring are empty.\n\nThe general shape: where a counterparty must retain full control of its own product, the achievable protection is advance notice plus a fast exit, and the governing document should be read for whether it has secured **both**.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Anemoy and Securitize each hold OWNER_ROLE via an OpenZeppelin TimelockController plus PROPOSER_ROLE and REDEEMER_ROLE, so the delay converts issuer power from instant to announced, not into",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The neighbouring Morpho Instance records no maxExchangeRate despite the stated controller requirement",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "56ba36d0-2c59-4602-a620-a89a42507ffb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4a80d178-7cf8-49e9-a432-ea49b72982ce",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ffaf53f6-f16d-4932-9e54-2e476ccdd5d5",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5dac7c03-e676-486d-92b9-91135960a8cd",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two Morpho Instances on Base sit adjacent in the Atlas and are near-identical in every recorded respect. A.6.1.1.2.2.6.1.3.3.1.1 (Grove x Steakhouse High Yield Vault USDC, token `grove-bbqUSDC`) and A.6.1.1.2.2.6.1.3.3.2 (Steakhouse Prime Instant USDC Morpho Vault V2, token `steakUSDC`) share a network, a target protocol, the same USDC underlying asset address, `Pending` RRC coverage, and matching 20,000,000 USDC inflow limits with unlimited outflow.\n\nThey differ in one place. The Prime Instance carries a **Max Exchange Rate** subsection at .3.2.2.4.3; the High Yield Instance has no equivalent \u2014 its Rate Limits section ends at outflow (.3.1.1.2.4.2).\n\nThat is difficult to reconcile with the Prime Instance's own text, which states that \"controllers **now** have protections that require a `maxExchangeRate` to be set for deposits.\" If the requirement is a property of the controllers, it should bind both Instances; if it binds both, the High Yield Instance has a configured value that the Atlas does not record.\n\nEither reading is a finding. Under the first, a live 20,000,000 USDC deposit path into a yield-bearing vault has no valuation bound. Under the second, the Atlas is incomplete for a control it elsewhere describes as mandatory \u2014 and the reader cannot tell which, because the schema has no slot for \"this control is set elsewhere.\"\n\nThe general lesson concerns how retrofitted requirements propagate. A control introduced as \"now required\" applies cleanly to Instances configured afterwards and leaves an undocumented tail of earlier ones. Auditing that tail requires reading for **absence** across sibling documents, which is exactly what a uniform schema makes possible and a reader scanning one document at a time will miss.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Grove x Steakhouse High Yield Vault USDC has the same network, protocol and 20m limits as Steakhouse Prime but omits the parameter that the adjacent document says controllers now require for deposits.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

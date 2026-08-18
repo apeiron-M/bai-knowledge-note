@@ -1,0 +1,97 @@
+{
+  "links": [
+    {
+      "id": "lnk-b8b042ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b8b042ff-d83f-421a-9992-aefa0bb692f0",
+      "targetTitle": "Sky remediates deprecated emissions by burning back to the c"
+    },
+    {
+      "id": "lnk-c3a5f175-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3a5f175-20ca-4688-8a0b-1fc98b118fb5",
+      "targetTitle": "SKY supply falls monotonically because buybacks are funded f"
+    },
+    {
+      "id": "lnk-82a54fd1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "82a54fd1-5aa4-4cb4-bdec-468bafb4ebd7",
+      "targetTitle": "KEEL token emissions are permanently disabled beyond Genesis"
+    },
+    {
+      "id": "lnk-db113d04-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "db113d04-982d-4738-8f8e-fb5bb43f4929",
+      "targetTitle": "Replacing minting with transfers from preminted supply remov"
+    },
+    {
+      "id": "lnk-fb177f13-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fb177f13-e71c-4707-b36e-e07ade2c3636",
+      "targetTitle": "Undercollateralized USDS is recapitalized by automatically m"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SKY may only be newly emitted to rescue protocol solvency, making dilution a stated emergency-only tool",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "018e5011-8ef8-40bc-ae04-8fed55e4511c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "302b49c8-2751-40a1-9096-f5188c772599",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9135fa00-0634-4762-83c5-19534961c304",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.1.2.2.2 states that \"no new SKY tokens may be emitted except for (1) emissions required to recapitalize the protocol if it is at risk of insolvency\" \u2014 the SKY Backstop \u2014 \"and (2) temporary emissions that are being deprecated and fully offset by corresponding burns, resulting in no net increase to the intended long-term token supply.\"\n\nRead carefully, the two exceptions are not symmetric. Case (2) is defined to produce *no net increase* and is explicitly on the way out, so it does not expand supply at all. That leaves exactly one live channel by which SKY holders can be diluted: recapitalizing an insolvent protocol.\n\nThis is a deliberate collapse of the design space. Most token systems keep emissions available as an ongoing funding source for rewards, growth, or contributor pay. Sky forecloses all of those and reserves the money printer for the single case where the alternative is protocol failure \u2014 which is also the case where existing holders would rather be diluted than wiped out. Dilution is repriced from a policy lever into a distress signal.\n\nThe consequence is that everything else must be funded from revenue or from SKY the protocol already holds. That constraint is what forces the mechanisms described elsewhere in this Article: rewards paid from protocol-held SKY, and conversions served from a preminted balance rather than by minting.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:15:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:15:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The second permitted case is not really an exception \u2014 deprecated emissions had to be fully offset by burns, so the only path to a net supply increase is the SKY Backstop.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

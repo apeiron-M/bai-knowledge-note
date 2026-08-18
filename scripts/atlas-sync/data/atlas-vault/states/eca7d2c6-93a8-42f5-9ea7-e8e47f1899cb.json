@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky Direct Exposures are held by Sky but operated through a Prime Agent's Allocation System, reducing the Agent to an implementer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "42d3695d-1587-49a9-b70d-ba99f8db2788",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6bf65360-efdb-48a2-a5c5-44b49a758f77",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5f12a602-4f14-4794-afce-ee4c7491a5e2",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.1 defines Sky Direct Exposures as \"exposures that are held directly by Sky but implemented through the Allocation System of a Prime Agent.\" Four consequences follow, each justified by the same clause \u2014 that the exposure is Sky's, not the Agent's:\n\n- No Agent Credit Line Borrow Rate is payable on funds financing the exposure, and \"all yield on Sky Direct Exposures is also due exclusively to Sky and is not retained by the Prime Agent\" (A.2.2.10.1.1.1.1.5).\n- No Risk Capital must be held against them (A.2.2.10.1.1.1.1.6).\n- No Actively Stabilizing Collateral is required, and the exposures do not count toward the Agent's ASC requirements either (A.2.2.10.1.1.1.1.7).\n\nThe result is a clean inversion of the Allocation System's normal economics. In the standard case the Agent posts equity, pays the Base Rate, and keeps the spread. Here it posts nothing, pays nothing, and earns nothing from the position \u2014 it supplies only operational capability, and Sky holds both the return and the risk.\n\nThis is how Sky takes direct positions without building its own execution infrastructure. The current list is concrete: Treasury Bills via Grove, Peg Stability Modules via Spark or Grove on non-mainnet chains, and Uniswap USDS/USDT pools via Spark. These are low-risk balance-sheet holdings where paying an Agent a spread to intermediate would be pure cost.\n\nThe symmetry is what makes it coherent: because the Agent bears no economic exposure, requiring it to hold capital against the position would be charging it for someone else's risk \u2014 and the final clause of A.2.2.10.1.1.1.1.7 closes the reverse loophole by refusing to let those balances count toward the Agent's own collateral requirements.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No Borrow Rate is owed, all yield goes to Sky, and no Risk Capital or Actively Stabilizing Collateral is required \u2014 the Agent contributes execution while Sky keeps both the return and the risk.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

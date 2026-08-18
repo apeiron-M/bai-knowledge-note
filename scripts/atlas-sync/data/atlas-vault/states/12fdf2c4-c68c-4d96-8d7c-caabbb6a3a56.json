@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce22e21c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ce22e21c-0c65-4f32-b881-dd01fcdbf84a",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Genesis Primitives are single-use by construction, so no further Instances can ever be Invoked",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "455e9b5b-a4bc-484d-97bb-a06046f5671e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1bd5fb0f-31bc-48f7-8ad1-8ce9bc382ec1",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9a215fc1-7dd0-4353-bfcd-d20082662625",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across A.6.1.1.7.2.1, three Genesis Primitives \u2014 Agent Creation (A.6.1.1.7.2.1.1), Prime Transformation (A.6.1.1.7.2.1.2), Executor Transformation (A.6.1.1.7.2.1.3) and Agent Token (A.6.1.1.7.2.1.4) \u2014 all carry the same closing statement in both their Hub and Instance trees: the Primitive \"is deployed solely for the one-time creation of the Agent\" (or transformation, or \"one-time deployment of the Agent's token\"), and therefore \"no further Instances of the Primitive can be Invoked.\"\n\nThe same reasoning is used to empty the Operational Process Definition: \"no further operational process is needed post-deployment.\"\n\nThe pattern separates two classes of Primitive with different lifetimes. Genesis Primitives are constitutive \u2014 they bring the Agent, its type, and its token into existence, and once that has happened re-running them is not merely unnecessary but structurally forbidden. Operational Primitives, by contrast, are re-invocable machinery the Agent uses continuously.\n\nWhat makes this load-bearing rather than bookkeeping is that the prohibition is written into the Artifact, not left implicit. A future proposal to re-invoke Agent Creation or re-run Prime Transformation would have to edit the Artifact text that says it cannot be done, making identity changes visible as Artifact edits rather than as ordinary operations.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Agent Creation, Prime Transformation and Agent Token Primitives each run exactly once; the Atlas closes their In-Progress Invocation directories and drops post-deployment process entirely.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

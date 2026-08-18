@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-519e2d44-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "519e2d44-b7f2-40fb-b95c-ba349892d9c7",
+      "targetTitle": "A.5 - The-Accessibility-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Early Bird Reward minted 120% of its estimate and burns the remainder rather than sizing the mint exactly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0c5f4b6d-7743-4c28-b49b-bb896ed4285b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fce99a61-3802-4f99-b37c-b0aa517d9cc8",
+      "name": "token-distribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ae0b9290-30e9-4132-9f4b-8b26fe73d612",
+      "name": "accessibility-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.5.3.1.1.1 records that 27,222,832.8 newly minted SKY \u2014 120% of total estimated Early Bird Reward distributions \u2014 was transferred to the Accessibility Facilitators' multisig, and that SKY not used to fund the MerkleDistributor will be burned by calling `burn`. The estimate needed was 22,685,694.\n\nThe pattern is over-provision-then-burn. A Merkle distribution must be fully funded before claims open, because a shortfall mid-distribution is far more damaging than a surplus: some holders simply cannot claim. Minting a 20% buffer converts an unbounded correctness risk into a bounded, reversible excess.\n\nBurning is what makes it safe \u2014 the buffer is not retained as discretionary treasury, so the over-mint cannot quietly become spending power.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "27,222,832.8 SKY was minted against an estimated 22,685,694 needed, with the excess burned from the multisig \u2014 over-provision-then-burn avoids a shortfall mid-distribution.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

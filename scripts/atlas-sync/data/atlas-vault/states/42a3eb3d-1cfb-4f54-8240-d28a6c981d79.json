@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad391ba3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ad391ba3-5d45-49e9-88ee-c745aa961906",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Root Edit Primitive stays permanently Active despite having only one Instance that can never be re-Invoked",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "67388ee0-f0ef-46b9-b3c1-f1e964f1217d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ae7f90f-6a7f-48da-9dcf-16359686ce42",
+      "name": "root-edit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9dc273e4-1889-4404-aa2f-b01aef29f900",
+      "name": "agent-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Root Edit Primitive has Global Activation Status `Active` (A.6.1.1.8.2.2.2.1.1) while simultaneously declaring that \"Because the Root Edit Primitive is deployed only once, no further Instances of the Primitive can be Invoked\" (A.6.1.1.8.2.2.2.1.4, A.6.1.1.8.2.2.2.4).\n\nThose two facts look contradictory only if Instances are read as events. Here the single Instance is a *standing capability*: its Instance Configuration Document holds no numeric parameters at all \u2014 \"The parameters of the Root Edit Primitive are fully specified by the Operational Process Definition\" (A.6.1.1.8.2.2.2.2.1.1). The Instance is the process.\n\nThat distinguishes Root Edit sharply from the Genesis Primitives, which fire and go `Completed`. Root Edit fires once and stays `Active` forever, because what it deployed was the amendment procedure itself. Every future change to the Launch Agent 7 Artifact runs through this one Instance.\n\nThe structural implication is significant: since the Instance can never be re-Invoked, the amendment procedure cannot be replaced by invoking a fresh Root Edit Instance. It can only be changed by using the existing procedure to edit its own definition \u2014 a self-amending process with no external re-entry point.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Unlike Genesis Primitives that go Completed after firing, Root Edit's single Instance is a standing process: deployed once, it defines how the Artifact is amended from then on.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

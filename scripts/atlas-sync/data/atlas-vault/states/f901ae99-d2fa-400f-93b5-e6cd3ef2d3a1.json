@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Whitelisting an Agent Spell creates authority that expires, capped by a configurable maxDelay of about seven days",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "fef4329b-c14d-4895-a8b2-7dd121be7df9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b71c982-783c-469d-8881-b22a285ba047",
+      "name": "starguard",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c28a3a93-9e48-44d2-a2c8-dfb29e826d5f",
+      "name": "authorization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.3.2.3.1.1.2.4 defines a configurable `maxDelay` setting \"the maximum duration between the whitelisting of the Agent Spell in the Sky Core Spell and the execution of the Agent Spell,\" with a recommended value of seven days. The stated rationale: \"this feature ensures Spells do not linger indefinitely, enforcing timely processing and reducing risks from delayed or forgotten actions.\"\n\nThis is the necessary complement to decoupling approval from execution. Once a Sky Core Spell only whitelists a codehash rather than executing it, an approved Spell becomes a standing option that someone may exercise later \u2014 and the world in which the vote was cast is not the world in which it might be executed. Market conditions, parameters and other approved changes all move.\n\n`maxDelay` therefore encodes a claim about what a governance decision *is*: not a permanent grant but a mandate with a shelf life, valid under approximately the conditions in which it was approved. Beyond the window, re-authorization is required rather than assumed.\n\nIt also removes a class of ambush. Without expiry, an unexecuted whitelist entry is a latent action that can be triggered at a moment chosen by whoever is watching \u2014 including a moment specifically chosen to be harmful. Bounding the window bounds that optionality, and pairs with `drop()` for explicit revocation: one mechanism for when someone notices a problem, one for when nobody does.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:18:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Prevents approved Spells lingering indefinitely, so a stale mandate cannot execute into changed conditions; timely processing becomes a contract-enforced property rather than an operational habit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

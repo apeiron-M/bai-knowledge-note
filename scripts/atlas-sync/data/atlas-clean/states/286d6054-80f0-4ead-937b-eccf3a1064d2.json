@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-c378b13b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c378b13b-b805-4451-a32b-a3306f27cd0b",
+      "targetTitle": "Only borrow interest above the SKY Borrow Minimum Rate is pa"
+    },
+    {
+      "id": "lnk-9be88c37-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9be88c37-6f7a-4ef5-a9eb-f0449dc70a1a",
+      "targetTitle": "The SKY borrowing debt ceiling is identically the USDS held "
+    },
+    {
+      "id": "lnk-882f073a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "882f073a-5766-4894-9afb-c877c3f7c254",
+      "targetTitle": "The SKY Borrow Minimum Rate is a no-arbitrage floor equal to"
+    },
+    {
+      "id": "lnk-329d97be-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "329d97be-c13d-474d-82ad-3f18f636351c",
+      "targetTitle": "Every rate in Sky is defined as an arithmetic spread from a "
+    },
+    {
+      "id": "lnk-41023ffa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "41023ffa-b446-452c-b51c-db0a709fec1c",
+      "targetTitle": "The SKY price feed applies a one-hour delay before prices be"
+    },
+    {
+      "id": "lnk-8a65d31f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8a65d31f-ca1e-4f5f-a89b-4dc271ca6144",
+      "targetTitle": "Utilization is time-weighted over a one-day interval so the "
+    },
+    {
+      "id": "lnk-e4c50bf3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e4c50bf3-4aa1-4944-bf56-429d857b60b2",
+      "targetTitle": "Sky deprecates its own Core Vaults by pricing users out rath"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A utilization-driven SKY Borrow Rate replaces the governance-set Stability Fee",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "e259c025-ddda-4b45-b7ce-9d1d38391f93",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b39a76eb-bbf9-4a50-b9c7-4c38d3dad9b8",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7b55818d-13c5-493e-a2f9-f67e579c80e6",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6581b205-7fff-4c69-899b-b06f2bada96e",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.5 states the substitution plainly: \"The interest rate charged to borrowers (SKY Borrow Rate) is dynamic and market-driven, based on the utilization of funds within the stUSDS contract. This dynamic rate will replace the static `Stability Fee` parameter associated with protocol-dependent, SKY-backed borrowing.\"\n\nThe Stability Fee was the canonical MakerDAO instrument: a rate chosen by voters, changed by proposal, and therefore always a lagging estimate of what the market would bear. It made every rate change a political event, and it left the protocol systematically mispriced between votes \u2014 too cheap during demand surges, too expensive after them.\n\nReplacing it with a utilization function removes governance from the pricing loop and puts it one level up, in the *shape* of the curve. Voters no longer decide the rate; they decide the floor, the slopes, and the target utilization that determine how the rate responds. Pricing becomes continuous and automatic while remaining fully specified in the Atlas.\n\nThis is the same delegation logic Sky applies elsewhere \u2014 bound the mechanism, then let it run \u2014 and it pairs necessarily with the dynamic debt ceiling. Once borrowing capacity is fixed to deposits, the rate is the only equilibrating variable available, so it cannot be left to move at governance speed. The residual governance risk shifts from \"is the rate right today\" to \"is the curve calibrated,\" which is a question that needs answering far less often.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Sky moves rate-setting for SKY-backed debt from a voted parameter to a formula: \"dynamic and market-driven, based on the utilization of funds within the stUSDS contract.\"",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

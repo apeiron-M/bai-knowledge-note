@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A change inside its approved parameter ranges can still require an Artifact Edit Proposal",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b67b9a1a-973e-4a9a-8574-5357ffc80e4e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a6a9688-f247-4667-8627-619e3eff8979",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d392e8f-b085-4fa9-8eae-aa8636c8d825",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.3.3.1.1 makes an Artifact Edit Proposal mandatory under two conditions. The first is mechanical: the modification \"falls outside the pre-defined operational ranges codified in the respective Instance Configuration Document.\" The second is discretionary: a modification \"even if notionally within defined ranges in the Artifact\" that Operational GovOps determines \"materially alter[s] the Instance's risk profile in a way that could invalidate the underlying Capital and Operational Plan and, consequently, the premises driving the current Required Risk Capital (RRC) for that Instance.\"\n\nThe second condition concedes that numeric ranges are an imperfect proxy for risk. Approved bounds were calibrated against a particular strategy; the same numbers can describe a materially different position once the strategy changes \u2014 a limit sized for one venue reused for a riskier one, for instance. A purely range-based test would let that pass, and the RRC computed from the original premises would silently stop applying.\n\nThe stated hook is RRC validity rather than prudence in the abstract, which links this directly to the rule that operational deviation invalidates an Instance's RRC. Both provisions protect the same thing: the correspondence between the model's assumptions and reality.\n\nThe cost is discretion. \"Operational GovOps retains the discretion to require an Artifact Edit Proposal... regardless of its fit within existing operational ranges,\" so a Prime cannot fully determine in advance whether a change is votable. That is a deliberate trade of predictability for coverage of the cases a parameter table cannot anticipate.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:26:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:26:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Operational GovOps may force a vote on any modification it judges to materially alter an Instance's risk profile, because that would invalidate the C&O Plan premises the current RRC was derived from.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

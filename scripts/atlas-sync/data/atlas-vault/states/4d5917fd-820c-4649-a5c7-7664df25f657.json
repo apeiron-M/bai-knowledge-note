@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An incomplete or noncompliant input invalidates a Primitive invocation outright rather than degrading it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b09a9bc3-2660-407e-a351-89259e66f298",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ebadd593-80f5-4f88-b413-a1042b47b059",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b9d2674-c739-4cc3-8f12-4dfbdc43a5ae",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.2 defines the required inputs for a valid Invocation of the Allocation System Primitive and states the failure semantics flatly: \"If any input is noncompliant or omitted, the Primitive will be invalidated and the Allocation Instance deployment will not move forward.\"\n\nThe inputs are unremarkable individually \u2014 global activation status, Core Allocation Vault and Buffer addresses, rate limiters and their parameters, the Capital Faucet and its limits, and the list of Instances grouped by blockchain with bridging mechanism, buffer, addresses, technical parameters, data submission protocols and emergency measures (A.2.2.10.1.2.1 through A.2.2.10.1.2.6.1). What is significant is that they are **jointly** necessary.\n\nAll-or-nothing validation makes the Artifact the actual deployment gate. There is no partially-configured Instance that runs while a missing field is chased down, and no path where an Instance operates without declared rate limits or declared emergency measures because those sections were left for later. Everything the ecosystem needs to supervise the Instance exists before it can hold capital.\n\nThe pattern also makes Primitive invocation checkable rather than negotiable: validity is a property of the Artifact document, so the same test can be applied by a reviewer or by software. The trade-off is brittleness \u2014 a single malformed field blocks a deployment that is otherwise ready, which is the intended direction of failure for a system moving other people's capital.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:26:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:26:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Allocation System Primitive fails closed: if any required input is omitted or noncompliant the Primitive is invalidated and deployment does not proceed, making the Artifact the deployment gate.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

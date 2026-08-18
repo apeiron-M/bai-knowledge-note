@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-b9a526c6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b9a526c6-9664-4cd0-a4c6-c7358a666375",
+      "targetTitle": "Deployment and handover each require both Spell Reviewers to"
+    },
+    {
+      "id": "lnk-ce489442-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce489442-e388-4522-b71d-df27162d0d3a",
+      "targetTitle": "Sky deploys new modules on-chain seven to eight days before "
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The deployed Spell is cast on a freshly deployed Tenderly testnet, so the exact production bytecode is executed before anyone votes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6463a851-62eb-41d7-b415-152844288651",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c47cb02a-2b58-432a-b629-e81e692b7770",
+      "name": "verification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c3d9fde1-f521-40fa-ab76-be25124d1564",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.10.4 has the Crafter deploy the Spell on mainnet; A.1.10.2.4.10.5 then requires that \"the Spell Crafter... casts the deployed Spell on a **newly deployed** Tenderly Testnet.\"\n\nThe ordering is the point. Testing before deployment exercises a build of the source; casting the already-deployed contract exercises the exact bytecode at the exact address that the Executive Vote will authorize. Any gap between source and deployed artifact \u2014 wrong compiler settings, wrong constructor arguments, a stale build \u2014 is invisible to the first and caught by the second.\n\n\"Newly deployed\" closes the other half. A fresh fork starts from current mainnet state, so the simulation runs against the world as it actually is at deployment time, not against a long-lived testnet whose state has drifted. Deployment and simulation being minutes apart is what makes the result predictive.\n\nA Spell is also single-shot and irreversible: it can be cast exactly once on mainnet, and there is no way to try it and observe. Forked-state simulation is the only mechanism that produces real evidence of what casting will do, which is why it sits on the critical path rather than in optional pre-work.\n\nNote what this buys governance specifically. By the time voters see the proposal, someone has already executed the precise contract they are being asked to approve and observed its effects \u2014 so the vote is on a demonstrated outcome rather than a predicted one.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.10.5 places simulation after mainnet deployment rather than before, testing the artifact voters will authorize instead of a compiled copy of its source.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel's Artifact was ratified with its core token parameters explicitly deferred to a future iteration",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "29bed453-ca0b-4101-9363-c4cffb3e2537",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "77d00aea-8c31-4ccd-bd64-749dde57a676",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e17d8b6-02dc-4fed-b54a-5ed6048aaf3f",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df673ba8-98e8-4b2e-8777-e5219acd6b8b",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Five consecutive parameters in Keel's Agent Token Primitive Instance are placeholders: Genesis Supply (A.6.1.1.3.2.1.4.2.1.1.3), Token Address (\u20261.1.4), Token Admin (\u20261.1.5) and the minting and initial distribution processes (A.6.1.1.3.2.1.4.2.1.2) all state they \"will be specified in a future iteration of the Keel Artifact,\" as does the Genesis Account (A.6.1.1.3.2.1.1.3.1.1.3).\n\nMeanwhile the Primitive's Global Activation Status is already `Active` and A.6.1.1.3.2.1.4.2.1.1.6 has already made emissions beyond the Genesis Supply permanently disabled. The cap is committed before the quantity it caps exists.\n\nThis is worth flagging in both directions. It shows the Atlas treats an Agent Artifact as a live, incrementally completed document \u2014 structure and irreversible commitments can be ratified first, and quantities filled in later without re-opening the structure. It also shows the limit of reading a status field: an `Active` Primitive with a specified Instance can still be operationally unusable because its parameters are blank.\n\nThe tension for a reader is that the strongest guarantee in the chunk (no dilution) is anchored to the least defined number in it (Genesis Supply). Nothing is inconsistent, but the guarantee cannot be evaluated until the deferred iteration lands.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:02:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Genesis Account, Genesis Supply, token address, Token Admin and the minting/distribution process are all marked as to-be-specified, while the emissions cap referencing that supply is already",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

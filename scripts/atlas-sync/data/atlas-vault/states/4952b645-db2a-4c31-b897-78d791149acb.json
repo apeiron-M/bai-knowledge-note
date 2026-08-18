@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A single marking event makes a USDS balance reward-eligible for ten years",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1aea901d-47a8-49ee-bdca-7144ad2ecdd4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "50510dc5-ef81-47d0-96a1-69574f5564e3",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "095f70cf-9756-45bc-9e85-8da2048a1f53",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.1.2.1.1.2.5 sets an unusually long tail: \"USDS balances are eligible for a Distribution Reward for a period of ten (10) years from the date of the event marking the USDS balance with the Reward Code. The date of the marking event is determined based on the Primitive Instance's specified Tracking Methodology.\"\n\nTen years converts an Integrator relationship from a service arrangement into an annuity. The economic proposition offered to a frontend is not \"earn while you keep sending deposits\" but \"a deposit you originate pays you for a decade, provided the balance persists.\" That is a far stronger inducement to integrate, and it explains why the marking event \u2014 a single on-chain parameter on a deposit call (A.2.2.9.1.2.1.1.2.1) \u2014 carries so much weight.\n\nIt also creates a durable liability. Every marking event today commits Sky to a stream of payments running to the mid-2030s, with no stated mechanism here for revising the rate or duration of already-marked balances. The clawback powers at A.2.2.4.1.1.2.1 address misconduct, not repricing.\n\nRead against the ten-year window, two other provisions become sharper. The last-marking-wins rule (A.2.2.9.1.2.1.1.2.1) is what allows a decade-long claim to be displaced by a competitor's re-marking. And the requirement that alternative Tracking Methodologies make double counting impossible (A.2.2.9.1.2.1.1.2.4) is not a bookkeeping nicety \u2014 a double-count error persists for ten years.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Eligibility runs ten years from the date of the marking event under the Instance's Tracking Methodology, turning one integration moment into a decade-long claim on rewards.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

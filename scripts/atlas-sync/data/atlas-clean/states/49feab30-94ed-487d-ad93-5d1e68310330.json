@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-c3a5f175-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3a5f175-20ca-4688-8a0b-1fc98b118fb5",
+      "targetTitle": "SKY supply falls monotonically because buybacks are funded f"
+    },
+    {
+      "id": "lnk-f01edbd8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f01edbd8-ff24-474e-9f40-393864d52922",
+      "targetTitle": "The Splitter allocates surplus between SKY accumulation and "
+    },
+    {
+      "id": "lnk-c359a5d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c359a5d7-0972-4362-88ad-cc8831a021fe",
+      "targetTitle": "Staking rewards currently bypass the revenue waterfall and a"
+    },
+    {
+      "id": "lnk-f74b8267-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f74b8267-c340-441a-aacb-4f4b0c1429a0",
+      "targetTitle": "doc-857d7c9d"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Smart Burn Engine mostly does not burn: only 10% of Step 3 Capital is permanently destroyed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "54b051ed-7165-4d7c-9d0d-8b4c6bc9ad5e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d96f5a7d-28b9-45fe-8fa5-569b5298bed6",
+      "name": "treasury",
+      "topicDocumentId": null
+    },
+    {
+      "id": "592b9d21-18aa-4980-92a9-64af004c0205",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.2.4 splits Step 3 Capital three ways: 45% \"used by the Smart Burn Engine to buy back SKY,\" with those tokens \"distributed to SKY stakers as SKY Staking Rewards\"; 45% \"distributed to SKY stakers as USDS Staking Rewards\"; and 10% used to buy back SKY that is \"burned.\"\n\nThe name invites the wrong model. Of the capital reaching this step, 90% is returned to stakers and only 10% reduces supply \u2014 and even the 45% SKY tranche passes through a market buyback purely as an acquisition step before redistribution, not as a supply reduction.\n\nThe economics of the two SKY paths differ sharply despite using the same engine. Buying back and distributing transfers value from the protocol to *stakers specifically*, and puts the tokens straight back into circulating supply in the hands of holders who chose to lock them. Buying back and burning benefits every holder pro rata by shrinking supply. Sky spends 4.5x more on the first than the second.\n\nThat weighting is a coherent choice: rewarding staking buys something burning cannot \u2014 locked supply and an engaged governance electorate, which the Atlas treats as a security property. It is also the more conditional payout, since it flows only to those who participate.\n\nThe practical caution is for anyone modelling SKY supply from revenue. Treating Step 3 as a buyback-and-burn programme overstates deflation by roughly an order of magnitude; the accurate reading is a staking dividend paid in two currencies, with a small burn attached. A.2.3.1.2.5 confirms Step 4 Capital comprises exactly those two streams.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "45% buys back SKY that is handed to stakers as rewards and 45% goes to stakers as USDS, so 90% of the step is redistribution and the buyback is largely a payout mechanism.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

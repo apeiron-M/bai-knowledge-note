@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's treasury operations are governed by refilling rate limits, not fixed caps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8c77c2be-fbe2-4868-a742-b208d6cbc36f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "94a0ba8c-81d7-4b4e-9841-0dcba5f1f4c7",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eaefd783-08aa-4745-86c2-edafb53edff1",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "230d359e-d522-47da-916b-0c03814c5e8e",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every entry under A.6.1.1.2.2.6.1.2.1.1.3 has the same two-field shape. For USDS minting on Ethereum Mainnet (A.6.1.1.2.2.6.1.2.1.1.3.1.1.1): \"`maxAmount`: 500,000,000 USDS\" and \"`slope`: 500,000,000 USDS per day.\"\n\nThis is a **token bucket**, not a quota. `maxAmount` is the bucket's capacity \u2014 the largest single burst possible when full. `slope` is the refill rate. The two together answer different questions: capacity bounds how much damage one compromised transaction sequence can do before anything replenishes; slope bounds sustained throughput and therefore how long a hostile actor would need to drain a given amount.\n\nSetting slope equal to maxAmount, as most Grove limits do, means the full allowance regenerates in a day. The bucket therefore imposes a **daily** ceiling, and its practical effect is to guarantee a human-scale reaction window: no single day's activity can exceed the cap, so monitoring and the Freezer Role have at least 24 hours to interrupt an attack before it can repeat.\n\nThe design choice this encodes is that Grove's risk controls target **rate of change** rather than absolute position size. Position limits live in the individual Instance Configuration Documents; the Liquidity Layer's controller-wide limits bound how quickly capital can be moved, minted, burned or bridged regardless of which Instance it ends up in.\n\nA.6.1.1.2.2.6.1.2.1.1.3.2 confirms the layering explicitly: these are \"controller-wide rate limits... Instance-specific rate limits are specified in each Instance Configuration Document.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every limit is a pair \u2014 maxAmount is the instantaneous ceiling and slope the per-day replenishment \u2014 so the constraint is on velocity of capital movement rather than on total size.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A backstop Relayer exists so removing a compromised one does not stop operations",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9b073950-f4b8-4094-bfb0-05cd09a2cfa9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "941171ed-cb21-451c-ae2e-7eac0ec79b23",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "35ee0787-065a-4faa-beab-3045d07c01db",
+      "name": "incident-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ef25e91c-698a-4ed3-949a-8bd01de0bd25",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.2.3.1 specifies the emergency action for a compromised Relayer: the `FREEZER_ROLE` calls `mainnetController.removeRelayer(compromisedRelayer)`, \"thereby preventing it from doing any harm to the system. **The backstop relayer can then take over.** This function should only be used if the keys to the relayer multisig have been leaked or compromised, and the relayer is now in the hands of an external bad actor.\"\n\nThis retrospectively explains the two Relayer multisigs listed earlier in the Artifact \u2014 the Prime Relayer Multisig controlled by Phoenix Labs and the Core Operator Relayer Multisig controlled by Soter Labs and the Spark Assets Foundation. They are not merely two teams with the same permission: they are primary and backstop, held by *different organizations* so that a compromise at one does not implicate the other.\n\nThe design point is that revocation is only a usable defence if it does not also disable the system. Without a backstop, removing the Relayer would freeze all capital movement \u2014 including the withdrawals needed to de-risk during the very incident that prompted the removal. Redundancy across organizations turns an all-or-nothing emergency power into a survivable failover.\n\nThe narrow usage guidance is equally deliberate: `removeRelayer` is for key compromise, not for disagreement about strategy or for suspected error. Bounding when an emergency power may be used is what keeps it from becoming a governance tool.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:57:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:57:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Freezer calls removeRelayer on the Controller, and 'the backstop relayer can then take over' \u2014 explaining why the Liquidity Layer maintains two independently controlled Relayer multisigs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

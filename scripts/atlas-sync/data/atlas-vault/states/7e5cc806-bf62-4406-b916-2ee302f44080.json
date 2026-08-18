@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The borrow rate targets 90% utilization, leaving only a 10% liquidity buffer for stUSDS exits",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c9f12f4e-c092-4062-8b21-e4bc469d5d00",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0cf3bf91-0cda-49f5-b571-cec7bf3d9003",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ddb2dc2-bc89-43b7-97e5-f79171a494e6",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "615b04da-121a-4af5-8224-daa825557562",
+      "name": "liquidity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.5.1 sets the control objective: \"The SKY Borrow Rate adjusts to target a 90% utilization rate of the USDS in the stUSDS contract. When stUSDS utilization is below 90%, the rate gradually decreases; when above 90%, it gradually increases.\" A.4.4.1.3.5.1.2 implements it as a kinked two-branch curve \u2014 `MinRate + Utilization/Target * Slope1` at or below target, and `MinRate + Slope1 + (Utilization \u2212 Target)/(1 \u2212 Target) * Slope2` above it.\n\nA 90% target is aggressive. It means the system is designed to hold 90% of lender capital lent out at equilibrium, which maximizes yield per deposited dollar and minimizes idle drag. That is the right objective if the goal is a competitive supply rate.\n\nIt sits in direct tension with the redemption rule in A.4.4.1.3.1, where stUSDS converts back to USDS only \"subject to available unutilized liquidity.\" At target, the exit window is 10% of the pool. Any redemption demand beyond that must wait for borrowers to repay or for new deposits to arrive \u2014 and the rate mechanism responds to withdrawal pressure by raising the borrow rate, which acts on borrowers slowly rather than freeing liquidity now.\n\nThe kink is what makes this survivable: above 90% the curve switches to Slope 2 and climbs steeply toward the Borrow Maximum Rate, so the last slice of liquidity becomes very expensive to consume. The design accepts thin normal-state liquidity in exchange for a strong price signal at the boundary, which is a coherent choice but means stUSDS holders should not assume same-day exit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rates fall below 90% and rise above it, maximizing capital efficiency \u2014 but since redemption requires unutilized liquidity, the target deliberately keeps the withdrawal buffer thin.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-89f8e474-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "89f8e474-4812-4148-9306-214d24084d93",
+      "targetTitle": "The Freezer Multisig's 2-of-5 threshold lets Operational Gov"
+    },
+    {
+      "id": "lnk-d901d297-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d901d297-1870-49ca-bcb3-3caf552a8aa1",
+      "targetTitle": "Freezer signers must justify freezing against Risk Capital r"
+    },
+    {
+      "id": "lnk-25ebe76b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "25ebe76b-e393-4c96-9afc-5bb43d4d92e1",
+      "targetTitle": "Keel holds one of five keys on the multisig that can freeze "
+    },
+    {
+      "id": "lnk-407c7014-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "407c7014-3c9c-457b-b898-0cfaf8be3871",
+      "targetTitle": "The Freezer Multisig's stated trigger is Pattern's own non-c"
+    },
+    {
+      "id": "lnk-7a6b0b65-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7a6b0b65-59bd-4d14-9f6f-e5080e9befa0",
+      "targetTitle": "Freezer multisigs use 2-of-N thresholds because halting is f"
+    },
+    {
+      "id": "lnk-a077859e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a077859e-3fd8-4c72-8e59-d5076e310769",
+      "targetTitle": "Freezer thresholds are low enough that most single signing o"
+    },
+    {
+      "id": "lnk-ba1ed452-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba1ed452-bae4-4e30-8043-8ad25374737c",
+      "targetTitle": "The emergency brake on Grove's Liquidity Layer is held by a "
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Freezer Multisig is composed so that Operational GovOps can freeze alone and Obex can neither freeze nor block a freeze",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2a3b9224-8470-48e5-9d29-2838452f08a7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7cbaee15-8574-488f-8a65-629df388c41d",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "acd5c9f6-4da3-4428-b9e9-4327f43d2cc6",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a4ab1571-12b7-4455-af93-05810788841e",
+      "name": "checks-and-balances",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.5.2.6.1.2.1.2.2.3.3 lists the Freezer Multisig signers as \"three (3) addresses controlled by Operational GovOps Soter Labs, one (1) address controlled by Operational Facilitator Redline Facilitation Group, and one (1) address controlled by Obex,\" against a 2-of-5 threshold (A.6.1.1.5.2.6.1.2.1.2.2.3.2).\n\nRun the arithmetic and the power distribution is unambiguous. Soter Labs alone satisfies the threshold with two of its three keys. Obex, holding one key, can neither trigger a freeze on its own nor prevent one \u2014 even Obex plus the Facilitator reaches the threshold without Soter Labs, but Soter Labs never needs either of them.\n\nThe Agent is therefore a token participant in the mechanism that shuts the Agent down, which is exactly right for the stated purpose. A.6.1.1.5.2.6.1.2.1.2.2.3.4 says signers \"should exercise their authority to freeze the Obex Liquidity Layer in the event that **Obex is not complying** with rules regarding Risk Capital or Asset Liability Management, or in the event of another emergency.\" A freeze is a compliance enforcement action against Obex, not only an anti-hack circuit breaker \u2014 so giving Obex a blocking stake would defeat it.\n\nThe accountability counterweight is disclosure: \"Each action executed by the Freezer Multisig, including any function calls and their parameters, must be reported to the Sky community within a reasonable time frame through a post on the Sky Forum.\" Low threshold, broad grounds, mandatory publication \u2014 freezing is made easy but never quiet.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its 2-of-5 threshold is met by Soter Labs' three signers by themselves; Obex holds one key and the Operational Facilitator one, so the Agent cannot veto its own shutdown.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

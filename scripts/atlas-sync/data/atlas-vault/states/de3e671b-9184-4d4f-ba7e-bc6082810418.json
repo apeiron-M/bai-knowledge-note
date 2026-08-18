@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Unratified changes to emergency multisig signers must be treated as malicious by default",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "60866e8a-468b-4bcf-8af8-e8d0ff437fdb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ea51f347-3c54-4306-a1d5-66efec7f0d1d",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a290b396-d2ae-44da-8d69-75afa8cd8d00",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.4.1.1.4 sets an unusual authority split for the SparkLend Security Access Multisig: modifying its signers \"must be approved through a Governance Poll; no Executive Vote is required.\" Membership of an emergency body is therefore a sentiment-level decision, not an on-chain execution one.\n\nTwo exceptions skip even the Poll: a signer self-reporting loss of private-key access, or a signer asking to be removed. Both require a public Sky Forum post, and replacement \"should be replaced as soon as possible, which does not require a Governance Poll.\" The reasoning is that both cases *reduce* trust in the current set and are attested by the affected party, so waiting on a Poll would leave the multisig degraded.\n\nThe load-bearing clause is the default for everything else: any change outside those exceptions or unratified by Sky Governance \"should be questioned immediately and treated as malicious,\" and the Core Facilitator should consider an expedited Executive Vote \"on removing external security access from the multisig.\"\n\nThis inverts the usual burden of proof. An unexplained signer change is not an administrative irregularity to be investigated \u2014 it is presumed hostile, and the prescribed response is to sever the standing power rather than to interrogate the change. That presumption is what makes a standing emergency capability survivable: the failure mode of a compromised signer set is contained by revoking the whole capability, not by adjudicating individual signers.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:39.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Signer changes need a Governance Poll but no Executive Vote; only self-reported key loss or voluntary exit bypass the Poll, and anything else triggers an expedited vote to revoke access.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

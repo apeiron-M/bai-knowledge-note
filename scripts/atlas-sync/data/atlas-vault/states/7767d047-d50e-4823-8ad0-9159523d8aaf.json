@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every active Grove instance runs with a Pending risk model, so capital charges rest on an unfinished RRC calculation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "08285e8a-52ce-40d4-b855-8515ac5c057e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2db0ac4e-651b-4a5c-8dc7-6eab52bf909d",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9f40d4ab-2d0a-4254-ae65-9ec7e73653fd",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eac700c2-ede1-4924-8a90-d3e138710243",
+      "name": "governance-gap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3 defines the status field precisely: \"If the Instance Financial RRC is calculated based on a fully implemented risk model the status is `Covered`. If the Instance Financial RRC is calculated based on a pending risk model the status is `Pending`.\"\n\nEvery instance in this chunk carries `Pending` \u2014 Centrifuge JTRSY (A...3.1.1.1.1), Centrifuge JAAA (A...3.1.1.2.1), Centrifuge ACRDX (A...3.1.1.3.1), Centrifuge JTRSY USDS Vault (A...3.1.1.4.1) and Blackrock BUIDL-I (A...3.1.2.1.1).\n\nThe amounts these statuses sit alongside are what makes the observation load-bearing: the JTRSY inflow limit is 500,000,000 USDC and the JTRSY USDS Vault's is 500,000,000 USDS. Capital is authorised at that scale while the risk model determining its capital charge is, by the Atlas's own definition, not fully implemented.\n\nThis is not concealment \u2014 the Atlas surfaces the status per instance as a first-class field, which is a stronger disclosure discipline than most frameworks manage. But it means the RRC framework currently functions as a *placeholder* for Grove rather than as a binding constraint, and the real constraint on exposure is the rate-limit configuration plus prose caps, not the risk model.\n\nThe field's design does anticipate resolution: `Pending` is expected to become `Covered` per instance as models land, so the gap is tracked rather than assumed away.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.6.1.1.2.2.6.1.3 defines Covered versus Pending by whether the Instance Financial RRC uses a fully implemented risk model; every instance documented here is marked Pending.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

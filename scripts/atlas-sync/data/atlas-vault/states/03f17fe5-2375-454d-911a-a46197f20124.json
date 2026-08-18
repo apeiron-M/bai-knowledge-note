@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Spell must carry an expiration date, capped at 90 days, and voters are told it explicitly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ebf3defe-9a08-457d-bdd0-ab3892fbf645",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac636a68-1558-49d5-ad56-791b9bb321d2",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bc24bda1-f431-4c48-a8e4-64d7e508e224",
+      "name": "authorization",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.8.2.4 requires that \"the Spell must always have an expiration date; it can't be more than 90 days in the future, and the typical expiration window is 30 days.\" A.1.10.2.4.8.3.5 requires the voter-facing summary to say so in prescribed words: \"If this Executive Proposal does not pass within 30 days, then it will expire and can no longer have any effect on the Sky Protocol.\"\n\nAn Executive Vote is therefore a time-limited grant of authority, not a permanent one. A Spell that passes but is never executed becomes inert, and re-authorization means going back to voters rather than reusing the old mandate.\n\nThe reasoning is the same as for StarGuard's `maxDelay` (A.1.10.2.3.2.3.1.1.2.4): an approved action carries the assumptions of the moment it was approved. Rates, balances, module states and other approved changes all move, and a mandate executed months later may do something quite different from what voters authorized in substance even while doing exactly what they authorized in text.\n\nThe pattern recurs at two layers \u2014 Spell expiry for Sky Core, `maxDelay` for whitelisted Agent Spells \u2014 which suggests a general principle rather than a local parameter: in this framework, authority decays by default and permanence must be argued for.\n\nRequiring the expiry to be *stated to voters* completes it. The time limit is part of what is being voted on, so a holder can weigh whether the window is short enough for the risk the action carries.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.8.2.4 makes a passed-but-unexecuted Spell die rather than persist; A.1.10.2.4.8.3.5 requires the expiry to be stated in the summary in fixed wording.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

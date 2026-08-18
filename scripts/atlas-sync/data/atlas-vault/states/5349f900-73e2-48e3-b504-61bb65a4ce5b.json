@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Where value may go is an admin-only setting, while how much may move is a relayer-and-rate-limit matter",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "04bbccb6-d901-4921-93ff-6a8633450271",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b9ddbb07-27ae-4d35-a9bd-785063f08130",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a35a59a7-0897-4470-89ca-b74d916bee95",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05c2a1a1-8ecc-4ec1-904f-3a5880bc4122",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The three Admin Functions documented for the `MainnetController` all configure *where* or *on what terms* value may move: `setMintRecipient(uint32 destinationDomain, bytes32 mintRecipient)` (A.6.1.1.3.2.6.1.2.2.1.1.2.1.1.1.1), `setLayerZeroRecipient(uint32 destinationEndpointId, bytes32 layerZeroRecipient)` (\u20261.2.1) and `setMaxSlippage(address pool, uint256 maxSlippage)` (\u20261.3.1). Each specification repeats that \"the contract will confirm the admin status of the operator. If the caller does not have the admin role, the transaction will revert.\"\n\nThe split against the Relayer Functions is clean and deliberate. Relayers move amounts within rate limits; only the admin can change the addresses those amounts can be bridged to, or how much price slippage a swap may tolerate.\n\nThe reason is that destination configuration is a total bypass of every quantitative control. A relayer who could set the cross-chain mint recipient could send the full rate-limited flow to an address they control, and the rate limits would faithfully permit it \u2014 the limits bound magnitude, not direction. Likewise, a permissive max slippage converts an ordinary swap into an arbitrarily-priced value transfer to a counterparty.\n\nSo the parameters that could turn a legitimate operation into an exfiltration route are held one level up, with Sky Governance via the Keel Proxy, while the day-to-day flow decisions stay with the fast operators. Every event emission named in these clauses (`MintRecipientSet`, `LayerZeroRecipientSet`, `MaxSlippageSet`) exists so that a change at that level is externally observable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "setMintRecipient, setLayerZeroRecipient and setMaxSlippage are restricted to the admin role, so destination addresses and slippage tolerance stay with Sky Governance and out of operator hands.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

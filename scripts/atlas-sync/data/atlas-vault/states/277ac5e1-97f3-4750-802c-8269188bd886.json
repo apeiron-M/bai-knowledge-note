@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Simplified Profit And Loss Calculation gives Primes the upside above the borrow rate without the downside below it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "71e87604-53ab-4e9d-8c6a-ec40e098bebe",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ab58d7f-e9f2-4ca0-98c5-e9376228d79f",
+      "name": "settlement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4a028e06-289e-4dff-ad4b-c9f030064491",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.4.1.2.2.1.1.2.2.1 defines Instance Profit as \"the greater of (1) Instance Revenue minus Instance Expenses and (2) zero,\" where A.2.4.1.2.2.1.1.2.2.1.1 makes Instance Expense the interest on Sky's Collateral Portfolio funds invested in the Instance, accrued per block at the Agent Credit Line Borrow Rate. A.2.4.1.2.2.1.1.2.4 then sets the amount due to Sky as Total Allocation System Revenue minus Adjusted Allocation System Profit \u2014 Sky takes all revenue except what the Prime retains as profit.\n\nThe zero floor is the whole shape of the arrangement. Above the borrow rate the Prime keeps the excess; below it, the calculation returns zero rather than a negative number, so the Prime owes nothing extra and Sky bears the gap between what the Instance earned and what its funding cost.\n\nThe Atlas states the resulting problem itself in A.2.4.1.2.2.1.1.2.3.1, describing \"the asymmetric nature of the Simplified Profit And Loss Calculation, where Primes earn profits on Allocation System Instances that earn more than the Agent Credit Line Borrow Rate but do not suffer losses when Instances earn less.\"\n\nThat is a call option payoff, and option holders rationally prefer volatility. A Prime facing this structure has an incentive to pursue strategies whose downside lands on Sky, because variance is free. Naming it \"Simplified\" is accurate about the motive \u2014 it avoids building full loss attribution before the tooling exists \u2014 and the Atlas treats the asymmetry as a temporary cost to be patched by penalties rather than as an acceptable equilibrium, which is why Stages 2 and 3 exist to remove it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Instance Profit is the greater of revenue minus expenses and zero, so a Prime keeps earnings above the Agent Credit Line Borrow Rate while Sky absorbs any shortfall beneath it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

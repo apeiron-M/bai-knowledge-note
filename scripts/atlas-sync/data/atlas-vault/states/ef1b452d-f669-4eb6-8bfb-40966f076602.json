@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Signer rotations may not quietly reduce signer count or threshold without approved justification",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a27e35db-e465-473e-8dbe-393992e2bb33",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96548dd3-9204-404c-b992-964356d33114",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f762f6e0-1424-4f5c-859a-eced15f2fc98",
+      "name": "multisig",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.2.2.1.1.3 states that \"[s]igner rotations must not reduce the total number of signers or decrease the signing threshold unless the Multisig Administrator provides a clear operational or security justification that is submitted to and approved by the Protocol Security Workstream Lead.\" A.2.11.1.3.2.2.1.1.1 requires every rotation to be reported with \"the reason for the change, the outgoing signer, and the incoming signer,\" and A.2.11.1.3.2.2.1.1.2 requires prompt notification of all composition changes with updated addresses.\n\nThe failure mode this targets is drift, not attack. A 5/9 multisig loses a signer who moves on and becomes 5/8, then someone is unresponsive so the threshold drops to 4, then another departure \u2014 and each individual step has a mundane operational justification. Nobody decides to weaken the multisig; it simply ends up weak. Since a signer leaving is a normal event and replacing them is work, the path of least resistance always points down.\n\nMaking every reduction require external approval converts strength into a ratchet: it can rise freely and can only fall deliberately, on the record, with a named approver. This is the operational-security analogue of the Atlas's Slippery Slope Misalignment doctrine, where the danger is not any single small step but the accumulation of individually defensible ones.\n\nThe rule's effectiveness depends entirely on the Protocol Security Workstream Lead having the capacity and willingness to refuse convenient requests \u2014 and on administrators reporting the change rather than executing it quietly, since the multisig contract itself enforces nothing here.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Any reduction requires a documented operational or security rationale approved by the Protocol Security Workstream Lead, turning multisig strength into a ratchet that resists gradual erosion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A rate limit whose slope exceeds its maxAmount is a burst control, and Grove uses that shape for execution venues rather than for held positions",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a7ef9ff9-6679-49a5-a32a-064bd302bc74",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ec6112c-0e09-4edf-af53-8ab5cf381509",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d41c608-6494-4c0e-b177-46700966636a",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5c9bcefd-8db7-46a4-adf2-db029566a8c6",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.6.1.2.4.3 sets the Curve RLUSD/USDC swap limits at `maxAmount` 20 million, `slope` 100 million per day, `maxSlippage` 0.1%. Compare Aave: 50 million cap, 25 million per day.\n\nThe two ratios describe opposite risk postures. Aave's cap exceeds its daily slope, so the binding constraint is **time** \u2014 you can hold up to 50 million but rebuilding the budget takes two days. Curve's slope exceeds its cap fivefold, so the binding constraint is **size per burst** \u2014 no single swap may exceed 20 million, but the budget refills in roughly 4.8 hours, permitting several such swaps a day.\n\nThat is exactly the right shape for a venue used transiently. A swap does not accumulate exposure; it converts one asset into another and finishes. What must be bounded is the size of any one execution, because that is what determines price impact and how much a manipulated pool could extract. Total daily throughput is not the risk.\n\nThe accompanying `maxSlippage` of 0.1% is the third parameter completing the picture, and it connects to the code: `CurveLib` reverts with `max-slippage-not-set` if it is zero and uses it to derive the floor a relayer's `minAmountOut` must clear (A...2.1.2.8.1.2, A...2.1.2.8.1.4). A 20 million cap and a 0.1% tolerance are complementary \u2014 the cap keeps trades inside the range where 0.1% is achievable in this pool.\n\nThe generalisable reading: `maxAmount / slope` is the refill period, and whether it is long or short tells you whether governance is limiting accumulation or limiting single-shot impact.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Curve RLUSD/USDC swap limit is 20 million with a 100 million per day slope \u2014 refilling in under five hours \u2014 the inverse of the Aave shape where the cap exceeds the daily slope.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel outsources its operational execution to a separate Executor Agent through the Executor Accord Primitive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b26493fe-4484-489e-ade0-7b1de95398f4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54764182-cdd1-466a-b2fd-cbee2b622f6e",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "937986a3-5294-4084-8b4a-d6e32908149e",
+      "name": "separation-of-powers",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.2.1 records an `Active` Executor Accord Primitive with one Instance, Amatsu. Its defining parameter, A.6.1.1.3.2.2.1.2.1.1.1, does not restate the roles but points outward: \"the Operational Facilitator and Operational GovOps for Amatsu are specified in A.6.1.2.1 - Operational Executor Agent Amatsu.\"\n\nKeel therefore does not staff its own execution layer. A Prime Agent holds the strategy, the token and the mandate; a distinct Operational Executor Agent, defined in its own Artifact, supplies the people and process that carry out operations and review them. The Accord is the joint between the two.\n\nTwo consequences follow. First, one Executor Agent can serve multiple Prime Agents without each re-specifying operational roles, and personnel changes happen in the Executor's Artifact rather than in every Prime Agent that relies on it. Second, the Accord is an ongoing relationship rather than a one-off: unlike the Genesis Primitives, its In Progress Invocations directory is live (A.6.1.1.3.2.2.1.4), so additional Executor Accord Instances can be invoked and completed Instances retired.\n\nThe trade-off is a dependency Keel does not control. Keel's ability to act operationally rests on an Accord with an entity whose internal governance is specified elsewhere, which is why the Accord itself is a Primitive with a failure and suspension path rather than an assumption.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Amatsu Instance supplies Keel's Operational Facilitator and Operational GovOps from another Artifact, splitting who sets strategy from who runs the day-to-day process.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

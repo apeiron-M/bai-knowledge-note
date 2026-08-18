@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Interim Deployment status automatically imposes a 100% Capital Ratio Requirement instead of a venue-specific risk assessment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "34ecdfec-cce1-4bbc-b630-4dc3303d2287",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e98e1b67-83f8-4db8-8239-49969daeb0a6",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "303a0eb2-10e1-4e6b-a651-baefe8203b4e",
+      "name": "capital-requirements",
+      "topicDocumentId": null
+    },
+    {
+      "id": "81c477c3-ddd7-48ab-aeda-a4bfad5f8ebb",
+      "name": "risk-framework",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.14.1.2.5.1 states that the JTRSY Instance \"is currently defined as an **Interim Deployment** (see A.1.10.2.3.2.2.2) and **as such** has CRR of 100%.\" A.6.1.1.2.2.6.1.3.1.14.2.2.5.1 says the same for BUIDL.\n\nThe words \"as such\" carry the mechanism. The Capital Ratio Requirement is not derived from an assessment of Anemoy, Securitize, or the underlying treasury exposure \u2014 it follows automatically from the deployment's *lifecycle stage*. A 100% CRR means the position must be fully backed by capital, so it consumes no leverage and generates no net balance-sheet exposure for Sky.\n\nThis solves a real bootstrapping problem. A risk framework cannot price a venue it has not observed, and observation requires deploying into it. Rather than guessing a CRR from an incomplete assessment, the framework applies the maximally conservative value by default and lets the deployment produce the evidence that justifies relaxing it.\n\nThe cost is precise: an Interim Deployment is capital-inefficient by construction, so a venue's yield can never justify itself during the testing period \u2014 every Interim Deployment looks unattractive on a return-on-capital basis while it is being evaluated. That makes the *duration* of interim status the important variable, and it also explains why these Instances pair the 100% CRR with a small Maximum Allocation: the framework is buying information, and it has priced the purchase rather than the position.\n\nThis is a reusable pattern for admitting unknown counterparties: make the trial risk-free to the balance sheet and cap its size, rather than attempting to assess what cannot yet be assessed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:04:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both Tokenized Treasury Instances state they have CRR of 100% by virtue of being Interim Deployments, making the test allocation fully capital-backed and therefore balance-sheet-neutral while it",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

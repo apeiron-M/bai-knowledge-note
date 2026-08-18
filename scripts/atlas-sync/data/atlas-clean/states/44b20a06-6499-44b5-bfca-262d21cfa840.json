@@ -1,0 +1,115 @@
+{
+  "links": [
+    {
+      "id": "lnk-c3006998-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3006998-378b-4de2-9fda-8dd8721fc58c",
+      "targetTitle": "The voter-facing Executive Document is reviewed only inside "
+    },
+    {
+      "id": "lnk-8ac79a21-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8ac79a21-bf27-4170-9862-b4c923f9de93",
+      "targetTitle": "No actor may both author and approve the same content within"
+    },
+    {
+      "id": "lnk-fd7060b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fd7060b8-ae56-4aee-b653-4cd81b459199",
+      "targetTitle": "Spell Reviewers work from the Executive Document while the C"
+    },
+    {
+      "id": "lnk-700a7c8e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "700a7c8e-305e-44b5-8819-1906db958040",
+      "targetTitle": "The Core Spell Crafter Checklist is optional while the Revie"
+    },
+    {
+      "id": "lnk-8d1d4e13-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d1d4e13-d77b-4973-9cbb-7b469fa9b680",
+      "targetTitle": "Anyone who encourages a Spell Reviewer to skip part of their"
+    },
+    {
+      "id": "lnk-a6fa3cc9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a6fa3cc9-7c14-4a61-a426-c6eb251e8f34",
+      "targetTitle": "doc-5f496915"
+    },
+    {
+      "id": "lnk-ba02272a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba02272a-d98e-4bd8-b368-06feb1b66439",
+      "targetTitle": "doc-8aae6489"
+    },
+    {
+      "id": "lnk-cbb6be22-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cbb6be22-536e-48af-909a-9daae6f9d687",
+      "targetTitle": "doc-db2857df"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Only the Crafter may touch Spell code and Reviewers may only suggest, with the Crafter barred from reviewing their own Spell",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b88ad8f3-2838-434a-be1d-e4b6d89d98f9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d12d8899-1076-427a-a70d-2e709967838c",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ef70c63-8ad1-4cbd-b965-dbbc458c056d",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Four constraints combine into a strict separation of duties over Spell code.\n\n**Exclusive authorship**: \"Every addition, modification, or removal of code or content within the Spell must be performed by the Crafter\" (A.1.10.2.1.11). **Review without write access**: \"The Reviewers may not perform any addition, modification or removal of code or content within the Spell, although they may suggest changes to the Spell Crafter\" (A.1.10.2.1.12). **No self-review**: \"A Crafter cannot serve as a Reviewer for the same Spell,\" and the team needs \"at least two Reviewers... at least one of whom should be a member of a different Ecosystem Actor than the Spell Crafter\" (A.1.10.2.1.10). **Mandatory rotation**: \"The designated Spell Crafter must be rotated, such that the same person does not craft the Spells for two consecutive Executive Votes\" (A.1.10.2.1.11).\n\nEach targets a distinct attack or failure. Exclusive authorship gives every line a single accountable origin \u2014 no diffusion of responsibility for how something got in. Read-only review keeps the reviewer adversarial: a reviewer who can edit becomes a co-author and stops being an independent check. Cross-organization review means capturing one Ecosystem Actor is insufficient, since A.1.10.2.2.2.1 shows the concrete rotation (Dewiz crafting is reviewed by one Dewiz and one Sidestream member, and vice versa). Crafter rotation prevents a single person accumulating the position from which a long-running pattern could be introduced across successive Spells.\n\nThe combination is why anonymity for Spell teams (A.1.10.1.1) is tolerable: no individual is trusted, so no individual needs to be identified.\n\nThe structural exposure is the size of the Roster. A.1.10.2.1.9 names exactly two teams, Sidestream and Dewiz, so cross-organization review has no redundancy \u2014 if either becomes unavailable or compromised, the independence property collapses to same-organization review.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:39:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.1.10-12 add a cross-organization requirement for at least one Reviewer and rotate the Crafter so nobody crafts two consecutive Executive Votes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

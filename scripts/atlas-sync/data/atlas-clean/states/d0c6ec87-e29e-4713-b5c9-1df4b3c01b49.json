@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Lifting, scheduling and casting a Spell are all permissionless \u2014 any Ethereum address can perform them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "16549b82-bbb1-4835-9aeb-8f0ed74c3ae9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dee4c194-d475-4f16-ac86-2ed686f11e3c",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "830160cc-a56c-4902-a102-c98c17990c71",
+      "name": "permissionless",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three consecutive provisions each end with the same clause. Lifting a Spell to become the hat \"is permissionless, meaning any Ethereum address can trigger the execution without requiring special permissions\" (A.1.10.2.4.13.2). Scheduling via `schedule()` is \"permissionless\" (A.1.10.2.4.13.3). Casting is \"permissionless\" (A.1.10.2.4.13.4).\n\nSo once SKY holders have voted, no named party stands between the decision and its execution. There is no executor to bribe, coerce, or lose. A.1.10.2.4.13.2.1 adds the chief-keeper, which monitors DSChief and calls `lift` automatically \u2014 but it is an optimization, not a gatekeeper: if it stops, anyone else can perform the same calls.\n\nThe security rests entirely on the preconditions being verifiable on chain. Lifting requires more approvals than the current hat; scheduling requires being the hat; casting requires the `eta` to have passed. Each is a fact the contract checks, so who makes the call is irrelevant.\n\nThis mirrors the reasoning behind StarGuard's permissionless Agent Spell execution (A.1.10.2.3.2.3.1.1.2.6): where every precondition is machine-checkable, restricting the caller adds a liveness dependency without adding safety.\n\nThe governance consequence is that the vote is genuinely the last human decision. All the elaborate role structure in the Executive Process \u2014 Governance Point, Crafter, Reviewers, Facilitator \u2014 operates *before* the vote. Afterwards the outcome is enforced by anyone with gas, which is what makes the process resistant to a last-minute refusal to act.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.13.2 through .4 place no privileged executor between an approved vote and its effect; authority lives in DSChief vote-weight, and a keeper automates the steps.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

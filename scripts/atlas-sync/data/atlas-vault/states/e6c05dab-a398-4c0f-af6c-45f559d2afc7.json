@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Agent's token admin should be its SubProxy account, placing token administration under Sky Governance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "dcc4386f-d44a-47a8-8577-50d75fc129a8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e833c056-c06d-407c-a1d9-0909d4be4752",
+      "name": "agent-artifacts",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ee050d8e-869b-4d0b-bb77-ec0d63262eab",
+      "name": "token-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.5.4.1.1.1 lists the Agent Token Primitive's inputs \u2014 name, ticker, symbol, genesis supply, total supply, distribution rules, emissions schedule, pending token address and token admin address \u2014 and then adds a directive: \"The token admin address **should be the Agent SubProxy Account**.\"\n\nThat single sentence has to be read against A.2.2.5.1.2.5, which defines the SubProxy as the Agent's treasury and states that it \"is controlled by Sky Governance.\" Routing token admin rights to the SubProxy therefore places administrative control of every Agent token in the same hands as its treasury, and those hands are not the Agent's.\n\nCore GovOps also deploys the contract: A.2.2.5.4.1.1.4 has the token deployed on-chain by Core GovOps after validation, with the minted supply allocated as specified and the pending token address automatically replaced by the real one. So the Agent specifies the token; the ecosystem creates and administers it.\n\nThis is the enforcement substrate behind several later mechanisms \u2014 most directly A.2.2.5.4.2.7, where Sky Governance can revert an Agent's irreversible emissions lock. That power is only meaningful because admin rights sit with an account Sky controls. The trade-off is that an Agent's token is not sovereign: its parameters can, in defined circumstances, be changed by a party the token holders do not elect.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:24:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Agent Token Primitive requires a token admin, and the Atlas directs it to the SubProxy \u2014 the same treasury account A.2.2.5.1.2.5 says Sky Governance controls.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

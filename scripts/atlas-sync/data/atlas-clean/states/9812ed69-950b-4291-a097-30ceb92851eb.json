@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-a4937777-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4937777-e2ec-4f89-8101-20f235546bd9",
+      "targetTitle": "doc-150f53f4"
+    },
+    {
+      "id": "lnk-a774b35c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a774b35c-ca5b-492e-8c18-223aea45aa66",
+      "targetTitle": "The Artifact documents delegated-signer authority without na"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Relayer can appoint and revoke Ethena delegated signers, extending its authority from moving funds to granting mint authorization",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "17b5f757-b69c-4234-b5c4-e3de7c309552",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e9edbf4e-ce71-42fd-a2d9-b61e14c4822b",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "55b73f76-df5a-46ba-affc-371750e601c0",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d36f2436-bf32-448a-82e5-66490327b68b",
+      "name": "ethena",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.3.1.4.1.3.1 states that the `delegatedSigners` authorized in the `ethenaMinter` contract \"are set up and removed in the `MainnetController` contract by the `Relayer` role.\" The two process definitions confirm the guards: `function setDelegatedSigner(address delegatedSigner) external onlyRole(RELAYER) isActive` (.3.2.1) and `removeDelegatedSigner` with the identical modifiers (.3.3.1). Both are executed by forwarding an `abi.encodeCall` payload through `proxy.doCall` to `ethenaMinter` (.3.2.2, .3.3.2).\n\nThis is a categorically different power from depositing and withdrawing. Fund-movement calls are bounded by rate limits and by a hardcoded proxy recipient, so a compromised Relayer can only shuffle capital between approved venues. `setDelegatedSigner` has **no rate limit** \u2014 the process definition lists only the role check and `isActive` \u2014 and its effect is to grant an arbitrary address standing authority in Ethena's minting flow.\n\nThe asymmetry matters because the containment argument for the Relayer role rests on parameterised limits. Here the only remaining controls are the role itself and the global kill switch. Appointing a signer is also not self-reversing: the authorization persists in an external contract until explicitly removed.\n\nIt is a coherent choice \u2014 off-chain minting flows genuinely need someone to nominate signers, and the Relayer is the operational role that exists \u2014 but it means the Relayer key's worst case is not bounded by rate limits across the board. For the Ethena instance specifically, it includes handing signing authority to an address of the attacker's choosing.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "setDelegatedSigner and removeDelegatedSigner run through the MainnetController under onlyRole(RELAYER) and isActive, so a role designed for throughput also administers who may sign Ethena mints.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

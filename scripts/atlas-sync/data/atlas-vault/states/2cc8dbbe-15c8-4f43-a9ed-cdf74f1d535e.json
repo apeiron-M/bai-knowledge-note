@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Core Facilitator can block an Atlas amendment for misalignment before voters ever see it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "40e12be8-4c82-4263-a759-ff1c4a919b24",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "51b02718-abb1-48f6-901f-f283065e714a",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1c947d6a-2c61-4b96-ab9c-5801238c88b7",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.11.2.3 grants the power for the weekly cycle \u2014 \"The Core Facilitator can reject an Atlas Edit Weekly Cycle Proposal if they deem it to be misaligned\" \u2014 and A.1.12.2.1.7 makes it mandatory in the monthly cycle: the Core Facilitator \"is required to review all Atlas Edit Proposals... submitted for Formal Submission to determine whether they are misaligned.\"\n\nThis is a substantive gate, not a formal one. The Facilitator already performs procedural checks (template compliance, GitHub PR, triggering eligibility); misalignment review is a judgment about *content*, exercised before any vote occurs. One appointed role can therefore keep a proposal off the ballot that SKY holders might have approved.\n\nThe constraints on the power are transparency-based rather than structural. A.1.12.2.1.7.1 requires the status to be set to \"Rejected-Misaligned\" and says the Facilitator \"should issue a written advisory opinion containing their findings/reasoning for blocking the AEP\" \u2014 note \"should,\" not \"must,\" so the reasoning is expected but not strictly compelled. A.1.12.2.1.7.3 requires the passing case to be marked \"Formal Submission,\" so the decision is always visible either way.\n\nThe design tension is explicit: the Atlas relies on a spirit-of-the-rule standard that only a human can apply, then must place that judgment somewhere. Concentrating it in the Core Facilitator makes it fast and accountable to one identifiable party, at the price of a chokepoint on constitutional change \u2014 and the accumulated advisory opinions become de facto precedent about what \"misaligned\" means.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:23:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A single role screens proposals in both cycles, must mark blocked AEPs 'Rejected-Misaligned' and should publish a written advisory opinion giving their reasoning.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

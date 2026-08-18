@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Third-party reported values are excluded from settlement; gains and losses count when the Instance receives them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "605f9353-a035-432c-b8fa-fd9f53880815",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f2356a3-b985-43db-bee9-d269833b1552",
+      "name": "settlement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e35bf4fa-ab15-4d86-81fb-595308509ee7",
+      "name": "accounting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.4.2.2 sets two rules for positions a third party holds on a Prime's behalf. Gains and losses \"are attributed to the period in which they are received or incurred by the Allocation System Instance, and not to the period in which the third party reports them.\" And flatly: \"Values reported by a third party through an application programming interface are not used to attribute gains or losses.\"\n\nThe second sentence is unusually direct for an accounting rule, and it defines a trust boundary. An API figure is an assertion by a counterparty, unverifiable and revisable, delivered by a party whose reporting cadence and valuation choices Sky does not control. Building settlement on it would make the amounts owed between Sky and its Primes depend on an external system's opinion.\n\nAttribution therefore follows **realisation at the Instance** \u2014 what actually arrived, when it arrived. That is observable on-chain, cannot be restated later, and cannot be timed by a counterparty's reporting calendar into a more convenient month.\n\nThe cost is that reported economic performance lags real performance. An investment accruing value at a custodian shows nothing until proceeds settle, so a Prime's settlement figures will be lumpy relative to its true position, and a month's result can be shifted by when a redemption clears.\n\nThe same instinct appears in the Uniswap Facets, which measure amounts by diffing the ALM Proxy's balances rather than trusting a position manager's return values. Across both the accounting and the execution layers, Sky consistently prefers a slightly delayed figure it can verify itself over a timely one it must take on faith.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Positions held by a third party are attributed to the period they are received or incurred by the Instance, and values a third party reports through an API are explicitly not used to attribute them.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Fast emergency powers act only over a scope that can be changed slowly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7a7b246d-1e9a-4872-bfcf-ba5ba346d72f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ddabcc0-30ca-41ee-ad0f-96af9068ea41",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b21d630d-8df5-492c-82e7-bacd894bf848",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.3.2.3 describes the LINE_MOM Debt Ceiling Breaker as able to \"reduce the debt ceilings of a **pre-configured whitelist** of vault types to zero without waiting for the GSM Pause Delay to expire.\" Then the constraint: \"The whitelist may be configured via a successful governance proposal, but **must wait for the GSM Pause Delay** before changes come into effect.\"\n\nThe two speeds are deliberate. Exercising the power is instant; extending the power's reach is slow. An attacker who captures the breaker can only zero ceilings for vault types already on the list, and adding a new target costs them a vote plus 48 hours of public visibility.\n\nThis generalizes the shape of every bounded fast power in the Atlas. BEAMs \"are limited by risk parameters, which are set by Sky Core Governance and require an Executive Vote to change\" (A.1.10.3.2.10). The Breaker Price Tolerance governing permissionless circuit-breaker activation \"requires an Executive Vote, which is subject to GSM Pause Delay\" (A.1.10.3.2.4.1). In each case, acting is fast and re-scoping is slow.\n\nThe design insight is that speed is only dangerous when combined with unbounded reach. A power that can act in seconds over a list fixed days ago has a knowable worst case \u2014 you can enumerate it, as A.1.10.3.2.3.1 does with seventeen named vault types. The same power with a mutable scope would have no bound at all.\n\nThe whitelist also makes the risk auditable in a way discretion never is: anyone can read exactly which vault types are exposed to instant ceiling reduction, and any change to that exposure is a governance event with a delay attached.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.3.2.3 lets the Debt Ceiling Breaker zero ceilings instantly, but only for a pre-configured whitelist whose own modification is subject to the full pause delay.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

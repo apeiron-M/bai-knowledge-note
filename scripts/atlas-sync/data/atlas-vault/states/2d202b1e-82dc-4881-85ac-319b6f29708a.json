@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An admin-set maximum exchange rate blocks deposits into vaults whose shares are priced above an acceptable threshold",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f6ad1a9a-691d-44a3-9184-7ac7d03477f4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "194d6830-5c1d-412e-9240-4900b0d1859a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "740ffe91-6a78-4ca2-be95-a83c81da4d65",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c53d1a35-a354-4807-930c-5c88c6dcf12d",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.2.1.6 adds a post-condition to every ERC-4626 deposit: \"The operator must ensure the realized exchange rate of the deposit does not exceed the configured `maxExchangeRates` for the `token`, otherwise the call reverts with `MainnetController/exchange-rate-too-high`. The exchange rate is computed by `_getExchangeRate(shares, amount)` as `EXCHANGE_RATE_PRECISION * amount / shares`... guarding against depositing into a vault whose shares are priced above the acceptable threshold.\"\n\nThe check is **realized, not quoted**. It runs after `deposit` returns, comparing the actual assets-per-share Grove received against a governance-set ceiling. A vault that quotes a fair price and delivers a bad one still fails.\n\nWhat makes this notable is that it needs **no external oracle**. The comparison is between the transaction's own outcome and a stored constant, so it cannot be manipulated by moving a price feed \u2014 the classic attack against oracle-dependent guards. The cost of that robustness is staleness: the ceiling is a fixed number set by `DEFAULT_ADMIN_ROLE` (A.6.1.1.2.2.6.1.2.2.1.2.1.1.9), so for a genuinely appreciating share price it must be periodically raised, and each raise is a Sky Governance action.\n\nThe setter's signature is revealing: `setMaxExchangeRate(address token, uint256 shares, uint256 maxExpectedAssets)`. Governance does not enter an abstract rate \u2014 it enters a **concrete example** of shares and the most assets it would accept paying for them, and the contract derives the ratio. That makes the parameter reviewable by someone reasoning in units rather than in 1e36 fixed-point.\n\nThe threat model being addressed is a vault whose share price has been inflated, whether by manipulation, by an accounting bug, or by a donation attack \u2014 Grove would otherwise buy in at the inflated level and absorb the correction.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:02:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "depositERC4626 computes the realized rate from shares received and reverts with exchange-rate-too-high if it exceeds the per-token maxExchangeRates value, giving an oracle-free entry-price sanity",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

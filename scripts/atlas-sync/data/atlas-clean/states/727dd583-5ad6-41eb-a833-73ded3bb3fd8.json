@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ea62bf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9ea62bf-5370-4722-8943-56af391a0c5f",
+      "targetTitle": "doc-12fdf2c4"
+    },
+    {
+      "id": "lnk-c9853ec1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9853ec1-bec7-4531-8f30-435efb1d02b8",
+      "targetTitle": "Keel completed Prime Transformation while leaving Executor T"
+    },
+    {
+      "id": "lnk-91257cf3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "91257cf3-12e2-4ae3-b9ff-b9a607185add",
+      "targetTitle": "Osero completed Prime Transformation and left Executor Trans"
+    },
+    {
+      "id": "lnk-cd39bc8e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd39bc8e-0c02-4c01-81f0-0141d3c78d82",
+      "targetTitle": "Grove keeps a fully scaffolded but Inactive Executor Transfo"
+    },
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Agent takes either the Prime or the Executor transformation, and never both",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "71ff3549-8967-41ff-b7ed-7bb1684b1e1b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5300de1d-60d0-46ca-b80e-d5a800e26d3f",
+      "name": "agent-types",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45809ae1-5d44-4406-9dc4-54a7e8cd6ae5",
+      "name": "genesis-primitives",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two mutually exclusive transformation primitives sit side by side in the Artifact. The Prime Transformation Primitive is `Completed` (A.6.1.1.8.2.1.2.1.1) with a Single Instance Configuration Document recording that \"Launch Agent 7 is a Prime Agent\" (A.6.1.1.8.2.1.2.3.1.1.1). The Executor Transformation Primitive is `Inactive` (A.6.1.1.8.2.1.3.1.1), with empty Active and Completed Instance directories.\n\nBoth primitives declare themselves single-use: each \"is deployed solely for the one-time transformation of the Agent,\" so \"no further Instances of the Primitive can be Invoked\" (A.6.1.1.8.2.1.2.1.4, A.6.1.1.8.2.1.3.1.4).\n\nCombining those two facts yields the structural consequence: once an Agent has spent its one transformation on the Prime path, the Executor path is not merely unused but unreachable \u2014 its own single-use clause forecloses a later Invocation. Agent type is therefore a terminal, one-way classification set at transformation time, not a mode the Agent can toggle.\n\nThat permanence is what allows other parts of the Atlas to attach different rights and obligations to Prime versus Executor Agents without needing to handle transitions between them.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Launch Agent 7 shows Prime Transformation Completed with a configuration Instance, while Executor Transformation stays Inactive with no Instances and no possible future Invocation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

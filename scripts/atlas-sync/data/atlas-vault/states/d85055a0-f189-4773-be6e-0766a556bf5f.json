@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce22e21c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ce22e21c-0c65-4f32-b881-dd01fcdbf84a",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Custody is separated from decision logic: the ALM Proxy holds the funds and only executes what the Controller directs",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "37487621-04ba-4474-9ddd-895dddb52bb6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "95e6dde9-e816-45eb-ab21-102a7b0471fa",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e2f18bfe-1cd3-466c-aaf2-7186d31bf578",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.6.1.2.1.1.1.2.1.1 states that \"the ALM Proxy custodies the Instance's funds and routes calls to external contracts as directed by the Controller contract.\"\n\nThe division is deliberate and narrow. The ALM Proxy is a passive holder and executor: it has the assets and the ability to call outward, but no logic about what should be done. The Controller has all of that logic and none of the assets.\n\nThis is the standard defence against a single-contract compromise, applied at the Agent level. An attacker who finds a flaw in the Controller reaches a contract with no balance; one who reaches the ALM Proxy directly finds a contract that acts only on the Controller's instruction. Value extraction requires defeating both.\n\nIt also makes emergency response coherent. The unwind procedures at A.6.1.1.7.2.6.1.2.2.3.2 and .3.3 work by \"centraliz[ing]\" liquidity in the ALM Proxy and then burning from there \u2014 a recovery plan that only makes sense because one known contract is the single custody point for the Instance.\n\nThe residual dependency is the pathway itself: everything the Agent holds is reachable through one proxy whose behaviour is determined by whichever address currently holds the Controller-facing roles, which is why the role and multisig structure around it carries so much of the Artifact's detail.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:46:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The contract holding Osero's assets contains no strategy, and the contract containing strategy holds no assets, so an exploit must compromise both to move funds.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Scaffold Artifact ships with all Sky Primitives present but Inactive, with the Upkeep Rebate Primitive the sole default-Active exception",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2534af7d-4d4a-48da-a57e-a5db2df08a49",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e97414a3-480e-4d60-b1b5-c8dd5cc2d649",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f81d9e9e-fa3e-4e10-b906-23a3af8699db",
+      "name": "agent-lifecycle",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.1.1.2 has Core GovOps set up a Scaffold Agent Artifact after receiving initial capital and the Agent Creation fee \u2014 \"a base template containing all Sky Primitives\" \u2014 with the Global Activation Status of every Primitive initially `Inactive`. A.2.2.1.2.2 repeats the rule and names the one exception: the Upkeep Rebate Primitive \"comes Globally Activated in all Scaffold Artifacts.\"\n\nThe architectural choice is **bundle everything, gate everything**. Every Agent physically contains the full Primitive set from birth, so capability changes are never additions \u2014 they are status changes on something already present. That makes the activation flag the single surface governance has to reason about, and makes every Agent's potential capability set identical and knowable in advance.\n\nThe Upkeep Rebate exception is telling. Read alongside A.2.2.1.2.4.2.1.3 (\"it is not possible to deactivate it\") and A.2.2.1.2.4.2.1.4 (the Ecosystem Upkeep Fee Primitive can never be deactivated once Activated), the pattern is that the ecosystem's own claim on an Agent is switched on before the Agent has any say, and cannot be switched off afterwards.\n\nSo the default configuration of a brand-new Agent is: no powers, one obligation-side Primitive already live. Capability is opt-in; participation in ecosystem upkeep is not.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Bundle-then-gate means expanding an Agent's capabilities never requires adding anything to its Artifact \u2014 only flipping an activation flag through governance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

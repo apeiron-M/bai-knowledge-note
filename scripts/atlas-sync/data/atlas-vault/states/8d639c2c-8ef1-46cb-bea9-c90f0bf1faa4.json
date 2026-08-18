@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Upkeep Rebate passes an Issuing Agent's fee through to its holders in proportion to supply held",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "898694f4-ae87-47a5-9105-56a1be3971c2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d08496b5-ba9a-4ace-8485-da313a1b5d8c",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30aeb7eb-575b-4cee-8236-326313bdb736",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.7.2 gives the Upkeep Rebate an exact formula. A Holding Agent's rebate equals (1) \"the Holding Agent's share of the Issuing Agent's token supply at the time the Issuing Agent pays its Ecosystem Upkeep Fees,\" multiplied by (2) \"the total monthly Ecosystem Upkeep Fees paid by the Issuing Agent.\" It is applied against the Holding Agent's own fees in the following calendar month.\n\nRead carefully, this is not a discount for good behaviour \u2014 it is a **credit for fees already paid on the same value**. If Agent A holds 30% of Agent B's supply, then 30% of B's market capitalization is already reflected in A's balance sheet and taxed once through B's payment; the rebate returns exactly 30% of B's fee to A. The mechanism eliminates double taxation on nested Agent holdings rather than subsidizing cross-holding out of thin air.\n\nThat reframes the incentive described at A.2.2.7. Cross-holding is not *rewarded*; it is made **fee-neutral**, which removes what would otherwise be a penalty on Agents that invest in each other. Without the rebate, an ecosystem-invested Agent would pay upkeep twice on the same underlying value and would rationally avoid holding peers.\n\nTwo details matter for edge cases. The share is measured at the instant the Issuing Agent pays, so ownership at a single monthly timestamp determines the credit. And the credit lands one month later, so an Agent's effective upkeep in any given month depends on last month's peer payments \u2014 a lag that makes the obligation harder to forecast during periods of volatile valuations.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rebate = the Holding Agent's share of the Issuing Agent's supply times the fee that Issuing Agent paid, so upkeep on nested Agent holdings is not charged twice.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

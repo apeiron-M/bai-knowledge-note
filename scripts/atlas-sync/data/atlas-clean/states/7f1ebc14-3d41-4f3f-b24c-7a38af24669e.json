@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-af1048a4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "af1048a4-a66e-4cb0-8197-c9fbc1aa618a",
+      "targetTitle": "doc-bdaeae2a"
+    },
+    {
+      "id": "lnk-aba43fe4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aba43fe4-1bdd-4b9b-852f-7a49abe20a8f",
+      "targetTitle": "Instance documents may deviate from general processes even t"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agents may extend inherited Core logic but never contradict it, and Spark currently extends nothing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b65e214c-c89d-4f51-89a1-77a4854d29d7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ce5b3222-ae77-474e-9a31-96772dd1f37e",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f91b6f0c-9ef8-4312-901f-79ba92b4572d",
+      "name": "inheritance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d5e5c7c2-752f-46da-bb6c-8785dbc0639d",
+      "name": "governance-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each inherited Routine Protocol is paired with an Agent Customizations document (A.6.1.1.1.2.5.1.2.1.2.1.1 and A.6.1.1.1.2.5.2.2.1.2.1.1) with identical wording: \"The Prime Agent may define instance-specific customization of the routine protocol to **extend** the baseline functionality defined in the Sky Core Atlas. This can include custom routines or processes layered on top of the inherited Sky Core logic. Any extensions must remain fully aligned with the requirements specified in the Sky Core Atlas.\" Both then record: \"[No customization presently.]\"\n\nThe permitted operation is extension only. An Agent can add routines on top of the base logic; it cannot override or subtract from it. That keeps every Instance a superset of the Core behaviour, so a reader who knows the base class knows the guaranteed minimum for any Agent Instance regardless of local additions.\n\nThe empty slots are informative rather than incidental. The customization point is declared and addressable even when unused, so a future extension has a defined home \u2014 the same convention used elsewhere in the Artifact for parameters pending a future iteration.\n\nWhat the pattern does not resolve is who adjudicates whether an extension \"remains fully aligned.\" As with Artifact Edit Restrictions, the constraint is stated as a requirement on the author and enforced through review rather than by any mechanism described here.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each Instance carries a declared Agent Customizations slot for layering local routines on top of Sky Core logic; both of Spark's active Instances record 'No customization presently'.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

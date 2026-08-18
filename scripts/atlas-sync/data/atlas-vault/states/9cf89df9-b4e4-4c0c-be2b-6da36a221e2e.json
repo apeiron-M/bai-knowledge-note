@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The PT-USDe instance records the USDe token address as its own token address",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6c396524-b348-4c07-8b88-bbb3aa8184eb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7cfd7cc0-394c-4427-833c-8050fead92e4",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "390fac0d-11eb-47ae-8c11-2c2eb1e80c44",
+      "name": "pendle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0009d84c-564a-4e05-ae66-cd98653e8841",
+      "name": "documentation-drift",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three sections of this chunk give the same address for three different roles:\n\n- A...3.1.4.1.2.2.1 \u2014 Ethena USDe instance, **Token Address**: `0x4c9EDD5852cd905f086C759E8383e09bff1E68B3`\n- A...3.1.4.2.2.2.2 \u2014 Ethena sUSDe instance, **Underlying Asset Address**: the same address\n- A...3.1.4.3.2.2.1 \u2014 Ethena PT-USDe instance, **Token Address**: the same address again\n\nThe first two are consistent and correct in relation to each other: sUSDe's underlying *is* USDe. The third cannot be. A Pendle principal token is a separate ERC-20 minted by a Pendle market, and the Pendle redemption procedure depends on it being distinct \u2014 A...2.1.2.11.1.3 reads `(sy, pt, yt) = pendleMarket.readTokens()` and approves the router to spend `pt`, while A...2.1.2.11.1.4 snapshots a *different* `tokenOut` balance.\n\nThe likely explanation is a copy-paste from the sibling Ethena instance, which is unsurprising given the duplicated-documentation drift visible elsewhere in the same section.\n\nThe reason it is worth recording rather than ignoring: instance configuration documents are the layer operators and reviewers use to verify that on-chain state matches governance intent. A wrong address in that layer defeats the verification \u2014 a reviewer checking the deployed PT against the documented one would flag a correct deployment as a mismatch, or worse, accept the documented value as authoritative. The instance's `RateLimitID`s (A...3.1.4.3.2.3.1, A...3.1.4.3.2.3.2) are published and can be checked directly, which is the more reliable anchor here.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:49:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "0x4c9EDD\u202668B3 appears as the USDe token, as the sUSDe underlying, and again as the PT-USDe token \u2014 the last of which cannot be right, since a Pendle principal token is a distinct contract.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are denominated in normalised value via the pool's stored_rates, not in raw token units",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8be80b22-8679-4b80-95bf-4cfff2ff3cd9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e72d986-e314-4190-aa47-5c4563573b26",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "13527f61-4f86-457b-9cdf-e0ff149a5612",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c14b63c-bd54-493c-a499-3be88f85161b",
+      "name": "accounting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every Curve rate-limit charge in this chunk passes through `stored_rates()` first. A...8.1.5 debits `params.amountIn * rates[params.inputIndex] / 1e18`. A...8.2.3 accumulates `valueDeposited += depositAmounts[i] * rates[i]` across all coins before dividing by `1e18`. A...8.3.3 and A...8.3.6 do the same for minimum-withdrawal and actual-withdrawal values.\n\nRaw token amounts are not comparable: a StableSwap pool can mix 6-decimal and 18-decimal assets, and yield-bearing components trade above par. `stored_rates` is the pool's own conversion into a common unit, so multiplying by it converts a heterogeneous vector of token amounts into a single scalar of value.\n\nThat scalar is what makes a per-pool limit meaningful. Without normalisation, a limit expressed in token units would mean a different exposure depending on which coin the relayer chose, and governance would have to maintain a separate calibrated limit per asset per pool.\n\nThe dependency is worth naming: the limit is only as trustworthy as the pool's reported rates. Grove is reusing the counterparty's accounting to bound its own exposure to that counterparty \u2014 acceptable for `stored_rates` and `get_virtual_price`, which are expensive to manipulate and internal to a pool's invariant, but it is the assumption the whole value-denominated limit rests on.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Curve deposits, swaps and withdrawals aggregate amount times stored_rates divided by 1e18, letting one limit govern pools whose assets differ in decimals and in exchange rate to the accounting unit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

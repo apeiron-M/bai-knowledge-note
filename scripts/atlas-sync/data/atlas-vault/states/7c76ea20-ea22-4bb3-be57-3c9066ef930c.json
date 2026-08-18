@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Multi-Instance Coordinator Document holds cross-cutting strategy that no single Instance configuration can express",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "aba96e8e-45e3-4575-9a7b-3044e55503d7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "52770932-7d6c-41c7-98da-7a3601f546a6",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "735d2e48-fe02-49ea-9931-e54a55f3954d",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "81448d16-e54e-4ae3-8913-9205254e4830",
+      "name": "agent-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2 introduces a document class not present in Grove's simpler Primitives: \"The documents herein provide general specifications of the Grove Liquidity Layer and define Grove's overarching strategy and operational framework for managing **across all Instances**.\"\n\nThis exists because of a gap the per-Instance design creates. Instance Configuration Documents describe individual positions; nothing in them can express portfolio-level facts \u2014 total exposure limits, concentration rules, rebalancing logic, or the shared contracts every Instance routes through. A directory of positions is not a strategy.\n\nThe Coordinator Document therefore sits **beside** the Instance tree rather than above it, holding what is true of the whole. A.6.1.1.2.2.6.1.2.1.1 puts the Liquidity Layer's architecture and its \"key smart contracts and their functionality\" here, which confirms the split: shared infrastructure is coordinator-level, individual exposures are Instance-level.\n\nThe structural point generalizes. Any system that decomposes a portfolio into individually governed units needs an explicit place for the emergent properties of the set, or those properties become nobody's responsibility. The Atlas's answer is to make the coordination layer a named document with its own address rather than leaving it implicit in the Agent's judgment.\n\nThe open question the structure raises is precedence: when a Coordinator-level constraint and an Instance-level parameter conflict, this section does not say which governs.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Because every position is its own Instance, the Artifact needs a second document type defining the overarching framework for managing across all of them \u2014 otherwise strategy exists nowhere.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

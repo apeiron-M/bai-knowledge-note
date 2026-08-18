@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-4c20d15c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4c20d15c-8702-459f-894a-501947050a4d",
+      "targetTitle": "Failed Invocations and Suspended Instances get permanent arc"
+    },
+    {
+      "id": "lnk-49c466da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "49c466da-866f-4c6d-9186-37e0f5cb22ff",
+      "targetTitle": "Failed Invocations and Suspended Instances are archived rath"
+    },
+    {
+      "id": "lnk-a1dda45c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a1dda45c-427c-48a6-8bf7-4a582ced2d09",
+      "targetTitle": "A Primitive Invocation has exactly two exits: graduate to th"
+    },
+    {
+      "id": "lnk-5742860f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5742860f-e980-468a-9200-e7a4c12088c1",
+      "targetTitle": "Invocation state transitions are physical subtree moves betw"
+    },
+    {
+      "id": "lnk-b76c656f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b76c656f-e30d-42ac-81e5-8fa577b0b8fa",
+      "targetTitle": "An Invocation's location in the Atlas document tree is its s"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Failed Invocations and Suspended Instances are archived inside the Hub Data Repository instead of being deleted",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "90adad9a-f0d5-4777-b3bb-a4e01446d7b1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a5abc8fd-516f-4920-a7b1-221a67edfb74",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "87db77c7-1cda-414e-ae89-0b6c75771f9a",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b9403bdd-d9fe-4097-b405-f5c252f36a6e",
+      "name": "auditability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.4.2.2.1.1.4 spells out the routing for in-progress work: Invocations \"that are completed successfully are moved to [the] Active Instances Directory, whereas failed Invocations are Archived in [the] Hub Data Repository.\"\n\nThat repository is subdivided for exactly this purpose. Under Archived Invocations/Instances sit two named slots: Failed Invocations (A.6.1.1.4.2.1.1.1.5.1.1) and Suspended Instances (A.6.1.1.4.2.1.1.1.5.1.2), each holding whole subtrees rather than summary records.\n\nThe non-obvious consequence is that the Artifact retains the ecosystem's failure history as a first-class part of its structure. An Agent cannot present a clean record by abandoning unsuccessful Invocations, because the destination for failure is defined in advance and lives in the same document tree as success. Each primitive therefore carries its own attempt log.\n\n`Suspended` being an archive destination rather than an in-place status is also notable: suspension physically removes an Instance from the Active directory, so \"what is currently active\" stays literally true and cannot include dormant entries.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Invocation routing is explicit: success moves the subtree into the Active Instances Directory, failure moves it to archive \u2014 so attempts that never became Instances stay on the record.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

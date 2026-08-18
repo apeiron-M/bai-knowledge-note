@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-853de761-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "853de761-02df-4290-a6a7-f576f4092cbc",
+      "targetTitle": "The Upkeep Rebate applies automatically to Prime Agents' cro"
+    },
+    {
+      "id": "lnk-c1c9fb27-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c1c9fb27-2014-432f-a743-8eae58e2e006",
+      "targetTitle": "The Upkeep Rebate makes Prime Agents' cross-holdings of each"
+    },
+    {
+      "id": "lnk-da092bb0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da092bb0-60f9-41f9-b178-bedb28968e87",
+      "targetTitle": "Prime Agents receive an automatic upkeep rebate for holding "
+    },
+    {
+      "id": "lnk-d507aaff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d507aaff-ccd0-4ca4-87c8-dbe41b289341",
+      "targetTitle": "Spark nets its Upkeep Rebate against the fees it owes rather"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Prime Agent automatically gets an Upkeep Rebate for other Prime Agents' tokens it holds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8f444239-c1b0-4d9e-ae55-cdecd28fb243",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "21371825-f34c-46e1-ba3b-3232d0ba8af8",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "306e5c3d-2e3f-4ec7-a7d7-4d531df38390",
+      "name": "upkeep-fee",
+      "topicDocumentId": null
+    },
+    {
+      "id": "86e93b6f-83c2-477b-8764-cb03af0ca83c",
+      "name": "agent-economics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.3.2.2.1.1 states the whole substance of Spark's Upkeep Rebate Primitive Instance in two sentences: \"Every Prime Agent is entitled to the Upkeep Rebate Primitive for tokens of other Prime Agents that they hold. Because this right automatically applies, there are no parameters.\"\n\nThe rebate exists because the Ecosystem Upkeep Fee is levied on market capitalization (A.6.1.1.1.2.3.1.2.1.1.1). If Agent A holds Agent B's token, part of A's market cap *is* B's market cap, and B is already paying upkeep on it. Without a rebate, the same value is charged twice, and the double charge grows with every layer of cross-holding.\n\nThe design consequence is that Agents can hold each other's tokens without an economic penalty for doing so. That matters for an ecosystem that wants its Agents to be mutually invested rather than siloed \u2014 a fee structure that punished cross-holding would push Agents toward isolation from each other.\n\nThe parameterless framing is also a claim in itself: this is an entitlement of Agent status, not a negotiated term. An Agent cannot be denied it, and equally cannot bargain for a better version of it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The right needs no parameters and no election \u2014 holding a peer Agent's token mechanically reduces your own upkeep bill, so cross-Agent holdings are not taxed twice.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

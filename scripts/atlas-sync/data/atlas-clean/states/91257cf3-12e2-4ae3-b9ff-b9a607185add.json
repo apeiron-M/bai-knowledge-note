@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-98d91d60-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98d91d60-fa63-4828-9a59-3fe8ea2cf9d3",
+      "targetTitle": "doc-e7db553d"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Osero completed Prime Transformation and left Executor Transformation Inactive, fixing it as a Prime Agent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "0af1dbd2-fc25-4119-8d57-486abc627220",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c228d9d9-ca80-492b-b004-e78ff3ea2c42",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7b07b35d-60b5-4999-ab52-3f2f78df64d3",
+      "name": "agent-types",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.1.2.3.1.1.1 states flatly: \"Osero is a Prime Agent.\" The surrounding statuses show how that identity was produced. The Prime Transformation Primitive's Global Activation Status is `Completed` (A.6.1.1.7.2.1.2.1.1); the Executor Transformation Primitive's is `Inactive` (A.6.1.1.7.2.1.3.1.1), with empty Active, Completed and In-Progress directories beneath it.\n\nAgent type is thus not a declared attribute so much as a consequence of which one-shot transformation was invoked. Since both transformation Primitives are \"deployed solely for the one-time transformation of the Agent\" and can never be re-invoked, the choice is effectively terminal.\n\nThe treatment of the road not taken is the notable part. The Executor Transformation Primitive retains its complete Hub skeleton \u2014 directories, archive subtrees, the closing statement that no further Instances can be Invoked \u2014 while holding nothing. The Artifact carries the shape of every Primitive an Agent could have used, marked inactive, rather than pruning to what was actually used.\n\nThat costs boilerplate but makes absence explicit and auditable: a reader can confirm Osero never went down the Executor path, rather than inferring it from silence.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:37:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Agent type is realized by which one-shot transformation Primitive is invoked; the unused path keeps its full document skeleton at `Inactive` rather than being removed.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-1d888b95-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1d888b95-01fe-4bb5-abc9-1754d142d417",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limit configuration doubles as the whitelist of venues Pattern may deploy into",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "cd609a55-55c9-4d06-b73d-2bc98ab7b457",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d2267c59-28d5-4c62-9297-68bdfc5b5dd1",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f030292-242c-4c75-b8d6-4e6895e56d33",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5affdb7e-b28f-45a1-b9f7-037adf05bdc8",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The same sentence recurs across the Relayer functions: \"The rate limit configuration serves as whitelisting for vaults\" (A.6.1.1.6.2.6.1.2.2.1.2.1.2.3.1 for ERC-4626 deposits, A.6.1.1.6.2.6.1.2.2.1.2.1.2.4.1.1 and .4.2.1 for ERC-7540 requests) and \"the rate limit configuration serves as whitelisting for swaps\" (A.6.1.1.6.2.6.1.2.2.1.2.1.2.6.1.1). Rate limits are keyed per vault, per asset, and for LayerZero transfers per destination endpoint.\n\nThe consequence is that there is no separate allowlist to maintain. A venue with no rate limit entry has zero available capacity, so every deposit into it reverts; permission and exposure limit are the same object. This eliminates a classic failure mode where an address is whitelisted but its size limit is forgotten, or where a limit is set for a venue that was never approved.\n\nIt also means **onboarding a counterparty is a quantitative decision by construction**. Whoever approves a new venue must simultaneously state how much may flow into it and how fast, and there is no way to express \"approved but unlimited\" except by deliberately invoking the unlimited setter.\n\nThe reverse is the operationally significant part: setting a rate limit to zero de-whitelists a venue instantly and without touching any other permission \u2014 a soft kill switch per counterparty, available to admin, that stops new exposure while leaving existing positions withdrawable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:49:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Stated repeatedly for vaults and PSM swaps: a venue with no configured rate limit cannot be used at all, so allowing a new counterparty and sizing exposure to it are the same act.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

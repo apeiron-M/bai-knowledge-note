@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce22e21c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ce22e21c-0c65-4f32-b881-dd01fcdbf84a",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are deliberately asymmetric: risk-increasing operations are capped while risk-reducing ones are unlimited",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "d59ffc55-4a1c-4521-866f-6300c6d6b170",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "541ce7c4-fbbb-40dc-9ec7-a4aa24d7f6f7",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c485a273-2fd6-4640-b677-402fe4604221",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Four rate-limit documents form a matched pair of asymmetries. USDS minting (A.6.1.1.7.2.6.1.2.1.1.2.1.1) has `maxAmount` 5,000,000 with a 5,000,000/day slope; USDS burning (.2.1.2) is `maxAmount: Unlimited`. SparkLend deposits (A.6.1.1.7.2.6.1.3.1.1.1.2.4.1) are capped identically; withdrawals (.2.4.2) are `Unlimited`.\n\nThe Emergency Protocol supplies the reasoning in its own words. A.6.1.1.7.2.6.1.2.2.3.2: \"SparkLend withdrawals are unlimited so that the full position can be unwound.\" A.6.1.1.7.2.6.1.2.2.3.3: \"USDS burning is unlimited so that the full outstanding amount can be burned.\"\n\nThe principle generalizes beyond Osero: rate limits should constrain the direction that adds exposure and never the direction that removes it. A symmetric limit would be actively harmful \u2014 in a crisis it would throttle the exit, converting a safety control into a trap, and would leave outstanding USDS that could not be extinguished as fast as it was created.\n\nThe slope mechanism adds a second dimension. A cap of 5,000,000 with a 5,000,000/day refill limits not total exposure but the *rate* at which it can be rebuilt, which bounds how much damage a compromised-but-not-yet-revoked Actor can do per day and gives the Freezer time to act.\n\nThe design cost is that unlimited exit capacity is also unlimited capacity to liquidate the position for any reason, including a wrongful one \u2014 the Artifact accepts that in exchange for guaranteed unwind.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:56.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "USDS minting and SparkLend deposits are capped at 5M with a daily slope; burning and withdrawal are \"Unlimited\" so a full position can always be unwound.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

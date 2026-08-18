@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-95dd9023-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "95dd9023-73a3-46ab-b5ce-860b5ab5ce08",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "All three Supply Side Stablecoin Primitives are Inactive, so Skybase operates purely on the demand side",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "32de6bb8-17c9-451c-b8fd-76440734aa7e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "adfa2838-1cdd-49f7-aaec-45217857424f",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d70ae025-0adc-4ec6-8339-4cd4e5ed37b2",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6090955d-5fda-4b8b-b61a-be8e2e1731fe",
+      "name": "stablecoin",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Under Supply Side Stablecoin Primitives (A.6.1.1.4.2.6), every Global Activation Status reads `Inactive`: the Allocation System Primitive (A.6.1.1.4.2.6.1.1.1), the Risk Capital Rental Primitive (A.6.1.1.4.2.6.2.1.1) and the Asset Liability Management Rental Primitive (A.6.1.1.4.2.6.3.1.1). None has a single Instance in any directory.\n\nThe contrast with the demand side is total. Distribution Reward and Integration Boost are both `Active` with a dozen Instances between them, while the entire supply-side apparatus \u2014 deploying capital, renting risk capital, managing asset-liability positions \u2014 is dormant.\n\nRead together, the activation statuses give a precise statement of what kind of Agent Skybase is: it *creates demand* for USDS and does not participate in producing or backing it. It spends to grow usage rather than operating a balance sheet that generates yield.\n\nThis is a meaningful constraint on how Skybase can fund itself. An Agent with active supply-side primitives can earn from deploying capital; Skybase's live inbound flow in this chunk is a Core Governance Reward for hosting a frontend, against outbound distribution rewards, integration boosts, subsidies and a market-cap-based Upkeep Fee. The dormant primitives are the ones it would need to activate to change that, and each activation would be a visible Artifact edit.\n\nThe fully-built-but-switched-off structure also illustrates the Atlas's uniformity principle: the capability exists in the tree with complete directories and archive slots, so activating it later is a status change rather than new construction.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Allocation System, Risk Capital Rental and Asset Liability Management Rental are all switched off, while both demand-side primitives run live Instances.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

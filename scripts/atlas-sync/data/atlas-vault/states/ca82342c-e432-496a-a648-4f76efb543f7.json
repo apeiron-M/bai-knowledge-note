@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel completed Prime Transformation while leaving Executor Transformation Inactive, so the two Agent forms are mutually exclusive by status",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "29f7ac1c-2de7-45a5-840e-d82ab0416e0f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "41cd7d34-cadc-4955-b377-0be2c815b27d",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6135a91a-f068-48ca-a2b8-1e3d55104626",
+      "name": "agent-types",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Keel's Artifact carries both transformation Primitives, in opposite states. A.6.1.1.3.2.1.2.1.1 gives the Prime Transformation Primitive Global Activation Status `Completed`, and its single Instance parameter A.6.1.1.3.2.1.2.3.1.1.1 states flatly: \"Keel is a Prime Agent.\" A.6.1.1.3.2.1.3.1.1 gives the Executor Transformation Primitive status `Inactive`, with no Instances at all.\n\nAgent type is therefore not a field in a registry \u2014 it is the residue of which transformation actually ran. The claim \"Keel is a Prime Agent\" is backed by a completed Primitive Instance with its own planning, GovOps review and Artifact Edit Proposal records, rather than by assertion.\n\nBecause both Primitives are present in every Agent Artifact, the pair also encodes what the Agent is *not*. An `Inactive` Executor Transformation is a positive statement that Keel has never been converted into an Operational Executor Agent, and A.6.1.1.3.2.1.3.4 makes that conversion unavailable through the Primitive (\"no further Instances of the Primitive can be Invoked\").\n\nThe design consequence is that changing an Agent's type is an Artifact-level constitutional event, not a status update \u2014 the same seal that protects the Agent's creation protects its category.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:05:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Agent type is recorded as an achieved Primitive state rather than a label: Prime Transformation reads Completed, Executor Transformation reads Inactive, and A.6.1.1.3.2.1.2.3.1.1.1 declares Keel",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

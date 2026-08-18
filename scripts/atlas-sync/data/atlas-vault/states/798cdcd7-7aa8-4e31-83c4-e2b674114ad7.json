@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Treasury allocation is a strict waterfall in which no later step is funded until earlier steps are complete",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "4d1ee1ab-444e-477e-b377-2a84037ec2a8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "34df3372-e90f-43e5-842c-130c4e08543c",
+      "name": "treasury",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05937628-f7a0-479a-92fd-0f1d05eec0eb",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.2 describes the allocation steps as \"a 'waterfall' with each previous step needing to be fully funded before any funds can be allocated to later steps,\" beginning from Net Revenue. A.2.3.1.1 synchronises the whole function with the Monthly Settlement Cycle, so the waterfall runs once per month on the preceding month's Net Revenue.\n\nA waterfall expresses priority as **order**, which behaves very differently from a fixed split when revenue falls. Under percentage allocations, a bad month starves every function proportionally, including the ones that protect the protocol. Under a waterfall, security and maintenance is made whole and the shortfall lands entirely on whatever sits furthest downstream. The design chooses to fail some functions completely rather than all of them partially.\n\nThe step structure also composes cleanly: A.2.3.1.2.2 takes all Step 0 Net Revenue as Step 1 Capital, allocates 20% to security and maintenance, and passes \"the remaining eighty percent (80%)... [as] Step 2 Capital.\" Each step's output is the next step's input, so a percentage is always taken against what actually arrived rather than against an ecosystem-wide budget \u2014 and inserting or reordering a step is a local change.\n\nThe political consequence is that arguing about position in the waterfall matters more than arguing about percentages, since a downstream allocation's expected value depends on the variance of revenue, not just its share.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:26:36.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:26:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Net Revenue flows through ordered steps and each must be fully funded before any funds reach the next, encoding funding priority in sequence rather than in negotiated percentages of the total.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

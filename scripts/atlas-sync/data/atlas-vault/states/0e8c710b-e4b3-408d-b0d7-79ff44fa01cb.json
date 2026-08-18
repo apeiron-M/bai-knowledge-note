@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A generic ERC-4626 adaptor lets Spark onboard any compliant vault without new controller code",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "017504be-bdc3-4160-b77a-4527122c50ba",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5bd114e8-e868-41c6-b585-7a7dc1f00e93",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c801d773-7a48-49b7-9f81-1c3da13b5a05",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3026132d-f90b-4858-98db-b8a458b418bd",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Fluid sUSDS instance declares that it \"follows the general ERC4626 procedures\" (A.6.1.1.1.2.6.1.3.1.5.1.3) and the process definitions use address-parameterised functions: `function depositERC4626(address token, uint256 amount) external onlyRole(RELAYER) isActive` (.5.1.3.1.1), `withdrawERC4626(address token, uint256 amount)` (.5.1.3.2.1) and `redeemERC4626(address token, uint256 shares)` (.5.1.3.2.5.3). The underlying asset is discovered at runtime \u2014 `IERC20 asset = IERC20(IERC4626(vault).asset())` \u2014 rather than configured.\n\nBecause the vault address is an argument, one code path serves every ERC-4626 venue. Onboarding Fluid required no new controller function; contrast the Aave and Ethena paths, which needed protocol-specific entry points (`depositAave`, `prepareUSDeMint`, `cooldownAssetsSUSDe`).\n\nThe consequence is that the standard's ubiquity becomes Spark's attack surface. Any address implementing `deposit`/`withdraw`/`redeem` is callable through the same function, including a malicious vault that accepts an approval and never honours redemption. Nothing in the code path distinguishes Fluid from an arbitrary ERC-4626 impostor.\n\nThat is precisely why the whitelist-by-rate-limit design is load-bearing here rather than merely convenient: the generic adaptor removes every other place a venue check could live. Governance's control over which vaults Spark can touch reduces, entirely, to which (action, vault) keys have a non-zero limit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T23:02:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "depositERC4626, withdrawERC4626 and redeemERC4626 take the vault address as a parameter, so the venue-specific logic collapses into configuration",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

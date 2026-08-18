@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-7c857abb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7c857abb-369f-44ee-a66a-71adf15abe02",
+      "targetTitle": "Executive Process timelines explicitly do not take precedenc"
+    },
+    {
+      "id": "lnk-bd9fe5da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd9fe5da-84ea-41e3-ae9c-47cc095eab30",
+      "targetTitle": "A repeated security incident escalates penalties even when t"
+    },
+    {
+      "id": "lnk-57eb7746-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "57eb7746-087b-40f2-923e-96f5955e5dd0",
+      "targetTitle": "Security incidents are priced into a Prime's borrow rate and"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Any choice between efficiency and security must be resolved toward security, including at the cost of gas",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "fccddb45-e41d-42bb-924d-920711cd8223",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "397848a9-ef49-4cd6-9bf9-799c3bfda1c6",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1787a485-7252-4b78-9c1e-3814d566daf4",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.7.4.1, \"Security First,\" states the Spell Team's tie-break rule: \"Any choice between efficiency and security must always be made to maximize security, even at the cost of time, process inefficiency, or gas cost.\"\n\nThe provision is stated twice on purpose, once for artifacts and once for process. Designs and contracts \"must always prioritize increased security over increased efficiency, reduced gas cost, or any other benefits,\" and \"rules and processes must always maximize security and safety, even at the cost of inefficiency, repetitiveness, longer review or audit timelines, or other drawbacks.\"\n\nNaming gas cost explicitly matters because gas is the one efficiency metric that is denominated in money and visible on every transaction. It is the easiest place for a security-reducing optimization to look like responsible stewardship. Ruling it out removes the most quantitative argument available to the efficiency side of any debate.\n\nNaming *repetitiveness* is the sharper move. Duplication is what engineering instinct treats as waste, yet it is exactly the mechanism the Atlas relies on for detection \u2014 two Spell Teams agreeing on novel designs, two parties independently summing transfers, confirmations recorded both as comments and as status cells. Declaring repetition an acceptable cost is what keeps those controls from being refactored away as redundant.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:25:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.7.4.1 extends the rule past code to rules and processes, accepting inefficiency, repetitiveness and longer review timelines as legitimate prices.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

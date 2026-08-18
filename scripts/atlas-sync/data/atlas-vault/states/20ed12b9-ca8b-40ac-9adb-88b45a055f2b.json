@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Instance must ship with a pre-authorised path to drain and shut itself down",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c010e730-031a-44f8-aaf2-54abec007c2b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "86f63899-d0e9-4f5b-9456-87684453781f",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d6f0b5fd-4623-48f2-9ccd-9b84259867f0",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.2.6.2.3 requires each Instance's fallback strategy to specify \"how Operational GovOps should determine when an emergency situation is occurring\" and what to do, and mandates that it \"include emergency measures for Operational GovOps to reduce exposure to, drain, and ultimately shut down the Allocation Instance if Required Risk Capital or Asset Liability Management obligations are breached.\" A.2.2.10.1.2.6.1 requires the same measures to be listed among the Instance's parameters.\n\nTwo halves make this work. The **recognition criteria** must be written in advance, so that declaring an emergency is not itself a judgment call \u2014 otherwise the escalation-to-a-vote rule would apply at the worst possible moment. And the **actions** must be pre-authorised, so the operator can act without new consent.\n\nThe graduated sequence \u2014 reduce, drain, shut down \u2014 is a considered choice over a single kill switch. Unwinding a position has market impact, so proportionate response is usually cheaper for the ecosystem; but committing in advance to full shutdown removes the option of indefinitely managing a breach rather than resolving it.\n\nMost importantly the trigger is a **capital** condition, not a loss condition. Exposure is unwound when risk capital or ALM coverage fails, before the failure has to show up as a loss \u2014 which is what makes RRC a live operational control rather than a reporting metric. This is also the strategy Operational GovOps activates when a self-operationalizing Prime's Instance underperforms its KPIs, so it doubles as the ecosystem's substitute for a strategy it cannot see.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:26:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:26:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The fallback strategy must define how Operational GovOps recognises an emergency and must include measures to reduce exposure, drain and ultimately shut down the Instance on an RRC or ALM breach.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

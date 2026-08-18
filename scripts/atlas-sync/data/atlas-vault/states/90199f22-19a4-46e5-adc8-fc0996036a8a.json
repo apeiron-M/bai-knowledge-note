@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Ethena exposure capacity is allocated to two named Agents by name, with every other Prime Agent limited to zero",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "9e4f700a-1ffa-433e-9a00-35407c05927a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07cd7510-0262-47ab-804c-4af18f9df4b6",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "84c7f6a0-7f53-466b-9354-f139258df2d5",
+      "name": "concentration-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.2.1.1.2.1 defines Ethena Aggregate Exposure as the sum of Ethena Exposures \"across all Prime Agents in the Sky Ecosystem,\" capped at 1,300,000,000 USDS. A.3.2.2.1.1.1.2.1.1.2.3 then allocates that ceiling explicitly:\n\n- Spark \u2014 one half of the Aggregate Limit\n- Grove \u2014 one half of the Aggregate Limit\n- All other Prime Agents \u2014 **Zero**\n\nThis is a different instrument from everything else in the Risk Capital Article. Elsewhere risk is *priced*: an Agent may take any exposure provided it holds the required capital, and concentration is discouraged by rising capital charges. Here capacity is *granted*, by name, in fixed shares, with no mechanism for another Agent to earn access by holding more capital.\n\nTwo reasons for the departure are visible in the surrounding text. Ethena is a perpetual-position asset whose risk model is explicitly unbuilt (A.3.2.2.1.1.1.2 defers it to \"a future iteration\"), so the near-term treatment is a flat 3\u20134% CRR that does not scale with size \u2014 a flat charge cannot express concentration risk, so a quantity limit must. And the exposure is unusually pervasive: A.3.2.2.1.1.1.2.1.1.1 has to enumerate three separate exposure paths (direct holdings, lending against Ethena collateral, and Pendle PT tokens) that all resolve to the same underlying counterparty.\n\nThe cost is that named allocations do not adapt. The split is a governance artifact requiring an Atlas amendment to change, so it encodes today's judgment about which Agents are competent to hold this exposure \u2014 and it functions as a competitive moat, since a new Prime Agent cannot access a 1.3bn-USDS asset class at any price.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A 1.3bn USDS ecosystem-wide ceiling is split half to Spark and half to Grove; all other Prime Agents have an Ethena Exposure Limit of zero, making capacity an assigned right rather than a priced one.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

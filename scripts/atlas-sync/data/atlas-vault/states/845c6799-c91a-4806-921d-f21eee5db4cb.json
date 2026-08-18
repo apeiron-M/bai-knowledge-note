@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove ships integration code it is not yet safe to use and disables it by mandating a rate limit of zero",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b33d0b72-f8ba-45df-8a8d-6b0147719368",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c308f0c3-ad58-4463-914b-89ab62f787f4",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8d6d77c0-195b-4d1e-8de7-bcf69ffba959",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "db627ffd-cd2a-4058-8a52-88f45df11f8b",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.13.1.2 states the mandate plainly: \"Note that this function was deployed **without integration testing**, so its rate limit must be kept at `0` until the LayerZero dependencies are live and the functionality has been thoroughly integration tested.\"\n\nThis reveals a second role for the rate-limit system. Because every metered function calls `_rateLimited(key, amount)` before acting, a limit of zero makes the function unconditionally revert for any non-zero amount. The limit registry therefore doubles as a **per-function enable flag** that governance controls without redeploying code.\n\nThe same chunk shows two neighbouring cases of the same discipline. A...13.1.3 warns that the `approvalRequired == false` branch cannot be integration tested \"without OFTs with `approvalRequired == false`\" and must be tested before production use. A...11.1.7 warns that `redeemPendlePT` \"must not be used for markets with non-standard SYs (such as ePENDLE, mPENDLE, or aTokens like aUSDC and aUSDT) without additional testing targeting each such market.\"\n\nThe trade-off is honest but real. Shipping dormant code keeps deployment cadence decoupled from integration readiness, and the zero limit is a strong technical guarantee \u2014 but the safety now depends on a *configuration value* rather than on the code's absence, so any process that sets limits in bulk, or any future refactor that stops routing through `_rateLimited`, silently arms the untested path.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas requires LIMIT_LAYERZERO_TRANSFER to stay at 0 until the dependency is live and integration tested, making the rate limit a governance kill switch rather than only a throttle.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Burning USDS refills the mint rate limit, making it a net-exposure cap rather than a throughput cap",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "fc4c2d61-65d6-4ff3-9c79-c440d0f071d8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e5224f2-402a-43f0-b6c4-e4ab02ea234c",
+      "name": "risk-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf932e64-db53-4bfd-8fc3-953f13a31f12",
+      "name": "usds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.1.2.5.2.1.2.2 specifies that a USDS burn is limited by `LIMIT_USDS_BURN`, and adds a coupling that is easy to overlook: \"The burn additionally increases the `LIMIT_USDS_MINT` rate limit by the same amount, where that rate limit is configured, restoring minting capacity.\"\n\nThat one clause changes what the mint limit means. Without it, `LIMIT_USDS_MINT` would cap cumulative gross minting over the limit's window, and ordinary operational churn \u2014 mint, deploy, unwind, return \u2014 would burn through the allowance even though outstanding exposure never grew. With it, the limit tracks *net* issuance: only USDS that stays out consumes capacity.\n\nThis is the correct alignment for a risk control whose real subject is outstanding exposure rather than transaction volume, and it is why an Agent can operate continuously against a limit sized to its mandate instead of to its expected activity level.\n\nThe hedge matters too. Restoration happens only \"where that rate limit is configured,\" so the refund is a property of a provisioned limit pair, not an unconditional accounting identity. The residual risk is that netting removes any bound on gross flow \u2014 an Agent can cycle arbitrarily large volumes through the vault so long as it returns them, so volume-sensitive concerns need a different control.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:07.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A burn increases LIMIT_USDS_MINT by the same amount where that limit is configured, so round-tripping does not exhaust minting capacity but net new issuance still does.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

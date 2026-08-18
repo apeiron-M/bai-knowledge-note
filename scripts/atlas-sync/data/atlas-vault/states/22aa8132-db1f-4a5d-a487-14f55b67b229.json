@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark protects the permission system rather than individual payments, defining Critical Actions as changes to controls",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "3cf818ca-4e55-402b-81d2-99abd6fbaf33",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7ee9510-e201-4818-8e2d-114ab7d194f3",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4f8607a9-b694-4dd2-a598-f7d8290ace76",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.7.2.7.1 defines Critical Actions as \"actions that could conceivably result in the loss of funds if they were executed maliciously or without authorization,\" and the list is almost entirely about the control system itself:\n\n- Adding a withdrawal address to the whitelist\n- Adding or removing a signer from the account approvals policy\n- Changing the approval quorum\n- Transferring funds outside the existing whitelist (A.6.1.1.1.3.8.2.7.1) / to an address controlled by an entity other than Spark Asset Foundation, Spark Foundation, or the Spark Liquidity Layer (A.6.1.1.1.3.7.2.7.1)\n\nRoutine transfers are absent. Sending funds to an already-whitelisted collateral agent is not a Critical Action.\n\nThe reasoning is that the whitelist does the containment. A.6.1.1.1.3.7.2.7.2 restricts whitelisted destinations to \"an approved collateral agent... or to the Spark Liquidity Layer,\" and the offchain version adds borrower addresses under lending agreements. If the only reachable destinations are places the money is supposed to go, then an attacker who captures signing authority still cannot extract value \u2014 they must first *add a destination*, and that is the action guarded by the independent-entity quorum.\n\nThis is a strictly better allocation of scarce human attention than gating every payment. Multi-entity approval on routine operational transfers would either paralyze loan origination or, more realistically, degrade into rubber-stamping \u2014 and a rubber-stamped quorum protects nothing. Reserving it for the handful of actions that change what is *possible* keeps each approval meaningful.\n\nIncluding quorum and signer changes closes the recursion: the rules governing the controls are themselves protected by the controls, so an attacker cannot lower the bar before clearing it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:50:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The enumerated critical actions are whitelist additions, signer changes, quorum changes and off-whitelist transfers \u2014 the meta-operations that would let any subsequent transfer be malicious.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad9a3a44-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad9a3a44-2b7f-4142-8c07-f1047b77fd89",
+      "targetTitle": "Fast emergency powers act only over a scope that can be chan"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Emergency bypasses are one-directional ratchets: restriction is instant, restoration requires the full pause delay",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "063c66a2-eb94-45c7-b50f-ce292823cda2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf25ee5d-5095-4260-93b3-b80c54757c3f",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "22997fda-0367-4bca-beee-7e746219f619",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The asymmetry is stated in exception after exception. Oracle Freeze: \"The oracle cannot be unfrozen without waiting for the GSM Pause Delay as part of a regular governance proposal\" (A.1.10.3.2.2). Debt Ceiling Breaker: \"To reverse the effect, parameters of affected vault types must be reconfigured with an Executive Vote which is subject to the GSM Pause Delay\" (A.1.10.3.2.3). Direct Deposit Breaker: identical language (A.1.10.3.2.5). After a BEAM is disabled by its MOM, rates or parameters can only be changed \"through the usual Executive Vote process, subject to the GSM Pause Delay\" (A.1.10.3.2.11, A.1.10.3.2.12).\n\nEvery fast path runs toward the restrictive state: freeze, halt, zero, disable. Nothing fast runs the other way.\n\nThe reasoning is a cost asymmetry. A wrongly triggered brake is expensive \u2014 frozen oracles, halted liquidations, closed credit lines \u2014 but bounded and recoverable. A wrongly triggered *release* could mint unbacked USDS or permit liquidations at broken prices, which is unbounded and irreversible. So the direction that can be taken in seconds is the direction whose worst case is a costly inconvenience.\n\nIt also shapes the attacker's options. Someone who compromises an emergency power can cause damage \u2014 the risk disclosures at A.1.10.3.2.2 and A.1.10.3.2.4 name preventing an expensive liquidation and exploiting a price drop to mint unbacked USDS \u2014 but they cannot use it to *open* anything. Restoring a permissive state always requires winning a vote and waiting.\n\nThe practical consequence for Sky is that recovery from any emergency action is at least one full delay away, so triggering a breaker commits the protocol to a degraded mode for a known minimum period. That makes trigger discipline part of the design rather than an operational nicety.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Oracle freezes, debt ceiling breakers, D3M breakers and BEAM shutdowns all act immediately, but every reversal must run through an Executive Vote subject to the delay.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

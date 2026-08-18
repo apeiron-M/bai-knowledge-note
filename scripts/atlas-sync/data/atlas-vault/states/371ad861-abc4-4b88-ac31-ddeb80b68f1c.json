@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-95dd9023-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "95dd9023-73a3-46ab-b5ce-860b5ab5ce08",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Skybase's Ecosystem Upkeep Fee is assessed on market capitalization rather than on revenue or profit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "61d4e9f8-5765-4bc4-8331-0f58482eb793",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b71fa758-98b4-4b60-bd0d-4d8fe326d674",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f63f7bf3-ffc7-465c-a48a-7446864de64a",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "43e2e7f6-a3e9-46ba-94d6-cbf7e96f5ed2",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.4.2.3.1.2.1.1.1 states the terms in one line: \"Skybase will pay 0.50% of its market capitalization per year in USDS.\"\n\nThe rate is a parameter; the *basis* is a design decision. Charging on market capitalization rather than revenue, fees, or profit makes the obligation independent of the Agent's business model \u2014 which is what lets a single Upkeep Primitive apply uniformly across Agents doing very different things, an interface operator and a lending protocol alike. It also makes the fee unavoidable through accounting: there is no cost line to inflate to shrink it.\n\nThe trade-offs are structural. The burden is pro-cyclical in valuation and blind to cash generation, so a pre-revenue Agent with a highly valued token owes real USDS, and a token re-rating raises the bill without raising the Agent's ability to pay. Denominating in USDS rather than SKYBASE compounds this: the Agent must source stable value, so it cannot settle its ecosystem obligations by printing its own token.\n\nThe fee is therefore best read as ground rent on the value the Agent captures from being part of Sky, rather than as a tax on its activity. Notably, A.6.1.1.4.2.3.1.2.1.2.1.1 defers the actual payment process to \"future iterations of the Skybase Artifact,\" so the liability is fixed before the collection mechanism exists.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:40:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "0.50% of market cap per year, payable in USDS, means the levy tracks how the market values the Agent \u2014 rising in bull markets regardless of whether the Agent generates cash.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

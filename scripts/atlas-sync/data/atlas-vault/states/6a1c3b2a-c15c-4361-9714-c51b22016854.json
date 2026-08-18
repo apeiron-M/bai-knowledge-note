@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-1d888b95-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1d888b95-01fe-4bb5-abc9-1754d142d417",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Prime Agents receive an automatic Upkeep Rebate for the tokens of other Prime Agents they hold",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2649a8ad-23a6-4848-8cd8-f83b2b4256d4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "072c8796-c5f0-4a00-8f90-cae5fe4f41e5",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a39084f3-e4ca-4e52-bc32-4accf83d6d8a",
+      "name": "upkeep-rebate",
+      "topicDocumentId": null
+    },
+    {
+      "id": "142fce6c-cc0b-43d6-a278-47c82f689ac2",
+      "name": "pattern",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.6.2.3.2.2.1.1 is unusually direct for a Parameters section: \"Every Prime Agent is entitled to the Upkeep Rebate Primitive for tokens of other Prime Agents that they hold. Because this right automatically applies, there are no parameters.\"\n\nTwo distinct claims sit here. The first is substantive: cross-holdings between Prime Agents generate a rebate against Ecosystem Upkeep obligations. Since each Prime Agent already pays upkeep on its own market capitalization (A.6.1.1.6.2.3.1.2.1.1.1), an Agent holding another Agent's token would otherwise be exposed to the levy twice over the same underlying value \u2014 once through the issuer and again through its own valuation. The rebate is the correction for that layering, and it makes inter-Agent holdings fee-neutral rather than penalized, which materially affects whether Agents will hold each other's tokens at all.\n\nThe second claim is procedural: the right is **automatic**, not granted. There is no negotiation, no rate to set, and no discretion for anyone to withhold it. That is why the Instance can exist with an empty Parameters section \u2014 the entire content of the Primitive is a standing entitlement defined at ecosystem level.\n\nThe practical residue is a calculation problem rather than a policy one: with no parameters to argue about, every dispute about the rebate reduces to arithmetic over holdings \u2014 which is exactly what the review protocol in the same Instance is built to handle.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:34.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:42:34.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The entitlement applies by right with nothing to configure, so the Upkeep Rebate Instance is the rare Primitive whose Parameters section declares itself empty.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-75383668-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75383668-2d82-4b08-87c8-7e5ecb1b80bc",
+      "targetTitle": "An Agent's realized identity is readable from the Global Act"
+    },
+    {
+      "id": "lnk-8d608ce3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d608ce3-538b-4b3a-a3f2-f43765cd23fc",
+      "targetTitle": "Every Skybase Primitive is wrapped in an identical Hub Docum"
+    },
+    {
+      "id": "lnk-c9853ec1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9853ec1-bec7-4531-8f30-435efb1d02b8",
+      "targetTitle": "Keel completed Prime Transformation while leaving Executor T"
+    },
+    {
+      "id": "lnk-91257cf3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "91257cf3-12e2-4ae3-b9ff-b9a607185add",
+      "targetTitle": "Osero completed Prime Transformation and left Executor Trans"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Skybase's agent type is visible in its primitive activation states: Prime Transformation Completed, Executor Transformation Inactive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "df7f8028-2a6d-4b98-b216-e1c8fc0e7298",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1430bd34-2666-41b4-ac80-5a96f8b172d3",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e31bcbd-150c-4e21-87de-833b12ae00d7",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2d016078-868a-4ce9-bd1e-6b9d882943ff",
+      "name": "agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.4.2.1.2.3.1.1.1 states plainly that \"Skybase is a Prime Agent.\" The surrounding status documents corroborate it structurally: the Prime Transformation Primitive's Global Activation Status is `Completed` (A.6.1.1.4.2.1.2.1.1) with a Single Instance Configuration Document, while the Executor Transformation Primitive's status is `Inactive` (A.6.1.1.4.2.1.3.1.1) with no Instances at all in its Active or Completed directories.\n\nBoth transformation primitives exist in every Agent's tree, but only one can ever have run \u2014 each is \"deployed solely for the one-time transformation of the Agent.\" Agent type is therefore not a free-text attribute; it is the observable residue of which single-shot primitive was Invoked.\n\nThis matters for verification. A reader auditing an Agent's classification does not have to trust the declarative parameter, because a contradictory pair of activation statuses would be visible immediately. The redundancy is deliberate design in a document tree that is otherwise ruthless about not repeating itself.\n\nIt also means `Inactive` carries real information here: it marks a capability that structurally exists for uniformity but is foreclosed for this Agent, not one that is merely awaiting use.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The two transformation paths are mutually exclusive, so an Agent's classification can be read off status documents rather than taken from a label.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

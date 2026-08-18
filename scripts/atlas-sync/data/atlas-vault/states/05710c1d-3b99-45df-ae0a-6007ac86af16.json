@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Safe Harbor pre-authorizes whitehats to seize at-risk funds and waives Sky's right to sue them for it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7f1a8551-9d56-4235-ba61-cfd2b3eff086",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b4ad184-e74c-4877-9a8e-aab69133da62",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1b4e52d-1406-4cd4-a4db-0354142f05a1",
+      "name": "legal-resilience",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.2 adopts the Security Alliance Safe Harbor Agreement, \"a public agreement that protocols may adopt to waive the right to pursue legal claims against a whitehat hacker, provided that the hacker acts competently, lawfully, and in good faith.\" Under it, \"any whitehat hacker who identifies a time-critical active exploit that could result in the loss of funds is authorized to act immediately to rescue those funds,\" returning them \"within 72 hours to an Asset Recovery Address.\"\n\nThe problem solved is a genuine deadlock. A rescue and an attack are the same transaction \u2014 both drain a vulnerable contract without the owner's instruction. A researcher who front-runs an exploit to save user funds has, on the face of it, committed unauthorized access and taken assets they do not own, and cannot obtain permission first because the window is minutes. Rational researchers therefore stand aside and watch funds be stolen.\n\nSafe Harbor resolves it by granting the authorization in advance and publicly, conditioned on conduct standards rather than on outcome. The 72-hour return window converts the rescuer into a temporary custodian with a hard deadline, which is what distinguishes rescue from theft after the fact.\n\nThe destination is chosen to remove custodial discretion: A.2.11.1.2.2.3.3.2 sets the Asset Recovery Address to \"the Pause Proxy on Ethereum Mainnet and the Governance Relay on each other chain\" \u2014 governance-controlled contracts, so recovered funds can only move again by governance action, not by any individual's signature.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "For a time-critical active exploit, a competent, lawful, good-faith rescuer may act immediately without permission, then return funds within 72 hours to a designated Asset Recovery Address.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

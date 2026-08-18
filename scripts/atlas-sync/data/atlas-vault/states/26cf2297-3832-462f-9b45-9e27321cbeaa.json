@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Each Instance declares whether its risk capital rests on a fully implemented or a pending risk model",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "16f8ecfd-a62b-4e08-ae1f-c180a88921f5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4efaad58-4c63-4e43-95de-ef9eb4b99fbb",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cdcc3f9f-5d83-432e-ad20-1237bcd7e896",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "60ea011f-44e3-4c7c-a467-4357669dffa7",
+      "name": "epistemic-status",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.3 introduces a status carried by every Active Instance: \"The `RRC Framework Full Implementation` status defines whether the Instance Financial RRC is calculated based on a fully implemented risk model ... or a pending risk model. If the Instance Financial RRC is calculated based on a fully implemented risk model the status is `Covered`. If ... a pending risk model the status is `Pending`.\"\n\nThis attaches an explicit epistemic label to a risk number. The Required Risk Capital figure for an exposure is an output of a model, and the flag says whether that model is finished. The SparkLend USDS Instance, for example, is marked `Covered` (A.6.1.1.1.2.6.1.3.1.1.1.1).\n\nThe reason this is more than bookkeeping: risk capital requirements aggregate. A portfolio-level capital figure computed partly from finished models and partly from provisional ones is not uniformly trustworthy, and without per-instance labelling the aggregate would hide which parts are soft. Marking each Instance lets a reader \u2014 or the Risk Council \u2014 see how much of Spark's stated capital adequacy rests on models still being built.\n\nThe wider methodological point generalizes well beyond Sky: a framework that computes numbers from models should record the maturity of each model alongside the number. Declaring uncertainty at the level where it originates is what keeps an aggregate honest, and it creates a natural work queue \u2014 every `Pending` is a known gap with a named owner.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:57:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:57:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The RRC Framework Full Implementation flag is Covered when the Instance Financial RRC comes from a fully implemented risk model and Pending when the model is still provisional.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

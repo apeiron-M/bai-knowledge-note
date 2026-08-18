@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Only borrow interest above the SKY Borrow Minimum Rate is passed to stUSDS lenders",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "002d8590-8cb9-42e4-849f-243551f7b173",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d2a6dfb-4867-4133-99da-5196ab70b0cd",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "38cfea3e-8282-483c-b3b3-cbf8653f19cd",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30942070-bef3-4e56-b83d-191114b09e90",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The spread term in A.4.4.1.3.2 is not the borrow rate but the borrow rate *minus a floor*: `(SKY Borrow Rate - SKY Borrow Minimum Rate) * Utilization`. A.4.4.1.3.2.1.3 confirms `SKY Borrow Minimum Rate` is a separately governed parameter defined at A.4.4.1.3.5.2.\n\nThe non-obvious consequence: borrowers pay the full SKY Borrow Rate, but lenders are only credited the portion above the minimum. The minimum-rate slice never reaches stUSDS holders. It is a protocol take-rate expressed as a floor rather than as an explicit fee percentage.\n\nEncoding the fee this way has a specific property. A percentage cut scales with the borrow rate, so the protocol earns most when credit is expensive. A fixed floor does the opposite \u2014 it is the *first* claim on interest, fully collected even in a low-rate regime, and its relative weight shrinks as the borrow rate climbs. The protocol's revenue from this facility is therefore stable in absolute terms while lender yield captures the upside of rate spikes.\n\nAt the boundary case, if the SKY Borrow Rate is set at or near the minimum, the entire spread term collapses to zero and stUSDS holders earn the Sky Savings Rate less the `Rfactor` deduction \u2014 potentially *below* what plain sUSDS would pay, while carrying lending and liquidity risk. Whether stUSDS is attractive is therefore a direct function of how far governance sets the borrow rate above the minimum, which makes that gap the key parameter for anyone evaluating the position.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:22:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Because the formula uses (SKY Borrow Rate \u2212 SKY Borrow Minimum Rate), the minimum-rate portion of every borrower's payment is retained by the system rather than distributed as lender yield.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

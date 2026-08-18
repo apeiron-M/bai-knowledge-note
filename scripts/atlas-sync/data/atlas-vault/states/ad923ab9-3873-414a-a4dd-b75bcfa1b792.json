@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-2f37aac2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "2f37aac2-27ef-44a5-9ae0-e1ed42b98f8e",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "LayerZero bridge destinations are a governance-configured allowlist: the relayer picks the chain, never the recipient address",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8e4689b1-97d1-402e-b63f-3853e969bca3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c1419000-7617-47ff-a4e3-ceed1e4b523d",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1484326a-7e3c-439b-9277-10bbf5b2ecae",
+      "name": "layerzero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "850f1bef-5155-430e-adcd-1d9da6bb4b70",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.13.1.4 builds the LayerZero send parameters and shows what the relayer does and does not control. The function signature (A...13.1.1) accepts `oftAddress`, `amount` and `destinationEndpointId` \u2014 but not a recipient. The recipient \"is read from `layerZeroRecipients` for that endpoint\":\n\n```\nSendParam({ dstEid: destinationEndpointId, to: layerZeroRecipients[destinationEndpointId], ... })\n```\n\nCross-chain transfer is the operation where an attacker most wants a free-form destination, because it moves value outside the reach of the origin chain's controls and is irreversible. Making the destination a mapping keyed by endpoint reduces the relayer's choice to selecting among destinations governance has already sanctioned.\n\nThe rate limit is keyed to match: A...13.1.2 derives it from `keccak256(abi.encode(LIMIT_LAYERZERO_TRANSFER, oftAddress, destinationEndpointId))`, so each token-and-chain pair gets its own budget rather than sharing one global bridging allowance. Opening a new corridor is a deliberate governance act on both the recipient map and the limit registry.\n\nAn unset entry in `layerZeroRecipients` yields the zero address, which is why the rate-limit-zero mandate in A...13.1.2 matters as the primary guard \u2014 the recipient map alone fails open in the sense that it would attempt a send to `0` rather than reverting on an unconfigured endpoint.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "SendParam.to is read from layerZeroRecipients[destinationEndpointId] rather than taken as an argument, so a compromised relayer cannot redirect bridged funds to an arbitrary address.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

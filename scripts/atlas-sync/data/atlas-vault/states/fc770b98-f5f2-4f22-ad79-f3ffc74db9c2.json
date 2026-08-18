@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-95dd9023-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "95dd9023-73a3-46ab-b5ce-860b5ab5ce08",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent Customizations may only extend inherited logic, never override it, and Skybase currently declares none",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "69b3278d-502d-4e02-b365-05fceb94796b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab5998fd-cf53-4734-aef7-46f25f980099",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bfac99dd-c90e-45c7-a023-2ccb956d7700",
+      "name": "inheritance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "75023b2b-159d-4dcb-a658-72fd8d4236bc",
+      "name": "distribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every Instance includes an Agent Customizations document with the same constitutional wording (A.6.1.1.4.2.5.1.2.1.2.1.1 and siblings): \"The Prime Agent may define instance-specific customization of the routine protocol **to extend the baseline functionality** defined in the Sky Core Atlas. This can include custom routines or processes layered on top of the inherited Sky Core logic. Any extensions must remain fully aligned with the requirements specified in the Sky Core Atlas.\"\n\nThe verbs are the constraint. Customization *extends* and *layers on top of*; nothing in the provision permits replacing or disabling inherited behaviour. Combined with the automatic-propagation rule, this makes the inheritance one-directional and non-negotiable: an Agent can add, but cannot subtract, and cannot insulate itself from a future Core Atlas change by pinning its own version.\n\nWhat makes the clause more than boilerplate is the second sentence \u2014 extensions must \"remain fully aligned with the requirements specified in the Sky Core Atlas.\" An added routine that technically sits alongside the base logic but frustrates its purpose is out of bounds, so the same spirit-of-the-rule standard that governs Artifact edits governs operational extensions.\n\nAnd the current state is uniform: all eight Instances \u2014 including Skybase's own app \u2014 record \"[No customization presently.]\" Skybase's entire distribution program presently runs on unmodified Sky Core logic, which means the ecosystem-wide base class is not merely a default but the operative code.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "All eight Distribution Reward Instances read '[No customization presently.]', so Skybase's distribution program runs entirely on unmodified Sky Core logic.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

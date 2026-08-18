@@ -1,0 +1,91 @@
+{
+  "links": [
+    {
+      "id": "lnk-b283e092-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b283e092-519c-4a48-9d74-db6746d7b8f1",
+      "targetTitle": "Ecosystem Spell Validation deliberately checks less than dev"
+    },
+    {
+      "id": "lnk-4b9f94d4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4b9f94d4-b68b-445a-8778-6d79d17687cb",
+      "targetTitle": "The DarkSpell check requires a Spell to be self-contained: e"
+    },
+    {
+      "id": "lnk-0c19d39e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0c19d39e-77a2-4d56-8432-8990d31447e9",
+      "targetTitle": "Spell Reviewers may not introduce code by any route \u2014 direct"
+    },
+    {
+      "id": "lnk-8c0acd77-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8c0acd77-d331-45af-a3ce-f2a276294b32",
+      "targetTitle": "The deployed-versus-repository code comparison has a defined"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Spell code review checklist targets deception patterns, not only vulnerabilities",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "16fb6dea-a111-45c8-b5ec-5968675815c2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f1f8fc28-d64d-480a-a72c-f43ebb4d7709",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cc2cbd6d-6177-4db8-8b49-4d42282f3936",
+      "name": "code-review",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.12.3.1.9 asks validators to look for \"low-level assembly operations,\" opcodes such as \"`delegatecall`, `callcode`, or `selfdestruct`,\" \"suspicious-looking payments or transfers,\" and \"any other malicious or unauthorized code,\" including \"cross-checking the Solidity code in `actions()` against the Executive Sheet and the Executive Document. Each action must be authorized per the Atlas.\"\n\nA.1.10.2.4.12.3.3.10 extends the list into territory most audit checklists omit: \"Hidden state changes: Look for retrieval functions (e.g., `get` or `view`) that include assignments (`=`)\"; \"External Calls At The End\" as a reentrancy signal; \"Force Ether, DAI or SKY Reception: Look for a `receive` function with no logic\"; \"Use of `tx.origin`\" instead of `msg.sender`; and \"**Function Naming Overlaps**: A contract might have function names that are similar or overlap with common Solidity functions to mislead a reviewer. Check for misleading function names (e.g., `transfer`, `approve`, `mint`) with unexpected logic.\"\n\nThe last two entries are not vulnerability classes \u2014 they are *social engineering embedded in source code*. A function named `transfer` that does something else, or a getter that quietly mutates state, exploits the reviewer's pattern-matching rather than the EVM. A reader skimming for familiar shapes sees what they expect.\n\nThis matters because Spell review is performed under time pressure by people reading a lot of similar-looking code, which is exactly the condition in which name-based shortcuts substitute for reading. Naming the technique makes the shortcut itself the thing to check.\n\nThe threat model on display is an insider who knows the process: not someone hoping a bug is missed, but someone crafting code that *reads* correct to a competent reviewer following the checklist.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Alongside delegatecall and selfdestruct, validators are told to look for view functions that assign state, misleading function names, and receive() with no logic \u2014 code written to fool a reviewer.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-eb364c7e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eb364c7e-874f-4878-8c3c-c7e0dd71a9b0",
+      "targetTitle": "Each pool's tick bounds are pinned to the same tolerance as "
+    },
+    {
+      "id": "lnk-aa85b441-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa85b441-0230-4ca9-b14e-5366bc4b7802",
+      "targetTitle": "The four Uniswap v4 pools apply contradictory outflow polici"
+    },
+    {
+      "id": "lnk-6b4cb7e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6b4cb7e6-61ef-4f52-a650-f08d899c2aa5",
+      "targetTitle": "USDS and Dai amounts are always rounded up so that residual "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Raw tick values are not comparable across pools, so the annotated percentage is the only checkable part",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "97e11681-27eb-4fd4-a860-8ab6d0caac7a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cb2a308a-dcb8-407a-b14d-b0e34b00adce",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a6d92f39-7a05-4aa0-aead-c94de1ecd8ea",
+      "name": "documentation-quality",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f4654cb1-df67-4b07-8a76-3020790f82a0",
+      "name": "liquidity-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three Uniswap v4 pools document an identical 0.1% band with entirely different numbers. PYUSD/USDS: \"Min lower tick limit: 276,314 (-0.1%), Max upper tick limit: 276,334 (+0.1%)\" (A.6.1.1.1.2.6.1.3.1.11.1.2.4.5). USDG/USDS: \"-276,334 (-0.1%)\" to \"-276,314 (+0.1%)\" (.11.3.2.4.5) \u2014 the same magnitudes with the sign flipped. rlUSD/USDS: \"-10 (-0.1%)\" to \"10 (+0.1%)\" (.11.4.2.4.5).\n\nA Uniswap tick encodes the price of token1 in token0, so the value depends on which asset sorts first and on the two tokens' decimals. A \u00b1276,324-centred band and a \u00b10 band can describe the same economic parity; the ~276,324 offset is the decimals gap between a 6-decimal and an 18-decimal token, and the sign follows the ordering.\n\nThe practical consequence is that the parenthesised percentages are doing the real work. Nothing else in the document lets a reader verify a tick value, and a sign or ordering mistake would place authorised liquidity on entirely the wrong side of parity while still looking like a plausible number.\n\nThe inconsistency extends to the field itself: PYUSD/USDS and USDT/USDS both specify \"Max tick width: 10 ticks\", while USDG/USDS and rlUSD/USDS omit the line. Whether the width constraint applies to those two pools cannot be determined from the Artifact \u2014 four instances of the same protocol, and half of them lack a parameter the other half treat as part of the risk configuration.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The same \u00b10.1% band appears as 276,314\u2013276,334 in one pool, -276,334 to -276,314 in another and -10 to +10 in a third, because ticks depend on token ordering and decimals.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

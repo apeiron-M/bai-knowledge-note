@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A change to the GSM Pause Delay is itself subject to the pre-change delay",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "cb77b6ab-35d5-4c98-af2f-03e5a9dd65eb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9cafe431-2c67-4478-8d78-fde290821f44",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3f676e8-ccc5-4369-9821-96d569207a6c",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.3.1.1 states that \"adjusting the GSM Pause Delay parameter is a manual process that requires an Executive Vote. **Changes to the GSM Pause Delay are subject to the pre-change GSM Pause Delay.**\"\n\nThis is a self-referential protection, and without it the entire delay would be worthless. An attacker who could pass one Spell would pass a Spell setting the delay to zero, wait out the old delay once, and thereafter execute anything instantly. The safety parameter would be the first thing removed.\n\nBy binding the change to the *pre-change* value, the delay always defends its own modification. Shortening it takes the currently configured time; the protection cannot be dismantled faster than it currently permits.\n\nThe general principle is that a security parameter must govern edits to itself, or it only constrains actors who choose not to attack it first. The same logic appears in the pause proxy ownership check (A.1.10.2.4.13.4.2), where a Spell cannot sever governance's control of the execution path, and in the Atlas's Immutable Documents, which cannot be amended by the ordinary process they govern.\n\nNote also what is *not* protected: the delay can be lowered, just not quickly. A.1.10.3.1.1 explicitly contemplates temporary reductions when \"time-critical governance actions are projected to be needed.\" The mechanism prevents a fast attack on the delay, not a deliberate governance decision to shorten it \u2014 and a lowered delay compounds, since every subsequent change including restoration is then subject to the shorter window.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:52:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.3.1.1 makes the parameter protect its own modification, so an attacker who captures a vote cannot shorten the window that would expose them.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

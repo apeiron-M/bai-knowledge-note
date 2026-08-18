@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-95dd9023-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "95dd9023-73a3-46ab-b5ce-860b5ab5ce08",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "As a Prime Agent, Skybase sources its Facilitator and GovOps functions from a separate Executor Agent through the Executor Accord Primitive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "825775b6-e08f-4600-b4f3-c7ea29e31124",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd630c59-1ef2-4482-9c1b-be9521a46b71",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f65f883a-b950-4360-81ae-165c34713235",
+      "name": "agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "df4ac167-8d9c-4bfa-8383-d49f64202a42",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Skybase's Executor Accord Primitive is `Active` (A.6.1.1.4.2.2.1.1.1) with one live Instance, the Ozone Instance (A.6.1.1.4.2.2.1.2.1). Its single substantive parameter delegates outward: \"The Operational Facilitator and Operational GovOps for Ozone are specified in A.6.1.2.2 - Operational Executor Agent Ozone\" (A.6.1.1.4.2.2.1.2.1.1.1).\n\nSo the roles that run Skybase's governance process are not defined inside Skybase's own Artifact. They are defined in another Agent's Artifact and bound to Skybase by an Accord \u2014 a recurring Operational Primitive, in contrast to the one-shot Genesis Primitives above it.\n\nThe separation buys two things. Operationally, a Prime Agent focused on a product surface does not need to staff a governance-operations function itself; it contracts one. Structurally, the Facilitator and GovOps who administer Skybase's process are accountable through a different Artifact than the one they administer, so the Agent cannot rewrite its own process operators unilaterally.\n\nThe trade-off is a dependency: Skybase's ability to execute governance actions is contingent on an external Executor Agent remaining in good standing. Because the Accord is a recurring primitive with a live In Progress Invocations Directory, that dependency is replaceable \u2014 new Accord Instances can be Invoked \u2014 which is presumably why this function was placed in an Operational rather than a Genesis Primitive.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Active Ozone Instance delegates Operational Facilitator and Operational GovOps to Operational Executor Agent Ozone, splitting Skybase's product mandate from its governance operations.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

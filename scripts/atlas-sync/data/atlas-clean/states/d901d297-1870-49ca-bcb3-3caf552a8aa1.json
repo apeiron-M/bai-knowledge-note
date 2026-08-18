@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-da158926-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da158926-00d0-4a00-949e-fd82fdde02ea",
+      "targetTitle": "Off-cycle emergency powers are granted only in exchange for "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Freezer signers must justify freezing against Risk Capital rules and report every action publicly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "397f235a-2f3c-48e8-815b-8aeae8c40dca",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8296cb72-8a97-4e3f-ad1f-9396d1bb24f5",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d26de9de-7c7d-4e7c-b6b8-e4cfd4acd13d",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ae0b50ce-f32a-4135-bca1-2748495a9b51",
+      "name": "transparency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.1.2.2.3.4 sets the Freezer Multisig's usage standards. Signers \"should exercise their authority to freeze the Spark Liquidity Layer in the event that Spark is not complying with rules regarding Risk Capital or Asset Liability Management, or in the event of another emergency.\" They \"should consult with Operational GovOps Soter Labs before exercising such authority, unless such consultation would cause a delay that could result in a loss of user funds or harm to Sky or Spark.\" Soter Labs may also request a freeze, and signers must engage \"in good faith\" on such a request.\n\nThree design features stand out. The primary triggers are **objective and external** \u2014 breach of the Risk Capital or ALM rules \u2014 so a freeze is normally an enforcement act with a citable basis rather than a discretionary judgment. Consultation is the default but explicitly yields to speed when funds are at risk, acknowledging that emergency powers with a mandatory waiting step are not emergency powers. And the request channel runs both ways: the operator can ask the key-holders to act, but cannot compel them.\n\nThe accountability mechanism is disclosure: \"Each action executed by the Freezer Multisig, including any function calls and their parameters, must be reported to the Sky community within a reasonable time frame through a post on the Sky Forum.\"\n\nRequiring the *parameters* \u2014 not just the fact of a freeze \u2014 is what makes the report verifiable against on-chain history rather than a summary the community must take on trust. Discretion is permitted; unexamined discretion is not.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The stated triggers are non-compliance with Risk Capital or Asset Liability Management rules or another emergency, with consultation expected first unless delay would cost user funds.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

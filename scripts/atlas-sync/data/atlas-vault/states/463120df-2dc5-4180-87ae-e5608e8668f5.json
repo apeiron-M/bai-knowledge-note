@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A voter can apply their full SKY weight to up to five proposals at once, so approving one does not withdraw support from another",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "47678f5f-258f-4485-ab65-3c3b645cd8dd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6da23fea-3588-4c39-ad65-56481f8a3ad0",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5e8f506e-4796-457e-898e-32a759d409fc",
+      "name": "voting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.6.3 states that \"voters can apply their **full** SKY vote-weight to up to 5 different proposals simultaneously (as defined by the `max_yays` limit in the contract), **rather than splitting their tokens between them**.\"\n\nThis is what makes the surrounding system workable. If support were divisible, the instruction to keep weight on the hat (for security) and the ability to back a new proposal (for progress) would be in direct conflict, and every holder would have to choose between defending the status quo and voting for change.\n\nNon-rivalrous approval removes the trade-off up to five slots: a holder can hold the line on the hat and simultaneously endorse its successor with the same tokens. Weight only actually shifts when a voter *removes* their approval from the hat, making disarmament a deliberate act rather than a side effect of participating.\n\nThe cap at five is the necessary limit. Unlimited slots would let one holder support every live proposal, which would make their weight informationally worthless \u2014 approving everything says nothing about preference and would inflate every threshold equally. A small cap forces some discrimination while preserving the overlap that matters.\n\nRead together with the hat-as-threshold rule, the effective question at each vote is not \"do you support this?\" but \"do you support this *more* than you want to keep defending the incumbent?\" \u2014 a comparative judgment that only becomes binding when a voter chooses to release their existing approval.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.6.3 makes approval non-rivalrous up to the max_yays limit of 5, letting a holder back a new proposal while continuing to defend the hat.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

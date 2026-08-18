@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky uses the Lindy Effect as a design criterion: time spent unchanged is evidence of future safety",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "7901d621-6b10-4f13-b118-4bb40ea506b8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "609f2599-14dd-4e2f-b100-cf35d8031a56",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a60d56e9-ac2b-4bba-8e27-e60153fad559",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.7.4.4 imports a heuristic into engineering practice: \"The 'Lindy Effect' states that the longer something has been in existence in its current state, the longer its remaining life expectancy. The 'Lindy' of a system or smart contract refers to the duration it has been operating in its current state and therefore implies its future stability. Specifically, the 'Lindy' of immutable systems uses their history of safe and secure operation as a predictor of future safety and security.\"\n\nThe restriction to *immutable* systems is what makes this more than folk wisdom. For mutable software, age is a weak signal \u2014 the thing running today may share little with the thing that survived last year. For an immutable contract, elapsed time is genuine accumulated evidence: the exact bytecode has been exposed to adversaries, real value and unanticipated conditions for that entire period without failing.\n\nThe consequence is a systematic bias toward old code. A newer contract may be better designed, better audited and more readable, and still lose to an older one on this criterion, because audits sample what reviewers thought to look for while survival tests everything the world actually threw at it.\n\nThis is the principle underneath several other provisions. It explains why reuse of archived Spell patterns is the default and why the absence of such a pattern makes an item \"novel\" and heavier to process (A.1.10.2.3.3.1). It also sets a real cost: every change resets the clock, so improvement carries an evidentiary penalty that has to be argued past.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:25:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.7.4.4 makes operating history a predictor for immutable systems, which systematically favours old code over better-designed new code and raises the bar on every upgrade.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

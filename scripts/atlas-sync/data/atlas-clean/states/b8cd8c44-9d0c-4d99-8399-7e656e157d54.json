@@ -1,0 +1,78 @@
+{
+  "links": [
+    {
+      "id": "lnk-de5e14b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de5e14b7-cad5-4bd5-af88-368284d17faa",
+      "targetTitle": "Grove operates live instances without a specified process fo"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Artifact specifies steady-state operations in call-level detail while onboarding, offboarding and upgrades remain unwritten",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "965ba5be-e565-4e3f-a61b-bc624860c80b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "83591b48-a014-4b7a-ab22-8e96e6b93213",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "57c5688c-baf5-4d70-b0be-6928ff77ef47",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cc45ce69-15ae-47c1-b58c-ba69a8d9f52b",
+      "name": "operational-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three sections in this chunk are placeholders. A.6.1.1.3.2.6.1.2.2.1.1.4 covers \"processes for invoking (onboarding) new Keel Liquidity Layer Instances and offboarding existing ones. This process will be specified in a future iteration of the Keel Artifact.\" A.6.1.1.3.2.6.1.2.2.1.1.5, \"the process for deploying new Controller contracts,\" says the same. So does the SkyBridge USDS/sUSDS bridging process (\u20262.1.2.6.2).\n\nThe contrast with their surroundings is stark: the routine functions are documented down to signatures, revert strings and event names, while the transitions between states are blank.\n\nThat inverts the usual risk ranking. Steady-state operations are the ones a rate limit can bound and an audit can reproduce; onboarding a venue, offboarding a position and swapping out a Controller contract are the moments when permissions are re-granted, balances move between systems, and assumptions silently change. A Controller upgrade in particular touches the contract that holds `ALM_CONTROLLER_ROLE` over the ALMProxy \u2014 the largest single point of authority in the design.\n\nThere is a partial answer elsewhere in the Artifact: invoking a new Allocation System Instance follows the Root Edit process, and rate limit configuration is admin-only, so onboarding cannot happen quietly. But offboarding and Controller replacement have no stated process at all, which means those actions would currently be improvised by the same parties whose behaviour the rest of the document constrains in detail.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:51:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Instance Lifecycle Management, Upgrading Controller and SkyBridge USDS/sUSDS bridging all defer to a future iteration, even as routine functions are documented parameter by parameter.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

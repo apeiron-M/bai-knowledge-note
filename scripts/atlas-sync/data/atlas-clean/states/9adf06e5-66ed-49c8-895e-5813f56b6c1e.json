@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-bc5aa103-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bc5aa103-87ae-4e05-a546-c0b23822ebed",
+      "targetTitle": "The Pioneer Incentive Pool pays the Savings Rate on unreward"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The 2025 Distribution Reward bonus excludes the Prime's own balances, blocking self-dealing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "97e7d1b6-ea76-47c3-93af-f009b87dda42",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d448446a-53c8-4431-b53c-c0cf332b0336",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3b0bc190-8aa2-457b-9c97-ce4d3496170e",
+      "name": "ecosystem-accords",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.2.2.3.2 adds \"an additional 0.4% Distribution Reward bonus... during the calendar year 2025,\" tripling the 0.2% standard rate set in A.2.8.2.2.2.3.1, and limits it \"strictly to the Prime and does not extend to the Prime Foundation.\" A.2.8.2.2.2.3.2.1 then closes the obvious loophole: \"USDS and sUSDS balances held by the Prime itself are not eligible.\"\n\nThe Distribution Reward pays a Prime for driving adoption of USDS, measured by balances marked with its reward codes. Without the exclusion, a Prime could mark its own holdings and collect a reward for distributing a stablecoin to itself \u2014 at 0.6% in 2025, a meaningful return on a self-referential transaction that adds no users.\n\nThe restriction to the Prime rather than the Foundation guards a related route. The two are distinct entities with distinct treasuries, so a bonus reaching the Foundation would let balances be moved one step sideways and still earn.\n\nWhat makes the exclusion notable is that the underlying metric is otherwise purely mechanical \u2014 a reward code attached to a balance. Attribution infrastructure of that kind measures activity, not its economic substance, so the anti-gaming work has to be done by carve-outs written alongside it.\n\nThe time limit fits the purpose: a temporary triple-rate incentive is a launch subsidy for the adoption push, reverting to the standard rate once the year ends. Both the elevated rate and the exclusion feed into the settlement calculation, since A.2.4.1.2.2.1.1.1.1 makes the Distribution Reward including \"any Bonus Distribution Reward\" an amount due from Sky to the Prime each month.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:44:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "An extra 0.4% applies during 2025 strictly to the Prime and not its Foundation, and USDS or sUSDS the Prime holds itself earns nothing from it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

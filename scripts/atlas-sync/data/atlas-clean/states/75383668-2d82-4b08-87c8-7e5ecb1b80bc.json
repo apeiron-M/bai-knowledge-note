@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-87de2b04-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87de2b04-9047-4307-affc-e44851e79de2",
+      "targetTitle": "The Global Activation Status of a one-shot Primitive disting"
+    },
+    {
+      "id": "lnk-c9853ec1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c9853ec1-bec7-4531-8f30-435efb1d02b8",
+      "targetTitle": "Keel completed Prime Transformation while leaving Executor T"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Agent's realized identity is readable from the Global Activation Status of each Primitive it holds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "1baf1212-8fa0-4c74-b658-f542edb8cc36",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e623cf7-7dfb-4429-9621-c1e48bd2701e",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bb944752-2ca5-4bef-8f76-5545a3b06d17",
+      "name": "pattern",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every Primitive Hub Document carries a one-word **Global Activation Status**. Across Pattern's Primitives the values differ meaningfully: Agent Creation is `Completed` (A.6.1.1.6.2.1.1.1.1), Prime Transformation is `Completed` (A.6.1.1.6.2.1.2.1.1), Executor Transformation is `Inactive` (A.6.1.1.6.2.1.3.1.1), the Agent Token Primitive is `Active` (A.6.1.1.6.2.1.4.1.1), and the Executor Accord Primitive is `Active` (A.6.1.1.6.2.2.1.1.1).\n\nRead together, those five words are a complete profile of what the Agent actually is: it was created, it took the Prime transformation path and not the Executor one, it has a live token, and it is operationally engaged through an Accord. Consistently with `Inactive` Executor Transformation, A.6.1.1.6.2.1.2.3.1.1.1 declares \"Pattern is a Prime Agent.\"\n\nThe pattern is that Sky does not store an Agent \"type\" field as the source of truth; type is a *consequence* of which transformation Primitives were Invoked. `Completed` versus `Active` also carries information: `Completed` marks the one-shot Genesis acts that are finished forever, while `Active` marks Primitives with live instances still under management.\n\nThe practical benefit is that a reader can audit an Agent's capabilities without trusting a summary \u2014 each claimed capability has a Primitive whose status either supports it or does not.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:36:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Pattern shows Agent Creation and Prime Transformation as Completed, Agent Token and Executor Accord as Active, and Executor Transformation as Inactive \u2014 a Prime Agent that never became an Executor.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

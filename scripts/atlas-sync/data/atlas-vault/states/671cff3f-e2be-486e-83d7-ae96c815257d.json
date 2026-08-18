@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-34d2871b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "34d2871b-89e8-405b-9233-348a5dd6d898",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel's Ecosystem Upkeep Fee is charged on market capitalization, taxing the Agent's valuation rather than its revenue",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "47213751-f998-4ea6-8995-d2f8f73ed716",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fe1feb4d-1ecf-4d8b-a2de-f43d6038a53d",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "98e05733-d21d-492f-949d-6a6981215ac5",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e1b61cef-8f87-443a-a2df-31fa1f3e9631",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.3.1.2.1.1.1 sets Keel's obligation in one line: \"Keel will pay 0.50% of its market capitalization per year in USDS.\"\n\nThe base is the design decision, not the rate. A market-cap fee is levied on how much the market believes the Agent is worth, not on what it earned, holds, or spends. That has consequences a revenue-based fee would not: the fee scales automatically with success and shrinks when the Agent's token falls, it cannot be minimized through accounting choices about where profit is booked, and it is owed even by an Agent with no revenue at all. It is closer to a franchise fee for the right to be a Sky Agent than to a tax on output.\n\nDenominating it in USDS while assessing it on KEEL's valuation also creates a standing demand for USDS from every Prime Agent, which is quietly aligned with Keel's own mandate to expand USDS usage.\n\nThe gap is that A.6.1.1.3.2.3.1.2.1.2.1.1 states \"the process to pay 0.50% of Keel's market capitalization per year in USDS will be specified in future iterations of the Keel Artifact\" \u2014 including, presumably, how and when market capitalization is measured. The obligation is `Active` and binding while the measurement and payment mechanics are still blank, which leaves the amount owed underdetermined in practice.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:19.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Keel owes 0.50% of market cap per year in USDS while the Primitive is already Active \u2014 but the payment process itself is deferred to a future iteration of the Artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Instance-specific processes are defined as deviations from a general Spark Liquidity Layer baseline",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ff3b6951-80a4-4fcc-9a60-19f992a4e3d4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd77c6cb-c629-4a39-a506-d707ea0d1dce",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cbeae357-9e52-439f-9c9d-9af116ab88a1",
+      "name": "operational-processes",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Every instance carries an `Instance-specific Operational Processes` slot described identically: it contains \"operational procedures or monitoring requirements unique to this Instance that deviate from or otherwise supplement the general Spark Liquidity Layer processes.\"\n\nThe Avalanche Aave instance at A.6.1.1.1.2.6.1.3.4.1.1.3 then does the factoring explicitly, redirecting the reader to shared definitions: \"For the general operational procedures applicable to all Aave-type instances. See Aave Functions and Aave AToken Withdrawal Action,\" plus `Process Definition For Depositing` and `Process Definition For Withdrawing` for the interaction logic.\n\nThis establishes a three-level inheritance: procedures common to all conduits, procedures common to a **protocol type** (all Aave-type instances), and per-instance overrides. New instances of a known protocol inherit a reviewed process body and need only document their divergences.\n\nThe governance benefit is that a fix to the shared Aave withdrawal process propagates to every Aave instance without amending each one \u2014 but so does a flaw. The inheritance concentrates both correctness and risk in the protocol-type definitions, which is where scrutiny should be spent, and it means an instance's true operating procedure can never be read from its own section alone.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:29:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each instance may supplement or deviate from shared procedures, with general logic factored into reusable definitions like Aave Functions and Process Definition For Depositing.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

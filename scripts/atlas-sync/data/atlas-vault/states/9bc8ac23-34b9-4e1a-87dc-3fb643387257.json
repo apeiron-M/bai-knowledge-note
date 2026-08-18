@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Ratification Poll must link one specific version of one Atlas Edit Proposal in the official GitHub",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "bd11e4f3-e111-46b3-bf52-140959d4449c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e941bfea-3780-463b-bf75-836dda7d2be7",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "387cbac7-4458-4359-bbdd-1afff06c7b46",
+      "name": "voting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.12.2.6 requires that Ratification Polls \"contain: Links to a specific version of a single Atlas Edit Proposal within the official Atlas GitHub.\"\n\nThree constraints are packed into one line. **Specific version** \u2014 the ballot references an immutable revision, so approval attaches to exact text rather than to whatever the proposal says when the poll closes. **Single proposal** \u2014 one AEP per poll, so voters cannot be forced to accept an unwanted edit to obtain a wanted one. **Official GitHub** \u2014 the canonical repository is the reference, not a Forum summary that could diverge from the code being merged.\n\nThis is the enforcement mechanism behind the Frozen Period and the re-triggering rule (A.1.12.2.1.2): those provisions stop the text changing under review, and this one records precisely which text was approved. Together they make an approved amendment auditable \u2014 anyone can diff the merged result against the linked revision.\n\nThe cost is throughput. Related edits that would naturally travel together must be polled separately, which multiplies the number of polls per cycle. Sky accepts that overhead, and handles the resulting collisions through the Reconciliation Process rather than by allowing bundles.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:27:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Bundling is excluded and so is version ambiguity: what voters ratify is a pinned commit, not a proposal that may have moved since.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

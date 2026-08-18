@@ -1,0 +1,73 @@
+{
+  "links": [
+    {
+      "id": "lnk-8d37c46e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d37c46e-eee3-4521-8db0-4056c13f446e",
+      "targetTitle": "Pendle PT capital requirements decay continuously toward the"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Idle assets carry a 25% capital charge, so the same balance is free or expensive depending on which eligibility list it appears on",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "efe1e350-c22a-4c5d-a6f8-f78da77b9371",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "37230dd9-37d4-40fa-bd5e-50af92cd53f0",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71956c00-9787-4b62-9343-1a1e3e33640a",
+      "name": "classification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.3.1 gives the interim rule for the direct-exposure asset class: \"a 25% Instance Financial CRR will be applied to all direct exposures. In the near term, direct exposures will be considered to be any assets held idle in a wallet controlled by a Prime Agent.\"\n\nRead literally, idleness is the taxable event. The definition is not about what the asset is \u2014 it is about the asset not being deployed. A quarter of the value must be backed by risk capital simply for sitting still.\n\nThat collides with A.3.2.2.1.1.1.6.1, which applies a **0%** CRR to Cash Stablecoins, \"only USDS, sUSDS, Dai, sDai, USDC, USDT, and pyUSD (either held directly or through decentralized exchanges such as Curve),\" explicitly contemplating direct holding. So an idle USDC balance is free and an idle anything-else balance costs 25%, with the two provisions overlapping in scope and resolved only by the enumerated list.\n\nThe economic intent is legible \u2014 the interim class is a placeholder for volatile crypto holdings (A.3.2.1.1.4.3.2.2 names ETH, stETH and WBTC), and 25% is a stand-in for an unbuilt market-and-liquidity-risk model. But the drafting makes *idleness* rather than *volatility* the operative criterion, which produces a real behavioural incentive: an Agent holding a non-listed asset has a strong reason to keep it deployed somewhere with a lower modelled charge rather than hold it in cash form while deciding what to do.\n\nIt is also the strongest argument in the Article for finishing the pending models. Until the direct-exposure model exists, a 25% charge on \"any assets held idle\" is doing a great deal of undifferentiated work.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Near-term 'direct exposures' are defined as any assets held idle in a Prime Agent's wallet at 25% CRR, while the seven enumerated Cash Stablecoins held directly carry 0%.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

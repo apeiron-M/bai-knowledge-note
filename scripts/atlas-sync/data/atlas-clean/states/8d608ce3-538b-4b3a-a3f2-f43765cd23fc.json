@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-d88336af-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d88336af-bf92-4313-9525-2651e28f7158",
+      "targetTitle": "Every Sky Primitive Instance is tracked through the same fou"
+    },
+    {
+      "id": "lnk-9d9f633c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9d9f633c-63a3-4dbf-892b-c2f2c0e45f32",
+      "targetTitle": "Every Sky Primitive an Agent uses is tracked by a Hub Docume"
+    },
+    {
+      "id": "lnk-bdf52e59-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bdf52e59-3d95-474b-a584-ecac3987f492",
+      "targetTitle": "Every Primitive Instance is tracked through a Hub Document w"
+    },
+    {
+      "id": "lnk-d4e2dff0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4e2dff0-611e-4b90-9bae-422b1007ec01",
+      "targetTitle": "Skybase publishes prospective distribution partners with a P"
+    },
+    {
+      "id": "lnk-dfa3d86b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dfa3d86b-c746-4dc6-8692-f4b6c2cc2131",
+      "targetTitle": "doc-a0fd0ea4"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Skybase Primitive is wrapped in an identical Hub Document exposing activation status and per-status Instance directories",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "ac4dbb12-a4b2-4a2c-b516-2ab2783e4143",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "400f1d5a-00bb-4c4c-85c9-a1020decb917",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a1e11d8c-b71b-4cdd-87c9-5082ae2d9ad0",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "80267bff-eb9b-4575-8ccd-811d7d89a911",
+      "name": "document-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Primitive Instance tree under A.6.1.1.4.2 repeats a fixed five-part Hub Document: a Global Activation Status (`Completed`, `Active`, or `Inactive`), an Active Instances Directory, a Completed Instances Directory, an In Progress Invocations Directory, and a Hub Data Repository. Compare A.6.1.1.4.2.1.1.1 (Agent Creation), A.6.1.1.4.2.1.4.1 (Agent Token) and A.6.1.1.4.2.2.1.1 (Executor Accord) \u2014 the headings are interchangeable; only the values differ.\n\nThe uniformity is the design. Because state is expressed as *location plus status field* rather than prose, the same question can be asked of any primitive on any Agent: is it switched on, what is running, what finished, what is mid-Invocation. An observer does not need to understand the Executor Accord Primitive to determine that Skybase has one Active Instance of it.\n\nThe cost is verbosity \u2014 the majority of the Skybase Artifact by volume is this scaffolding, including directories that exist only to state that they are empty. The Atlas pays that cost to get a machine-readable, position-addressable state surface across a heterogeneous set of primitives.\n\nThe second-order effect is that primitive *activation* becomes an auditable governance fact rather than an inference from behaviour: turning a capability on requires editing a named status document in the Artifact.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:35:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Global Activation Status plus Active/Completed/In-Progress directories and a Hub Data Repository give each primitive the same queryable lifecycle surface regardless of what it does.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

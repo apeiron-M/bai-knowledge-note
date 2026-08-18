@@ -1,0 +1,85 @@
+{
+  "links": [
+    {
+      "id": "lnk-9c4cca54-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9c4cca54-35fe-40ee-a4e4-a59d6cb9e0a5",
+      "targetTitle": "The entire capital-penalty regime currently runs in shadow m"
+    },
+    {
+      "id": "lnk-f5b63c58-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f5b63c58-a386-4300-b979-12cf1be3f840",
+      "targetTitle": "Core Facilitator and Core GovOps hold full discretion both t"
+    },
+    {
+      "id": "lnk-ef0c1b12-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ef0c1b12-f573-4a9f-9568-e52604dc7c9b",
+      "targetTitle": "doc-ed84fb3a"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The entire Asset Liability Management enforcement layer is unbuilt: detection and reporting substitute for penalties",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "c1bee962-c1b0-444c-ac3c-e9fab262331d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "444a422a-0620-4e43-abb7-0fc2539ed6f5",
+      "name": "peg-stability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "31878ca1-6632-41d7-852a-61b95858cc99",
+      "name": "transition",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three provisions in the same Section leave the framework without teeth. A.3.3.2.2.2: \"In the near term there will be no penalties for Prime Agents for failing to maintain the Minimum Actively Stabilizing Collateral.\" A.3.3.2.3.2: DAB penalties \"will be specified in a future iteration.\" A.3.3.2.4.3: penalties for failing Peg Defense obligations likewise \"will be specified in a future iteration.\"\n\nWhat exists instead is visibility. A.3.3.2.2.2.1 requires the Core Council Risk Advisor to build a tool that automatically detects and reports failures, with each violation reported within 24 hours to five parties: the Core Facilitator, Core GovOps, the Agent's Operational Facilitator, its Operational GovOps, and the Agent itself.\n\nSo compliance currently rests on three things: the ASC Incentive making compliance economically neutral rather than costly, reputational exposure through multi-party reporting, and the general remedies available elsewhere (Core GovOps' power to restrict Allocation System usage). This is a reasonable interim design \u2014 the incentive removes the motive to under-hold, so detection may be sufficient \u2014 but it means the 5% minimum is currently a monitored target rather than an enforced floor, exactly as the Risk Capital penalties are in shadow mode (A.3.2.2.7.2.1.1.7).\n\nA.3.3.2.2.3 goes further and suspends the requirement itself for one Agent: \"due to limitations in the infrastructure on Solana, Keel is exempt from the requirement to maintain the Minimum Actively Stabilizing Collateral,\" with removal promised in a future iteration.\n\nThat exemption is worth noting on its own terms. A per-Agent ratio guarantees the aggregate only if every Agent complies (A.3.3.1.3); one exempt Agent breaks the derivation, so Sky's system-wide ASC coverage is now below 5% of the Collateral Portfolio by exactly Keel's share. A technical limitation on one chain has been converted directly into a reduction in the ecosystem's peg-defense capacity, with no compensating requirement imposed elsewhere.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "No penalties exist for missing the ASC minimum, DAB and Peg Defense penalties are deferred to a future iteration, and Keel is exempt outright due to Solana infrastructure limits.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

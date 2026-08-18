@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-1d8cd32c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1d8cd32c-e890-4205-ad17-39da1606ab7f",
+      "targetTitle": "Atlas treasury text states intent only; on-chain effect requ"
+    },
+    {
+      "id": "lnk-b8cd8c44-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b8cd8c44-9d0c-4d99-8399-7e656e157d54",
+      "targetTitle": "The Artifact specifies steady-state operations in call-level"
+    },
+    {
+      "id": "lnk-bd601792-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd601792-a5b7-44a4-8d34-c9c530118e6b",
+      "targetTitle": "Atlas updates after a Spell must not introduce any change be"
+    },
+    {
+      "id": "lnk-c6b0f9e5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c6b0f9e5-e69f-4056-94fb-321cf579125b",
+      "targetTitle": "The Atlas embeds a runnable reference implementation to disa"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas specifies contract behaviour statement by statement, embedding Solidity fragments as governed procedure",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "6e744a80-3ee6-49ee-b343-4a0fc52c70d8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a9d24771-09ee-4fbd-ab59-53d3ef1c12cd",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "102e5f66-4202-4cbb-ad38-c83518a7a80e",
+      "name": "documentation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5e86e5d-16c5-4ca5-aeaf-7a99f74f409e",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.1 breaks each admin function into individually addressed steps with the source quoted inline. `setMaxSlippage` becomes four sections: confirm the caller holds `DEFAULT_ADMIN_ROLE` (.3.1, quoting the `onlyRole` modifier), validate the bound \u2014 \"the operator must ensure the provided `maxSlippage` does not exceed `1e18`, reverting with `MainnetController/max-slippage-out-of-bounds` otherwise\" (.3.2) \u2014 write the mapping (.3.3), and \"emit the event to the blockchain logs\" (.3.4). `setMintRecipient` and `setLayerZeroRecipient` get the same treatment.\n\nThe framing is unusual and revealing: each step is written as an obligation on **the operator** (\"the operator must emit the event\") even where the statement is executed automatically by the contract. The Atlas is not documenting the code \u2014 it is **restating the code as procedure that a human is accountable for**, so a deviation is a governance breach rather than merely a bug.\n\nThe benefit is that the governed text and the deployed bytecode are checkable against each other at the granularity of a single require statement. A reader can verify that the contract does what the Artifact says without trusting a summary.\n\nThe cost is coupling. Every contract upgrade now implies an Artifact edit, and any drift between the two produces a document that describes a system that no longer exists. Given how many parameters in the neighbouring sections already read \"will be specified in a future iteration\" (A.6.1.1.2.2.6.1.2.1.1.3), that maintenance burden is not hypothetical.\n\nIt also explains the Atlas's sheer volume: at this resolution, a handful of admin setters consumes as much document space as an entire governance process.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Admin operations are decomposed into numbered steps \u2014 check the role, validate the bound, write the mapping, emit the event",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

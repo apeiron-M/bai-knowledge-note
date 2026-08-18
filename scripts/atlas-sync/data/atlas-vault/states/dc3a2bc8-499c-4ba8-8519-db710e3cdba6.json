@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark Savings ETH pays depositors the liquidity layer's yield explicitly net of the idle redemption buffer",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8b624904-5f9d-4267-b506-836472c56b6f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6bb3799a-5eb5-4f69-95e4-b1ca9aa8bae7",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29c6b2e3-89e0-4a2c-8439-65b3567b3d32",
+      "name": "yield-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.5.3.2.3.3 gives the ETH vault a formula rather than a benchmark: the Rewards Rate equals \"the supply-weighted average yield of ETH-denominated assets held in the Spark Liquidity Layer, **multiplied by one minus the percentage of spETH backing held in the spETH vault contract for instant redemptions**, plus the Spark Savings ETH Spread\" \u2014 the spread itself \"defined as part of the ALM Planner configuration process,\" bounded to a range of \u22120.5% to 2%.\n\nThe middle factor is the interesting one. Assets sitting in the vault for instant redemption earn nothing; only the deployed remainder earns the liquidity layer's yield. Multiplying by (1 \u2212 buffer share) passes that dilution straight through to depositors, so the advertised rate is arithmetically what the pool actually earns.\n\nThe alternative \u2014 quoting the gross deployed yield and absorbing the buffer's cost from elsewhere \u2014 would mean Spark subsidizing liquidity out of its own margin, and would create a perverse incentive to shrink the buffer to protect the headline rate. Here the cost of liquidity is borne by the people who benefit from it, and Spark has no rate-driven reason to under-provision.\n\nThe bounded spread does the remaining work. It is Spark's margin, and permitting it to go **negative** to \u22120.5% is a deliberate allowance to pay depositors *more* than the pool earns \u2014 a subsidy lever for bootstrapping a new vault, capped tightly enough that it cannot become a structural loss.\n\nThis is the most transparent rate definition in the Spark Artifact: a reader with chain data can compute what the vault should be paying, and any divergence is a fact about the setter's performance rather than an ambiguity in the policy.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:48:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The rate equals the supply-weighted ETH yield times one minus the share of spETH backing held for instant redemptions, plus a spread bounded between \u22120.5% and 2%.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

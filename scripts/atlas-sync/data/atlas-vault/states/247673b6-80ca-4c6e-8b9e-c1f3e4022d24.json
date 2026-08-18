@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A rate-limit parameter can be left unspecified while its paired parameter is Unlimited, leaving a throttle with no defined value",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "55547be8-a1a9-4f2e-8af5-890eeacb8fed",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e05c63f8-36ef-49a7-8ea1-648f69e6807c",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f1540247-1995-451d-a544-a76d04555a9f",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7767494f-762c-4c72-abb8-551435cfad73",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Maple USDC outflow rate limits (A.6.1.1.1.2.6.1.3.1.3.1.2.4.2) read: \"`maxAmount`: Unlimited\" and \"`slope`: This parameter will be specified in a future iteration of the Spark Artifact.\"\n\nThe deferral pattern normally applies to whole slots \u2014 RateLimitIDs, the Aave `Pool`, Ethena's underlying asset address. Here it appears *inside* a populated parameter pair, at a leaf level, mixing a stated value with an admitted unknown.\n\nWith an unlimited ceiling the slope is arguably moot: a bucket that is never depleted never needs to refill. On that reading the deferral is harmless bookkeeping. But it also means the document cannot be mechanically checked against chain state \u2014 a verifier comparing documented limits to deployed limits has nothing to compare for this leg, and cannot distinguish \"intentionally unbounded\" from \"not yet decided\".\n\nThe broader point is about how the Artifact degrades. Deferral is used consistently and honestly enough to be a recognisable convention, but its granularity is unconstrained: it can swallow an entire identifier block or a single number nested two levels inside an otherwise complete specification. That makes completeness impossible to assess from structure alone \u2014 every leaf must be read to know whether the configuration is actually determined.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:33:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Maple USDC's outflow declares maxAmount Unlimited but defers the slope to a future iteration of the Spark Artifact, so the document specifies neither a ceiling nor a regeneration rate for that leg.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

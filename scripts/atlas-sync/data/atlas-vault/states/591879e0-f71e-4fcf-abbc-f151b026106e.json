@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-d54e3312-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "d54e3312-f916-412f-80df-4ab274ea828c",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "USDS replaced Dai as a 1:1 convertible successor rather than a forced migration",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "31586fe6-4fad-4787-97f1-9b0396d76e2e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dc957ff1-4925-4806-99e1-7120d52819f3",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d00be21-e0ec-4701-a3be-ea25cc26025d",
+      "name": "stablecoin",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d51b1fbc-36a5-40ae-a338-e900ef4ad858",
+      "name": "upgrades",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.1.1.1 records that in the Endgame Token Launch Phase, \"USDS was launched as an upgrade to Dai, offering new features, including Token Rewards. Dai can be exchanged to and from USDS at a rate of 1:1.\"\n\nThe operative detail is that conversion runs in **both directions** at par and without expiry. This is a materially different upgrade strategy from a migration: nobody is required to act, no integration breaks, and the legacy token retains full value. Adoption is driven purely by the new features being worth having.\n\nThe cost of that gentleness is permanent duality \u2014 two units of account for the same dollar, indefinitely, each needing supply accounting and integration support. Sky accepts that cost to avoid the alternative failure mode, where a deadline-driven migration strands balances held in contracts nobody controls anymore.\n\nThe same shape recurs for the governance token (MKR to SKY), which suggests this is a deliberate house pattern rather than a one-off: ship the successor, make it convertible, let the old one wither.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:15:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:15:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Launching the upgrade as a parallel, freely exchangeable token adds features (Token Rewards) without breaking existing Dai holders or integrations \u2014 no deadline, no stranded balances.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "When a Delegate is removed or compromised their delegators' voting power is annulled rather than returned",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "f3f54b2c-bc94-40a7-b95b-2323bbe5e98f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "326b3a37-be48-4954-956f-3ee122a3a752",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "01137e98-ef62-4ecc-a153-e5b388fd7272",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "caecfbc1-3c8d-4431-9e2f-02debbee151c",
+      "name": "delegation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two provisions place the cost of a Delegate's failure on the people who delegated to them. A.6.1.1.2.3.1.4.5.4: on offboarding the registry status becomes Inactive, and \"**GROVE Delegators must manually revoke their delegations and redelegate** if they wish to continue participating in Grove governance.\" A.6.1.1.2.3.1.4.7.2: on suspected key compromise, the Foundation flags the Delegate as \"Suspended - Security Review\" and \"**All voting power to the suspended address is annulled**.\"\n\nNeither event returns the power to the holder. It stops existing until the holder takes an action.\n\nFor the compromise case the reasoning is unavoidable \u2014 an attacker holding the key would otherwise control every vote delegated to that address, so annulment is the only safe response and speed matters more than the delegators' convenience. Reassigning power automatically is not an option either: there is nobody to reassign it to who the delegator chose.\n\nThe consequence is a silent, unbounded disenfranchisement. A delegator who is not watching the registry or the Forum simply stops having a vote, with no on-chain event in their own wallet to signal it and no expiry forcing a review. Since delegation can only be changed \"whenever no proposal is live\" (A.6.1.1.2.3.1.4.2.3), even an attentive delegator may have to wait for a gap in governance to restore their position.\n\nThis is the hidden liability of the delegation model. A delegator's participation depends not only on their delegate voting well but on their delegate remaining in good standing and keeping their keys secure \u2014 and the failure mode is not a bad vote, which is visible, but the absence of a vote, which is not. The framework mitigates it only through publication: the Foundation \"notifies the governance community on the Sky Forum,\" which places the burden of noticing squarely on the delegator.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:55:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:55:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Delegations do not fail over: on offboarding, holders must manually revoke and redelegate, and on key compromise all voting power to the suspended address is annulled outright.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

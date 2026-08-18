@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-3773617b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3773617b-3158-4e2b-a798-3fef19b2d579",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The instance tree is network-scoped first, so the same protocol is approved and reviewed separately per chain",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "b34ddb0a-3cc9-419b-a194-301226dc2169",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e412452-eeb5-4a04-aea9-66d68d474cea",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8158d528-6285-4930-9e04-1293688dd66d",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "297d9b72-36fe-4bd8-b6d8-6931723c5db9",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "After the Ethereum Mainnet venues the tree opens a sibling: \"The Base Instances of the Spark Liquidity Layer with `Active` Status are stored herein\" (A.6.1.1.1.2.6.1.3.2), immediately followed by its own Morpho section (.2.1) and the Base - Morpho Blue USDC ERC4626 Vault instance (.2.1.1).\n\nThe hierarchy is therefore network \u2192 protocol \u2192 instance, not protocol \u2192 network. Every venue is re-approved, re-parameterised and re-reviewed for each chain it runs on, and there is no shared 'Morpho' object that both chains inherit from.\n\nThat is the right decomposition for the actual risks. A protocol deployment on Base has different contracts, different liquidity, different bridge dependencies and different governance latency from its mainnet counterpart, and a limit sized for one says nothing about the other.\n\nThe verdicts confirm the independence is real rather than clerical: Base Morpho Blue reads \"**`Covered`**\" (.2.1.1.1) while all three Ethereum Morpho instances read \"**`Pending`**\". The same protocol name carries opposite review states on two chains \u2014 which is coherent under per-chain assessment, and would look like a contradiction to anyone summarising coverage by protocol. The Base instance also sharpens the field name to `Token Address (ERC4626 Vault)` (.2.1.1.2.2.1), a small sign that the schema is still being refined as the newer subtrees are written.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:47:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Base opens its own subtree with its own Morpho section, and Base Morpho Blue is marked Covered while the Ethereum Morpho instances are all Pending \u2014 one protocol, two independent risk verdicts.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

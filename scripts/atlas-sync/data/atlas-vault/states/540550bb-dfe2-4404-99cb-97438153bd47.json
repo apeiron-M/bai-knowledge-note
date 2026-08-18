@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Integration Boost tracks pending Invocations under Active Instances while the Distribution Reward uses a separate In Progress directory",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "8478fd43-ca1c-423d-91a3-98ce9790d325",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "06f73719-6017-44a1-af7b-f3276a5b5e99",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b4b7db33-caef-4301-bcbd-bd86c4bd4400",
+      "name": "schema-consistency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The two Primitives that conform to the Process Definition schema (A.2.2.2) implement its document bookkeeping differently. The Distribution Reward chain writes Invocation Status into `Primitive Hub Document/**In Progress Invocations Directory**/Instance Name` and, on approval, converts the entry into the `Active Instances Directory` schema and moves it (A.2.2.9.1.2.3.6.4.2.2).\n\nThe Integration Boost chain uses one location throughout. From the GovOps review stage onward it writes `Active instances/Instance name/Instance status` \u2014 `Proposal drafting in progress` (A.2.2.9.2.2.3.2.4.2.2), `Proposal Pending Facilitator Review` (.3.3.4.2.1), `Approved` or `Rejected` (.3.5.4.2), and finally `Active` (.3.6.4.2.1). Only the first stage (.3.1.4.2) mentions an In Progress Invocations Directory, and no promotion step moves anything out of it.\n\nSo under the Boost's specification, unapproved and even rejected instances occupy the `Active Instances` subtree, distinguished only by a status field. Under the Distribution Reward's, location itself carries the distinction and \"active\" is a structural fact rather than a value to be read.\n\nThe divergence matters because location-as-state is a load-bearing property elsewhere: monthly settlement runs over instances \"with an Instance Status of `Active`\" (A.2.2.9.1.2.4.1.1.1.1.1, A.2.2.9.2.2.4.1.1.1.1.1), and any tooling that instead enumerated the Active Instances subtree would pick up pending Boost instances. It is a concrete example of the cost of applying the schema Primitive-by-Primitive rather than deriving all specifications from one implementation.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Two Primitives built on the same Process Definition schema diverge in document-tree usage, so an in-flight Boost instance sits in the same subtree as live ones.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,72 @@
+{
+  "links": [
+    {
+      "id": "lnk-1d888b95-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1d888b95-01fe-4bb5-abc9-1754d142d417",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Multi-Instance Coordinator centralizes the Liquidity Layer's mechanism while leaving its allocation strategy unwritten",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "91cddc1d-9493-4ec2-acf1-393eaa9a8266",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1b12b1d8-899a-466c-816b-9e7e7e63cbb2",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69d5f48f-e2b5-4575-99d7-cbfd352ecb0a",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f239feaa-59bd-4776-8dc6-79afa8d36b1c",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.6.2.6.1.2 introduces the Multi-Instance Coordinator Document as providing \"general specifications of the Pattern Liquidity Layer\" and defining \"Pattern's overarching **strategy** and operational framework for managing across all Instances.\" The factoring works: contract addresses, role definitions, controller functions, rate limit management and the emergency protocol all live here once, and the instance documents are pointed to only \"for instance-specific parameters (such as vault addresses, asset addresses, and rate limits)\" (A.6.1.1.6.2.6.1.2.2.1.2.1.2.3).\n\nThat is a sound separation. Shared machinery described in one place cannot drift between instances, and adding a venue does not duplicate the operating manual.\n\nThe strategy half is missing. A.6.1.1.6.2.6.1.2.3 - Allocation Strategy contains a single sentence: \"In the future, additional logic will be added herein regarding the strategy by which capital is allocated between different Instances of the Pattern Liquidity Layer.\" Two adjacent operational processes are also deferred \u2014 Instance Lifecycle Management (A.6.1.1.6.2.6.1.2.2.1.4) and Upgrading Controller (A.6.1.1.6.2.6.1.2.2.1.5).\n\nThe result is an Agent with a fully specified *how* and an unspecified *how much, where*. Every mechanical action a relayer can take is documented to the function signature, while the question of how Pattern decides to split capital across venues currently has no rule at all \u2014 it sits with the operators inside the rate limits that Sky Governance sets. For an Agent whose entire purpose is capital allocation, that is the most consequential empty section in the Artifact.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:49:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Shared contracts, roles, functions and rate limits are factored out so instance documents hold only local parameters \u2014 but the section meant to say how capital is split between instances is empty.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

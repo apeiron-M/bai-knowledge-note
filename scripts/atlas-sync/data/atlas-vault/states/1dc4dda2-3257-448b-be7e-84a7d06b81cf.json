@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Document Update in one Process can deterministically compel the initiation of another Process",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "37975224-e7cd-4acd-b0a6-c94cbba6c685",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3d2013a5-4a83-4ec0-aa93-b91a4cbfc86b",
+      "name": "process-definition",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ef4d31ce-fb8f-4000-ab71-c69bee38a709",
+      "name": "automation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.2.1.1.2 defines Document Update Triggers as \"a type of gating condition that automatically or deterministically compels initiation of a Process in response to a specific Core Atlas or Agent Artifact Document Update in a previous Process Definition,\" and makes the obligation hard: \"Once the specified Atlas or Artifact Document Update occurs (and assuming any specified Dependencies are also met), the Process **must** be initiated.\"\n\nA.2.2.2.4 supplies the other half of the link from the producing side: a Required Output \"can serve as a 'trigger' that deterministically compels another Process Definition to be initiated by a system or actor,\" with a `Trigger - Process` field naming the Process it initiates.\n\nTogether these turn the Primitive set into a **state machine over documents**. Processes do not call each other; they write documents, and document writes fire the next Process. The mediating artifact is the Atlas itself, which means every transition in the machine is a governance-visible record rather than an opaque internal message.\n\nTwo consequences follow. First, coupling is by data, not by procedure, so a Process need not know who consumes its output. Second, because initiation is mandatory rather than permissive, an incorrect Required Output can compel a downstream Process that nobody intended \u2014 the chain has no discretionary checkpoint unless a Dependency (A.2.2.2.1.2) supplies one.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Document Update Triggers plus the Required Outputs `Trigger - Process` link chain Primitive Processes into a state machine whose transitions are Atlas and Artifact document changes.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

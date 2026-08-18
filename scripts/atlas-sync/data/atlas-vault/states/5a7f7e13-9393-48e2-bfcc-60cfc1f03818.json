@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-0be63c7b-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "0be63c7b-28bb-4054-becf-050d5e35920e",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every rate in Sky is defined as an arithmetic spread from a single Base Rate, making one lever move the whole system",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "adf6f119-d222-4219-9f08-e2f7fbb174e9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5daa1fe6-f6fa-4677-9a7a-f832b7cef760",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "82e3407f-470d-4543-81ac-61e16967aaf9",
+      "name": "core-stability-parameters",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.1 states that the Base Rate \"is the key interest rate in the system. It defines all other rates by various spreads.\" The rate ladder that follows is entirely derivative:\n\n- Sky Savings Rate = Base Rate \u2212 Distribution Reward Fee \u2212 Sky Spread (A.3.1.2.2.1)\n- Agent Rate = Base Rate \u2212 Sky Spread, equivalently SSR + Distribution Reward Fee (A.3.1.2.3.1)\n- Agent Credit Line Borrow Rate = Base Rate (A.3.1.2.5.1)\n\nA.3.1.1.2 makes the coupling mandatory rather than conventional: when setting the Base Rate, the Core Executor Agents \"must also set all other Core Stability Parameters so that they maintain their specified relationship to the Base Rate.\" There is no independent tuning of the ladder's rungs.\n\nA.3.1.2.7 fixes the arithmetic. All rates are annual percentage yields, and \"a spread between two rates ... is the arithmetic difference between their annual percentage yields\" \u2014 added or subtracted \"directly, without conversion.\" This is a deliberate simplification: per-second compounding rates (the contracts store RAY-precision per-second rates, A.3.1.2.2.3) do not compose additively, so the Atlas specifies the human-readable convention and lets implementations convert.\n\nThe design tradeoff is expressiveness for auditability: one number moves saver yield, agent yield and borrow cost together in lockstep, so a governance reader only has to check one parameter and a small set of spreads rather than reconcile a matrix of independent rates.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:18:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Base Rate is the sole primitive interest rate; SSR, Agent Rate and the credit-line borrow rate are fixed offsets from it, and spreads are added directly to APYs without compounding conversion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

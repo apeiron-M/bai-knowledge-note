@@ -1,0 +1,79 @@
+{
+  "links": [
+    {
+      "id": "lnk-95976a42-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "95976a42-1148-4a2e-a0ea-36e5c897d050",
+      "targetTitle": "A Document Update in one Process can deterministically compe"
+    },
+    {
+      "id": "lnk-beb94181-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "beb94181-e00a-44b5-b74f-ef6516524777",
+      "targetTitle": "Invoking one Primitive Instance runs a chain of six Process "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Required Outputs must be explicitly correlated to the Input stage or exclusive pathway that triggers them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a431ca2e-4cd5-4072-bfc4-4bfe138f2e88",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f772a19e-b004-4b1f-bbeb-9ca67c1539d2",
+      "name": "process-definition",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dc3a14ff-8083-4ebd-b9a6-52883fa16fca",
+      "name": "control-flow",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.2.3 splits Required Primitive Inputs into two composition forms. **Sequential Stages** (A.2.2.2.3.1): \"Each Input stage must be completed before progressing to the next... Once an Input stage is completed, the subsequent Input stage is initiated automatically.\" **Mutually Exclusive Pathways** (A.2.2.2.3.2): \"Once a pathway is chosen\u2014either manually or automatically via the application of a defined decision or condition\u2014the Process follows that pathway through to completion, rendering the other pathways inapplicable.\"\n\nA.2.2.2.4.1 then imposes the binding requirement: where multiple Required Output sets exist, the Required Primitive Input field \"must define which `Required Output` set is Invoked upon completion of that stage or pathway.\" For sequential stages, \"each stage's successful completion triggers its corresponding Required Output set,\" so all outputs eventually execute in sequence. For exclusive pathways, \"only the Required Output set tied to that pathway is applied. Outputs associated with the unselected/unexecuted pathways remain inactive.\"\n\nThese are the two primitives of control flow \u2014 sequence and branch \u2014 expressed in document terms, and the correlation requirement is what makes them unambiguous. Without it, a Process with several output sets would leave open which document updates actually occur, and since those updates can themselves trigger further Processes (A.2.2.2.4), ambiguity would propagate downstream.\n\nA.2.2.2.4 also notes the degenerate case: some Processes need no formal Required Outputs at all, because the input change itself \u2014 \"e.g., toggling a field to Globally Activate a Primitive\" \u2014 completes the Process in a single step.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:19:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Sequential stages fire their outputs cumulatively in order; mutually exclusive pathways fire only the selected set and leave the alternatives permanently inactive.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

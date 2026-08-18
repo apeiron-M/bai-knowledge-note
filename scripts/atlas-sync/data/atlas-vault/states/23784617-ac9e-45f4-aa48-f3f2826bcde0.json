@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Integration Boost pays the Sky Savings Rate on USDS balances sitting in partner protocols that do not otherwise earn it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "2c1e2f42-5cd9-48bb-bea7-885701e489a9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2f14b66e-7c26-4bb3-a53d-d65a8716b2c7",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f6c6150d-90f9-4be7-ac76-b2d0f4574fe3",
+      "name": "usds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.2.1.1 introduces the Integration Boost Primitive as providing \"a low complexity version of the Sky Savings Rate to Integration Boost Partners that hold USDS or lending markets that integrate USDS,\" and A.2.2.9.2.2.1.1 supplies the formula: \"the Integration Boost is calculated as the Sky Savings Rate times the **Unrewarded** USDS balances in the Integration Boost Partner's protocol.\"\n\nThe word \"Unrewarded\" is what defines the instrument. USDS deposited directly into the Sky Savings Rate already earns yield; USDS sitting inside a third-party lending market or DeFi protocol does not. Those balances are economically inert from the holder's perspective, which creates a disincentive to hold USDS anywhere other than Sky's own venue. The Integration Boost pays the same rate to those balances so that integration does not cost the user their yield.\n\n\"Low complexity\" points at the delivery mechanism rather than the economics. Rather than requiring every partner protocol to integrate the Savings Rate contract, the Boost is computed off reported net deposits and paid out as a transfer \u2014 an accounting-level replication of the SSR that any protocol can receive without technical work.\n\nStrategically this is a defence of USDS's competitive position in composability. A stablecoin whose yield disappears the moment it enters a lending market is worse collateral than one whose yield follows it, and A.2.2.9.2.2.3.1.2 confirms the intent: Prime Agents look for \"a DeFi protocol or market where an Integration Boost would drive adoption.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:23.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:34:23.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Calculated as the Sky Savings Rate times the Unrewarded USDS balances in a DeFi partner's protocol, it is described as a low-complexity version of the SSR for integrated venues.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

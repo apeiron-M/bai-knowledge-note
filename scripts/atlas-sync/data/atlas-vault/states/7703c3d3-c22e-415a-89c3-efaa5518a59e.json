@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Globally deactivating a Primitive suspends every existing instance immediately, but reactivation revives none of them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "fe7a7c41-ff51-4776-bd19-a0f965c82211",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d0f847b5-5d97-4fb7-af37-d9da2dacc801",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b115d5b-956b-49ef-87f4-5652d262cbb4",
+      "name": "agent-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.1.2.4.2 states that when a Primitive's Global Status is deactivated, \"_all_ existing instances of that Primitive immediately become `Suspended`,\" and while it remains Globally Inactive the Agent \"is barred from creating new instances or reactivating existing instances.\" A.2.2.1.2.4.2.2 then makes reactivation deliberately incomplete: restoring Global status \"restores the Agent's ability to create new instances (via proper Invocation) but does _not_ automatically revive previously deactivated instances. Each existing instance remains inactive unless separately reactivated through the appropriate governance process.\"\n\nThe asymmetry is the design. Deactivation is a **broad, instant kill switch** \u2014 one governance action stops every deployment of that Primitive at once, which is exactly what a security incident or framework breach demands. Reactivation is deliberately **narrow and per-instance**, so restarting requires explicitly re-affirming each deployment.\n\nThis avoids a specific failure mode: a Primitive deactivated for cause, later globally re-enabled for an unrelated new use case, silently resurrecting the very instances that caused the problem. The default on the recovery path is off.\n\nThe cost is operational drag proportional to instance count. An Agent running many parallel instances \u2014 A.2.2.1.3.3 explicitly contemplates multiple Integration Boost instances \u2014 faces one cheap shutdown and then N separate governance actions to come back, which makes global deactivation a much heavier decision than its single-action cost suggests.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:16:24.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The asymmetry makes deactivation cheap and recovery expensive: each suspended instance needs its own separate governance action to become Active again.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

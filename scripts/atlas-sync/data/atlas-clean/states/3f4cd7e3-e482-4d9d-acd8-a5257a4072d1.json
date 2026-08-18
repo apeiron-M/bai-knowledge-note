@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-684ab53d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "684ab53d-6f8f-4dec-a980-51d2c7a3e9c2",
+      "targetTitle": "Every Spark Liquidity Layer venue is specified by a uniform "
+    },
+    {
+      "id": "lnk-973641da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "973641da-ccc0-4c06-a202-e29a6310443d",
+      "targetTitle": "Every Spark Liquidity Layer deployment is registered as a un"
+    },
+    {
+      "id": "lnk-f11a43c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f11a43c0-c874-450f-bce7-2ab74cfabfd9",
+      "targetTitle": "Spark Savings v2 inverts the schema by recording an Asset Su"
+    },
+    {
+      "id": "lnk-dc9bef75-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc9bef75-9d48-454d-a3ca-2b64fea38581",
+      "targetTitle": "Centralized custodians and exchanges appear in the Allocatio"
+    },
+    {
+      "id": "lnk-ee14b006-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee14b006-92df-4ad7-98a6-53e27daa1e69",
+      "targetTitle": "Anchorage conduits move assets to a custodian without conver"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Swap-only instances turn the Instance Configuration Document into a registry of trading routes, not just capital deployments",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "a4b9f2db-c115-4b18-96b7-2527746b9b4d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "22c612b7-b516-42c7-a528-42b0401ee400",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "84d0c067-ad01-42a3-94ae-2f8b85a143d8",
+      "name": "liquidity-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "13824807-0a11-40b8-81cf-e36cbd0b42b5",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three Curve instances declare `Asset Supplied By Spark Liquidity Layer` as \"N/A - swap only\": USDC/USDT (A.6.1.1.1.2.6.1.3.1.7.2.2.1.3), weETH/WETH-ng \"for Swaps\" (.7.5.2.1.3) and rlUSD/USDC \"for Swaps\" (.7.6.2.1.3). Their inflow and outflow rate limits carry the same string in place of numbers (.7.2.2.4.1/.2, .7.5.2.4.1/.2, .7.6.2.4.1/.2), leaving only the swap leg populated.\n\nThese instances hold no position. Spark never supplies liquidity to the pool and never receives an LP token to hold; the venue is used as an exchange and nothing more. The `Token` field still lists an LP token (`crv2pool`) because the template demands one, but it names the pool rather than a holding.\n\nThat makes the Instance Configuration Document do double duty. For lending and vault venues it records *where the balance sheet is deployed*; for these it records *which routes the Relayer may trade through*, sized by how much and at what maximum slippage. Both live in the same tree under the same `Active` status, distinguished only by the N/A markers.\n\nThe governance consequence is worth being explicit about: authorising a swap route is materially different from authorising a deployment. There is no ongoing counterparty exposure to monitor, but there is a standing permission to move value through a third-party pool, whose worst case is execution loss rather than principal loss. Filing both under one schema keeps the approval process uniform, at the cost of letting a reader assume every `Active` instance represents capital at risk in that venue.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:38:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Curve USDC/USDT, weETH/WETH-ng and rlUSD/USDC record Asset Supplied By Spark Liquidity Layer as 'N/A - swap only' with both inflow and outflow legs disabled, leaving swap limits as the only live",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

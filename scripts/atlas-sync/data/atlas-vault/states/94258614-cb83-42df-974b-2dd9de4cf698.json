@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-753e0a12-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "753e0a12-b29d-4c3b-b69a-54dab080b983",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Executive Document hash check must prove the only difference from the hashed commit is the Spell address substitution",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "29a08c91-9058-4ce8-bacf-b0137abe5f4e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05c4fb01-8cf4-4a31-a8e1-f358e2b36e11",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d02e559-84a1-4ce2-9682-662fc7f916d7",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.12.3.3.1 asks validators to confirm \"that the smart contract developers referenced the correct governance copy when building the Spell and that the document voters see on the Voting Portal matches the Spell contents,\" by checking that the hash embedded in the Spell corresponds to the Executive Document in GitHub.\n\nThe complication is that the two artifacts cannot be identical. \"Validators should be aware that the hash refers to an earlier commit of the Executive Document markdown, prior to the inclusion of the contract address.\" The Spell hashes a document that necessarily predates the Spell's own deployment.\n\nSo the check has two stages: verify the hash against that earlier commit \u2014 via the online Keccak-256 tool or `cast keccak -- \"$(wget $RAW_EXEC_URL -O -)\"` at the specific commit \u2014 and then \"conduct a diff check between the commit associated with the Executive Hash and the final version of the document to confirm that **the only difference is the replacement of the Spell address placeholder**.\"\n\nThat second step is what makes the whole document-to-code binding sound. Without it, the hash proves only that *some* version of the document was referenced, leaving a window in which the published text could differ from the hashed text in ways no hash would reveal. A.1.10.2.4.11.1.3 asserts as policy that only the address field may change after deployment; this check independently verifies that the policy was followed.\n\nIt is a good illustration of how the Atlas layers controls: an internal rule restricts the edit, an internal reviewer confirms the field, and an external validator proves the delta cryptographically. None of the three depends on the others being honest.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:41:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.3.3.1 has validators hash an earlier commit and then diff it against the published version, closing the gap created by the one post-deployment edit the process allows.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

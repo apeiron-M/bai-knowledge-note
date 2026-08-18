@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-09318187-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "09318187-7a04-4560-a4b3-69ceae85d796",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Invocation's lifecycle stage is encoded by where its documents sit in the Artifact tree",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "81d748e1-0ec4-4303-a634-24ef678f0134",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "109ac267-9049-4d14-97c9-6b18aaeacfc9",
+      "name": "agent-artifacts",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dafe0d07-b762-4363-a172-d0165a8ab6a5",
+      "name": "state-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Distribution Reward Invocation chain tracks state twice over: in a status field, and in document location. A.2.2.9.1.2.3.1.4.2 creates the `Instance Configuration` Document and registers it under `Primitive Hub Document/In Progress Invocations Directory`. On success, A.2.2.9.1.2.3.6.4.2.1 has the document \"moved from `In Progress Invocations` to `Active Instances`,\" and .6.4.2.2 has the directory entry itself \"converted into `Active Instances Directory` schema and moved into that subtree.\"\n\nOn failure the document is preserved rather than discarded: A.2.2.9.1.2.3.5.4.2 specifies that when the proposal fails, the \"`Instance Configuration Document` is `Archived` in Primitive Hub Document/Hub Data Repository.\"\n\nTwo properties fall out of this. First, **the tree is queryable as state**: listing `Active Instances` gives an Agent's live Primitive deployments without evaluating any status logic, and the schema conversion on promotion means an active instance is described by a different shape than a pending one. Second, **rejected attempts remain part of the record**. An Agent's Artifact accumulates the history of what it proposed and failed to pass, not just what it operates.\n\nThe Instance Configuration Document also \"automatically inherits\" its Status from the Primitive Hub Document, which is how the global/instance status relationship of A.2.2.1.3.1 is realized concretely \u2014 global deactivation propagates through inheritance rather than through a separate sweep over instances.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:30:07.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Instance Configuration Documents live under In Progress Invocations, are moved into Active Instances on approval, and are Archived rather than deleted when a vote fails.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}

@@ -1,0 +1,67 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad391ba3-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ad391ba3-5d45-49e9-88ee-c745aa961906",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Launch Agent 7's on-chain Liquidity Layer contracts are specified inside the Artifact itself, not merely referenced",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "DRAFT",
+  "topics": [
+    {
+      "id": "72197737-3e2b-42e9-bd35-194e06fb7060",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8edfea5-fad8-4299-8784-86ecbbcd0c55",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "74c722ed-e9c6-4661-9b3d-939bbda6e000",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Under the Multi-Instance Coordinator, A.6.1.1.8.2.6.1.2.1.1 commits the Artifact to describing \"the high-level design of the Launch Agent 7 Liquidity Layer, including its key smart contracts and their functionality,\" and A.6.1.1.8.2.6.1.2.1.1.1 carries the addresses of \"the Liquidity Layer's constituent contracts\" \u2014 an ALLOCATOR_BUFFER and an ALLOCATOR_VAULT, the latter labelled ALLOCATOR-INTERVAL-A.\n\nThe substantive claim is about where authority over the technical stack sits. By naming deployed contracts in the Artifact rather than pointing at an external registry, the Agent's on-chain configuration becomes governed text: changing which contracts constitute the Liquidity Layer requires a Root Edit, which means an alignment review by the Operational Facilitator and a token-holder vote.\n\nThat closes a gap that would otherwise exist between what the Artifact says the Agent is and what the Agent actually operates. Contract-level changes cannot be made quietly as engineering decisions while the governing document continues to describe the old arrangement.\n\nThe naming convention hints at planned extension \u2014 an allocator vault suffixed INTERVAL-A implies siblings \u2014 which is consistent with the Allocation System being the one Supply Side primitive built for many Instances and given a coordinator to manage them.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-17T21:45:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Allocation System Primitive documents the Layer's high-level design and names its Allocator Buffer and Allocator Vault contracts, putting deployed code under the Artifact's amendment process.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": []
+}
