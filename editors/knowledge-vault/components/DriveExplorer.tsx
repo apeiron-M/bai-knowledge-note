@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback } from "react";
 import type { EditorProps } from "document-model";
 import {
   setSelectedNode,
-  useDocumentsInSelectedDrive,
   useFileNodesInSelectedDrive,
 } from "@powerhousedao/reactor-browser";
 import type { ProjectStatus } from "document-models/project";
@@ -17,8 +16,12 @@ import { SearchView } from "./SearchView.js";
 import { ActivityView } from "./ActivityView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
+import { useVaultDocIndex } from "../../shared/use-vault-doc-index.js";
+import {
+  useReactorDocsWithRefetch,
+  type ReactorDocSpec,
+} from "../hooks/use-reactor-docs.js";
 import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
-import { useAutoHealth } from "../hooks/use-auto-health.js";
 import { ThemeToggle } from "../../shared/theme-context.js";
 
 type ViewMode =
@@ -36,7 +39,15 @@ export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
   const [graphFocus, setGraphFocus] = useState<GraphFocus | null>(null);
   const [graphClearNonce, setGraphClearNonce] = useState(0);
-  const { notes } = useKnowledgeNotes();
+  // `notesLoading` is true until the first metadata fetch settles. It has
+  // to be threaded into every note-derived view: without it they render
+  // their "empty vault" state during the several seconds the fetch takes,
+  // which reads as "there is nothing here" rather than "not yet loaded".
+  const { notes, isLoading: notesLoading } = useKnowledgeNotes();
+  // Pre-warm the shared doc-title index (module-level TTL cache) so the
+  // first document editor the user opens finds it hot instead of paying
+  // the two index round-trips itself.
+  useVaultDocIndex();
   const fileNodes = useFileNodesInSelectedDrive();
   const showDocumentEditor = !!children;
 
@@ -63,25 +74,26 @@ export function DriveExplorer({ children }: EditorProps) {
     }>
   >(() => [], []);
 
-  // Auto-generate health metrics
-  useAutoHealth(notes);
-
   // Count doc types
-  const allFiles = fileNodes ?? [];
+  const allFiles = useMemo(() => fileNodes ?? [], [fileNodes]);
   const sourceCount = allFiles.filter(
     (n) => n.documentType === "bai/source",
   ).length;
-  const pipelineExists = allFiles.some(
-    (n) => n.documentType === "bai/pipeline-queue",
-  );
 
-  // Project badge counts non-ARCHIVED projects. Unlike sourceCount, this
-  // can't be derived from file nodes alone (FileNode only carries
-  // documentType, not the document's state), so it reads the full
-  // documents here instead.
-  const documents = useDocumentsInSelectedDrive();
-  const projectCount = (documents ?? []).filter((d) => {
-    if (d.header.documentType !== "bai/project") return false;
+  // Project badge counts non-ARCHIVED projects. FileNode only carries
+  // documentType, not state, so the (few) project documents are read
+  // from the server directly.
+  const projectSpecs = useMemo<ReactorDocSpec[]>(
+    () =>
+      allFiles
+        .filter((n) => n.documentType === "bai/project")
+        .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name })),
+    [allFiles],
+  );
+  const { docs: projectDocs } = useReactorDocsWithRefetch(projectSpecs, {
+    pollMs: 60_000,
+  });
+  const projectCount = projectDocs.filter((d) => {
     const status = (
       d.state as unknown as { global: { status?: ProjectStatus } }
     ).global.status;
@@ -147,7 +159,8 @@ export function DriveExplorer({ children }: EditorProps) {
     {
       key: "notes",
       label: "Notes",
-      badge: notes.length,
+      // No badge while loading — a "0" here would be a false count.
+      badge: notes.length > 0 ? notes.length : undefined,
       icon: (
         <svg
           className="h-4 w-4"
@@ -281,6 +294,7 @@ export function DriveExplorer({ children }: EditorProps) {
       <VaultSidebar
         notes={notes}
         mocs={mocs}
+        isLoading={notesLoading}
         graphFocus={graphFocus}
         onClearGraphFocus={handleClearGraphFocus}
       />
@@ -354,7 +368,7 @@ export function DriveExplorer({ children }: EditorProps) {
               className="text-[10px]"
               style={{ color: "var(--bai-text-faint)" }}
             >
-              {notes.length}n
+              {notesLoading && notes.length === 0 ? "…" : `${notes.length}n`}
             </span>
             <ThemeToggle />
             <GettingStartedButton />
@@ -375,7 +389,7 @@ export function DriveExplorer({ children }: EditorProps) {
               clearFocusNonce={graphClearNonce}
             />
           ) : viewMode === "search" ? (
-            <SearchView />
+            <SearchView isLoading={notesLoading} />
           ) : viewMode === "activity" ? (
             <ActivityView />
           ) : viewMode === "sources" ? (
@@ -385,7 +399,7 @@ export function DriveExplorer({ children }: EditorProps) {
           ) : viewMode === "health" ? (
             <HealthDashboard />
           ) : (
-            <NoteList notes={notes} />
+            <NoteList notes={notes} isLoading={notesLoading} />
           )}
         </div>
       </div>

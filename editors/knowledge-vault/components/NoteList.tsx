@@ -1,9 +1,13 @@
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { prefetchOnHover } from "../lib/prefetch.js";
 import { memo, useState, type CSSProperties } from "react";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
+import { LoadingPanel } from "./LoadingStates.js";
 
 type NoteListProps = {
   notes: KnowledgeNoteInfo[];
+  /** True until the first vault metadata fetch settles. */
+  isLoading?: boolean;
 };
 
 const PAGE_SIZE = 30;
@@ -31,8 +35,19 @@ const STATUS_BADGE_STYLES: Record<string, CSSProperties> = {
   },
 };
 
-export function NoteList({ notes }: NoteListProps) {
+export function NoteList({ notes, isLoading = false }: NoteListProps) {
   const [visibleCount, setVisibleCount] = useState(PAGE_SIZE);
+
+  // Distinct from the empty state below: nothing has arrived *yet*. The
+  // vault metadata query takes seconds on a large vault, and claiming
+  // "no knowledge notes yet" during that window is simply wrong.
+  if (isLoading && notes.length === 0) {
+    return (
+      <div className="p-4">
+        <LoadingPanel label="Loading notes…" />
+      </div>
+    );
+  }
 
   if (notes.length === 0) {
     return (
@@ -90,6 +105,7 @@ const NoteCard = memo(function NoteCard({ note }: { note: KnowledgeNoteInfo }) {
     <button
       type="button"
       onClick={() => setSelectedNode(note.id)}
+      {...prefetchOnHover(note.id)}
       className="group flex flex-col rounded-xl border border-[var(--bai-border)] bg-[var(--bai-surface)] p-4 text-left transition-all hover:border-[var(--bai-accent)] hover:bg-[var(--bai-hover)]"
     >
       {/* Header */}

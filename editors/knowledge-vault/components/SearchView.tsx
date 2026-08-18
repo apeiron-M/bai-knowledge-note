@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
+import { prefetchOnHover } from "../lib/prefetch.js";
 import {
   useGraphSearch,
   type SearchResult,
   type TopicInfo,
 } from "../hooks/use-graph-search.js";
 import type { CSSProperties } from "react";
+import { LoadingLine, LoadingPanel } from "./LoadingStates.js";
 
 /* ------------------------------------------------------------------ */
 /*  Constants                                                         */
@@ -48,7 +50,7 @@ function similarityColor(score: number): string {
 /*  Component                                                         */
 /* ------------------------------------------------------------------ */
 
-export function SearchView() {
+export function SearchView({ isLoading = false }: { isLoading?: boolean }) {
   const { query, setQuery, results, topics, loading, error } = useGraphSearch();
 
   return (
@@ -129,9 +131,13 @@ export function SearchView() {
       {/* Content */}
       <div className="flex-1 overflow-auto">
         {!query.trim() ? (
-          <EmptyState topics={topics} onTopicClick={setQuery} />
+          <EmptyState
+            topics={topics}
+            onTopicClick={setQuery}
+            isLoading={isLoading}
+          />
         ) : (
-          <ResultList results={results} />
+          <ResultList results={results} loading={loading} />
         )}
       </div>
     </div>
@@ -145,9 +151,12 @@ export function SearchView() {
 function EmptyState({
   topics,
   onTopicClick,
+  isLoading,
 }: {
   topics: TopicInfo[];
   onTopicClick: (topic: string) => void;
+  /** True until the vault's first metadata fetch settles. */
+  isLoading: boolean;
 }) {
   const [showTopics, setShowTopics] = useState(false);
 
@@ -180,6 +189,12 @@ function EmptyState({
         understands meaning — try "how does storage work?" or "legal setup for
         organizations".
       </p>
+
+      {/* While the vault is still loading, say so instead of silently
+          rendering a landing page with nothing behind it. */}
+      {isLoading && topics.length === 0 && (
+        <LoadingLine label="Loading notes…" />
+      )}
 
       {/* Explore topics button */}
       {topics.length > 0 && (
@@ -233,7 +248,18 @@ function EmptyState({
 /*  Result list                                                       */
 /* ------------------------------------------------------------------ */
 
-function ResultList({ results }: { results: SearchResult[] }) {
+function ResultList({
+  results,
+  loading,
+}: {
+  results: SearchResult[];
+  loading: boolean;
+}) {
+  // A search in flight with nothing to show yet is not "no results".
+  if (loading && results.length === 0) {
+    return <LoadingPanel label="Searching…" />;
+  }
+
   if (results.length === 0) {
     return (
       <div
@@ -276,6 +302,7 @@ function ResultCard({
     <button
       type="button"
       onClick={() => setSelectedNode(result.documentId)}
+      {...prefetchOnHover(result.documentId)}
       className="group flex w-full items-start gap-3 rounded-xl border p-4 text-left transition-all border-[var(--bai-border)] bg-[var(--bai-surface)] hover:border-[var(--bai-accent)] hover:bg-[var(--bai-hover)]"
     >
       {/* Similarity score */}

@@ -39,9 +39,12 @@ export type KnowledgeNoteInfo = {
  * before the GraphIndexerProcessor finishes its historical replay.
  *
  * Returns `{ notes, noteMap, isLoading, error, refetch }`. The
- * `isLoading` is true only on the very first fetch; subsequent
- * refetches keep returning the previous nodes so the sidebar doesn't
- * flicker.
+ * `isLoading` is true only until the very first fetch settles;
+ * subsequent refetches keep returning the previous nodes so the sidebar
+ * doesn't flicker. It can also be true while a cached snapshot is
+ * already rendered (see `useGraphMetadata`), so consumers should treat
+ * `isLoading && notes.length === 0` as "show a loading state" and plain
+ * `isLoading` as "this may be stale".
  */
 export type UseKnowledgeNotesResult = {
   notes: KnowledgeNoteInfo[];

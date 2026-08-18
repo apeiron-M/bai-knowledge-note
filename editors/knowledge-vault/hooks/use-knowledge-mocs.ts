@@ -84,20 +84,27 @@ export function useKnowledgeMocs(): UseKnowledgeMocsResult {
 
       const coreIdeas: MocInfo["coreIdeas"] = [];
       const childRefs: string[] = [];
+      // The same target can be linked through BOTH edge types — the hub
+      // carries CHILD_MOC (hierarchy) and CORE_IDEA (graph-visible)
+      // edges to each child MoC. Dedupe here so no consumer (sidebar
+      // tree, graph links, editor hierarchy card) renders duplicates.
+      const seenChildren = new Set<string>();
+      const seenIdeas = new Set<string>();
       const sourceEdges = edgesBySource.get(node.documentId) ?? [];
       for (const edge of sourceEdges) {
-        if (edge.linkType === "CHILD_MOC") {
-          childRefs.push(edge.targetDocumentId);
+        const target = edge.targetDocumentId;
+        if (
+          edge.linkType === "CHILD_MOC" ||
+          (edge.linkType === "CORE_IDEA" && mocIds.has(target))
+        ) {
+          if (!seenChildren.has(target)) {
+            seenChildren.add(target);
+            childRefs.push(target);
+          }
         } else if (edge.linkType === "CORE_IDEA") {
-          // MoC → note core idea; on legacy data CORE_IDEA also pointed
-          // at child MoCs, so fall back to target-type for disambiguation.
-          if (mocIds.has(edge.targetDocumentId)) {
-            childRefs.push(edge.targetDocumentId);
-          } else {
-            coreIdeas.push({
-              noteRef: edge.targetDocumentId,
-              contextPhrase: "",
-            });
+          if (!seenIdeas.has(target)) {
+            seenIdeas.add(target);
+            coreIdeas.push({ noteRef: target, contextPhrase: "" });
           }
         }
       }

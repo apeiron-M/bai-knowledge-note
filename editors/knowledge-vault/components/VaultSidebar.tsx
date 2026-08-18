@@ -5,15 +5,23 @@ import {
   useNodesInSelectedDrive,
   useSelectedDrive,
 } from "@powerhousedao/reactor-browser";
+import { prefetchOnHover } from "../lib/prefetch.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
 import type { GraphFocus } from "./GraphViewPixi.js";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
+import { LoadingLine, SidebarSkeleton, Spinner } from "./LoadingStates.js";
 
 type VaultSidebarProps = {
   notes: KnowledgeNoteInfo[];
   mocs: MocInfo[];
+  /**
+   * True until the first vault metadata fetch settles. Drives the
+   * skeletons below: without it the sidebar renders zero-count groups
+   * and "nothing here" copy while the data is still in flight.
+   */
+  isLoading?: boolean;
   /** When set, sidebar content is replaced by the graph highlight neighborhood. */
   graphFocus?: GraphFocus | null;
   onClearGraphFocus?: () => void;
@@ -42,6 +50,7 @@ const DEFAULT_WIDTH = 256;
 export function VaultSidebar({
   notes,
   mocs,
+  isLoading = false,
   graphFocus = null,
   onClearGraphFocus,
 }: VaultSidebarProps) {
@@ -138,6 +147,16 @@ export function VaultSidebar({
     }
     return groups;
   }, [filtered]);
+
+  // A loading state is only honest while there is nothing to show. Once
+  // any data has arrived — including a cached snapshot that the live fetch
+  // will replace — we render it and show a quieter refresh hint instead.
+  const showNotesSkeleton = isLoading && notes.length === 0;
+  const showMocsSkeleton = isLoading && mocs.length === 0;
+  const showSignalsSkeleton =
+    isLoading && observations.length === 0 && tensions.length === 0;
+  const showTreeSkeleton = isLoading && (allNodes?.length ?? 0) === 0;
+  const isRefreshing = isLoading && notes.length > 0;
 
   const noteMap = useMemo(() => {
     const map = new Map<string, KnowledgeNoteInfo>();
@@ -357,6 +376,19 @@ export function VaultSidebar({
         ))}
       </div>
 
+      {/* Refreshing hint: data is on screen but may be a cached snapshot. */}
+      {isRefreshing && (
+        <div className="flex items-center gap-1.5 px-3 pb-1">
+          <Spinner className="h-2.5 w-2.5" />
+          <span
+            className="text-[10px]"
+            style={{ color: "var(--bai-text-faint)" }}
+          >
+            Refreshing…
+          </span>
+        </div>
+      )}
+
       {/* Content */}
       <div className="flex-1 overflow-y-auto px-2 pb-4">
         {graphFocus ? (
@@ -400,6 +432,7 @@ export function VaultSidebar({
                 key={item.id}
                 type="button"
                 onClick={() => setSelectedNode(item.id)}
+                {...prefetchOnHover(item.id)}
                 className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
                 style={
                   item.isSelected
@@ -449,8 +482,36 @@ export function VaultSidebar({
           </div>
         ) : (
           <>
-            {section === "notes" && (
+            {section === "notes" && showNotesSkeleton && (
+              <SidebarSkeleton label="Loading notes…" />
+            )}
+
+            {section === "notes" && !showNotesSkeleton && (
               <>
+                {notes.length === 0 && (
+                  <div className="px-2 py-6 text-center">
+                    <p
+                      className="text-xs"
+                      style={{ color: "var(--bai-text-muted)" }}
+                    >
+                      No knowledge notes yet
+                    </p>
+                    <p
+                      className="mt-1 text-[10px]"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
+                      Add a source to start the extraction pipeline
+                    </p>
+                  </div>
+                )}
+                {notes.length > 0 && filtered.length === 0 && (
+                  <p
+                    className="px-2 py-4 text-center text-xs"
+                    style={{ color: "var(--bai-text-faint)" }}
+                  >
+                    No notes match “{search}”
+                  </p>
+                )}
                 {STATUS_ORDER.map((status) => {
                   const groupNotes = grouped[status];
                   if (groupNotes.length === 0) return null;
@@ -494,6 +555,7 @@ export function VaultSidebar({
                               key={note.id}
                               type="button"
                               onClick={() => setSelectedNode(note.id)}
+                              {...prefetchOnHover(note.id)}
                               className="sidebar-row group flex w-full flex-col gap-0.5 rounded-md px-2 py-1.5 text-left transition-colors"
                             >
                               <span
@@ -539,7 +601,9 @@ export function VaultSidebar({
 
             {section === "mocs" && (
               <div className="space-y-1">
-                {mocs.length === 0 ? (
+                {showMocsSkeleton ? (
+                  <SidebarSkeleton label="Loading MOCs…" rows={4} />
+                ) : mocs.length === 0 ? (
                   <p
                     className="px-2 py-4 text-center text-xs"
                     style={{ color: "var(--bai-text-faint)" }}
@@ -586,12 +650,14 @@ export function VaultSidebar({
                               >
                                 {moc.title}
                               </span>
-                              <span
-                                className="ml-auto text-[10px]"
-                                style={{ color: "var(--bai-text-faint)" }}
-                              >
-                                {moc.noteCount}
-                              </span>
+                              {moc.noteCount + moc.childRefs.length > 0 && (
+                                <span
+                                  className="ml-auto text-[10px]"
+                                  style={{ color: "var(--bai-text-faint)" }}
+                                >
+                                  {moc.noteCount + moc.childRefs.length}
+                                </span>
+                              )}
                             </button>
                           ))}
                         </div>
@@ -635,12 +701,14 @@ export function VaultSidebar({
                               >
                                 {moc.title}
                               </span>
-                              <span
-                                className="ml-auto text-[10px]"
-                                style={{ color: "var(--bai-text-faint)" }}
-                              >
-                                {moc.noteCount}
-                              </span>
+                              {moc.noteCount + moc.childRefs.length > 0 && (
+                                <span
+                                  className="ml-auto text-[10px]"
+                                  style={{ color: "var(--bai-text-faint)" }}
+                                >
+                                  {moc.noteCount + moc.childRefs.length}
+                                </span>
+                              )}
                             </button>
                           ))}
                         </div>
@@ -716,18 +784,26 @@ export function VaultSidebar({
                     ))}
                   </div>
                 )}
-                {observations.length === 0 && tensions.length === 0 && (
-                  <p
-                    className="px-2 py-4 text-center text-xs"
-                    style={{ color: "var(--bai-text-faint)" }}
-                  >
-                    No pending signals
-                  </p>
-                )}
+                {showSignalsSkeleton && <LoadingLine label="Loading signals…" />}
+                {!showSignalsSkeleton &&
+                  observations.length === 0 &&
+                  tensions.length === 0 && (
+                    <p
+                      className="px-2 py-4 text-center text-xs"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
+                      No pending signals
+                    </p>
+                  )}
               </div>
             )}
 
-            {section === "folders" && <FolderTreeView nodes={allNodes ?? []} />}
+            {section === "folders" &&
+              (showTreeSkeleton ? (
+                <LoadingLine label="Loading drive tree…" />
+              ) : (
+                <FolderTreeView nodes={allNodes ?? []} />
+              ))}
           </>
         )}
       </div>

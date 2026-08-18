@@ -271,13 +271,20 @@ export default function GraphViewPixi(props: GraphViewProps) {
 
       for (const m of props.mocs ?? []) {
         const linkCount = m.coreIdeas.length + m.childRefs.length;
+        // The HUB is the root of the whole vault: give it a fixed radius
+        // larger than any other node can reach (MoCs cap at 58, notes at
+        // 31), so the starting point of the hierarchy is unmistakable.
+        const radius =
+          m.tier === "HUB"
+            ? 68
+            : 22 + Math.min(36, Math.sqrt(linkCount) * 3.6);
         const node: SimNode = {
           id: m.id,
           label: m.title,
           isMoc: true,
           tier: m.tier,
           status: null,
-          radius: 22 + Math.min(36, Math.sqrt(linkCount) * 3.6),
+          radius,
           color: MOC_COLOR,
           linkCount,
         };
@@ -311,6 +318,9 @@ export default function GraphViewPixi(props: GraphViewProps) {
         }
         for (const child of m.childRefs) {
           if (!nodeById.has(child)) continue;
+          // Child MoCs render exactly like note connections (CORE_IDEA)
+          // — same colour, width and spring — matching the original
+          // powerhouse knowledge-vault graph behaviour.
           links.push({
             id: `moc-child-${m.id}-${child}`,
             source: m.id,
