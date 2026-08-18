@@ -1,10 +1,15 @@
 import { useState, useMemo, useCallback, useEffect, useRef, memo } from "react";
 import {
   setSelectedNode,
-  addDocument,
-  useDocumentsInSelectedDrive,
   useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
+import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
+import {
+  useReactorDocsWithRefetch,
+  type ReactorDocSpec,
+} from "../hooks/use-reactor-docs.js";
+import { createDocumentRemote } from "../lib/remote-reactor.js";
+import { triggerVaultPull } from "../hooks/use-remote-first.js";
 import type {
   ProjectStatus,
   TeamMember,
@@ -260,14 +265,16 @@ function NewProjectDialog({
     if (!name.trim() || !driveId || loading) return;
     setLoading(true);
     try {
-      const result = await addDocument(
+      const newId = await createDocumentRemote({
+        documentType: "bai/project",
+        name: name.trim(),
         driveId,
-        name.trim(),
-        "bai/project",
-        projectsFolderId,
-      );
+        parentFolderId: projectsFolderId,
+        targetFolderPath: "projects",
+      });
+      triggerVaultPull();
       onClose();
-      setSelectedNode(result.id);
+      setSelectedNode(newId);
     } catch (err) {
       console.error("[ProjectsView] Failed to create project:", err);
       setLoading(false);
@@ -358,10 +365,33 @@ export function ProjectsView() {
     [],
   );
 
-  const documents = useDocumentsInSelectedDrive();
   const driveId = useSelectedDriveId();
   const folderMap = useFolderMap();
   const projectsFolderId = folderMap.get("projects");
+  // Targeted server reads of just the project/wbs documents; agents
+  // update goal trees server-side, so keep them reasonably fresh.
+  const { serverFileNodes, isLoading: treeLoading } = useKnowledgeNotes();
+  const projectSpecs = useMemo<ReactorDocSpec[]>(
+    () =>
+      serverFileNodes
+        .filter((n) => ["bai/project", "bai/wbs"].includes(n.documentType))
+        .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name })),
+    [serverFileNodes],
+  );
+  const { docs: documents, isLoading: docsLoading } = useReactorDocsWithRefetch(
+    projectSpecs,
+    {
+      pollMs: 30_000,
+      // Switching tabs unmounts this view. `retainKey` lets the hook
+      // paint the project/wbs documents it already holds while the drive
+      // tree reloads, so coming back shows the cards immediately.
+      retainKey: "projects-view",
+    },
+  );
+  // Spinner only when there is nothing at all to show: under
+  // stale-while-revalidate `docsLoading` stays true while an already
+  // cached (possibly partial) card list is on screen.
+  const isLoading = (treeLoading && projectSpecs.length === 0) || docsLoading;
 
   const wbsById = useMemo(() => {
     const m = new Map<string, Goal[]>();
@@ -424,7 +454,31 @@ export function ProjectsView() {
         <NewProjectButton onClick={() => setCreateOpen(true)} />
       </div>
 
-      {projects.length === 0 ? (
+      {isLoading && projects.length === 0 ? (
+        <div
+          className="flex h-64 items-center justify-center rounded-xl"
+          style={{
+            backgroundColor: "var(--bai-surface)",
+            border: "1px solid var(--bai-border)",
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <svg
+              className="h-4 w-4 animate-spin"
+              style={{ color: "var(--bai-text-muted)" }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path d="M21 12a9 9 0 11-6.219-8.56" />
+            </svg>
+            <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
+              Loading projects…
+            </p>
+          </div>
+        </div>
+      ) : projects.length === 0 ? (
         <div
           className="flex h-64 flex-col items-center justify-center gap-3 rounded-xl"
           style={{

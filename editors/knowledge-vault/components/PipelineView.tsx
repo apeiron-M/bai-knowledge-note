@@ -1,5 +1,9 @@
 import { useMemo } from "react";
-import { useDocumentsInSelectedDrive } from "@powerhousedao/reactor-browser";
+import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
+import {
+  useReactorDocsWithRefetch,
+  type ReactorDocSpec,
+} from "../hooks/use-reactor-docs.js";
 
 const PHASE_COLORS: Record<string, string> = {
   create: "bg-amber-400",
@@ -28,13 +32,31 @@ type PipelineTask = {
 };
 
 export function PipelineView() {
-  const documents = useDocumentsInSelectedDrive();
-
-  const queueDoc = useMemo(() => {
-    return (documents ?? []).find(
-      (d) => d.header.documentType === "bai/pipeline-queue",
-    );
-  }, [documents]);
+  // One targeted read of the pipeline-queue singleton, polled: agents
+  // advance tasks server-side, so the view tracks external progress.
+  const { serverFileNodes, isLoading: treeLoading } = useKnowledgeNotes();
+  const queueSpecs = useMemo<ReactorDocSpec[]>(
+    () =>
+      serverFileNodes
+        .filter((n) => n.documentType === "bai/pipeline-queue")
+        .slice(0, 1)
+        .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name })),
+    [serverFileNodes],
+  );
+  const { docs, isLoading: docsLoading } = useReactorDocsWithRefetch(
+    queueSpecs,
+    {
+      pollMs: 10_000,
+      // Switching tabs unmounts this view; paint the cached queue
+      // document while the drive tree reloads.
+      retainKey: "pipeline-view",
+    },
+  );
+  const queueDoc = docs[0];
+  // "initializing" claims the document does not exist yet, so it must not
+  // be shown while we are still looking for it — the tree lookup that
+  // produces the spec is itself async, and on remount it restarts empty.
+  const isLoading = docsLoading || (treeLoading && queueSpecs.length === 0);
 
   const state = useMemo(() => {
     if (!queueDoc) return null;
@@ -61,7 +83,7 @@ export function PipelineView() {
       <div className="flex h-full items-center justify-center">
         <div className="text-center">
           <p className="text-lg text-gray-500">
-            Pipeline queue initializing...
+            {isLoading ? "Loading pipeline queue…" : "Pipeline queue initializing..."}
           </p>
           <p className="mt-1 text-sm text-gray-600">
             The pipeline-queue document will be created automatically

@@ -1,11 +1,17 @@
 import { useState, useMemo, useCallback } from "react";
 import {
   setSelectedNode,
-  useDocumentsInSelectedDrive,
   useSelectedDriveId,
-  deleteNode,
 } from "@powerhousedao/reactor-browser";
 import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
+import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
+import {
+  useReactorDocsWithRefetch,
+  type ReactorDocSpec,
+} from "../hooks/use-reactor-docs.js";
+import { deleteDocumentRemote } from "../lib/remote-reactor.js";
+import { prefetchOnHover } from "../lib/prefetch.js";
+import { triggerVaultPull } from "../hooks/use-remote-first.js";
 
 type DeleteTarget = { id: string; title: string } | null;
 
@@ -13,10 +19,12 @@ function DeleteModal({
   target,
   driveId,
   onClose,
+  onDeleted,
 }: {
   target: DeleteTarget;
   driveId: string | undefined;
   onClose: () => void;
+  onDeleted: () => void;
 }) {
   const [deleting, setDeleting] = useState(false);
 
@@ -26,7 +34,11 @@ function DeleteModal({
     if (!driveId || !target) return;
     setDeleting(true);
     try {
-      await deleteNode(driveId, target.id);
+      // Server-side delete removes the document AND its drive node in
+      // one call; the scoped sync channel delivers the tree change.
+      await deleteDocumentRemote(target.id, driveId);
+      triggerVaultPull();
+      onDeleted();
     } finally {
       setDeleting(false);
       onClose();
@@ -124,11 +136,38 @@ export function SourceList() {
       setOpenGroups((prev) => ({ ...prev, [status]: !prev[status] })),
     [],
   );
-  const documents = useDocumentsInSelectedDrive();
   const driveId = useSelectedDriveId();
+  // Source ids come from the authoritative server tree; the doc states
+  // come from the reactor directly. Polls because agents move sources
+  // through the extraction lifecycle server-side.
+  const { serverFileNodes, isLoading: treeLoading } = useKnowledgeNotes();
+  const sourceSpecs = useMemo<ReactorDocSpec[]>(
+    () =>
+      serverFileNodes
+        .filter((n) => n.documentType === "bai/source")
+        .map((n) => ({ id: n.id, documentType: n.documentType, name: n.name })),
+    [serverFileNodes],
+  );
+  const {
+    docs: documents,
+    isLoading: docsLoading,
+    refetch,
+  } = useReactorDocsWithRefetch(sourceSpecs, {
+    pollMs: 20_000,
+    // Switching tabs unmounts this view. `retainKey` lets the hook paint
+    // the source documents it already holds while the drive tree reloads,
+    // so coming back shows the list immediately and refreshes behind it.
+    retainKey: "source-list",
+  });
+  // The tab badge counts tree nodes (instant); the list needs the doc
+  // states (async). Show a loading panel instead of a false "empty" —
+  // but only when we have NOTHING to show: under stale-while-revalidate
+  // `docsLoading` stays true while a partially cached list is already on
+  // screen, and a spinner over real content would be a regression.
+  const isLoading = (treeLoading && sourceSpecs.length === 0) || docsLoading;
 
   const sources = useMemo(() => {
-    return (documents ?? [])
+    return documents
       .filter((d) => d.header.documentType === "bai/source")
       .map((d) => {
         const state = (
@@ -192,7 +231,31 @@ export function SourceList() {
         </button>
       </div>
 
-      {sources.length === 0 ? (
+      {isLoading && sources.length === 0 ? (
+        <div
+          className="flex h-64 items-center justify-center rounded-xl"
+          style={{
+            backgroundColor: "var(--bai-surface)",
+            border: "1px solid var(--bai-border)",
+          }}
+        >
+          <div className="flex items-center gap-2">
+            <svg
+              className="h-4 w-4 animate-spin"
+              style={{ color: "var(--bai-text-muted)" }}
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2.5"
+            >
+              <path d="M21 12a9 9 0 11-6.219-8.56" />
+            </svg>
+            <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
+              Loading sources…
+            </p>
+          </div>
+        </div>
+      ) : sources.length === 0 ? (
         <div
           className="flex h-64 items-center justify-center rounded-xl"
           style={{
@@ -256,6 +319,7 @@ export function SourceList() {
                         <button
                           type="button"
                           onClick={() => setSelectedNode(source.id)}
+                          {...prefetchOnHover(source.id)}
                           className="flex flex-1 items-center gap-3 text-left min-w-0"
                         >
                           <div className="flex-1 min-w-0">
@@ -345,6 +409,7 @@ export function SourceList() {
         target={deleteTarget}
         driveId={driveId}
         onClose={() => setDeleteTarget(null)}
+        onDeleted={refetch}
       />
     </div>
   );
