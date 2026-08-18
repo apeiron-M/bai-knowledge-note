@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-bcf1809e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bcf1809e-dd3a-4803-b016-5107e18bb79f",
+      "targetTitle": "One Uniswap pool is governed as three separate Grove Instanc"
+    },
+    {
+      "id": "lnk-d5a576f5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d5a576f5-3797-4275-86b4-8a69393157e5",
+      "targetTitle": "Grove's Tokenized Treasury Instances disable every optional "
+    },
+    {
+      "id": "lnk-de5e14b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de5e14b7-cad5-4bd5-af88-368284d17faa",
+      "targetTitle": "Grove operates live instances without a specified process fo"
+    },
+    {
+      "id": "lnk-ee97f6ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee97f6ef-1468-4f29-94a3-f64c6d543d9e",
+      "targetTitle": "An unconfigured pool is inert: missing slippage or TWAP sett"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Grove Instance can be an execution venue rather than a position: the Curve pool instances have no deposit or withdrawal limits at all",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2d201860-67c9-47e3-914c-69a49485e069",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d546b598-cf03-43a8-955a-98129116d931",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "39d37d24-15a0-465a-8a13-ca01cd89243b",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c0235cb5-d1e8-4fa2-97ec-f13731f8ca57",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Curve RLUSD/USDC Pool instance (A.6.1.1.2.2.6.1.3.1.6.1) records `N/A - swap only` for its inflow RateLimitID, outflow RateLimitID, deposit limits and withdrawal limits (A...6.1.2.3.1, A...6.1.2.3.2, A...6.1.2.4.1, A...6.1.2.4.2). Only the swap key and swap limits are populated.\n\nSo an Instance is not necessarily a place Grove keeps capital. Here it is a **capability grant scoped to one pool**: permission to exchange RLUSD and USDC at a specific address under a specific size and slippage bound, with no authority to provide liquidity to it. The Liquidity Layer's `addLiquidityCurve` and `removeLiquidityCurve` functions exist (A...2.1.2.8.2, A...2.1.2.8.3) but cannot be used against this pool, because their rate-limit keys are unset and `triggerRateLimitDecrease` reverts on a zero `maxAmount` (A...1.3.4).\n\nThe unset limits are therefore not an omission \u2014 they are the mechanism enforcing the scope. This is the fail-closed default doing useful work: the same property that makes an unconfigured instance inert makes a *partially* configured one precisely bounded.\n\nA...6.1.3 confirms the distinction is intentional by listing a separate instance for the same pool: \"Curve RLUSD/USDC Pool **LP Deposits** Instance Configuration Document\" (A...6.3). Swapping through a pool and providing liquidity to it are modelled as two instances of one venue, because they are two different risks \u2014 one is execution, the other is impermanent-loss and pool-composition exposure.\n\nThe instance template strains slightly under two-sided venues: A...6.1.2.2.2 and A...6.1.2.2.3 are both titled \"Underlying Asset Address\", one holding USDC and the other RLUSD, because the schema assumes a single underlying.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Inflow and outflow RateLimitIDs and limits are all recorded as N/A - swap only, so the Instance concept covers venues Grove passes through as well as places it holds capital.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d8be0c1f-1d9e-4f9f-b187-1468a5db0814",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "213603b9-ed55-4b8a-9585-dc313b76c9f7",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

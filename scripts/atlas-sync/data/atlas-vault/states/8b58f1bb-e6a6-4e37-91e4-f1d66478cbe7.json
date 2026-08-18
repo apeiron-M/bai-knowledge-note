@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "RRC framework coverage is Pending for every venue outside the original lending set, so review lags integration",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c78eb137-1225-4191-9cb9-d8c15d30919c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c7725482-d354-4633-beeb-57067c899ef8",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30cc1880-313a-48a4-9af2-8f0238c82f7f",
+      "name": "risk-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c694db7d-c5f2-4aee-a6aa-5dee36d41ee0",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The `RRC Framework Full Implementation` flag reads \"**`Pending`**\" for all six Curve instances (A.6.1.1.1.2.6.1.3.1.7.1.1, .7.2.1, .7.3.1, .7.4.1, .7.5.1, .7.6.1), for Superstate USTB (.6.1.1), and for both Morpho instances (.8.1.1, .8.2.1) \u2014 as it does for Fluid (.5.1.1) and the two Ethena instances. `Covered` appears only on the SparkLend, Aave and Maple instances.\n\nSeen instance by instance, a `Pending` flag is a disclosure. Seen across the whole Active set, it is a pattern: coverage tracks protocol family, and the boundary falls exactly between the conventional lending venues and everything more recent \u2014 AMM pools, tokenised treasuries, restaking-adjacent pairs, generic ERC-4626 vaults.\n\nThat is the opposite of the intuitive prioritisation. The Covered venues are the ones whose risks the industry understands best; the Pending ones include the instrument types where a framework would add the most, and several carry non-trivial permissions \u2014 Superstate's dual redemption routes, Curve's slippage-governed swap authority, Morpho Dai's 200,000,000 DAI inflow ceiling.\n\nThe honest reading is that integration outruns review, and the Artifact chooses to publish the gap rather than gate on it. That makes the debt enumerable \u2014 a reader can list exactly which venues lack coverage by grepping one field \u2014 but it also means the flag currently describes the majority state rather than the exception, which erodes its power to signal that any particular instance deserves attention.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "All six Curve pools plus Fluid, Superstate, Ethena and Morpho declare Pending, while SparkLend, Aave and Maple declare Covered \u2014 the unreviewed venues are the long tail of newer instrument types.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8a24625c-664d-4859-a903-0eda1bcd5171",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1ceeed89-91ea-40f5-ad04-65bdcbe40188",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

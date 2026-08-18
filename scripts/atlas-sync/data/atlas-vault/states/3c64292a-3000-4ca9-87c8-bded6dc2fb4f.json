@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-d289671d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d289671d-a34c-436b-b198-2170552ed431",
+      "targetTitle": "The Spark and Grove borrow subsidy decays linearly from SOFR"
+    },
+    {
+      "id": "lnk-95f4a260-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "95f4a260-686c-4e83-934b-dae337001e0a",
+      "targetTitle": "A Prime Agent borrowing at a Subsidized Rate has its Agent R"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reimbursement grant requires maintaining a billion USDS of borrowing at all times or it is slashed pro rata",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e2af459f-bd1e-45e6-b371-447c6b5925e1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ed9737c8-7b70-4d55-b807-800ca4e27281",
+      "name": "ecosystem-accords",
+      "topicDocumentId": null
+    },
+    {
+      "id": "853d374b-5919-42b8-b44a-bf18b2157911",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.2.2.2.4 conditions the subsidy on a debt floor: \"Primes, including Spark and Grove, must each maintain a minimum borrowing of 1,000,000,000 USDS from Sky at all times to remain eligible for the full monthly reimbursement grant. If the amount borrowed falls below this threshold, the reimbursement grant will be proportionately slashed. This grant will cover the difference between the borrowing Base Rate and SOFR.\"\n\nThe subsidy is therefore delivered as a *reimbursement* rather than a discounted rate \u2014 the Prime pays the Base Rate and is paid back the gap \u2014 and eligibility depends on a balance maintained continuously, not on average or period-end borrowing.\n\nThe incentive this creates cuts against prudence. A Prime that finds no opportunity worth funding should repay and stop paying interest; here, dropping below the floor costs it the grant proportionally, so it is rewarded for holding a billion USDS of debt regardless of whether it has anywhere good to put the proceeds. Combined with the Simplified Profit And Loss Calculation's zero floor, which removes the downside of a position earning less than its funding cost, the pressure to stay fully drawn is considerable.\n\nSky's side of the bargain is legible: the subsidy is buying USDS supply and deployed liquidity, and paying for an option to borrow that goes unexercised buys nothing. The floor makes the grant a payment for actual balance-sheet usage.\n\nThe control is that \"at all times\" is a hard test on a live figure, and A.2.8.2.2.2.2.5 keeps the door open above it \u2014 borrowing beyond a billion is available \"at the prevailing Base Rate,\" unsubsidised. The subsidy therefore has both a floor and a ceiling, and only the first billion is concessionary.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The grant covering the gap between the Base Rate and SOFR is conditioned on a continuously maintained minimum debt, so a Prime is penalised for reducing borrowing even when it has nothing to",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8a69d0c3-3c77-4330-b0e7-0a4b1898a48b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:48.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d715da8d-b616-4358-a22b-548fe8efbdf5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:48.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

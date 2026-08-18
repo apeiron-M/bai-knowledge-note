@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-75383668-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75383668-2d82-4b08-87c8-7e5ecb1b80bc",
+      "targetTitle": "An Agent's realized identity is readable from the Global Act"
+    },
+    {
+      "id": "lnk-56b40158-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56b40158-2ad1-452e-a540-01deef83f298",
+      "targetTitle": "Primitive state is tracked on two independent axes: a per-pr"
+    },
+    {
+      "id": "lnk-87de2b04-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87de2b04-9047-4307-affc-e44851e79de2",
+      "targetTitle": "The Global Activation Status of a one-shot Primitive disting"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Which Primitives an Agent activates is itself a public statement of strategy to its token holders",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4490e17a-0b0a-40ca-ad87-9a2b0b7e7b8f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0dd1d2fb-8bb8-4a72-80a7-b4081162ba59",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e0b035db-de80-4ae4-93a1-dea6d6f14977",
+      "name": "agent-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.1.2.1 states that an Agent may only Invoke a Primitive it has previously Globally Activated, and then draws out a second-order effect: \"an Agent's decision regarding which Primitives to Activate allows the Agent to express its strategy to token holders.\" The worked example is an asset-gathering Agent that Globally Activates the Distribution Reward and Integration Boost Primitives but not the Allocation System Primitive.\n\nWhat makes this a genuine signal rather than noise is A.2.2.1.2.3: \"Activation gives the Agent the ability to Invoke a Primitive... but does not require the Agent to do so.\" Activation is therefore *costless in action* but *not costless in disclosure* \u2014 an Agent that activates a Primitive has announced that this capability is within its intended scope, whether or not it ever uses it.\n\nThe mechanism converts a permissions list into a legible strategy document. Token holders do not need to read an Agent's prose vision statement to see what it intends; they can read its activation state, which is machine-readable and lives in the Artifact.\n\nIt also creates a discipline: because post-launch activation requires a token holder vote and Operational Executor Facilitator review (A.2.2.1.2.4.1.3), an Agent that activates broadly to preserve optionality is signalling a wide mandate it must defend, while a narrow activation set is a self-imposed constraint holders can rely on.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Activation grants the ability to Invoke without obliging it, so the activated set reads as declared intent \u2014 an asset-gathering Agent activates Distribution Reward but not Allocation System.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dc0e30ea-4c31-433e-b2fe-cd361d3c2072",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:52.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "db6f84ba-92ba-473a-b05d-324fdd2b0ddb",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:52.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

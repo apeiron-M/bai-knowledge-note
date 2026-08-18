@@ -1,0 +1,143 @@
+{
+  "links": [
+    {
+      "id": "lnk-5c475e2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5c475e2d-4aac-49f8-92b3-9a0e0878047c",
+      "targetTitle": "doc-a3cc0e5b"
+    },
+    {
+      "id": "lnk-df5f0ffe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df5f0ffe-be36-41a2-93ea-fce960862c1c",
+      "targetTitle": "The Relayer role can be granted only by admin but revoked by"
+    },
+    {
+      "id": "lnk-b2d6823f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b2d6823f-6981-448a-8fc0-1b4d863dc57d",
+      "targetTitle": "Emergency roles in the Liquidity Layer are strictly subtract"
+    },
+    {
+      "id": "lnk-31b50d3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "31b50d3e-1659-4dcd-ab05-f7c96afc8a1a",
+      "targetTitle": "The Freezer role can strip a Relayer's permissions but canno"
+    },
+    {
+      "id": "lnk-52d081ca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "52d081ca-805e-42d9-8392-a32452f95235",
+      "targetTitle": "Every Relayer operation is gated by the same three precondit"
+    },
+    {
+      "id": "lnk-621c05ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "621c05ee-2733-4401-a816-7ce7dbe6c724",
+      "targetTitle": "Solana permissions are capability flags rather than a role h"
+    },
+    {
+      "id": "lnk-a4937777-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a4937777-e2ec-4f89-8101-20f235546bd9",
+      "targetTitle": "doc-150f53f4"
+    },
+    {
+      "id": "lnk-b265e2f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b265e2f3-693f-40e0-9075-69837145b8b2",
+      "targetTitle": "Emergency response runs a fixed three-step sequence: revoke "
+    },
+    {
+      "id": "lnk-d0faa3cb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0faa3cb-6f02-495a-b036-f44653e796f8",
+      "targetTitle": "A backstop Relayer exists so removing a compromised one does"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Emergency authority over the Liquidity Layer is strictly subtractive: the Freezer can revoke a Relayer but never grant one",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6bac57c5-c23c-4d60-a55e-4faa171988cc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "192e5eea-1d34-40b5-8cf9-f9e471bcbe47",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f43e653b-05e7-4ed2-9aae-1f88f9976172",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f7f562f8-6a44-46bd-8975-34dc4bd2b789",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.5.2.6.1.2.2.1.1.2 states the asymmetry precisely: \"The Relayer Role may be granted to an address by any address holding the `DEFAULT_ADMIN_ROLE`. The Relayer Role may be removed from an address by any address holding the `DEFAULT_ADMIN_ROLE` **or the `FREEZER_ROLE`**.\" A.6.1.1.5.2.6.1.2.2.1.1.4 confirms the Freezer's scope: \"the emergency role that can remove a compromised Relayer.\"\n\nThe design principle is that an emergency power should be incapable of doing damage in the hands of an attacker. A compromised Freezer can halt Obex's allocation activity \u2014 disruptive, expensive, but recoverable. It cannot appoint a Relayer, mint, transfer, or redirect funds. The worst outcome of Freezer compromise is a denial of service; the worst outcome of admin compromise is loss of funds.\n\nThis is what justifies the Freezer's deliberately low bar elsewhere: a 2-of-5 multisig with mixed control (A.6.1.1.5.2.6.1.2.1.2.2.3.2). Making a purely subtractive power easy to fire is cheap, because the cost of a false positive is bounded and the cost of hesitation in a real incident is not.\n\nThe corollary is that recovery is asymmetric too. Freezing takes two signatures from a five-key set; restoring a Relayer requires the admin, which is Sky Governance. Stopping is fast and unilateral; restarting is slow and constitutional \u2014 the correct ordering for a system holding other people's capital.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Relayer Role may be granted only by DEFAULT_ADMIN_ROLE, but removed by either DEFAULT_ADMIN_ROLE or FREEZER_ROLE \u2014 so emergency power can only reduce what the system is able to do.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "35c32c3a-2bcb-4a51-a103-9bc60c91c40b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a647dc0d-c49e-466d-990b-bc39b055d7af",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:33.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

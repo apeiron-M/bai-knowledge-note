@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-df5f0ffe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df5f0ffe-be36-41a2-93ea-fce960862c1c",
+      "targetTitle": "The Relayer role can be granted only by admin but revoked by"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An AdministeredAgent lets a compromised relayer be revoked without disturbing the Allocator Role it acts under",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ac8638c4-d9dc-4e53-b4a8-71d0661ad519",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cc7d046e-7f40-4592-9566-012c112f4815",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3d59e49c-ea1a-4461-869b-204c61607d1c",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96f9d545-66b9-4a78-b03c-dfd2ea370739",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.1.1.1.4.1.5 introduces an indirection layer that is easy to overlook: \"The AdministeredAgent holds the Allocator Role of the Diamond PAU and mediates relayer access to the Controller: the relayer multisigs are registered as its actors and submit operations through it, while the Freezer Multisig is registered as a revoker authorized to remove a compromised actor.\"\n\nWithout this layer, each relayer multisig would hold the Allocator Role directly, and removing a compromised relayer would mean revoking a protocol-level role \u2014 a privileged, disruptive operation. With it, the **role is held once, by a contract**, and the humans are merely registered actors underneath. Ejecting one is a local operation on the AdministeredAgent that leaves the role assignment and every other relayer untouched.\n\nThe revoker wiring is the second half. Assigning revocation to the **Freezer Multisig** \u2014 the same party that can halt operations entirely \u2014 gives the emergency responder a **scalpel as well as a hammer**. Faced with one misbehaving relayer, it can remove that actor and let everything else keep running, rather than being forced to freeze the whole controller because that is its only tool.\n\nThe generalizable pattern: when an emergency power is all-or-nothing, it is used late, because using it is expensive. Adding a proportionate intermediate power makes early intervention cheap enough to actually happen. That is why this contract exists at all, and why its permissions are cross-referenced to the Diamond PAU role hierarchy rather than left implicit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:34.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The AdministeredAgent holds the Allocator Role and registers relayer multisigs as actors; the Freezer Multisig is registered as a revoker able to remove any one of them individually.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "35c2c88e-3227-4454-8de6-ac51621dbf96",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:12.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4464dd8d-2059-4151-8a63-84470da4b611",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:13.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

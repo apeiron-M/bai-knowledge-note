@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb822f75-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fb822f75-3b0b-470b-bd7c-b814df03c718",
+      "targetTitle": "Grove's rate limits are denominated inconsistently across In"
+    },
+    {
+      "id": "lnk-ee773703-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee773703-176f-4007-9a03-acf95f68442f",
+      "targetTitle": "doc-b4367a37"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's unit of risk accounting is the protocol-deployment-and-asset pair, not the protocol",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a68c1405-60b3-403a-a0d9-da5c7ce4d952",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa14adf3-e42e-49d8-9e2f-985467bf224c",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "49ddbf47-d228-4bd7-93ed-198cc6bc7b6d",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e4e690d-e95a-4614-ab7d-5e2272e9d6d7",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.5 lists four Aave instances: Core v3 USDC (A...5.1), Core v3 RLUSD (A...5.2), Horizon USDC (A...5.3) and Horizon RLUSD (A...5.4). Each has its own Instance Configuration Document, its own aToken (`aEthUSDC`, `aEthRLUSD`, `aHorRwaUSDC`, `aHorRwaRLUSD`) and its own pair of published `RateLimitID`s \u2014 eight distinct keys across the four.\n\nThe granularity is deliberate and it tracks where risk actually differs. Aave Core v3 and Aave Horizon are separate markets with separate collateral sets and separate liquidity; Horizon's `aHorRwa` prefix marks it as the RWA market, whose collateral behaves quite unlike Core's. Sharing a budget across them would let exposure concentrate in whichever market happened to be used first.\n\nThe asset dimension matters for the same reason: a USDC position and an RLUSD position in the same market carry different depeg and issuer risk, so they get different budgets denominated in their own units (50 million USDC in one case, 50 million RLUSD in the other).\n\nThis also explains the shape of the code seen earlier. Aave limits are keyed with `makeAssetKey(LIMIT_AAVE_WITHDRAW, aToken)` (A...2.1.2.7.2.4) \u2014 keyed on the **aToken**, which uniquely identifies a market-and-asset combination rather than a protocol. The key derivation and the instance taxonomy are the same decomposition expressed twice.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Aave Core v3 and Aave Horizon each get separate USDC and RLUSD instances with their own inflow and outflow RateLimitIDs \u2014 four independent budgets within one protocol family.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "745da6ae-3763-468a-870b-acbf3cf53321",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:54.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "49714550-5c55-4b99-9f2a-c08cc8cd1d9a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:54.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

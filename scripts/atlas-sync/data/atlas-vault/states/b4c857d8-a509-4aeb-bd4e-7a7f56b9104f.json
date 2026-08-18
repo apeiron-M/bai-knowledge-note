@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4b41dda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4b41dda-9a74-4a12-8f29-58d5f5ad9301",
+      "targetTitle": "Emergency-response multisigs are exempt from signer and thre"
+    },
+    {
+      "id": "lnk-daaa94ba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "daaa94ba-3e03-467c-b26c-02d9794b4c4a",
+      "targetTitle": "A multisig must be registered and security-approved before i"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A noncompliant multisig gets 48 hours, then its operations must stop unless the security lead grants an exception",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a0a8ae05-0fad-4a91-95dc-e9de683dadd3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b09b2c69-23d7-460f-99ae-04b936d2687f",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1f51b014-9b03-47c9-ac0c-74381deb2bcd",
+      "name": "enforcement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.3.5 is what converts the Multisig Security Enforcement Framework from guidance into enforcement: \"a grace period of forty-eight (48) hours is provided to resolve the issue. If the noncompliance is not resolved within this period, Multisig operations must be immediately stopped, unless an exception is granted by the Protocol Security Workstream Lead. Core GovOps may then determine whether further actions are required to enforce the halt.\"\n\nThe 48-hour window is calibrated to the kinds of defects the review process actually finds \u2014 an out-of-date registry entry, a threshold below the standard, an unreported signer change. Most are fixable in a day; none are worth halting operations over if they are fixed. But the deadline is what makes the requirements real, because a compliance regime whose worst outcome is a note in a report is optional.\n\nTwo features soften and complicate it. The exception is discretionary and unbounded \u2014 no criteria, no time limit, no requirement to record a reason \u2014 so the entire enforcement mechanism can be suspended by one role holder. And \"Core GovOps may then determine whether further actions are required\" concedes that a stop order is an instruction to humans; the multisig contract does not stop itself, and the signers who must comply are the ones found non-compliant.\n\nThe Treasury allowance module of A.2.11.1.3.2.1.1.3.2.1 is the hard backstop that this soft mechanism leans on: where instruction fails, governance can still sweep the assets.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The framework carries an actual halt mechanism rather than a reporting obligation, with Core GovOps empowered to determine what further action is needed to enforce the stop.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a96a7ead-85b1-418e-9cd7-96dec46f4132",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "37fd35ba-8fc3-4b29-a798-8323baa09d42",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

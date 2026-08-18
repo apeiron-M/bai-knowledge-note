@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-cc91fb25-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cc91fb25-5d51-4769-93fe-455f85b9752c",
+      "targetTitle": "Keel's Solana limits are two-dimensional: Reserves cap outfl"
+    },
+    {
+      "id": "lnk-90461e4f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "90461e4f-2352-4eb5-b0ba-274c140d69f3",
+      "targetTitle": "Keel gives a hard covenant to stay at or below a 90% Encumbr"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel has no documented rule for splitting capital between its allocation Instances",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4d8e65e7-f74f-4f82-a20e-29205be4d113",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b660414-39ed-46aa-a517-a083492d279c",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bdb9e29b-76a0-4b3d-b662-3e0d3e1f8c2d",
+      "name": "allocation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f2f2e899-9fbb-48b1-837e-6cfd31cc1fc1",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.3 is one sentence: \"in the future, additional logic will be added herein regarding the strategy by which capital is allocated between different Instances of the Keel Liquidity Layer.\"\n\nThe gap this leaves is precisely the Agent's core investment judgment. Governance decides which venues are permitted (Root Edit), admin decides how much each may hold (rate limits), and the Artifact then declines to say how much of the available capital should actually go where. Within the limits, the split is at the discretion of Keel and its off-chain ALM Planner.\n\nThat is defensible \u2014 an allocation rule frozen into a constitutional document could not respond to changing yields, and rate limits already bound the damage of a bad concentration. But it means the Artifact's extensive risk apparatus constrains the *shape* of Keel's portfolio without constraining its *composition*: nothing in the document prevents every asset sitting at its cap on the single riskiest permitted venue.\n\nIt also marks where a reader's understanding must stop. The Keel Artifact can be read end to end and still not answer what the Agent will do with the money, which is the question a KEEL holder most wants answered.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:38.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Allocation Strategy section states only that logic for allocating capital across Keel Liquidity Layer Instances will be added in future, leaving venue sizing to discretion within the rate limits.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "85e3a72f-bbe2-4082-802d-d85495c5527f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "df9217b7-8926-4984-8bc6-e56dd03dd241",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

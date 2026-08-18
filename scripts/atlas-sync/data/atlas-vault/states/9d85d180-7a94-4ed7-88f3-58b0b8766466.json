@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-eff423ca-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eff423ca-5040-45ed-a760-ba11d055b31e",
+      "targetTitle": "A primitive marked Globally Active with no Instances is auth"
+    },
+    {
+      "id": "lnk-edb22716-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "edb22716-fd75-4e83-86ae-dc75ca022050",
+      "targetTitle": "The Sky Primitive catalogue applies to every Agent regardles"
+    },
+    {
+      "id": "lnk-ccea7cdb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ccea7cdb-57dd-4d64-b875-14e811bb7500",
+      "targetTitle": "Token SkyLink feasibility is gated on the target chain suppo"
+    },
+    {
+      "id": "lnk-e1c48f95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e1c48f95-7e40-4388-9257-7702cd3214a0",
+      "targetTitle": "Grove has activated its allocation and distribution Primitiv"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Pattern's activated Primitive set confines it to Ethereum Mainnet despite the Artifact provisioning cross-chain capability",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2a8c237c-9bfd-421e-835a-8f4328c563c8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ff7a71ff-edb5-4d73-853c-e360bb1835c4",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2d11b540-4693-4d2d-a37e-68b1281b2003",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec51ebb6-f8cd-4417-a327-36009bf37754",
+      "name": "multi-chain",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three independent signals in this section point the same way. The Token SkyLink Primitive \u2014 Pattern's instance of the mechanism for linking its token across chains \u2014 has Global Activation Status `Inactive` (A.6.1.1.6.2.4.1.1.1). The Pioneer Chain Primitive is likewise `Inactive` (A.6.1.1.6.2.5.3.1.1). And the Allocation System Primitive, which *is* `Active` (A.6.1.1.6.2.6.1.1.1), partitions its Active Instances Directory by chain and contains exactly one chain: Ethereum Mainnet (A.6.1.1.6.2.6.1.1.2.1).\n\nBy contrast the two other Demand Side Stablecoin Primitives Pattern holds \u2014 Distribution Reward (A.6.1.1.6.2.5.1.1.1) and Integration Boost (A.6.1.1.6.2.5.2.1.1) \u2014 are both `Active`.\n\nThe reading is that Pattern's current operating surface is a single chain, and that this is a *choice recorded in status fields* rather than a limitation of the framework. Every structure needed to operate elsewhere is already present and merely switched off.\n\nThis matters for how an Agent Artifact should be read. The presence of a Primitive section proves nothing about capability in use; only the activation status and the contents of the Active Instances Directory do. A reader summarizing Pattern from headings alone would credit it with cross-chain token distribution and new-chain pioneering that it is not currently doing.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Token SkyLink and Pioneer Chain are both Inactive while the Allocation System's only chain sub-directory is Ethereum Mainnet \u2014 multi-chain reach exists as structure, not as activity.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "743911fa-4de9-4d6e-9f53-44f118e8a0fd",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:44.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2f7582d7-7d29-4a27-af04-f116f0f3e5e5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:44.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

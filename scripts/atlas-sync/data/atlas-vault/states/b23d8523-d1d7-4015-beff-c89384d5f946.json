@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Bridge rate limits carry a standing exemption from the Governance Poll stage so risk caps can move weekly",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "be962847-a605-4cdf-b126-94c54a5c7b1e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ca9b0160-7ee2-4a37-bdce-910f6c1f3748",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "88399204-2557-414b-b9fa-1130e4bc0018",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6c896b99-6212-4e46-9bf9-07a0cb8fb5f7",
+      "name": "skylink",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The same delegation appears for every rate limit in this chunk (A.4.2.2.2.3.2.2, A.4.2.2.3.3.2.2, A.4.2.2.3.3.2.3, A.4.2.2.4.3.2.2, A.4.2.2.4.3.2.3): limits \"may be modified by the Core Facilitator, in consultation with the Core Council Risk Advisor, through the Operational Weekly Cycle,\" and \"such modifications can be effected directly via an Executive Vote, without requiring a prior Governance Poll.\"\n\nThis is a *standing, class-wide* poll exemption for a category of parameter, which is a different instrument from the single-item exemptions the Atlas grants elsewhere. Sky's normal sequence is Governance Poll for signalling, then Executive Vote for execution. Here the poll is permanently removed for bridge risk caps, and the Atlas text itself supplies the legitimacy that a poll would otherwise provide.\n\nThe justification is cadence matching. A bridge cap is a risk-management dial that may need adjusting as flows change, and a parameter that can only move at the speed of full governance will be systematically stale \u2014 too tight during normal operation, too loose when conditions deteriorate. Weekly adjustability keeps the dial usable.\n\nThe guardrails are role-based rather than vote-based: a named proposer (Core Facilitator), a mandatory consultation with a named risk role (Core Council Risk Advisor), a fixed cadence (Operational Weekly Cycle), and the Executive Vote itself as the remaining ratification. The bet is that a risk parameter with a bounded blast radius is better governed by expert cadence than by electorate signalling.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Core Facilitator, consulting the Core Council Risk Advisor, may change limits through the Operational Weekly Cycle directly via Executive Vote \u2014 a class-wide bypass, not a one-off.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e6b6cad3-cb1a-404e-bc67-6189d4f9bbdc",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e2062ff1-e93d-489a-a52b-fa4fdd8b4013",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

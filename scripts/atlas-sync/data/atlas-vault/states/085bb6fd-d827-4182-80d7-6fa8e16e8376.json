@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-329b156c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "329b156c-59e8-432b-bbba-484d12c2fe39",
+      "targetTitle": "doc-de869731"
+    },
+    {
+      "id": "lnk-db294f6b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "db294f6b-a85b-457a-8992-06ad69d05408",
+      "targetTitle": "Cancellation parameters must be read from the Pause contract"
+    },
+    {
+      "id": "lnk-4b9f94d4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4b9f94d4-b68b-445a-8778-6d79d17687cb",
+      "targetTitle": "The DarkSpell check requires a Spell to be self-contained: e"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Scheduling records the action contract's extcodehash, so the code executed must be the code that was scheduled",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f9e6a315-28d8-442d-9ecb-f0545fb1525c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "18185348-beed-4686-b4e0-f3c9ce43c3d2",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7aae6f86-e9f9-44c6-9cf0-916cd01b8688",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.13.3 describes scheduling as calling `plot` on `ds-pause` with four parameters: \"The address of the Spell action contract\"; \"The `extcodehash` value of the Spell action contract\"; \"Any `calldata` information required for the future execution\"; and \"The `eta`, which is the earliest time the Spell's actions can be executed. This must be scheduled at least the duration of the pause delay into the future.\"\n\nThe second parameter is the security-critical one. Committing the address alone would guarantee only *where* execution goes; committing the `extcodehash` commits *what code is there*. Any change to the code at that address between scheduling and casting invalidates the plotted entry.\n\nThis is what makes the whole review window meaningful. Ecosystem Validators spend the pause delay examining a deployed contract (A.1.10.2.4.12), and their findings would be worthless if the code could differ at execution time. The extcodehash turns \"we reviewed the contract at this address\" into a claim the chain itself enforces.\n\nIt also closes the loop with the DarkSpell check at A.1.10.2.4.12.3.1.5, which ensures the executing action contract is created inline with the Spell rather than referenced by an arbitrary address. Together: the action contract cannot be a swappable pointer, and its code cannot change after scheduling.\n\nThe `eta` completes the arrangement by making the delay a property of the plotted entry rather than a policy someone must honour. The pause is not enforced by convention \u2014 it is a field in the commitment.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.13.3 plots address, extcodehash, calldata and eta together, cryptographically pinning what will run during the entire pause delay window.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5fabe950-1cd4-44be-988c-c39764201c06",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2230681e-9a93-4865-ba3a-800894d07113",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

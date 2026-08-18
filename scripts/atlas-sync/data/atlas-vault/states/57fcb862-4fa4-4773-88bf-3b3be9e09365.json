@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-f6c7bc76-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f6c7bc76-18f1-4b3c-a2b9-6f3be315d131",
+      "targetTitle": "Each Instance declares whether its risk capital rests on a f"
+    },
+    {
+      "id": "lnk-62f373ac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "62f373ac-d782-4cdd-8e59-a603a6272613",
+      "targetTitle": "Every allocation Instance carries a flag stating whether its"
+    },
+    {
+      "id": "lnk-59506155-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "59506155-7f32-41a3-a361-1bb6ea3fd680",
+      "targetTitle": "RRC Framework Coverage records which risk model prices an In"
+    },
+    {
+      "id": "lnk-5b14d573-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5b14d573-ae3a-4912-b597-2b3b9e35732f",
+      "targetTitle": "Required Risk Capital decomposes into three additive risk ty"
+    },
+    {
+      "id": "lnk-9fd3dbb1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9fd3dbb1-5404-45a8-a1d6-05d9a33b017d",
+      "targetTitle": "Operational deviation from an Instance Configuration Documen"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Instance may operate while its risk models are incomplete, flagged per-Instance as Covered or Pending",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "57dd6c4c-335f-422c-b181-debb681be4fb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "827c40b1-f487-4631-b764-c9c4184e8f81",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64708b18-e1b3-44fa-8e5c-a729eff8b8d7",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.3.2.1.1.2 concedes that \"Some Allocation System Instances displayed on the RRC Dashboard concern asset types whose risk models have not yet been fully developed,\" and requires each active Instance's Configuration Document to specify its `RRC Framework Full Implementation` status as either `Covered` or `Pending`.\n\nThe honest reading is that the RRC figure for a `Pending` Instance is not the same kind of number as for a `Covered` one, even though both appear on the same dashboard and both feed the same Aggregate RRC. A.2.2.10.1.1.3.2.1.1.1 already notes that \"the models for certain risk-factors are still currently under development.\"\n\nWhat makes this a design choice rather than an admission of failure is the machine-readable flag. The alternative approaches are worse: refusing to operate an Instance until its models mature blocks the ecosystem behind quantitative research, and publishing provisional numbers unlabelled invites everyone downstream to treat them as final. The status field lets an Instance run while marking exactly where the number should not be trusted.\n\nThe residual risk is aggregation. Because Aggregate RRC sums Instance Total RRCs without weighting by model maturity, a Prime whose book is mostly `Pending` faces the same TRC adequacy test \u2014 and the same automatic penalty accrual \u2014 computed on the weakest inputs. The flag informs a reader; it does not adjust the requirement.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The RRC Dashboard shows Instances whose asset-type risk models are not fully developed, and the Instance Configuration Document carries an explicit RRC Framework Full Implementation status.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2895244e-ed63-4cae-93e5-a33a9f467fd6",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8b4ba9ea-c4b3-4538-98b8-772dcd43e792",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

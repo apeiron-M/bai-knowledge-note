@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-df5f0ffe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df5f0ffe-be36-41a2-93ea-fce960862c1c",
+      "targetTitle": "The Relayer role can be granted only by admin but revoked by"
+    },
+    {
+      "id": "lnk-5c475e2d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5c475e2d-4aac-49f8-92b3-9a0e0878047c",
+      "targetTitle": "doc-a3cc0e5b"
+    },
+    {
+      "id": "lnk-41472e44-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "41472e44-4458-47d3-9dfc-8613e537055f",
+      "targetTitle": "Suspending a compromised relayer zeroes every capability at "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Freezer role can strip a Relayer's permissions but cannot grant them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a4d97caf-97f4-43b9-a1b1-069072aeb761",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f2ecd7e1-7237-4046-9984-9101a72af795",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2cb88a11-1124-4e8f-bc17-4d47ea05950d",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c7491ab-e3ef-4e7a-b11e-f3c575a32f9d",
+      "name": "operational-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.2.1.1.2 sets an asymmetric permission: \"The Relayer Role may be granted to an address by any address holding the `DEFAULT_ADMIN_ROLE`. The Relayer Role may be removed from an address by any address holding the `DEFAULT_ADMIN_ROLE` **or the `FREEZER_ROLE`**.\"\n\nThe Freezer therefore holds a revoke-only power over the actor that moves capital. It can end the automated Planner's authority immediately, without waiting for Sky Governance to act through the Spark Proxy, and without ever being able to appoint a Relayer of its own choosing.\n\nThis is the same design principle as the Avalanche governance bridge Guardian, whose power is \"strictly limited to cancelling pending actions\" with no admin control. In both cases the fast emergency key can only subtract capability. A compromised Freezer can halt Spark's operations \u2014 a denial of service that Sky Governance can repair by re-granting roles \u2014 but it cannot redirect funds or install its own operator.\n\nStated generally: give emergency responders the minimum power that stops the bleeding and no power that could cause it. The recovery path is deliberately slower and sits with admin, because reinstating authority is a decision that should be deliberate while withdrawing it must be instant.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "RELAYER_ROLE may be granted only by DEFAULT_ADMIN_ROLE, yet removed by either admin or FREEZER_ROLE \u2014 the emergency key's power is deliberately subtractive only.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ec1c9c49-1f72-4235-9378-f83cb65d8968",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:33.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c1624edc-fa02-4fd8-93f5-f50559f7e759",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:33.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Funds borrowed on an Agent Credit Line are ring-fenced to the Allocation Vault and may never reach the Agent's SubProxy",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c69311a2-f13c-483b-885e-6389cbafb8d0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "76844159-6e93-4140-ba8e-928e96bb7fea",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "78b276dc-d449-4f21-8618-1a04a0ab797a",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.5.3 states that funds borrowed at the Agent Credit Line Borrow Rate \"must be deposited into the Agent's Allocation Vault and used to invest in Allocation System Instances,\" and \"may not be transferred to the Agent's SubProxy account or otherwise outside of the Agent's designated accounts for its Allocation System Primitive.\"\n\nThe restriction only makes sense read against the Agent Rate. Per A.3.1.2.3, Prime Agents earn the Agent Rate on USDS, Dai and sUSDS balances held **in their SubProxy** \u2014 and the Agent Credit Line Borrow Rate equals the Base Rate, which equals the Agent Rate plus the Sky Spread. With the Sky Spread at 0% (A.3.1.2.6), borrowing at the Base Rate and parking the proceeds in the SubProxy would earn back the entire borrow cost, producing a costless balance-sheet inflation that generates Distribution Reward Fee income for the Agent and pure risk for Sky.\n\nThe ring-fence removes that path structurally rather than by pricing it away. Borrowed capital must be *deployed*, into a specific primitive, in a specific account, and its performance is what the Agent is paid for.\n\nIt also makes the two accounts mean different things for risk accounting: the SubProxy holds the Agent's own liquid balances, the Allocation Vault holds Sky's credit at work. Any provision that reasons about one (interest accrual, Encumbrance Ratio, Total Risk Capital) can do so without disentangling the other.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Borrowed USDS must be deposited in the Allocation Vault and invested in Allocation System Instances only \u2014 separating leveraged capital from the account where Agents hold and earn on free balances.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "de369780-cd66-468c-8c77-ba2494e3d9ed",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:53.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7de1990a-43e7-4146-8b6b-34cc8e58729d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:53.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-bffff39b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bffff39b-46e8-4819-90b4-cf6bce61bc66",
+      "targetTitle": "Amending the Osero Artifact runs a four-stage Root Edit: hol"
+    },
+    {
+      "id": "lnk-9a1ce76a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9a1ce76a-43db-4b56-948f-ac6f846b6493",
+      "targetTitle": "Pre-agreed KPIs let deposit caps and yield expansions move w"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Deploying capital to a new venue is a constitutional act: invoking a new Allocation System Instance runs the full Root Edit process",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ded67daf-9591-4302-8268-036d03869db9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab80d662-26df-4c09-8e21-7bc3d235b589",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f075e283-45c7-4b4e-81d0-3309636c7100",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.6.1.2.1.2.2 states that \"the governance process to invoke a new Instance of the Allocation System Primitive follows the Root Edit process,\" pointing at the Operational Process Definition at A.6.1.1.7.2.2.2.2.1.2.\n\nThis places capital-deployment decisions at the highest procedural tier the Agent has. Adding a venue \u2014 a new target protocol, a new network, a new supplied asset \u2014 requires a 1%-holder proposal, an Operational Facilitator alignment finding, a three-day Snapshot poll with 10% participation, and a Facilitator-executed Artifact edit.\n\nThe boundary being drawn is between *where* capital may go and *how much* goes there. Venue selection is constitutional; sizing within an approved venue is operational, handled by relayers inside rate limits. Osero's operators can move funds freely within the SparkLend USDS Instance but cannot open a position anywhere the Artifact does not already name.\n\nThat is a strong containment property \u2014 the set of protocols Osero can ever touch is enumerated in a public document and expandable only by vote \u2014 and a real cost in agility. An opportunity requiring a new venue takes at least ten days and a governance campaign.\n\nOne inconsistency deserves flagging. A.6.1.1.7.2.6.1.2.2.1.4, Instance Lifecycle Management, says the processes for onboarding and offboarding Instances \"will be specified in a future iteration of the Osero Artifact.\" So one section routes new Instances through Root Edit while another describes the process as not yet written. The most coherent reading is that Root Edit supplies the governance authorization while the operational mechanics of onboarding and, notably, *offboarding* remain undefined \u2014 leaving exit from a venue less specified than entry.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:03:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.6.1.1.7.2.6.1.2.1.2.2 routes new Instances through Facilitator review and a token holder vote, so each new protocol or chain requires an Artifact amendment.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6757eba5-1b87-4d97-a14b-734b6d5a0e09",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:03:48.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7a841af1-ccf6-48f8-8a18-30337b7b9ba8",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:03:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-b25976a1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b25976a1-e82c-4b6b-acad-9080d0adecdf",
+      "targetTitle": "Funds borrowed on an Agent Credit Line are ring-fenced to th"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Agent borrowing costs are scheduled to move from a flat Base Rate to per-Agent risk-based pricing",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "26563e30-60d6-47da-ba33-af11b15840cd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e8ab34a6-7153-4f10-ad8e-2ee2d454d48d",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "29cb699e-ebcf-449b-9324-90880154fa3e",
+      "name": "credit-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.5.1 makes the flat borrow rate provisional: the Agent Credit Line Borrow Rate \"is equal to the Base Rate **unless** variable pricing has been activated,\" after which it \"will vary by Prime Agent according to its Credit Rating.\" A.3.1.2.5.5 confirms the sequencing \u2014 differentiation waits on \"the development of a Prime Agent Credit Rating System.\"\n\nThe Atlas is unusually specific about what would feed that rating: \"the Encumbrance Ratio and the Prime Spell Security Incident Registry.\" That pairing is the interesting part. One input is financial (how much of the Agent's capacity is already committed); the other is *operational security history* \u2014 an Agent that has had smart-contract security incidents pays more to borrow.\n\nPricing security posture into cost of capital is a different lever from the usual ones. Rather than reviewing an Agent's code or revoking its access after an incident, Sky makes carelessness continuously expensive, so remediation has a measurable payback and the incentive persists between audits.\n\nUntil activation, all Prime Agents pay the same Base Rate regardless of risk \u2014 so during the interim, cross-subsidization of riskier Agents by safer ones is an accepted cost of not yet having the rating machinery.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Once a Prime Agent Credit Rating System exists, the Agent Credit Line Borrow Rate varies by rating, computed from inputs including the Encumbrance Ratio and the Prime Spell Security Incident Registry.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b109836a-6ca8-424b-8141-a2fb2eb6ad82",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ef3472cc-2fd7-46eb-8228-d2d050181034",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

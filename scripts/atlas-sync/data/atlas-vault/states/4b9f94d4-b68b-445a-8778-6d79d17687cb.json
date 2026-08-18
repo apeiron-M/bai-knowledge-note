@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-6cf78728-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6cf78728-c190-493a-a638-ce8944628eb5",
+      "targetTitle": "A Spell deployed with CREATE2 automatically fails validation"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The DarkSpell check requires a Spell to be self-contained: execute() may only call actions(), and the action contract must be instantiated inline",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8137b4ef-74ff-4df2-b8d0-1d816a6fc41d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e933a66-08ee-4d72-8298-fb37123a62c1",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ed454ca-5107-4930-8bfe-2ae40b8abd94",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.12.3.1.5 names an attack class and defines two mechanical checks against it. Validators must confirm the Spell \"does not execute an external `DssAction` contract,\" ensuring it \"is self-contained, does not rely on external contracts or pre-defined Ethereum addresses, and that the `DssExec` and `DssSpellAction` contracts are deployed together and not separately, as is done when using **DarkSpells**.\"\n\nThe checks are:\n\n1. \"Check that the DssAction contract's `execute()` function only calls the `actions()` function and does not interact with any external contracts or explicitly defined Ethereum addresses.\"\n2. \"Check that the second argument used in the constructor when instantiating the `DssExec` is a newly created Spell action contract (e.g. `address(new DssSpellAction())`) and not an explicitly defined Ethereum address.\"\n\nThe attack this defeats is indirection. Every other validation check examines the Spell contract at the published address \u2014 its source, its compiler settings, its diff against GitHub. If that contract merely *points* to another contract holding the real behaviour, all of those checks can pass on entirely innocent code while the actions executed live somewhere nobody looked.\n\nRequiring `address(new DssSpellAction())` closes it structurally rather than by inspection. An inline instantiation means the action contract is created in the same deployment transaction, so it cannot pre-exist, cannot be swapped, and is covered by the same verified source. A hardcoded address, by contrast, is an arbitrary pointer whose target the validator would have to chase and verify separately.\n\n\"If either of these checks fails, the Spell cannot pass validation\" \u2014 no judgment, no severity assessment. The property being protected is that what you verify is what executes, and that is binary.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.3.1.5 blocks the pattern where a verified executor points at a separately deployed action contract, which would let audited code delegate to unaudited behaviour.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9cf99e11-46f3-46db-8cf0-8767cceb1967",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:52.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "11f34e3e-0e43-4b4f-9b56-7cf741fe14af",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:52.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

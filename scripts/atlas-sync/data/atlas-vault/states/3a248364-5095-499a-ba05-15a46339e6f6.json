@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-601f2dad-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "601f2dad-42a6-40be-a3b9-68d3b47abdbc",
+      "targetTitle": "A Ratification Poll must link one specific version of one At"
+    },
+    {
+      "id": "lnk-fd3d4c8c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fd3d4c8c-7cb0-466f-a38f-ff5989052f6e",
+      "targetTitle": "Simultaneous Atlas edits are merged if logically compatible "
+    },
+    {
+      "id": "lnk-997e101d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "997e101d-2ebb-4782-b76e-3a797252d117",
+      "targetTitle": "The Atlas treats the pull-request workflow itself as an atta"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Atlas amendments are executed as GitHub pull requests merged by the Core Facilitator",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ec483d0d-3fd6-40cc-8679-278a87c01f7a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c29cc47b-19ec-4c47-8c54-e69f923272ea",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3ec2b7fd-197d-44f7-af64-62b0e99f1627",
+      "name": "tooling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.12.2.1.3 makes the Atlas's amendment mechanics concrete. After triggering, the Core Facilitator must verify the proposal follows the Atlas Edit Proposal Template and \"must also verify that the AEP has been submitted to the Atlas Github repository with a Pull Request by the AEP Author\" \u2014 with a fallback that \"the AEP author can request the Core Facilitator to create the Pull Request for them.\" On successful verification the Facilitator must approve the AEP and assign it a formal number, update the Preamble to the AEP, and merge the Pull Request.\n\nThe Atlas is therefore a version-controlled repository whose amendment process is a code-review workflow with a governance vote attached. A.1.11.2.2 reinforces this by requiring the Core Facilitator to publish the weekly Governance Polls \"to the community Github and the official Voting Portal\" \u2014 polls and text live in the same system of record.\n\nThis is what makes several other provisions operable. The Reconciliation Process in A.1.11.2.5.2 borrows merge-conflict semantics because the substrate genuinely has them; the formal number assigned at verification gives every amendment a stable citation; and the diff is the audit trail, so \"documented publicly\" has a precise meaning rather than a rhetorical one.\n\nThe residual centralization is worth noting: the author opens the PR, but only the Core Facilitator merges it. The canonical text passes through one role's hands on every change, so the integrity of the Atlas depends on that merge step matching what voters approved.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Initial verification requires template compliance and a PR in the Atlas repository from the author; on success the Facilitator assigns a formal number, updates the Preamble and merges.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f74f1857-92cf-4307-a13c-aef9efd3af7a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "17670422-2c8f-469e-b3ef-2faf63cb9e27",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

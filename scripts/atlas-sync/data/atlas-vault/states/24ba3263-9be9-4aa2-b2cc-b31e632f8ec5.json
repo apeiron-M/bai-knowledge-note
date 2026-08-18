@@ -1,0 +1,125 @@
+{
+  "links": [
+    {
+      "id": "lnk-51525b04-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "51525b04-4b2c-428a-8fea-ca37e0dfc617",
+      "targetTitle": "doc-892e8a06"
+    },
+    {
+      "id": "lnk-d0b938c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0b938c0-f312-466e-831a-4ced55f508bb",
+      "targetTitle": "Keel's governance runs on forum posts and GitHub pull reques"
+    },
+    {
+      "id": "lnk-3a0be811-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3a0be811-14bc-4647-9820-ab524a13a683",
+      "targetTitle": "doc-4de671ab"
+    },
+    {
+      "id": "lnk-3a248364-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3a248364-5095-499a-ba05-15a46339e6f6",
+      "targetTitle": "Atlas amendments are executed as GitHub pull requests merged"
+    },
+    {
+      "id": "lnk-6d7fd202-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6d7fd202-6247-4c82-87fb-9e792de044fa",
+      "targetTitle": "Grove's Artifact documents inherited Sky Core infrastructure"
+    },
+    {
+      "id": "lnk-a8b21694-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8b21694-9635-446c-be32-f47ccf413fa4",
+      "targetTitle": "doc-b52443d0"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's governance currently runs on forum posts and GitHub pull requests because the specified tooling does not exist yet",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "66a2ed93-9e2a-4202-a15e-c55c30f9e938",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0c78ce3-2458-419c-a8cf-1fea28b500f4",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9c635b56-ac68-481e-afc9-567c14e3dc71",
+      "name": "governance-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d11477bf-e24d-471b-b158-83b8f0783d57",
+      "name": "tooling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two parallel Short-Term Transitionary Measures reveal that the Root Edit process is specified ahead of its infrastructure.\n\nFor **submission**, A.6.1.1.2.2.2.2.2.1.2.1.1.2: \"Until the Powerhouse system supports submitting Artifact Edit Proposals, GROVE token holders may submit Artifact Edit Proposals by posting them to the Sky Forum,\" with the title containing \"Grove Artifact Edit Proposal\" and the post including \"cryptographic proof that the author controls an account holding the required percentage of the total GROVE token supply.\"\n\nFor **enactment**, A.6.1.1.2.2.2.2.2.1.2.1.5.1: \"Until the Powerhouse system supports updating Agent Artifacts, the Operational Facilitator works with the Core Facilitator to update the Atlas GitHub repository\" to reflect approved proposals.\n\nThe pattern is worth naming because it recurs throughout the Atlas: the document specifies the *intended* mechanism, then attaches a manual fallback that is what actually operates. The fallback is not weaker on verification \u2014 cryptographic proof of holdings is arguably stricter than a UI check \u2014 but it is weaker on **automation**, because a human must transcribe an approved vote into the canonical repository.\n\nThat transcription step is the live trust assumption. Between the poll result and the merged pull request sits the Operational Facilitator plus the Core Facilitator, with the Artifact itself relying on their fidelity rather than on a mechanism. The interim rails also make the token-holding check a point-in-time snapshot in a forum post rather than a continuously verifiable state.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Short-Term Transitionary Measures substitute a titled forum post with cryptographic proof of holdings for submission, and a PR against the next-gen-atlas repository for enactment.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dbbe7ab9-25a8-46ae-9231-8139bbbdf742",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3ab6662a-f9bc-421a-9c66-ec10ce18c1ec",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

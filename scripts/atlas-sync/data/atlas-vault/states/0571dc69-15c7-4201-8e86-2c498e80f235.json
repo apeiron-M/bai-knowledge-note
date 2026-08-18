@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-db113d04-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "db113d04-982d-4738-8f8e-fb5bb43f4929",
+      "targetTitle": "Replacing minting with transfers from preminted supply remov"
+    },
+    {
+      "id": "lnk-da348693-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da348693-797c-4f25-9833-04879c9a67be",
+      "targetTitle": "The Atlas records MKR holders' informed consent so removing "
+    },
+    {
+      "id": "lnk-44bb4868-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44bb4868-e639-4b3e-b935-6149258474f8",
+      "targetTitle": "USDS replaced Dai as a 1:1 convertible successor rather than"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Delayed Upgrade Penalty ratchets upward on a fixed schedule to force MKR conversion without a deadline",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f23365de-caff-4231-9474-60f7171fa02b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "38be81df-fb46-41a7-9754-c51134470375",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    },
+    {
+      "id": "27523475-02f7-4aa1-a1a8-92185f47fc22",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.1.2.1.1.1 gives holders a standing right to convert MKR to SKY at a fixed 1:24,000 rate, \"subject to the Delayed Upgrade Penalty.\" A.4.1.2.1.1.1.1 defines the penalty's trajectory: set to 1% in the September 18, 2025 Executive Vote, and \"increased gradually at the rate of 1 percentage point per 3 months thereafter.\"\n\nThe mechanism design is the claim, not the numbers. A migration deadline creates a cliff: everything is fine until a date, after which value is destroyed outright and anyone who missed it has a grievance. A monotonically rising penalty instead makes delay continuously costly while never removing the option. Holders self-select their exit time against their own cost of acting, and the protocol never has to choose between stranding balances and supporting a legacy token forever.\n\nBecause the schedule is *pre-announced and open-ended*, it is also credible. Nobody needs to trust future governance to raise the penalty; the ruleset already says it rises, so waiting for leniency is not a rational strategy. The escalation eventually approaches confiscatory levels, which is how a soft mechanism achieves a hard deadline's effect without a hard deadline's discontinuity.\n\nThe cost is a slow-burning obligation: the penalty must keep being applied, and its indefinite ramp means the Atlas carries a live parameter that will look absurd if the migration is ever declared complete.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:15:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rising 1 percentage point every 3 months indefinitely, it replaces a cliff deadline with continuous pressure: converting is always possible, but always more expensive than yesterday.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9828c2e0-490a-40a2-9b19-c22c835af38f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "22f724ee-512e-44f0-a0a1-08ffd31bc5df",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

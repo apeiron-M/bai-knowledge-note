@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Artifact documents delegated-signer authority without naming any of its holders",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0b4156ab-dbc5-42da-b814-412ac781b11b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3e1559f8-5458-4498-9d60-955dfdbf2206",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cce5809f-1a69-493f-b41f-44d8b0b8d2a2",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec745e2d-bb52-4611-93a7-eda9d6507244",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Ethena instance dedicates a document to \"the addresses authorized as `delegatedSigners` in the `ethenaMinter` contract\" (A.6.1.1.1.2.6.1.3.1.4.1.3.1). Its child, `Addresses Of Delegated Signers` (.3.1.1), contains only: \"`delegatedSigner` addresses \u2014 These addesses will be specified in a future iteration of the Spark Artifact.\"\n\nElsewhere in the chunk, deferral affects things that are recoverable by inspection: a RateLimitID can be recomputed from a key, a `Pool` address read from the aToken contract. A signer set cannot be reasoned about from the document at all \u2014 its members are chosen by the Relayer at runtime, and the Artifact is the only place a reader could learn who they are.\n\nThe combination is the sharp edge: the same instance grants the Relayer unlimited authority to add signers and declines to record the resulting set. Whatever oversight the slot was created to enable is not currently available, and its absence is invisible unless a reader specifically drills to this leaf.\n\nThe placeholder is still better than silence \u2014 it establishes that this list is *supposed* to be published, which makes it an auditable commitment rather than an undocumented capability. But it means the privilege surface of the Ethena instance is, as documented, unbounded in membership and unlimited in rate.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Ethena's Addresses Of Delegated Signers slot states the addresses will be specified in a future iteration, so a high-privilege set is structurally acknowledged but not enumerated for review.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c149877b-d1a1-4734-b3ea-ca9d307a0903",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:03.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "80ab364a-9fd8-45e4-a812-bb072008b94b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

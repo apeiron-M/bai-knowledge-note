@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-f1a25b86-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1a25b86-7b9b-4774-af47-401fb5829d20",
+      "targetTitle": "doc-9d57257d"
+    },
+    {
+      "id": "lnk-945b39d5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "945b39d5-0cc8-4571-8389-10912390962d",
+      "targetTitle": "doc-730c3add"
+    },
+    {
+      "id": "lnk-3712c5ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3712c5ea-99e9-42c6-bada-501a53a94a84",
+      "targetTitle": "The Atlas splits into Immutable and Adaptive Documents so ev"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Archive Documents make version history a normal part of the tree but with zero operative force",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "74b411f1-89a7-4333-864d-be24f5cb4639",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "806aae0c-3920-42bc-9ad4-125d65bad8af",
+      "name": "versioning",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b5f79cc5-24f6-4ef7-a3ac-edd45ced3f85",
+      "name": "atlas-documents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.2.2.2.24 defines the Archive Type: Custom Components \"mirror the components of the original Document at the time of the version being archived,\" the identifier is the original plus a 'v' suffix and version number (A.1.v3 for the third version of A.1), and archives \"should be created whenever an Atlas Document is updated.\" They \"are not meant to be modified or deleted once created.\"\n\nThe interesting move is the pairing of two properties that usually come apart. Archives are **addressable** \u2014 they live in the tree, at real identifiers, citable like any other document \u2014 but they are Accessory Documents that \"do not have any impact on the governance or operation of Sky.\"\n\nThat combination is exactly what a precedent system needs. A.1.1.2 requires interpretations to be congruent with established precedent, which requires knowing what the text said when the precedent was set; archives supply that. But if archived versions retained any operative force, every superseded rule would remain arguable, and the Atlas would accumulate contradictory law rather than replacing it. Making them citable-but-inert gives evidentiary weight without legal weight.\n\nImmutability here is also of a different kind from the Immutable Documents' immutability. Immutable Documents are fixed because their content must never change; Archives are fixed because they are a *record*, and an editable record of what a document used to say would defeat its only purpose. The Atlas uses the same property for opposite reasons in the two cases.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:20:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:24.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.2.2.2.24 stores each superseded version at 'A.x.vN' as an Accessory Document, immutable once created and declared to have no impact on governance or operation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0b29cc0b-44cd-4631-9c56-5baa27c8592b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:24.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "70c09884-53fe-4c22-8aef-674ce3be33cb",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:24.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

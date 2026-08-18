@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-85a0a57f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "85a0a57f-ff93-4b0c-bb28-a2f5a10bb361",
+      "targetTitle": "The relayer's own minimum-output argument must itself clear "
+    },
+    {
+      "id": "lnk-7d55ddf5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d55ddf5-2687-4d9d-b00d-407824b071b1",
+      "targetTitle": "New Uniswap V3 positions may only be minted inside governanc"
+    },
+    {
+      "id": "lnk-d15e5dda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d15e5dda-ca4b-4018-b783-2ebc600f47e4",
+      "targetTitle": "Allowances granted for a single operation are reset to zero "
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Removing Uniswap V3 liquidity requires the proxy to own the position NFT and validates the declared minimums against what was actually collected",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fa27a392-fe29-4e62-aad3-6fad7a169a59",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3df7f7df-704f-484a-b82e-342d4f7ba4ec",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f16ec5eb-eb74-4684-a59d-52560ffc2885",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e6014aa8-aa46-466e-86c3-5838ac5d06ec",
+      "name": "slippage-protection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.9.3.3 opens with an ownership assertion: `require(positionManager.ownerOf(tokenId) == address(proxy), \"UniswapV3Lib/proxy-does-not-own-token-id\")`, alongside snapshots of the proxy's `token0` and `token1` balances. Because a Uniswap V3 position is an NFT identified by an arbitrary integer, without this check a relayer could pass any `tokenId` and have the controller operate on a stranger's position.\n\nThe more unusual step is A...9.3.6, run *after* `decreaseLiquidity` and `collect`:\n\n```\nrequire(params.min.amount0 >= (amount0CollectedAfter - amount0CollectedBefore) * params.maxSlippage / 1e18, \"UniswapV3Lib/min-amount-below-bound\");\n```\n\nThe comparison runs in the direction that constrains the **caller's declaration**, not the execution: the minimum the relayer supplied must be at least the realised amount scaled by `maxSlippage`. A relayer who declared a comfortably low minimum \u2014 the usual way to guarantee a fill \u2014 reverts, even though the withdrawal itself came out fine.\n\nThat is the same \"constraint on the constraint\" idea used pre-emptively on Curve (A...8.1.4), applied here after the fact because the realised amount is only knowable post-collection. Its effect is to force relayers to submit tight, well-estimated minimums as a matter of routine, so the `min` values passed to the position manager are genuinely protective rather than nominal.\n\nRate limits are then decreased per token and only when non-zero (A...9.3.7), keyed by token-and-pool, keeping the withdraw budget separate per side of the pool.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "ownerOf must equal the proxy, and afterwards each declared min must be at least the measured collected delta scaled by maxSlippage \u2014 so a slack declaration reverts a successful execution.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "90b1aec3-fc21-460e-ae4e-35c6847b0898",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "498b8414-117b-4dac-9a2c-e29599cf7e51",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:38.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

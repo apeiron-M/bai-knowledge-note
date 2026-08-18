@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-8af96c64-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8af96c64-3510-4235-aba8-f1c283e4be70",
+      "targetTitle": "doc-a24a2901"
+    },
+    {
+      "id": "lnk-e35bd9fd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e35bd9fd-dae9-4310-84fe-3a884dbbe171",
+      "targetTitle": "Core Governance Rewards are already flowing while the compli"
+    },
+    {
+      "id": "lnk-7ab5f215-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ab5f215-307f-41c0-8482-8e394d18ee2e",
+      "targetTitle": "The Governance Point must confirm every Executive Vote item "
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Housekeeping items skip the Governance Poll but are fenced off from anything that changes risk",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c337c1c2-36c0-4c39-b955-cb6b9b022eab",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8be63609-3d11-4d7e-b795-c4d4a54b75f8",
+      "name": "governance-cycles",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d546af34-f08b-407c-af50-e83d72dce9be",
+      "name": "protocol-maintenance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.11.1.5.1.2 opens a fast path: \"Housekeeping items can be directly included in Executive Votes without a Governance Poll.\" Because that bypasses the sentiment gate entirely, the Atlas constrains it on two fronts.\n\nThe first is definitional. A.1.11.1.5.1.1 defines housekeeping items as \"maintenance and record-keeping actions necessary to the correct functionality of the Sky Protocol\" and then fences them by exclusion: they \"do not include actions that modify risk parameters or introduce new elements into the protocol.\" Examples given are cleaning up technical debt, updating the Chainlog, and cancelling unused payment streams. Defining the category by what it excludes is what makes it non-expandable \u2014 anything touching risk or adding functionality is disqualified regardless of how routine it looks.\n\nThe second is procedural. The Core Facilitator must post the items and their rationale to the Forum, then \"request a confirmation of the technical accuracy of the housekeeping items from the technical Ecosystem Actor (or Spell team) who is leading Spell development,\" who \"must reply to the Forum Post confirming the accuracy.\" So the classification is attested by a second party, in public, before the item rides into an Executive.\n\nA.1.11.1.5.1 adds a conflict-of-interest guard: where Spell teams propose the items, \"the Core Facilitator must always conduct an independent assessment of the justification for, and security risks associated with\" them. The people whose work is simplified by the cleanup cannot be the only ones judging that it is safe.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Defined by exclusion \u2014 no risk-parameter modifications, no new protocol elements \u2014 and admitted only after a rationale post and written technical confirmation from the lead Spell team.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5aec6ba5-a4aa-453e-b65e-a5c2e2fba46a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "18122724-f078-47fd-ad9c-688c3b6abcd9",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

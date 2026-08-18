@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-99a51326-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "99a51326-13cd-4190-b451-af83c209bf41",
+      "targetTitle": "Fee-free USDS/USDC convertibility for Osero depends on a Sky"
+    },
+    {
+      "id": "lnk-d979d3b0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d979d3b0-8322-4975-8c5a-565873e06386",
+      "targetTitle": "The PSM is priced as a zero-capital-requirement route to ASC"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Zero PSM fees with no authorized-party carve-outs make USDS's peg inherit USDC's peg",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b399cea1-1f99-4ac3-a76b-f012cc9748e3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bcf73ed2-e9dc-47ce-b1e2-8fbe04b9010c",
+      "name": "peg-stability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "45e09542-ca73-439b-aa65-ac09d92c430f",
+      "name": "psm",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.3.2.7.1.1.2 lists the Lite PSM's live parameters: `tin` 0%, `tout` 0%, `line` 10,000,000,000 DAI, `gap` 800,000,000, `ttl` 43,200 seconds, `buf` 800,000,000, and \"Authorized Parties: None.\"\n\nThe fee settings are the consequential ones. `tin` is the fee to swap collateral in for Dai and `tout` the fee to swap Dai back out (A.3.3.2.7.1.1.1.1\u2013.2). Both at zero means round-trip convertibility between USDC and Dai/USDS at exactly par, for anyone, at any size up to the ceiling. And because A.3.3.2.7.1.1.1.7 defines Authorized Parties as actors permitted to use the PSM \"without paying swap fees,\" having none is not an exclusion \u2014 with fees already at zero, everyone is effectively authorized.\n\nThe result is that USDS cannot trade meaningfully away from USDC while the PSM has capacity in the relevant direction. Any discount is arbitraged by buying USDS cheap and redeeming at par for USDC; any premium is arbitraged the other way. Transaction costs are gas, not spread.\n\nThis is the strongest peg mechanism Sky has, and it is also a dependency. USDS is pegged to USDC as tightly as arbitrage allows, so it inherits USDC's peg quality, USDC's issuer risk and USDC's freeze capability. The elaborate ALM machinery \u2014 5% ASC, resting bids at 0.999, Peg Defense Events \u2014 is the layer that matters in exactly the scenarios where this one fails: when the PSM's ceiling is exhausted, when it holds nothing left to redeem, or when USDC itself is the asset in question.\n\nThe two ALM roles are visible in the parameters. A `buf` of 800m pre-minted Dai (A.3.3.2.7.1.1.1.6) makes small swaps cheap by avoiding a mint on each transaction; the matching `gap` and 12-hour `ttl` mean the ceiling can rise by 800m only twice a day, bounding how fast Sky's USDC exposure can grow even under sustained inflow.\n\nParameter changes require the Core Facilitator to recommend, in consultation with the Core Council Risk Advisor, followed by an Executive Vote through the Operational Weekly Cycle (A.3.3.2.7.1.1.3) \u2014 governance-gated, unlike the Core Stability Parameters, which agents may move within bounded limits.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Lite PSM charges tin and tout of 0% with no fee-exempt parties, so anyone can convert USDC to USDS and back at par up to a 10bn ceiling, arbitraging the two to within gas costs.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4643a180-fbe2-444a-ba84-570d1576d507",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e261faba-877f-41a7-815e-cd3c1e57b659",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:30.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

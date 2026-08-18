@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-7d8e6ff2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7d8e6ff2-5590-4faa-aec8-f834d863b7d8",
+      "targetTitle": "An Agent's SubProxy treasury account is controlled by Sky Go"
+    },
+    {
+      "id": "lnk-a25340b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a25340b8-4612-4e4c-9ac2-6df404e5e66c",
+      "targetTitle": "The startup capital and creation fee gating all Agent creati"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every Agent begins fully centralized: the Genesis Account holds 100% of tokens and is controlled by the Founder",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bed5e00f-ea1e-4027-b2d2-a6ad0c1ac81b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b26a25ae-2616-42a4-a754-dcea4df99a24",
+      "name": "agent-lifecycle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7dfaad4a-cae3-4cbe-ab66-74bff4d3494f",
+      "name": "token-distribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.5.1.2.6 requires the Agent Creation Primitive to designate a Genesis Account, populated by Core GovOps, and states two facts about it: \"The Genesis Account initially controls 100% of the tokens of the Agent. The Genesis Account is initially controlled by the Agent Founder.\"\n\nThe design accepts maximal initial centralization as the baseline. Every Agent starts as a Founder-controlled entity holding its entire token supply, and any dispersal of governance power happens afterwards through the Agent Token Primitive's distribution rules and emissions schedule (A.2.2.5.4.1.1.1). Decentralization is an *outcome of a specified process*, not a precondition of existence.\n\nRead against A.2.2.5.1.2.5, the split of control is deliberate and interesting: at creation, the **Founder holds all voting power** through the Genesis Account, while the **treasury (SubProxy) is controlled by Sky Governance**. Neither party has both. The Founder can direct the Agent but not unilaterally extract from it; Sky can hold funds but not vote the tokens.\n\nThe word \"initially\" is doing quiet work in both clauses, and the Atlas does not specify here what causes it to stop being true \u2014 that is left to the Agent's own distribution rules, which the Founder authors during the window when Founder Access still exists.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Decentralization is treated as an outcome of later distribution rules, not a starting condition \u2014 while the treasury SubProxy is Sky-controlled from the same moment.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d815b2f9-5595-4267-b7d1-07677b161756",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:25.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fb56ed81-49b6-4e74-b05c-86a3277d2f4a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:25.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

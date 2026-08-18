@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-5b14d573-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5b14d573-ae3a-4912-b597-2b3b9e35732f",
+      "targetTitle": "Required Risk Capital decomposes into three additive risk ty"
+    },
+    {
+      "id": "lnk-569b44ff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "569b44ff-948e-4f91-9ce7-2e31f3e4c97e",
+      "targetTitle": "Aggregate RRC is built bottom-up from three per-risk compone"
+    },
+    {
+      "id": "lnk-b5e85c87-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5e85c87-1546-40f6-afbd-d171fb56bc9d",
+      "targetTitle": "Every Active Instance publishes whether its risk capital fig"
+    },
+    {
+      "id": "lnk-c8ad784e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c8ad784e-2321-4b46-b1f6-27af9a1f5c0d",
+      "targetTitle": "The 8.75% capital ratio in the RRC formula currently has no "
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Any risk the framework cannot quantify is capitalized at 100%, making unmeasured risk maximally expensive rather than free",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5e36f1ad-e425-46cd-a12a-603f30e70ac5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "78c8a93c-978f-41ca-9f13-22a645d54df4",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "928a626f-934d-4c2f-ac03-af569bcbbffc",
+      "name": "fail-safe-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.1.1.3.2 is one line with outsized consequences: \"If Instance Financial RRC, Instance Smart Contract RRC, or Instance Administrative RRC for an Instance cannot be calculated then the Instance Total CRR is 100%.\"\n\nA 100% CRR means the Agent must hold risk capital equal to the entire invested amount \u2014 economically identical to being unable to use Sky's capital at all. Unquantifiable risk is therefore not permitted-by-default nor forbidden-by-rule; it is priced at the maximum, which makes the prohibition self-enforcing and removes any need for a gatekeeper to say no.\n\nThe pattern recurs at finer granularity. A.3.2.2.1.1.1.1.4 defines an Unauthorized Exposure as an underlying asset of a lending market that was not in the pro-forma RRC estimate approved by the Core Council Risk Advisor, and reasons: \"Because the risk of an Unauthorized Exposure has not been assessed, its Capital Ratio Requirement is 100%, applying at the exposure level the full-reservation principle.\" A.3.2.2.1.1.1.1.3.8.1 shows it applied in practice inside an otherwise 1\u20134% Morpho vault, where the mF-One / USDC market carries CRR = 100%.\n\nThe important refinement is that the charge is proportionate, not punitive: \"An Instance's Capital Ratio Requirement is the capital-weighted aggregate of its exposures' Capital Ratio Requirements, so an Instance with only a fraction of its capital in Unauthorized Exposures has a Capital Ratio Requirement below 100%.\" A lending market that quietly adds a new collateral asset therefore raises the Agent's capital requirement smoothly in proportion to drift, instead of instantly invalidating the whole position \u2014 a graduated failure mode for a risk that arises from someone else's governance decisions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:25.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "If any RRC component for an Instance cannot be calculated its Total CRR is 100%; the same full-reservation rule applies to Unauthorized Exposures, weighted by their share of Instance capital.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f14a4f7d-f865-4c45-9345-2fbf012c8ad4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:25.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f7ba3b76-9198-4aec-a80c-505c91acd68a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:25.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

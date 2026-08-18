@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-c8ad784e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c8ad784e-2321-4b46-b1f6-27af9a1f5c0d",
+      "targetTitle": "The 8.75% capital ratio in the RRC formula currently has no "
+    },
+    {
+      "id": "lnk-bd17992f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd17992f-ed65-4abe-8ade-5bcddc6013ab",
+      "targetTitle": "Real World Asset capital is computed by applying the Basel F"
+    },
+    {
+      "id": "lnk-b5f534f9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5f534f9-b518-4dee-83af-6f6a81a48b2f",
+      "targetTitle": "Sky's financial risk framework is an explicit adaptation of "
+    },
+    {
+      "id": "lnk-0b0fab0f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0b0fab0f-1f0c-4fd5-b423-7e1ad84daab8",
+      "targetTitle": "doc-0f710b51"
+    },
+    {
+      "id": "lnk-d97e9e31-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d97e9e31-e3d9-418f-adc5-b054206f3569",
+      "targetTitle": "Administered flat CRRs increasingly displace the modelled ca"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The two implemented risk models use different capital ratios \u2014 8.75% for lending markets and 8% for Real World Assets",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "88add919-dedd-4167-aa2e-b2402b64454c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f5cda6c6-c923-49d8-8bd5-72f7e1d900c1",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "188d9989-305d-4f6e-908f-4085e3d1afcf",
+      "name": "consistency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.1.1.5.1 sets the Capital Ratio for the lending-market model at `8.75%`, described as \"the capital ratio without additional buffers.\" A.3.2.2.1.1.1.5.2.6 completes the Real World Asset calculation by multiplying leverage-adjusted Aggregate RWA \"by an 8% capital ratio.\"\n\n8% is the Basel minimum total capital ratio, so the RWA path uses the unmodified regulatory number and the lending-market path uses a figure 75 basis points higher. The Atlas states no reason for the difference, and both models trace to the same source framework.\n\nWhether it matters in practice depends on where the ratio sits in each formula, and the two placements are not equivalent. In the RWA pipeline the 8% is a genuine multiplier: RRC = adjusted RWA \u00d7 8%. In the lending-market formula the ratio appears twice, as `K \u00d7 (1/CR) \u00d7 EAD \u00d7 ECR`, and because A.3.2.2.1.1.1.1.1.5.3 states ECR currently equals CR, the two occurrences cancel and the 8.75% has no effect at all.\n\nSo today the discrepancy is latent rather than active \u2014 but it is a trap. The moment Sky Governance sets an ECR above CR to add a buffer, the lending-market path starts scaling by ECR/8.75% while the RWA path scales by nothing, and the two asset classes drift apart by a factor no one chose. Recording the inconsistency now is cheaper than diagnosing it later.\n\nA related presentational hazard sits alongside it: the framework uses the same symbol for different things across models, most visibly `K` for both the Basel capital requirement (A.3.2.2.1.1.1.1.1.4) and the correlation sensitivity coefficient (A.3.2.2.1.1.1.1.1.3.3).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:51.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both derive from Basel's 8% minimum, but the lending-market path applies 8.75% while the RWA path applies 8%, so identical modelled loss produces different requirements by asset class.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "11deb428-9865-43fb-8f4a-3a2089b3fa41",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "752c0724-db56-47f5-ac61-58967d66f9cf",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

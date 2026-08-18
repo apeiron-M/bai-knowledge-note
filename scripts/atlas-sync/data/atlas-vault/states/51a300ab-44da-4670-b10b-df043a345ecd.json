@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-54ec30fe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "54ec30fe-c173-4f35-892b-91a0043936b8",
+      "targetTitle": "doc-89c6cbb6"
+    },
+    {
+      "id": "lnk-52e2f302-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "52e2f302-276c-46dc-8712-4c32dbf56b5a",
+      "targetTitle": "Grove's Ethena integration only grants an approval on-chain;"
+    },
+    {
+      "id": "lnk-de5e14b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "de5e14b7-cad5-4bd5-af88-368284d17faa",
+      "targetTitle": "Grove operates live instances without a specified process fo"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove ships integration code it is not yet safe to use and disables it by mandating a rate limit of zero",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b33d0b72-f8ba-45df-8a8d-6b0147719368",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c308f0c3-ad58-4463-914b-89ab62f787f4",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8d6d77c0-195b-4d1e-8de7-bcf69ffba959",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "db627ffd-cd2a-4058-8a52-88f45df11f8b",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.13.1.2 states the mandate plainly: \"Note that this function was deployed **without integration testing**, so its rate limit must be kept at `0` until the LayerZero dependencies are live and the functionality has been thoroughly integration tested.\"\n\nThis reveals a second role for the rate-limit system. Because every metered function calls `_rateLimited(key, amount)` before acting, a limit of zero makes the function unconditionally revert for any non-zero amount. The limit registry therefore doubles as a **per-function enable flag** that governance controls without redeploying code.\n\nThe same chunk shows two neighbouring cases of the same discipline. A...13.1.3 warns that the `approvalRequired == false` branch cannot be integration tested \"without OFTs with `approvalRequired == false`\" and must be tested before production use. A...11.1.7 warns that `redeemPendlePT` \"must not be used for markets with non-standard SYs (such as ePENDLE, mPENDLE, or aTokens like aUSDC and aUSDT) without additional testing targeting each such market.\"\n\nThe trade-off is honest but real. Shipping dormant code keeps deployment cadence decoupled from integration readiness, and the zero limit is a strong technical guarantee \u2014 but the safety now depends on a *configuration value* rather than on the code's absence, so any process that sets limits in bulk, or any future refactor that stops routing through `_rateLimited`, silently arms the untested path.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas requires LIMIT_LAYERZERO_TRANSFER to stay at 0 until the dependency is live and integration tested, making the rate limit a governance kill switch rather than only a throttle.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8184f9d4-f76a-41fb-a3a7-cf418c0dba95",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "96230b2c-42f9-48eb-96af-29bee3ba1b0d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

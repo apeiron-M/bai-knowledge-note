@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-78eb2189-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "78eb2189-27a4-49f2-aaaa-7514c3eaf6e6",
+      "targetTitle": "The SP-BEAM bounds delegated rate changes on four axes at on"
+    },
+    {
+      "id": "lnk-4f9031dd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4f9031dd-df6f-49eb-a94c-46e7724a9c5e",
+      "targetTitle": "Rate changes flow through a bounded external access module i"
+    },
+    {
+      "id": "lnk-e45800bb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e45800bb-0a7f-4207-9f93-5b1595c0c610",
+      "targetTitle": "The launch supply rate is set at an explicitly unsustainable"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Dai is being retired by rate: the DSR must be driven to 0% while the SSR keeps a 200-basis-point floor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c7f8e7eb-52c8-4545-8573-8ee8c5178c8a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ed078e2-a604-4a66-a104-019a28def94e",
+      "name": "usds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "13f19045-9dd8-4c4b-9eb0-8d9663d8786e",
+      "name": "dai-migration",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.4.1 contains a one-line strategic commitment: \"The Dai Savings Rate must gradually be reduced to 0% over time.\" A.3.1.1.2 carves it out of the rate ladder explicitly \u2014 every other Core Stability Parameter must maintain its specified relationship to the Base Rate, and \"the only exception is the Dai Savings Rate.\"\n\nSo Dai is deliberately decoupled from the system's key rate and walked to zero yield, while USDS holders continue to receive Base Rate minus fees. Migration is driven by opportunity cost rather than by any forced conversion or deadline: holders are never prevented from holding Dai, they are simply progressively unpaid for it.\n\nThe access-module bounds make the asymmetry structural rather than merely intended. The DSR module permits a `min` of 0 basis points (A.3.1.2.4.1.1); the SSR module's `min` is 200 basis points (A.3.1.2.2.2.1). An operator acting within delegated authority can therefore take Dai yield to zero but cannot take USDS yield below 2%, and cannot reverse the Dai decline beyond what governance-set bounds allow. The ratchet is in the contract configuration.\n\nThe \"gradually\" is the load-bearing word: an abrupt cut to 0% would be a de facto redenomination event and a peg risk for Dai, whereas a slow grind lets the stock migrate without a run.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The asymmetry is encoded in the access module bounds \u2014 DSR min is 0 bp, SSR min is 200 bp \u2014 so the deprecation cannot be reversed by an operator without escalating to governance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b1329932-75b2-4249-9126-f1740deefd9d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e5137fd4-44ac-4dc6-8a48-1661816ae665",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

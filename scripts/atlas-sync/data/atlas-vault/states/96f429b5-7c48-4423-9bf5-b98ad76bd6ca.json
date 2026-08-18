@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-98155eb6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "98155eb6-84d6-42c7-bf34-2cf7894d97e7",
+      "targetTitle": "Each direction of an issuer conversion is a separate instanc"
+    },
+    {
+      "id": "lnk-977282df-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "977282df-248c-461c-a5b6-87b2dbaaaa85",
+      "targetTitle": "Spark Liquidity Layer rate limits are deliberately asymmetri"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Directional conversion routes are sized asymmetrically, revealing which way Spark expects to move",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a2e25a4f-6657-4826-bf0a-879a3f41ff4f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5e357032-c4af-4f13-9ed8-ccb288807889",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0448af84-191a-482f-88a3-567500f2c084",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "72e9d3b4-1f72-4cb6-9398-ecfa1f862ba1",
+      "name": "liquidity-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The four Paxos instances share a `maxAmount` of 5,000,000 but diverge sharply on slope. USDC\u2192PYUSD: 50,000,000 USDC per day (A.6.1.1.1.2.6.1.3.1.12.1.2.4.1). PYUSD\u2192USDC: 200,000,000 PYUSD per day (.12.2.2.4.1). PYUSD\u2192USDG: 50,000,000 per day (.12.3.2.4.1). USDG\u2192PYUSD: 100,000,000 per day (.12.4.2.4.1).\n\nThe pattern is consistent across both pairs: the route *out of* the less liquid asset is sized two to four times faster than the route into it. Acquiring PYUSD or USDG is throttled; unwinding back toward USDC, or out of USDG into PYUSD, is not.\n\nThis is the asymmetry seen in the lending instances, where outflow is left unlimited, reappearing where there is no natural inflow/outflow direction to hang it on. In a conversion pair, 'de-risking' is not a leg of one conduit \u2014 it is the *other conduit*, and the only way to express 'we may always retreat faster than we advance' is to size the two documents differently.\n\nSo the pair of slopes encodes a view about which asset Spark considers the safe default. It also creates a subtle governance property: reversing that view requires amending two documents in opposite directions, not flipping one flag, which makes a change of stance visible as a coordinated pair of edits rather than a quiet parameter tweak.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:14:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Paxos allows 200,000,000 PYUSD per day out to USDC but only 50,000,000 USDC per day in, and 100,000,000 USDG out against 50,000,000 into USDG \u2014 exits from the minor asset are the faster leg.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "072aad5d-8303-48da-8ec2-e4824037c729",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:14:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cbe18fe9-2464-4b0d-af7d-b8a503650d5f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:14:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

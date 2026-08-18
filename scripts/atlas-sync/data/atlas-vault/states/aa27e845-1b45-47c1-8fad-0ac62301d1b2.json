@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-b1eb75a7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b1eb75a7-a51f-436e-834b-6c79637bc7ba",
+      "targetTitle": "Osero's liquidity layer can be operated by either Osero or O"
+    },
+    {
+      "id": "lnk-dc0ffce7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc0ffce7-8c92-4589-9087-72c34106efd5",
+      "targetTitle": "doc-fcd495e3"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Two independent Relayer multisigs let Operational GovOps operate Obex's Liquidity Layer without Obex",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "da1d40e6-6f4c-4185-be4c-97cd6287a4b7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6713dcd1-e47e-4eec-9a4c-6c43752b497f",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "42c5a176-77b3-4ea0-953e-8adb90f70fdf",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f41115d4-4682-4660-a758-e7503ad847e7",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two multisigs hold the identical `RELAYER_ROLE`. The **Prime Relayer Multisig** is \"controlled by Obex\" with a 4-of-7 threshold over seven Obex-controlled addresses (A.6.1.1.5.2.6.1.2.1.2.2.1). The **Core Operator Relayer Multisig** is \"controlled by Operational GovOps Soter Labs\" with a 2-of-3 threshold over three Soter Labs addresses (A.6.1.1.5.2.6.1.2.1.2.2.2).\n\nThe capability is redundant rather than divided: either party can independently mint USDS, transfer assets, deposit to and redeem from vaults, and swap through the PSM, each bounded by the same rate limits. This is continuity engineering \u2014 if Obex's signers become unavailable, unresponsive or compromised, the ecosystem's own operator can still unwind positions and repay debt without waiting for a governance cycle.\n\nThe thresholds encode different assumptions. Obex's 4-of-7 majority spreads authority across a larger internal set; Soter Labs' 2-of-3 is tuned for a small professional team that must be able to act quickly. Both are constrained by the same Usage Standards clause requiring the role be exercised \"in accordance with the instructions specified in the Obex Artifact.\"\n\nThe cost is a widened attack surface: two independent key sets can each move capital, so the system's operational security is that of the weaker set. The design accepts that in exchange for guaranteeing that no single party's failure can strand the Liquidity Layer \u2014 the same reasoning that gives the Freezer a low threshold.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Prime Relayer Multisig is 4-of-7 controlled by Obex; the Core Operator Relayer Multisig is 2-of-3 controlled by Soter Labs \u2014 both hold the same RELAYER_ROLE.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a0a09061-ef0c-448e-b143-dbaca58a7b52",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:25.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d4efdad7-2c56-46df-be63-4467d82b7d25",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:26.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

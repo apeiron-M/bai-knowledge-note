@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-c36562f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c36562f4-5d4f-4219-a452-683bb0630e6f",
+      "targetTitle": "The Loss Given Default formula as written in the Atlas alway"
+    },
+    {
+      "id": "lnk-c11ffaf6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c11ffaf6-6d83-4e27-b0b4-9b35dcd60240",
+      "targetTitle": "The reference implementation's probability-of-default comput"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reference implementation clamps Loss Given Default to [0,1], confirming the published formula's bound is written backwards",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7161de67-555d-4391-9c48-a18ba76ad2dd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5c407d60-1d47-411e-96a6-4f3a39191c24",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f5a885e0-27c8-4006-96d3-20a26d2e3a28",
+      "name": "specification-defect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.1.1.2 states the Loss Given Default step as `LGD = min(1 - (1 - LP) * (1 - S) / LT, 0)`, which can never return a positive number and would zero out every capital requirement downstream.\n\nThe reference implementation included at A.3.2.2.1.1.1.1.5 settles the question of intent. It computes recovery as a share-weighted sum across collateral positions of `(1 - liquidation_penalty) * (1 - slippage) / liquidation_threshold`, then applies `lgd = max(0.0, min(1 - recovery, 1.0))`.\n\nSo the intended semantics are a two-sided clamp of the loss fraction to the unit interval: floor at 0 when recovery exceeds the debt, cap at 1 when recovery is worthless. The prose's `min(..., 0)` is a transposition of the floor.\n\nTwo consequences follow. First, the defect is confined to the prose and does not affect anything computed from the reference code \u2014 but the Atlas is the normative artifact, so an independent implementer following only the specification would produce a framework that requires zero capital. Second, the code makes a modelling choice the prose does not state: recovery is aggregated **across positions** as a share-weighted average before the clamp, so an over-collateralized position can offset an under-recovering one within the same Instance, rather than each position being floored independently.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Prose gives LGD = min(1 \u2212 recovery, 0); the code computes max(0.0, min(1 \u2212 recovery, 1.0)) \u2014 resolving the defect and making the code, not the formula, the operative definition.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8852caae-9de5-4945-b9f1-8882d3c3c269",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "27a39c63-4c92-432e-abb3-5308eacc90cb",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

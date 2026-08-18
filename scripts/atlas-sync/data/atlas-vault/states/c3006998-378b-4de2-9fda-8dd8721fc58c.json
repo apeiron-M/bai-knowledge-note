@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-fd7060b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fd7060b8-ae56-4aee-b653-4cd81b459199",
+      "targetTitle": "Spell Reviewers work from the Executive Document while the C"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The voter-facing Executive Document is reviewed only inside the producing team, unlike Spell code which is reviewed across teams",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f41973f8-9e59-4289-b15c-4f0d0a704fc3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3aeab7f7-2fd3-4d79-b3be-6ab5ae29a455",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f4f58907-38c2-4092-a277-ebbfe8a76849",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.8.4 provides that \"another member of the Core Facilitator team must review the Executive Document to ensure adherence to all specified conventions. **As a general rule**, the reviewer must not be the author of the Executive Document to provide independent validation.\" A.1.10.2.4.8.3.10 adds that \"any member of the Core Facilitator team can commit changes to the Executive Document,\" with the standard practice being to request changes from the drafter. Merging \"requires two approvals\" (A.1.10.2.4.8.5.2).\n\nCompare the Spell code path. There, the Crafter is the *only* party permitted to commit (A.1.10.2.4.7.2.3), and a Prime Spell reviewer must not be the Crafter for that cycle's Sky Core Spell (A.1.10.2.3.2.2.3.3.3) \u2014 hard, per-cycle, cross-team disqualifications. For the Executive Document, review is intra-team, write access is shared, and the author/reviewer separation is a general rule rather than a requirement.\n\nThe asymmetry has a rationale: code executes irreversibly, and the Document's numbers are independently constrained by the Executive Sheet, the hash check, and the Content Liaison confirmations. Convention-adherence review is also genuinely cheaper than security review.\n\nStill, the Executive Document is the only artifact most voters ever read. Errors of framing, emphasis, or omission \u2014 precisely the failures that no hash or checksum detects \u2014 are checked by one colleague of the author under a softenable rule. In a process that elsewhere treats unanimity as suspicious (A.1.10.2.4.7.4.7) and mandates cross-team independence for code, the persuasion layer receives the weakest independence guarantee in the chain.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.8.4 asks another Core Facilitator member to review 'as a general rule', a softer separation than the Spell process's per-cycle cross-team disqualifications.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b8d34a8c-a85d-469b-8f0d-c663df535205",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "540b1b13-5052-4a6f-8fc3-7460d48f81ea",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

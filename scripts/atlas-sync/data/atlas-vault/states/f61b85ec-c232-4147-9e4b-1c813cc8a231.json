@@ -1,0 +1,18 @@
+{
+  "title": "The voter-facing document has the weakest independence guarantee in the Executive chain",
+  "status": "OPEN",
+  "content": "**Side A \u2014 code review is strict.** Spell code requires reviewer separation enforced across teams and rotated per cycle, with the validator mandated to assume the answering party is acting maliciously.\n\n**Side B \u2014 document review is not.** The Executive Document \u2014 the artifact voters actually read to decide \u2014 is reviewed within the same team, with author/reviewer separation stated only \"as a general rule.\"\n\nThe asymmetry is backwards relative to the threat. Code defects are caught by hashes, diffs, simulation and independent reconstruction; **framing and omission errors in the voter-facing description are caught by none of those.** A Spell that does exactly what its code says, described in a way that leads voters to a different conclusion, passes every technical control in the chain.\n\nThis is not a contradiction in the strict sense \u2014 both provisions can hold simultaneously \u2014 but it is a live tension between the Atlas's stated adversarial posture and where it spends its review budget.\n\n**To resolve:** consider whether the Executive Document warrants the same cross-team separation the code path already mandates.",
+  "observedAt": "2026-08-17T23:04:43.000Z",
+  "observedBy": "atlas-extract",
+  "resolution": null,
+  "resolvedAt": null,
+  "description": "Spell code requires hard per-cycle cross-team reviewer separation, while the Executive Document that voters actually read is reviewed intra-team with author/reviewer separation only as a general rule.",
+  "involvedRefs": [
+    "cdce3add-0bb4-47ba-add1-b53109d83a21",
+    "3652d224-028e-40bc-af6b-e5150bfb2cc8",
+    "2ef896ad-d5e5-41f9-9c05-3097dc2dd097",
+    "b9a526c6-9664-4cd0-a4c6-c7358a666375",
+    "0c19d39e-77a2-4d56-8432-8990d31447e9",
+    "fd7060b8-ae56-4aee-b653-4cd81b459199"
+  ]
+}

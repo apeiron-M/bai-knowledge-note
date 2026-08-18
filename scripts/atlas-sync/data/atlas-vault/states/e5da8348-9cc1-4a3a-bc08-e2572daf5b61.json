@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Artifact deliberately declines to record Spark's current treasury balance, deferring to chain state",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "34ff5116-a532-4fbd-a402-b5cd75eb92e5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9363ccd4-fc10-47f9-a3d4-f78170de9132",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b6946f37-afb5-489b-810b-361f1669683a",
+      "name": "governance-artifacts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.4.2.3.1.1 defines Current SubDAO Proxy Value as the sum of USDS held at a specific Ethereum address, then adds a rule about the Artifact itself: the buyback process \"uses the most up-to-date onchain value... and **this does not need to be updated in the Spark Artifact** as it is expected to fluctuate frequently based on monthly settlements and other operational processes.\"\n\nThis completes a three-tier scheme visible across the Spark Artifact for how a value can live in the document.\n\n1. **Core provisions** \u2014 policy, formulas, thresholds \u2014 changed only through the Root Edit Primitive and a governance vote.\n2. **Active Data** \u2014 rosters, program details \u2014 changed by a named Responsible Party via Direct Edit on an enumerated trigger, with publication.\n3. **Referenced chain state** \u2014 this tier \u2014 never written into the document at all. The Artifact records the *definition* (which address, which token) and points at reality for the number.\n\nThe boundary is drawn by update frequency against the cost of staleness. A treasury balance that moves continuously would be wrong the instant it was written, and a wrong number in an authoritative document is worse than no number, because downstream readers cannot tell which one the process actually uses.\n\nWhat the Artifact keeps is the part that must be agreed: the address, the asset, and the fact that this specific balance is the one the buyback formula consumes. That is the auditable content \u2014 anyone can recompute the month's buyback from the document plus a chain query, with no privileged access and nothing to trust in between.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Current SubDAO Proxy Value is defined as a named on-chain address's USDS holdings, with an explicit note that it need not be maintained in the Artifact because it fluctuates frequently.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "53312aae-3cf3-4c9e-a03e-a180b4987895",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:41.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9ac62b53-512b-4fce-a253-534da50b0282",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:44.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

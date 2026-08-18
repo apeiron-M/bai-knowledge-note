@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-5c3f79f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5c3f79f4-520d-4943-a709-1ca8f91ab5df",
+      "targetTitle": "The Executive Sheet is the Crafter's source of truth and onl"
+    },
+    {
+      "id": "lnk-fd7060b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fd7060b8-ae56-4aee-b653-4cd81b459199",
+      "targetTitle": "Spell Reviewers work from the Executive Document while the C"
+    },
+    {
+      "id": "lnk-38ca97cd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "38ca97cd-f221-4ef0-9886-ee8822e75bec",
+      "targetTitle": "The Atlas keeps 'Executive' and 'Spell' as strictly separate"
+    },
+    {
+      "id": "lnk-7c857abb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7c857abb-369f-44ee-a66a-71adf15abe02",
+      "targetTitle": "Executive Process timelines explicitly do not take precedenc"
+    },
+    {
+      "id": "lnk-a0d74e26-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a0d74e26-633b-42c5-8224-024999b2a6ac",
+      "targetTitle": "Token transfer totals are summed independently by the Govern"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Executive Sheet, not the Executive Document, is the Crafter's source of truth \u2014 because it exists earlier",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "d5fcd839-415f-4033-8931-8f7bee287002",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b824511d-0c2b-406f-a2fd-00d92d8f8b75",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2e2b5faf-d9c2-42ba-b672-eabcb50da8ad",
+      "name": "process-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.7.2.2 states that \"the Crafter must use the Executive Sheet as their key reference document and source of truth while developing the Spell. While the Executive Document is the instruction document for the Executive Process, the Executive Sheet is **available earlier** which enables the Crafter to begin Spell development at an earlier stage.\"\n\nThe justification is purely temporal. The Executive Document is the authoritative published artifact voters read, but it is finalized in Step 8 \u2014 after crafting begins in Step 7. Waiting for it would serialize two weeks of work that can overlap.\n\nThe accepted risk is drift: code is written against an artifact that can still change. The Atlas contains that risk rather than eliminating it. A.1.10.2.4.6 finalizes the sheet on Friday of week 1 and requires that \"any updates to the Executive Sheet made after Friday, week 1, must follow the procedure in A.1.10.2.4.8.3.8 - Core Facilitator Must Notify Spell Team Of Changes.\"\n\nSo the design is: freeze the working artifact at a known moment, then make every later change an explicit push notification to the party building against it. That is a deliberate choice of a *managed* concurrency hazard over a schedule that would be safe but a week longer \u2014 and it only holds if the notification duty is honoured, since a silent late edit produces a Spell that faithfully implements a superseded instruction.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.7.2.2 subordinates the formal instruction document to the working artifact so coding can start sooner; the cost is a change-notification duty once the sheet is finalized.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7ab3697c-9626-4908-be45-0c1095663331",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cbf48af6-53ee-433f-87f7-f93a69669883",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

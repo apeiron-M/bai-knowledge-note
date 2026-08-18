@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-d22b14aa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d22b14aa-f0dd-4ae0-bbcd-b19afaf05693",
+      "targetTitle": "The Stability Fee is created by minting new Dai into the bor"
+    },
+    {
+      "id": "lnk-922b25cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "922b25cc-75d3-48e9-ab9f-5ecb04d636a8",
+      "targetTitle": "Settlement migrates in three stages from simplified accounti"
+    },
+    {
+      "id": "lnk-193e6ba9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "193e6ba9-494a-412a-a978-c3b100883a2d",
+      "targetTitle": "doc-0522672d"
+    },
+    {
+      "id": "lnk-e4c50bf3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e4c50bf3-4aa1-4944-bf56-429d857b60b2",
+      "targetTitle": "Sky deprecates its own Core Vaults by pricing users out rath"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Prime Allocator Vault Stability Fees are set to zero so all value transfer runs through Executive Votes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0fc81bcf-d283-4254-8275-86ba41aa2117",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d03ebd13-3d51-433a-a8cb-22a40e185944",
+      "name": "settlement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "81bad619-b141-4cfe-be7f-3a154e9a50d5",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.4.1.2.2.1.3.1 requires that \"The Stability Fees for each Prime Allocator Vault must be reduced to zero so that value is transferred from Primes to Sky Core exclusively through Executive Votes,\" directing the Core Executor Agents with the Risk Advisor to use the Stability Parameter Bounded External Access Module to do it.\n\nThis is a deliberate move *away* from automation, which is worth pausing on. On-chain stability fees accrue continuously without anyone acting \u2014 normally the desirable property. Switching them off means every transfer of value from a Prime to Sky now requires a governance action.\n\nThe motive is single-channel accounting. Under the Simplified Profit And Loss Calculation the amount a Prime owes is not the accrued interest \u2014 it is Total Allocation System Revenue minus Adjusted Profit, computed off-chain and including discretionary penalties. If stability fees also accrued on-chain, value would be moving through two uncoordinated paths and the monthly settlement figure would need constant reconciliation against whatever the vault had already collected.\n\nSo the choice is coherent given the stage: while the authoritative computation lives off-chain, the on-chain mechanism that would compete with it is disabled. Everything then flows through one instrument that is publicly proposed, reviewed and recorded.\n\nThe cost is that settlement depends entirely on governance executing \u2014 a missed Executive Vote means Sky collects nothing that month \u2014 and the same section pairs it with a mandate that the Core Council \"ensure tooling is developed\" to compute the amounts automatically (A.2.4.1.2.2.1.3.2). Stage 3 eventually re-enables on-chain accrual, so this is explicitly a temporary trade of automation for a single reconcilable channel.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Automatic on-chain fee accrual is deliberately switched off via the Stability Parameter Bounded External Access Module, concentrating every Prime-to-Sky transfer into one governed, auditable channel.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2334bb02-ebe4-45dd-939a-960b499202a4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:33.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3702aab4-1fd9-4e35-b7cf-8b817b615572",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:33.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

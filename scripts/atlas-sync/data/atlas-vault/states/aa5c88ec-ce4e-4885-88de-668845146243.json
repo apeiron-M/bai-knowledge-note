@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e9f8904d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9f8904d-ed94-4ee7-9f40-5f82ad86ebd6",
+      "targetTitle": "The PT-USDe instance carries three separate rate limits beca"
+    },
+    {
+      "id": "lnk-bea96dc1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bea96dc1-4182-4f96-acfc-7e7d72b2fc52",
+      "targetTitle": "Grove caps how fast capital can enter an allocation but leav"
+    },
+    {
+      "id": "lnk-ccc2a6cf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ccc2a6cf-9fb8-4ec9-b6e5-7a13b3fb855a",
+      "targetTitle": "Grove models two-way convertibility through a centralized is"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Where a conduit is broker- or issuer-mediated, Grove's outflow RateLimitID is absent and the inflow limit measures counterparty credit rather than venue exposure",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6ff2a498-4942-4967-b8d4-20e9cef27643",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6d11bcb6-1a3a-4e7a-be64-774af92fc521",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "767e5f1c-f6f2-48f1-9793-9a92b48b1261",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a9eee84b-068c-483c-9d71-d77f8dfa583a",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.6.1.1 configures a Uniswap AUSD/USDC position on **Monad**, and its rate limit sections are titled \"Deposit Rate Limits (**via FalconX**)\" and \"Withdrawal Rate Limits (via FalconX)\" (.2.4.1, .2.4.2). Deposits are capped at 50,000,000 USDC with a 50,000,000 per day slope; withdrawals read `maxAmount`: N/A and `slope`: N/A; the outflow RateLimitID at .2.3.2 reads \"N/A.\"\n\nThe same shape appeared in the USDC To USDG Via Paxos Instance, which has a single `transferAssets` limit and no outflow control at all. Two unrelated Instances, one an AMM position on a new chain and one a stablecoin mint, converge on the identical structure \u2014 which makes it a pattern rather than a quirk.\n\nThe common cause is that a rate limit can only constrain an action Grove itself takes on-chain. Where the outbound leg is a transfer to an intermediary \u2014 FalconX here, Paxos there \u2014 and the return leg is that intermediary performing an obligation, there is no Grove-initiated transaction on the return path to meter. The slot is not merely unset; it has no referent.\n\nThe consequence deserves stating without euphemism. For these Instances, `maxAmount` is not a bound on exposure to Uniswap or to Monad. It is a bound on how much **unsecured credit Grove can extend to the intermediary per day**. The named venue in the Instance title describes where the money is ultimately meant to go, not what Grove is actually exposed to while it is in transit.\n\nSo an \"N/A\" outflow RateLimitID is a reliable tell. Anywhere it appears alongside a populated inflow limit, the reader should look for an off-chain counterparty and reclassify the Instance's risk accordingly \u2014 the uniform schema will otherwise present it identically to a fully on-chain conduit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:33.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Monad Uniswap Instance routes deposits via FalconX with outflow RateLimitID N/A and withdrawal limits N/A, matching the Paxos conduit",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9f73062f-0c75-4a36-86b6-5bfd9a35ce87",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "99d5fcf3-0bda-4fd5-8b83-dc57e0c23144",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:12.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

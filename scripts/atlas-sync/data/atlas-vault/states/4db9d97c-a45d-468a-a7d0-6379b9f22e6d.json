@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-e44c2a0c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e44c2a0c-60b1-464b-8544-cdb450492c6c",
+      "targetTitle": "Grove prices a new market's burn-in period as a capital char"
+    },
+    {
+      "id": "lnk-859bdd1a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "859bdd1a-23a5-4e7d-9d6d-35ec62ce85ec",
+      "targetTitle": "Two live Morpho instances share the grove-bbqUSDC ticker at "
+    },
+    {
+      "id": "lnk-71500e0d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "71500e0d-69c4-4f78-a260-39379567cf16",
+      "targetTitle": "Grove needs an explicit Atlas authorization even to collect "
+    },
+    {
+      "id": "lnk-e2a4eab3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e2a4eab3-cfdd-4166-b915-7b5f7c9f9408",
+      "targetTitle": "Grove deploys much of its capital through named third-party "
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's capital requirements distinguish markets within a single Instance, so the Instance is not the finest unit of risk control",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e607ad1b-a747-4146-8f57-0f931249107c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5f9dd1e1-50a3-4b5d-b8fb-6dea7eaa0a4f",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5097fa49-d0aa-43db-9c59-56148ed63db9",
+      "name": "capital-requirements",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fa8de766-f9ce-4149-be5f-95297021b7d3",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.7.1.1.2.5.2 assigns two different capital requirements inside one Instance: the schedule from 3% to 0.65% \"applies to the **approved spUSDG/USDG market**,\" while \"any allocation to the **syrupUSDG/USDG market, which is not approved**, is subject to a 100% CRR.\"\n\nEverything else about the Instance is undifferentiated. There is one inflow RateLimitID, one 50,000,000 USDG deposit limit, one maxExchangeRate, one token. Grove deposits USDG into a Morpho vault, and the vault allocates across markets \u2014 so the market-level distinction is downstream of every on-chain control the Instance defines.\n\nThat breaks the framing that holds through most of the Grove Liquidity Layer, where the Instance is the atom of both authorization and enforcement. Here authorization is finer-grained than enforcement: the Atlas expresses a preference between markets that no RateLimitID can implement, because the allocation decision belongs to the vault curator, not to Grove.\n\nThe consequence is that this Instance's real risk profile depends on a party whose choices Grove does not control and whose actions the Instance's controls cannot bound. The vault could rotate its allocation between the approved and unapproved markets without any Grove limit registering a change.\n\nThat is precisely why the differentiation had to be expressed as a **capital requirement** rather than a limit \u2014 a CRR is computed from where the exposure ends up, so it can reach a distinction that a transaction-time control cannot. Where an allocation is intermediated by a curator, capital charges are the only instrument that follows the money to its destination.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:34.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Grove x Steakhouse USDG Instance carries a 3%-to-0.65% CRR for the approved spUSDG/USDG market and a 100% CRR for the unapproved syrupUSDG/USDG market under one set of rate limits.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "11f4c88e-e428-4846-a9be-756beb4994bc",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:25.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "53e94bd9-48be-4a3c-bf80-57b862f91b53",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:29.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

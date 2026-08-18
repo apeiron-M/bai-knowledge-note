@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-69dfa9b9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "69dfa9b9-8920-421d-8d11-ea0ecd8d3011",
+      "targetTitle": "The Upkeep Rebate is an automatic entitlement of every Prime"
+    },
+    {
+      "id": "lnk-853de761-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "853de761-02df-4290-a6a7-f576f4092cbc",
+      "targetTitle": "The Upkeep Rebate applies automatically to Prime Agents' cro"
+    },
+    {
+      "id": "lnk-f75a126d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f75a126d-fb18-4947-a919-30e1b397aed2",
+      "targetTitle": "Every Scaffold Artifact ships with all Sky Primitives presen"
+    },
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An entitlement that applies automatically is recorded as a primitive with no parameters at all",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "398a6a59-3a58-4e25-a6dd-0dcda61b1994",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf648b71-252a-4790-87ce-f87b5625351a",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "00a43603-ed18-4097-a7db-edab8631dd2e",
+      "name": "upkeep-rebate",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.8.2.3.2.2.1.1 does something unusual for a Parameters document: it declines to have parameters. \"Every Prime Agent is entitled to the Upkeep Rebate Primitive for tokens of other Prime Agents that they hold. Because this right automatically applies, there are no parameters.\"\n\nThe pattern is worth naming because the Artifact uses parameter presence as a signal of discretion. Where an Agent has choices \u2014 fee terms, token supply, Accord counterparty \u2014 the Instance Configuration Document records them, and they become editable through Root Edit. Where a right attaches by virtue of Agent *type* rather than by agreement, the configuration is deliberately empty.\n\nThe consequence is that an empty parameter set is a protection, not an omission. Because there is nothing to configure, there is nothing for Launch Agent 7 Governance to amend and nothing for a counterparty to negotiate away. The rebate cannot be traded, waived, or tuned at the Agent level; changing it would require changing what a Prime Agent is, at the Atlas level.\n\nThis is the same authority-partitioning logic seen elsewhere in the Artifact: put the levers where the right decision-maker sits, and remove them entirely where no Agent-level decision should exist.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Upkeep Rebate Instance Configuration explicitly has an empty parameter set because the right attaches by virtue of Agent type \u2014 nothing is configurable, so nothing is negotiable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3a6234f6-3390-4c2a-be2a-13ae1e9d74f5",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:39.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9ceb9b01-d106-4447-8d9f-6bbd636a5143",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:39.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

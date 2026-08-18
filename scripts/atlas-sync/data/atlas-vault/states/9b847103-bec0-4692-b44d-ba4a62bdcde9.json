@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-b63d405c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b63d405c-487a-4cde-a4b8-dbc1a51efe84",
+      "targetTitle": "A Sky Primitive is a standardized interface through which Ag"
+    },
+    {
+      "id": "lnk-dd87b940-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dd87b940-add5-4a9a-bcfd-0e592aa80416",
+      "targetTitle": "A Prime Agent cannot operate without an Executor Accord and "
+    },
+    {
+      "id": "lnk-c03f6e16-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c03f6e16-0bc2-4324-95f2-5d822a63d178",
+      "targetTitle": "Pioneer Prime status can be held once per chain and once per"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Prime Agents are barred from touching Sky Protocol resources themselves",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "26c0a823-2a62-4c45-b589-782afb0be981",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f5d1e254-e120-4cae-bad1-f5f7c7e4b4ca",
+      "name": "agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bfd1df37-3b9c-402e-ab9f-2852663f15c6",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.14.3.4 draws the line by subject matter rather than by trust: \"Whenever a Prime Agent's strategy involves any on-chain or off-chain interaction with Sky Protocol resources or infrastructure, including the Sky Primitives, the operationalization of that strategy is generally restricted to Executor Agents.\" The single carve-out is for \"Prime Agents directly operationalizing Allocation System Primitive Instances using internal, proprietary strategies.\"\n\nA.1.14.3.3 marks the complementary territory the Prime keeps: it \"autonomously handle[s] initiatives that do not directly interface with Sky Protocol-level resources,\" such as product strategy, business development and partnership negotiation. A.1.14.3.4.1 spells out what the Executor does instead \u2014 \"bridging capital, verifying on-chain data and generating reports, and preparing off-chain votes for Prime Agent token holders to update their Artifact.\"\n\nThe split is between deciding and touching. Primes decide what should happen; Executors are the only parties whose hands reach the Protocol. Because Executor Artifacts are standardized (A.1.14.2.9) and Executors must verify alignment on every action (A.1.14.4.4.1), every path from Agent strategy to Protocol state passes through a uniform, alignment-checked, refusable intermediary.\n\nThe consequence for accountability is worth stating: an Agent can never claim that a harmful protocol interaction was purely its own initiative, because it had no means to perform one. Any protocol-level harm attributable to an Agent implies an Executor that either agreed or failed to check \u2014 which is why the Executor's compliance duty is placed beyond amendment by either party.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Any strategy involving on-chain or off-chain interaction with Protocol resources or Sky Primitives must be operationalized by an Executor Agent, with a narrow exception for Allocation Instances.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "931b9b04-b037-4cb4-806f-28b96641d787",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0fccc987-bb49-40b6-9fed-58ec3cf538b7",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce5ca4f2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce5ca4f2-b6a4-4040-9902-5fc370fa8b0d",
+      "targetTitle": "doc-31203218"
+    },
+    {
+      "id": "lnk-f196b1a1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f196b1a1-ca8f-4d3b-ac76-a24691e09274",
+      "targetTitle": "Budget Controllers are the single sanctioned path from Atlas"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Triggering an Atlas Edit Proposal requires posting a bond that stays locked until the proposal resolves",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9ac994d8-1bb8-45be-bc5e-cc4eb8cb62af",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cec79bea-20e0-40e3-8ea2-d9a9bfeae642",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bedc5ab5-c7fd-4352-b09e-f97c1981706d",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.6.4.4.2.1 attaches a financial condition to the power of putting a proposal before governance. Where an AD has triggered an Atlas Edit Weekly or Monthly Cycle Proposal, \"no payouts may be made that would reduce their AD Buffer below the Triggering Threshold... until the Proposal has been voted on or rejected by the Core Facilitator for misalignment.\" A.1.6.4.4.2.1.1 sets that threshold at \"one (1) month of compensation based on the budget for Level 3 Ranked Delegates\" \u2014 the lowest ranked tier, so the bond is uniform and set at the cheapest ranked seat.\n\nThe mechanism is a **bond held through resolution**. The right to force a governance cycle is valuable and abusable: a delegate could trigger proposals to obstruct, to extract concessions, or to create noise. Requiring an untouchable balance for the duration means the triggering delegate remains exposed to penalty until the outcome is known \u2014 and A.1.6.4.4.3 supplies the enforcement, since penalties are deducted from exactly this buffer.\n\nThe resolution condition is carefully drawn to include the failure case: the lock lifts when the proposal \"has been voted on **or rejected by the Core Facilitator for misalignment**.\" A delegate whose proposal is thrown out as misaligned cannot have drained the account first; that is the scenario a penalty would most likely follow.\n\nSetting the bond at the Level 3 rate rather than the delegate's own rate is a deliberate equalizer. Pegging it to individual budget would make triggering cheap for Level 3 delegates and expensive for Level 1, distorting who can practically use the mechanism by rank rather than by merit of the proposal.\n\nThe general pattern \u2014 pair a governance power with skin in the game denominated in an account the enforcer can reach \u2014 is what turns the AD Buffer from a payroll mechanism into the collateral layer of the delegate system.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:32:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.6.4.4.2.1 blocks payouts that would drop a triggering delegate's buffer below one month of Level 3 budget until the proposal is voted on or rejected for misalignment.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "922aa240-db03-4c2a-abd9-977392d147be",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:57.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d4c6914a-1a26-47f0-b570-1bfaaa731ee3",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:57.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-f6c7bc76-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f6c7bc76-18f1-4b3c-a2b9-6f3be315d131",
+      "targetTitle": "Each Instance declares whether its risk capital rests on a f"
+    },
+    {
+      "id": "lnk-b5e85c87-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5e85c87-1546-40f6-afbd-d171fb56bc9d",
+      "targetTitle": "Every Active Instance publishes whether its risk capital fig"
+    },
+    {
+      "id": "lnk-f910e738-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f910e738-5f90-44aa-96d7-67d489e989e8",
+      "targetTitle": "Coverage is claims-made with a 24-month retroactivity window"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every allocation Instance carries a flag stating whether its own risk model is fully implemented or still pending",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "148c4ea0-b9d8-4dab-9ddf-3ca6d4ea1e36",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6848ec56-fd7c-4e49-8ef3-b9cc94d075b8",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d09e2275-3565-4770-8d66-fd856050f855",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dbc6d9b7-2b34-45d3-84eb-4f4b7f0ce5ba",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.6.2.6.1.3 defines a status that sits on every Active Instance: \"The `RRC Framework Full Implementation Coverage` status defines whether the Instance Financial RRC is calculated based on a fully implemented risk model... or a pending risk model... If the Instance Financial RRC is calculated based on a fully implemented risk model the status is `Covered`. If... a pending risk model the status is `Pending`.\" Pattern's Maple USDC instance is marked **`Covered`** (A.6.1.1.6.2.6.1.3.1.1.1.1).\n\nThis is a second-order disclosure and an unusual one. Most risk frameworks publish a number; this one publishes a claim about the *provenance* of the number. A required-risk-capital figure derived from a provisional model is not the same kind of fact as one derived from a finished model, and the flag forces that distinction to travel alongside the figure instead of being lost in it.\n\nThe consequence is that risk capital can be computed for a position before the modelling work is complete \u2014 the framework does not block deployment pending a finished model, it labels it. That is a deliberate trade of precision for operability, and the label is what keeps the trade honest: an aggregate built from many `Pending` instances can be recognized as weakly grounded without re-deriving it.\n\nBecause the status lives on the instance rather than on the Agent, it also becomes a comparable, auditable field across the whole ecosystem \u2014 one can ask what fraction of deployed capital sits behind finished models.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:51:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "RRC Framework Full Implementation Coverage reads Covered or Pending depending on which model computes the Instance Financial RRC, so model maturity is disclosed per position.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1e5eefdd-1865-4157-9af8-e2958066449a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:39.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3932cff2-061b-4256-aa73-492c513abf0e",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:39.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

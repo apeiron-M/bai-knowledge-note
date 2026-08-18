@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-d5db2373-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d5db2373-5049-45c3-8216-63fff545d12d",
+      "targetTitle": "doc-f9c06f8f"
+    },
+    {
+      "id": "lnk-b5a3e305-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5a3e305-0030-452a-8629-631c07995905",
+      "targetTitle": "Spark's emergency lane is distinguished by permission to reo"
+    },
+    {
+      "id": "lnk-9639e9c2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9639e9c2-236d-4563-b454-155147ef9705",
+      "targetTitle": "Spark's minimum lending rate is the greater of the Sky Savin"
+    },
+    {
+      "id": "lnk-bd7eac08-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd7eac08-14a1-4cb4-94fa-0e4c4ea82b6c",
+      "targetTitle": "Loan enforcement is delegated to a collateral agent that may"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Cross default lets Spark accelerate a borrower's entire offchain book on a single loan failure",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8ee55f5f-4e7b-44a9-919d-1daacd216c08",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68f08b13-6706-4bff-b1d4-70d0f8d460c6",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "93e4584c-f873-4a86-a555-1cb8dc81cdc4",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.8.2.5.2 grants a single clause of real power: \"If a borrower defaults on or is liquidated in one Offchain Collateralized Loan funded by Spark, Spark **may accelerate any other outstanding loans from the same borrower**.\"\n\nWithout it, each loan is evaluated only against its own collateral. A borrower with five positions could let the weakest be liquidated \u2014 accepting the loss on that one \u2014 while the other four run on, even though the first liquidation is strong evidence about the borrower's overall solvency and their willingness to meet calls. Cross default converts a first default from an isolated event into information about the whole relationship, and lets Spark act on it before the remaining positions deteriorate.\n\nIt also removes a specific strategy. Absent cross default, a distressed borrower rationally triages: sacrifice the position with the least valuable collateral, defend the rest, and buy time. With it, the first sacrifice costs them everything, so the incentive is to meet every call or none.\n\nThe clause is notably **absent** from the Arkis mandate, which has an insolvency trigger (A.6.1.1.1.3.7.2.5.1) but no cross-default provision. The likely reason is structural rather than an oversight: Arkis exposure runs through a single margin account per borrower, where positions already offset and margin is computed portfolio-wide, so there is nothing to cross-default *to*. Offchain lending is a series of discrete bilateral loans against separately custodied collateral packages, which is exactly the structure that permits sacrificing one and keeping the others.\n\nThe power is permissive \u2014 \"may accelerate\" \u2014 leaving room to distinguish a technical default from a credit failure, which is appropriate given the counterparties are registered entities Spark expects repeat business from.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:50:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A default or liquidation in one Offchain Collateralized Loan permits acceleration of all other loans to the same borrower \u2014 a per-counterparty view absent from the Arkis mandate.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d54a5c1e-b080-4aec-9c49-1a9464ed269d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e126928a-7711-46ab-92c9-af03899d2acb",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

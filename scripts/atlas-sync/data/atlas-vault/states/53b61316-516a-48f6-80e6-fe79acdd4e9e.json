@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-c3006998-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3006998-378b-4de2-9fda-8dd8721fc58c",
+      "targetTitle": "The voter-facing Executive Document is reviewed only inside "
+    },
+    {
+      "id": "lnk-700a7c8e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "700a7c8e-305e-44b5-8819-1906db958040",
+      "targetTitle": "The Core Spell Crafter Checklist is optional while the Revie"
+    },
+    {
+      "id": "lnk-8ac79a21-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8ac79a21-bf27-4170-9862-b4c923f9de93",
+      "targetTitle": "No actor may both author and approve the same content within"
+    },
+    {
+      "id": "lnk-b9a526c6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b9a526c6-9664-4cd0-a4c6-c7358a666375",
+      "targetTitle": "Deployment and handover each require both Spell Reviewers to"
+    },
+    {
+      "id": "lnk-c99c7f8d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c99c7f8d-be7b-4d7a-bc9c-01c4f85335dc",
+      "targetTitle": "doc-216d0662"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every change to a Spell checklist or operational template requires one approval from each Core Spell Team",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "77b3f092-f3b1-4126-8b90-2c279aaf6041",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d748c043-d03c-4a62-9f3d-8c86f11e4366",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8ff3831f-dda5-44d1-bbf7-d7fc5ce73ebb",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The same requirement appears five times in this chunk. Core Spell Checklist updates \"require two (2) approvals, one (1) from each Core Spell Team, before [they] can be merged\" (A.1.10.2.5.1.1.2). Agent Spell Checklist updates: identical (A.1.10.2.5.1.2.2). The Technical Scope Template (A.1.10.2.5.2.1.2), the Deployment Checklist (A.1.10.2.5.2.2.2) and the Morpho Deployment Verification Guide (A.1.10.2.5.2.3.1) each repeat it verbatim.\n\nThe specification is one approval *from each team*, not two approvals generally. Two engineers from the same team cannot satisfy it. That converts process change into a bilateral act between the ecosystem's two independent Spell Teams.\n\nWhy it matters: these documents are the operational rules the teams work under, and the Reviewer Checklist in particular defines what counts as a complete review. Since Crafter and Reviewer roles alternate between the two teams cycle by cycle (A.1.10.2.4.8.3.6), a team that could unilaterally weaken the Reviewer Checklist would be weakening the scrutiny applied to its own Spells next cycle. Mutual consent removes that possibility.\n\nIt is also a constitutional pattern in miniature \u2014 the procedures that constrain the constrainers cannot be edited by the constrained party alone. The same instinct appears in the Atlas's split of Immutable and Adaptive Documents, and in requiring both teams to agree on any novel implementation design (A.1.10.2.3.3.2.3).\n\nThe safety valve against deadlock is procedural rather than structural: A.1.10.2.5.1.1.2 requires the author to \"communicate the priority of the update,\" and if it is needed before the next Spell, \"reviewing and merging must be prioritized accordingly.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Repeated across five provisions, the two-approval rule means neither team can unilaterally alter the procedures that govern its own work or its counterpart's review.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c94eeacb-d4e2-411c-b037-d9e58f1f5a79",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:53.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "42e761de-6ff2-44a4-aba4-10610f007c25",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:53.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

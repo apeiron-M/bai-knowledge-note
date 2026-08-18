@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Allowances granted for a single operation are reset to zero in the same transaction",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c13c5c59-40de-4a07-a062-555dd4a0dee5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6872528b-f78c-4d45-9c31-912635a32a34",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1eadd5e9-b954-47aa-b9c1-6a10c398bb57",
+      "name": "smart-contract-architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4825af1c-c44c-435c-9210-828b71013bc9",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.9.1.6 instructs the operator to \"reset the `router` allowance for `tokenIn` back to zero to clear any dust approval left after the swap\", and A...9.2.6 does the same for both `token0` and `token1` against the `positionManager`, after first requiring `liquidity != 0`.\n\nThe residue is genuine: approvals are granted for the full requested amount, but routers and position managers frequently consume less than requested. Whatever is left stays as a live allowance on the proxy \u2014 an asset the proxy did not intend to keep exposed, redeemable by that contract at any point in the future.\n\nZeroing in the same transaction makes the allowance's lifetime equal to the operation's. The proxy's standing approval surface is then empty between operations, so a later compromise of a router or position manager cannot reach Grove funds through a stale grant.\n\nNote the ordering in A...9.2.6: `require(liquidity != 0, \"UniswapV3Lib/no-liquidity-increased\")` comes first. A call that added nothing is treated as a failure rather than as a no-op to be cleaned up \u2014 the contract refuses to leave a state where approvals were spent but no position was gained.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "swapUniswapV3 and addLiquidityUniswapV3 re-approve the router and position manager to 0 after execution, so leftover dust approvals never persist as standing spend rights against the proxy.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "947d5589-3089-467a-a56e-fb5da238d5e6",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:15.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7184fda6-62ed-47d4-87bd-37f62f25e751",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:15.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

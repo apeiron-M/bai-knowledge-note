@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-e35bd9fd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e35bd9fd-dae9-4310-84fe-3a884dbbe171",
+      "targetTitle": "Core Governance Rewards are already flowing while the compli"
+    },
+    {
+      "id": "lnk-e7836576-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e7836576-6ae7-41be-8a79-a332c71bf258",
+      "targetTitle": "Active Data lets a named Responsible Party edit records insi"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas separates governed text from Active Data, which a named Responsible Party updates without an Artifact edit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1da461a9-f7b3-48f2-be7c-d3d77c054c83",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ca7a7c22-7b12-4c34-854e-b88723f52dc5",
+      "name": "active-data",
+      "topicDocumentId": null
+    },
+    {
+      "id": "abfffc68-129d-4e05-9a0f-649308839f8f",
+      "name": "governance-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9ee9d343-6a45-4e23-9e05-7aa349f8aa2f",
+      "name": "grove",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.5.1.2.1.3.4 is marked `[Active Data Controller]` rather than `[Core]`, and it declares its own update regime: \"The Distribution Reward payments for the Grove Finance Instance... are defined as Active Data. The Active Data is updated as follows: The Responsible Party is Operational GovOps. The Update Process must follow the protocol for 'Direct Edit'.\" The list itself (A.6.1.1.2.2.5.1.2.1.3.4.0.6.1) is marked `[Active Data]` and is currently empty.\n\nThis solves a problem any constitution-as-database faces: some content is a **rule** and some is a **record**, and forcing them through the same amendment process is either too slow for the record or too loose for the rule. The Atlas's answer is a typed document class where the mutability is declared inline, together with who may exercise it and by what protocol.\n\nThe pairing is what makes it accountable rather than merely convenient. Every Active Data node names a **Responsible Party** and an **Update Process**, so 'Direct Edit' is not an absence of governance \u2014 it is a specific delegation to a specific role, recorded in the same tree as the rules that constrain that role.\n\nThe consequence for readers of the Atlas is that the document tree is not uniformly governed. Sections marked `[Core]` change only via Root Edit; sections marked `[Active Data]` can change between one reading and the next at a single party's initiative. Reasoning about what the Atlas guarantees requires checking which class a given node belongs to.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Grove's Distribution Reward payment list is Active Data owned by Operational GovOps under a 'Direct Edit' protocol, so frequently-changing records bypass the proposal-review-vote cycle entirely.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4ed46014-8710-4f38-9f8e-2221637ad38d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c2ddc039-c8a8-47d6-acc7-cd4086923919",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

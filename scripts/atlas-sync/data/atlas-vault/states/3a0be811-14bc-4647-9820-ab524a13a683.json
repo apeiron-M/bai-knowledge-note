@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-d0b938c0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0b938c0-f312-466e-831a-4ced55f508bb",
+      "targetTitle": "Keel's governance runs on forum posts and GitHub pull reques"
+    },
+    {
+      "id": "lnk-51525b04-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "51525b04-4b2c-428a-8fea-ca37e0dfc617",
+      "targetTitle": "doc-892e8a06"
+    },
+    {
+      "id": "lnk-4cb24cc5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4cb24cc5-2650-4141-997a-b41ece665787",
+      "targetTitle": "Powerhouse is the exclusive gateway for submitting and updat"
+    },
+    {
+      "id": "lnk-6cd816bd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6cd816bd-4e9e-4e6e-b291-811dfae7bea6",
+      "targetTitle": "Osero has no defined route for expert review of technically "
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Until Powerhouse tooling exists, Osero governance runs on Forum posts, cryptographic proof of holdings, and GitHub pull requests",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ca2e4de0-c500-4e7e-8ec7-95a59c06bcc0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "07f27f48-9430-4328-9a9e-a90e07bb6479",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba79244a-b9bf-4d6e-854f-297818f1320a",
+      "name": "root-edit",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Routine Protocol specifies the Powerhouse system as the venue for both proposal submission and Artifact update, then supplies fallbacks for the fact that it does not yet support either.\n\nA.6.1.1.7.2.2.2.2.1.2.1.1.1 lets holders submit by posting to the Sky Forum under \"Osero Prime\" with a title containing \"Osero Artifact Edit Proposal,\" and requires \"cryptographic proof that the author controls an account holding the required percentage\" \u2014 a signature check standing in for an onchain eligibility gate.\n\nA.6.1.1.7.2.2.2.2.1.2.1.5.1 handles execution: the Operational Facilitator \"works with the Core Facilitator to update the Atlas GitHub repository ... to reflect proposals approved by Prime Governance.\"\n\nTwo consequences follow. First, the canonical text of a constitutional document is currently maintained through pull requests in a public repository, so the integrity of the Artifact depends on repository access control rather than on the Primitive's own machinery. Second, the fallback introduces an actor the routine protocol never mentions \u2014 the Core Facilitator \u2014 meaning the transitional path has a different set of hands on it than the specified one.\n\nWriting the workaround into the governed text rather than treating it as informal practice is the notable choice: the gap between specified and actual process is itself made auditable, and removing the measures later will require its own Root Edit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Two Short-Term Transitionary Measures substitute manual steps for the specified system, making a public repository the de facto canonical record of the Artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "011f76f2-2884-487b-9a9a-586eb02b5e8d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5d73b752-1fa3-48f2-951c-fc55e91e3c4c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

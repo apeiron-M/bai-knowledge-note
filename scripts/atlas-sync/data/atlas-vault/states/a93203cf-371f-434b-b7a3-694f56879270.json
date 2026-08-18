@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "stUSDS redemption is not guaranteed: exit depends on unutilized liquidity in the converter contract",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e4304cfb-2ea4-47e8-afde-465f96845944",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a9b9604a-d945-49de-bf36-5035ba1d16cf",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1ad09bd8-8dfc-47a5-aa5c-da3ecfa7b5ba",
+      "name": "risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "72a10c7f-597e-4566-8670-81ee0fd0d105",
+      "name": "liquidity",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.1 defines stUSDS as \"a yield-bearing token representing USDS deposited into the stUSDS contract\" whose function is to provide segregated risk capital, and then states the exit condition: \"stUSDS can be converted back to USDS **subject to available unutilized liquidity** in the stUSDS converter contract.\"\n\nThat qualifier is a material difference in kind from the rest of Sky's stable products. USDS is redeemable and sUSDS is a savings wrapper; both are designed to be exitable. stUSDS is a lending position wearing a token's clothing. Once deposited capital has been drawn by SKY borrowers, it is committed until those loans are repaid, so the redemption queue is bounded by whatever share of the pool is idle.\n\nThe uncomfortable correlation is that idle liquidity is scarcest exactly when depositors most want out. High utilization is both the condition that pays the best stUSDS Rate and the condition that blocks withdrawal, and a period of SKY stress would plausibly produce heavy borrowing, falling collateral values, and a rush for the exit simultaneously.\n\nThis is a coherent design \u2014 a lender cannot both earn a lending spread and retain instant liquidity \u2014 but it means stUSDS should be read as term risk capital, not as a cash-equivalent yield product. It also explains why the stUSDS Rate formula is utilization-sensitive: the rate has to recruit new deposits and discourage further borrowing as the pool tightens, because there is no protocol backstop to call on.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Unlike USDS, stUSDS carries lender liquidity risk \u2014 capital lent out to SKY borrowers cannot be recalled, so depositors can be locked in exactly when utilization is highest.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b6bd4a96-ef0b-41ec-bdff-d4bd8ef6af8e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:16.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f67294b2-3f8a-4da0-b7e5-7761d93346d5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

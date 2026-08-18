@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-8d1d4e13-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d1d4e13-d77b-4973-9cbb-7b469fa9b680",
+      "targetTitle": "Anyone who encourages a Spell Reviewer to skip part of their"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Core Spell Crafter Checklist is optional while the Reviewer Checklist is mandatory for every review",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6f68b744-81a9-4948-9bc3-ddb7cde9d233",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c15bc374-c6a0-4030-91f2-1dcb8f7ade0f",
+      "name": "quality-assurance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7942fd8d-242d-4107-9dbd-8c5290583077",
+      "name": "code-review",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two adjacent provisions state opposite rules. A.1.10.2.5.1.1.1.1: \"The Core Spell Crafter Checklist defines standardized steps for Spell Crafters. **The Core Spell Crafter Checklist is not mandatory.**\" A.1.10.2.5.1.1.1.2: \"The Core Spell Reviewer Checklist defines the mandatory steps for internal and external Spell Reviewers. **All Spell Reviewers must complete the Core Spell Reviewer Checklist for every Core Spell review.**\"\n\nThe asymmetry encodes a claim about what each role is. Crafting is treated as work with many valid paths, where the artifact is judged by its result and the checklist is a helpful default that a competent Crafter may depart from. Reviewing is treated as a coverage guarantee, where the value lies precisely in the completeness of the enumeration \u2014 a review that skips items is not a different style of review, it is a smaller one.\n\nIt also fits the surrounding rules. The Crafter's output is checked downstream by two Reviewers, the Governance Point and Ecosystem Validators, so an idiosyncratic method is caught by its results. The Reviewer's output is a signature that others rely on and nobody re-derives, so its quality must come from the process rather than from later detection.\n\nThe mandatory checklist is also what makes A.1.10.2.4.9.2.1's ban on selective review enforceable. A rule against skipping sections presupposes a fixed list of sections; a discretionary checklist would give any omission a plausible reading as professional judgment.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:48.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:14:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.5.1.1.1.1 and .1.2 split craft from verification: how a Spell is built is left to professional judgment, while what must be checked is standardized and non-negotiable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "25fdb165-7c7e-4213-993c-7d788633002c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:14:02.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "018f33c8-f735-4e46-8c77-8a6cf07f9696",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:14:02.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

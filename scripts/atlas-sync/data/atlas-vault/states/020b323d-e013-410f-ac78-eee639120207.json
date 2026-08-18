@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-ced39c1b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ced39c1b-0db4-4daf-9f19-856bc487b3c1",
+      "targetTitle": "Chainlog values must be retrieved from multiple independent "
+    },
+    {
+      "id": "lnk-3cd402d1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3cd402d1-d8e5-4274-87f6-7cbba5bff6b7",
+      "targetTitle": "The Chainlog is a single on-chain registry of contract addre"
+    },
+    {
+      "id": "lnk-9b847103-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9b847103-bec0-4692-b44d-ba4a62bdcde9",
+      "targetTitle": "Prime Agents are barred from touching Sky Protocol resources"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Onchain provenance is the strongest form because falsifying it requires a compromised contract controller or supply chain attack",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "01d61b99-9bc9-4092-a25e-99d9778515ad",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "89f6e23b-cc39-45a8-a924-f59bd5e7605f",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aab36fa0-1eda-43b5-9e93-8a617fe6c153",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.5.1.3 rates onchain provenance as \"one of the most legitimate types.\" Information from Sky Protocol-associated smart contracts is \"considered practically immutable and publicly visible,\" and its \"compromise resistance... is very strong and relies on a compromised controller of a Sky Protocol-associated smart contract or severe supply chain attack to manipulate information.\"\n\nStating the threat model is what makes the rating useful rather than decorative. Onchain data is not called unfalsifiable; it is called falsifiable only through two specific, expensive routes. That gives reviewers something concrete to reason about instead of a vague sense of blockchain-grade trust.\n\nThe extension to off-chain storage is the more interesting move: \"information referred to by on-chain values or content hashes but stored on IPFS or other similar services is also considered practically immutable.\" Immutability is located in the *reference*, not the bytes. A content hash committed on chain pins exactly one document; substituting a different document changes the hash and breaks the link.\n\nThe practical payoff is scale. Sky can treat long documents, reports and configuration blobs as strong provenance without paying to store them on chain, provided the pointer is a content hash rather than a URL. The residual risk shifts from tampering to *availability* \u2014 an IPFS object that nobody pins can become unreachable while remaining perfectly verifiable, which the provision does not address.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "IPFS content referenced by an on-chain hash inherits the same standing \u2014 immutability is treated as a property of the reference, not of the storage location.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "31e57fd4-364a-4828-b9d9-68f6a226228d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8a3b7ac5-87b1-4800-8a0e-a49ab190f115",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

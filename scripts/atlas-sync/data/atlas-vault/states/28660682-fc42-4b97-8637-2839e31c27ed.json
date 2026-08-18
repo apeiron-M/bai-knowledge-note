@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4231db1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4231db1-4130-46d0-96c4-c37bd155907a",
+      "targetTitle": "The Morpho instance splits Curator and Guardian roles behind"
+    },
+    {
+      "id": "lnk-5726f965-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5726f965-2abb-4b59-aaae-8b1252e28ddd",
+      "targetTitle": "Curators must prove authorization while Guardians must justi"
+    },
+    {
+      "id": "lnk-c11f5384-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c11f5384-38ff-4802-9296-0554b681f019",
+      "targetTitle": "Morpho instances record third-party governance roles as inst"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Curator actions carry a three-day timelock whose value is the mandatory public visibility of pending changes",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0c9e6c9d-188e-4732-8a24-dd9d2694e5b4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "698961f3-7b82-4e9a-8873-c5150e04afe1",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7628584a-8b11-41b6-a395-022f3264bb79",
+      "name": "delegated-authority",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.9.5.1 sets the floor: \"All admin or privileged controls managed by curator roles must be subject to a minimum timelock delay of **three (3) days** between scheduling and execution.\" A.6.1.1.1.3.9.5.2 supplies the condition that makes it useful: \"Pending changes subject to the timelock must be **publicly visible onchain** for the duration of the delay period.\"\n\nA delay without visibility protects nobody. If a pending change cannot be inspected, three days is simply three days of latency \u2014 the same attack executes, just later. Visibility is what converts elapsed time into an opportunity: anyone can read the queued transaction, compare it against the poll that supposedly authorized it, and raise an alarm.\n\nThe curator's reporting duty (A.6.1.1.1.3.9.3.3) closes the loop by requiring the report to include \"the **UTC time at which the timelock period for the action elapses**\" alongside the transaction hash and a link to the approving poll. On-chain visibility means the data exists; publishing the expiry time means observers know how long they have. Without it, monitoring the queue would require continuously watching the contract rather than reading a forum post.\n\nThree days is a deliberately modest floor rather than a target. The Morpho USDT instance elsewhere in this Artifact runs a 240-hour \u2014 ten day \u2014 timelock, so instances are configured well above the minimum where the exposure warrants it.\n\nThe cost is the familiar one: risk *reductions* are delayed identically to risk increases. A curator who needs to pull an allocation from a failing market waits the same three days as one raising a cap, which is why the framework's emergency escape is a cancellation power rather than an acceleration power.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:52.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:03:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "All privileged curator controls need a minimum three-day delay between scheduling and execution, and pending changes must be visible onchain throughout, turning the delay into an audit window.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "63d3cc67-7b65-4008-8dd4-cea271aa489e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:03:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "39dcc45e-d623-42ef-bf33-7d0e1a46ec0b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:03:47.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

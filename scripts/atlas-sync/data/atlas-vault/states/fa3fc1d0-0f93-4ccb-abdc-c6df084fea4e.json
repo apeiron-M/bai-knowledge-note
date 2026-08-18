@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky pays 1% of Net Revenue to keep governance frontends maintained, treating frontend access as governance security",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f0ff8f48-9c92-42b4-a3c7-29355e40f02e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d879bb3-e776-49c9-b663-28f9b88af987",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "571a97a1-8bbf-4d30-a4b8-ba396e2b5000",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.11.1 defines the Core Governance Reward Primitive as \"a reward that Sky pays to Prime Agents that provide SKY holders with secure access to the core Sky Governance features, ensuring that the Governance Security of Sky is maintained over time.\" A.2.2.11.1.1 sets the pool at 1% of Sky's Net Revenue, funded from the Core Council Allocation and paid \"to the Prime Agent that manages the relationship with each eligible Integrator, with sharing subject to bilateral negotiation.\"\n\nThe claim embedded here is that governance security is not only a smart-contract property. A protocol whose voting contracts are flawless is still capturable if the interfaces holders actually use are unmaintained, insecure or absent \u2014 the practical franchise depends on someone running a frontend well, indefinitely, including through periods when no one is paying attention.\n\nFunding it as a standing revenue share rather than a grant follows from that framing. Frontend maintenance is an ongoing obligation with no natural completion, and it is a public good: the Integrator captures little of the value of a secure voting interface, so it is exactly the kind of work that gets underprovided.\n\nThe routing through Prime Agents rather than directly to Integrators is a second choice, making a Prime the accountable counterparty for a third party's frontend and leaving the split to bilateral negotiation. Sky buys one throat to choke and stays out of the pricing; the risk is that the Integrator doing the work captures too little of the reward to sustain it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:26:31.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:33.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Core Governance Reward funds Prime Agents managing Integrators whose frontends give SKY holders secure access to core governance, on the reasoning that unmaintained frontends erode Governance",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "571c3332-00df-49cb-9dc6-f9097fe82aa4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:33.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a11faf50-be09-4325-9622-8c3b045501be",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:33.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

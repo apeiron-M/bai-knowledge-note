@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-e85c1a95-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e85c1a95-8292-47ec-8226-ecfc08b960c8",
+      "targetTitle": "Ecosystem Accords make Agent-to-Agent agreements a first-cla"
+    },
+    {
+      "id": "lnk-dc7d3ba5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dc7d3ba5-9ed5-47cb-b1db-88186c8358c7",
+      "targetTitle": "Ecosystem Accords bind an Agent to Sky by mutual agreement r"
+    },
+    {
+      "id": "lnk-c5989336-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c5989336-6969-457c-8915-cc8f4cf02d29",
+      "targetTitle": "doc-5f84d127"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Distribution of Agent tokens received by Sky is governed by each Ecosystem Accord rather than by Atlas rules",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "de2a79dc-8911-4906-abf9-d195a2486d51",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8ee5639-7842-48ba-9d55-fbbdbc73a136",
+      "name": "agents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf25ea61-2ef5-4900-852c-fe8fbe06d8bd",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8facfc5c-0c97-4e24-b555-e0f71402ca39",
+      "name": "tokenomics",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.5 is a single sentence that delegates an entire subject: \"When Sky invests capital in Agents, the tokens Sky receives in exchange are distributed in accordance with the terms of the Ecosystem Accord between Sky and the respective Agent.\"\n\nWhat is notable is the absence. Agent token distribution is a live mechanism referenced from elsewhere in the Protocol Scope \u2014 SKY stakers can elect to receive Agent Token rewards, distributed continuously pro-rata among wallets that opted into a specific token. Yet the Atlas declines to state any of the substantive terms here, deferring them wholesale to a per-Agent contract.\n\nThe design logic is that Agents are negotiated counterparties, not subsidiaries. Each investment has its own vesting, lockups, and distribution mechanics agreed bilaterally, and forcing them into a uniform Atlas rule would either constrain what deals Sky can strike or require an Atlas amendment for every new Agent. Keeping terms in the Accord lets the Atlas describe the *plumbing* while the commercial terms vary per deal.\n\nThe cost is a genuine transparency gap in the ruleset. A reader who wants to know what a staker actually receives from a given Agent must go to that Agent's Accord; the Atlas alone cannot answer. It also means Accords carry economically significant terms without appearing in the document that governs everything else \u2014 worth knowing when assessing how much of Sky's economics is visible from the Atlas.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:48.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas states no split or schedule of its own: when Sky invests capital in an Agent, the terms for distributing the tokens received live in the bilateral Accord with that Agent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a7013b88-7ca5-4f53-b60b-d2abce72c90a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e21b2e52-6fd9-4cd6-8834-7ba048ad5f27",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:48.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

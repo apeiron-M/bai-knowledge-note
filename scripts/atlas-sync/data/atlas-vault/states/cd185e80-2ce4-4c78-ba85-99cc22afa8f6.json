@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-d42fb7cb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d42fb7cb-7030-4d76-9a91-835a423c017d",
+      "targetTitle": "doc-859c3074"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Discord messages, forum posts and social media comments can never authorize an Executive action",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2241fc36-b6dd-49b2-a712-6e35f7652d78",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5e8384b-dbfd-47ff-9b33-48a71e133a43",
+      "name": "provenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0665d57c-cbdd-4922-86b6-0d99f1ca0f81",
+      "name": "executive-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.5.1.1 defines weak comment type provenance as \"informal or editable comments made by stakeholders, which lack the security and visibility needed for Executive actions,\" naming \"Discord messages, forum posts, or unverified social media comments\" \u2014 and adds the decisive qualifier: **\"even if they relate to an action affecting the commenter (e.g., confirming a payment).\"**\n\nThe three failures are mapped onto the three axes: high mutability, because such comments \"can often be edited or deleted without a public trace\"; limited visibility, because they \"may not be visible to all ecosystem participants (e.g., requiring platform-specific accounts or access to private channels)\"; and low compromise resistance, since they rely \"on accounts without strong security protocols.\" The conclusion is absolute: weak comment provenance \"must not be used to authorize Executive actions.\"\n\nThe carve-out being denied is the intuitive one. If Alice is owed a payment and Alice says on Discord that the amount is right, that feels like the strongest possible confirmation. The Atlas says no \u2014 because the thing being protected is not accuracy at the moment of speaking but verifiability weeks later, when a reviewer needs to confirm that the authorization existed and said what the Spell assumed.\n\nThis is worth reading against A.1.10.2.3.2.2.1.2, which makes Prime Spell Security Guidelines binding when \"communicated to Prime Agents\" through \"designated Signal and Slack channels\" and \"live calls.\" Chat is insufficient to *authorize* an Executive action but sufficient to *impose a penalizable obligation* on a Prime Agent. The asymmetry may be defensible \u2014 the two regimes protect different things \u2014 but it is a real inconsistency in how the Atlas treats the same class of record.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.5.1.1 rules out weak comment provenance even when the commenter is the affected stakeholder confirming their own payment \u2014 editability without public trace is disqualifying by itself.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4a2289db-7e9e-47cd-a55c-35fd64f217eb",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:56.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f3c41557-9470-4989-8691-c37b59eb7af5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:57.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

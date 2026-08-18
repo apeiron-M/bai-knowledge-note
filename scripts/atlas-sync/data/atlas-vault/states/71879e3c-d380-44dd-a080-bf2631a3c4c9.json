@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-c3626818-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3626818-9af3-40af-9603-03898e7b5b02",
+      "targetTitle": "doc-bfdfd5a8"
+    },
+    {
+      "id": "lnk-89906839-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "89906839-1ed8-4c28-abad-69741962e619",
+      "targetTitle": "Whether a rate limit meters gross flow or net exposure depen"
+    },
+    {
+      "id": "lnk-c95f8048-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c95f8048-7021-404f-94eb-5e388245cf64",
+      "targetTitle": "Reversing an operation credits its rate limit rather than co"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are a continuously refilling allowance that repaying debt restores, not a cumulative cap",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "25c87e97-72d9-4d0c-abe0-c5e8fbc72a27",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "685b4695-0993-4664-ab14-7a71b401b9a8",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6399c994-f4ae-4b1d-930d-f8dc510d057a",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fbfc3beb-1d11-4684-a0ac-7e5911af45ef",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.5.2.6.1.2.2.1.3.4 gives the exact formula: the contract \"will calculate and return the minimum of (slope * time elapsed since lastUpdated + lastAmount) and maxAmount.\" Consuming capacity is the mirror image \u2014 `triggerRateLimitDecrease` sets \"lastAmount to currentRateLimit minus amountToDecrease\" and stamps the current timestamp (A.6.1.1.5.2.6.1.2.2.1.3.5).\n\nThis is a token bucket: `maxAmount` is the bucket size, `slope` the refill rate per second, and every operation drains it by its size. Nothing is ever counted cumulatively, so a Liquidity Layer running for years faces the same constraint as one running for a week \u2014 the limit governs *velocity*, not lifetime volume.\n\nThe reflexive case is where it becomes a risk instrument rather than a throttle. `burnUSDS` \"will increase the available Rate Limit for minting USDS by the amount of USDS being burned. This increase will be limited by the `maxAmount` parameter\" (A.6.1.1.5.2.6.1.2.2.1.2.1.2.1.2.1), and `redeemERC4626` likewise \"will update the withdrawal rate limit based on the amount of assets received.\" Reversing an exposure returns the capacity that creating it consumed.\n\nSo the mint limit is best read as a **net outstanding exposure meter with a speed governor**, not a spending budget. An Agent that mints and repays promptly retains full capacity; one that mints and holds exhausts it. The cap on the refund at `maxAmount` prevents banking unused headroom, which is what stops an operator from idling to accumulate a burst larger than the bucket was ever meant to permit.\n\nUnlimited is encoded in the same structure \u2014 `type(uint256).max` for maxAmount with slope 0 (A.6.1.1.5.2.6.1.2.2.1.3.3) \u2014 and short-circuits the arithmetic, so \"no limit\" is a value in the system rather than an exception to it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:43.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "getCurrentRateLimit returns min(slope \u00d7 elapsed + lastAmount, maxAmount), and burnUSDS increases available mint capacity by the amount burned \u2014 so the limit tracks net exposure over time.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "43369b68-471e-4448-8567-0dcc59fdec79",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:43.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4b2eae16-cf16-4576-abc8-6cf82fc53761",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:43.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

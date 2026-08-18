@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-7ce5fb67-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ce5fb67-a151-4d10-accd-9d93dd809fd0",
+      "targetTitle": "The ALM Proxy is hardcoded as the recipient of every positio"
+    },
+    {
+      "id": "lnk-684ab53d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "684ab53d-6f8f-4dec-a980-51d2c7a3e9c2",
+      "targetTitle": "Every Spark Liquidity Layer venue is specified by a uniform "
+    },
+    {
+      "id": "lnk-80180878-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "80180878-4f4f-4f2e-8e27-0e6399e43de5",
+      "targetTitle": "The ERC-4626 process definitions ship with unresolved templa"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Venue integrations are documented once per standard, with instance documents supplying only the addresses and limits",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "18a9c514-c3fa-424b-a162-b540a1b7f1c2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "074a3bcd-333a-4e9b-a4ec-944f13fe7cb1",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c7f087c5-fae3-462e-826c-f9d246d45e64",
+      "name": "integrations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "442917c9-2687-4ca9-939e-8bfce85ebcb7",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.2.1.2.1.2.2 and A.6.1.1.1.2.6.1.2.2.1.2.1.2.3 define generic procedures per *interface standard* rather than per venue: deposit, withdraw and redeem for \"ERC4626-compliant tokenized vaults\" and deposit/withdraw for \"Aave lending pools.\" Each ends by deferring the specifics \u2014 \"for detailed call structures, instance-specific parameters (vault address, asset address, pool address, rate limits) ... refer to the specific Instance Configuration Document.\"\n\nThe division of labour makes the venue count manageable. Dozens of Instances across Morpho, Fluid, Aave, Maple and Spark Savings v2 collapse into two operational procedures plus a table of addresses per Instance. Onboarding a venue that speaks a known standard means writing an ICD, not writing a process.\n\nOne detail in both procedures deserves attention: the ALM Proxy is specified as **both** `receiver` and `owner` in `withdraw(uint256 assets, address receiver, address owner)` and `redeem(...)`, and as `onBehalfOf` in Aave's `supply(...)`. Positions are opened and closed in the proxy's own name throughout, so no intermediate account ever holds custody and there is no step where funds sit somewhere recoverable only by an operator.\n\nThe generalizable point is that standard-conformance is a governance asset, not just an engineering convenience: it is what lets a single audited procedure cover an open-ended set of counterparties while keeping each one's exposure separately configured.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:54:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Generic ERC-4626 and Aave deposit/withdraw/redeem procedures name the ALM Proxy as both receiver and owner, leaving vault addresses and rate limits to each Instance Configuration Document.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "66afc701-7a91-4231-a5a2-14dcca8efab7",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:57.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5fb4469e-e058-4ebb-97f6-1b9eb2d4a0e1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

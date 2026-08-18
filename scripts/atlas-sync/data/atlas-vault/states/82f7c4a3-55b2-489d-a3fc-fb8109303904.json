@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-c1c9fb27-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c1c9fb27-2014-432f-a743-8eae58e2e006",
+      "targetTitle": "The Upkeep Rebate makes Prime Agents' cross-holdings of each"
+    },
+    {
+      "id": "lnk-853de761-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "853de761-02df-4290-a6a7-f576f4092cbc",
+      "targetTitle": "The Upkeep Rebate applies automatically to Prime Agents' cro"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Prime Agents get an automatic upkeep rebate for holding each other's tokens, creating a structural incentive to cross-hold",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6acd2542-87c9-4b64-a605-8e14c7454555",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "15b2961a-63b8-497b-833c-408c0847cba5",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba7b0e46-f7c3-4d4b-9927-00b3513a137b",
+      "name": "ecosystem-upkeep",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7fe9efbb-4d1e-4aed-8054-4b68b17d4d09",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.3.2.2.1.1 states the entitlement and then explains why the Parameters section is empty: \"Every Prime Agent is entitled to the Upkeep Rebate Primitive for tokens of other Prime Agents that they hold. Because this right automatically applies, there are no parameters.\"\n\nTwo operational facts complete the mechanism. A.6.1.1.2.2.3.2.2.1.2.1.1: \"Grove keeps all tokens of other Agents it holds in its SubProxy account.\" A.6.1.1.2.2.3.2.2.1.2.1.2: \"When paying Ecosystem Upkeep fees, Grove deducts the rebate from the fees it pays.\"\n\nThe economic effect is a **cross-holding subsidy between Agents**. An Agent that holds other Agents' tokens pays less into ecosystem upkeep, so mutual shareholding is cheaper than independence. That pushes the Agent layer toward being a mutually invested federation rather than a set of unrelated competitors \u2014 Agents have a direct financial reason to want each other to succeed, because another Agent's token appreciating both grows their treasury and enlarges their rebate.\n\nMandating custody in the **SubProxy** rather than a Foundation or Labs multisig is what makes the rebate self-verifying: the holdings are at a known onchain address under governance control, so the rebate base can be checked by anyone rather than asserted by the Agent.\n\nThe deduction-at-source design (netting rather than claiming) removes a payment cycle but also means the Agent computes its own bill. That is exactly why the review step in A.6.1.1.2.2.3.2.2.1.2.1.3 exists.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:41.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The entitlement 'automatically applies' and therefore has no parameters at all; Grove deducts the rebate directly from the Ecosystem Upkeep Fee it owes rather than claiming it separately.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2472479b-6f8a-48b7-9050-2a8d4995e11f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1f966773-efcb-4acd-bed5-031c867b2952",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Stablecoin conversion routes are themselves governed Instances, authorized per direction and per chain",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a89d80e7-263e-4417-af1e-aa7a43ba72cd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "52f6f00d-a085-4812-a9bb-802093077f0a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d4b92f8-9a1e-4221-91f9-69f3e92c3dba",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b36e0ac0-1966-4ffc-a9d7-13f8648e3a6d",
+      "name": "stablecoins",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.1.2.1.15.1 registers \"Ethereum Mainnet - USDC To USDG Via Paxos\" as an Active Allocation System Instance. A.6.1.1.2.2.6.1.1.2.7.2.1 registers \"Robinhood Chain - USDG To USDC Via Paxos\" as a different Instance on a different chain.\n\nTwo things are being asserted. First, **a conversion is an allocation**. Swapping one dollar-equivalent for another looks value-neutral, but it changes issuer exposure \u2014 moving from Circle's balance sheet to Paxos's is a credit decision, and the Atlas treats it as one by requiring an Instance rather than letting it happen inside operational discretion.\n\nSecond, **direction is part of the authorization**. The two routes are not one bidirectional facility; USDC\u2192USDG and USDG\u2192USDC are separate entries. Approving entry into a position does not implicitly approve the exit path, and each direction can be configured, limited or suspended on its own.\n\nThe chain split reinforces it: minting happens where Grove holds USDC, redeeming happens where the USDG is deployed. Combined with the Robinhood Chain Morpho USDG vault (A.6.1.1.2.2.6.1.1.2.7.1.1), the three Instances trace a complete round trip \u2014 convert on Ethereum, deploy on Robinhood Chain, convert back \u2014 with each leg individually visible in the Artifact.\n\nThe cost is that an operational sequence anyone would think of as one workflow requires three separate governance entries, and a gap in any one of them strands capital at that step.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "'USDC To USDG Via Paxos' on Ethereum and 'USDG To USDC Via Paxos' on Robinhood Chain are two separate entries, so the ability to mint and the ability to redeem are approved independently.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2081d427-bd4c-48b4-b2a8-37b2ba68cc3b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2cfd1181-9570-4a54-8dfe-9742e2d8fd56",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

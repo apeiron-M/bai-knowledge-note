@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-fc2ff598-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fc2ff598-0442-4a5c-9973-668b698eb85d",
+      "targetTitle": "A Prime Agent may be its own Integrator and earn the Distrib"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Integrator reward payments are made to the Prime Agent, not the Integrator that earned them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a55c5b79-3c7d-4bcc-b64f-68022a4a8517",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5a881b79-ddaa-4a57-a4b9-b9d8696e9985",
+      "name": "integrator-program",
+      "topicDocumentId": null
+    },
+    {
+      "id": "53be7e61-e51b-40dc-98d4-0dd1a9083430",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.4.2 states that reward payments \"associated with an Integrator\" \u2014 across the Distribution Reward, Integration Boost, Core Governance Reward, stUSDS Distribution Reward and srUSDS Distribution Reward \u2014 \"are paid to the Prime Agent that manages the relationship with the Integrator. Any sharing of such reward payments with the Integrator is subject to bilateral negotiation between the Prime Agent and the Integrator. **No party is contractually obligated to share any specific portion** of these reward payments, including any downstream pass-through to end users.\"\n\nThe nominal beneficiary therefore has no Atlas-level claim on the reward named after it. Rewards are an instrument the ecosystem hands to Prime Agents to spend on relationships, not an entitlement the Integrator earns.\n\nThe rationale is coherent with the rest of the design: Prime Agents are the accountable ecosystem members holding Artifacts, Accords, tokens and governance, while Integrators are external frontends. Paying the accountable party preserves a single point of responsibility, and lets a Prime Agent price each Integrator relationship differently \u2014 competing on generosity rather than collecting a fixed schedule.\n\nThe cost is that Integrator economics are entirely off-Atlas. The reward level Sky sets is only an upper bound on what reaches the actor whose behaviour it is trying to change, and the explicit disclaimer of pass-through to end users means the same is true one hop further down.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:20:01.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Distribution Reward, Integration Boost, Core Governance Reward, stUSDS and srUSDS rewards all land with the managing Prime Agent; any share to the Integrator is bilateral and unenforceable.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9bbbfaa0-9b9e-453f-bf40-a183469e8ffe",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3a51169a-8b82-41d0-977b-4cb8429d2f2b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

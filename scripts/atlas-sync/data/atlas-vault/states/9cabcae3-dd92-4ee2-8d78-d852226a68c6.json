@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-ab1fb567-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ab1fb567-42b4-4299-9654-1604d8d24d3b",
+      "targetTitle": "A rate-limit parameter can be left unspecified while its pai"
+    },
+    {
+      "id": "lnk-e23e270c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e23e270c-6fb7-4a55-813e-69b372e20b9f",
+      "targetTitle": "Rate limits double as the whitelist: a venue with no configu"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Under whitelist-by-rate-limit, a deferred limit and a zero limit are indistinguishable on-chain",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6e8203fc-c53d-40a3-82b0-14243aacbe40",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b2723f1f-884d-45d4-bf9c-f0a6bc3deddf",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f0e63d3-4d9f-456e-b050-879a5e2d698e",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2e8c6d08-dcfa-40b4-b275-ba10ae9c96a6",
+      "name": "governance-structure",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two instances in this chunk defer an entire leg. Superstate USTB's inflow limits give both parameters as \"This parameter will be specified in a future iteration of the Spark Artifact\" (A.6.1.1.1.2.6.1.3.1.6.1.2.4.1), with the outflow `maxAmount` set to `Unlimited` and its slope also deferred (.6.1.2.4.2). Morpho Dai inverts it: inflow fully specified at 200,000,000 DAI with a 100,000,000 per day slope, both outflow parameters deferred (.8.1.2.4.1/.2).\n\nElsewhere the Artifact states that whitelisting is performed by the rate limits themselves. Combining the two facts collapses a distinction the documents appear to draw. If a venue's capability exists only where a non-zero limit has been configured, then a leg whose limit is 'not yet specified' confers exactly what a leg whose limit is zero confers: nothing. The prose difference between \"will be specified later\" and \"0\" has no on-chain counterpart.\n\nThat is reassuring in one direction \u2014 an undocumented parameter is fail-closed, not fail-open, so deferral cannot accidentally authorise anything. It is confusing in the other: a reader cannot tell from the Artifact whether Morpho Dai currently has an exit route at all, and the deferred leg is the *outflow*, the direction every other instance treats as never to be constrained.\n\nThe general lesson is that in a system where configuration is capability, documentation gaps are not neutral. An unwritten limit is a decision \u2014 the most restrictive one \u2014 whether or not anyone intended to make it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Superstate USTB defers both inflow parameters and Morpho Dai defers both outflow parameters; since capability derives from a configured limit, an unwritten limit grants nothing regardless of intent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "70ef1a09-aae9-4473-95ce-11f2ac3059d2",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7a4e40e2-7821-4c7e-a89a-e6da73c67a27",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:27.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-fe69cb53-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fe69cb53-b09d-471c-b467-3cb81b1abc0d",
+      "targetTitle": "Treasury allocation is a strict waterfall in which no later "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Backstop capital retention tapers continuously to zero near target but jumps to a flat 50% below the Turbo-Fill Floor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "af6ad62d-f753-44d9-832d-63064ef8cc75",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5cd99722-10a7-4d2d-8662-b067bbacc8f4",
+      "name": "treasury",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71a8e42e-6690-441e-b87a-9ac6c7284e06",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.2.3 defines three regimes for Step 2 Capital. Below the Turbo-Fill Floor, \"fifty percent (50%) of Step 2 Capital is retained to grow Aggregate Backstop Capital.\" Between the floor and the Target, retention is \"fifty percent (50%) multiplied by the fill factor, where the fill factor is one (1) minus the ratio of current Aggregate Backstop Capital to the Target.\" At or above Target, \"none of Step 2 Capital is retained.\"\n\nThe middle regime is a proportional controller: the closer the buffer gets to target, the less revenue it absorbs, reaching zero exactly at target. This avoids the pathology of a hard threshold, where the last dollar of filling would divert half of a month's revenue and crossing the line would swing the payout to stakers abruptly.\n\nThe interesting artifact is at the floor. Evaluating the taper formula at the floor gives 50% x (1 \u2212 floor/target), which is strictly *less* than the flat 50% applied just below it \u2014 so retention drops discontinuously as the buffer recovers past the floor. That kink is intentional and is what \"Turbo-Fill\" names: below the floor the system fills at maximum rate regardless of how far it has to go, because being under-backstopped is a distinct condition rather than a point on a gradient.\n\nRead as policy, the schedule encodes that solvency has strict priority while under-provisioned, and becomes a tapering claim on revenue once merely incomplete. Note also the cap: retention never exceeds half of Step 2 Capital, so stakers always receive something even in the worst regime.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:44.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Between floor and target, retention is 50% times one minus the ratio of current to target; below the floor it is a flat 50%, creating a deliberate discontinuity at the floor.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c6cfdbda-797c-4469-9870-6d32865a5466",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c11c9f1a-e0f7-4791-8a7e-9c3f8172ae68",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

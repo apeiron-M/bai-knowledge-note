@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-d3ca21b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d3ca21b7-87e6-4aa6-9709-ac2b2377b087",
+      "targetTitle": "Imposing the collateral ratio on every Agent separately make"
+    },
+    {
+      "id": "lnk-c3198ad1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3198ad1-1dc2-4fe0-b6a9-061994b230c1",
+      "targetTitle": "Perpetual yield exposure targets are declared to override th"
+    },
+    {
+      "id": "lnk-a598243d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a598243d-46ac-4aed-bf43-58732b265e2d",
+      "targetTitle": "doc-82e6d18e"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Aggregate exposure limits need both a pre-trade prohibition and a discretionary forced-sale power, because they can be breached without anyone trading",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "17c956bc-4004-4204-89b4-c2cc3022dbaf",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "55cb4c4b-b7e2-4f81-8490-daa25db3484b",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d2f817d4-abb3-456e-83c9-83c9f1e1ed7c",
+      "name": "enforcement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Both named-asset limit regimes in this Section come in matched pairs. For Ethena: A.3.2.2.1.1.1.2.1.1.2.4 prohibits any investment \"that would cause its Ethena Exposures to exceed its Ethena Exposure Limit,\" while A.3.2.2.1.1.1.2.1.1.2.5 provides that if the limit *is* exceeded, \"the Core Council may direct the Agent to sell Ethena Exposures\" back under it. Superstate repeats the structure at aggregate level (A.3.2.2.1.1.1.2.1.2.2.3 and .2.4).\n\nThe second limb is not redundant, and the reason is structural. These limits are defined over quantities no single Agent controls. Ethena Aggregate Exposure sums across all Prime Agents; an Agent's own exposure also drifts with market value, and the ratio-based limits elsewhere in the framework move when the denominator moves. A rule that only forbids *actions* therefore cannot keep the system inside its bounds \u2014 breaches arrive passively, through someone else's deployment or a price change.\n\nWhat makes the pairing interesting is the asymmetry in force. The prohibition is absolute (\"No Prime Agent may make an investment...\"), while the remedy is discretionary (\"the Core Council **may** direct\"). Deliberate breach is forbidden outright; passive breach triggers judgment, because forced selling into the conditions that usually cause passive breaches is itself a risk. The Core Council gets to decide whether unwinding or waiting is safer.\n\nThe cost is that a limit enforced by discretion is not a hard limit. Between the moment a limit is exceeded and the moment the Core Council acts, the ecosystem sits outside its stated risk bounds with no automatic correction \u2014 and A.3.2.2.1.1.1.2.1.1.2.5 sets no deadline for the decision.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Sky pairs 'no Agent may invest so as to exceed the limit' with 'the Core Council may direct a sale' \u2014 the second exists because ecosystem-wide limits move with other Agents and with prices.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fef4059f-37cd-4444-9eb6-b780573ef511",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:10.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "622103d8-aa45-479b-b860-fb75be1a45f2",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:14.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

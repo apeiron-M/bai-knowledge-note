@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-7f0677e3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7f0677e3-cda8-4e01-a784-13c11586ebcd",
+      "targetTitle": "The LayerZero bridge's minimum delivered amount is set from "
+    },
+    {
+      "id": "lnk-6dba1c92-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6dba1c92-90a6-48ac-931f-5c565c2cfb92",
+      "targetTitle": "CCTP refuses to bridge to a domain with no configured mint r"
+    },
+    {
+      "id": "lnk-ee97f6ef-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee97f6ef-1468-4f29-94a3-f64c6d543d9e",
+      "targetTitle": "An unconfigured pool is inert: missing slippage or TWAP sett"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The LayerZero send sets minAmountLD to zero, contradicting the layer's own rule that unset minimums must revert",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9a79c212-a74c-4479-a311-7949371b51c0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "52612ddc-63e0-4752-b25f-9b137bed9b67",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8cc72e50-a102-4371-86e9-39acc45aa9ed",
+      "name": "layerzero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cdf21b42-c997-4374-b45c-cbe9b45f5a55",
+      "name": "slippage-protection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Everywhere else in the Grove Liquidity Layer a zero minimum is treated as an error: `CurveLib/max-slippage-not-set`, `UniswapV3Lib/min-amount-not-set`, `PendleLib/min-amount-out-not-set` (A...8.1.2, A...9.1.2, A...11.1.2). A...13.1.4 then constructs the LayerZero send with `minAmountLD` \"initialized to `0`\".\n\nOFT transfers can legitimately deliver less than `amountLD` \u2014 decimal-precision dust removal and fee-on-send implementations both reduce the credited amount \u2014 so `minAmountLD` is exactly the field that would bound that loss. Setting it to zero accepts any delivered amount, including, in principle, none.\n\nThe function also has no post-hoc verification: unlike the Aave, Uniswap and Pendle paths, there is no balance-delta check, because the credit lands on a different chain where this contract cannot observe it. So neither of Grove's two slippage mechanisms is active here.\n\nThis is only coherent when read together with A...13.1.2's mandate that the rate limit stay at `0` until the integration is tested. The inconsistency is a symptom of unfinished code held behind a kill switch \u2014 which makes it a specific thing to check before that switch is flipped, rather than a settled design choice.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Curve, Uniswap and Pendle all reject a zero minimum outright, yet the bridge hardcodes no floor on the delivered amount \u2014 consistent only while the function stays disabled by a zero rate limit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1afebab6-09cc-4528-ad17-bbc91e18e844",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:19.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8b94efc1-ceed-4b26-bf4a-a0d947d7984c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

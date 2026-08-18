@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-99f64149-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "99f64149-2cdb-4872-b27c-6544855199df",
+      "targetTitle": "Backstop capital retention tapers continuously to zero near "
+    },
+    {
+      "id": "lnk-c675d197-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c675d197-b1f2-41c0-8dee-66d6529971cd",
+      "targetTitle": "Phase-out speed is a feedback loop on surplus safety capital"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Aggregate Backstop Capital is USDS's excess-capital safety net, sized as a proportion of the liability it protects",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "329dbe0a-f415-4e27-9171-6917e9d0d34d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "61c9a42b-9919-4e0a-b0e1-128838d11899",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d992c82-686d-49bb-b512-0a9f75896ba1",
+      "name": "capital-structure",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3442cb73-6506-4519-83f4-6ed041a594b8",
+      "name": "solvency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.5.3.1.2 describes Aggregate Backstop Capital as \"the 'safety net' of excess capital backing USDS beyond standard collateral\" \u2014 capital that exists specifically to absorb losses that collateral does not cover.\n\nA.3.5.3.2.1 sets the target as a *ratio* rather than an absolute figure: one and one half percent of the total supply of USDS. Because the target scales with outstanding USDS, growth in the stablecoin automatically raises the required buffer instead of letting the protection ratio decay as the system scales \u2014 the usual failure mode of a fixed capital target.\n\nA.3.5.3.2.3 makes the target self-funding: while Aggregate Backstop Capital sits below target, a portion of Step 2 Capital is retained rather than distributed. And A.3.5.3.2.2 adds a second, sharper regime \u2014 a Turbo-Fill Floor below which \"an accelerated retention rate applies.\"\n\nThe two-tier design is the interesting part. A single retention rate would refill the buffer at the same speed whether it is slightly below target or nearly exhausted. Splitting into a normal band and a floor-triggered turbo band lets Sky keep distributing surplus in ordinary conditions while converting revenue aggressively into capital exactly when depletion is severe. Note that the floor is an absolute amount while the target is a ratio, so the two can diverge as USDS supply changes.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:26.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Targeted at 1.5% of total USDS supply, with Step 2 revenue retained while below target and an accelerated retention rate below the Turbo-Fill Floor.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "abc31849-a314-423d-8b3c-23406ec20a26",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6b553592-3254-44a5-8c69-75ac3cf5905c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

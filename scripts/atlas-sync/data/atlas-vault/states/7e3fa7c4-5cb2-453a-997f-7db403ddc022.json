@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-f7b51e2f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7b51e2f-634d-48cc-8d3d-dfb392d0b909",
+      "targetTitle": "A Primitive's Global Activation Status and each instance's S"
+    },
+    {
+      "id": "lnk-87de2b04-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87de2b04-9047-4307-affc-e44851e79de2",
+      "targetTitle": "The Global Activation Status of a one-shot Primitive disting"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Globally deactivating a Primitive suspends every existing instance immediately, but reactivation revives none of them",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fe7a7c41-ff51-4776-bd19-a0f965c82211",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d0f847b5-5d97-4fb7-af37-d9da2dacc801",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4b115d5b-956b-49ef-87f4-5652d262cbb4",
+      "name": "agent-governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.1.2.4.2 states that when a Primitive's Global Status is deactivated, \"_all_ existing instances of that Primitive immediately become `Suspended`,\" and while it remains Globally Inactive the Agent \"is barred from creating new instances or reactivating existing instances.\" A.2.2.1.2.4.2.2 then makes reactivation deliberately incomplete: restoring Global status \"restores the Agent's ability to create new instances (via proper Invocation) but does _not_ automatically revive previously deactivated instances. Each existing instance remains inactive unless separately reactivated through the appropriate governance process.\"\n\nThe asymmetry is the design. Deactivation is a **broad, instant kill switch** \u2014 one governance action stops every deployment of that Primitive at once, which is exactly what a security incident or framework breach demands. Reactivation is deliberately **narrow and per-instance**, so restarting requires explicitly re-affirming each deployment.\n\nThis avoids a specific failure mode: a Primitive deactivated for cause, later globally re-enabled for an unrelated new use case, silently resurrecting the very instances that caused the problem. The default on the recovery path is off.\n\nThe cost is operational drag proportional to instance count. An Agent running many parallel instances \u2014 A.2.2.1.3.3 explicitly contemplates multiple Integration Boost instances \u2014 faces one cheap shutdown and then N separate governance actions to come back, which makes global deactivation a much heavier decision than its single-action cost suggests.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:16:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The asymmetry makes deactivation cheap and recovery expensive: each suspended instance needs its own separate governance action to become Active again.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6a05f8bf-d2b7-4989-9d2e-6d5b370274bd",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0190939c-4502-48f1-8f67-de131cc3e3c9",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

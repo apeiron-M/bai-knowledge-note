@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Anything requiring operational judgment is escalated to a token holder vote by design",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8b55d3e2-7880-45a0-8fdd-8f482752e061",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7a985de4-f3b0-4c74-aa01-6c1be70ac96c",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6988d0d3-5585-4a0b-a6a3-824c661615b8",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.2.6.2 sets the drafting standard for Instance strategy documents: they \"must describe in detail how the Allocation Instance should be operated so that the Operational Executor Agent that the Prime Agent has contracted with can operate the Allocation Instance without further input from the Prime Agent or having to make 'judgment calls'.\"\n\nA.2.2.10.1.1.3.3 supplies the consequence when that standard is not met: \"Any change to the Allocation Instance outside of the limits specified in the Prime Agent Artifact **or requiring judgment on the part of Operational GovOps**... requires a new vote of Prime Agent token holders.\"\n\nTaken together these define the operator as an executor, not an agent with delegated discretion. Judgment is not distributed to whoever is closest to the situation \u2014 it is routed back to token holders. A.2.2.10.1.2.6.2.1 makes the boundary explicit by requiring the strategy to \"specify limits to the amount by which the allocation can be adjusted before a vote of Prime Agent token holders is required.\"\n\nThe rationale is accountability under separation: the Executor operates capital it does not own under a strategy it did not write, and any discretion it exercises is authority nobody voted to give it. Pushing judgment upward keeps the Executor's liability bounded by its instructions.\n\nThe cost is latency at exactly the wrong moments \u2014 a novel market condition is by definition unspecified, so the correct response is a vote. This is why a pre-authorised fallback strategy exists separately: emergencies cannot wait for the escalation path this rule creates.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:26:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Strategy documents must let an Operational Executor Agent run the Instance with no further Prime input and no judgment calls, so unspecified situations become governance events rather than discretion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f161aaa9-b01f-4e36-a9a4-85ab6fe3832c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:11.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7dc6d326-dd6b-47c0-8145-d2246339e8a6",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:11.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

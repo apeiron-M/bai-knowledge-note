@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-f12f6404-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f12f6404-2cbd-4379-8006-ab8a2270cd28",
+      "targetTitle": "Aave deposit slippage is verified by differencing the proxy'"
+    },
+    {
+      "id": "lnk-7f0677e3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7f0677e3-cda8-4e01-a784-13c11586ebcd",
+      "targetTitle": "The LayerZero bridge's minimum delivered amount is set from "
+    },
+    {
+      "id": "lnk-4c1c49f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4c1c49f4-fa6b-4d25-bec7-b526a14e962d",
+      "targetTitle": "Removing Uniswap V3 liquidity requires the proxy to own the "
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Pendle redemption passes a deliberately slack minimum to the router while enforcing the caller's strict minimum on the measured balance delta",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fe7e2207-cab3-4357-82d8-5b982509d3fd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3177e60b-de75-4dc3-b376-7af1520f1eda",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3593a3ed-c555-458d-9a95-37d30529e946",
+      "name": "pendle",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fe5fbc29-da58-409a-a19a-70964bc9e90a",
+      "name": "slippage-protection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two different minimums appear in the same procedure. A.6.1.1.2.2.6.1.2.2.1.2.1.2.11.3 computes the one handed to Pendle:\n\n```\nuint256 minTokenOut = params.pyAmountIn * 1e18 / pyIndexCurrent - 5;\n```\n\nand states the reason for the constant: \"A rounding buffer of `5` is subtracted from `minTokenOut` to avoid reverts caused by potential rounding errors.\" A...11.1.6 then applies the real test after the call, against measured state:\n\n```\nuint256 totalTokenOutAmount = IERC20(tokenOut).balanceOf(proxy) - tokenOutAmountBefore;\nrequire(totalTokenOutAmount >= params.minAmountOut, \"PendleLib/min-amount-not-met\");\n```\n\nThe division of labour matters. The router-facing minimum only needs to catch gross failure, and making it exact would let a one-wei truncation revert an otherwise correct redemption \u2014 so it is loosened by a fixed epsilon. The caller-facing minimum is where Grove's actual tolerance lives, it is checked on a balance the proxy owns, and it cannot be zero (`min-amount-out-not-set`, A...11.1.2).\n\nThe general lesson is that a protocol-facing guard and a policy guard should not be the same number. Conflating them forces a choice between spurious reverts and weak protection; separating them gets both.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "minTokenOut is derived from the PY index minus a hardcoded rounding buffer of 5 wei; the authoritative check is a separate require on the proxy's actual tokenOut increase.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "03ce83aa-3e80-48ad-a73e-8008319edba5",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "88e9e3de-2ad5-4598-bfdf-fd72f7c6c5b8",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

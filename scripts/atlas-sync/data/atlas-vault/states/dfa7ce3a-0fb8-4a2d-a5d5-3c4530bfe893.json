@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-f01edbd8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f01edbd8-ff24-474e-9f40-393864d52922",
+      "targetTitle": "The Splitter allocates surplus between SKY accumulation and "
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Kicker Module lets the Smart Burn Engine keep accumulating SKY while the Surplus Buffer is negative",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5fbaadfe-fb43-4765-84c1-998b355e5dfc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d7eae78-64fa-489e-96cb-584e27ecf0a2",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e98b0a43-b334-4046-b138-d9c8181686e1",
+      "name": "smart-burn-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "179357ac-97ff-418e-a829-4da4537b2268",
+      "name": "surplus-buffer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.5.2.2 states that the Kicker Module \"allows funds to be transferred from the Surplus Buffer to the Splitter as long as the Surplus Buffer is above a specified signed threshold. This allows funds to be transferred from the Surplus Buffer to the Splitter even when the Surplus Buffer is negative, as long as the Surplus Buffer is above the specified threshold.\"\n\nThe load-bearing word is **signed**. A.3.5.2.2.1.1 confirms `khump` is a signed integer with RAD precision, and the current value is set well below zero (-200 million USDS). The natural design \u2014 pay out surplus only when there is surplus \u2014 is explicitly rejected.\n\nThe reason is visible once combined with A.3.5.3.1.3, which reclassifies a negative Surplus Buffer as capital *deployed* into Genesis Agents rather than as a loss. Under that reading a negative buffer is an investment position, not insolvency, so halting SKY accumulation at zero would be an arbitrary stop.\n\nThe trade-off is real: the protocol can continue buying and burning its governance token while its own assets-minus-liabilities figure is negative, financing that accumulation against a governance-set tolerance for negativity rather than against realized surplus. The safety of the design rests entirely on `khump` being set correctly.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The khump threshold is a signed integer, so surplus keeps flowing to the Splitter until the buffer falls below a deliberately negative floor rather than stopping at zero.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "10f505a1-e717-4f96-9e5d-0858c9f1ed8b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f796c31e-e2ec-4868-8453-0bd58c6ffded",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

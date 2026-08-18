@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Aligned Delegate breaches are two-tier: procedural notices expire after 12 months, integrity breaches end the role at once",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f236725b-fc0c-40f1-a524-c210ccdfba32",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "82d0a30c-e954-4461-a426-7855132c2e27",
+      "name": "aligned-delegates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4a12d521-b0eb-4427-9034-539df88c9c2f",
+      "name": "accountability",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.6.6.1 splits breaches into two tiers \"based on severity,\" with the response determined by \"the tier of the breach and the Aligned Delegate's prior record.\"\n\n**Tier 1 (Procedural)** covers \"late vote explanations, minor communication lapses, and similar administrative failures that do not reflect on the Aligned Delegate's integrity or judgment\" (A.1.6.6.1.1). The first response is a public notice \u2014 posted, pointedly, \"on the Forum thread where the Aligned Delegate submitted their AD Recognition Submission Message,\" so the breach record sits permanently alongside the delegate's own credentialing post. The notice \"must specify the breach and the expected correction.\"\n\nTwo timing rules do the escalation work: \"A Tier 1 notice expires 12 months after issuance. A subsequent Tier 1 breach while two or more Tier 1 notices remain active is considered a Tier 2 breach.\" So three live procedural breaches within a rolling year converts an administrative problem into a terminal one, while expiry means an isolated lapse does not follow a delegate forever. The framework is measuring *pattern*, not count.\n\n**Tier 2 (Integrity)** breaches \"involve fundamental failures of integrity that are incompatible with the Aligned Delegate role\" and result in \"immediate derecognition regardless of the Aligned Delegate's prior record\" (A.1.6.6.1.2). No accumulation, no warning, no credit for good history.\n\nThe division rests on a claim about what each type of failure evidences. Procedural failure is consistent with a delegate who is competent but overloaded \u2014 correctable by notice. Integrity failure is evidence about character, and no amount of prior good conduct rebuts it, because the framework's premise is that misalignment compounds rather than averages out (A.0.1.1.12).\n\nBreaches are recorded as Active Data in the registry at A.1.6.6.1.3.0.6.1, whose current entries are all Tier 1 \u2014 with several delegates appearing twice within two months, which is exactly the escalation pathway the expiry rule governs.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:32:09.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.6.6.1 keys the response to tier and prior record \u2014 a third Tier 1 breach while two notices remain active becomes Tier 2, and any Tier 2 breach is immediate derecognition.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "189dc48f-68ce-4b03-959a-75c7623c37da",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:10.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "aac66abc-7887-49a0-a273-d427f9fcd9de",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:10.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

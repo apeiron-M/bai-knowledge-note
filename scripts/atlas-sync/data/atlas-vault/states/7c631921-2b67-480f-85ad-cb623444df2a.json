@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-d4e2dff0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4e2dff0-611e-4b90-9bae-422b1007ec01",
+      "targetTitle": "Skybase publishes prospective distribution partners with a P"
+    },
+    {
+      "id": "lnk-d6bccfc1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d6bccfc1-2969-4c18-aa09-775297ee40fa",
+      "targetTitle": "Reserved Reward Code ranges and published Integrator lists l"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Prospective Instances are fully pre-provisioned at the Planning stage, including a reserved Reward Code",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "2f60ab8e-f82c-466c-b834-284c26ebe159",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2c42bab2-ef4f-41b2-9e17-8249831b6059",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8685aea5-019c-4616-875e-00722f1a619f",
+      "name": "distribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0d30ab59-30ff-4fa6-8925-d55dbabb62bd",
+      "name": "lifecycle",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each of the four in-progress Invocations at A.6.1.1.4.2.5.1.4 carries a complete Instance Configuration Document, not a placeholder. MetaMask (.4.1), InstaDapp (.4.2), Gnosis Protocol (.4.3) and Piku.co (.4.4) each already have an Invocation Status of `Planning`, an assigned Reward Code \u2014 `1005`, `1006`, `1050`, `1010` \u2014 the inherited Routine Protocol, an Agent Customizations document reading \"[No customization presently.]\", and both Active Data controllers with Operational GovOps named as Responsible Party under Direct Edit.\n\nThe only parameter uniformly left open is the Tracking Methodology, which in all four cases \"will be defined in a future iteration of the Skybase Artifact.\"\n\nThis inverts the usual order of operations. Rather than agreeing terms and then creating records, the Atlas creates the full governed structure first and fills in the measurement rule last. An Invocation completing is therefore not a build step \u2014 the machinery already exists \u2014 it is a status change that moves an existing subtree into the Active Instances directory.\n\nTwo consequences follow. Reward Codes are consumed at the planning stage, so a deal that never closes still burns an identifier and leaves it recorded in an archived Failed Invocation \u2014 the code space is a permanent, append-only registry rather than a recyclable pool. And the allocation is not strictly sequential: Gnosis Protocol holds `1050` while Piku.co holds `1010`, so codes appear to be assigned in blocks or reserved out of order rather than issued as a counter.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "MetaMask, InstaDapp, Gnosis Protocol and Piku.co already hold Reward Codes 1005, 1006, 1050 and 1010 plus declared Active Data controllers, with only the Tracking Methodology left open.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "deb4a09f-e04f-4716-8461-721dc6c04486",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c850d813-ecd6-4e6d-8e93-f06b22b70ffd",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

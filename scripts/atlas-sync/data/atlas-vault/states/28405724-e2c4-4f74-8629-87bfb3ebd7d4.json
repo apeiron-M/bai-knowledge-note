@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-ee773703-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee773703-176f-4007-9a03-acf95f68442f",
+      "targetTitle": "doc-b4367a37"
+    },
+    {
+      "id": "lnk-56c973c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "56c973c4-3054-4376-8bca-fdee23919dae",
+      "targetTitle": "Governance messages bridged to Avalanche wait three days and"
+    },
+    {
+      "id": "lnk-f3158185-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f3158185-8925-4f8d-973f-71ff7457afee",
+      "targetTitle": "Grove's Pioneer Chain incentives target Avalanche but the in"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Governance reaches Grove's foreign chains through per-chain relay receivers on heterogeneous bridges",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7fde79c2-88e2-4c10-8493-b194ec3eab9b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "880e9676-c07f-4744-9bb7-b53a90a1cab9",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c659af27-290e-4613-a1e9-9d630511f20d",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "24807308-b98e-4456-9afa-597be9d67abb",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Grove's authority originates on Ethereum, but its capital sits on six other chains, so the Artifact records the machinery that carries instructions outward. Avalanche has a \"Grove LayerZero v2 Governance Relay Receiver\" (A.6.1.1.2.2.6.1.2.1.1.1.1.3.2) **and** two \"Grove Circle CCTP Governance Relay Receivers\", one for CCTP v1 and one for v2 (A...1.3.3). Robinhood Chain has a \"Grove Arbitrum Governance Relay Receiver\" (A...1.4.2). Base is reached through a Grove Executor and Grove Receiver pair (A...1.2.1, A...1.2.2).\n\nThree properties follow. First, **the transport is heterogeneous**: LayerZero, Circle CCTP and an Arbitrum-mediated route all carry governance messages, so Grove's control plane inherits the security assumptions of several different bridges simultaneously, not one.\n\nSecond, **the receiver is the authority anchor on the foreign chain**. Whatever a receiver accepts becomes a valid instruction locally. A bridge compromise is therefore not merely a fund-transfer risk \u2014 it is the ability to issue governance commands to Grove's foreign-chain contracts.\n\nThird, maintaining **parallel v1 and v2 CCTP receivers** on Avalanche means the older path stays live alongside the newer one. That is operationally prudent during migration and is also a standing extra surface, since the security of the arrangement is the security of the weaker receiver, not the stronger.\n\nThe Robinhood Chain case is the sharpest: governance reaches it *via Arbitrum*, adding a third chain as an intermediate hop. Each hop is another place the instruction can be delayed or forged, and the Artifact records the topology precisely so that this is auditable rather than assumed.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:44.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Avalanche has a LayerZero v2 receiver plus separate Circle CCTP v1 and v2 receivers; Robinhood Chain is reached through an Arbitrum governance relay receiver, so bridge risk becomes governance risk.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b2272fcf-dcce-4c82-b85f-f0b360d7bef3",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:43.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2d234b4a-fabc-4061-8c55-178239dce742",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:44.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

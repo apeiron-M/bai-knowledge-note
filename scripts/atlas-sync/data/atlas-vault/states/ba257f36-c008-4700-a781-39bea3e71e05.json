@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Validators must not trust the Spell repository's own tooling, including its Makefile and test scripts",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f980b2d4-8a10-4bf9-ad04-b52cf14921bf",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6dbba67d-5f2b-487d-b857-0df590936a3b",
+      "name": "verification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ba205bec-6445-4bfa-8074-47de5c370266",
+      "name": "supply-chain",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Three provisions treat the repository's automation as part of the attack surface rather than as validation infrastructure.\n\nA.1.10.2.4.12.2.10: \"Automated Spell deployment and code comparison scripts within the Spell repositories may require an Etherscan API key; however, **these scripts must not be used when validating Spells**.\" A.1.10.2.4.12.3.1.1, step 9: run `make test`, but \"if there are concerns about potential modifications to the function, validators can bypass the `make` command and directly execute the test script using `./scripts/test-dssSpell-forge.sh`.\" A.1.10.2.4.12.3.3.11: \"Verify that the test scripts themselves have not been tampered with or maliciously modified in the repository.\"\n\nThe underlying problem is circularity. A comparison script that reports \"deployed code matches the repository\" is itself code from that repository. If the repository is compromised, the tool that would detect it is compromised too, and it reports success \u2014 which is worse than having no tool, because it manufactures false assurance.\n\nThe response is layered rather than absolute. Convenience tooling is banned outright for the comparison checks; the build wrapper (`make`) may be bypassed in favour of the underlying script; and the scripts that remain in use must themselves be inspected for modification.\n\nNote how this pairs with A.1.10.2.4.12.3.1.4, which permits verifying deployed-versus-repository code with an ordinary online diff tool. A generic third-party utility with no knowledge of Sky is more trustworthy for this purpose than a purpose-built script maintained by the very team whose output is under examination.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:11.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.2.10 bans the repo's deployment and comparison scripts during validation, and A.1.10.2.4.12.3.3.11 requires checking the test scripts themselves for tampering.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "58ca7eb0-31f5-4824-8525-1eaebe6451b8",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8a30997a-20e8-413d-95a2-ace42ddb6c22",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

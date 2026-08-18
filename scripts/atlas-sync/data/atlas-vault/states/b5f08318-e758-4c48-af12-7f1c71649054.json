@@ -1,0 +1,16 @@
+{
+  "title": "An aggregate cap is written in prose but nothing enforces it",
+  "status": "OPEN",
+  "content": "**Side A \u2014 the written ceiling.** The instance documents state a **$5 million combined** cap across JTRSY and BUIDL.\n\n**Side B \u2014 the enforced limits.** Each instance carries its own independent 5,000,000 USDS inflow rate limit. Nothing ties them together, so filling both is fully compliant with every on-chain constraint while breaching the written ceiling by 2x.\n\nWhat makes this notable rather than a mere gap is that the same Artifact demonstrates the fix: a Diamond PAU instance uses an aggregate normalized RateLimitID precisely to bind several venues under one shared budget. The capability exists and simply was not applied here.\n\nThe same pattern appears in reverse elsewhere \u2014 instances declaring \"Maximum Exposure 0 USD\" in prose beside live enforced deposit budgets \u2014 suggesting prose limits and enforced limits are maintained independently.\n\n**To resolve:** either bind the two instances under one aggregate rate limit, or correct the prose to match what is enforced.",
+  "observedAt": "2026-08-17T23:04:40.000Z",
+  "observedBy": "atlas-extract",
+  "resolution": null,
+  "resolvedAt": null,
+  "description": "JTRSY and BUIDL share a stated $5 million combined ceiling while each carries an independent 5,000,000 USDS inflow limit \u2014 filling both satisfies every enforced constraint at $10 million.",
+  "involvedRefs": [
+    "0c0cb270-f5d6-4995-9a4e-dcc9f3c9b133",
+    "a49a8042-5831-416a-9d19-e6bdb1782d0c",
+    "34d9bd3c-2b26-46e4-98a0-fa8ac52c41c6",
+    "6eb1e9ec-0581-4a75-9cf8-2467a85e8b61"
+  ]
+}

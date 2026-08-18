@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-f18498e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f18498e6-87d7-42d8-84c4-af240911f96b",
+      "targetTitle": "doc-7f54dcb5"
+    },
+    {
+      "id": "lnk-df22dde1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "df22dde1-ba41-4e97-80cb-14037680c249",
+      "targetTitle": "A single Sky Forum category serves as Launch Agent 7's one p"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Private reporting of a validation issue is acceptable only when multiple trusted parties are present",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5ff90762-57fb-4489-9591-93258e48f7b1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "088007eb-4610-4997-870f-b697a6dd084c",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c0282b5e-d96d-418f-9196-2012bb730461",
+      "name": "transparency",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The reporting rules form a small escalation architecture. Issues go to the Core Facilitator by default (A.1.10.2.4.12.4.5). Public reporting on the Sky Forum is \"the recommended method\" (A.1.10.2.4.12.4.8). Private reporting \"is only recommended where the private communication involves **multiple trusted parties, as a single actor may be acting maliciously and provide false information**\" (A.1.10.2.4.12.4.7). And if a validator \"suspects that the Core Facilitator is malicious or compromised, they must notify Sky Governance by reporting the issues they found publicly. This permits the Sky Governance community to independently investigate the issue and act together to mitigate an attack\" (A.1.10.2.4.12.4.6).\n\nThe rule against one-to-one disclosure is the sharpest part. Reporting privately to a single person hands the attacker \u2014 if that person is the attacker \u2014 advance warning, an opportunity to fabricate a reassuring answer, and knowledge of who found it, all with no witnesses. Multiple recipients mean a false response has to survive several people's scrutiny at once.\n\nThe escalation for a suspected Core Facilitator deliberately does not name a substitute individual. It goes to the whole community, because any named alternative would just relocate the same single-point-of-trust problem. It also converts what would otherwise be an accusation into a technical finding that others can independently verify.\n\nThe underlying stance is consistent with the rest of the section: publicity is the default security mechanism, and confidentiality is an exception justified only by the risk of tipping off an active exploiter \u2014 never by discretion or convenience.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:41:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.4.7 assumes any single confidant may be the attacker; suspicion of the Core Facilitator escalates to public reporting to Sky Governance rather than to another individual.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6bb010fd-29b6-4477-8d3b-75e48cf9413d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2def934a-d951-4600-9d78-0ed19f87016a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

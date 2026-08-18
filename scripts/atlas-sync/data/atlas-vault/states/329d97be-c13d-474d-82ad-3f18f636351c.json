@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-f0f37c7d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f0f37c7d-cf13-4719-94a2-f5a98d1b0ae6",
+      "targetTitle": "doc-a4eb7282"
+    },
+    {
+      "id": "lnk-c378b13b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c378b13b-b805-4451-a32b-a3306f27cd0b",
+      "targetTitle": "Only borrow interest above the SKY Borrow Minimum Rate is pa"
+    },
+    {
+      "id": "lnk-6284155b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6284155b-7b05-4935-8684-4be64185a536",
+      "targetTitle": "Agent borrowing costs are scheduled to move from a flat Base"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every rate in Sky is defined as an arithmetic spread from a single Base Rate, making one lever move the whole system",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "adf6f119-d222-4219-9f08-e2f7fbb174e9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5daa1fe6-f6fa-4677-9a7a-f832b7cef760",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "82e3407f-470d-4543-81ac-61e16967aaf9",
+      "name": "core-stability-parameters",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.1 states that the Base Rate \"is the key interest rate in the system. It defines all other rates by various spreads.\" The rate ladder that follows is entirely derivative:\n\n- Sky Savings Rate = Base Rate \u2212 Distribution Reward Fee \u2212 Sky Spread (A.3.1.2.2.1)\n- Agent Rate = Base Rate \u2212 Sky Spread, equivalently SSR + Distribution Reward Fee (A.3.1.2.3.1)\n- Agent Credit Line Borrow Rate = Base Rate (A.3.1.2.5.1)\n\nA.3.1.1.2 makes the coupling mandatory rather than conventional: when setting the Base Rate, the Core Executor Agents \"must also set all other Core Stability Parameters so that they maintain their specified relationship to the Base Rate.\" There is no independent tuning of the ladder's rungs.\n\nA.3.1.2.7 fixes the arithmetic. All rates are annual percentage yields, and \"a spread between two rates ... is the arithmetic difference between their annual percentage yields\" \u2014 added or subtracted \"directly, without conversion.\" This is a deliberate simplification: per-second compounding rates (the contracts store RAY-precision per-second rates, A.3.1.2.2.3) do not compose additively, so the Atlas specifies the human-readable convention and lets implementations convert.\n\nThe design tradeoff is expressiveness for auditability: one number moves saver yield, agent yield and borrow cost together in lockstep, so a governance reader only has to check one parameter and a small set of spreads rather than reconcile a matrix of independent rates.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Base Rate is the sole primitive interest rate; SSR, Agent Rate and the credit-line borrow rate are fixed offsets from it, and spreads are added directly to APYs without compounding conversion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5353d26d-41ae-438e-8155-cd50a4c0cbc1",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "91ad4036-bc6a-4692-b36d-3595661e496b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

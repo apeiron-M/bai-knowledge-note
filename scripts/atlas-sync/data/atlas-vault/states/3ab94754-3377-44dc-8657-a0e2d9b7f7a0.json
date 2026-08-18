@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-e23e270c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e23e270c-6fb7-4a55-813e-69b372e20b9f",
+      "targetTitle": "Rate limits double as the whitelist: a venue with no configu"
+    },
+    {
+      "id": "lnk-77c24f3a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "77c24f3a-3ab2-4d40-970d-ce77bfa2812e",
+      "targetTitle": "Rate limit configuration doubles as the whitelist of venues "
+    },
+    {
+      "id": "lnk-9274096a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9274096a-6f64-48e0-b89b-53b30e7254cd",
+      "targetTitle": "doc-64d713ea"
+    },
+    {
+      "id": "lnk-d15e5dda-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d15e5dda-ca4b-4018-b783-2ebc600f47e4",
+      "targetTitle": "Allowances granted for a single operation are reset to zero "
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Claiming a fulfilled request only checks that a rate limit exists, so de-listing a venue by zeroing its limit would trap pending funds",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ea185556-2d89-4120-9fa7-eac18f13394c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9763aef2-2915-4680-a517-d7f5c501a286",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1fd4100f-16ce-4388-8614-9e92a2a96ca2",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    },
+    {
+      "id": "844639df-cb48-481f-beb6-48b2c87ffc11",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.5.2.2 describes the gate on claiming a fulfilled deposit: \"This is an **existence check only**: it requires the `LIMIT_7540_DEPOSIT` rate limit keyed to the `token` to have a non-zero `maxAmount`, reverting otherwise, and it **neither decreases nor increases** the available amount. This confirms the vault is whitelisted before shares are claimed.\" A.6.1.1.2.2.6.1.2.2.1.2.1.2.5.4.2 says the same for claiming a redemption, and the Centrifuge cancel/claim operations (A...2.6.1.2 through A...2.6.4.2) use the identical `rateLimitExists` pattern, reverting with `invalid-action`.\n\nNot charging the claim is correct: the allowance was already consumed when the request was submitted, so charging again would double-count the same exposure.\n\nBut the existence check has a consequence the Artifact does not draw out. Because the whitelist **is** the rate limit (A.6.1.1.2.2.6.1.2.2.1.2.1.2.2.1.2), the way to revoke a venue is to zero its `maxAmount`. Doing so while a request is pending would make the claim revert \u2014 the assets have already left the proxy, the entitlement exists at the vault, and the function that retrieves it is gated on a limit that has just been set to zero.\n\nThat is a real operational hazard rather than a theoretical one, because the async positions are precisely the RWA vaults whose fulfilment takes days. Revoking a counterparty mid-flight is exactly the moment someone would want to, and it is the moment the mechanism turns against the holder.\n\nThe safe sequence it implies: never zero a limit until pending requests are claimed or cancelled. Nothing in the specification enforces that ordering, so it is an unwritten operational precondition on a governance action.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Claim operations run an existence check requiring non-zero maxAmount and neither decrease nor increase the allowance \u2014 the charge happened at request time, but the gate still blocks on a zeroed limit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e2c05f9d-3f8a-47e7-b8d6-3e13db7b4249",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:39.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "45890d58-4e4b-4ef9-ad41-b593f6d932a1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:39.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

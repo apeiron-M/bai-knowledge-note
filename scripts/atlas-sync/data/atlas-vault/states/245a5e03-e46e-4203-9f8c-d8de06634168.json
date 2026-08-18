@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-d4791aac-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4791aac-106c-4f67-ba0d-2bc9776a214a",
+      "targetTitle": "Safe Harbor pre-authorizes whitehats to seize at-risk funds "
+    },
+    {
+      "id": "lnk-87b19457-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "87b19457-fb13-40a0-9814-f77ac954a05f",
+      "targetTitle": "Bug bounty rewards above one million USD are paid in monthly"
+    },
+    {
+      "id": "lnk-9eb5e36b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9eb5e36b-0c75-429c-aa08-b73c3a4ddea9",
+      "targetTitle": "doc-83693f45"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Safe Harbor bounty is ten percent of recovered funds capped at ten million USD, so the marginal reward vanishes above a hundred million rescued",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b838083f-6c34-4923-91be-39d635d773c4",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cee7086d-711a-438c-abd6-a383fc800a62",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "78d7efce-a2ec-4af3-9d74-a8c5e1dcba07",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two parameters set the Safe Harbor payoff. A.2.11.1.2.2.3.2.2 fixes `bountyPercentage` at `10` \u2014 \"the value to which the whitehat hacker is entitled, expressed as a percentage of the funds recovered\" \u2014 and A.2.11.1.2.2.3.2.1 fixes `bountyCapUSD` at `10000000`.\n\nThe two bind at 100,000,000 USD recovered. Below that, the rescuer's reward scales with how much they save, which is exactly the incentive gradient the mechanism wants. Above it, the marginal reward for rescuing an additional dollar is zero.\n\nFor a protocol whose stated threat model is being \"a honeypot\" precisely because of \"high TVL,\" the plateau sits inside the range of a realistic worst case. In a nine-figure exploit, a rescuer choosing between a partial rescue that hits the cap and a harder, riskier full rescue is paid the same for both.\n\nThe cap is not irrational \u2014 an uncapped percentage on protocol-scale TVL would create an obligation large enough to itself threaten solvency, and would invite manufactured rescues. But it means the incentive design is calibrated for medium-sized incidents and flat for catastrophic ones, and the residual motivation at the top of the range is reputational rather than economic. Stacked with the 1,000,000 USD monthly payment ceiling, a capped 10,000,000 USD bounty is also a ten-month receivable.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The cap binds at exactly 100M USD recovered; beyond that a rescuer gains nothing more for saving more, at the scale where the protocol needs rescue most.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "0f25ec64-7fbb-4f6c-8d6a-d1aa3781a01a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "d8320d52-c949-481c-933b-591670f40bc6",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

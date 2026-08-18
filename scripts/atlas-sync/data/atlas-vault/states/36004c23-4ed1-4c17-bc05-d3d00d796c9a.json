@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-8d5ba41b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d5ba41b-a2d4-4f69-bf08-54e2f9df93bc",
+      "targetTitle": "doc-44dfb4c7"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove separates the authority to decide a Delegate's status from the duty to record it, and requires publication of every change",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "84c71122-b0ff-4062-8e63-07574d251645",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "34e4f078-a417-4d24-a31a-0f0cf20d5f74",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f06be1e3-1e4b-4487-b6fa-95d229336423",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec4e43f2-b986-4d9f-9661-cf736fe0d19d",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.3.1.4.8.2 is typed in the Atlas as an **[Active Data Controller]** node and specifies four fields for maintaining the List Of Delegates: \"Responsible Party: Operational Facilitator. Trigger: Receipt of onboarding, renewal, non-renewal, or discretionary offboarding notice from the Grove Foundation. Update Process: Direct Edit. Publication: The Operational Facilitator posts a notice on the Sky Forum.\" The list itself (A.6.1.1.2.3.1.4.8.2.0.6.1) is typed **[Active Data]**.\n\nThis is how the Atlas handles state that must change between governance votes. Most of the document changes only through the Root Edit process; a delegate roster cannot work that way, since onboarding and automatic offboarding happen continuously. Typing the node as Active Data authorizes direct editing while keeping the *rules* for that editing inside the governed document \u2014 the data is mutable, the controller specification is not.\n\nThe split of duties is the substantive control. The Foundation decides and issues notice; the Operational Facilitator, a different party, performs the edit and publishes it. Neither can complete a change alone in the normal course: a decision that is never notified does not reach the registry, and an edit without a notice has no trigger. Given that registry status is what determines who may vote (A.6.1.1.2.3.1.4.1), that separation is the difference between a roster and an unaudited list.\n\nThe mandatory Forum notice supplies the external check. Since delegators bear the cost of an offboarding \u2014 their power is annulled until they redelegate \u2014 publication is the only mechanism that tells them to act.\n\nThe residual weakness is that \"Direct Edit\" means the registry's integrity rests on one party's diligence, and the specification names no reconciliation step against the Foundation's own records. The trigger is a received notice, not a verified one.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:55:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Grove Foundation decides; the Operational Facilitator direct-edits the List Of Delegates as Active Data on receipt of notice and posts to the Sky Forum, making the registry a maintained",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f089db95-3d97-4493-987e-8592adedf84e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:34.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "63356d48-616c-4cdb-b685-664d227103fc",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

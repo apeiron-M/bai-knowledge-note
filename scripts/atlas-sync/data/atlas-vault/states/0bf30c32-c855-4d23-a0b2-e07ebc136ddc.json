@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a4d503b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3a4d503b-0729-48b8-badc-d8c039dcb697",
+      "targetTitle": "doc-6d04d8ab"
+    },
+    {
+      "id": "lnk-6f17a3a3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6f17a3a3-11b1-4a7b-ae1e-0e1f5dbad32b",
+      "targetTitle": "A daily slope larger than maxAmount turns the rate limit int (copy) 1"
+    },
+    {
+      "id": "lnk-da0ae689-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "da0ae689-b3e5-4ece-a22c-e404c341bd71",
+      "targetTitle": "Rate limits accrue continuously and are computed at call tim"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Setting a rate limit's slope to zero converts it from a replenishing throttle into a permanent lifetime cap",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1bdc7cc1-a9cf-43f6-a3df-7f9b5e217b3c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "98b9b9b9-9499-46d5-abde-2566af7e15c5",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "94432ac4-2309-4513-9fb8-904764336484",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6b40a95c-b5fa-410a-8718-ed384538c253",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.12.3.2.4.1 sets the Grove Diamond PAU Uniswap v3 AUSD/USDC deposit limits to `maxAmount`: 5,000,000 with `slope`: **0** \u2014 on the aggregate limit and on both the AUSD and USDC legs.\n\nEvery other Instance in this chunk pairs a capacity with a positive per-day slope, so the bucket refills and the limit constrains a *rate*. With slope zero there is no replenishment: the 5,000,000 is drawn down once and never comes back. The same primitive, given a degenerate parameter, stops being a rate limit and becomes an absolute allowance.\n\nTwo neighbouring provisions confirm this is the intent rather than an oversight. A.6.1.1.2.2.6.1.3.1.12.3.2.5.1 states \"total exposure through this Instance may not exceed 5,000,000 USDS,\" matching the rate-limit capacity exactly; and A.6.1.1.2.2.6.1.3.1.12.3.2.5.2 sets the Capital Ratio Requirement for the Instance to **100%**. An exposure ceiling enforced off-chain is here mirrored on-chain by the slope-zero trick, so the on-chain limit cannot drift above the written mandate through the passage of time.\n\nThe generalizable technique: where a policy is a *stock* limit (total exposure) rather than a *flow* limit (per-day inflow), a rate-limit primitive can still express it by zeroing the slope \u2014 no new contract or control type required. The trade-off is that restoring capacity then always requires a governance action, which is exactly the friction a hard cap should have.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Grove Diamond PAU Uniswap Instance uses slope 0 on every deposit limit, so its 5,000,000 capacity never refills once consumed \u2014 reinforced by a 5,000,000 USDS maximum-exposure ceiling.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "25d40911-548c-4607-8660-251ee2e02657",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:21.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "73abbbbc-e335-4005-86d3-bb04ca9f743f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

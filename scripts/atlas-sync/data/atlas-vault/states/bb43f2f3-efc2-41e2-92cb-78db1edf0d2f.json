@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-f1463097-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1463097-5322-4276-af5a-2fb628c42bfd",
+      "targetTitle": "doc-80d0a8ad"
+    },
+    {
+      "id": "lnk-be7a50d9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "be7a50d9-09de-419a-8fde-8ce3826c45b5",
+      "targetTitle": "Sky documents inbound payment instructions in its constituti"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Protocol Scope owns protocol engineering but is bounded to non-collateral components",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6d2daad9-cd9c-41ca-870d-b4c82c9bb1e1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d41df70e-71f9-4514-92cf-76b41c755f7d",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "688275c3-21ef-4d95-882e-251f200584de",
+      "name": "scopes",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4 states that the Protocol Scope \"regulates the maintenance and development of the core Sky Protocol and its critical, **non-collateral** components\" and \"defines all rules for protocol engineering.\"\n\nThe qualifier `non-collateral` is the load-bearing word. Sky partitions all activity into six Scopes, each with its own Alignment Artifact that must not be changed beyond its Atlas-defined boundary. Protocol therefore gets the widest possible engineering mandate \u2014 *all* rules for protocol engineering \u2014 while being explicitly denied the thing engineers of a lending protocol would otherwise control: what backs the money.\n\nThe chunk confirms the split in the token definitions themselves. USDS supply is \"regulated through the Peg Stability Module and the Allocation System, **as governed by the Stability Scope**,\" and SKY's liquidity \"is boosted by the Smart Burn Engine, **as governed by the Stability Scope**.\" Protocol Scope defines and maintains the contracts; Stability Scope decides how much money flows through them.\n\nThe trade-off is that any change touching both code and collateral policy needs coordination across two Artifacts. The benefit is that a compromised or captured engineering process cannot unilaterally alter the ecosystem's risk exposure \u2014 a separation-of-powers argument implemented as a documentation boundary.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:15:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its boundary is drawn by exclusion: collateral and financial-stability decisions belong to the Stability Scope, so Protocol owns code, maintenance and security rather than balance-sheet policy.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fed928ae-8a35-4817-ace2-6179c1cacc3a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a2f1e08c-a81c-4505-a83b-63b95ed0e5eb",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

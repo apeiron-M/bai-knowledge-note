@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-f3158185-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f3158185-8925-4f8d-973f-71ff7457afee",
+      "targetTitle": "Grove's Pioneer Chain incentives target Avalanche but the in"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Pioneer Chain Primitive funds a chain-level incentive pool whose address is local but whose terms are set by the Core Atlas",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a54c5a58-eef2-407e-91d4-c3db89011376",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6bcaf75c-1713-4e72-8652-88620558d764",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f19a5f5e-18be-4acd-bbc7-d1609fcff569",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8e64e7e2-17ca-4658-9208-00640454080d",
+      "name": "distribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.5.3.3.1 shows how thin a Pioneer Chain Instance is. Its identifiers reduce to one line \u2014 \"Network: Solana\" (A.6.1.1.3.2.5.3.3.1.1.1.1) \u2014 and its substance is a Pioneer Incentive Pool with an address on Solana (A.6.1.1.3.2.5.3.3.1.1.2.1). The rules are not written here: A.6.1.1.3.2.5.3.3.1.1.2.2 states that \"the Pioneer Incentive Pool for this Instance is governed by the terms specified in A.2.2.9.3.1.4 - Pioneer Incentive Pool.\"\n\nThe division of labour is precise. The Agent contributes what only it can \u2014 a pool that exists at a specific address on a specific chain, backed by its own operational presence \u2014 while the conditions under which those funds may be spent stay in the Core Atlas, identical for every Agent that pioneers any chain.\n\nThat keeps a large discretionary pot from becoming an Agent-governed slush fund. Keel's tokenholders cannot loosen the pool's terms through a Root Edit, because the terms are not in Keel's Artifact; changing them requires moving the Core Atlas, where the Artifact Edit Restrictions bar Keel from reaching.\n\nThe corresponding weakness is opacity at the Agent level: reading Keel's Artifact tells you a chain-level pool exists and where it lives, but nothing about eligibility or size without following the upstream reference.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:16.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Keel's Solana Instance specifies only the network and a Pioneer Incentive Pool address; governance of the pool defers to A.2.2.9.3.1.4, so the Agent holds the funds without setting the rules.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fada812d-b513-4255-be10-02d68702e529",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:29.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1d0ea993-ba36-4763-bde3-ea2abbc8c126",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:29.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

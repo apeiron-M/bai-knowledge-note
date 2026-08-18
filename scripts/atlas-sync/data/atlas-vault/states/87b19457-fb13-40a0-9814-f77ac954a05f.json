@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Bug bounty rewards above one million USD are paid in monthly one-million tranches",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "aa69bd85-14fb-4d78-a685-52ccf932d51b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9cf71b72-b514-4bc7-9140-76796b39558f",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "68ecfde9-2aae-43f7-ad6b-bb8614bccfb4",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.11.1.1.3.3.2 sets the ordinary target as payout \"within one full calendar month after the report was approved,\" with USDS sent \"directly from the protocol's buffer to the whitehat hacker\" via the next possible Executive Vote. It then adds a ceiling on velocity: \"[f]or Bug Bounty rewards over USD 1,000,000: after the first million is paid out, the remaining amount is paid out over time with up to USD 1,000,000 per consecutive month until the determined amount for payout is reached.\"\n\nThe treasury logic is sound. Payouts come from the same buffer that absorbs protocol losses, and a critical finding often arrives when the protocol is already stressed, so smoothing a large obligation over months protects solvency and avoids a forced liquidation to pay a bounty.\n\nBut the schedule weakens the incentive precisely where the program's value is greatest. A researcher weighing disclosure against exploitation compares an immediate, certain exploit payoff against a bounty now paid over many months \u2014 a maximum-severity finding worth several million becomes a multi-year receivable, subject to each month's Executive Vote and to governance's continued willingness to pay.\n\nThe unstated dependency is that installments rely on the same discretionary machinery each cycle. Nothing in the provision makes later tranches enforceable, so the largest bounties are the ones whose completion rests most on Sky's ongoing good faith \u2014 the opposite of what a credible incentive requires.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:30.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "After the first million, the remainder is released at up to 1,000,000 USD per consecutive month \u2014 protecting the buffer from a single large draw while deferring payment on the most severe findings.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "78cb4155-85df-4cd3-997b-a4bd3925ca87",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:29.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "be4e7bb6-4146-4f23-b008-3bdaddb42956",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:30.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

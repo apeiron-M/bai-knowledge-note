@@ -1,0 +1,119 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0f4a5d1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b0f4a5d1-13a2-433b-8029-fc1fbf78a1f6",
+      "targetTitle": "Obex's operating capital is debt minted against a Sky Alloca"
+    },
+    {
+      "id": "lnk-b28c1ab6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b28c1ab6-5b3b-4270-baf4-9e6074b863d8",
+      "targetTitle": "doc-f0c070b8"
+    },
+    {
+      "id": "lnk-ddba1f8e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ddba1f8e-7c56-453d-8486-37d6d34029a5",
+      "targetTitle": "Pattern operates on borrowed USDS: minting draws vault debt "
+    },
+    {
+      "id": "lnk-b6b9bb7b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b6b9bb7b-90a8-42b6-b112-376e1ef3a139",
+      "targetTitle": "doc-90e15350"
+    },
+    {
+      "id": "lnk-cd51973b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cd51973b-d2d5-4fa1-9520-a76065857024",
+      "targetTitle": "Sweeping accrued Spark revenue into the ALM Proxy needs no t"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's USDS is debt drawn against a Sky Allocation Vault, not capital granted to the Agent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "dbe10022-be0f-42ff-9ebd-44f0f136f861",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "43de9863-6755-4b43-8dbb-35b3eed67a4d",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f621988a-c423-4600-b916-121346debe51",
+      "name": "usds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "63b325a1-e919-4d74-b0aa-95a4c20798f9",
+      "name": "balance-sheet",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The mint procedure at A.6.1.1.1.2.6.1.2.2.1.2.1.2.1.1 is explicit about the plumbing: the Relayer calls `proxy.doCall(address(vault), abi.encodeCall(vault.draw, (usdsAmount)))` to \"mint USDS into the buffer,\" then transfers it from the Buffer to the ALM Proxy. The burn procedure (A.6.1.1.1.2.6.1.2.2.1.2.1.2.1.2) defines the reverse as steps \"for an operator to return and then `burn` Spark's USDS **debt** in the Sky Allocation Vault,\" ending in `vault.wipe`.\n\n`draw` and `wipe` are vault debt operations. Spark does not receive USDS as an endowment; it borrows USDS into existence against an allocation line Sky has extended to it, and repaying reduces that debt.\n\nThis reframes the whole Liquidity Layer. Every position Spark holds at Aave, Morpho or Ethena is funded by a liability to Sky, which makes the operation a spread business: earn more on deployed collateral than the cost of the drawn line, while keeping the assets redeemable. It also explains why the Encumbrance Ratio ceiling of 90% matters and why Sky, not Spark, holds the admin role over these contracts \u2014 the ecosystem is the creditor.\n\nThe two-step routing through a Buffer rather than minting straight to the proxy is worth noting as well: the Buffer is the vault's counterparty, and the ALM Proxy receives USDS by ordinary transfer. Custody and debt accounting stay in separate contracts.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:54:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:14:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "mintUSDS calls vault.draw into a Buffer and transfers to the ALM Proxy; burnUSDS reverses it with vault.wipe, described as returning and burning 'Spark's USDS debt'.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3f54dab7-1445-483f-a2a2-d52cba451738",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:14:18.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "60068c02-fc57-422f-a04c-2b203d115135",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:14:18.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

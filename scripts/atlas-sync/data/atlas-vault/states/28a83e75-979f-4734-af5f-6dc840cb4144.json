@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-621c05ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "621c05ee-2733-4401-a816-7ce7dbe6c724",
+      "targetTitle": "Solana permissions are capability flags rather than a role h"
+    },
+    {
+      "id": "lnk-76a7436d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "76a7436d-eaee-424d-9c33-34c498de4043",
+      "targetTitle": "Sky keeps its own relayer alongside Keel's on the same Liqui"
+    },
+    {
+      "id": "lnk-31b50d3e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "31b50d3e-1659-4dcd-ab05-f7c96afc8a1a",
+      "targetTitle": "The Freezer role can strip a Relayer's permissions but canno"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Solana offers two graduated freeze levels, and only Sky Governance can lift either",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "90f201f7-0b2b-45bc-ba76-81b8fc37d316",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f87d63f2-a0fb-4847-877b-34966e6d7075",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5733d295-463c-4738-8a8f-e9ccc2fd4110",
+      "name": "emergency-powers",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2699649d-3796-4cb0-b75b-177e5ec27ddd",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.2.2.3.2 gives the Freezer a second, heavier instrument than relayer suspension: \"in the event of a more severe threat to the Controller, the Freezer Role can call the instruction to suspend the entire Controller instance.\" Two statuses are offered \u2014 `ControllerStatus::PushPullFrozen` for a Full Freeze (\u20263.2.1) and `ControllerStatus::Frozen` for a Reallocation Freeze (\u20263.2.2).\n\nThe escalation ladder is the point: suspend one relayer, or stop movement of funds, or stop the Controller entirely. Each rung matches a different diagnosis \u2014 a compromised key, an unsafe strategy, a compromised system \u2014 so the responder is not forced to choose between doing nothing and halting everything.\n\nBoth freezes share the crucial property that neither is reversible by the party that applied it: each remains \"until the Default Admin Role subsequently lifts this status.\" Stopping stays cheap and fast at 2-of-5; restarting stays with Sky Governance. And because both statuses also block managing Integrations, Reserves and Permissions, a frozen Controller cannot be quietly reconfigured while it is dark.\n\nOne documentation caveat is worth flagging: the two clauses describe themselves almost identically \u2014 the Reallocation Freeze text also opens \"a complete freeze prevents any movement of funds\" \u2014 so the operative difference between `PushPullFrozen` and `Frozen` is not actually stated. A responder choosing between them under pressure would have to infer it from the status names.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:32.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:21.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A Full Freeze (PushPullFrozen) stops all Controller actions including configuration; a Reallocation Freeze (Frozen) stops fund movement \u2014 both cleared only by the Default Admin Role.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6836997d-dd47-4060-8276-7329431f514f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "68a15878-2082-42b8-a25c-0c4e80fd607c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:21.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

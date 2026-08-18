@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove needs an explicit Atlas authorization even to collect fees accrued on its own Uniswap position",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "da4a0b30-f426-4493-ae28-e23d15d362fc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8a6f9e09-d471-4cd7-8911-92cae232f4a4",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "be106eea-a870-4a3f-be21-1d61b01b4844",
+      "name": "mandate",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ab73cb9f-ec75-44c6-83f2-674c1caf9ce6",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.1.12.2.3.1 records, under *Instance-specific Operational Processes*, that \"Grove is authorized to execute a **one-time** collect of all fees accrued on this Instance's Uniswap V3 position (tokenId 1192575 in the Uniswap V3 `NonfungiblePositionManager`), with proceeds received by the **ALM Proxy**.\"\n\nEvery element of that sentence narrows it: one-time rather than standing, a named tokenId rather than the Instance's positions generally, and a fixed destination for the proceeds. Collecting fees the position has already earned is about as economically benign as an action gets \u2014 it does not change exposure, take counterparty risk, or move price \u2014 and yet it required a written grant scoped to a single NFT.\n\nThe generalizable claim is about the shape of Grove's mandate. An Agent operating under *residual* discretion would need no such entry: anything not forbidden would be permitted, and fee collection would obviously not be forbidden. That this authorization had to be added establishes the opposite default \u2014 Grove's powers are **enumerated**, and an action outside the rate-limited conduits defined by the standard schema is unauthorized until the Atlas says otherwise.\n\nThe trade-off is direct: enumeration makes the Agent's authority auditable and its overreach detectable, at the cost of routing routine housekeeping through governance. The \"one-time\" qualifier shows the cost being paid rather than avoided \u2014 the cheaper move would have been a standing authorization, and it was not taken.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A one-time collect on a specific Uniswap V3 tokenId, with proceeds routed to the ALM Proxy, is written into the Instance document \u2014 evidence Grove holds enumerated powers, not residual discretion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "20eee958-1c2f-4abb-a51f-ab29f104de7d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6922e6fe-e96d-44fa-b328-3fd479473e34",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

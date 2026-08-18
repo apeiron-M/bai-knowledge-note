@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-e78b51aa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e78b51aa-9266-4b1b-ac1d-96aeb7802786",
+      "targetTitle": "New Spark risk parameters do not break existing loans \u2014 non-"
+    },
+    {
+      "id": "lnk-6f73639c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6f73639c-67ff-42d4-be13-7a5aa5964d96",
+      "targetTitle": "The Governance Acceptance clock starts at first end-user con"
+    },
+    {
+      "id": "lnk-4a7da9c4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4a7da9c4-dd34-4e03-87c4-4b72358f2367",
+      "targetTitle": "Spark's Curators are execution agents with no discretion \u2014 e"
+    },
+    {
+      "id": "lnk-69bfc6c2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "69bfc6c2-6b64-463e-b706-7966dc4a6937",
+      "targetTitle": "Spark protects the permission system rather than individual "
+    },
+    {
+      "id": "lnk-f840a8e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f840a8e6-9ea8-4c43-95ba-23d926366aa2",
+      "targetTitle": "doc-f555c4d9"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "If approved Arkis policy changes are not executed, Spark must withdraw all funding from the platform",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c1603e10-dccc-4cdf-8053-05ec4644efac",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "667fb61e-a0f1-4b86-943f-f5a7ff0c18b0",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2a87ca64-05f6-4dec-895d-432207d62a7f",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.7.1.2 splits execution of approved policy changes by where the component lives: \"Spark Governance (for onchain updates under Spark governance admin control), or **via the Arkis team** (for offchain components including the Arkis Margin engine or CEX subaccount management).\" Changes \"must be executed promptly after Root Edit Primitive approval.\" Then the consequence: \"**If policy changes are not executed as required, Spark must remove all funding allocated through the Arkis protocol infrastructure as soon as reasonably practicable.**\"\n\nThe structural problem is real and general. Half of Spark's risk controls here \u2014 the margin engine, the exchange subaccounts \u2014 run on infrastructure Spark does not operate and cannot unilaterally reconfigure. A governance vote can amend the Spark Artifact; it cannot make a third party's engineers deploy a change.\n\nMost agreements answer this with a contractual obligation and a legal remedy, which is slow, expensive, and useless when the exposure is live capital under someone else's margin logic. Spark instead pre-commits to the only remedy it can actually execute alone: leaving. The obligation is on Spark \u2014 \"Spark **must** remove all funding\" \u2014 not on Arkis to comply.\n\nMaking it mandatory rather than permitted is what gives it force. A right to withdraw invites case-by-case argument about whether this particular delay warrants disruption, and the answer is almost always no until it is catastrophically yes. A duty to withdraw removes the negotiation and hands Arkis a standing commercial incentive to execute promptly, since the counterparty's exit is automatic rather than discretionary.\n\nIt is the same philosophy as the Aave revenue-share pause and the term-end delegate lapse: make the safe outcome the default and let inaction produce it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Off-chain components depend on the Arkis team to implement, so the remedy for non-execution is a mandated exit rather than a contractual claim Spark cannot practically enforce.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f7546f47-79ae-4b04-ac63-27d677b0ef1b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "e8c04a13-de67-4fc5-b12d-034f817ed759",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

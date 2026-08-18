@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-bda88bd0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bda88bd0-6670-41e5-bc8c-10d5b311e5e4",
+      "targetTitle": "doc-4a350d1e"
+    },
+    {
+      "id": "lnk-feb1971f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "feb1971f-05cd-4c9b-ad2f-cade495acceb",
+      "targetTitle": "Root administrative control of Grove's Liquidity Layer is he"
+    },
+    {
+      "id": "lnk-96265a4a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "96265a4a-2421-42b8-a1ac-bad70ba0b631",
+      "targetTitle": "Instance administration and Facet approval are deliberately "
+    },
+    {
+      "id": "lnk-f1a28a98-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1a28a98-19b0-48d8-9d40-1efc739e2ed6",
+      "targetTitle": "Root administrative authority over the liquidity layer sits "
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky Governance, not Pattern, holds the admin role over Pattern's own Liquidity Layer contracts",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0f969a90-cf90-447a-a1aa-1c4159c920f1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3066448f-c8cf-4447-a6c1-641defc95410",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f4caf1f1-62e9-4b93-ad47-6407556c192f",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cd151b68-c860-4296-ac6b-8a93458f1eec",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.6.2.6.1.2.2.1.1.1 defines the top of the permission tree: \"The admin role (DEFAULT_ADMIN_ROLE) is the role that can grant and revoke any role, including itself and all other roles defined in the contract... **This role is fully controlled by Sky Governance via the Pattern Proxy.**\"\n\nThe combination is what matters. Admin is universal \u2014 it can grant and revoke *any* role, including its own \u2014 and it is held by Sky Governance rather than by Pattern, Pattern Dev Co., or the operators who run the system day to day. Every other role in the Liquidity Layer (Relayer, ALM Controller, Freezer) exists at admin's pleasure.\n\nThis inverts the intuitive reading of Agent autonomy. Pattern owns a mandate, a token and an amendment procedure, but the contracts that actually mint USDS and move assets answer to the ecosystem. An Agent that misbehaves can be de-permissioned at the contract layer without needing Pattern's own governance to cooperate \u2014 the same asymmetry seen in the emissions override, expressed in code rather than in prose.\n\nThe admin role also holds the parameters that bound the operators: setting rate limit data, setting maximum slippage, and setting cross-chain mint and LayerZero recipients (A.6.1.1.6.2.6.1.2.2.1.2.1.1, A.6.1.1.6.2.6.1.2.2.1.3.2). So the boundary of what operators may do is drawn by Sky Governance, while the actions inside that boundary are taken by Pattern's operators.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:04.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "DEFAULT_ADMIN_ROLE can grant and revoke every role including itself and is exercised through the Pattern Proxy, so ultimate control of the Agent's capital machinery sits at ecosystem level.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7fb84b98-55ac-479a-830f-0ed04da793fb",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "53661f72-8131-438b-b07f-1fa3eab1235b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:09.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

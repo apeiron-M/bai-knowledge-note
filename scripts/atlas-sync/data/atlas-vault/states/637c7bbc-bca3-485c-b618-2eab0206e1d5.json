@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-a8383920-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a8383920-f6ab-4562-a852-2af922a90dcc",
+      "targetTitle": "A Multi-Instance Coordinator Document holds strategy that sp"
+    },
+    {
+      "id": "lnk-ac06aff6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ac06aff6-2520-4b5c-89d5-cad3621fcd1f",
+      "targetTitle": "A Multi-Instance Coordinator Document holds cross-cutting st"
+    },
+    {
+      "id": "lnk-ff184d7c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ff184d7c-fc78-471a-af05-fede521a02b3",
+      "targetTitle": "The Multi-Instance Coordinator centralizes the Liquidity Lay"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Multi-Instance Coordinator Document holds the strategy that no single Instance can express",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "123cb444-702b-4d1e-bc97-e95d35dce377",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c635608c-f9f9-4b4b-a5f3-274af8a0d8be",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c9140c5a-0aab-4ad9-9f4b-001c8c22237c",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0b51eab4-eac0-4c28-8735-4baa15f198b3",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2 introduces the Multi-Instance Coordinator Document: it \"provide[s] general specifications of the Spark Liquidity Layer and define[s] Spark's overarching strategy and operational framework for managing **across all Instances**.\"\n\nThis is the necessary counterpart to per-Instance configuration. Granular Instances give precise control over each exposure, but they cannot express anything about the portfolio: concentration across venues, how much total capital is deployed, which chain gets liquidity when several want it. Those are properties of the set, not of any member.\n\nSo the Artifact adds a document type one level up. The Coordinator holds the shared infrastructure \u2014 the Allocator and ALM contract addresses, the operational roles, the off-chain parameters \u2014 and the strategy that governs how Instances are used together.\n\nThe design lesson generalizes beyond Spark: any system that decomposes a portfolio into independently configured units needs an explicit home for cross-unit policy, or the aggregate behaviour becomes an emergent side effect of many local decisions that no document describes. The Coordinator is where the Liquidity Layer stops being a list of positions and becomes a strategy.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Because allocation is configured one chain-venue-asset triple at a time, the Artifact needs a separate document for the overarching framework governing behaviour across all Instances.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9a7b3ba2-d9dd-438f-9362-87ff924b8c5d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1c6f8821-9774-481a-8b8f-84c27e563191",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

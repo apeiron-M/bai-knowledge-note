@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-36543d71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "36543d71-727a-4514-a125-7ff1fd18abb4",
+      "targetTitle": "Deploying capital to a new venue is a constitutional act: in"
+    },
+    {
+      "id": "lnk-3bed7502-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3bed7502-51fe-424e-a125-a036a3cb24fd",
+      "targetTitle": "Keel has no documented rule for splitting capital between it"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Opening a new allocation position requires a Root Edit, so venue selection is governance and size is parameters",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7970b35a-2efa-431e-b5ad-516214bb9434",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2b2d2be4-d73e-40d5-95b8-6c794f8390e2",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7290a92c-9fe1-4dae-a594-d72d749c6139",
+      "name": "agent-governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "968d7a3e-d3f1-4672-bf97-fc805966bd09",
+      "name": "allocation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.2.1.2.1 routes capital deployment through the constitution: \"the governance process to invoke a new Instance of the Allocation System Primitive follows the Root Edit process.\"\n\nThat means every new (chain, venue, asset) position Keel wants to take must clear a 1%-holder proposal, an Operational Facilitator alignment review, a Snapshot poll with quorum, and a Facilitator-executed Artifact edit. Adding Kamino PYUSD is a constitutional amendment, not an operational decision.\n\nThe division of labour with the rate limits is the elegant part. Governance decides *what Keel may be exposed to* \u2014 the set of counterparties and assets \u2014 and the rate limits decide *how much and how fast* within that set. Neither mechanism has to do the other's job: the vote does not need to anticipate sizing, and the limits do not need to encode judgments about a venue's solvency.\n\nThe trade-off is speed. A yield opportunity on a venue not already in the Artifact cannot be taken in days, which structurally biases Keel toward deepening existing positions over chasing new ones. For an Agent deploying Sky's collateral, that bias is plausibly the intended outcome rather than a defect.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Invoking any new Allocation System Instance runs the full tokenholder amendment process, while how much flows into an existing position is bounded by rate limits instead.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "122ca089-80ed-4690-a912-ee2fc011b936",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7071a3ba-2562-48fa-abd6-9d91538906fe",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:27.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

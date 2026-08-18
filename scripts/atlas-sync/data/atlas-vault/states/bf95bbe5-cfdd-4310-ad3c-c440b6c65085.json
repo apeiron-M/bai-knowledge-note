@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Process Definition schema currently governs only the Distribution Reward and Integration Boost Primitives",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5eb8d511-8384-4548-8b81-121682957cf3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7dd2a0fb-c9e7-471e-bee8-24ac8565fe8a",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d82853a7-7240-4584-af9e-53228106e75b",
+      "name": "implementation-gap",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "After establishing the Process Definition schema as the common structure for all Sky Primitives, A.2.2.2 concedes its actual reach: \"At present, only the Distribution Reward Primitive and the Integration Boost Primitive specifications are structured using this schema. In future iterations of the Atlas, the schema will be applied to all Primitive specifications in this Article.\"\n\nTwo of seventeen Primitives conform. The claim that the schema \"aligns the entire ecosystem\" is therefore aspirational for most of the Primitive set, and a reader cannot assume that a given Primitive's specification exposes triggers, dependencies, inputs, and outputs as discrete machine-readable fields.\n\nThis matters beyond documentation tidiness. The schema is what makes Document Update Triggers possible \u2014 one Process's Required Output deterministically initiating another Process (A.2.2.2.4). Automated chaining between Primitives can only work across the conforming subset, so the two most reward-heavy Demand Side Primitives are automatable while the rest remain prose specifications requiring human interpretation.\n\nIt also shows the Atlas's characteristic sequencing: define the target structure first, migrate specifications to it incrementally, and record the migration state in the document itself rather than in an external roadmap.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:08.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas publishes a universal schema alongside an admission that most Primitive specifications do not yet conform to it, so the ecosystem runs two documentation standards at once.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "fd30b0e0-b28c-491c-939e-14e6fa571e4a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:08.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8cca15a6-23bd-4b62-88e5-7f255a1439fa",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:08.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-46ac9129-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "46ac9129-84e2-4405-b65f-694bfc87b722",
+      "targetTitle": "Keel's demand-side incentives operate at three different gra"
+    },
+    {
+      "id": "lnk-b494a110-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b494a110-214d-4d86-8ff0-e2f1eea43fa6",
+      "targetTitle": "New Tracking Methodologies are permitted only if double coun"
+    },
+    {
+      "id": "lnk-b43161dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b43161dc-72e7-4256-9a32-5057dba7099f",
+      "targetTitle": "Distribution attribution rests on a per-Instance Reward Code"
+    },
+    {
+      "id": "lnk-4fb490a0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4fb490a0-b0ae-4f50-864c-47ba65ba553c",
+      "targetTitle": "Tracking Methodology is pluggable per Instance because some "
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Distribution Reward tracking subtracts balances already attributed to another Instance, preventing the same USDS earning twice",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5fd8b99f-fb86-4df0-8da7-3ada3e1a49b6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "894c685e-a2a1-42ab-be0e-24bf7f40d003",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "473ff3f0-e8a6-4bf0-aa56-2a35bf198c91",
+      "name": "distribution",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ec150940-0a26-4c36-a522-dd5662ceccde",
+      "name": "measurement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.5.1.3.1.1.2 defines the Solana Bridge Instance's Tracking Methodology as \"synthetic tagging of deposits and withdrawals from the LayerZero contract on Ethereum... **minus the running balances already attributed to a Distribution Reward Instance**.\"\n\nThe subtraction clause is the mechanism worth keeping. Distribution Rewards are paid per Instance, and one balance of USDS can plausibly satisfy the tracking definition of several Instances at once \u2014 bridged to Solana, then deposited in a venue that has its own Instance. Without netting, the same dollar would be rewarded repeatedly and Keel's incentive spend would scale with the number of programs rather than with real new demand.\n\nCalling the tagging \"synthetic\" is the other honest admission. There is no on-chain label identifying which USDS crossing a bridge belongs to which reward program; attribution is a constructed accounting view over observed contract events. That makes the methodology a *model*, and it explains why the Atlas pins it to a specific contract address and requires a designated party to compute it \u2014 reproducibility substitutes for verifiability.\n\nThe general principle generalizes past Keel: in a multi-program incentive system, each program's measurement definition must be stated relative to the others, or the programs silently double-pay.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Solana Bridge Instance tags LayerZero bridge deposits and withdrawals on Ethereum, then nets out running balances already credited to a Distribution Reward Instance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3ef55877-f15b-4ac8-bf56-7923dbeecdaf",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0200ea6d-070c-43c5-9ec0-91de43a32292",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

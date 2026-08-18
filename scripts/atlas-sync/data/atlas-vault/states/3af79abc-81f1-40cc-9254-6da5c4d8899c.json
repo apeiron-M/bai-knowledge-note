@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-a22ca456-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a22ca456-ad8f-4224-9100-d7c61f7ce547",
+      "targetTitle": "doc-015e675a"
+    },
+    {
+      "id": "lnk-c2522ca4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2522ca4-e6a1-4f95-99a9-18fc876a48be",
+      "targetTitle": "Collateral qualifies as peg-stabilizing by the price it comm"
+    },
+    {
+      "id": "lnk-a5a208ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a5a208ce-c3b4-4ffd-8660-f3b0cb065abf",
+      "targetTitle": "doc-8e3c962f"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky pays Agents exactly the spread between its own Base Rate and SOFR for holding peg reserves, and not a basis point more",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "be8b2cfb-fc01-47d0-a768-665edf381ab1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "53097dfa-adbb-4ef8-956a-603fa5fa810d",
+      "name": "peg-stability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "82936c55-874f-4238-b071-70336f47144f",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.3.2.2.4.1 defines the Actively Stabilizing Collateral Incentive, computed per block:\n\n`ASC Incentive = Eligible Actively Stabilizing Collateral \u00d7 (Base Rate \u2212 SOFR)`\n\nThe construction is precisely targeted at the cost it exists to offset. An Agent holding ASC has capital sitting in cash-like instruments earning roughly the risk-free rate (SOFR, defined at A.3.3.2.2.4.1.3 as the Fed's overnight Treasury-collateralized borrowing rate), while it is paying Sky the Base Rate to borrow (A.3.1.2.5.1). The spread between the two is exactly the carrying cost of the obligation, and the incentive reimburses exactly that.\n\nThe consequence is that the ASC requirement becomes economically neutral rather than a tax. An Agent is neither penalized nor enriched for holding the reserve, so its capital allocation decisions elsewhere are undistorted \u2014 and Sky bears the cost of its own peg insurance rather than pushing it onto the Agents whose cooperation it needs.\n\nThe cap is the other half of the design. A.3.3.2.2.4.1.1 defines Eligible ASC as \"the lesser of (1) the Prime Agent's Actively Stabilizing Collateral and (2) the Prime Agent's Minimum Actively Stabilizing Collateral.\" Holding more than required earns nothing extra, so the incentive drives holdings *to* the requirement rather than beyond it. Sky is buying a specific quantity of peg defense, not subsidizing cash balances.\n\nA subtlety worth flagging: the incentive goes to zero if the Base Rate ever falls to SOFR, and turns negative in form if it falls below. Since the Base Rate is set daily at discretion (A.3.1.1.1.1) partly in response to the level of ASC in the Lite PSM, there is a feedback loop \u2014 cutting the Base Rate simultaneously reduces the reward for holding the reserve whose scarcity would have argued for raising it.\n\nPayment is monthly, through the Monthly Settlement Cycle (A.3.3.2.2.4.2), even though accrual is per block.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:07.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The ASC Incentive is Eligible ASC \u00d7 (Base Rate \u2212 SOFR) per block, where Eligible ASC is the lesser of actual and required holdings \u2014 compensating opportunity cost without rewarding over-holding.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b8a601d7-3807-4105-b833-2ee713e921db",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:07.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "71bf6758-7ea3-4c1c-adfc-ad8df1982117",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:07.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

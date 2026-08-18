@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce67a188-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce67a188-3b62-424d-bd29-2edefce66a73",
+      "targetTitle": "The destination address a payer uses encodes the accounting "
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Collateral qualifies as peg-stabilizing by the price it commits to, not by what asset it is",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5dc19248-fe85-43a9-a8b7-6c3dee7e65db",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f91c1ac2-4c00-49be-bba8-7806ed182ba8",
+      "name": "peg-stability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64b3cb3d-0bb5-48f2-b4b7-be7f4de63308",
+      "name": "asset-liability-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.3.2.2.1.1 defines Resting Actively Stabilizing Collateral by an obligation rather than by identity: it \"must provide buy support at a price of at least 0.999 USD per USDS (10bps downside spread).\" A.3.3.2.3.1 mirrors it on the other side \u2014 the Demand Absorption Buffer is USDS \"that is for sale for at most 1.001 USD per USDS.\"\n\nThe definition is functional, and the eligible-asset list follows from it rather than the other way round: Resting ASC \"includes Cash Stablecoins in PSMs or decentralized exchanges (e.g., Curve), other stablecoins, crypto assets, or off-chain Real World Asset (RWA) loans to market makers, **provided they meet the specified redemption price and transparency requirements**.\" An offchain loan to a market maker can count as peg-defending collateral if it is genuinely callable at that price; a nominally liquid onchain asset cannot if it is not.\n\nThe 10bps band is what makes the commitment meaningful. Capital sitting in a pool that only bids at 0.99 does not defend the peg \u2014 it defines a new one. By fixing the price at which support must exist, Sky is specifying the *width of the corridor* it is willing to let USDS trade in, and the ASC requirement is simply how much depth stands at the corridor's edge.\n\nThe symmetry of 0.999 / 1.001 gives USDS a stated 20bps two-sided band, which the Peg Defense Event trigger then reuses: A.3.3.2.4.1 declares an emergency when the average price \"falls below 0.999 USD per USDS\" \u2014 the same number as the ASC bid. The routine obligation and the emergency trigger are the same line, so a Peg Defense Event is by definition the moment the resting bids failed to hold.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:03:43.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Resting ASC must provide buy support at 0.999 USD per USDS or better (10bps downside spread), and DAB must be offered at no more than 1.001 \u2014 a spread commitment any asset class can meet.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6755f2d6-d743-4996-8616-0996f404004b",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:03:43.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "777316fd-a609-4725-b197-46f02ee5b709",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:03:43.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

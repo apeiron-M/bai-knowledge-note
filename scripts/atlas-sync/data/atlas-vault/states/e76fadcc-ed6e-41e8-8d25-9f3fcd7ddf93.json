@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-f840a8e6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f840a8e6-9ea8-4c43-95ba-23d926366aa2",
+      "targetTitle": "doc-f555c4d9"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Arkis instance is bounded by off-chain parameters that no rate limit can enforce",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bbfcd527-3877-48be-8c82-20b9dd8c65bb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5262193-42fb-40a9-92c2-40659f60c30c",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7cbff25b-bb70-4488-8e09-84ba203ed09d",
+      "name": "risk-management",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9e3c0dbb-7ea1-434b-8357-990e75fc42b9",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Arkis instance places two parameters where no other instance has any: under `Off-chain Operational Parameters` it records \"The Maximum Exposure for this Instance is $50 million\" (A.6.1.1.1.2.6.1.3.1.10.1.2.5.1) and \"The Instance Capital Ratio Requirement for this Instance is 50%\" (.10.1.2.5.2). Its on-chain limits are ordinary: inflow `maxAmount` 5,000,000 USDC with a 5,000,000 per day slope, outflow Unlimited (.10.1.2.4.1/.2).\n\nThese are different in kind from everything else in the registry. Every rate limit is a *flow* control that the controller enforces at call time. Maximum Exposure is a **stock** control \u2014 a ceiling on the position that may be outstanding at any moment \u2014 and the rate-limit machinery has no concept of accumulated balance. A capital ratio requirement is a credit condition on the counterparty, which no Spark contract can observe at all.\n\nThe arithmetic makes the gap concrete. A 5,000,000 per day inflow slope reaches $50 million in ten days of continuous drawing, and nothing in the `rateLimited` modifier notices when the eleventh day would breach the documented cap. The constraint is real as governance and invisible as code.\n\nFiling them under `Off-chain Operational Parameters` is therefore an accurate label rather than a filing convenience: it marks exactly which commitments depend on someone watching. It also shows the limits of the whitelist-by-rate-limit design \u2014 for a venue whose risk is credit rather than execution, the parameter that matters most is the one the contracts cannot hold.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A $50 million Maximum Exposure and a 50% Instance Capital Ratio Requirement sit under Off-chain Operational Parameters, making them process commitments rather than contract-level constraints.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "dc6ac463-37ce-4651-b410-ef8b8b206b6f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "183c69f7-4ece-4197-aa75-31cf9847cf1f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

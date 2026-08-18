@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-feb1971f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "feb1971f-05cd-4c9b-ad2f-cade495acceb",
+      "targetTitle": "Root administrative control of Grove's Liquidity Layer is he"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Root administrative authority over the liquidity layer sits with the Osero SubProxy rather than with any multisig",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ed9a5d71-0866-4405-8937-73615d9cce86",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fea05ba0-9c79-4c75-b999-bebb81e95fe6",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "950f4aa6-33c8-425e-96d0-76934e900030",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.6.1.2.2.1.1 sets out the role assignments: \"For the Osero Liquidity Layer, the `DEFAULT_ADMIN_ROLE` is held by the Osero SubProxy, and the `CONTROLLER` role by the Controller contract. The `ALLOCATOR_ROLE` is held by the AdministeredAgent contract.\" The Relayer Multisigs appear only as Actors and the Freezer only as a Revoker.\n\nNo multisig holds a role in the AccessControls contract at all. Operator keys sit one level below the permission system, acting through the AdministeredAgent, which means a compromised operator cannot escalate: there is no role for it to modify because it holds none.\n\nRoot authority instead routes through the Osero SubProxy \u2014 the account established in the Agent Creation parameters, which sits inside Sky's proxy hierarchy and is subject to the StarGuard delay recorded at A.6.1.1.7.2.1.1.3.1.1.3.1. Changing the permission structure is therefore a governance-path action with a built-in delay, not a multisig transaction.\n\nThe resulting hierarchy has three tiers with distinct change costs: permissions (SubProxy, slow and governed), authority holders (contracts, fixed by the Artifact), and identities (multisig rosters, rotatable at will within the invariants at A.6.1.1.7.2.6.1.2.1.2.1.1.5).\n\nThe pattern to take away is that speed of change should be inversely proportional to the scope of what changes \u2014 and this Artifact implements that literally, with the fastest-changing layer holding the least power.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "DEFAULT_ADMIN_ROLE is held by the SubProxy while multisigs hold only Actor or Revoker status, so operator keys can never re-grant permissions to themselves.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5587841b-69f9-445b-8e0e-f910992a6381",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bd18f2c8-31b9-4f2a-bd59-45e4ef89f0e3",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:47.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

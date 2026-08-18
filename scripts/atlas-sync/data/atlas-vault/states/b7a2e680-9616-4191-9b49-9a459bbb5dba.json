@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f9097006-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f9097006-787e-40fc-96f9-3f05e087f8a8",
+      "targetTitle": "Grove runs a monolithic controller alongside a shared Diamon"
+    },
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Diamond PAU implements allocation as a thin per-Agent Controller dispatching into Facets and a Beacon shared across all Agents",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "65470ace-949f-4510-8f45-0ebc303c2b17",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "73cdbbad-df56-4a4a-85d9-c14d33291b64",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b50b38c1-9311-41bc-bf1d-1b05010b5381",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.6.1.2.1.1.1.2 defines the Diamond Parallelized Allocation Unit as \"a modular implementation of the Allocation System in which the Controller dispatches operations to shared Facet contracts, with integration configurations held in a shared Beacon contract. The Beacon and the Facet contracts are shared across Diamond PAU implementations.\"\n\nA.6.1.1.7.2.6.1.2.1.1.1.2.1.2 makes the Controller's role precise: it \"is the entry point for all allocator operations; it synchronizes integration configurations from the shared Beacon contract ... and dispatches calls to the appropriate Facet contract.\"\n\nThe split determines who controls what. An Agent owns its Controller, ALM Proxy, AccessControls and rate limits; it does not own the integration logic \u2014 that is written once for the ecosystem and used by every Agent. Osero's choice of venues is therefore expressed by which Facets it uses (A.6.1.1.7.2.6.1.2.2.1.2 names the USDS Facet and the Aave v3 Facet) rather than by code it wrote.\n\nThe benefits are uniformity and upgradeability: a fix or a new integration written into a shared Facet is available to all Agents at once, and no Agent can implement a subtly different version of the same integration.\n\nThe cost is correlated risk. A defect in a shared Facet or a bad configuration synced from the Beacon reaches every Diamond PAU simultaneously, so the architecture concentrates exactly the risk that deploying separate Agents was meant to distribute. Configuration synchronization also means an Agent's runtime behaviour can change without any change to the Agent's own contracts.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Integration logic and configuration live in ecosystem-wide contracts; each Agent deploys only the entry point \u2014 uniform behaviour and upgrades at the cost of shared blast radius.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "064de3a7-7033-478f-a07e-5511c5348d86",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:54.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "112bb83c-2203-4d96-9733-1f01a074044d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:54.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

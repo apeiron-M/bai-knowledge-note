@@ -1,0 +1,132 @@
+{
+  "links": [
+    {
+      "id": "lnk-a6fa3cc9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a6fa3cc9-7c14-4a61-a426-c6eb251e8f34",
+      "targetTitle": "doc-5f496915"
+    },
+    {
+      "id": "lnk-997e101d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "997e101d-2ebb-4782-b76e-3a797252d117",
+      "targetTitle": "The Atlas treats the pull-request workflow itself as an atta"
+    },
+    {
+      "id": "lnk-44b20a06-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44b20a06-6499-44b5-bfca-262d21cfa840",
+      "targetTitle": "Only the Crafter may touch Spell code and Reviewers may only"
+    },
+    {
+      "id": "lnk-59c8e0a1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "59c8e0a1-79a5-469e-95f3-6129e2c4a396",
+      "targetTitle": "Code must already have passed internal non-author review bef"
+    },
+    {
+      "id": "lnk-7a4fd0fc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7a4fd0fc-3c50-4d2c-9001-ba1201580222",
+      "targetTitle": "External input on Spell technical details is informational o"
+    },
+    {
+      "id": "lnk-7ca36b54-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ca36b54-ae50-4491-8d20-81ca09190f9b",
+      "targetTitle": "Reviewer approval is a defined assertion that the Spell perf"
+    },
+    {
+      "id": "lnk-8d1d4e13-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d1d4e13-d77b-4973-9cbb-7b469fa9b680",
+      "targetTitle": "Anyone who encourages a Spell Reviewer to skip part of their"
+    },
+    {
+      "id": "lnk-fde68b35-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fde68b35-2112-4e7e-a034-635b3abe010c",
+      "targetTitle": "The Crafter must verify that master's latest commit is the o"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spell Reviewers may not introduce code by any route \u2014 directly, via pull request, via suggestion, or after deployment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a104386f-377a-44cf-a8c5-3491d8f5ad3f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "11dfa38a-bdea-4e34-9308-c62ac90248cc",
+      "name": "separation-of-duties",
+      "topicDocumentId": null
+    },
+    {
+      "id": "19fe068f-fc1f-4f9e-987e-f256e4de03c5",
+      "name": "code-review",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Atlas spends four provisions closing one hole. A.1.10.2.4.9.2.3 bans Reviewers from \"*directly* committing, adding, contributing, or modifying code to a Spell they are reviewing.\" A.1.10.2.4.9.2.4 extends the ban to \"*indirectly*\" doing so, and gives the case: \"If a Reviewer added code via a Pull Request (**even from a trusted party such as an Agent**), this would be indirectly modifying the Spell code.\" A.1.10.2.4.9.2.5 confirms Reviewers \"can make suggestions, but cannot commit those suggestions.\" A.1.10.2.4.9.2.9 forbids them from merging the Spell's pull request. A.1.10.2.4.9.2.10 forbids leaving GitHub suggestions after deployment or archival.\n\nEnumeration rather than a single principle is deliberate. Each item is a mechanism that produces the same outcome \u2014 code in the Spell that the Reviewer put there \u2014 while feeling different in practice. Relaying an Agent's pull request feels like courier work, not authorship. Committing your own suggestion feels like accepting your own accepted advice. Naming each route removes the room for a good-faith reading that lands in the same place.\n\nThe parenthetical about trusted parties is the key clause: the origin of the code is irrelevant. What the rule protects is not code quality but the *structural* independence of the reviewer. A Reviewer who has contributed any line can no longer give an outside opinion on the whole, however good that line was.\n\nThe post-deployment ban (A.1.10.2.4.9.2.10) covers a subtler risk: a suggestion on a deployed or archived Spell cannot improve anything, but it can muddy the record of what was reviewed and approved at the time, which is the artifact future audits depend on.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:33:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Four separate provisions enumerate every channel, and the ban holds even for a pull request from a trusted party such as an Agent, so the prohibition is on the effect rather than the intent.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "3eeb4e57-2f01-4abc-ae63-ee9f5bf7f3f8",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fe95c54b-cfe2-4fb7-9877-32339253966f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

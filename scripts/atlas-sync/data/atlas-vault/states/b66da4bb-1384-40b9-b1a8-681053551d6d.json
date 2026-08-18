@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Large USDC swaps must iteratively refill the PSM and revert outright if it cannot be filled",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cab8cdf9-bca2-49cb-abfc-710398fc79bd",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "30b94809-25ee-444f-89d9-a7620e7531c2",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7d93c66e-5bee-40fb-9682-38a8edf4e59f",
+      "name": "liquidity-risk",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4edad356-2e26-4a15-a583-dd74d603b1da",
+      "name": "operations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.2.1.2.1.2.4.2.5 sets the real constraint on converting USDC to USDS: \"The maximum amount of USDC that can be swapped to DAI in one transaction is calculated based on the DAI balance held by the PSM\" \u2014 `limit = dai.balanceOf(address(psm)) / psmTo18ConversionFactor`.\n\nIf the requested amount fits, one swap executes. If not, the operator must loop (A.6.1.1.1.2.6.1.2.2.1.2.1.2.4.2.8): call `psm.fill()` to refill the PSM with DAI, recalculate the limit, swap the maximum that fits, subtract, and repeat until the full amount is swapped. And if the refill fails, \"the transaction reverts with `DssLitePsm/nothing-to-fill`\" (A.6.1.1.1.2.6.1.2.2.1.2.1.2.4.2.9).\n\nThis is a capacity ceiling that no Spark parameter controls. The rate limits are Spark's own policy; the PSM's fillable DAI is a property of the wider Sky system at that moment. A conversion that is fully within Spark's rate limits can still fail because the shared peg module is empty.\n\nThe engineering response \u2014 self-chunking with refills \u2014 makes the common case invisible: operators request an amount and the contract splits the work. But the failure mode is a hard revert rather than a partial fill, so an operator attempting a large conversion during system-wide stress gets nothing rather than something. Conversion capacity should therefore be treated as a shared, time-varying resource, not as a fixed property of the Liquidity Layer.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:54:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The per-transaction limit is the PSM's own DAI balance; exceeding it forces a loop of psm.fill() and partial swaps, and a PSM that cannot be filled fails with DssLitePsm/nothing-to-fill.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "ca1e0a26-1f66-4d94-9353-ee54e4525ee0",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "43895104-dda1-488c-a9d5-c864d8a06cbf",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:39.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

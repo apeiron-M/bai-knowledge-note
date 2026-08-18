@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-c11f5384-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c11f5384-38ff-4802-9296-0554b681f019",
+      "targetTitle": "Morpho instances record third-party governance roles as inst"
+    },
+    {
+      "id": "lnk-bda88bd0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bda88bd0-6670-41e5-bc8c-10d5b311e5e4",
+      "targetTitle": "doc-4a350d1e"
+    },
+    {
+      "id": "lnk-f4231db1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4231db1-4130-46d0-96c4-c37bd155907a",
+      "targetTitle": "The Morpho instance splits Curator and Guardian roles behind"
+    },
+    {
+      "id": "lnk-5726f965-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5726f965-2abb-4b59-aaae-8b1252e28ddd",
+      "targetTitle": "Curators must prove authorization while Guardians must justi"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Spark's Curators are execution agents with no discretion \u2014 every action must be pre-approved by a governance poll",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "09f35129-70a4-4a8e-9a6b-8047c107205a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69f86b7d-142d-4394-a2bd-9cd468655e41",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0c25142b-e3d0-4b19-9b91-872ffb5f4635",
+      "name": "delegated-authority",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.9.2 states the framework's purpose as defining \"the conditions under which Spark governance may authorize external contributors to **execute** approved changes onchain, while preserving governance oversight, timelock protections, and cancellation authorities.\" The scope clause is categorical: \"Curators may only execute actions that have been explicitly approved by Spark governance via polling\" (A.6.1.1.1.3.9.3.2), and A.6.1.1.1.3.9.4.1 repeats that all curator-executed changes \"must be approved **in advance**.\"\n\nA Curator is defined (A.6.1.1.1.3.9.3.1) as \"a specific admin role defined within the Morpho smart contract system\" \u2014 and this is where the design becomes interesting. In Morpho's own model, a curator is an active manager: it selects markets, sets allocation caps, and adjusts risk in response to conditions, which is the entire value proposition of a curated vault. Spark takes the contract role and strips the discretion out of it.\n\nWhat remains is a division of labour. Governance retains every decision; the Curator supplies the operational capability \u2014 key custody, transaction construction, monitoring, availability \u2014 that a token-holder vote cannot itself provide. The Artifact is delegating *hands*, not judgment.\n\nThe trade-off is real. A vault whose parameters can only change at the speed of a governance poll cannot respond to a fast-moving market the way a discretionary curator can, and the Artifact accepts that cost in exchange for a mandate an observer can verify: every curator transaction should map to a specific prior poll, which is exactly what the reporting requirement forces the Curator to demonstrate.\n\nIt also means the Curator's misalignment risk is bounded to *unauthorized* action rather than *bad* action \u2014 a much easier thing to detect, and the thing the timelock and guardian exist to catch.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:53:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:22.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The framework separates deciding from signing: governance approves changes in advance and the Curator may only submit the corresponding transactions, inverting Morpho's usual active-management",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a6c7c3ad-fa28-4146-9ef0-37c94daf410a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:22.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2d921224-c07e-4262-99f2-d31a64aa9869",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:22.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

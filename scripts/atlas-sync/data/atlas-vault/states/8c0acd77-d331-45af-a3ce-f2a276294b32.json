@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-ba257f36-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba257f36-c008-4700-a781-39bea3e71e05",
+      "targetTitle": "Validators must not trust the Spell repository's own tooling"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The deployed-versus-repository code comparison has a defined allowlist of differences that must not be flagged",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "921a9f34-a22c-4e95-b35c-265589e05871",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "36f68231-60bf-4a12-92b9-058228a8165c",
+      "name": "verification",
+      "topicDocumentId": null
+    },
+    {
+      "id": "51d7f7a6-f5e2-4bd1-b80b-1cde9d66de26",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.12.3.1.4 requires that the deployed Spell code match the GitHub repository, with the substantive standard being that the deployed Spell \"must not contain any potentially malicious code or any notable functional changes within the `DssSpellAction`.\" The comparison may be run with the repository's `diff-deployed-Spell` script or with a generic online diff tool.\n\nBecause Etherscan's flattened verified source is not literally identical to the repository layout, the provision enumerates acceptable differences: \"Comments: Lines starting with `//` or inside `/* */`\"; \"Imports and Solidity versions: Multiple declarations in the GitHub code\"; \"Interfaces: Numerical suffixes like `_1` or `_2` added to interface names\"; and \"Extra code or warnings within the `DssExecLib` library.\"\n\nThe allowlist is necessary \u2014 without it every validation would drown in false positives and validators would learn to wave differences through, which is the worse failure. But an explicit list of ignorable differences is also a map of where a change can hide in plain sight, and validators are instructed not to flag those regions.\n\nComments are the most interesting case. They cannot alter behaviour, so ignoring them is sound in principle. Yet comments are exactly where a misleading description of what the code does would live, and elsewhere the Atlas treats deceptive presentation as an attack vector in its own right (A.1.10.2.4.12.3.3.10 warns about function names chosen to mislead reviewers). A comment saying a transfer is 1M when it is 10M changes no execution and would not be flagged here.\n\nThe safeguard is that the standard is substantive \u2014 \"no notable functional changes\" \u2014 rather than mechanical, so the allowlist guides attention without licensing a difference that actually matters.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:15.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.12.3.1.4 accepts comment changes, duplicated imports and pragmas, numeric interface suffixes and extra DssExecLib code \u2014 so the check is semantic, not byte-exact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8800d289-07fd-4b66-a73b-003547e6dc98",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:15.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "47d4ff5f-4285-4422-bb4e-fc29ef340ab2",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:15.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Bringing USDS home in an emergency still requires a Sky Executive Vote, unlike USDC",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "646965da-4257-4a84-aedb-382bdcb5093c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54312a71-d376-40f2-b142-d5737423daaf",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e0c69119-a9c7-4b1e-8ebe-7e7732b7a946",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "046c172f-628f-4c39-bbb8-7f695960a851",
+      "name": "governance-limits",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Within the emergency Bridge Liquidity section, the two assets are handled very differently. USDC repatriation is a single Relayer call: `foreignController.transferUSDCToCCTP(usdc.balanceOf(address(proxy)), 0)`. But A.6.1.1.1.2.6.1.2.2.3.3.2 states that \"the function to bridge USDS and sUSDS is currently actioned by an **Executive Vote by Sky Governance**. This process will be managed by the operator of the Spark Liquidity Layer in the future.\"\n\nSo part of the wind-down runs at operator speed and part runs at governance speed. In an incident affecting an L2 deployment, USDC can be pulled to Mainnet immediately while USDS and sUSDS sitting on that chain wait for an Executive Vote to be prepared, scheduled and executed.\n\nThe same gap appears in the routine path \u2014 A.6.1.1.1.2.6.1.2.2.1.2.1.2.5.2 and A.6.1.1.1.2.6.1.2.2.1.2.2.2.4.2 both say the OP Token Bridge process for USDS/sUSDS \"will be specified in a future iteration of the Spark Artifact\" \u2014 so this is an unfinished capability rather than a deliberate control.\n\nThe irony is worth stating plainly: the assets Spark can move without limit under its rate limits, because they are Sky's own liabilities, are the assets it cannot currently move across chains without a Sky vote. Anyone assessing the emergency protocol's effectiveness should treat cross-chain USDS as illiquid on emergency timescales until the operator-managed bridge process lands.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:57:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "USDC repatriation is a Relayer call, but 'the function to bridge USDS and sUSDS is currently actioned by an Executive Vote by Sky Governance' \u2014 leaving part of the retreat path governance-gated.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "de1818dd-0341-4e8b-b7b6-49b49ca61b72",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "74325c39-ebdb-4d0f-9ee9-9d1c02f1f5b4",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

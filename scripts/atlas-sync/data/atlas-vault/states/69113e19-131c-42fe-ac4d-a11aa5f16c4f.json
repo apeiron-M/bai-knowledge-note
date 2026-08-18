@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-9f014705-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9f014705-7d8d-4d61-87d8-6a3b493c6423",
+      "targetTitle": "Every SkyLink bridge pairs a Token Bridge with a Governance "
+    },
+    {
+      "id": "lnk-d062270b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d062270b-15f7-42fd-b23a-697c02c0ad05",
+      "targetTitle": "Each SkyLink bridge can be frozen independently from either "
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SkyLink exports protocol mechanisms to other chains, not just bridged token balances",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "7d745f1a-a558-4dbb-97c4-72e767354773",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cd7a552d-68fb-4663-862c-360f0a0ada54",
+      "name": "skylink",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c561e653-5b82-4e0e-8bce-9d4026e91b81",
+      "name": "multichain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65230df2-c250-40f7-a6e6-559cbd153604",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.2 defines SkyLink as \"a multichain system that enables native crosschain transfer of Sky Ecosystem-related tokens to other blockchains, including Ethereum L2s and major L1s.\" A.4.2.1 then states what travels with the tokens: \"SkyLink deployments support features including the Savings Rate Mechanism (including sUSDS), the Token Rewards Mechanism and the SKY Staking Mechanism.\"\n\nThe distinction matters because the default multichain stablecoin design ships only a claim \u2014 a wrapped token on the destination chain that earns nothing and does nothing until bridged home. Under that design, every yield-bearing or reward-bearing behaviour stays on mainnet, and remote users are second-class holders who must pay bridge costs to participate in the economics.\n\nSkyLink instead replicates the mechanisms themselves, so a user on Solana or Avalanche can hold sUSDS and accrue the Savings Rate, or stake SKY, without returning to Ethereum. USDS becomes genuinely multi-homed rather than mainnet-with-satellites.\n\nThe cost is that each mechanism now has N deployments to maintain, audit and keep parameter-synchronized, and each destination chain inherits a copy of the attack surface. That is precisely why the rest of A.4.2.2 is almost entirely freeze authority, rate limits and validator quorums: replicating mechanisms multiplies what can go wrong, so the containment machinery has to be standardized.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Deployments carry the Savings Rate (including sUSDS), Token Rewards and SKY Staking natively, so a remote chain hosts the product rather than a wrapped IOU of it.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "762b37fb-09e9-45fc-9b80-4a87047736e8",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "167aee11-8d71-448b-81e0-32f223a4d0dc",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

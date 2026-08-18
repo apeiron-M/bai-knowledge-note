@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-9e78be24-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9e78be24-ca23-4e5a-adae-c09228b88fc2",
+      "targetTitle": "Ranked Delegate seats are appointed at the top two levels bu"
+    },
+    {
+      "id": "lnk-c90318ba-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c90318ba-7ef6-4f66-abec-ae3a75b3c08d",
+      "targetTitle": "The 75% voting participation rule resets its measurement win"
+    },
+    {
+      "id": "lnk-ef6f62ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ef6f62ce-dfb7-46ee-beaf-3b4be486ccf2",
+      "targetTitle": "Delegate pay is conditioned on explanation quality that the "
+    },
+    {
+      "id": "lnk-6883a78e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6883a78e-54e9-4f72-ae5b-6ac97e8717d6",
+      "targetTitle": "The AD Buffer withholds a delegate's earnings until a one-mo"
+    },
+    {
+      "id": "lnk-96b7cfa2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "96b7cfa2-b90e-437c-bb0b-25fe38c54d20",
+      "targetTitle": "Top-tier Ranked Delegates must police their peers' vote expl"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Ranked Delegate pay falls on a linear scale from 95% participation to zero at 75%",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4a2a294a-ea60-496f-9a9f-c18cda02cec5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2bebffc8-e0d6-4afb-ac0e-ef1bbe03515a",
+      "name": "aligned-delegates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6ca54d62-3198-492a-b650-550ce4721355",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.6.4.3.1 makes Ranked Delegate budget a function of voting activity over the trailing six months. Below 95% participation, \"the reduction is applied on a proportional linear scale: for every percentage point below 95% voting activity, the RD's budget is reduced correspondingly.\" At 75%, \"they become completely ineligible to receive RD income.\" The annotation A.1.6.4.3.1.0.3.1 does the arithmetic: the range spans 20 percentage points, so \"the RD budget decreases by **5%** for every percentage point drop in voting activity from 95% to 75%.\"\n\nThe design significance is the absence of a cliff. A single threshold creates two pathologies: a delegate just above it has no incentive to improve, and a delegate just below it has no incentive to try, since the penalty is already incurred. A gradient makes every individual vote worth 5% of a month's budget at the margin, so the incentive is continuous across the whole range.\n\nNote how the two thresholds interlock with the general AD rules. The Tier 1 breach floor for all Aligned Delegates is 75% (A.1.6.2.1) \u2014 exactly where Ranked Delegate income reaches zero. So the ranked tier layers a *financial* gradient on top of the *disciplinary* floor: between 75% and 95% a delegate is compliant but progressively unpaid; below 75% they are both unpaid and in procedural breach, and a Level 3 seat transfers away.\n\nThe timeliness rule feeds the same metric \u2014 for Executive Votes a vote counts only if cast within three business days (A.1.6.2.1.2) \u2014 so late participation costs money as well as credit. What the scale deliberately does not measure is how the delegate voted; only that they showed up, on time, and explained themselves (A.1.6.4.3.2 applies an identical gradient to vote explanations).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.6.4.3.1 reduces budget 5% per percentage point below 95% and cuts income entirely at 75%, replacing pass/fail compliance with a continuous gradient.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2a106212-bebf-4e7e-80cf-23c06f9050af",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7f82096c-e110-432a-84f5-7ceedab58310",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:42.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

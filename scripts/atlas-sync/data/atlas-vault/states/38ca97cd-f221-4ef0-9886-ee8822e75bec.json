@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-75319afc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "75319afc-3be2-4c33-b3c7-554181ff6cac",
+      "targetTitle": "Voting against an Executive Vote containing only already-app"
+    },
+    {
+      "id": "lnk-7ab5f215-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7ab5f215-307f-41c0-8482-8e394d18ee2e",
+      "targetTitle": "The Governance Point must confirm every Executive Vote item "
+    },
+    {
+      "id": "lnk-5c3f79f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5c3f79f4-520d-4943-a709-1ca8f91ab5df",
+      "targetTitle": "The Executive Sheet is the Crafter's source of truth and onl"
+    },
+    {
+      "id": "lnk-7a4fd0fc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7a4fd0fc-3c50-4d2c-9001-ba1201580222",
+      "targetTitle": "External input on Spell technical details is informational o"
+    },
+    {
+      "id": "lnk-f29f3ac8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f29f3ac8-8d58-4f78-baba-0537b4edbf50",
+      "targetTitle": "An Executive item counts as novel purely because no existing"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Atlas keeps 'Executive' and 'Spell' as strictly separate terms because they name authority and artifact",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "16c238f9-4124-4a41-ab73-a8bd545da46d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bd899989-bd11-495b-8623-dc6c5299cb11",
+      "name": "governance-cycles",
+      "topicDocumentId": null
+    },
+    {
+      "id": "19502668-c084-4f16-81fb-ceed339e81e1",
+      "name": "terminology",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.11.1.2.2 states plainly that \"the terms 'Executive' and 'Spell' are distinct concepts\" and then fixes four terms:\n\n- **Executive / Executive Vote** \u2014 \"used in all instances where the formal governance vote is being referenced.\"\n- **Executive Process** \u2014 the end-to-end development of an Executive Vote, involving Facilitators, Spell teams (collectively the \"Governance Security Engineering Team\") and other recognized Ecosystem Actors.\n- **Spell** \u2014 \"the smart contract that executes the changes to the protocol approved by Sky Governance in an Executive Vote,\" used when referring to code base, code operations, reviews and quality.\n- **Spell process** \u2014 the end-to-end development of a Spell by the Core Facilitator and current Spell team, with **Spell development process** as the narrower technical subset.\n\nThe distinction is not pedantry; it separates *authority* from *artifact*, and each has a different failure mode and a different accountable group. A vote can be legitimate while its Spell is defective, and a Spell can be technically flawless while executing something never authorized.\n\nMuch of the surrounding emergency machinery depends on holding the two apart. Standby Spells exist because a valid decision can be blocked by the cost of producing a Spell; Core GovOps' authenticity validation exists because the artifact may not match the authority it claims; and Protego exists to cancel an artifact whose authority has since been repudiated.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "REFERENCE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:20:19.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Executive Vote is the formal governance vote; Spell is the smart contract that executes what it approved \u2014 each with its own end-to-end process and its own participants.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b1e99eb7-cd89-4d04-9f20-ea38070d76a3",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a909c438-ed36-493d-bfba-0727b343267c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

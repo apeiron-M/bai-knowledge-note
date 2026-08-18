@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-e44c2a0c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e44c2a0c-60b1-464b-8544-cdb450492c6c",
+      "targetTitle": "Grove prices a new market's burn-in period as a capital char"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove calibrates each maxExchangeRate against the vault's recorded current share price, so headroom is a per-Instance judgement",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b16cd65b-b1ff-4d43-9bbe-11e9f9679aa3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "518cb408-bf46-4928-90c5-20f808cc878b",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "313c0605-3c1b-4d01-a84a-3b36f8d4bba8",
+      "name": "oracles",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90c8aefe-eaaa-4747-8f3a-05af22ba5ed8",
+      "name": "risk-controls",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.3.7.1.1.2.4.3 sets `setMaxExchangeRate(GROVE_X_STEAKHOUSE_USDG_V2, 1e18, 1.15e6)` and annotates it: \"ensures 1 share can represent at most 1.15 USDG (**current share price is ~1.00**).\"\n\nRecording the reference price alongside the bound is what makes the parameter reviewable. Without it, 1.15 is an arbitrary constant; with it, the bound is legible as *current price plus 15% headroom*, and a reader can check whether the margin is still appropriate by comparing today's share price to the recorded baseline.\n\nComparing across Instances shows the margin is a genuine judgement rather than a convention. The Steakhouse Prime vault allows 2.00 against a similar starting point \u2014 roughly 100% headroom. Maple syrupUSDC uses 3e6. Same control, same purpose, margins differing by an order of magnitude, with no stated rule for choosing.\n\nA tight bound like 1.15 makes the guard sensitive: a modest corruption of the share price trips it. It also makes the guard perishable, because ordinary yield accrual consumes the margin \u2014 at plausible stablecoin vault yields, 15% is years of headroom rather than decades, and the parameter will eventually need raising for entirely benign reasons.\n\nThat is the trade-off in one line: sensitivity costs maintenance. A 2.00 bound will not need touching but will not catch much; a 1.15 bound catches more and turns into an operational obligation. Neither Instance's *Instance-specific Operational Processes* section records a review cadence, which is where that obligation would belong.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:05.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The USDG vault's bound is 1.15 with the Atlas noting the price is ~1.00, a 15% margin, where the Steakhouse Prime vault allows 2.00 \u2014 the same control tuned an order of magnitude differently.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f1360fc7-85d5-44af-94e8-f4589dae5225",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:05.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a95f90ee-02f7-4225-9703-023651cf8e1d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:05.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

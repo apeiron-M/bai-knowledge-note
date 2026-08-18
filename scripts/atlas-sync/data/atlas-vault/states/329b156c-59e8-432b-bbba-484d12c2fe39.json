@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-d0c6ec87-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0c6ec87-e29e-4713-b5c9-1df4b3c01b49",
+      "targetTitle": "doc-47343a84"
+    },
+    {
+      "id": "lnk-3b541651-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3b541651-dbc3-4ab6-b352-2844bbe4c6df",
+      "targetTitle": "The GSM Pause Delay's function is to create the window in wh"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "After a Spell executes, ds-pause re-checks that the Pause Proxy is still owned by ds-pause",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "71ce84e8-1954-4e16-b61a-f9598a08d9f9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96b41ba7-bec2-4a2c-9666-242c288ca910",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e3b2f12-3e9e-48d5-a401-c3b2ce0e71cc",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.13.4.2 walks through execution inside the cast transaction: `ds-pause` validates and removes the scheduled entry, then \"calls `exec` on the Pause Proxy contract, which performs a **`delegatecall`** to the Spell action contract address specified during scheduling.\" After the actions run, step 5: \"**Final Checks**: If the transaction succeeds, the `exec` function in `ds-pause` performs a final ownership check to ensure the Pause Proxy is still owned by `ds-pause`.\"\n\nThe check exists because of the delegatecall. Running by delegatecall means the Spell's code executes in the Pause Proxy's storage context with the proxy's full authority \u2014 including, in principle, the authority to change who owns the proxy. That is the single most dangerous thing a Spell could do, because it would detach the protocol's execution engine from governance permanently and irreversibly.\n\nMaking the assertion *after* the actions rather than before is what makes it effective. A pre-check proves nothing about what the actions will do; a post-check tests the state they actually left behind. Since the whole thing is one transaction, a failed assertion reverts everything, so a Spell that attempts to orphan the Pause Proxy accomplishes nothing at all.\n\nThis is a self-preservation invariant expressed in code rather than in rules: whatever else governance authorizes, it cannot authorize the destruction of its own control path, because that outcome cannot survive the transaction that produces it.\n\nStep 4 handles the mundane counterpart \u2014 \"If the transaction reverts at any point (e.g., due to an error in `actions()`), the Pause Proxy halts execution\" \u2014 giving Spells all-or-nothing semantics, so a partially applied Spell is not a possible state.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:04.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.13.4.2 adds a post-execution ownership assertion, so a Spell running by delegatecall in the proxy's context cannot sever governance's control and survive.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "01fa92a7-d8ee-4895-a47a-4cb8d0c69046",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:04.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "654ed797-9ab4-438b-b603-a323165b4196",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:04.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

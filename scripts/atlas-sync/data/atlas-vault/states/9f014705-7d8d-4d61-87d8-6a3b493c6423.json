@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-d4d840ce-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4d840ce-4bb9-402f-86b3-929f24771db8",
+      "targetTitle": "Token Bridges run a 2-of-2 validator quorum while Governance"
+    },
+    {
+      "id": "lnk-d062270b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d062270b-15f7-42fd-b23a-697c02c0ad05",
+      "targetTitle": "Each SkyLink bridge can be frozen independently from either "
+    },
+    {
+      "id": "lnk-dfde423c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "dfde423c-264b-4764-856d-9b3a58aadeda",
+      "targetTitle": "SkyLink rate limits start low and are meant to rise as a bri"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Every SkyLink bridge pairs a Token Bridge with a Governance Bridge so control travels with the asset",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "711302dd-de5a-49aa-ab4e-6e418457222e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "40371622-0afc-494a-88af-3530686ba1ea",
+      "name": "skylink",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96c9e9f8-a4ee-4279-8655-94a1e882cb49",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6fd710d4-3f5c-40c4-bfab-81c958577993",
+      "name": "multichain",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each SkyLink deployment in this chunk has the same two-part structure. The Solana bridge \"consists of both a Token Bridge that allows bridging USDS between Ethereum Mainnet and Solana as well as a Governance Bridge that allows exercising governance control for Sky-issued tokens on Solana\" (A.4.2.2.2.1); Avalanche (A.4.2.2.3.1) and Plasma (A.4.2.2.4.1) repeat it verbatim for USDS and sUSDS.\n\nSplitting asset movement from control messaging solves a problem that pure token bridges leave open: once a token exists on a foreign chain, who can upgrade it, pause it, or change its parameters there? Without a governance channel the answer is a local admin key, which fragments authority and creates an actor Sky does not control. With one, Ethereum-side governance remains the single source of authority for Sky-issued tokens everywhere.\n\nThe two channels are deliberately configured differently \u2014 the Token Bridge runs a 2/2 validator quorum while the Governance Bridge runs 4/7 \u2014 which is only possible because they are separate channels in the first place. The separation is what allows the security profile to be tuned to the payload.\n\nThe accepted risk is that the Governance Bridge is itself a privileged remote-execution path: whoever can forge a message that clears 4-of-7 can exercise governance authority over Sky tokens on that chain. Hence the freeze powers that apply to both components.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:00.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Sky-issued tokens on a remote chain remain governable from Ethereum because a second message channel carries governance actions alongside the asset channel.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "15cde487-cd47-4eca-926f-ca6c1db84903",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "167b9321-55c3-405b-8770-18a858e452ec",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

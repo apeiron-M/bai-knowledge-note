@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-e07b186b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e07b186b-4e5d-4e76-b578-e38f2453ac2e",
+      "targetTitle": "The monthly reward calculation is time-triggered per Active "
+    },
+    {
+      "id": "lnk-d0d585a7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0d585a7-4056-49f7-9ee5-010db9d82575",
+      "targetTitle": "doc-05b64df1"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Integration Boost calculation fires on each instance's own configured Cadence rather than a fixed ecosystem date",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "279d2dec-8ce7-495d-83fc-511e12271250",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c8be2cd3-f83d-49c9-bb56-d13f16780f8f",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5c6aca59-6b1c-4c4e-bb4e-480d32301e31",
+      "name": "process-definition",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.2.2.4.1.1.1.1.1 sets the Integration Boost calculation to trigger \"at the end of each occurrence of the **Cadence** for each Instance of the Integration Boost Primitive with an Instance Status of `Active`.\" The comparable Distribution Reward trigger is absolute: \"on the 1st of every month\" (A.2.2.9.1.2.4.1.1.1.1.1).\n\nThis makes the Time-Based Trigger field a **parameterized reference to Instance configuration** rather than a literal date. The schema (A.2.2.2.1.1.1) describes the field as defining \"the triggering date/time for recurring or scheduled Processes,\" and here it resolves per instance from the Cadence value ratified in the Instance Configuration Document.\n\nThe capability is what allows the Boost's three permitted cadences (A.2.2.9.2.2.1.3.1) to be real choices instead of decorative ones. It also means the settlement workload for the Boost is spread across the calendar according to partner preferences, where the Distribution Reward concentrates on one day each month.\n\nBoth triggers share the `Active` filter, which is the mechanism by which instance status controls payment: suspending an instance removes it from the trigger's scope, so no payment occurs without any separate stop instruction \u2014 a clean example of the independent instance lifecycle established at A.2.2.1.3.1.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its time trigger is parameterized by the Instance's chosen weekly, biweekly or monthly Cadence, unlike the Distribution Reward's fixed 1st-of-the-month trigger.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c8fb5999-4ab5-46be-a5a8-7c2f757a0ee4",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:14.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "69247b6f-cf81-4c91-912c-45e487a17228",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:16.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

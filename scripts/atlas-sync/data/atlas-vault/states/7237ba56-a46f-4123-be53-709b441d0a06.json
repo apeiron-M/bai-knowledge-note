@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-a510e0f9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a510e0f9-24a8-43e1-afc1-28eae214ad74",
+      "targetTitle": "Integration Boost net deposit data must be on-chain verifiab"
+    },
+    {
+      "id": "lnk-826da52c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "826da52c-ed5b-4fae-b0d3-8486ab2559d8",
+      "targetTitle": "doc-9e04be41"
+    },
+    {
+      "id": "lnk-ba9e8147-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba9e8147-84cf-4e1f-bcf3-529214c93fa8",
+      "targetTitle": "Keel's Save Instance measures deposits under the partner's f"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Integration Boost payments depend on an off-chain API maintained by the Core Council Risk Advisor",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8c36e562-d187-496c-bcf7-ecf5b4c098e3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7e9e4f62-aecf-4e3e-a78e-ddd7bf8d985c",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1b3b3648-1940-4b97-8b5c-650410750e8a",
+      "name": "oracles",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e404d4f-f354-44aa-8b59-2776ca7a93e9",
+      "name": "operational-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.5.2.2.1.1.5 defines the data path: \"The Data Submission Responsible Actor calculates the net deposits based on on-chain events and makes the data available through an API endpoint\" \u2014 a specific `info-sky.blockanalitica.com` URL. A.6.1.1.1.2.5.2.2.1.1.6 names that actor as the Core Council Risk Advisor.\n\nThe inputs are on-chain and therefore independently verifiable, but the computation and publication are not. What flows into the weekly payment is one party's calculation, served from one hosted endpoint operated by a third-party analytics provider.\n\nThat makes the endpoint a live dependency of the reward mechanism. If it is unavailable, stale, or wrong, the payment either stalls or pays the wrong amount, and nothing in this provision describes a fallback source or a reconciliation step. Naming the Responsible Actor gives accountability for the number; it does not give redundancy for the pipeline.\n\nThe wider pattern is worth noting: the Atlas is explicit about where trust sits. Rather than implying a trustless computation, it writes the trusted party and the trusted URL into the specification, so the assumption is auditable even though it is not eliminated. Readers evaluating an incentive programme's robustness should look for exactly this \u2014 the named actor and the named endpoint \u2014 because that is where the mechanism actually depends on someone doing their job.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:37.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Net deposits are computed from on-chain events by a named Responsible Actor and published at a third-party endpoint, making a single hosted service a dependency of the payment flow.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "16d9027e-325e-4aca-97f5-a4cea820768a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:35.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1a6541b7-bfe1-4bbd-a277-cf3faa6d5e92",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,126 @@
+{
+  "links": [
+    {
+      "id": "lnk-613a6d4b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "613a6d4b-5578-4309-b1f9-df42f6daa0e6",
+      "targetTitle": "Editing the Atlas weekly requires only a Governance Poll whi"
+    },
+    {
+      "id": "lnk-65fa58e9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "65fa58e9-c9bd-4d3f-9ef4-b5b22ef6df42",
+      "targetTitle": "doc-2a20bba1"
+    },
+    {
+      "id": "lnk-bb43f2f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bb43f2f3-efc2-41e2-92cb-78db1edf0d2f",
+      "targetTitle": "The Protocol Scope owns protocol engineering but is bounded "
+    },
+    {
+      "id": "lnk-286ba3b9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "286ba3b9-75ac-4d04-b27a-8074e57bce3a",
+      "targetTitle": "The audit requirement covers on-chain code only \u2014 off-chain "
+    },
+    {
+      "id": "lnk-3cd402d1-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3cd402d1-d8e5-4274-87f6-7cbba5bff6b7",
+      "targetTitle": "The Chainlog is a single on-chain registry of contract addre"
+    },
+    {
+      "id": "lnk-922b25cc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "922b25cc-75d3-48e9-ab9f-5ecb04d636a8",
+      "targetTitle": "Settlement migrates in three stages from simplified accounti"
+    },
+    {
+      "id": "lnk-cdf9a25c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cdf9a25c-c1b4-43ba-ada0-1cd9d7e08e93",
+      "targetTitle": "The Chronicle Point Reward Instance is identified by a Chain"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Atlas treasury text states intent only; on-chain effect requires a separate Executive Vote",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f7710be5-d25f-4f79-b005-e0884d5ce8e3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "eccaeaa9-3359-4037-a702-5b2de037b0e8",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2acdc16d-b555-4653-b370-3021915de2b4",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.4 states that the Treasury Management Function \"is implemented through Executive Votes that update the corresponding on-chain parameters,\" and draws the distinction sharply: \"Changes to the documents herein define the intended operation... operational effect on the Sky Protocol requires a subsequent Executive Vote. Until such an Executive Vote is executed, prior on-chain parameters remain in force.\"\n\nThis makes the Atlas a specification rather than an executable artifact, and normalises a gap between the two. Reading a percentage in the Atlas tells you what governance has agreed *should* happen, not what the contracts are doing today \u2014 a distinction that matters enormously for anyone reasoning about actual cash flows.\n\nThe separation is deliberate and has a real benefit: written intent can be debated, revised and ratified in one process, while execution carries its own authorisation with its own review. It also means a documentation error cannot move funds by itself.\n\nThe cost is drift. The same section demonstrates it immediately: pending activation of USDS Staking Rewards, \"the Smart Burn Engine continues to operate under existing on-chain parameters,\" so the Step 3 split described in A.2.3.1.2.4 is not currently what the protocol executes. A reader who took the waterfall percentages as live would be wrong.\n\nThe implication for anyone auditing Sky is that the Atlas and chain state are two records requiring reconciliation, and \"the Atlas says X\" is never sufficient evidence about protocol behaviour.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:15.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:16.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Until an Executive Vote implements a change, prior on-chain parameters remain in force, so a documented allocation and the live protocol behaviour can legitimately differ.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a050b38e-ef8b-4b49-9d81-7ea7c7807031",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:15.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fad4a3c5-cd4a-44d5-afc2-0bf18f9fe3c3",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:16.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

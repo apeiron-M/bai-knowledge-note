@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-fdad1ddd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fdad1ddd-fe93-471d-a42d-7426f2e86f66",
+      "targetTitle": "Grove removes non-performing Delegates automatically on quan"
+    },
+    {
+      "id": "lnk-5dc21916-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5dc21916-b838-4ae6-84fe-0f6aeb135726",
+      "targetTitle": "Offboarding a Delegate strands their delegators' voting powe"
+    },
+    {
+      "id": "lnk-ffbab9eb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ffbab9eb-3184-4b61-97e9-6cc71f89b261",
+      "targetTitle": "When a Delegate is removed or compromised their delegators' "
+    },
+    {
+      "id": "lnk-32b45c19-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "32b45c19-78b8-4fe1-84ba-9425d3c50c11",
+      "targetTitle": "The SRC speaks with one determinative voice while preserving"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Delegate non-performance removal is automatic and purely quantitative, requiring no one's judgment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ad66b643-2bc4-4942-853c-ee7daddd6b94",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b43e5bd4-daef-41b7-a32b-d7cfb2eae5c3",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cd2e854e-c457-4946-a36a-f574fc80314f",
+      "name": "delegation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.3.1.3.5.2 sets two thresholds and makes breach self-executing: \"A Delegate is **automatically** offboarded if they fail to vote on \u2265 3 proposals in a row; or maintain a voting percentage less than 85%.\"\n\nThe two conditions catch different failure shapes. Three in a row catches abandonment \u2014 a delegate who has gone dark, lost their key, or lost interest, detected fast. The 85% floor catches chronic partial neglect, which the consecutive-miss test would never trip if the delegate votes just often enough to reset the counter.\n\nAutomaticity is the load-bearing property. Every other removal channel in the framework runs through a body with discretion: the Spark Risk Council can offboard immediately for misconduct (A.6.1.1.1.3.1.3.5.3), and disqualification grounds trigger an SRC-initiated removal vote (A.6.1.1.1.3.1.3.4.2.5). Participation, by contrast, is measured and applied without anyone deciding \u2014 which matters precisely because the actor who would otherwise decide, the Spark Foundation, appointed and pays the delegate.\n\nThe corresponding weakness is that mechanical thresholds measure only presence. A delegate who votes on 100% of proposals without reading them satisfies both conditions perfectly, and only the discretionary channels can address that.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:32:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Three consecutive missed votes or a participation rate below 85% offboards a Delegate by rule, so enforcement cannot be softened by the same body that appointed them.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "25d650e5-c393-4156-a931-b2fab4c253ff",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:51.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2e18b41a-a14a-421d-a47d-0a1c49eec29c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:51.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,125 @@
+{
+  "links": [
+    {
+      "id": "lnk-54dd60dc-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "54dd60dc-26fe-4e44-ada3-65f6c9e0a82a",
+      "targetTitle": "Unexplained changes to the Freezer Multisig signers must be "
+    },
+    {
+      "id": "lnk-2f5b769e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2f5b769e-dedc-4a34-b0d7-3968094a05e2",
+      "targetTitle": "An unratified change of Freezer signers must be treated as m"
+    },
+    {
+      "id": "lnk-8288f2ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8288f2ec-16d4-4c82-bb7e-88e78ceaf550",
+      "targetTitle": "Changing Freezer Multisig signers requires an Atlas Edit Pro"
+    },
+    {
+      "id": "lnk-0e3e4efa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "0e3e4efa-ef0f-4c83-86f6-be630106cf62",
+      "targetTitle": "Signer rotations may not quietly reduce signer count or thre"
+    },
+    {
+      "id": "lnk-4d0543b2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4d0543b2-17f5-4c3b-bd5e-081b3c138bd5",
+      "targetTitle": "Emergency multisig use is gated by a two-part test that turn"
+    },
+    {
+      "id": "lnk-e25e5801-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e25e5801-863c-46c0-8190-49a8681de78d",
+      "targetTitle": "doc-539111c1"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Any unratified change to the Freezer Multisig signers must be treated as malicious by default",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f1761284-3113-4852-9377-260e20f01c1d",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dcdd968b-cb75-4c4b-8332-d185d5b8b55f",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b8978684-d280-43a6-8580-7f350738e8f7",
+      "name": "security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e7437c0-885c-4d8f-a724-e8d2f3b65b18",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.6.2.6.1.2.1.2.2.2.5 closes the Freezer Multisig section with a default-hostile rule: \"Any changes to the Multisig signers that do not fall within the two exceptions listed above, or that have not been ratified by Sky Governance, **should be questioned immediately and treated as malicious**. Where malicious activity is suspected, the Core Facilitator must prepare an expedited Executive Vote so that Sky Governance can vote on removing external security access from the Multisig.\"\n\nThe interesting choice is the burden of proof. An unexplained signer change is not an anomaly to be investigated on its merits; it is presumptively an attack. This is the right default for a key rotation event because the two benign explanations are already enumerated and both require a public post \u2014 so a change without one of those posts has no innocent form.\n\nThe remedy is equally specific, and it is escalation rather than reversal. Nobody attempts to undo the change at the multisig; instead a named role (the Core Facilitator) must prepare an expedited Executive Vote to remove the multisig's external security access entirely. The response to a possibly-captured key set is to **retire the instrument**, not to fight for control of it.\n\nThe cost is a live denial-of-service vector against Pattern's own safety machinery: a spurious or mistaken signer change can trigger a process that ends with Pattern's emergency brake being disconnected pending governance action. The Atlas accepts that cost in exchange for removing all ambiguity about how to react.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:46.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:03:39.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rather than investigating first, the Atlas presumes bad faith and names the remedy: the Core Facilitator prepares an expedited Executive Vote to strip the multisig of external security access.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "057e2bf7-8cf6-4bad-b7ea-f199738da308",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:03:38.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fade6175-2859-4bba-97aa-ec5c769f0dd7",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:03:39.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-8d37c46e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d37c46e-eee3-4521-8db0-4056c13f446e",
+      "targetTitle": "Pendle PT capital requirements decay continuously toward the"
+    },
+    {
+      "id": "lnk-b5f534f9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5f534f9-b518-4dee-83af-6f6a81a48b2f",
+      "targetTitle": "Sky's financial risk framework is an explicit adaptation of "
+    },
+    {
+      "id": "lnk-a49a8042-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a49a8042-5831-416a-9d19-e6bdb1782d0c",
+      "targetTitle": "Tokenized fund wrappers and direct Ethena holdings currently"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky assigns its own paper a zero capital charge, mirroring Basel's treatment of sovereign debt",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "dcf30bc6-3b20-47de-b400-7020f818443e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "65a83efa-5030-4185-b6d1-3ab440e32d57",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "aa4fced7-8564-4a46-b5ce-2411deef00e3",
+      "name": "self-reference",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.4.1 sets the interim bond-like schedule in two lines: \"PT-USDS - 0% Instance Financial CRR\" and \"All other bond-like exposures - 4% Instance Financial CRR,\" with only Pendle PT tokens eligible under the provision.\n\nThe asymmetry is worth stating plainly. PT-USDS and PT-USDe are the same instrument type on the same protocol \u2014 a principal token with duration risk and Pendle smart-contract risk. One requires no financial risk capital at all; the other, per A.3.2.2.1.1.1.2.1.1.1.3, starts at 10% and is unusable beyond six months to maturity. The entire difference is whose liability sits underneath.\n\nThis is the Basel sovereign analogy carried to its logical end. In the Basel Framework the Article otherwise adopts wholesale (A.3.2.2.1.1.1.5.1.1), a bank's holdings of its own currency-denominated sovereign debt can attract a 0% risk weight \u2014 the issuer of the unit of account cannot default in that unit. Sky, as issuer of USDS, applies the same reasoning to claims denominated in USDS.\n\nThe logic is defensible and the blind spot is the familiar one. A 0% charge means the framework, by construction, cannot express the risk that USDS itself is impaired, or that duration on a USDS claim becomes costly if the peg is under stress \u2014 exactly the scenario the Stability Scope exists to manage. Sovereign zero risk weights had the same structure, and the European bank/sovereign nexus is what they produced.\n\nThe pattern repeats among the RWA exceptions in A.3.2.2.1.1.1.5.3.1, where BUIDL, JTRSY on Ethereum Mainnet and USTB \u2014 tokenized Treasury funds \u2014 also receive 0%, while ACRDX receives 9.99%. Zero is reserved for claims on the sovereign and for claims on Sky.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:28.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "PT-USDS carries a 0% Instance Financial CRR while all other bond-like exposures carry 4%, so a duration-bearing claim on Sky is treated as riskless in the same framework that charges 10% for PT-USDe.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9d986275-2875-49be-9fbd-050c685acfff",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7b44612d-04c6-427c-a3c1-27beccd87a55",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

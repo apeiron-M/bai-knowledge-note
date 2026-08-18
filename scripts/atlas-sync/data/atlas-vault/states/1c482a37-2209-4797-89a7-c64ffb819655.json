@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-2afb6c05-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "2afb6c05-5dc5-4e3f-ab7a-fabedbb84b0a",
+      "targetTitle": "Smart contract and administrative capital charges scale with"
+    },
+    {
+      "id": "lnk-c3d9ac28-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3d9ac28-8e3e-442f-ad16-10bdb0a594db",
+      "targetTitle": "The F2 exposure window shrinks twice as fast per rating poin"
+    },
+    {
+      "id": "lnk-c78e6e71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c78e6e71-0b23-4ca3-bd0b-c6124367284e",
+      "targetTitle": "Responsibility for identifying which contracts are in scope "
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Smart contract capital switches its denominator with risk level: systemic scale for safe protocols, the Agent's own capital for risky ones",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ce308f00-3121-46d1-9fe2-71147b671923",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1aa7f673-15a3-42b4-b495-3503d54745a4",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "426d411a-128a-424c-9832-22d9b92985a1",
+      "name": "systemic-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The smart-contract capital charge is produced by feeding one of two ratios into a shared piecewise function (A.3.2.2.1.2.3.3.1), and which ratio is used depends on the protocol's risk rating. Low-risk protocols use F1 only; high-risk protocols use F2 only; medium-risk protocols compute both and blend them by \u03b1 = (r \u2212 25)/25 (A.3.2.2.1.2.3.1.1\u2013.3).\n\nThe two ratios measure completely different things.\n\n**F1 = E_beyond / C_tot** (A.3.2.2.1.2.3.3.2.2), where Exposure Beyond Surplus is \"the difference between the Sky Ecosystem's aggregate allocation to the protocol and aggregate internal liquid surplus of all Agents,\" and Total Collateral is \"the total USDS and Dai debt in the system.\" This is a *systemic* measure: how much of the ecosystem's exposure to this protocol exceeds everything all Agents could absorb, as a fraction of Sky's whole balance sheet. It is nonzero only when the ecosystem is collectively over-exposed, and it is identical for every Agent.\n\n**F2 = (e_int + \u03b1(e_tot \u2212 e_int)) / s_liq** (A.3.2.2.1.2.3.3.2.3) with \u03b1 = 0.1, where `s_liq` \"is equal to the Total Risk Capital of the Agent.\" This is an *idiosyncratic* solvency measure: the Agent's own exposure, plus a tenth of every other Agent's exposure, against its own risk capital.\n\nThe switch encodes a claim about which failures matter at which risk level. For a well-audited, battle-tested protocol, an individual Agent's position is not the concern \u2014 only the possibility that the whole ecosystem has piled in past its collective ability to absorb a loss. For a risky protocol, the Agent's own capital adequacy is the binding question, and its own book dominates. The middle band interpolates continuously rather than jumping.\n\nThe 10% weight on other Agents' exposure inside F2 is the concrete implementation of the concentration principle in A.3.2.1.1.5.3: crowding into the same protocol raises everyone's requirement, but at a discount to own-book exposure. Both ratios also require ecosystem-wide data \u2014 aggregate allocations, aggregate risk capital, total system debt \u2014 so no Prime Agent can compute its own smart-contract capital requirement from information it holds itself.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:42.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:13:09.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "F1 measures ecosystem exposure beyond all Agents' risk capital against total system debt; F2 measures own exposure plus 10% of others' against own Total Risk Capital, blended in the middle band.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "52736ddd-cfd8-4d5e-b6d8-5f8ba5181c44",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:13:09.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "161acfa9-2591-419c-9818-e02255dee45d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:13:09.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's Primitive-indexed architecture requires an Omni Documents container for everything that spans or falls outside a Primitive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "466c22b6-d284-4a0b-9c88-5ae5aba5095e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2f2348ba-a266-4183-9f0a-b61000651c4a",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6f1e24fa-bf1b-4f0d-9cfa-4a6e2e5fb7e7",
+      "name": "document-architecture",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c211fde5-65a9-41b3-86c3-b78568020dd5",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.3 defines Omni Documents as specifying \"Grove's strategic intent and operational processes relating to infrastructure **inherited from Sky Core**, activities **unrelated to Sky Primitives**, or activities **spanning multiple Sky Primitives**.\"\n\nThe rest of the Artifact is indexed by Primitive: each gets a hub, directories, instances and an archive, and everything about Grove's operations is meant to hang off one of them. That indexing is only total if every activity belongs to exactly one Primitive \u2014 and the three cases named here are precisely the ones where it does not.\n\nSo Omni Documents is the residual any single-axis taxonomy needs. What makes it worth noting is *what actually ends up there*. Grove's Delegation Framework, its emergency response protocols and its forum governance all live under Omni Documents \u2014 governance material that determines who may exercise voting power over the whole Artifact. The Primitive structure, with its enumerated states and archived history, does not reach it.\n\nThe result is an inversion: the most rigorously structured parts of the Artifact describe individual allocations, while the material with the broadest reach sits in a container defined by exclusion. Cross-cutting concerns are typically the hardest to reason about, and here they receive the least structural support.\n\nThat the third case is \"activities spanning multiple Sky Primitives\" is the sharpest form of the problem. Composite activity is not an edge case in a system built from composable primitives \u2014 it is the expected outcome \u2014 and the architecture routes it to the bucket that has no lifecycle, no directory and no archive.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:53.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Omni Documents holds infrastructure inherited from Sky Core, activity unrelated to Sky Primitives, and activity spanning several",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b6ead132-5a15-4090-9204-2523e6e477de",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9e6d2a8a-ab2c-4bbd-826b-e56774d4227c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:53.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

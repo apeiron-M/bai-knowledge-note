@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e5a02153-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5a02153-ac11-402b-88ff-73961e274570",
+      "targetTitle": "A SkyLink bridge only becomes usable after third-party audit"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SkyLink build costs are reimbursed as a percentage of bridging volume, so unused bridges are never repaid",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5c58f2d2-c151-49a9-8978-d5d4936bb4d1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cdde8077-02dd-4c51-9b50-dda03756d30b",
+      "name": "skylink",
+      "topicDocumentId": null
+    },
+    {
+      "id": "79af64dc-db6e-4b08-a3e3-7243348f7d9b",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.8.1.1.2.1 defines the settlement mechanics: each cycle the Prime Agent Reimbursement Module \"tallies the total token bridging volume on the new chain\" and \"calculates the reimbursement due for bridge development costs **as a percent of the token bridging volume**,\" with Core GovOps paying the amount due \"to the extent that such costs have not already been fully reimbursed\" and recording cumulative reimbursement in Powerhouse.\n\nSo reimbursement is capped by documented cost but *paced by usage*. An Agent that deploys a bridge to a chain nobody uses recovers nothing, however carefully it documented its spend under A.2.2.8.1.1.1.1.3. The promise of reimbursement in A.2.2.8 is real but contingent.\n\nThis is what stops the shared-ownership model from being exploitable. Because Sky Core owns and everyone shares SkyLink deployments, a flat cost-reimbursement rule would let an Agent bill the ecosystem for speculative bridges at zero risk. Volume-linked recovery pushes the target-selection risk back onto the builder \u2014 which is precisely why A.2.2.8.1.1.1.1.1 requires the Agent to research user base, DeFi ecosystem, and \"estimate potential use of the token on the target chain to justify the bridge deployment and audit costs.\"\n\nThe residual cost is a bias toward established chains. An Agent bearing the downside of a quiet chain will systematically under-deploy to new or speculative ecosystems, even where the ecosystem's long-run interest might favour early presence. The \"first-mover incentives\" named in A.2.2.8 are the counterweight.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Prime Agent Reimbursement Module tallies volume each settlement cycle and pays a share of it until documented costs are recovered \u2014 converting cost recovery into a usage bet.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c5af8f9c-7591-4f2b-8b9b-ff44aa222fbc",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "13f317fb-99fd-4f7f-80f7-2b77dca3894f",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

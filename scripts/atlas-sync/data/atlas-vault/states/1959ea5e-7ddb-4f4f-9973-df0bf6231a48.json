@@ -1,0 +1,125 @@
+{
+  "links": [
+    {
+      "id": "lnk-9812ed69-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9812ed69-950b-4291-a097-30ceb92851eb",
+      "targetTitle": "doc-da54c961"
+    },
+    {
+      "id": "lnk-5f2c55ee-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5f2c55ee-f314-4f4b-b933-9acc004e6396",
+      "targetTitle": "Controller functions carry an isActive gate as well as a rol"
+    },
+    {
+      "id": "lnk-199713b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "199713b8-48de-4e2d-9d99-6dcb0df1cdfc",
+      "targetTitle": "Every Grove Liquidity Layer interaction with an external pro"
+    },
+    {
+      "id": "lnk-44e8047c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "44e8047c-5d76-46f8-8a58-a3666664937a",
+      "targetTitle": "Grove never claims Merkl rewards itself; it authorises an ex"
+    },
+    {
+      "id": "lnk-85a0a57f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "85a0a57f-ff93-4b0c-bb28-a2f5a10bb361",
+      "targetTitle": "The relayer's own minimum-output argument must itself clear "
+    },
+    {
+      "id": "lnk-a774b35c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a774b35c-ca5b-492e-8c18-223aea45aa66",
+      "targetTitle": "The Artifact documents delegated-signer authority without na"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Authorising an external signer over Grove's Ethena orders requires only the relayer role and is subject to no rate limit",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c2c819dc-1881-4c22-888e-6878d0d98869",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "60837f07-ea9b-47aa-8d0a-8ba2d6dacd9b",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "376b6a4d-a3c5-4bf9-965a-76af00871fec",
+      "name": "ethena",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ae77fa62-67e9-48f9-9b16-533703d52402",
+      "name": "access-control",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.2.1.2.1.2.10.1 defines `setDelegatedSigner` as \"authorizing a signer to sign Ethena mint and redeem orders on behalf of the Grove ALM Proxy\", and A...10.1.2 shows the whole implementation: a `_checkRole(RELAYER)` followed by `proxy.doCall(ethenaMinter, setDelegatedSigner(delegatedSigner))`. A...10.2 mirrors it for revocation.\n\nCompare this to the neighbouring functions. `prepareUSDeMint`, `prepareUSDeBurn` and `cooldownAssetsSUSDe` all pass through `_rateLimited(...)` before acting. The delegation functions do not, because there is no amount to meter \u2014 but that is precisely what makes them the highest-leverage calls in the module. A rate limit bounds how much value a compromised relayer can move per period; delegation instead **transfers the capability itself** to an address of the relayer's choosing, outside any amount-based control.\n\nThe tension is structural rather than a bug: Grove's safety model is two-layered (role plus quantitative limit, per A...7.2.1 and the `_rateLimited` calls throughout), and this is the one place where the second layer is inapplicable, leaving the relayer key as the sole control.\n\nThe mitigation available is that `removeDelegatedSigner` exists and is equally cheap, so revocation is always one relayer transaction away \u2014 which shifts the burden onto monitoring for unexpected delegations rather than preventing them.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:34:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "setDelegatedSigner and removeDelegatedSigner are the only Ethena operations with no _rateLimited call, yet they hand a third party the power to sign mint and redeem orders for the proxy.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "282597ee-0cd9-41fe-9b4a-d0bbdbda99b7",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "0104b3cf-30e8-4431-aecd-99923da096a0",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

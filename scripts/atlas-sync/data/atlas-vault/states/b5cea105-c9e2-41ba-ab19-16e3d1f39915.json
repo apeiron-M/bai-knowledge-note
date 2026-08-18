@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-e9894e4e-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e9894e4e-f65a-4371-a084-01ec2237e9c0",
+      "targetTitle": "An Executive Proposal that fails to move the hat is not reje"
+    },
+    {
+      "id": "lnk-ca331512-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ca331512-b48e-4d4d-b673-13d0d7397349",
+      "targetTitle": "A voter can apply their full SKY weight to up to five propos"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Executive Votes have no fixed quorum \u2014 the incumbent hat's vote-weight is the threshold a new proposal must beat",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "41915a05-b627-4d10-bde2-53c88b6ff7a5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5829abfc-6e36-497f-8423-637e6c43093a",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ea3c913-9409-4d77-8a8f-322cdad4ad82",
+      "name": "voting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.6.3 describes Continuous Approval Voting, whose first key aspect is the \"**victory threshold set by the hat**: The vote-weight on the current hat proposal establishes the 'victory threshold' that new proposals must exceed to become eligible for execution.\"\n\nThere is no percentage, no minimum turnout and no fixed bar. The requirement is purely comparative: outweigh the proposal that currently holds the hat in the DSChief contract.\n\nThe consequence is that Sky's governance difficulty is a floating quantity set by past participation rather than by rule. When holders keep weight on the hat, a new proposal \u2014 including a hostile one \u2014 must assemble more support than the entire standing coalition. When they drift away, the bar falls with them, and the protocol becomes cheaper to capture without any rule having changed.\n\nThis also inverts the usual meaning of a failed vote. Under quorum-based systems, insufficient support means the proposal is rejected. Here it means the challenger did not out-mobilize the incumbent, and A.1.10.2.4.13.1 confirms it \"can still gain support and be executed later within the expiration window.\"\n\nThe design's virtue is that it never deadlocks: something is always the hat, and the status quo is a live position rather than a default. Its exposure is that security is emergent from participation levels no one controls.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:45:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:54.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.6.3 makes approval relative rather than absolute, so how hard a change is to pass depends entirely on how much weight currently sits on the last one.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "821fa511-427f-4516-9335-5ef930487c1e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:54.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "650b8339-9fa5-4612-b2af-20b09b669ec4",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:54.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

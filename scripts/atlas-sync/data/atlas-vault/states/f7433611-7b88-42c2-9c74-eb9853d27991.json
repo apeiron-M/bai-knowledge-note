@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Cancellation is the one governance power Sky is willing to make fully permissionless",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8c54bc48-9fed-42ae-82ce-7277b3a44197",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "77c1130f-003c-4b21-b174-e19a880be2c7",
+      "name": "governance-security",
+      "topicDocumentId": null
+    },
+    {
+      "id": "473cf9ca-4003-4e01-a11f-0b308ab8cdaa",
+      "name": "permissionless-design",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Protego exposes two escalation levels. A.1.10.5.3.1.1 describes the narrow one: an **Emergency Drop Spell** is deployed against a specific planned action and, \"once authorized by Sky Governance,\" can cancel it \u2014 execution requires the spell to hold the `hat` in the Chief contract. Deployment itself is already open: A.1.10.5.3.1.1.1 notes \"any user can permissionlessly deploy an Emergency Drop Spell,\" so only the authorization step is gated.\n\nThe broad one is A.1.10.5.3.1.2: Protego itself \"can be granted authority by Sky Governance to allow any user to permissionlessly cancel any planned governance action,\" again by giving the contract the `hat`. Once granted, A.1.10.5.3.1.2.1 and A.1.10.5.3.1.2.2 let anyone drop a single plan or a batch of plans in one call.\n\nWhat makes this defensible is the asymmetry of the power. Every other emergency capability in the Atlas can *cause* a state change, so it must be tightly held. Cancellation can only *subtract* pending actions \u2014 the worst an attacker with drop authority can do is force governance to re-pass a proposal through the ordinary process. Griefing is possible; theft is not.\n\nThe design consequence is a genuine tiering: identify-and-cancel-one requires a vote per target and stays narrow, while switching Protego on wholesale converts the pause delay into a public veto that nobody has to be trusted to exercise. The second is stronger medicine \u2014 it makes governance unable to execute anything while it is active \u2014 which is why it takes the hat rather than a standing grant.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:35.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Granted the hat in Chief, Protego lets any user drop any planned action, singly or in batches; Emergency Drop Spells are the narrower alternative, targeting one pre-identified action.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "394dffd6-4658-4940-83dc-2baabfe13d80",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "fe8c2648-cf60-4d3b-98d6-94c23229b122",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:35.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

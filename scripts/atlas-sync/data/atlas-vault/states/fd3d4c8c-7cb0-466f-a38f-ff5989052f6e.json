@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Simultaneous Atlas edits are merged if logically compatible and returned to voters if not",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "a7bdf6c1-579d-4249-a19f-7f24044b58da",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c5776e39-c6de-4e03-8fac-0229c7f9bbab",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "dc5d1917-cf1b-456f-88c5-0f581e7107f0",
+      "name": "governance-cycles",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.11.2.5.2 handles the case where voters approve several proposals editing the same Atlas component in one cycle, and splits on whether the edits can coexist.\n\nWhere edits are \"non-conflicting / logically compatible,\" the Core Facilitator \"will consolidate them into a single edit either by stitching them together in the affected component or by stringing one after the other as a new component,\" and any such action \"will be documented publicly and should be available for examination prior to the end date of the relevant polls.\" Where edits are \"conflicting / logically incompatible and cannot be coherently reconciled,\" the choice returns to voters: a binary Reconciliation Process Poll for two proposals, or a Facilitator-chosen multi-option method for more, with \"the difference between the conflicting amendments... clearly presented so that voters can make an informed choice.\" That poll runs for three days in the Operational Weekly Cycle immediately following the originating polls.\n\nThe blast radius is deliberately narrow: \"This process only applies to the specific components that are being simultaneously edited,\" and unaffected components of the same proposals \"may be merged, unless they are dependent on the component that does have simultaneous edits.\" A collision quarantines the contested component instead of voiding whole proposals.\n\nThe governance insight is the division of labour between mechanical and political resolution. Compatible edits are a *merge* problem, delegated to an administrator under an obligation of public documentation before polls even close \u2014 voters can see the consolidation they are voting into. Incompatible edits are a *preference* problem, which no administrator may resolve on voters' behalf. Sky's Atlas is effectively a version-controlled document with an explicit conflict-resolution protocol, distinguishing conflicts a maintainer may fix from conflicts only the electorate may.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:20.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Core Facilitator publicly consolidates non-conflicting edits before polls close; irreconcilable ones go to a three-day Reconciliation Poll in the next Operational Weekly Cycle.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "29837844-a7bc-464d-9e2b-d1be62751b3a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:20.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7eb98746-65c8-4ab9-ad3d-6e8f89ed4d76",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:20.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

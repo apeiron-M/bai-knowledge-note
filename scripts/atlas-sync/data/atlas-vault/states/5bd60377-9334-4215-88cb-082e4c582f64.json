@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-854a9dc8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "854a9dc8-a4da-4d55-94df-bfc7171c7b25",
+      "targetTitle": "doc-01427f70"
+    },
+    {
+      "id": "lnk-ce67a188-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce67a188-3b62-424d-bd29-2edefce66a73",
+      "targetTitle": "The destination address a payer uses encodes the accounting "
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "DssBlow2 credits the Surplus Buffer by burning the incoming ERC-20 and recreating it as internal VAT balance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b3320fd7-98c7-48b5-96ea-7c6cb959a997",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8c793778-2ea0-4a86-b17c-e6cad822bd3f",
+      "name": "protocol-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f555666d-cdfe-4ef1-8109-179032cf0a47",
+      "name": "accounting",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5281bd18-ad04-499a-b8c5-cd56b9eb2449",
+      "name": "smart-contracts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.6.1.1.1.1.1 describes the return path for stablecoins: tokens are transferred to `MCD_BLOW2`, and \"calling the `blow` function on this contract will cause any Dai or USDS tokens held by it to be added to the Surplus Buffer. During this process, the ERC-20 tokens are burned and the tokens are instead reflected as an internal balance in the MCD_VAT contract.\"\n\nThe burn-and-recredit step is the interesting mechanic, and it follows from what USDS *is*. A circulating USDS is a liability of the protocol; the Surplus Buffer is protocol equity. Simply holding USDS in a protocol-owned address would leave the liability outstanding and the surplus unrecognized \u2014 the system would show both a debt and an asset that are really the same dollar. Burning the token extinguishes the liability, and the corresponding internal VAT balance records the equity.\n\nSo returning money to Sky is not a transfer, it is a **retirement**. The double-entry structure of the accounting system dictates the mechanism, which is why an ordinary token transfer to a treasury address cannot substitute for it.\n\nThis also explains the requirement for a separate call: depositing tokens and recognizing surplus are distinct steps, and `blow` is permissionless in effect \u2014 anyone can trigger the sweep of whatever the contract holds. The consequence for anyone paying Sky is that the payment is not complete on transfer; it is complete when swept.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:07.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Calling `blow` destroys the Dai or USDS tokens held by the contract and reflects them as an internal balance in MCD_VAT \u2014 external tokens must leave circulation to become protocol equity.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e0c2c2e1-3148-4daa-ae1d-775ec85d5d55",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:30.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "939c7ffe-3371-4934-a1a8-a92252950fcb",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

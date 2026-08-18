@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-ccc2a6cf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ccc2a6cf-9fb8-4ec9-b6e5-7a13b3fb855a",
+      "targetTitle": "Grove models two-way convertibility through a centralized is"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove interposes a five-contract scaffold between itself and a treasury token issuer, splitting custody, valuation and redemption across separate addresses",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ff1a00ef-763f-4a22-b725-377f41fe1a00",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96c223d0-82ec-45f5-843b-555cf69820f2",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a0ce6ad1-0805-4ced-95dd-260e7110dd67",
+      "name": "tokenized-treasury",
+      "topicDocumentId": null
+    },
+    {
+      "id": "841afab4-443f-4c60-9299-38ce9f6726cc",
+      "name": "counterparty-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Compare address counts across this chunk. The Maple syrupUSDC conduit lists two (A.6.1.1.2.2.6.1.3.1.13.1.2.2.1\u2013.2: token, underlying asset). The Avalanche Centrifuge Instances list two. The Tokenized Treasury Instances list seven each \u2014 A.6.1.1.2.2.6.1.3.1.14.1.2.2.1\u2013.7 gives a Token Address, a **Centrifuge ERC-7540 Vault**, a **JTRSY Rate Provider**, a **Pocket Contract**, a **Token Redeemer Contract**, an **Owner Timelock**, and a **Basin Contract**; .14.2.2.2.1\u2013.7 mirrors it for BUIDL with a *Securitize Redemption Wallet* in the vault's place.\n\nThe names indicate a deliberate separation of functions that a plain token holding fuses together. Valuation is delegated to a dedicated Rate Provider \u2014 the contract the seven-day Staleness Threshold applies to. Exit is delegated to a named Token Redeemer, matching the `REDEEMER_ROLE` defined at A.6.1.1.2.2.6.1.2.2.1.1.2.5. Privileged control sits behind the Owner Timelock. The Pocket and Basin contracts complete the arrangement, with Basin naming the architecture the Interim Deployment is testing.\n\nThe payoff of splitting these is that each function can be bounded, monitored and role-assigned independently rather than being an undifferentiated property of \"holding the token.\" It is what makes the Instance's other controls addressable: a staleness bound needs a valuation contract to point at, and a redemption process needs a redeemer.\n\nThe cost is equally clear and is why this is an Interim Deployment. Five extra contracts are five extra pieces of code that can fail, and the arrangement's correctness now depends on how the pieces compose rather than on any one of them. The Atlas's response is to run the whole scaffold at 100% CRR under a $5 million cap until it has been observed working \u2014 buying evidence about the architecture, not about the fund.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:52.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Both Tokenized Treasury Instances name a Vault or redemption wallet, Rate Provider, Pocket, Token Redeemer, Owner Timelock and Basin",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e56533d0-904d-4e8f-aa88-4f9e0257f10e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:52.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "52cba8f6-07cd-411b-a60f-3d2a951da984",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:52.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

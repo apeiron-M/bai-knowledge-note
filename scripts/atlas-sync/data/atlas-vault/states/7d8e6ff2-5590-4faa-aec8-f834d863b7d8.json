@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-a1754302-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a1754302-3f50-4e66-ac93-0ef2b93341fc",
+      "targetTitle": "Paying capital and the creation fee produces a Proto-Agent w"
+    },
+    {
+      "id": "lnk-e5583d66-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5583d66-1767-47a2-9abd-7af848f08d1e",
+      "targetTitle": "Light Agents inherit GovOps benefits from a parent Agent's E"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "An Agent's SubProxy treasury account is controlled by Sky Governance, not by the Agent",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e9077e70-5f24-48f2-8057-844eadbc26b9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "725acfc3-a524-4672-b021-5ba20cdf1282",
+      "name": "agent-artifacts",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8fbfa0d6-f061-4141-bcbd-e2e84ff8399b",
+      "name": "treasury",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.5.1.2.5 defines a required Agent Creation Primitive input in two short sentences that carry substantial weight: \"The SubProxy is an account that serves as the Agent's treasury. The SubProxy Account is **controlled by Sky Governance**.\"\n\nThe field is also not the Founder's to supply \u2014 \"This field is populated by Core GovOps,\" consistent with A.2.2.5.1.1.1.2, where Core GovOps creates the Genesis and SubProxy Accounts only after validating the Founder's inputs and confirming that all required Primitives are Activated.\n\nSo an Agent's treasury is externally custodied from birth, by the same governance body the Agent is nominally an independent participant in. The Agent's autonomy runs over its Artifact \u2014 its Omni Documents, Primitive activations, token holder votes \u2014 while its funds sit under Sky Governance control.\n\nThis is what makes several other mechanisms enforceable rather than aspirational: the non-deactivatable Ecosystem Upkeep Fee Primitive, the Atlas's ability to demand repayment of rewards, and suspension of underperforming Primitive instances all presuppose that the ecosystem can reach an Agent's balances. Alignment is backed by custody, not only by rules.\n\nThe trade-off is the obvious one. An Agent cannot credibly commit to any obligation that would conflict with Sky Governance's wishes, because it cannot independently move its own treasury to honour it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:20:21.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Core GovOps populates the SubProxy address into the Agent Creation Primitive, so an Agent's treasury is externally custodied from the moment the Agent is created.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "89ddd08f-5391-4ec5-913c-77cff40b610d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "63166fcb-84a3-4335-a8e6-6cb7d566303d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-f521cdfd-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f521cdfd-ec47-4667-a2dc-6849412763b2",
+      "targetTitle": "doc-8109372e"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Base's minimum, ideal and maximum USDC balances are all set to the same number",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "849da3d9-1dd5-4d9c-b12e-f98e05e63156",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "55d61c7a-4373-4782-b96c-229cd26245f4",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "747f8d3c-0e99-473e-a547-cb4675591fdb",
+      "name": "operations",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1a07a63d-7133-4d4e-bbe2-de5984831114",
+      "name": "data-quality",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.2.6.1.2.1.1.2.2.2 through A.6.1.1.1.2.6.1.2.1.1.2.2.4 define three separate off-chain parameters for USDC on Base \u2014 minimum maintained balance, ideal balance, and maximum balance \u2014 and give all three the same value: 800,000.\n\nThe structure implies a control band: hold at least the minimum, aim for the ideal, do not exceed the maximum. Three distinct thresholds exist so that an operator can let the balance drift within a tolerance and only rebalance when it leaves the band.\n\nWith all three equal, the band has zero width. Read literally, any balance above 800,000 breaches the maximum and any balance below breaches the minimum, so the position is either exactly at target or out of compliance on one side \u2014 and every inflow or outflow demands a rebalancing action.\n\nTwo readings are available and the text does not settle between them. Either the parameters are placeholders awaiting calibration, with the target duplicated into all three slots, or the intent is a hard peg with rebalancing triggered by any deviation above the minimum operation size, which for Base is 100,000 (A.6.1.1.1.2.6.1.2.1.1.2.2.1) \u2014 in which case that floor, not the band, supplies the real tolerance.\n\nThe second reading is more plausible precisely because minimum operation sizes exist, and it shows how two off-chain parameters interact: a zero-width band is only workable because another parameter forbids small corrective transactions.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:06:26.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "USDC_MIN_BALANCE_BASE, USDC_OPTIMAL_BALANCE_BASE and USDC_MAX_BALANCE_BASE are each 800,000, collapsing what reads like a tolerance band into a single point with no hysteresis.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9625ff32-0779-4826-8de2-c7e2032a22c0",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:06:26.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c35a412f-09f1-415e-ac82-16e7073c973d",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:06:26.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

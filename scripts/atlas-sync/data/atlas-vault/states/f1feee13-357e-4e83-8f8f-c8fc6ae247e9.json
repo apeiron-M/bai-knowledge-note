@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Technical Scope Forum Post is the only link binding an off-chain audit to the on-chain bytecode",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6699becd-39ef-45af-9b45-04f149bbb049",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b89e0d4c-1c0b-4c4c-b60c-876706910389",
+      "name": "audit",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2e29ea5e-176a-4428-99cd-b6fddc63b7b6",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The Forum Post requirements at A.1.10.2.3.2.1.2.1.2.1 include \"a link to the audit reports... hosted on the auditor's website or another independently verifiable source,\" \"confirmation that the deployed code matches the commit hash that was sent for audit,\" and that \"constructor arguments are as expected in the Init script.\"\n\nEach of those is an assertion made in prose by the team that wrote and deployed the module. An audit certifies a *commit*; a chain holds *bytecode*; and the only thing joining them in this process is a claim in a forum thread. Constructor arguments are the sharper case \u2014 they are not covered by the audit at all, yet they determine the module's live configuration.\n\nThe Atlas is aware of the exposure and answers it socially rather than technically: A.1.10.2.3.2.1.2.1.2 requires that \"the Spell Team not involved in the technical Forum Post creation must confirm the contents of the Forum Post as a public reply to ensure transparency and independent verification.\"\n\nThat is a genuine control, but it is second-party attestation, not verification by construction. Anyone auditing the process should treat the commit-hash-to-bytecode step as the seam where a compromise would be hardest to detect after the fact, because a false attestation here is indistinguishable from a true one without independently rebuilding the artifact.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:14:38.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.3.2.1.2.1.2.1 requires a human attestation that deployed code matches the audited commit hash and that constructor args match the Init script \u2014 nothing automated enforces either.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5c9c9179-880e-4d9e-8b29-0e112b371574",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:14:38.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7681e482-80ae-4d83-8783-6bd9755b4837",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:14:38.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

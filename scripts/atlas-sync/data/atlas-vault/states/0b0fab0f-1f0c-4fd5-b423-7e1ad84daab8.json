@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-5b14d573-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5b14d573-ae3a-4912-b597-2b3b9e35732f",
+      "targetTitle": "Required Risk Capital decomposes into three additive risk ty"
+    },
+    {
+      "id": "lnk-b5f534f9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5f534f9-b518-4dee-83af-6f6a81a48b2f",
+      "targetTitle": "Sky's financial risk framework is an explicit adaptation of "
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Financial risk models are organized by asset class, not by risk category, because the categories are interrelated",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0751c7fe-d676-435d-94e0-eb5e2b09c90f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "caedf66a-ea4d-4771-97e6-d3f37eb2eaba",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6bb8df24-83db-44ab-ac2d-61d01928ac6f",
+      "name": "risk-modeling",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.1.1.4.2 defines three financial risk categories \u2014 Credit Risk (a debt instrument not repaid on terms), Market Risk (value decline from market conditions or investor perception), Liquidity Risk (inability to sell quickly or in size at fair value without price impact) \u2014 and then explicitly declines to use them as capital buckets: \"These categories of risk are interrelated, so Instance Financial RRC is not directly associated with these risk categories. Instead, risk models are developed for different asset classes.\"\n\nThis is the opposite of the additive treatment applied one level up, where Financial, Smart Contract and Administrative RRC simply sum. The distinction is deliberate: technical exploits and privileged-access abuse are genuinely independent of market moves, whereas a collateral crash, a liquidity gap and a resulting default are three descriptions of one event. Summing them would double-count.\n\nThe categories survive as *design inputs*: \"the development of each of these risk models is informed by considerations regarding how each of the financial risk categories impacts the specific asset.\" A.3.2.1.1.4.3 then enumerates the asset classes, and the mapping is visible in each \u2014 lending markets model credit risk with volatility and liquidity factors; direct exposures to ETH, stETH and WBTC combine market and liquidity risk; perpetual positions such as Ethena and Resolv use a modified credit model for delta-neutral exposure; bond-like instruments such as Pendle PT-tokens use a modified credit model for duration; and Cash Stablecoins are defined by the *absence* of all three.\n\nThe structural consequence is that the framework's coverage is enumerated rather than general. Only lending markets and Real World Assets have fully implemented models (A.3.2.1.1.4.3.1); perpetuals, direct exposures, bond-like instruments and Cash Stablecoins are pending \u2014 and per the full-reservation rule, an asset with no model is capitalized at 100%.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:24.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Credit, market and liquidity risk are defined but never capitalized separately; instead each asset class gets one model informed by all three, so no exposure is charged twice for the same loss.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cfa16a7f-8c82-4052-b2ca-10241de3a3b7",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3338d99c-069f-4ab9-9d7c-21fcddfb734a",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:55.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

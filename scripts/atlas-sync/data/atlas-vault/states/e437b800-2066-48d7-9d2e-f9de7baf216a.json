@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-e7836576-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e7836576-6ae7-41be-8a79-a332c71bf258",
+      "targetTitle": "Active Data lets a named Responsible Party edit records insi"
+    },
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The same kind of datum is governed differently across the two demand-side primitives: reward addresses are Core in one and Active Data in the other",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "253fabfb-e5e0-4326-8c20-e3cf92f177c8",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a08d36e6-7d52-47ef-8c2e-9f3e318a5ab5",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9781ecce-f9f2-4a6f-98d6-159331f32343",
+      "name": "active-data",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ac0e862e-a610-4b49-a217-2c790a8c5de5",
+      "name": "tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "In the Integration Boost primitive, the Integration Partner Reward Address is a `[Core]` parameter sitting in the Instance's Parameters section (A.6.1.1.4.2.5.2.2.1.1.2), and the Instance's only `[Active Data Controller]` is the Integration Boost Payments list (A.6.1.1.4.2.5.2.2.1.3.4). There is no partner-address Active Data document at all.\n\nIn the Distribution Reward primitive the opposite holds: the partner payment address lives inside \"Third Party Partner Payment Addresses And Transaction Records\", declared Active Data with Operational GovOps as Responsible Party under 'Direct Edit' (A.6.1.1.4.2.5.1.2.3.3.5).\n\nSo the payment destination \u2014 arguably the single most security-critical field in either Instance \u2014 sits on opposite sides of the governance boundary in two sibling primitives under the same parent. Redirecting an Integration Boost requires a Root Edit: proposal, alignment review, token holder poll. Redirecting a Distribution Reward requires Operational GovOps to make a direct edit.\n\nThere may be a rationale \u2014 Distribution Reward addresses were still being filled in for several partners, so operational editability may be a practical concession \u2014 but the asymmetry means the Artifact's answer to \"who can change where the money goes\" depends on which primitive you are reading, not on any stated principle. For a framework that derives so much of its integrity from classifying documents as `[Core]` versus `[Active Data]`, an inconsistency in that classification for the same field type is the kind of gap worth resolving explicitly rather than by convention.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:50.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:25:24.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Changing where an Integration Boost is paid requires an Artifact edit, while a Distribution Reward partner payment address can be changed by Operational GovOps under Direct Edit.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "8e5c1757-2245-4e7e-bb5d-e9cf9b6ee37a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:25:23.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "bccb9312-94e3-417b-881e-800a08f6d0d2",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:25:24.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

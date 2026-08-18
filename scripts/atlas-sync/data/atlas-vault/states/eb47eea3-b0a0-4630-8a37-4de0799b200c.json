@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-896e514f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "896e514f-cfcc-411f-8ff5-9dee04138bd0",
+      "targetTitle": "A.6.1.1.8 - Launch-Agent-7"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Launch Agent 7 has activated allocation but left both Supply Side rental primitives switched off",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6d951d78-7ffb-461f-bbea-649f2513bed7",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a8029c93-6b96-4ef1-8bea-27927d4a990a",
+      "name": "supply-side",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5d2e02b0-1ae3-480c-bab9-1a482f0a9a1d",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Across the Supply Side Stablecoin Primitives, Launch Agent 7's activation pattern is lopsided. Allocation System is `Active` (A.6.1.1.8.2.6.1.1.1) and carries a full Liquidity Layer specification. Risk Capital Rental is `Inactive` (A.6.1.1.8.2.6.2.1.1). Asset Liability Management Rental is `Inactive` (A.6.1.1.8.2.6.3.1.1). Core Governance Reward is also `Inactive` (A.6.1.1.8.2.7.1.1.1).\n\nRead as strategy, the Agent has switched on the machinery for deploying stablecoin liquidity while declining, for now, the ecosystem services that would let it rent risk-bearing capacity or hand off asset-liability management. Those functions are therefore either handled on the Agent's own balance sheet or not yet needed at its current scale.\n\nThis is worth reading against the emissions provision in A.6.1.1.8.2.1.4.2.1.1.6, which reserves Sky Governance's right to re-enable AGENT7 emissions where the Agent \"is in violation of Risk Capital requirements.\" The Agent is subject to Risk Capital requirements while having chosen not to activate the primitive designed for renting Risk Capital. Its route to compliance under stress is thus its own capital, not a rental facility it has already stood up \u2014 and if that proves insufficient, the fallback is dilution imposed from above.\n\nActivating Risk Capital Rental later is possible but is itself a governance action, which means it is not a fast lever in a crisis.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:46:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:06.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Allocation System is Active while Risk Capital Rental and Asset Liability Management Rental are Inactive, so the Agent deploys stablecoin liquidity without renting risk capital or ALM from the",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "91f1999d-dcce-491b-886a-7dc541100b83",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:06.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4dfea105-d7e0-4a25-845f-55fefab1cb82",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:06.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

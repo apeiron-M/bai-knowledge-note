@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-854a9dc8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "854a9dc8-a4da-4d55-94df-bfc7171c7b25",
+      "targetTitle": "doc-01427f70"
+    },
+    {
+      "id": "lnk-ae4deb59-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ae4deb59-d46a-4046-86de-a3c143681d3b",
+      "targetTitle": "Keel's Ethereum emergency protocol is a pre-written three-st"
+    },
+    {
+      "id": "lnk-b265e2f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b265e2f3-693f-40e0-9075-69837145b8b2",
+      "targetTitle": "Emergency response runs a fixed three-step sequence: revoke "
+    },
+    {
+      "id": "lnk-8d5bc66c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8d5bc66c-a548-4094-b2e6-7184f25d68c5",
+      "targetTitle": "Obex's Liquidity Layer can mint 100 million USDS while its b"
+    },
+    {
+      "id": "lnk-f85fcac1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "f85fcac1-03e0-4d13-aa69-64842ab836fe",
+      "targetTitle": "A.6.1.1.5 - Obex"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Liquidity Layer Emergency Protocol is a concrete unwind runbook ending in debt repayment",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1888003c-66e1-4fad-b210-8bbe3d4a30b9",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3129369-bbc9-483d-8378-7f2b5912600e",
+      "name": "obex",
+      "topicDocumentId": null
+    },
+    {
+      "id": "544ce33b-f7ad-43ab-93aa-9a637b9a6b82",
+      "name": "emergency-response",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d4060e8b-b517-492e-9169-3907aaa0f7e0",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Unlike most abnormal-condition branches in Agent Artifacts, Obex's Liquidity Layer Emergency Protocol (A.6.1.1.5.2.6.1.2.2.3) is populated with executable steps.\n\n**Stop the bleeding**: \"In the event of a compromised Relayer, the `FREEZER_ROLE` can call the function to `removeRelayer` from the Controller contract\" (A.6.1.1.5.2.6.1.2.2.3.1). **Recover**: to \"recover the liquidity from Mainnet Protocols and centralize it in the Mainnet Obex ALM Proxy,\" call `redeemERC4626(address(token), token.balanceOf(address(proxy)))` (A.6.1.1.5.2.6.1.2.2.3.2.1). **Consolidate**: `swapUSDCToUSDS(usdc.balanceOf(address(proxy))` (A.6.1.1.5.2.6.1.2.2.3.3). **Repay**: `burnUSDS(usds.balanceOf(address(proxy))` (A.6.1.1.5.2.6.1.2.2.3.4).\n\nWriting the calls with full-balance arguments rather than amounts is the operationally important detail. Under incident conditions, the person executing does not have to compute position sizes, and no step can be partially completed through an arithmetic mistake. The runbook is designed to be executed by someone under stress.\n\nThe terminal state is also the informative part. The sequence does not end with assets safely custodied \u2014 it ends with Obex's USDS debt wiped and the ALM Proxy empty. Because the Agent's capital is borrowed from a Sky Allocation Vault, \"safe\" means *returned*, and an emergency unwind is a full deleveraging rather than a defensive repositioning.\n\nThe gap is that the runbook covers the mainnet ERC-4626 path only. There is no stated recovery sequence for ERC-7540 positions, whose two-step request-then-claim redemption cannot complete synchronously, nor for assets in flight over CCTP or LayerZero \u2014 precisely the positions hardest to unwind quickly.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:47:12.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Remove the compromised Relayer, redeem all ERC-4626 positions to the ALM Proxy, swap recovered USDC into USDS, then burn USDS to wipe the vault debt \u2014 each step a named function call.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bd6280be-133e-4c97-80ff-55d9a01ae2d7",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ac81c4d7-83b3-4a40-956f-275812a0aa52",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-fd57100f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fd57100f-ab44-4ac5-8652-b5a3e75dddf9",
+      "targetTitle": "The Integration Boost is computed from per-block USDS balanc"
+    },
+    {
+      "id": "lnk-7b7930b7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7b7930b7-e9ed-4f3b-a916-90bbc570b6ef",
+      "targetTitle": "The Integration Boost pays the Sky Savings Rate on USDS bala"
+    },
+    {
+      "id": "lnk-aac7d094-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aac7d094-c800-4f46-bb91-c4feba12cf2e",
+      "targetTitle": "The Integration Boost verifies submitted data against on-cha"
+    },
+    {
+      "id": "lnk-ce28db5b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce28db5b-b20d-4746-b20b-a8138d872bab",
+      "targetTitle": "doc-76d2b8c2"
+    },
+    {
+      "id": "lnk-d65271b6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d65271b6-e941-4920-8224-e819131a904c",
+      "targetTitle": "The Integration Boost is priced per block against the Sky Sa"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Operational GovOps must confirm that an Integration Boost pays exactly the Sky Savings Rate, neither more nor less",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e7b54648-e7d9-4b36-a1ee-bd63db40f010",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "05a88641-ae33-4981-9ab8-09840ef32a87",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e4612eff-4747-4f8a-9b3c-5db38cb57bd6",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.2.2.3.2.2 gives Operational GovOps three checks on an Integration Boost plan: that submitted data can be verified using on-chain data; that \"the Savings Rate Adjustment Strategy **ensures that the payment on USDS balances equals the Sky Savings Rate**\"; and that the data accurately reflects deposits with no possibility of double counting.\n\nThe middle test is unique to this Primitive and is a **rate ceiling as well as a floor**. The Boost is not a budget a Prime Agent may spend competitively; it is a replication of a specific rate, and an instance that would pay more than the SSR fails review just as one paying less would.\n\nThe reason is systemic rather than fiscal. If Prime Agents could set boost levels freely, they would bid against each other for the same partner protocols using ecosystem funds, and integrated USDS would earn different yields in different venues for no reason a user could see. Fixing the payment at the SSR makes the Boost a uniform property of USDS \u2014 yield follows the token into any integrated venue at the same rate \u2014 rather than a negotiated inducement.\n\nIt also means Prime Agents compete on *which* integrations to pursue and on how much Distribution Reward they share (A.2.2.9.2.2.1.4.3), not on the boost itself. The one variable that would turn demand generation into a subsidy war is removed from their control, while everything else stays open to negotiation.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Its review adds a third test to the Distribution Reward's two: that the Savings Rate Adjustment Strategy \"ensures that the payment on USDS balances equals the Sky Savings Rate\".",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "c28ea049-7fb7-4dcf-b1c5-582ff8a341d1",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:58.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "87934ea9-7be8-4d9e-8734-36c9373bb4d7",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4323865-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4323865-ee64-4f96-ab66-5493e5331d8a",
+      "targetTitle": "The Governance Point independently re-verifies the Spell aga"
+    },
+    {
+      "id": "lnk-a14426da-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a14426da-1164-4af0-b3e7-361f8e2777ea",
+      "targetTitle": "doc-9c780c4b"
+    },
+    {
+      "id": "lnk-c5aa1505-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c5aa1505-a300-4d0a-ae79-ec444a12435a",
+      "targetTitle": "doc-952d9362"
+    },
+    {
+      "id": "lnk-ce489442-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce489442-e388-4522-b71d-df27162d0d3a",
+      "targetTitle": "Sky deploys new modules on-chain seven to eight days before "
+    },
+    {
+      "id": "lnk-d8beebaa-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d8beebaa-9ca8-4e69-857e-9448b77bb203",
+      "targetTitle": "Each Executive Sheet item carries three independent confirma"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Governance Point must confirm every Executive Vote item is justified by something Sky Governance already ratified",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "254ac9be-63ac-443f-8ce4-326af4a190a0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "64066ae4-9096-442e-931b-7b2b7e2ff36a",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2612e2da-28b9-4515-b521-48f8a9ff1644",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.2.1.2 lists the Governance Point's duties, two of which are gates rather than tasks: \"Ensure the contents of each Executive Vote are justified by processes or structures ratified by Sky Governance,\" and \"verify that the delivered code matches the code reviewed and approved on GitHub and that it contains all expected actions from the sheet.\"\n\nThe first establishes that an Executive Vote is an **implementation vehicle, not a decision point**. Every item must trace to a prior ratified decision, which is why the Executive Sheet records \"the provenance of each item\" (A.1.10.2.1.1). Nothing should reach the Spell that governance has not already approved through the appropriate process.\n\nThat single duty is what makes several otherwise-puzzling rules coherent. It explains why voting against a Spell \"that only contains content already approved in the Atlas and does not fail Spell validation\" is a Tier 2 integrity breach (A.1.6.6.1.2, item 6): if provenance has been verified, a no vote blocks an executed decision rather than expressing a policy view. It also explains the estoppel rule's premise (A.1.6.6.2) \u2014 the content of a compliant Spell should already be known to anyone who followed governance.\n\nThe second duty closes the deploy-time gap: reviewed code and delivered code must be the same, and the delivered Spell must contain everything the sheet listed \u2014 catching both substitution and omission.\n\nThe Governance Point is also positioned as a deliberate non-expert check. A.1.10.2.2.1 notes that \"the Technical Point has domain expertise as the crafter of the smart contracts, but the Governance Point also has crucial context and should serve as a cross-check to the extent they can. The Governance Point is expected to ask questions where needed.\" The honesty of \"to the extent they can\" is notable \u2014 the cross-check is acknowledged as partial, and its value is in interrogation rather than in independent technical verification.\n\nContinuity is handled by a designated Governance Backup per Spell, with the roles rotating inside the Core Facilitator on an internal schedule (A.1.10.2.2.1.1).",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:39:18.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.2.1.2 makes provenance a gating duty alongside verifying delivered code matches what was reviewed on GitHub \u2014 Executive Votes implement prior decisions rather than making new ones.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f970f8ae-f5b4-498c-890e-ea5eaeb0e97a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:12.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6009fdeb-7f2d-46d2-a5c5-e0df6ac8d174",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:12.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

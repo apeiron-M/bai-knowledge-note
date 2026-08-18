@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-b76c656f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b76c656f-e30d-42ac-81e5-8fa577b0b8fa",
+      "targetTitle": "An Invocation's location in the Atlas document tree is its s"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Primitive Invocation has exactly two exits: graduate to the Active Instances Directory or be archived as a failure",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "53cccfbe-02a1-4f18-ae90-8051548319b2",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96b91244-190f-4f6a-95d2-18f068045a4b",
+      "name": "sky-primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6e5de750-bd9e-4c8d-9705-c8c275502ab7",
+      "name": "governance-process",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.2.1.1.4 spells out the routing for an in-flight Invocation: the directory holds \"all prospective Instances of the Executor Accord Primitive whose Invocation is currently in progress. Invocations that are completed successfully are moved to [the] Active Instances Directory, whereas failed Invocations are Archived in [the] Hub Data Repository.\"\n\nTwo properties follow. First, **prospective Instances are tracked before they exist as Instances** \u2014 the Atlas records intent, not just outcomes, so an observer can see what is being attempted in real time rather than only what succeeded.\n\nSecond, **there is no silent exit**. A failed Invocation is not removed from the record; it is relocated. Combined with the Suspended Instances subtree, this means the Hub Data Repository accumulates the complete negative history of a Primitive's use.\n\nThat is what makes the Primitive framework auditable in a governance sense rather than merely descriptive: an Agent cannot make an embarrassing attempt disappear by abandoning it, because abandonment has a defined destination in the document tree.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:29:35.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:46.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The In Progress Invocations Directory is a staging area, not a terminus, so every attempt leaves a permanent record in the Hub Data Repository whether or not it ever became an Instance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1687539e-90b6-4e3a-9a5f-00f0020e2339",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:46.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "db0fb495-3951-4ffd-ac34-505ce210c119",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:46.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

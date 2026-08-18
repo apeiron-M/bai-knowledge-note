@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-71879e3c-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "71879e3c-d380-44dd-a080-bf2631a3c4c9",
+      "targetTitle": "Rate limits are a continuously refilling allowance that repa"
+    },
+    {
+      "id": "lnk-1d253750-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "1d253750-ecbe-41dc-99da-18cb1886ef7b",
+      "targetTitle": "Grove's treasury operations are governed by refilling rate l"
+    },
+    {
+      "id": "lnk-174c08fe-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "174c08fe-d73e-40ba-b8bc-a614fd605eda",
+      "targetTitle": "Burning USDS refunds mint capacity rather than consuming a b"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are regenerating capacity defined by a maximum and a per-day slope, not fixed caps",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "cd680dfa-cb1c-4238-9dad-4d577a49a077",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5e312a63-466a-4138-a28b-49502b7e776d",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "cccc0558-7950-4960-a6f4-ea7d1d262b42",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "025ec289-3dbb-4629-ad61-d4047fd00505",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.6.2.6.1.2.2.1.3.4 gives the formula: the contract \"will calculate and return the minimum of (slope * time elapsed since lastUpdated + lastAmount) and maxAmount.\" Pattern's USDS mint limit is configured with `maxAmount` 100,000,000 USDS and `slope` 50,000,000 USDS per day (A.6.1.1.6.2.6.1.2.1.1.3.1.1.1), with the USDS-to-USDC swap limit set the same way.\n\nThis is a leaky-bucket allowance rather than a ceiling. Two independent quantities are bounded at once: the largest single action (capped by current available capacity, itself capped by `maxAmount`) and the sustained rate over time (capped by `slope`). A cap alone would permit an unlimited number of max-size actions in succession; a rate alone would permit an unboundedly large single action after a long idle period. Combining them closes both.\n\nCapacity is also **restored by reversing the action**: burning USDS \"will increase the available Rate Limit for minting USDS by the amount of USDS being burned,\" explicitly \"limited by the `maxAmount` parameter\" (A.6.1.1.6.2.6.1.2.2.1.2.1.2.1.2.1). Round-tripping therefore does not consume the day's allowance, so unwinding a position is never throttled by the size of the position that was opened.\n\nThe control has an off switch: `setUnlimitedRateLimitData` (A.6.1.1.6.2.6.1.2.2.1.3.3) sets `maxAmount` to `type(uint256).max`, and `getCurrentRateLimit` then short-circuits to unlimited. That switch is admin-only \u2014 which, per the role definition, means Sky Governance.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Available headroom accrues as min(slope x elapsed time + lastAmount, maxAmount), so a large action drains capacity that refills over days \u2014 bounding both single-transaction and sustained throughput.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2977174d-80f2-4040-9855-c80599408b00",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:41.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "3603f75a-cb1f-4a63-ae9e-eeac88b4e3d2",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-ed99a5d7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ed99a5d7-4c51-44ec-b946-a1d5c91a8933",
+      "targetTitle": "Undercapitalization is penalized by the minute at annualized"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The entire capital-penalty regime currently runs in shadow mode, replaced by a soft 90% Encumbrance Ratio expectation",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f52e474a-8476-47e3-a90c-4e74d6c558ac",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1d110fed-6a69-4a74-96be-6770766c82df",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "17724b01-cd1e-4dbe-a431-54e4bf0b406a",
+      "name": "transition",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.7.2.1.1.7 suspends the whole schedule of minute-by-minute penalties described immediately above it. While the Risk Framework \"undergoes refinement,\" breaches will be calculated by Core GovOps \"once the infrastructure is in place to do so,\" and the calculation \"serves the purposes of system monitoring, data gathering, and framework calibration. However, throughout this interim phase, such calculated penalties will not be formally assessed against Prime Agents, and consequently, Prime Agents will not be required to make payment.\"\n\nIn its place: \"Prime Agents are expected to maintain a Encumbrance Ratio of less than or equal to 90%.\"\n\nSo the operative constraint today is not the 100% coverage line with escalating fines \u2014 it is a 10% voluntary buffer below full coverage, enforced by expectation and by the exposure-reduction powers that appear throughout the Section. That reframes several other provisions: the 90% figure in the Avalanche deployment condition (A.3.2.2.1.1.1.5.3.1.1) is this threshold, and A.3.2.2.6.2.2's parallel suspension of penalties for framework-change shortfalls belongs to the same transition.\n\nRunning penalties in shadow mode is a defensible engineering choice \u2014 the schedule's calibration is untested, the data feeds it depends on are partly unbuilt, and a mis-parameterized 3,000% APY charge applied to a measurement error would be catastrophic. Calculating without assessing produces exactly the data needed to calibrate.\n\nThe cost is that the framework's most precise-looking machinery is currently inert, alongside the unreachable High/Extreme risk bands (A.3.2.2.1.2.2.1) and the cancelling capital ratio (A.3.2.2.1.1.1.1.1.5.3). A reader assessing how tightly Prime Agents are actually bound today should look at the 90% expectation and at Operational GovOps' discretion to reduce exposure \u2014 not at the penalty tables.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Penalties are calculated for monitoring, data gathering and calibration but 'will not be formally assessed' and need not be paid; instead Agents are expected to stay at or below a 90% ratio.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "907e1b24-fa4c-4f48-a071-b77299daa643",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:18.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cecf1e7a-14d2-477e-9fc7-009a25b18159",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:18.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

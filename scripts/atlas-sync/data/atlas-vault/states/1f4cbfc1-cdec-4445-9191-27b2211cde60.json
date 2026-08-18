@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-3735c6d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3735c6d2-3aed-4a76-b6a1-8f7603d39cc9",
+      "targetTitle": "doc-741f1730"
+    },
+    {
+      "id": "lnk-4b864ed3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4b864ed3-12b4-4632-85fc-30f9c36fe6a2",
+      "targetTitle": "The DC-IAM makes debt ceiling increases permissionless but r"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Debt Floor blocks both minting below the minimum and repaying down to a small nonzero balance",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "b03bb9d3-50d7-42cc-8a6b-75d58901d4a1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6af6e0ce-d80c-443f-8c18-97aa327f9c99",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c428e7bf-281b-4b81-8c8d-c9958b60b032",
+      "name": "risk-parameters",
+      "topicDocumentId": null
+    },
+    {
+      "id": "6adf5fc4-bf87-4d87-a603-1712adf3c640",
+      "name": "liquidations",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.1.2.6 defines the Debt Floor (`dust`) bidirectionally. Minting is blocked if \"the amount of Dai minted would not put the vault's amount of Dai minted above its Debt Floor.\" And \"likewise, if a user attempts to pay back debt such that their debt will equal less than the Debt Floor **and greater than zero**, the transaction will fail.\"\n\nThe second half is the non-obvious one. Most minimums only gate entry; this one gates partial exit too, so a vault's debt is constrained to the set {0} \u222a [dust, \u221e). Users may exit fully but not linger just under the floor.\n\nThe reason is liquidation economics. Auctions cost gas and pay keeper incentives \u2014 a flat `tip` plus a proportional `chip` (A.3.7.1.1.2.5.5, A.3.7.1.1.2.5.6). Because the flat component does not shrink with position size, below some debt level liquidating a vault costs the protocol more than it recovers, and such positions become permanently unliquidatable bad debt. Enforcing the floor on repayment as well as on minting closes the route by which a vault could be walked down into that dead zone.\n\nThe pairing of a flat and a proportional keeper reward is the complement of the same logic: `tip` guarantees a gas-covering floor on the reward for small liquidations, while `chip` scales the reward with the debt being liquidated so large positions attract proportionate keeper effort.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:01.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A vault must sit at zero debt or at or above dust; transactions that would leave it between the two revert, so the protocol never accumulates positions too small to be worth liquidating.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6713457a-2fda-4e75-ac48-7d9ceb10e8c6",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:01.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "71508727-8f01-4c3b-b0db-05e4f4c441d1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:01.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

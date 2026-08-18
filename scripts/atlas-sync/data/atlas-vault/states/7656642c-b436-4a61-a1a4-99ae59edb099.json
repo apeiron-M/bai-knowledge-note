@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Keel's allocation positions are addressed chain-then-protocol-then-asset, and most of them hold rival stablecoins",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8d9781b1-507f-4fa9-bb6f-4b320dc095f6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e137758f-9704-44ad-a1e8-8930c81c49fe",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8aa8af44-be9f-4683-abe9-99a1cf0f5c0d",
+      "name": "allocation",
+      "topicDocumentId": null
+    },
+    {
+      "id": "af309446-6c27-4370-99c4-8c5aedf5fb86",
+      "name": "liquidity-layer",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.2.6.1.1.2.1 organizes Keel's Active Allocation System Instances in a three-level directory: network (Solana), then protocol (Kamino, Drift), then asset. Kamino carries five Instances \u2014 USDS, USDC, USDT, USDG, PYUSD \u2014 and Drift four.\n\nThe asset list is the notable part. Keel's mandate is to expand USDS, yet four of every five allocation Instances hold stablecoins Sky does not issue. Deploying into USDC, USDT, USDG and PYUSD positions is how the Agent \"generates excess returns on assets in Sky's collateral portfolio\": earning yield requires going where the yield is, which on a lending venue means supplying whatever asset the market pays for.\n\nThe triple-keyed addressing is what keeps that manageable. Because risk attaches jointly to a chain, a venue and an asset \u2014 a Kamino USDT position and a Drift USDT position fail for different reasons \u2014 making each combination its own Instance lets any one of them be suspended, re-parameterized or retired without touching the others.\n\nThe cost is proliferation: nine Instances for two venues on one chain, each carrying the full Instance skeleton, and each requiring its own governance action to create.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:42:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Keel Liquidity Layer runs one Allocation System Instance per (Solana, venue, token) triple \u2014 Kamino and Drift across USDS, USDC, USDT, USDG and PYUSD.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "08cbc674-3f6e-46dd-9e80-623ef5a0b791",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:13.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "20e98abb-f6af-4a24-b044-779697a09785",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:13.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

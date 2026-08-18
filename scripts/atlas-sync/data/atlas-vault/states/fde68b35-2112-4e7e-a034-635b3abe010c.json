@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Crafter must verify that master's latest commit is the one that merged the previous Spell",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5f9b2ee9-4548-45ea-8ff2-5e495ecb3505",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5ced60c4-03f3-48fc-9322-b45f76bff428",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd09998c-9334-4770-8130-5aacf3e07739",
+      "name": "supply-chain",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.7.2.4 requires that \"in order to ensure that no malicious maintenance pull requests have been merged, the Crafter must check that the latest commit made to the 'master' (or 'main') branch of the Spell repository is the commit that merged the last Spell to master.\"\n\nThe threat is specific and easy to overlook. Spell review scrutinizes the Spell's own pull request \u2014 the diff. It does not re-examine the base the diff applies to. An attacker who lands an innocuous-looking maintenance commit between cycles gets their change into production without it ever appearing in a reviewed Spell diff.\n\nThe check exploits a strong invariant: the Spell repository is only supposed to move when a Spell merges. Under that invariant, \"anything after the last Spell merge\" is exactly the set of unreviewed changes, and detecting it costs one glance at the log \u2014 no diff reading, no judgment.\n\nThis is also a rare example of the Atlas specifying a control whose value depends on the repository staying quiet between Spells. It makes routine housekeeping commits expensive by design: any legitimate maintenance now has to be reconciled against a check that treats every unexpected commit as potentially hostile.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:25:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:36.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.2.4.7.2.4 turns a git log check into a supply-chain control: any other commit on the branch means an unreviewed maintenance change slipped in between Spell cycles.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4105db78-8f5e-4a29-9259-7f2a39bc4ace",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:36.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "148ac5d4-9337-421b-b9b0-6c5a8125399c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:36.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-d0d585a7-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d0d585a7-4056-49f7-9ee5-010db9d82575",
+      "targetTitle": "doc-05b64df1"
+    },
+    {
+      "id": "lnk-d5361874-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d5361874-fa4f-4a81-9821-82e6a52a2008",
+      "targetTitle": "Integration Boost and Distribution Reward stack on the same "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Integration Boost verifies submitted data against on-chain balances before each payout, unlike the Distribution Reward's quarterly after-the-fact review",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9d74d742-3452-4b13-8a16-abc938fd395b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bcc20826-27a6-41d2-af76-ceb08f085516",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "737468ad-cdcb-40ce-b084-a7f0771d2b8a",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.2.2.4.1.1.2 orders the routine cycle as submit, verify, calculate: \"the data provider submits the net USDS deposit data to Powerhouse. Operational GovOps **verifies this data by checking on-chain balances and confirms that there are no discrepancies**. Operational GovOps then calculates the payout based on the net USDS deposit data and the Sky Savings Rate.\"\n\nThe Distribution Reward's equivalent (A.2.2.9.1.2.4.1.1.2) has Operational GovOps compute eligible balances from the Tracking Methodology and publish the underlying data, with independent checking deferred to Core GovOps' quarterly review (A.2.2.9.1.2.4.1.3) \u2014 after payment has already gone out.\n\nThe difference follows from who produces the numbers. For the Distribution Reward, Operational GovOps derives balances itself from on-chain events, so there is nothing external to validate at payout time. For the Integration Boost, the figures arrive from a **third party** \u2014 the Core Council Risk Advisor today, potentially the partner itself later (A.2.2.9.2.2.1.2.2) \u2014 and a self-reported input feeding a payment needs checking before the payment, not after.\n\nThis is why A.2.2.9.2.2.1.2.1 requires submitted data to be verifiable against on-chain data in the first place: the verifiability requirement exists precisely so that this inline check is cheap enough to run every cycle. Verification effort is placed where the trust gap is, rather than applied uniformly.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:59.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:17.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Each cycle the data provider submits net deposits, Operational GovOps checks them against on-chain balances and confirms no discrepancies, and only then is the payout calculated.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "9c4032c6-a463-4c7b-92eb-0699b46bea09",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:17.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9cc3a615-f5ff-4ec2-8309-57d8963f160b",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:17.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

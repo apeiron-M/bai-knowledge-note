@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-36543d71-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "36543d71-727a-4514-a125-7ff1fd18abb4",
+      "targetTitle": "Deploying capital to a new venue is a constitutional act: in"
+    },
+    {
+      "id": "lnk-218ceecf-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "218ceecf-08d2-422c-a5ce-d6ff61950d67",
+      "targetTitle": "doc-781e2d24"
+    },
+    {
+      "id": "lnk-5db95b10-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5db95b10-9d2d-43b5-a5b0-b4842a59ffc9",
+      "targetTitle": "No Root Edit proposal reaches a token holder vote unless the"
+    },
+    {
+      "id": "lnk-7fe56ba8-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "7fe56ba8-60a5-43ed-abf5-f1b5e23c4612",
+      "targetTitle": "A.6.1.1.6 - Pattern"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Adding a new allocation venue requires the full Root Edit process, making capital deployment a constitutional act",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0d6bf7df-a02d-417d-a533-d45458af4490",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c81c100d-eba6-44f8-95be-5c9bef485374",
+      "name": "pattern",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7d4ed53-96f8-42ba-8a97-d74262becffa",
+      "name": "allocation-system",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e3abd02-055b-4256-ae9e-e36f9b68836b",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.6.2.6.1.2.1.2.1 is one sentence with large consequences: \"The governance process to invoke a new Instance of the Allocation System Primitive follows the Root Edit process.\"\n\nThat means opening a new venue for Pattern's capital is procedurally identical to amending the Pattern Artifact: a holder with at least 1% of circulating supply must propose it, the Operational Facilitator must find it aligned and operationally feasible within seven days, and a three-day Snapshot poll must clear a 10% quorum with 50% in favour.\n\nThe design decision is to treat **which counterparties Pattern lends into as a matter of constitutional scope rather than of operational discretion**. Relayers can move existing capital freely within configured rate limits, but they cannot introduce a new venue; that requires the token holders. It follows that an Agent's risk profile can only be expanded by its owners, while day-to-day management stays with operators.\n\nThe cost is latency and rigidity. A credit opportunity that appears and closes inside ten days cannot be taken at all, which is a real constraint for an Agent whose mandate is supplying liquidity to credit markets. It also front-loads all diligence into a single vote, since once an instance exists the ongoing sizing decision devolves to rate limit configuration.\n\nThe adjacent section (A.6.1.1.6.2.6.1.2.2.1.4) concedes that the actual onboarding and offboarding procedure \"will be specified in a future iteration,\" so the authorizing gate is defined before the operational runbook it gates.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:49:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Invoking a new Instance of the Allocation System Primitive runs through the same proposal, alignment review and token holder vote used to amend the Artifact itself.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6ff729e0-e1d1-40c1-8508-7f50b5ac5eed",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:58.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2fbad7a0-3505-42e7-a720-7f3998d9d48e",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

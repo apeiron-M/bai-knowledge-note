@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Imposing the collateral ratio on every Agent separately makes system-wide compliance automatic",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ebf76516-bdfe-45ba-a9e0-cb8c69f47675",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d408ea09-9ca9-4357-b6b5-65253f865475",
+      "name": "peg-stability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "db0db9ed-59fc-45da-99ac-fbe51d6b85bd",
+      "name": "decentralized-enforcement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.3.1.3 states the reasoning explicitly: each Prime Agent must maintain the required ASC and DAB percentages \"with respect to its portion\" of the Collateral Portfolio, and \"by ensuring that every Prime Agent maintains these levels, Sky as a whole remains compliant with the required thresholds.\"\n\nThe alternative would be an ecosystem-level target with capacity allocated to Agents \u2014 which is exactly how the Ethena exposure limit works (A.3.2.2.1.1.1.2.1.1.2.3), and the contrast shows why the ratio approach is preferred where it is available. A per-Agent ratio needs no central allocator, no queue, no adjudication when Agents grow at different rates, and no enforcement action when the aggregate drifts. It is a local invariant whose conjunction implies the global one.\n\nIt also removes the free-rider problem. Under an aggregate target, an Agent's ASC holdings benefit every other Agent equally, so each has an incentive to hold less and rely on the others. Per-Agent ratios make the obligation non-transferable by default \u2014 and where transfer is desirable, A.3.3.1.6 provides an explicit rental market rather than letting it happen by omission.\n\nThe denominator is defined carefully to prevent gaming. A.3.3.1.3.1 defines the Agent Collateral Portfolio as capital deployed through the Allocation System Primitive \"excluding any portion of that capital held in USDS.\" Holding USDS therefore shrinks the base rather than counting toward it, so an Agent cannot satisfy a USDS-buying obligation by holding the thing it would need to buy.\n\nThe cost of the local-invariant approach is rigidity: 5% is right for the ecosystem only if it is right for every Agent, regardless of differences in strategy, chain or liquidity access \u2014 which is precisely why A.3.3.2.2.3 has to carve out an exemption for Keel on Solana rather than rebalance the requirement.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:05.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:17:47.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Rather than monitoring an ecosystem aggregate, the Atlas requires each Prime Agent to hold 5% ASC against its own portfolio, so the sum is compliant by construction with no central allocation.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7221658b-d5d8-4da5-965f-f28f60431cf8",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:17:47.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "df245217-16c9-4d75-b86e-263deb098305",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:17:47.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

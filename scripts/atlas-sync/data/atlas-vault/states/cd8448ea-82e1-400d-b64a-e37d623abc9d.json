@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-eef513b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "eef513b8-9cef-45c8-be5f-48cac30ffb63",
+      "targetTitle": "Spark Savings v2 instances bound risk with a supply cap and "
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Rate limits are keyed per action-and-asset pair, so caps bound each venue-asset conduit rather than aggregate exposure",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8bcb5135-f8dd-465e-813e-499dc83183fa",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b0648001-9734-4d3a-82f2-78edae61c164",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2fa515d1-8433-4e70-bf14-a4402835f559",
+      "name": "rate-limits",
+      "topicDocumentId": null
+    },
+    {
+      "id": "136b19a6-0104-485c-a8da-1699d484079a",
+      "name": "risk-management",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "The rate-limit key is constructed, not global: `RateLimitHelpers.makeAssetKey(LIMIT_AAVE_DEPOSIT, aToken)` (A.6.1.1.1.2.6.1.3.1.2.1.3.1.3) and `RateLimitHelpers.makeAssetKey(LIMIT_AAVE_WITHDRAW, aToken)` (.3.2.3). The limit identity is therefore the pair (action, asset), and the instance documents confirm this by publishing separate inflow and outflow `RateLimitID`s for the same conduit (.1.6.2.3.1 and .1.6.2.3.2 hold two different hashes).\n\nGranularity per conduit is what makes the limits useful \u2014 an incident in one venue-asset pairing should not consume the capacity of an unrelated one, and each limit can be sized against that venue's specific liquidity and risk profile.\n\nThe consequence is that no documented number in this chunk bounds total deployment. SparkLend alone shows inflow ceilings of 100,000,000 USDC, 100,000,000 DAI, 500,000,000 USDT, 100,000,000 pyUSD and 50,000 ETH, each with its own independently refilling slope. Nothing in these documents prevents them being drawn concurrently, so the effective aggregate inflow capacity is the sum of the parts, refreshed in parallel.\n\nAn aggregate constraint may well exist elsewhere in the Spark Artifact or in the Allocation System Primitive, but a reader who reasons about total risk from instance-level `maxAmount` values will systematically understate it. The per-conduit design optimises for containment of a single venue failure, not for bounding total balance-sheet deployment.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:41.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "RateLimitHelpers.makeAssetKey(LIMIT_AAVE_DEPOSIT, aToken) derives a distinct limit per aToken, meaning simultaneous draws across instances can sum well above any single documented maxAmount.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5df9bf63-19a2-4870-8e02-be3d5734372a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:38.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9ae6689a-9bd4-4c18-a73b-77e647936613",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:41.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

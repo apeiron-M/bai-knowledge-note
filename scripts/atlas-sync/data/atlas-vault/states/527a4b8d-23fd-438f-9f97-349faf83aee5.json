@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-c655c3e0-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c655c3e0-a69c-4987-97f8-da002ff1a960",
+      "targetTitle": "Grove imposes key-hygiene requirements on Delegates and make"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove blocks delegation to a holder's own second wallet unless that wallet is a registered Active Delegate",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "93822fbe-c334-426c-97a1-0fdb7617ee0a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3cc42992-50a1-4f47-b78c-c101b7475c6b",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d8595d6a-88f8-4dcb-a82b-2fd0861cc11a",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d1efee89-73c9-463b-bd91-24b224b4452c",
+      "name": "delegation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.3.1.4.2.4 states: \"GROVE holders may only assign their voting power to Active Delegates. This also means **Delegators cannot delegate to another wallet they themselves control**, unless it is an Active Delegate wallet.\"\n\nThe second sentence spells out a consequence the first would otherwise leave implicit, and it is the substantive one. Combined with A.6.1.1.2.3.1.4.1 \u2014 only Active Delegates can cast votes, and Delegate status is recorded in a public List Of Delegates \u2014 the rule means every unit of *delegated* voting power terminates at a wallet that has passed Grove Foundation onboarding and appears in the registry.\n\nWhat it forecloses is quiet aggregation. In an open delegation system, a party can concentrate voting power across many wallets into one they control without ever appearing as a recognized actor, and the concentration is invisible because the receiving wallet looks like any other holder. Here, concentration by delegation requires becoming a Delegate, which means identity verification, conflict disclosure, sanctions screening, and a public registry entry.\n\nSo the rule turns aggregated voting power into a **disclosed status** rather than an emergent property of the token graph. The registry becomes a reliable map of where delegated influence sits.\n\nThe cost is a real restriction on ordinary holders: someone who simply wants to vote from a hot wallet while holding in cold storage cannot use delegation to do it. Grove accepts that friction to keep the registry meaningful. And the protection is bounded \u2014 nothing here prevents a party from splitting holdings across wallets and voting each directly. What is blocked is concentration *through the delegation mechanism*, which is the part the framework can see and therefore the part it governs.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "GROVE holders may only delegate to Active Delegates, so voting power either stays in the holder's own wallet or moves to a Foundation-vetted actor",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "f6f4d542-e692-4c1d-8368-909d4b880b8e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c0528d55-8728-4dba-a24a-56b6f2973192",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

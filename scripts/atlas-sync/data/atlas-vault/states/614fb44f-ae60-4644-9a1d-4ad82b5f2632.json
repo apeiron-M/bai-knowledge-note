@@ -1,0 +1,113 @@
+{
+  "links": [
+    {
+      "id": "lnk-801b4cfb-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "801b4cfb-d7ed-4568-926a-ac04718c3475",
+      "targetTitle": "SparkLend prices Dai administratively as a spread over the S"
+    },
+    {
+      "id": "lnk-9639e9c2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9639e9c2-236d-4563-b454-155147ef9705",
+      "targetTitle": "Spark's minimum lending rate is the greater of the Sky Savin"
+    },
+    {
+      "id": "lnk-9ca71c26-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9ca71c26-fbf3-47a9-8832-2779f3d61ed7",
+      "targetTitle": "SparkLend's kinked interest rate curve is a self-correcting "
+    },
+    {
+      "id": "lnk-cc7bc213-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cc7bc213-1475-4f21-a6c2-a347d26dd3ae",
+      "targetTitle": "doc-c4b24c64"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SparkLend sources liquidity directly from Sky rather than from depositors, so it can undercut market borrow rates",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "339a0ff1-6c82-4a5d-a5cc-bc9933777ed6",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "beb2aff2-bf49-44ca-b8ab-e71f9e5266e8",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9d596834-baae-4e78-8168-42e85c343e51",
+      "name": "lending-markets",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7c5a5216-d8b1-4227-80ab-a2f7ad31d045",
+      "name": "usds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.1.1 describes SparkLend as \"a lending market focused on USDS borrowing, sourcing liquidity directly from Sky to provide the best borrow rates for USDS.\"\n\nThe mechanism is the interesting part. A conventional DeFi lending market must attract supply from depositors, so its borrow rate is bounded below by whatever yield depositors demand; utilization spikes force rates up. SparkLend inverts this by taking its USDS supply from the issuer itself. The rate becomes a **policy choice** by Sky rather than the output of a deposit auction.\n\nThat is what makes \"the best borrow rates for USDS\" a structural claim and not marketing: no competitor sourcing from third-party depositors can systematically match a rate set by the entity that mints the asset.\n\nThe trade-off is where the risk moves. Because Sky is the supplier, borrower defaults and market shocks are absorbed by the ecosystem's balance sheet rather than by unrelated depositors. Subsidized borrow rates are therefore an expenditure of Sky's risk capacity, which is why lending exposure has to be governed by explicit parameters elsewhere in the Artifact rather than left to the market.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:54.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:23:58.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A lending market whose supply side is the issuer itself is not rate-constrained by competing for deposits \u2014 the structural reason Spark can claim the best USDS borrow rates.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b7986767-e416-493a-89c4-6f78cc74598c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:23:58.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9f9c9dfc-df5b-4e71-b56e-caf9696f6af8",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:23:58.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

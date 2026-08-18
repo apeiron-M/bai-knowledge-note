@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-d69f028f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d69f028f-9586-4513-bf5d-d25b9bc3683e",
+      "targetTitle": "Omni Documents are the residual category that keeps non-Prim"
+    },
+    {
+      "id": "lnk-b576bce2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b576bce2-795e-4898-9772-ccb6a0593360",
+      "targetTitle": "Agent Artifacts are assembled from configured Primitive Inst"
+    },
+    {
+      "id": "lnk-5d3e60fa-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5d3e60fa-a32e-4464-ae54-52cde82d8cdb",
+      "targetTitle": "A.6.1.1.3 - Keel"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Omni Documents are the residual category proving Sky's Primitive decomposition is not exhaustive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "fb9330f8-67fc-43c7-ba50-049a8ecf1f6b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69289af9-06db-47cb-a2be-2fea90b0690a",
+      "name": "keel",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d795fe15-4319-4df0-abcf-d6fdc02351aa",
+      "name": "primitives",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7ee1d665-7642-46fc-8069-dc57ba87a371",
+      "name": "agent-artifacts",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.3.3 defines Omni Documents as holding \"Keel's strategic intent and operational processes relating to infrastructure inherited from Sky Core, activities unrelated to Sky Primitives, or activities spanning multiple Sky Primitives.\"\n\nThe rest of Keel's Operational Artifact is organised strictly by Primitive: each Primitive gets a Hub Document, Instance directories, and lifecycle branches. Omni Documents exist because that organising principle does not cover everything an Agent actually does.\n\nThe three named residuals are each interesting for a different reason. **Inherited Sky Core infrastructure** is legacy that predates the Primitive model and cannot be retrofitted into it. **Activity unrelated to any Primitive** concedes that Agents do real work the Primitive catalogue has no slot for. **Activity spanning multiple Primitives** is the sharpest case: it admits the decomposition cuts across some genuine operations, so cross-Primitive work has nowhere to live within the per-Primitive tree.\n\nNaming the residual explicitly is better engineering than pretending it away \u2014 it means cross-cutting and legacy activity is documented in a designated place rather than smuggled into whichever Primitive branch looks closest. But it also marks the boundary of the Primitive framework's coverage, and anything in Omni Documents inherits none of the lifecycle, archival or Invocation machinery that Primitive branches provide.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:58.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:51.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Keel routes infrastructure inherited from Sky Core, activity unrelated to any Primitive, and activity spanning several Primitives into one non-Primitive branch of its Artifact.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "86ec3183-1f3f-4551-82f3-a7c65986d2c5",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:51.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "05d6546e-b1f7-4024-a707-f5cc90214565",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:51.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

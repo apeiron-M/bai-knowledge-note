@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f1a25b86-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f1a25b86-7b9b-4774-af47-401fb5829d20",
+      "targetTitle": "doc-9d57257d"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Original Context Data attaches authorial intent to every document to mitigate cultural drift over time",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "49af7cdb-527e-42d0-9088-e5980d1001dc",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "589a2a1d-2284-4466-bd72-e87969177b01",
+      "name": "atlas-documents",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1e1cc927-cb86-475e-bb04-6e11751bf669",
+      "name": "interpretation",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.2.2.2.8 defines the Original Context Data Type: a Supporting Document at the .0.1 position of its Target, containing \"all relevant information to understand the intention and reasoning behind the wording and elements of the main Document.\" Its stated purpose is to \"help anchor the fundamental purpose and meaning of the target document to its original context, and should help mitigate cultural drift over time.\"\n\nThis is a direct structural answer to a problem that spirit-of-the-rule interpretation otherwise has no defence against. If interpreters are told to read for purpose, and purpose is reconstructed from the current reader's assumptions, then the purpose of a rule silently migrates with the culture of whoever is reading it. Storing the original intent as a first-class, addressable document means a later interpreter must argue against a written record rather than against nothing.\n\nThe mutability rule is the subtle part. Original Context Data \"should be in a finished form alongside the creation or modification of its Target Document,\" but may be revised when new evidence better describes the original intention \u2014 \"in a way that doesn't contradict its earlier language.\" So it is neither frozen nor freely editable: it can be *deepened* but not *reversed*. That asymmetry is what keeps it useful as an anchor; a fully editable intent record would drift in lockstep with the interpretation it is supposed to constrain.\n\nIt also doubles as an ingestion mechanism \u2014 it \"can contain unstructured data used for genesis data integration of early Atlas Documents\" \u2014 which is how pre-Atlas context gets into a rigidly typed tree.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:19:22.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:32.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.2.2.2.8 stores the reasoning behind a document's wording as a sibling document, and permits revision only in ways that do not contradict its own earlier language.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5a1a6f36-3504-4183-a78d-8c1eb8531ba2",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:32.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "c6b92938-2c56-4de6-b431-fcb5f86fe874",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:32.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

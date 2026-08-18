@@ -1,0 +1,18 @@
+{
+  "title": "A 1-of-2 multisig fails the majority rule that governs changes to it",
+  "status": "OPEN",
+  "content": "**Side A \u2014 the live configuration.** Several Prime Relayer Multisigs are documented at a **1-of-2** signing requirement, holding full `RELAYER_ROLE`.\n\n**Side B \u2014 the modification rule.** The clause permitting changes to those multisigs allows them only where \"at least a majority of signers are required to execute transactions.\" A majority of two is two, so a 1-of-2 configuration does not satisfy the constraint that governs its own modification.\n\nThe practical effect is that a multisig presented as a two-party control is operationally a **single key** \u2014 either signer acts alone. The majority rule appears to be exactly the safeguard intended to prevent that, so the current state is either a grandfathered exception or an oversight.\n\nThe same shape recurs elsewhere: a 2-of-5 Core Operator multisig against a rule requiring two-thirds, and freezer sets where one organization holds a majority of seats against a lower threshold.\n\n**To resolve:** confirm whether existing configurations were intended to be exempt from the majority constraint, or whether they should be raised to satisfy it.",
+  "observedAt": "2026-08-17T23:04:36.000Z",
+  "observedBy": "atlas-extract",
+  "resolution": null,
+  "resolvedAt": null,
+  "description": "Prime Relayer Multisigs are recorded at a 1/2 signing threshold while the clause permitting signer changes requires that at least a majority of signers be needed to execute \u2014 and a majority of two is ",
+  "involvedRefs": [
+    "32f7ac71-ed70-4f69-868f-7996b6ffa757",
+    "a9c72742-4ac0-43de-9524-4c6cbee12485",
+    "b1eb75a7-a51f-436e-834b-6c79637bc7ba",
+    "ee3e5040-dcc5-4a7f-945e-154bcf88f110",
+    "8a8d152e-51c0-45a5-97c5-d8bee00566de",
+    "ad6015e3-7cb3-43a2-90ec-8c2f63693297"
+  ]
+}

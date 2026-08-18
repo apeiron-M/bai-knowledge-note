@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-ee0fb5b3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ee0fb5b3-6584-405a-9fa7-55e1f459d935",
+      "targetTitle": "A single marking event makes a USDS balance reward-eligible "
+    },
+    {
+      "id": "lnk-621be458-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "621be458-3ae9-4498-b319-bbad2691807c",
+      "targetTitle": "doc-0f385757"
+    },
+    {
+      "id": "lnk-86f9752f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "86f9752f-8b80-4d10-92bb-bb140fd825c8",
+      "targetTitle": "Reward Codes make staking activity attributable to a specifi"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "When a balance is marked by several Reward Codes, the most recent marking event takes the whole attribution",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "569b5b57-af05-4157-8586-8dbf2e3a416e",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "90ab966b-2313-4566-ad1e-c14edd30e9d9",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "71d3043f-63e4-4c75-8a8e-b5c0c5225167",
+      "name": "attribution",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.1.2.1.1.2.1 describes the Ethereum Mainnet Tracking Methodology \u2014 the Reward Code passed as a parameter when depositing USDS into the Sky Savings Rate or Token Rewards contracts, combined with withdrawal data and processed by Operational GovOps into net deposits \u2014 and then resolves the conflict case: \"Where a balance has been marked with more than one Reward Code, the balance is attributed to the Reward Code specified in the **most recent marking event**.\"\n\nThis is last-touch attribution, and it has strong competitive consequences. Attribution is winner-take-all rather than shared, so there is no partial credit for the Integrator that originally acquired a deposit. And because the ten-year eligibility window (A.2.2.9.1.2.1.1.2.5) attaches to the marking event, a later marking transfers a claim that could have run for years.\n\nThe result is a contestable market in existing balances. An Integrator can grow revenue either by attracting new USDS or by inducing existing holders to re-transact through its own frontend \u2014 the second being cheaper. That keeps Integrators competing for users continuously rather than collecting rent on a one-time acquisition, but it also spends real resources moving balances that were already in the system.\n\nThe rule's virtue is that it is unambiguous and computable from on-chain data, which matters far more than fairness for a mechanism Operational GovOps must settle monthly across many Agents. Proportional or first-touch attribution would require history reconstruction and invite disputes; last-touch needs only the latest event.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:25.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:27.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Last-touch attribution makes reward claims winner-take-all and displaceable: a competing Integrator can capture a rival's ten-year claim by triggering a fresh marking event.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "405443d9-4c34-4a2d-a4ed-4ab2401754c0",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:27.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2bb99a1a-24cc-48eb-b573-88e9f4535846",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:27.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

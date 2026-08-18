@@ -1,0 +1,95 @@
+{
+  "links": [
+    {
+      "id": "lnk-8288f2ec-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8288f2ec-16d4-4c82-bb7e-88e78ceaf550",
+      "targetTitle": "Changing Freezer Multisig signers requires an Atlas Edit Pro"
+    },
+    {
+      "id": "lnk-5abd4881-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "5abd4881-75c0-448b-a9f0-fa8d65c703c0",
+      "targetTitle": "A.6.1.1.2 - Grove"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Unexplained changes to the Freezer Multisig signers must be presumed malicious and answered with an expedited Executive Vote",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "67ba827d-cf09-4d10-b8ee-334dd194c0ac",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2f8cae94-3830-4391-96f6-689525267ff7",
+      "name": "grove",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fdf2e000-315e-4705-9116-f3b6f49cd939",
+      "name": "access-control",
+      "topicDocumentId": null
+    },
+    {
+      "id": "8bbc302a-dacf-4f9f-bf4c-e34e987486f7",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.2.2.6.1.2.1.2.2.4.5 places the Freezer Multisig's membership under Sky-level governance rather than Grove's: \"Modification of the signers of the Freezer Multisig must be approved through an **Atlas Edit Proposal**.\"\n\nTwo exceptions are allowed, and both are shaped so they cannot be used to seize the multisig: a signer self-reporting \"a loss of access to their private key,\" or a signer asking to be removed. In both cases the signer must announce it \"in the form of a public Sky Forum post.\" The exceptions therefore cover only **voluntary, self-announced departures** \u2014 a third party can never invoke them on someone else's behalf, and the announcement creates a public record before the change.\n\nThe enforcement clause is what makes this more than a rule: \"Any changes to the Multisig signers that do not fall within the two exceptions listed above, or that have not been ratified by Sky Governance, **should be questioned immediately and treated as malicious**. Where malicious activity is suspected, the Core Facilitator must prepare an expedited Executive Vote so that Sky Governance can vote on removing external security access from the Multisig.\"\n\nThis inverts the usual burden. An unexplained signer change is not an anomaly to investigate before concluding anything \u2014 it is **presumed hostile by default**, with a named party (the Core Facilitator) obliged to prepare a specific remedy (an expedited Executive Vote) without waiting for proof.\n\nThe design logic is that a multisig takeover is fast and irreversible while investigation is slow. Setting the default to hostile makes the slow process run in parallel with the fast attack rather than after it. The cost is a standing risk of overreaction to a merely undocumented change \u2014 accepted here because the asset being protected is the ability to stop Grove.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:44:06.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:31.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Signer changes require an Atlas Edit Proposal except for self-reported key loss or resignation announced publicly; anything else triggers removal of the multisig's security access by Sky Governance.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "cc38bb61-1d1f-4a4c-851b-d9071bb1757f",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "7b06a21a-d771-4c03-b5bb-de39701860ef",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:31.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Each Executive Sheet item carries three independent confirmation fields that all start as Unconfirmed",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "efabbb0a-b8be-42c1-acbf-0ad6a9babd0a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bed5ae67-0c76-4566-8e58-d3b97804f532",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d3d251d3-09c3-4080-be64-f7d4b45a96fc",
+      "name": "provenance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.2.3.1 requires the Governance Point, when listing preliminary items, to \"complete information for the Input Action(s), Derived Action(s), and Type, and populate the 'Liaison Confirm,' 'Technical Confirm,' and 'Governance Confirm' fields as **Unconfirmed**.\" Items needing further discussion are marked \"TBD\" or \"TBC\".\n\nThree things follow from that small provision. The confirmations are **orthogonal**: content correctness (the Liaison who requested the item), technical soundness (the Technical Point), and governance authority (the Governance Point) are separate questions that no single party can answer alone. They are **per-item**, so a Spell is never confirmed in bulk \u2014 approval is granular. And they are **explicitly initialized to the negative**, which is the difference between an unfilled cell that might mean anything and a recorded state that means \"not yet cleared.\"\n\nDefault-deny is what makes the sheet auditable by absence. At any moment the outstanding work is a filter query, not a reconstruction from Slack threads, and an item that slipped through unconfirmed is visible rather than merely undocumented.\n\nThe explicit TBD/TBC markers serve the same end for values: a placeholder that announces itself cannot be mistaken for a decided number, which is exactly the failure mode that turns a provisional rate into an executed one.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:21:13.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:14:37.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Liaison, Technical and Governance confirmations are tracked per row as explicit state, so an item's readiness is a default-deny data field rather than an inference from discussion.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "277cca4a-47bd-4e26-9c94-c50871b6e07a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:14:37.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "443d46e4-15e4-46f6-b014-2c3d12381a77",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:14:37.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

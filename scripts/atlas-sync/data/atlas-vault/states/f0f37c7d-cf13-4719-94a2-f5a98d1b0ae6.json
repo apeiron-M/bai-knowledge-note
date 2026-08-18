@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky sets its own retained interest margin to zero, so the Base Rate passes through to savers minus only the distribution fee",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "bf6c4c67-dfb6-4411-b751-bc96c55c4eed",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fd1d071a-a72e-4c3b-84a9-be50857d8e40",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "990d9b39-c3d4-40e5-9709-c99a8678ec36",
+      "name": "revenue-model",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.1.2.6 defines the Sky Spread as \"a margin Sky retains for facilitating the ecosystem's financing\" which, \"together with the Distribution Reward Fee, ... constitutes the difference between the Base Rate and the Sky Savings Rate.\" It then sets it: \"The Sky Spread is 0%.\"\n\nThe value is a parameter, but its being zero has structural consequences worth recording. It means the entire wedge between what Sky earns on collateral (the Base Rate) and what savers receive is the Distribution Reward Fee \u2014 a payment to distributors, not to Sky. Sky takes no cut of the savings spread at all.\n\nTwo things follow. First, the Agent Rate equals the Base Rate exactly (A.3.1.2.3.1: Agent Rate = Base Rate \u2212 Sky Spread), which is why the Agent Credit Line Borrow Rate at the Base Rate would be perfectly self-financing if borrowed funds could earn the Agent Rate \u2014 and why the ring-fencing rule in A.3.1.2.5.3 is necessary rather than merely tidy. Second, Sky's revenue must come from somewhere other than saver spread: surplus from collateral performance, fees elsewhere in the system, and the retained differences described in A.3.1.2.3.5.\n\nBecause the Sky Spread is a named parameter rather than a hardcoded zero, it is a dormant lever: turning it positive would silently reduce SSR and Agent Rate together across the whole ladder without touching the Base Rate.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:30.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:10.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Sky Spread is defined as Sky's margin for facilitating ecosystem financing and is currently 0%, meaning Sky monetizes the balance sheet elsewhere rather than by taxing the savings rate.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "834abd7e-62c2-46fa-94e5-ff826a1ec64a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:10.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8f0b268e-3dc3-428d-a636-f738e87448c3",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:10.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

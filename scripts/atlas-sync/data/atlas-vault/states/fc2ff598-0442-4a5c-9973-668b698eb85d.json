@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Prime Agent may be its own Integrator and earn the Distribution Reward on its own frontend",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "5e096682-3271-4325-a126-1ecfe7f8bdb3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b84c1e8e-0240-430c-aa43-32774e19a1a8",
+      "name": "distribution-reward",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fc614513-f955-4975-ae74-b66795c47e9a",
+      "name": "conflict-of-interest",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.9.1.2.3.1.2 lists three opportunity types for invoking the Distribution Reward Primitive: rewarding an existing Integrator, onboarding a new one, and \u2014 stated explicitly \u2014 \"The Prime Agent may also be (or choose to be) an Integrator itself and deploy a Reward Code on its frontend to earn the Distribution Reward.\"\n\nSelf-integration is not treated as an edge case or a conflict to be managed. The same requirements apply: the Prime must apply to the Integrator Program and be approved by Operational GovOps, which issues it a Reward Code, and it must develop a plan to track USDS utilization attributable to it.\n\nThe economics are worth stating plainly. Under A.2.2.4.2 all Integrator rewards are paid to the managing Prime Agent, with sharing left to bilateral negotiation and no obligation to pass anything on. When the Prime *is* the Integrator, there is no counterparty and no negotiation \u2014 the Prime retains the full 0.2% on balances it originates through its own frontend.\n\nThat makes self-integration the most profitable configuration available under this Primitive, which is coherent if the goal is USDS adoption regardless of who delivers it: a Prime with its own distribution channel should be paid the same as one who recruits a partner. The check that remains is the Integrator Requirements themselves \u2014 alignment judged by Operational GovOps (A.2.2.4.1.1.1) and legal compliance (A.2.2.4.1.1.2) \u2014 applied by a party that is not the Prime, which is the only structural separation in the arrangement.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:55.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas explicitly contemplates self-integration, subject only to the same Integrator application and Reward Code issuance \u2014 and since rewards are paid to the Prime, none is shared out.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "6a136f65-7138-4648-8703-89d1088fbbb8",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5f87dcf4-7c5a-4347-848c-fbd64377a367",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:55.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

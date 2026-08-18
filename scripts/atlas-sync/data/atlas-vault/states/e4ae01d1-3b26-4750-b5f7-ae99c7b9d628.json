@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-1813ac2c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "1813ac2c-7f52-4179-aa40-2b44d435b739",
+      "targetTitle": "A.6.1.1.7 - Osero"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky Governance keeps a unilateral override to re-enable OSERO emissions when Risk Capital rules are breached",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "4a0fbc7c-1049-44a5-a707-32f8d3e92845",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "15317daa-ba96-488f-8f24-e62d967640b1",
+      "name": "osero",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f62797b5-11cc-490c-a1f5-f94b7412c178",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.6.1.1.7.2.1.4.2.1.1.6 caps OSERO supply permanently and denies Osero Governance any power to reverse it \u2014 then reserves one exception: \"Sky Governance retains the ability to revert where Osero is in violation of Risk Capital requirements and emissions are required by the Risk Framework.\" It cross-references A.3.2 - Risk Capital.\n\nThis is an asymmetric authority-to-modify, and the asymmetry is the point. The party that would benefit from dilution (Osero, needing capital) is the party forbidden from causing it. The party that would be harmed by Osero's undercapitalization (Sky, holding Osero-originated collateral) is the party that can force it.\n\nThe override is also narrowly gated rather than general: it activates only on a Risk Capital violation *and* only where the Risk Framework requires emissions as the remedy. Sky cannot dilute OSERO holders because it wants to, only because the risk rules leave no alternative.\n\nThere is a real tension embedded here for OSERO holders. \"Permanently disabled\" is true only conditionally \u2014 the supply guarantee is strongest exactly when Osero is healthy and evaporates precisely when it is not. A holder buying the cap is therefore holding a claim whose dilution risk is correlated with the Agent's distress, which is when they can least afford it.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:35:55.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:10:03.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The sole exception to Osero's permanent supply lock: if the Risk Framework requires emissions to cure a Risk Capital violation, the parent ecosystem can dilute over the Agent's objection.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "1ee02aca-8630-4239-acab-539ea422921a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:10:02.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a71ed162-1215-47d0-b549-977dde1d24ab",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:10:03.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

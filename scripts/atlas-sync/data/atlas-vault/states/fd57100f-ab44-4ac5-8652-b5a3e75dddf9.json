@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-ac8dceb2-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "ac8dceb2-6f60-495e-8dd9-14b5ce421cad",
+      "targetTitle": "A.6.1.1.4 - Skybase"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Integration Boost is computed from per-block USDS balances in the partner venue against the Sky Savings Rate",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "922cf560-0bd2-4ac9-9f08-cb950c079aa1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "fb160001-e640-490e-9e74-347fcc0c921b",
+      "name": "skybase",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3375c2b1-6f64-41fe-a226-0cdef2b983d4",
+      "name": "integration-boost",
+      "topicDocumentId": null
+    },
+    {
+      "id": "55c78730-5150-436f-b95a-4fef96f6b38e",
+      "name": "stablecoin",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Each Integration Boost Instance carries a \"Savings Rate Adjustment Strategy\" parameter with the same construction (A.6.1.1.4.2.5.2.2.1.1.7 for Euler, .2.1.7 for Curve, .3.1.7 for Morpho): \"The Integration Boost is calculated based on **per block values for USDS in [the venue] and the Sky Savings Rate**.\"\n\nTwo design choices are packed into that sentence. Measurement is **per block**, so the boost tracks the integral of USDS held in the venue over time rather than a snapshot \u2014 a partner cannot earn by staging a large balance on a measurement date, and cannot lose the whole period's accrual to a momentary outflow.\n\nAnd the benchmark is the **Sky Savings Rate**, the return USDS holders get for simply saving in Sky. Naming the SSR in the formula makes the boost a *spread over the alternative*: the boost's job is to make holding USDS inside Euler, Curve or Morpho competitive with holding it in Sky's own savings product. The primitive is titled a \"Savings Rate Adjustment Strategy\" precisely because that is what it is.\n\nThe consequences are real. The cost of an integration is not fixed \u2014 it scales with the partner's success, so a wildly successful integration is proportionally expensive. And because the boost is indexed to the SSR, a change in Sky's own savings rate mechanically changes what Skybase pays every integration partner, coupling this Agent's spending to a Stability Scope parameter it does not control.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:48:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:13.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Boost accrues continuously from how much USDS sits in the integration, benchmarked to the SSR \u2014 making it a rate spread over the base savings rate rather than a flat integration fee.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "2c6de55c-058b-44c1-a8ea-6e8da9bba7c2",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:13.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ea034bd4-ce4a-4f57-b510-0bebda02f0e8",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:13.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

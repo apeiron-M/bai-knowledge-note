@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-9bae07e4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9bae07e4-7618-40c4-bb49-53813675eb16",
+      "targetTitle": "Asset Liability Management defends the peg in both direction"
+    },
+    {
+      "id": "lnk-c2522ca4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c2522ca4-e6a1-4f95-99a9-18fc876a48be",
+      "targetTitle": "Collateral qualifies as peg-stabilizing by the price it comm"
+    },
+    {
+      "id": "lnk-bb43f2f3-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bb43f2f3-efc2-41e2-92cb-78db1edf0d2f",
+      "targetTitle": "The Protocol Scope owns protocol engineering but is bounded "
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Permissionless availability of USDS is a hard constraint, while value generation is only the optimization target over it",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "34eac644-3f6f-4b32-8ea3-42275db86954",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "5bc01ecf-7fda-46ff-affa-ce89a4ff50c9",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf2f192e-c55c-42f8-b7f2-d7fc3cc8ef9a",
+      "name": "usds",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3 opens the Stability Scope with two sentences that are easy to read as one goal but function as a constraint plus an objective. The constraint: \"The USDS Stablecoin **must be** a permissionless and useful currency available to anyone.\" The objective: \"Its stability and risk **must be managed** to generate as much value for Sky and public good as possible.\"\n\nThe ordering matters. Permissionlessness is stated as a property of the product, not as one input to a value-maximization problem \u2014 so a risk-management choice that increased Sky's revenue by gating access would fail the first sentence regardless of how much value it generated. Value maximization operates on the *stability and risk* dimension, not on the access dimension.\n\nThe second sentence also pairs \"value for Sky\" with \"public good\" as a joint target rather than a tradeoff, which is what allows later provisions (a zero retained spread, subsidized rates for ecosystem participants) to be justified without being framed as concessions.\n\nA.3.1.0.3.4 supplies the operative definition of the stability being managed: keeping USDS's value \"within a narrow range,\" because \"USDS should be worth $1 USD to fulfill its promise of being a Stablecoin.\" Stability is thus a peg commitment, not a volatility-minimization preference.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:18:10.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:24:43.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Stability Scope's mandate is asymmetric: USDS must be permissionless and useful to anyone, and only within that constraint is stability/risk managed to maximize value for Sky and public good.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "395610d5-c2fa-459b-92cf-3ba5d547ca19",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:24:43.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "38d6fb01-ab3b-4c88-85b4-81b9c11d36c1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:24:43.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

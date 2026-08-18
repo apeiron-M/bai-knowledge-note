@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-ce489442-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ce489442-e388-4522-b71d-df27162d0d3a",
+      "targetTitle": "Sky deploys new modules on-chain seven to eight days before "
+    },
+    {
+      "id": "lnk-e5a02153-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e5a02153-ac11-402b-88ff-73961e274570",
+      "targetTitle": "A SkyLink bridge only becomes usable after third-party audit"
+    },
+    {
+      "id": "lnk-ced39c1b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ced39c1b-0db4-4daf-9f19-856bc487b3c1",
+      "targetTitle": "Chainlog values must be retrieved from multiple independent "
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Chainlog is a single on-chain registry of contract addresses whose updates ride along as housekeeping",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "f867e891-1678-46dd-b2e1-009b44982f41",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e6f94e5d-9d5f-4764-9416-04cb73253178",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b1cc5b36-d6a8-4656-ab99-7b74b02a0fe3",
+      "name": "protocol",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.1.2 defines the Chainlog as \"an on-chain, governance-managed registry that records the official addresses of Sky's core smart contracts,\" where \"each contract entry... is identified by a unique key ('Chainlog key'), which is used to reference the contract in documentation, governance actions, and integrations. It serves as the single source of truth for contract addresses in the protocol.\"\n\nThe indirection layer is the point. Referring to contracts by stable key rather than by raw address means documentation, Spells, and third-party integrations do not need updating when a contract is replaced \u2014 and, more importantly, a reader of a governance proposal can tell *which* contract is meant without verifying a hex string by eye. Address confusion is a classic attack surface in on-chain governance, and a keyed registry removes most of it.\n\nBeing on-chain and governance-managed matters equally. An off-chain registry could be edited without a governance action; an on-chain one changes only through the Executive Process, so the mapping from key to address carries the same authority as any other protocol change.\n\nThe procedural detail is the interesting trade-off: \"Updates to the Chainlog are defined as housekeeping items... and can be included directly in an Executive Vote.\" Registry maintenance therefore does not require its own proposal cycle \u2014 it rides along with whatever Spell is going out. That is sensible for genuine bookkeeping, since a registry that lags behind reality is worse than no registry.\n\nBut it is worth noting what the classification implies: a change to the authoritative key-to-address mapping is treated as routine. Since the Chainlog is what documentation, governance actions, and integrations resolve against, a wrong or malicious entry redirects everything that reads it \u2014 which makes the housekeeping path the lowest-scrutiny route to a high-leverage change, checked only by the general Spell review chain.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:40:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:15:11.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.1.2 makes it the source of truth for Sky's core contract addresses, keyed for reference in documentation and integrations, with updates includable directly in an Executive Vote.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e0f15f7d-0fa6-4095-b3d2-4242907cad7c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:15:11.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "9c15db3d-464a-4686-9f9f-ea2505fdd477",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:15:11.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

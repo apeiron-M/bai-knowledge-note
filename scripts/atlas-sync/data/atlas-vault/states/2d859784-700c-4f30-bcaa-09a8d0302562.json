@@ -1,0 +1,101 @@
+{
+  "links": [
+    {
+      "id": "lnk-5136be42-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "5136be42-2cee-4842-99df-e130989b156a",
+      "targetTitle": "The Multisig Registry records only three fields and currentl"
+    },
+    {
+      "id": "lnk-9a67016b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9a67016b-4fad-4132-94ae-de336339a056",
+      "targetTitle": "The derecognition record shows operational security breaches"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The SRC registry departs from its own specification on both member expertise and verified addresses",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "37765351-dbb5-4a4b-b71a-8ab730bce4fa",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "3f992159-6753-4e0b-b705-1037e297e6f2",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ecbf7493-93e5-4c61-99b3-054d8793c36f",
+      "name": "risk-governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "c11f34df-e8a2-4fb4-be95-87c6b1774a36",
+      "name": "governance-tensions",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two requirements and the data that is supposed to satisfy them do not match.\n\nA.6.1.1.1.3.1.4.5.1 states that \"SRC members shall be domain experts across security, risk/economics, and operations,\" and .5.2 fixes the seat count at three. A.6.1.1.1.3.1.4.11 specifies that the registry records \"name or alias, domain expertise, **verified governance address**, start date, term status, and standing.\"\n\nThe live registry at A.6.1.1.1.3.1.4.11.1.0.6.1 lists Blockworks Advisory, L2 Beat and Aragon \u2014 all seated 2025-10-03, all Active, and all with `Domain Expertise: Risk` and `Verified Governance Address: N/A`.\n\nWith three seats and three risk specialists, the mandated coverage of security and operations is unfilled. Whether \"across\" means each member is broad or the body collectively spans the three domains, neither reading is satisfied by three entries reading \"Risk\" \u2014 which matters because the Scope of Review at .4.2 explicitly includes \"security vulnerabilities and operational attack surface\" as reviewable categories.\n\nThe blank addresses are the smaller but cleaner discrepancy: a field the Artifact requires, present in the schema and empty in every row. It also means SRC determinations are not cryptographically attributable the way Delegate votes are, despite the SRC wielding a stronger power.\n\nBoth gaps are, notably, visible *because* the Artifact specifies the fields and publishes the data in the same document. The structure makes its own shortfalls auditable \u2014 which is the argument for this style of governance artifact even when the shortfalls are real.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:37:29.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:05:12.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Artifact requires expertise across security, risk/economics and operations plus a verified governance address, yet all three seated members list Risk only and address N/A.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5e237bf8-faec-4242-bd2c-6e766477fcd7",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:05:12.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "b2a65ffc-aa75-4e53-9bb8-271dd9c9cbbf",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:05:12.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

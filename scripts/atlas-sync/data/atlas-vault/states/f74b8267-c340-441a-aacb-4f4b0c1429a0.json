@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "SBE-BEAM technical limitations fail closed, rejecting any parameter value the module could not later undo",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "29c75ffc-0f0f-4285-8035-d2e07c53c1a1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "557de7f9-7d7d-4227-a41d-5953a1298e03",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0e897873-6cf7-490d-a7a7-969ca6be9418",
+      "name": "smart-burn-engine",
+      "topicDocumentId": null
+    },
+    {
+      "id": "bf3ac0eb-5988-43b5-a9de-bb41d074a831",
+      "name": "safety-invariants",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.5.2.4.4 defines a second, lower layer of protection: limitations that \"apply independently of the bounding parameters set by Sky Governance,\" where \"an attempt to use the SBE-BEAM in a manner that exceeds these limitations will revert.\"\n\nThe stated rationale for the five-year cap on `hop` is the clearest statement of the principle: it \"prevents the Smart Burn Engine from being placed in a state in which its reward stream... can no longer be revived through the SBE-BEAM.\" Because `rewardsDuration` tracks `hop`, an absurdly long interval would stretch the staking reward stream out beyond any useful horizon \u2014 and since the module is the tool used to fix such a mistake, the mistake would be unfixable by the module that made it. The cap protects the *recoverability* of the mechanism, not the value of any parameter.\n\nThe other limits follow the same shape: `burn` above 100% \"would cause the Smart Burn Engine to halt,\" and `kbump` must be a whole multiple of `RAY` or the transaction reverts, keeping the lot size in the protocol's standard fixed-point precision.\n\nThe design lesson is the layering. Governance-set bounds express current policy and can be voted looser; technical limitations express what would break or strand the machine and are not negotiable per-vote. Failing closed (revert) rather than clamping silently also means an operator error is visible as a failed transaction instead of an unintended state.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:17.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:09:50.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Enforced independently of governance bounds and by reverting rather than degrading: hop above five years would strand the reward stream, burn above 100% would halt the engine.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "137454f2-112a-461f-8493-86014c1378ae",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:09:50.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "14ea2725-10f7-4f0e-9aec-41d593389e17",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:09:50.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

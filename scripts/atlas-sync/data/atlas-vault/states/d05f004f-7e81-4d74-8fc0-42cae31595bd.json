@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A 30% income penalty accrues until a Prime completes its token generation event, and Grove's trigger is an event rather than a date",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "37d77b2e-d145-4847-b2a5-0d9366ceff81",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "e7720c99-4674-4e3a-9a1f-fd1d6f2ce738",
+      "name": "ecosystem-accords",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d8974dc2-a155-4c1a-bb8f-72df8b2e7617",
+      "name": "enforcement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.2.2.7.1 imposes a 30% penalty on a Prime that has not completed its Token Generation Event by July 1, 2025, \"calculated on the income... the Prime is receiving or is meant to receive (including revenue that has accrued but has not been transferred) until the TGE occurs.\"\n\nThe design is a running meter rather than a fixed fine, and it deliberately reaches accrued-but-untransferred revenue so the charge cannot be avoided by delaying settlement. Spark cleared the deadline \u2014 A.2.8.2.2.2.7.1.1.1 records its TGE on June 17, 2025, and A.2.8.2.2.2.7.2.1 confirms \"No penalties were applied.\"\n\nGrove's position is different in kind. A.2.8.2.2.2.7.1.1.2 defines its TGE as occurring \"on the first date that SKY Staking users are able to earn GROVE Token Rewards\" \u2014 a condition dependent on Sky's own staking infrastructure, not a date Grove alone controls. The meter therefore runs against a milestone the penalised party cannot unilaterally reach.\n\nTwo further provisions leave the exposure open-ended. A.2.8.2.2.2.7.1.2 defers payment to \"the last Capital Transfer to a Genesis Agent,\" a date the Core Council must later record by Atlas Edit Proposal (A.2.8.2.2.2.7.1.2.1). And A.2.8.2.2.2.7.1.2.2 concedes that the settlement mechanism, \"including the calculation of the penalty for each Prime and how the calculated balance is paid to Sky, will be included in a future iteration of the Atlas.\"\n\nA liability is therefore accruing at a defined rate against an undefined base with an unspecified settlement method and an unknown due date. That is worth flagging as an open item rather than reading as a settled term.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:43:57.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:59.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Missing the July 1 2025 TGE deadline charges 30% of income accrued until it happens; Grove's TGE occurs when SKY stakers can first earn GROVE rewards, and the settlement mechanism is still unwritten.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "37f330e9-9055-453f-a418-3d69d67cce92",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:59.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "cf536b7d-e612-479a-85e6-bc6d3041f7fa",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:59.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

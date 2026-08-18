@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-ad3f525d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad3f525d-f75c-49b8-a6f1-896fcf55ac8a",
+      "targetTitle": "Core GovOps takes the final inclusion decision whenever the "
+    },
+    {
+      "id": "lnk-4f7d6895-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4f7d6895-70a3-42e5-aa88-9709737f540c",
+      "targetTitle": "The dispute adjudicator is deliberately isolated from the pa"
+    },
+    {
+      "id": "lnk-fcfde764-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fcfde764-3d06-4039-9dc4-22118c5f382d",
+      "targetTitle": "Every Instance must ship with a pre-authorised path to drain"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Removing the Core Facilitator requires two independent roles to reach consensus, with a temporary stand-in named",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "e6ba4f05-ae5d-4d12-bdfd-a6e5b8935d17",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0f7e0fa1-2bf4-4026-866e-aa0f77eb653b",
+      "name": "accountability",
+      "topicDocumentId": null
+    },
+    {
+      "id": "b080e8d6-76c1-4f2f-9205-aa28d8027c59",
+      "name": "core-facilitator",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.9.1.6.2 handles the hardest case in the accountability chain: \"Where the deficient Alignment Conserver is the Core Facilitator, the Protocol Security Workstream Lead and Core GovOps must reach consensus in order to initiate a derecognition proceeding against the Core Facilitator. Once this threshold is met, the procedure defined in A.1.5.9 should be followed. In the interim, Core GovOps selects an Operational Facilitator to step in temporarily and assist with coordinating emergency response.\"\n\nThree mechanisms are stacked here, each addressing a different failure mode of removing a system's most powerful role.\n\n**A two-key requirement** raises the bar for initiation. Elsewhere a single body can start a proceeding; here two independent roles must agree, which protects against a unilateral move against the Core Facilitator by any one actor. Note that the two are deliberately dissimilar \u2014 one is a technical security specialist (a Professional Ecosystem Actor per A.1.8.1.2), the other a governance operations body \u2014 so collusion requires crossing a domain boundary.\n\n**A named interim** solves the continuity problem that usually makes removal unthinkable. The Core Facilitator coordinates emergency response, publishes Executive Votes, and holds sole write access to the Executive Sheet; removing them mid-crisis would be its own emergency. Pre-designating that Core GovOps selects an Operational Facilitator means the question \"who does the job in the meantime?\" is already answered.\n\n**Separation of initiation from adjudication** keeps the two-key holders from being judge as well as accuser \u2014 the proceeding itself follows A.1.5.9.\n\nThe residual weakness is symmetry: the same two roles that must agree to act are the only ones who can, so a Core Facilitator with influence over either is effectively unremovable through this route.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:38:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:34.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.9.1.6.2 makes the Protocol Security Workstream Lead and Core GovOps jointly necessary to initiate derecognition, while Core GovOps appoints an Operational Facilitator to cover the interim.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4d4ac408-cd75-48e4-bc50-98ef2e65527c",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:31.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6164d0b2-e9aa-445d-a108-43c6106b72d1",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:34.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

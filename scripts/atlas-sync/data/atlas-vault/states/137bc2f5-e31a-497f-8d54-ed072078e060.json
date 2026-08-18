@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-f02d3401-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f02d3401-6302-4fc9-b0c9-c483fdb29796",
+      "targetTitle": "A change to the GSM Pause Delay is itself subject to the pre"
+    },
+    {
+      "id": "lnk-aef96c92-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aef96c92-52ac-4bc2-9a38-a8fbc15213f3",
+      "targetTitle": "doc-6c43fa49"
+    },
+    {
+      "id": "lnk-64f9c4ea-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "64f9c4ea-0f98-4710-82d9-cb6932635836",
+      "targetTitle": "doc-ae8142b6"
+    },
+    {
+      "id": "lnk-7100467b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "7100467b-cfce-410c-8e87-3eb86923fcff",
+      "targetTitle": "The Genesis Capital Backstop currently executes through Exec"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The GSM Pause Delay's value is a dial between governance-attack resistance and crisis responsiveness",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "8ce86db4-7a6a-404f-8964-35389108af7a",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0f158a27-e38a-49dc-832e-e7dddb1a600e",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "54dcc8cd-b4af-4b81-afb4-db1529940de3",
+      "name": "risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.3.1.1 gives the reasoning in both directions. \"An increase to the GSM Pause Delay parameter should be considered if the risk of governance attack is considered especially high for whatever reason. **In the past, the GSM Pause Delay has been increased due to the risk from flash loans combined with increased liquidity of the SKY token on the open market.**\" And: \"A decrease should be considered if time-critical governance actions are projected to be needed in the near future. For example, if extreme market volatility is expected, it may be beneficial to reduce the GSM Pause Delay temporarily.\"\n\nThe flash-loan case shows what the delay actually defends against. If enough SKY can be borrowed atomically, an attacker can pass a Spell without owning any governance stake \u2014 and the only remaining defence is time, during which honest holders can out-vote them or use the Executive Drop (A.1.10.3.2.1) to cancel the pending proposal. The delay converts an instantaneous capital attack into a contest that requires holding a position under public scrutiny.\n\nThat explains why the parameter tracks *SKY market liquidity* rather than anything internal: the cheaper it is to rent a majority, the more time the defence needs.\n\nThe symmetry is uncomfortable and honestly stated. Reducing the delay for a volatile market simultaneously reduces the flash-loan defence, so the parameter cannot be optimized for both threats at once \u2014 it must be set for whichever is currently more likely. That the Atlas records the historical adjustment and its cause makes the parameter's value a reasoned position rather than an inherited constant, which matters because A.1.10.3.1.2 puts the current value at 48 hours.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:00.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.3.1.1 records an actual increase driven by flash loans combined with SKY market liquidity, and contemplates temporary decreases when volatility demands faster reaction.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "4f4a3132-d4f7-4b70-a9a9-e5ea7d03351a",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:00.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4f9686f2-d4a9-4133-a71c-ecb5bea0823c",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:00.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

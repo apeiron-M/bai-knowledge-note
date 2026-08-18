@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-f7433611-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f7433611-7b88-42c2-9c74-eb9853d27991",
+      "targetTitle": "Cancellation is the one governance power Sky is willing to m"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Executive Drop makes the pause window a two-sided race, at the cost of letting an attacker block legitimate proposals",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "1e6c6ade-38da-4d27-a7d5-1e675f4d771f",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "24d8831b-660d-46a8-a147-ee21799fc64a",
+      "name": "governance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a181c288-4a1d-4636-806c-cfdb35a5aab7",
+      "name": "security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.3.2.1 describes an exception built into the MCD_PAUSE contract itself: \"the executive drop functionality allows a successful governance proposal to cancel a previous governance proposal that has not yet passed the GSM Pause Delay period and been executed. As in any other situation, the new Executive proposal must be the hat proposal.\"\n\nIts purpose is the counter-attack: \"This functionality allows Sky Governance to prevent a malicious attack on the protocol if they are able to exceed the attacker's SKY weight before the GSM Pause Delay expires.\"\n\nThis is what makes the delay an active defence rather than merely a waiting period. Without drop, detecting a malicious pending Spell would leave defenders with nothing to do but watch the clock \u2014 the attack was already scheduled and the delay guaranteed only advance notice. With drop, the window is a contest that the honest majority can win by out-voting the attacker in time.\n\nThe disclosed cost is symmetric and unavoidable: \"the risk opened up by this exceptional functionality is that a malicious attacker may be able to delay or permanently block a legitimate governance proposal.\" The mechanism cannot distinguish a rescue from a censorship \u2014 both are a new hat cancelling a pending proposal. An attacker with sustained vote-weight can hold the hat and drop every legitimate Spell indefinitely.\n\nSo the pause window is genuinely two-sided, and which side benefits depends entirely on who can assemble more SKY within it. That reinforces why A.1.10.2.6.3 urges holders to keep weight parked on the hat: the standing coalition is both the threshold an attacker must beat and the force that can cancel their Spell if they do.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:52:49.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:07:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "A.1.10.3.2.1 lets a new hat proposal cancel a plotted-but-unexecuted one, turning the delay into governance's counter-attack window \u2014 and into a censorship tool.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "5294962f-ab68-40a7-8a8d-4c0cb89c7f57",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:07:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "ee5920c6-7f03-41d7-a14a-693c0b807fb5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:07:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

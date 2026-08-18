@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Legacy Accounts are defined by exclusion, so every Sky Core account not named as a buffer must be drained",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "dd2ae710-ba7a-4584-be42-56e2043cf8b1",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "34f9c363-696e-40b4-8293-4ae0be18cc4c",
+      "name": "treasury",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1700e6e0-c8e3-4ee7-9bc3-ef7c02348d6b",
+      "name": "accounting",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.3.1.2.2.2.1.6.1 defines Legacy Accounts as \"all accounts controlled by Sky Core, with the exception of the Core Council Buffer, the Aligned Delegates Buffer, and the Demand Side Buffer and its auxiliary accounts,\" listing the former Distribution Reward Controller Wallet, the former Integration Boost Wallets and the Sky Ecosystem Liquidity Bootstrapping Budget as non-exhaustive examples.\n\nDefining the category by exclusion is the load-bearing choice. An enumerated list of accounts to close would silently omit whatever nobody remembered, and every forgotten wallet stays live. Inverting it makes the surviving set finite and named, so any account discovered later is a Legacy Account by construction and inherits the obligation to consolidate.\n\nTwo provisions complete the closure. A.2.3.1.2.2.2.1.6.2 obliges Ecosystem Actors to \"take all necessary actions\" to move the funds, and A.2.3.1.2.2.2.1.6.3 redirects the future: \"All funds that would otherwise be transferred into or out of Legacy Accounts must instead be transferred into or out of the Core Council Buffer or the Demand Side Buffer.\" Without that second rule, drained accounts would simply refill.\n\nThe motive is visible in the accounting rules. Net Revenue recognises Expenses only as funds leave the Sky Surplus Buffer, and \"transfers out of accounts other than the Sky Surplus Buffer are not recognized as Expenses\" \u2014 so every side account is a place where spending happens without appearing in Net Revenue. Collapsing account sprawl is what makes a single-account cash-basis definition of profit honest rather than merely convenient.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:30:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:08:40.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Everything Sky Core controls apart from three named buffers is a Legacy Account whose funds must be consolidated, with future flows rerouted through the surviving buffers instead.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "96e1707d-da2c-4f4f-a903-4619c951e7f0",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:08:40.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "f4e6c288-12ad-4b21-9287-c30bcf4f6f19",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:08:40.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

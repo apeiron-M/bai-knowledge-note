@@ -1,0 +1,89 @@
+{
+  "links": [
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Sky owes offboarded vault users advance notice because forced unwinding harms them even when the liquidation penalty is zero",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "c894af7d-0189-4628-9c4b-3994255ceab5",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f70b9894-b152-4f15-a468-016c9cf3600d",
+      "name": "stability-scope",
+      "topicDocumentId": null
+    },
+    {
+      "id": "09dcf8aa-1426-4508-895e-7c8a5f2403d4",
+      "name": "collateral-offboarding",
+      "topicDocumentId": null
+    },
+    {
+      "id": "1414b1c1-70fc-4123-95e9-450c58b3eb6e",
+      "name": "user-protection",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.7.1.5.1 is unusually candid for a protocol rulebook. It records that \"there have been several instances where users entered official Sky forums/chats to understand why they had been suddenly liquidated, despite historically comfortable collateralization ratios,\" cites the forum post documenting it, and concludes: \"This is, understandably, a poor user experience.\"\n\nIt then rejects the obvious defence that zeroing the liquidation penalty makes offboarding harmless: \"Even with liquidation penalties set to 0%, the forced unwinding of levered positions conceivably can result in user losses, as well as potentially taxable events.\" The harm is in the forced timing, not the fee \u2014 a user liquidated at a moment they did not choose realizes losses and, in many jurisdictions, a taxable disposal they had not planned.\n\nThis converts offboarding from a purely technical parameter change into an obligation with a communications component. The stated objective is \"to minimize the number of users who are unaware of the offboarding prior to getting their positions liquidated,\" explicitly \"on a best-effort basis\" \u2014 a duty of effort, not of outcome.\n\nA.3.7.1.5.1.1's four goals show the balance being struck: codify good-faith communication, keep the process light enough for contributors to actually follow, minimize unaware users, and preserve a bypass for security or solvency emergencies. The design concedes that a notice regime nobody follows protects no one, and that in a genuine emergency user notice cannot outrank solvency.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "DECISION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:40.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:45.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "The Atlas cites real cases of users liquidated despite comfortable ratios, and concedes that unwinding levered positions can cause losses and taxable events regardless of penalty settings.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e22ee08f-cbd1-457f-998d-da4fe47938af",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:45.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "2ebec83c-cc01-44cb-80c8-65b245ef95b2",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:45.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

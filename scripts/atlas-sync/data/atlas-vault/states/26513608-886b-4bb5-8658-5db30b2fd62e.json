@@ -1,0 +1,108 @@
+{
+  "links": [
+    {
+      "id": "lnk-d05f004f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d05f004f-7e81-4d74-8fc0-42cae31595bd",
+      "targetTitle": "A 30% income penalty accrues until a Prime completes its tok"
+    },
+    {
+      "id": "lnk-bdff89e9-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bdff89e9-f5f6-4bc3-bc1f-fb93cdc0c3b0",
+      "targetTitle": "Grove's Ecosystem Upkeep Fee is levied on its market capital"
+    },
+    {
+      "id": "lnk-329d97be-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "329d97be-c13d-474d-82ad-3f18f636351c",
+      "targetTitle": "Every rate in Sky is defined as an arithmetic spread from a "
+    },
+    {
+      "id": "lnk-4233c536-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4233c536-2f9b-486d-9277-35e0db0191c1",
+      "targetTitle": "An unpaid settlement owed to Grove counts toward its Total R"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Grove's compensation is indexed to both the Base Rate and deposit volume, so Sky's cost auto-scales with monetary policy",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "804fa1f6-5815-4e41-aee4-eb866b759e9b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "4e1d7f84-fbd3-4b32-81fb-bc1326fc75f1",
+      "name": "incentive-design",
+      "topicDocumentId": null
+    },
+    {
+      "id": "390264b2-2f76-469a-8458-42a0f5e2b1ce",
+      "name": "ecosystem-accords",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.8.2.10.2.1.2 sets Grove's ongoing compensation as `Chronicle_Point_Reward_Instance_USDS_Deposited x 20% x Base_Rate`, where the Base Rate is Sky's governance-set rate from A.3.1.2.1. The stated justification is that it \"recognizes Grove's role in promoting and supporting Chronicle across integrations within the Sky Ecosystem.\"\n\nStructurally this is a revenue share, not a fee. Both inputs float: deposit volume floats with adoption, and the Base Rate floats with Sky's monetary policy. The 20% is the only negotiated constant.\n\nThat design has a real advantage \u2014 the Accord never needs amending when conditions change, which matters given that amendment requires an Atlas Edit. It also aligns Grove with growth in Chronicle-integrated deposits.\n\nThe cost is that Grove's income is exposed to a variable Sky itself controls. When governance cuts the Base Rate for stability reasons, Grove's compensation falls proportionally with no reference to the work it performed that month. Indexing a service fee to a policy lever means the service provider bears policy risk, which is a different bargain from bearing adoption risk alone.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:17:08.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Deposits in the Chronicle Point Reward Instance x 20% x Base Rate: a fee expressed as a share of yield rather than a fixed amount, which needs no renegotiation when rates or TVL move.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a839bffe-9d4b-428a-8d17-207f7cbc4214",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:28.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "dc383126-6b17-43e5-90c9-78e0aafb6a88",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:29.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

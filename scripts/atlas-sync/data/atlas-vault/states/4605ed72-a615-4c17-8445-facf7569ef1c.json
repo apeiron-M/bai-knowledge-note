@@ -1,0 +1,107 @@
+{
+  "links": [
+    {
+      "id": "lnk-8aec403f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "8aec403f-31eb-4422-a0fd-7ef05dd7e893",
+      "targetTitle": "doc-5349f900"
+    },
+    {
+      "id": "lnk-b5c79b81-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "b5c79b81-0699-41fb-ba41-83b13e5f7bfa",
+      "targetTitle": "LayerZero bridge destinations are a governance-configured al"
+    },
+    {
+      "id": "lnk-6dba1c92-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "6dba1c92-90a6-48ac-931f-5c565c2cfb92",
+      "targetTitle": "CCTP refuses to bridge to a domain with no configured mint r"
+    },
+    {
+      "id": "lnk-3a61019f-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "3a61019f-493a-45ab-914a-60c65a17b055",
+      "targetTitle": "A.6.1.1.1 - Spark"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Relayer can only bridge to destinations an admin has pre-registered, and cannot name the recipient",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "05592ff7-4fa6-46ca-80ea-5ebca8859369",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a6e3a4b6-862f-4212-bd34-4378810baf4a",
+      "name": "spark",
+      "topicDocumentId": null
+    },
+    {
+      "id": "9a7dd755-fb8d-4bea-9803-8aaa3cfe04d7",
+      "name": "cross-chain",
+      "topicDocumentId": null
+    },
+    {
+      "id": "7b80e9a3-d5ed-42f4-a214-866c4f3e6085",
+      "name": "operational-security",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two provisions combine into one of the Liquidity Layer's strongest containment properties. A.6.1.1.1.2.6.1.2.2.1.2.1.1.1 makes recipient configuration an admin-only act: `function setMintRecipient(uint32 destinationDomain, bytes32 mintRecipient) external onlyRole(DEFAULT_ADMIN_ROLE)`, storing `mintRecipients[destinationDomain] = mintRecipient`. A.6.1.1.1.2.6.1.2.2.1.2.1.2.5.1.3 then has the bridging function read from that mapping and refuse anything unset: `require(mintRecipient != 0, \"MainnetController/domain-not-configured\")`.\n\nThe Relayer supplies only an amount and a destination *domain*. It cannot supply an address. Where the funds land on the far chain was decided in advance by `DEFAULT_ADMIN_ROLE` \u2014 which A.6.1.1.1.2.6.1.2.2.1.1.1 places with Sky Governance via the Spark Proxy.\n\nThis is what makes automated bridging tolerable. Cross-chain transfer is the operation an attacker most wants, because it moves value out of the domain where the defenders' tools work. Reducing the Relayer's discretion to \"how much, to which pre-approved chain\" means a compromised Relayer key can rearrange Spark's capital across approved destinations but cannot exfiltrate it to an address of its choosing.\n\nThe residual risk moves upstream to admin: a malicious or mistaken `setMintRecipient` would redirect every subsequent bridge to that domain. That is a slow, governance-gated action rather than a fast operational one, which is exactly where the Atlas prefers dangerous power to sit.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:54:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:16:42.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "setMintRecipient is DEFAULT_ADMIN_ROLE only, and transferUSDCToCCTP reads the recipient from the mintRecipients mapping \u2014 an unconfigured domain reverts with MainnetController/domain-not-configured.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "bc48f394-7cc0-4f69-9dee-43b39ed29ae3",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:16:42.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "1a667071-b95f-414b-83a7-201a36bdf9d3",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:16:42.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

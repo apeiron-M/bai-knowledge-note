@@ -1,0 +1,125 @@
+{
+  "links": [
+    {
+      "id": "lnk-c378b13b-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c378b13b-b805-4451-a32b-a3306f27cd0b",
+      "targetTitle": "Only borrow interest above the SKY Borrow Minimum Rate is pa"
+    },
+    {
+      "id": "lnk-d4e66123-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "d4e66123-e9a7-4e61-956b-8b0d005bc0a5",
+      "targetTitle": "The stUSDS Distribution Reward makes borrowers fund the refe"
+    },
+    {
+      "id": "lnk-9639e9c2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "9639e9c2-236d-4563-b454-155147ef9705",
+      "targetTitle": "Spark's minimum lending rate is the greater of the Sky Savin"
+    },
+    {
+      "id": "lnk-a0701f43-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a0701f43-55aa-49bb-b94d-17be1ee60ef4",
+      "targetTitle": "doc-6b67dfc5"
+    },
+    {
+      "id": "lnk-ad6eb5d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ad6eb5d2-4844-4936-be95-95b825cea73a",
+      "targetTitle": "A capped OSM wrapper takes the minimum of the SKY oracle pri"
+    },
+    {
+      "id": "lnk-f0f37c7d-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f0f37c7d-cf13-4719-94a2-f5a98d1b0ae6",
+      "targetTitle": "doc-a4eb7282"
+    },
+    {
+      "id": "lnk-6ffc6ed1-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "6ffc6ed1-e8c2-4430-bc4a-71aa799797cc",
+      "targetTitle": "A.4 - The-Protocol-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The SKY Borrow Minimum Rate is a no-arbitrage floor equal to the Savings Rate plus the distribution incentive",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "9a34f2fc-561a-4f96-a322-acb0b24be7a3",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "2d155ed1-31d1-4f14-8108-3dfea1e855d9",
+      "name": "stusds",
+      "topicDocumentId": null
+    },
+    {
+      "id": "422b138e-75cd-4a60-a06e-697a87b58f50",
+      "name": "interest-rates",
+      "topicDocumentId": null
+    },
+    {
+      "id": "37cb63ae-3b09-4b8d-a95e-5cb49d71d1cb",
+      "name": "arbitrage",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.4.4.1.3.5.2 gives both the formula and, unusually, its rationale: `SKY Borrow Minimum Rate = Sky Savings Rate + stUSDS Distribution Reward`, because \"the formula ensures the SKY Borrow Minimum Rate covers the baseline cost of capital (Sky Savings Rate) plus the incentive cost (stUSDS Distribution Reward), preventing value-draining arbitrage where users could borrow below the Sky Savings Rate.\"\n\nThe attack it forecloses is elementary and unbounded. If borrowing USDS cost less than the Sky Savings Rate paid, any borrower could take USDS, deposit it into savings, and collect the difference risk-free \u2014 a strictly profitable loop limited only by collateral and the debt ceiling. Because both legs are protocol obligations, the protocol funds the entire spread, so the loop drains the treasury at a rate proportional to how much capital can be pushed through it.\n\nThe floor eliminates it structurally rather than by monitoring. And it is defined *relationally*, not as a number: because the floor tracks the Savings Rate, no future Savings Rate change can accidentally open the arbitrage. This is the important design property \u2014 the invariant survives parameter drift, which a hardcoded minimum would not.\n\nIncluding the Distribution Reward in the floor extends the same logic to incentive costs, and it is why the floor is genuinely a *cost recovery* line: below it, the facility is not merely unprofitable but actively subsidizing a loop. The floor also has a visible knock-on effect elsewhere \u2014 since only the spread *above* this floor is passed to stUSDS lenders, everything embedded in the floor is retained by the system.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:27:53.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:21:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "`Sky Savings Rate + stUSDS Distribution Reward` exists to prevent \"value-draining arbitrage where users could borrow below the Sky Savings Rate\" \u2014 borrowing cheaper than saving would be a money pump.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b0008db9-d984-442c-b521-3765319c1a05",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:21:55.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "4a2e5f9e-da3f-456b-b38b-417d7c449b46",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:21:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

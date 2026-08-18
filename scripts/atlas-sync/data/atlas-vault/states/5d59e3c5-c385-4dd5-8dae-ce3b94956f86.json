@@ -1,0 +1,96 @@
+{
+  "links": [
+    {
+      "id": "lnk-ba0a4e19-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "ba0a4e19-e8f2-4411-957a-a49406734c6a",
+      "targetTitle": "Legal recourse converts a smart-contract exploit from a tota"
+    },
+    {
+      "id": "lnk-bf1a01b5-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bf1a01b5-5aa5-4092-86f3-c50de0978b68",
+      "targetTitle": "Sky uses the Lindy Effect as a design criterion: time spent "
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Lindy Adjustment Factor formalizes survival-with-money-at-stake as evidence of safety, scaling contract age by the log of TVL",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "85712298-7f06-438d-8296-ca68837d396b",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "96b723da-e831-4824-bdc7-03f1fd1609d5",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "a9be436c-4642-41fc-8244-2a80d16f00cd",
+      "name": "smart-contract-risk",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.2.2.4 states the reasoning before the formula, which is unusual and useful: the Lindy Adjustment Factor \"is based on the idea that vulnerable smart contracts with large TVL for a significant period of time would have already been hacked. Therefore, protocols with a greater time integrated TVL are safer, all other things equal, than protocols with a lower time integrated TVL.\"\n\nThe mechanism: `LAF = max(0, 1 \u2212 ln(1 + \u03bb\u00b7AGEeff) / ln(1 + \u03bb\u00b7max))` with decay factor \u03bb = 0.1 and `max` = 60 months, the effective age at which \"the risk of a set of smart contracts has decayed to zero.\" LAF multiplies the base rating, so it can reduce a protocol's smart-contract risk to nothing but never increase it.\n\nThe interesting part is the input. A.3.2.2.1.2.2.4.3 defines Effective Age as `CA \u00d7 ln(1 + gmTVL / TVLthreshold)` \u2014 average contract age in months, multiplied by the log of geometric-mean daily TVL normalized by 100,000,000. Calendar age alone earns very little; age *while holding significant value* earns much more.\n\nThat is the argument taken seriously rather than gestured at. Time only constitutes evidence of security if attackers were motivated to look, and TVL is the bounty that motivates them. A contract that sat untouched for three years holding 1m USD has proven far less than one that held 1bn for eighteen months. Using the geometric mean of *daily* TVL rather than current or peak TVL closes the obvious gaming route: a protocol cannot buy Lindiness with a brief TVL spike.\n\nThe logarithms compress hard at both ends. Ten times more TVL is worth roughly twice the effective age, and the outer logarithm means most of the risk reduction arrives early. The framework is therefore generous to moderately proven protocols and stingy about distinguishing very proven ones \u2014 and it treats 60 effective months as the point where smart-contract risk is genuinely zero, an assumption no amount of Lindiness strictly justifies.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "CONCEPT",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:31:20.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:11:18.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Effective age = contract age \u00d7 ln(1 + gmTVL/100m), and risk decays logarithmically to zero at 60 effective months \u2014 so value at risk over time, not calendar age alone, is what counts as evidence.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "e6547939-e9b0-4bda-93dc-6eef5a62ad88",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:11:18.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "055a1d1b-462c-4105-98df-a55f1ff0f182",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:11:18.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

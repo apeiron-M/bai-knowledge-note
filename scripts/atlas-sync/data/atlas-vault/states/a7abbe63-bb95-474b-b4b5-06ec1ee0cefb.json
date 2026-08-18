@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-c11ffaf6-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c11ffaf6-6d83-4e27-b0b4-9b35dcd60240",
+      "targetTitle": "The reference implementation's probability-of-default comput"
+    },
+    {
+      "id": "lnk-c36562f4-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c36562f4-5d4f-4219-a452-683bb0630e6f",
+      "targetTitle": "The Loss Given Default formula as written in the Atlas alway"
+    },
+    {
+      "id": "lnk-bd17992f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "bd17992f-ed65-4abe-8ade-5bcddc6013ab",
+      "targetTitle": "Real World Asset capital is computed by applying the Basel F"
+    },
+    {
+      "id": "lnk-aa7a0440-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "aa7a0440-3041-4ff6-aef3-ea8d52a9b35f",
+      "targetTitle": "The reference implementation clamps Loss Given Default to [0"
+    },
+    {
+      "id": "lnk-c3d9ac28-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "c3d9ac28-8e3e-442f-ad16-10bdb0a594db",
+      "targetTitle": "The F2 exposure window shrinks twice as fast per rating poin"
+    },
+    {
+      "id": "lnk-c9ecc1d6-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "c9ecc1d6-4fb0-4a10-b037-0f904b506414",
+      "targetTitle": "A.3 - The-Stability-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The reference implementation's Exposure At Default accretes debt at the risk-free rate plus the borrow rate, which the specification does not describe",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "30379327-e0f9-4eca-bd63-9f3cbe1f6020",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "25432ddc-4d20-4599-a431-db4dd9a9323e",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "24af4270-c20c-42d5-a931-921494cdcbbf",
+      "name": "specification-defect",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.3.2.2.1.1.1.1.1.5.2 defines Exposure At Default in one sentence: \"the total amount of funds from the Allocation System that have been deployed into the decentralized lending protocol.\" A present-tense balance.\n\nThe reference implementation computes something materially different:\n\n`ead = sum(debt[\"debt_usd\"] * math.exp((RISK_FREE_RATE + debt[\"borrow_apy_30d\"]) * TIME_HORIZON) for ...)`\n\nwith `RISK_FREE_RATE = 0.04  # SOFR` declared as a module constant. This is a *forward* exposure \u2014 the debt grown continuously over the one-year horizon at the risk-free rate plus the position's 30-day trailing borrow APY. It is internally coherent, since PD is estimated over the same one-year horizon and the exposure at the moment of a future default is larger than today's, but it is not what the Atlas says.\n\nThe divergence has two distinct consequences. Substantively, capital requirements are higher than the prose implies, by roughly `exp((0.04 + borrow rate) \u00d7 1)` \u2014 a 10%+ uplift at plausible rates. Procedurally, a 4% SOFR assumption has entered the risk framework through committed code rather than through the Atlas, so it is not visible as a governed parameter and there is no stated process for updating it as rates move.\n\nThis is a general hazard of shipping a reference implementation alongside a normative specification: where they differ, the code silently wins, because it is what gets run \u2014 and undeclared constants inside it become de facto risk parameters.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "OBSERVATION",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:43.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:12:02.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Prose defines EAD as funds deployed into the protocol; the code computes debt \u00d7 exp((0.04 + borrow APY) \u00d7 T), introducing a 4% SOFR constant that appears nowhere in the Atlas text.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "7288fe0f-95e5-4b73-b324-f4dcd307df64",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:12:02.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "814c608b-2491-4c03-a94c-d4a7b8bde0c8",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:12:02.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

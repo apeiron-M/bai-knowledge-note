@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-f4323865-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "f4323865-ee64-4f96-ab66-5493e5331d8a",
+      "targetTitle": "The Governance Point independently re-verifies the Spell aga"
+    },
+    {
+      "id": "lnk-fd7060b8-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "fd7060b8-ae56-4aee-b653-4cd81b459199",
+      "targetTitle": "Spell Reviewers work from the Executive Document while the C"
+    },
+    {
+      "id": "lnk-a6ba9dff-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "a6ba9dff-2158-4a08-990d-0c92e2fc2102",
+      "targetTitle": "Every Executive Sheet item must appear in the Executive Docu"
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "The Executive Sheet forbids deviation from prior wording, so linguistic novelty signals substantive novelty",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "ef0f15e6-0a45-4db7-b382-b5c93efa1b6c",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d705f1a4-7505-4001-8018-8694b19c2c82",
+      "name": "executive-process",
+      "topicDocumentId": null
+    },
+    {
+      "id": "ea7ed01b-a5b0-45ab-8097-575241a2dd3d",
+      "name": "error-prevention",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.1.10.2.4.2.1.3 is unusually strict about prose: text for input and derived actions \"should follow previous wording and structural patterns. There should be **no deviation** from existing patterns of wording or sentence structure used in the Executive Sheet unless it is absolutely required for the Spell process to be completed. The instructions should be specific and follow previous instructions in the archive.\"\n\nSupporting rules push the same way. Numbers must always be numerals, \"if a value is zero the number '0' should be used instead of the word 'zero'... This maintains the consistency between values and thus reduces the chances of a misread\" (A.1.10.2.4.2.1.3.3). Changes use a fixed template \u2014 \"Increase SSR by 3.00 percentage points from 15.50% to 18.50%\" \u2014 carrying delta, start and end together (A.1.10.2.4.2.1.3.2). Values are absolute with explicit start and end times rather than per-unit-of-time rates (A.1.10.2.4.2.1.3.1). Addresses must be EIP-55 checksummed, \"using mixed-case letters to create a verifiable format that helps detect typos\" (A.1.10.2.4.2.1.3.4). Even layout is fixed: a blank row above each bold input action, derived actions unbolded directly beneath (A.1.10.2.4.2.1.2).\n\nThe common purpose is anomaly detection. If every Spell reads like the last one, a reviewer's attention is spent only on what differs \u2014 and any unfamiliar phrasing is a flag worth pulling, either because the underlying action is genuinely new or because something was transcribed wrong. Free-form prose destroys that signal by making variation normal.\n\nEIP-55 shows the principle in its purest form: redundancy deliberately added to a value so that a corrupted version fails a check rather than executing. The wording rules do the same job with a human as the checksum function.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:21:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:04:57.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Frozen phrasing plus numerals-always and EIP-55 checksummed addresses optimize the sheet for anomaly detection by a reviewer diffing against precedent, not for readability.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "b380b244-b224-42bc-9773-503f060efe2d",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:04:57.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "8f9687d7-f69a-452a-a546-51b1c1d46cb5",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:04:57.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

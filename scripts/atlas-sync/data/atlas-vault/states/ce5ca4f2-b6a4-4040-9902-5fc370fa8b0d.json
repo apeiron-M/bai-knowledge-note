@@ -1,0 +1,90 @@
+{
+  "links": [
+    {
+      "id": "lnk-e38fae86-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "e38fae86-65f9-4d62-ac01-62203820b099",
+      "targetTitle": "An Atlas proposal may not include language preventing other "
+    },
+    {
+      "id": "lnk-b0d1152c-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "b0d1152c-7030-4e0f-b585-52cbe2adad05",
+      "targetTitle": "A.1 - The-Governance-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A proposal's authorization is bound to its exact text, so editing it revokes the authorization",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "0c71537c-71ed-4d5d-9503-787cfbd82cd0",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d4871d06-95b0-421e-ad6f-1d2a416b3b56",
+      "name": "atlas-maintenance",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0a6e5446-da4e-4d4e-9530-8ba817a92266",
+      "name": "governance",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "Two rules in the Monthly Cycle treat approval as attaching to a specific text rather than to a proposal's identity.\n\nA.1.12.2.1.2: \"If the Proposal is edited subsequent to being triggered, the Proposal must be triggered again before proceeding further in the Atlas Edit Monthly Cycle process.\" The Ranked Delegate's stake therefore backs particular language, not a title. Without this, a sponsor's bond could be leveraged into support for content they never read \u2014 and an author could obtain sponsorship for an innocuous draft and then substitute a different amendment behind it.\n\nThe Action Tenet at A.1.12.2.1.7.2.0.4.1 runs the same logic in the opposite direction: while A.1.12.2.1.7.2 allows a blocked AEP to \"be amended and re-submitted in a future Atlas Edit Monthly Governance Cycle,\" the Tenet clarifies that it \"cannot be resubmitted in its original form; it must be edited before it can be formally submitted again.\" A misalignment block therefore permanently disqualifies that exact text, forcing the author to engage with the objection instead of resubmitting unchanged until a different Facilitator or a quieter cycle lets it through.\n\nTogether they make text the unit of governance state. Positive authorization does not survive an edit, and a negative determination does survive resubmission \u2014 both closing paths by which a decision recorded about one document could be transferred to another.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:24:14.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:20:49.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "An amended AEP must be triggered again before proceeding, and an AEP blocked for misalignment cannot be resubmitted in its original form.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "59f05782-62c2-473d-b897-159c1030441e",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:20:49.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "6553783c-fecf-485c-84d4-2b4cb7a45b75",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:20:49.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

@@ -1,0 +1,114 @@
+{
+  "links": [
+    {
+      "id": "lnk-4cb64244-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "4cb64244-539d-4188-8d6f-fa6c08cd14c8",
+      "targetTitle": "The Simplified Profit And Loss Calculation gives Primes the "
+    },
+    {
+      "id": "lnk-3735c6d2-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3735c6d2-3aed-4a76-b6a1-8f7603d39cc9",
+      "targetTitle": "doc-741f1730"
+    },
+    {
+      "id": "lnk-95f4a260-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "95f4a260-686c-4e83-934b-dae337001e0a",
+      "targetTitle": "A Prime Agent borrowing at a Subsidized Rate has its Agent R"
+    },
+    {
+      "id": "lnk-25ad1390-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "25ad1390-7b1e-4e57-bfed-bed589cc0d9f",
+      "targetTitle": "doc-80db4bf5"
+    },
+    {
+      "id": "lnk-3c64292a-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3c64292a-3000-4ca9-87c8-bded6dc2fb4f",
+      "targetTitle": "The reimbursement grant requires maintaining a billion USDS "
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A Prime can opt out of the asymmetric settlement per asset by paying the borrow rate and taking full P&L",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6e159f9f-7644-46d4-9311-c31aa78d2afa",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "801a59ef-68a0-42d8-ab96-61229b97dd49",
+      "name": "settlement",
+      "topicDocumentId": null
+    },
+    {
+      "id": "69f8ce41-becf-40ee-9158-55c011cca2b4",
+      "name": "prime-agents",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.4.1.2.2.1.1.4 introduces \"exceptions to the Simplified Profit And Loss Calculation for specific assets held by certain Prime Agents,\" and the two instances are parallel. A.2.4.1.2.2.1.1.4.1: \"Spark pays the Agent Credit Line Borrow Rate with respect to funds borrowed by Spark to invest in USDT and held in SparkLend. Spark thus realizes the full profit and loss associated with these investments.\" A.2.4.1.2.2.1.1.4.2 says the same for pyUSD held in SparkLend or Spark's ALM Proxy.\n\nThe word \"thus\" carries the logic. Paying the borrow rate unconditionally \u2014 rather than having it netted against revenue under the simplified calculation \u2014 converts the arrangement into ordinary borrowing. The Prime owes the cost of funds whatever happens, so it keeps the gains and bears the losses.\n\nThis reveals the simplified calculation for what it is: a *subsidy* whose value is the removed downside. Waiving it is not a concession by the Prime but a price, and the exceptions show the two regimes can coexist asset by asset within one Prime rather than being a Prime-level election.\n\nIt also sketches the destination. Stage 3 in A.2.4.1.2.2.3.1 has Base Rate interest accruing on-chain to each Prime's Allocator Vault, which is exactly this structure generalised \u2014 unconditional interest, full P&L to the Prime, no asymmetry to patch with penalties. The Spark exceptions are the target arrangement running early on specific assets, and their existence suggests the constraint on rolling it out broadly is tooling rather than principle.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PATTERN",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:36:45.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:18:14.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Spark pays the Agent Credit Line Borrow Rate on funds borrowed for USDT and pyUSD positions and thereby realizes the full profit and loss, showing the exception is priced rather than granted.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "a81535b8-b2e5-408b-9e71-8a4e0bad0f90",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:18:14.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "5ed7f085-d3d4-4e66-b641-8e1d29d7c115",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:18:14.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

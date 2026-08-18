@@ -1,0 +1,102 @@
+{
+  "links": [
+    {
+      "id": "lnk-3f1ed21f-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "3f1ed21f-7f17-498b-a4cc-bf15ac7fa879",
+      "targetTitle": "Invoking the Executor Accord Primitive transfers Primitive i"
+    },
+    {
+      "id": "lnk-cc5ae905-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "cc5ae905-1409-497e-9750-6e97744a0c7b",
+      "targetTitle": "doc-5d9b6ec2"
+    },
+    {
+      "id": "lnk-58335213-rel",
+      "linkType": "RELATES_TO",
+      "targetDocumentId": "58335213-4021-402b-8541-4f2c95d219e2",
+      "targetTitle": "A closed strategy is separated across three parties and must"
+    },
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "Core GovOps validates a TRC Report by independent recomputation rather than by accepting the Prime's figures",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "31c62420-4077-4f2c-a1d8-7d8fd9bff8cb",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "f4c0feaa-d16c-4f85-be1b-b934a4d7c074",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "0e0e7d56-f97e-4dc7-8c9c-df8bdbf83c8e",
+      "name": "verification",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.3.2.1.3.2.1 assigns each reported category its own independent source of truth. Referenced Ecosystem Accords for rented PEJRC or OSRC are verified \"against the Atlas,\" confirming \"the existence, current validity, and terms\" as formally recorded there. IJRC is reconciled \"against the actual on-chain state of the Prime Agent's designated SubProxy account,\" with a second test that the assets meet the Atlas definition of eligible assets. TEJRC and directly-originated OSRC are checked \"by cross-referencing data from the relevant smart contract systems\" \u2014 TEJRC pool contracts, OSRC auction records.\n\nThe process then closes with recomputation rather than review: Core GovOps \"independently calculates and verifies the Prime Agent's compliance with all Atlas-defined capital sourcing ratios (e.g., External Per Internal (EPI), Senior Per Junior (SPJ)).\"\n\nThis is why A.2.2.10.1.1.3.2.1.2.3.2 demands counterparty identifiers, expiry dates and direct Accord references for every rented component. The report's job is not to state a total but to supply pointers that make each line independently checkable \u2014 the reported number is a claim, and each pointer is where it gets tested.\n\nOnly the off-chain attestations resist this treatment, and there the Atlas escalates rather than accepts: the assessment \"may include requiring the Prime Agent to provide supplementary documentation, verifiable evidence, or independent third-party confirmations,\" and cross-referencing disclosures against \"on-chain indicators or transactions that might corroborate or contradict the attestations.\"",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "PROCEDURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:23:03.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:22:29.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Every component is checked against a different authority: Accords against the Atlas, IJRC against on-chain SubProxy balances, TEJRC and OSRC against their contracts, and all sourcing ratios",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "d2b8785f-cb66-417a-9eb0-683e82cf0203",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:22:29.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "67b1840d-6883-4a17-9bcb-f59f808822c2",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:22:29.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}

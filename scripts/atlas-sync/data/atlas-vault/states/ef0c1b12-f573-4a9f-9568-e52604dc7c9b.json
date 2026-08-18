@@ -1,0 +1,84 @@
+{
+  "links": [
+    {
+      "id": "lnk-fb7df948-der",
+      "linkType": "DERIVED_FROM",
+      "targetDocumentId": "fb7df948-ecb4-4b2b-b3f3-7a60b1a04713",
+      "targetTitle": "A.2 - The-Support-Scope"
+    }
+  ],
+  "model": null,
+  "scope": null,
+  "title": "A shortfall accrues penalties per second automatically, making the on-chain monitor an interim penalty ledger",
+  "editor": null,
+  "inputs": [],
+  "models": [],
+  "status": "CANONICAL",
+  "topics": [
+    {
+      "id": "6154b39e-20a2-4708-b296-102c4c826d38",
+      "name": "sky-atlas",
+      "topicDocumentId": null
+    },
+    {
+      "id": "d16f4e77-39eb-4dcd-8cb0-38360852499d",
+      "name": "risk-capital",
+      "topicDocumentId": null
+    },
+    {
+      "id": "33ea8228-0380-45e1-b305-bd34ef94b0a0",
+      "name": "enforcement",
+      "topicDocumentId": null
+    }
+  ],
+  "content": "A.2.2.10.1.1.3.2.1.3.1 specifies that where a Prime Agent's OVRC is less than its Aggregate RRC, \"the shortfall will be logged and penalty accrual will commence on a pro-rata, per-second basis for the duration and magnitude of the observed shortfall, according to the penalty schedule defined in the Atlas. Thus, this on-chain monitoring system serves as an interim penalty ledger.\"\n\nThree properties make this more than an alarm. Enforcement is **continuous** \u2014 there is no reporting boundary at which a shortfall becomes chargeable, so a Prime cannot be undercapitalised between snapshots for free. It is **proportional in two dimensions**, so a brief small gap and a sustained large one are priced differently rather than both counting as one violation. And it is **automatic**, requiring no discretionary finding before a liability exists.\n\nThe cost of automation is accepting known measurement error. Because the trigger is OVRC rather than TRC, the ledger charges against a figure the Atlas itself says can be wrong in both directions \u2014 hence \"interim.\"\n\nThe design pattern is worth naming: accrue against the imperfect signal immediately, then correct against the authoritative record later. The alternative \u2014 waiting for verified data before any liability attaches \u2014 would leave enforcement silent during exactly the window when a shortfall is doing damage.",
+  "context": null,
+  "modelId": null,
+  "modules": [],
+  "outputs": [],
+  "version": null,
+  "computes": null,
+  "filePath": null,
+  "noteType": "ARCHITECTURE",
+  "severity": null,
+  "hooksUsed": [],
+  "rootCause": null,
+  "confidence": null,
+  "consumedBy": [],
+  "provenance": {
+    "author": "atlas-extract",
+    "createdAt": "2026-08-17T21:22:47.000Z",
+    "sessionId": null,
+    "updatedAt": "2026-08-18T18:19:56.000Z",
+    "sourceOrigin": "DERIVED"
+  },
+  "sourceType": null,
+  "targetType": null,
+  "cardinality": null,
+  "description": "Where OVRC falls below Aggregate RRC, penalty accrual starts pro-rata on duration and magnitude without human involvement, producing a provisional liability that later reconciliation revises.",
+  "alternatives": [],
+  "consequences": [],
+  "errorMessage": null,
+  "relationType": null,
+  "correctPattern": null,
+  "decisionStatus": null,
+  "dispatchTargets": [],
+  "lifecycleEvents": [
+    {
+      "id": "744160fc-f84d-4533-900c-741089f4fcc5",
+      "actor": "knowledge-agent",
+      "comment": "Batch review: extraction verified against source; fields and links complete.",
+      "toStatus": "IN_REVIEW",
+      "timestamp": "2026-08-18T18:19:56.000Z",
+      "fromStatus": "DRAFT"
+    },
+    {
+      "id": "a17db3be-f0a2-4291-9066-48c0334c5cec",
+      "actor": "liberuum",
+      "comment": "Approved: vault-wide canonicalization after full verification pass.",
+      "toStatus": "CANONICAL",
+      "timestamp": "2026-08-18T18:19:56.000Z",
+      "fromStatus": "IN_REVIEW"
+    }
+  ]
+}
