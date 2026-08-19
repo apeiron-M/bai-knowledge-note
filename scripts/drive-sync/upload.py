@@ -382,7 +382,11 @@ def main() -> int:
     args = parse_args()
     data_dir = Path(args.data)
     manifest = json.loads((data_dir / "manifest.json").read_text())
-    id_map = IdMap(data_dir / "id-map.json")
+    # See IdMap: a mapping only means anything against the target it was
+    # built for. Bind it here so a reused --data directory fails loudly
+    # instead of skipping documents it never created on this reactor.
+    target = f"{gql.SUPERGRAPH_ENDPOINT}#{getattr(args, 'existing_drive', None) or args.drive_name}"
+    id_map = IdMap(data_dir / "id-map.json", target=target)
 
     print(f"[upload] data:        {data_dir}")
     print(f"[upload] drive name:  {args.drive_name}")

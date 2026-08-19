@@ -89,7 +89,12 @@ def upload(
 
     data = Path(data)
     manifest = json.loads((data / "manifest.json").read_text())
-    id_map = IdMap(data / "id-map.json")
+    # Scope the id-map to this exact reactor+drive. Reusing a snapshot
+    # directory across targets silently skips every document that the
+    # PREVIOUS target created, which is indistinguishable from success
+    # until phase 3 starts mutating ids that do not exist here.
+    target = f"{endpoint}#{existing_drive or drive_name or 'new-drive'}"
+    id_map = IdMap(data / "id-map.json", target=target)
 
     args = Namespace(
         data=str(data),
