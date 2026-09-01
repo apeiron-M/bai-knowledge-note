@@ -243,7 +243,7 @@ export function VaultSidebar({
         <button
           type="button"
           onClick={() => setSidebarOpen(true)}
-          className="sidebar-collapse-btn absolute left-0.5 top-[31px] z-20 rounded-full p-1 backdrop-blur transition-colors"
+          className="sidebar-collapse-btn absolute left-0.09 top-[28px] z-20 rounded-full p-1 backdrop-blur transition-colors"
           style={{
             color: "var(--bai-text-muted)",
             backgroundColor: "var(--bai-surface)",
