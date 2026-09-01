@@ -224,68 +224,6 @@ export function DriveExplorer({ children }: EditorProps) {
         </svg>
       ),
     },
-    {
-      key: "activity",
-      label: "Activity",
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <circle cx="12" cy="12" r="10" />
-          <path d="M12 6v6l4 2" />
-        </svg>
-      ),
-    },
-    {
-      key: "pipeline",
-      label: "Pipeline",
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-        </svg>
-      ),
-    },
-    {
-      key: "health",
-      label: "Health",
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M22 12h-6l-2 3-4-6-2 3H2" />
-        </svg>
-      ),
-    },
-    {
-      key: "config" as ViewMode,
-      label: "Config",
-      icon: (
-        <svg
-          className="h-4 w-4"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2"
-        >
-          <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z" />
-          <circle cx="12" cy="12" r="3" />
-        </svg>
-      ),
-    },
   ];
 
   return (
@@ -307,7 +245,9 @@ export function DriveExplorer({ children }: EditorProps) {
             backgroundColor: "var(--bai-surface)",
           }}
         >
-          <div className="flex gap-1">
+          <div className="flex items-center gap-1">
+            {/* Creating comes before browsing, so it leads the row. */}
+            <CreateMenu />
             {TABS.map((tab) => (
               <button
                 key={tab.key}
@@ -364,7 +304,11 @@ export function DriveExplorer({ children }: EditorProps) {
           </div>
           <div className="flex items-center gap-3">
             <GettingStartedButton />
-            <CreateMenu />
+            <SettingsMenu
+              activeView={viewMode}
+              isActive={!showDocumentEditor}
+              onSelect={handleSwitchView}
+            />
           </div>
         </div>
 
@@ -398,6 +342,186 @@ export function DriveExplorer({ children }: EditorProps) {
     </div>
   );
 }
+
+/**
+ * Views that report on the vault rather than hold its content: what has
+ * happened, what is queued, how healthy it is, and how it is configured. They
+ * sit behind a single gear so the tab row stays about the knowledge itself.
+ *
+ * `hint` says what each one answers, since a label alone does not distinguish
+ * "Activity" from "Pipeline".
+ */
+/**
+ * Gear menu for the vault's reporting views.
+ *
+ * Mirrors `CreateMenu`: same dropdown shape, same click-catcher so an outside
+ * click closes it. Takes the active view so the gear can show when one of its
+ * items is the current one — otherwise collapsing four tabs into an icon would
+ * lose the "you are here" the tab row used to give.
+ */
+function SettingsMenu({
+  activeView,
+  isActive,
+  onSelect,
+}: {
+  activeView: ViewMode;
+  /** False while a document editor covers the view, matching the tab row. */
+  isActive: boolean;
+  onSelect: (mode: ViewMode) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const showingSettingsView =
+    isActive && SETTINGS_ITEMS.some((i) => i.key === activeView);
+
+  return (
+    <div className="relative">
+      <button
+        type="button"
+        onClick={() => setOpen((v) => !v)}
+        className="flex items-center gap-1.5 rounded-md px-2 py-1.5 text-xs font-medium transition-colors"
+        style={{
+          backgroundColor: showingSettingsView
+            ? "var(--bai-hover)"
+            : "transparent",
+          color: showingSettingsView
+            ? "var(--bai-accent)"
+            : "var(--bai-text-tertiary)",
+        }}
+        title="Vault reports and settings"
+        aria-label="Vault reports and settings"
+      >
+        <svg
+          className="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z" />
+          <circle cx="12" cy="12" r="3" />
+        </svg>
+      </button>
+
+      {open && (
+        <>
+          <div className="fixed inset-0 z-10" onClick={() => setOpen(false)} />
+          <div
+            className="absolute right-0 z-20 mt-1 w-56 rounded-lg py-1 shadow-xl"
+            style={{
+              border: "1px solid var(--bai-border)",
+              backgroundColor: "var(--bai-surface)",
+            }}
+          >
+            {SETTINGS_ITEMS.map((item) => {
+              const current = isActive && activeView === item.key;
+              return (
+                <button
+                  key={item.key}
+                  type="button"
+                  onClick={() => {
+                    onSelect(item.key);
+                    setOpen(false);
+                  }}
+                  className="flex w-full items-center gap-2 px-3 py-2 text-left hover:bg-white/5"
+                  style={{
+                    color: current
+                      ? "var(--bai-accent)"
+                      : "var(--bai-text-secondary)",
+                  }}
+                >
+                  <span className="shrink-0">{item.icon}</span>
+                  <span className="min-w-0 flex-1">
+                    <span className="block text-xs">{item.label}</span>
+                    <span
+                      className="block text-[10px]"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
+                      {item.hint}
+                    </span>
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+const SETTINGS_ITEMS: {
+  key: ViewMode;
+  label: string;
+  hint: string;
+  icon: React.ReactNode;
+}[] = [
+  {
+    key: "activity",
+    hint: "Recent writes across the vault",
+    label: "Activity",
+    icon: (
+      <svg
+        className="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <circle cx="12" cy="12" r="10" />
+        <path d="M12 6v6l4 2" />
+      </svg>
+    ),
+  },
+  {
+    key: "pipeline",
+    hint: "Queued and in-flight processing tasks",
+    label: "Pipeline",
+    icon: (
+      <svg
+        className="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+      </svg>
+    ),
+  },
+  {
+    key: "health",
+    hint: "Diagnostics from the last check",
+    label: "Health",
+    icon: (
+      <svg
+        className="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="M22 12h-6l-2 3-4-6-2 3H2" />
+      </svg>
+    ),
+  },
+  {
+    key: "config",
+    hint: "How this vault is set up",
+    label: "Config",
+    icon: (
+      <svg
+        className="h-4 w-4"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+      >
+        <path d="M12.22 2h-.44a2 2 0 00-2 2v.18a2 2 0 01-1 1.73l-.43.25a2 2 0 01-2 0l-.15-.08a2 2 0 00-2.73.73l-.22.38a2 2 0 00.73 2.73l.15.1a2 2 0 011 1.72v.51a2 2 0 01-1 1.74l-.15.09a2 2 0 00-.73 2.73l.22.38a2 2 0 002.73.73l.15-.08a2 2 0 012 0l.43.25a2 2 0 011 1.73V20a2 2 0 002 2h.44a2 2 0 002-2v-.18a2 2 0 011-1.73l.43-.25a2 2 0 012 0l.15.08a2 2 0 002.73-.73l.22-.39a2 2 0 00-.73-2.73l-.15-.08a2 2 0 01-1-1.74v-.5a2 2 0 011-1.74l.15-.09a2 2 0 00.73-2.73l-.22-.38a2 2 0 00-2.73-.73l-.15.08a2 2 0 01-2 0l-.43-.25a2 2 0 01-1-1.73V4a2 2 0 00-2-2z" />
+        <circle cx="12" cy="12" r="3" />
+      </svg>
+    ),
+  },
+];
 
 const CREATE_ITEMS = [
   {
