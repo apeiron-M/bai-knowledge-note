@@ -176,17 +176,13 @@ describe("pickFallbackModels", () => {
     m("p/paid", { created: 600 }),
   ];
 
-  it("returns the next newest free models after the primary, capped at three", () => {
-    expect(pickFallbackModels(catalog, "a/free")).toEqual([
-      "b/free",
-      "c/free",
-      "d/free",
-    ]);
+  it("returns the next newest free models after the primary, leaving room for it in a request of three", () => {
+    expect(pickFallbackModels(catalog, "a/free")).toEqual(["b/free", "c/free"]);
   });
 
   it("never includes the primary, paid models, skipped models, or tiny contexts", () => {
     const got = pickFallbackModels(catalog, "b/free", new Set(["c/free"]));
-    expect(got).toEqual(["a/free", "d/free", "e/free"]);
+    expect(got).toEqual(["a/free", "d/free"]);
     expect(got).not.toContain("b/free");
     expect(got).not.toContain("p/paid");
     expect(got).not.toContain("tiny/free");

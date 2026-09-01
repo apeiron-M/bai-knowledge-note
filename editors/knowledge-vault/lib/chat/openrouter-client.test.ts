@@ -1,6 +1,7 @@
 import "../../../shared/test/browser-globals.js";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import {
+  MAX_MODELS_IN_REQUEST,
   OpenRouterError,
   parseSseChunk,
   streamChat,
@@ -173,6 +174,20 @@ describe("streamChat", () => {
     mockStream(["data: [DONE]\n\n"]);
     await streamChat({ key: "k", model: "a/primary", messages: [] });
     expect(lastRequest().body).not.toHaveProperty("models");
+  });
+
+  it("never sends more models than OpenRouter accepts, primary included", async () => {
+    mockStream(["data: [DONE]\n\n"]);
+    await streamChat({
+      key: "k",
+      model: "a/primary",
+      messages: [],
+      fallbackModels: ["b", "c", "d", "e"],
+    });
+    const models = lastRequest().body.models as string[];
+    expect(models).toHaveLength(MAX_MODELS_IN_REQUEST);
+    expect(models[0]).toBe("a/primary");
+    expect(MAX_MODELS_IN_REQUEST).toBe(3);
   });
 
   it("reports which model actually answered", async () => {

@@ -17,6 +17,13 @@
 
 const COMPLETIONS_URL = "https://openrouter.ai/api/v1/chat/completions";
 
+/**
+ * OpenRouter rejects a `models` array longer than this — and the count
+ * includes the primary. Enforced here, at the request boundary, so no caller
+ * can reintroduce a 400 by choosing one fallback too many.
+ */
+export const MAX_MODELS_IN_REQUEST = 3;
+
 export interface ToolCall {
   id: string;
   type: "function";
@@ -122,7 +129,12 @@ export async function streamChat(opts: {
     body: JSON.stringify({
       model: opts.model,
       ...(opts.fallbackModels?.length
-        ? { models: [opts.model, ...opts.fallbackModels] }
+        ? {
+            models: [opts.model, ...opts.fallbackModels].slice(
+              0,
+              MAX_MODELS_IN_REQUEST,
+            ),
+          }
         : {}),
       messages: opts.messages,
       stream: true,

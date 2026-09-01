@@ -10,6 +10,7 @@
  * and tested directly; the hook composes them with the auth module.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
+import { MAX_MODELS_IN_REQUEST } from "../lib/chat/openrouter-client.js";
 import {
   beginOAuth,
   clearKey,
@@ -137,8 +138,11 @@ export function pickDefaultModel(
   return catalog[0]?.id ?? FALLBACK_MODEL;
 }
 
-/** How many fallbacks ride along with each request. */
-export const MAX_FALLBACKS = 3;
+/**
+ * How many fallbacks ride along with each request: OpenRouter accepts three
+ * models per request *including* the primary, so two fallbacks fill it.
+ */
+export const MAX_FALLBACKS = MAX_MODELS_IN_REQUEST - 1;
 
 /**
  * The next free candidates after `primary`, for OpenRouter's in-request
