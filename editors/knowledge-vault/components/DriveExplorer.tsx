@@ -1,8 +1,9 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useEffect } from "react";
 import type { EditorProps } from "document-model";
 import {
   setSelectedNode,
   useFileNodesInSelectedDrive,
+  useSelectedDriveId,
 } from "@powerhousedao/reactor-browser";
 import type { ProjectStatus } from "document-models/project";
 import { VaultSidebar } from "./VaultSidebar.js";
@@ -13,6 +14,8 @@ import { SourceList } from "./SourceList.js";
 import { ProjectsView } from "./ProjectsView.js";
 import { HealthDashboard } from "./HealthDashboard.js";
 import { SearchView } from "./SearchView.js";
+import { ChatView } from "./ChatView.js";
+import { readReturnIntent } from "../lib/chat/openrouter-auth.js";
 import { ActivityView } from "./ActivityView.js";
 import { GettingStartedButton } from "./GettingStarted.js";
 import { useKnowledgeNotes } from "../hooks/use-knowledge-notes.js";
@@ -24,6 +27,7 @@ import {
 import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
 
 type ViewMode =
+  | "chat"
   | "notes"
   | "graph"
   | "sources"
@@ -36,6 +40,20 @@ type ViewMode =
 
 export function DriveExplorer({ children }: EditorProps) {
   const [viewMode, setViewMode] = useState<ViewMode>("search");
+  const driveId = useSelectedDriveId();
+  // Returning from OpenRouter remounts the app, and `viewMode` is component
+  // state — without this the user lands on Search with their question gone.
+  // `readReturnIntent` clears the key, so this cannot loop; a mismatched
+  // drive is ignored rather than yanking the user into another drive's chat.
+  const [chatReturnDraft, setChatReturnDraft] = useState("");
+  useEffect(() => {
+    if (!driveId) return;
+    const intent = readReturnIntent();
+    if (intent && intent.driveId === driveId) {
+      setChatReturnDraft(intent.draft);
+      setViewMode("chat");
+    }
+  }, [driveId]);
   const [graphFocus, setGraphFocus] = useState<GraphFocus | null>(null);
   const [graphClearNonce, setGraphClearNonce] = useState(0);
   // `notesLoading` is true until the first metadata fetch settles. It has
@@ -139,6 +157,22 @@ export function DriveExplorer({ children }: EditorProps) {
     badge?: number;
     icon: React.ReactNode;
   }[] = [
+    {
+      key: "chat",
+      label: "Chat",
+      icon: (
+        <svg
+          className="h-4 w-4"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+        >
+          <path d="M21 11.5a8.38 8.38 0 01-.9 3.8 8.5 8.5 0 01-7.6 4.7 8.38 8.38 0 01-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 01-.9-3.8 8.5 8.5 0 014.7-7.6 8.38 8.38 0 013.8-.9h.5a8.48 8.48 0 018 8v.5z" />
+          <path d="M9 12h.01M12 12h.01M15 12h.01" />
+        </svg>
+      ),
+    },
     {
       key: "search",
       label: "Search",
@@ -323,6 +357,8 @@ export function DriveExplorer({ children }: EditorProps) {
               onGraphFocusChange={handleGraphFocusChange}
               clearFocusNonce={graphClearNonce}
             />
+          ) : viewMode === "chat" ? (
+            <ChatView initialDraft={chatReturnDraft} />
           ) : viewMode === "search" ? (
             <SearchView isLoading={notesLoading} />
           ) : viewMode === "activity" ? (
