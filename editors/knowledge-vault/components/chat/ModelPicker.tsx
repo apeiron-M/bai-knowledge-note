@@ -40,13 +40,17 @@ export function ModelPicker({
 
   const shown = useMemo(() => {
     const q = filter.trim().toLowerCase();
-    const list = q
-      ? models.filter(
-          (m) =>
-            m.id.toLowerCase().includes(q) || m.name.toLowerCase().includes(q),
-        )
-      : models;
-    return list.slice(0, 60);
+    const matches = (m: ModelInfo) =>
+      m.id.toLowerCase().includes(q) ||
+      m.name.toLowerCase().includes(q) ||
+      // Typing "free" should find every free model, not just ids suffixed :free.
+      (q === "free" && m.free);
+    const list = q ? models.filter(matches) : models;
+    // Free models first: for someone without credits they are the only ones
+    // that work, and they should not have to know that to find them.
+    return [...list]
+      .sort((a, b) => Number(b.free) - Number(a.free))
+      .slice(0, 60);
   }, [models, filter]);
 
   return (
@@ -74,6 +78,17 @@ export function ModelPicker({
           <path d="M12 2a4 4 0 014 4v1h1a3 3 0 013 3v1a3 3 0 01-3 3h-1v1a4 4 0 01-8 0v-1H7a3 3 0 01-3-3v-1a3 3 0 013-3h1V6a4 4 0 014-4z" />
         </svg>
         <span className="truncate">{current?.name ?? model}</span>
+        {current?.free && (
+          <span
+            className="shrink-0 rounded px-1 text-[9px] font-semibold uppercase tracking-wide"
+            style={{
+              backgroundColor: "var(--bai-accent-soft)",
+              color: "var(--bai-accent)",
+            }}
+          >
+            free
+          </span>
+        )}
         <svg
           className="h-3 w-3 shrink-0 opacity-60"
           viewBox="0 0 24 24"

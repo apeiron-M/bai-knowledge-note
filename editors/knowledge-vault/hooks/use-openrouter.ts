@@ -22,21 +22,38 @@ import {
 const MODELS_URL = "https://openrouter.ai/api/v1/models";
 const MODEL_STORAGE = "bai-chat-model:v1";
 
-/** A capable, widely available default; the user can change it any time. */
-export const DEFAULT_MODEL = "anthropic/claude-sonnet-4.5";
+/**
+ * Used only when the catalog holds no free model with a usable context window
+ * (or is unreachable and nothing is stored). Paid, so never chosen silently
+ * when a free option exists — a default that bills the user before they have
+ * picked anything is the wrong default.
+ */
+export const FALLBACK_MODEL = "anthropic/claude-sonnet-4.5";
+
+/**
+ * Smallest context window the auto-chosen default may have. The system
+ * prompt is ~800 tokens, a paged document read is ~2,000, and a six-round tool
+ * loop accumulates all of it; free models below this would truncate mid-answer.
+ */
+export const MIN_DEFAULT_CONTEXT = 32_000;
 
 export interface ModelInfo {
   id: string;
   name: string;
+  /** Unix seconds, as OpenRouter reports it. */
+  created: number;
   contextLength: number;
   /** USD per prompt token, as OpenRouter reports it. */
   promptPrice: number;
   completionPrice: number;
+  /** Zero prompt AND completion price. Detected by price, not by id suffix. */
+  free: boolean;
 }
 
 interface RawModel {
   id?: unknown;
   name?: unknown;
+  created?: unknown;
   context_length?: unknown;
   supported_parameters?: unknown;
   pricing?: { prompt?: unknown; completion?: unknown };
@@ -60,13 +77,20 @@ export async function fetchToolCapableModels(): Promise<ModelInfo[]> {
           Array.isArray(m.supported_parameters) &&
           m.supported_parameters.includes("tools"),
       )
-      .map<ModelInfo>((m) => ({
-        id: m.id as string,
-        name: typeof m.name === "string" && m.name ? m.name : (m.id as string),
-        contextLength: num(m.context_length),
-        promptPrice: num(m.pricing?.prompt),
-        completionPrice: num(m.pricing?.completion),
-      }))
+      .map<ModelInfo>((m) => {
+        const promptPrice = num(m.pricing?.prompt);
+        const completionPrice = num(m.pricing?.completion);
+        return {
+          id: m.id as string,
+          name:
+            typeof m.name === "string" && m.name ? m.name : (m.id as string),
+          created: num(m.created),
+          contextLength: num(m.context_length),
+          promptPrice,
+          completionPrice,
+          free: promptPrice === 0 && completionPrice === 0,
+        };
+      })
       .sort((a, b) => a.name.localeCompare(b.name));
   } catch {
     return [];
@@ -82,23 +106,38 @@ export function storeModel(id: string): void {
 }
 
 /**
+ * The model to use when the user has not chosen one: the newest free,
+ * tool-capable model with a usable context window. "Newest" follows the
+ * catalog's `created` stamp so the default tracks what OpenRouter currently
+ * offers for nothing, rather than a name hardcoded here that goes stale.
+ */
+export function pickDefaultModel(catalog: ModelInfo[]): string {
+  const free = catalog
+    .filter((m) => m.free && m.contextLength >= MIN_DEFAULT_CONTEXT)
+    .sort((a, b) => b.created - a.created);
+  if (free[0]) return free[0].id;
+  if (catalog.some((m) => m.id === FALLBACK_MODEL)) return FALLBACK_MODEL;
+  return catalog[0]?.id ?? FALLBACK_MODEL;
+}
+
+/**
  * Pick the model to use given the stored preference and the live catalog.
  *
  * While the catalog is empty (unreachable, or not loaded yet) the stored
  * choice is trusted — an offline catalog must not silently swap the user's
- * model. Once a non-empty catalog arrives, a stored id it no longer contains
- * falls back to the default and is flagged so the UI can say so.
+ * model. Once a non-empty catalog arrives, an explicit choice it still
+ * contains wins; otherwise the free default is used, flagged when it
+ * replaced a stored id so the UI can say so.
  */
 export function resolveModel(
   stored: string | null,
   catalog: ModelInfo[],
 ): { model: string; fellBack: boolean } {
   if (catalog.length === 0)
-    return { model: stored ?? DEFAULT_MODEL, fellBack: false };
-  const has = (id: string) => catalog.some((m) => m.id === id);
-  if (stored && has(stored)) return { model: stored, fellBack: false };
-  const fallback = has(DEFAULT_MODEL) ? DEFAULT_MODEL : catalog[0].id;
-  return { model: fallback, fellBack: stored !== null };
+    return { model: stored ?? FALLBACK_MODEL, fellBack: false };
+  if (stored && catalog.some((m) => m.id === stored))
+    return { model: stored, fellBack: false };
+  return { model: pickDefaultModel(catalog), fellBack: stored !== null };
 }
 
 export interface UseOpenRouter {
@@ -111,6 +150,8 @@ export interface UseOpenRouter {
   modelsLoading: boolean;
   /** The stored model vanished from the catalog and the default is in use. */
   modelFellBack: boolean;
+  /** The active model costs nothing per token. */
+  modelIsFree: boolean;
   connect: (intent: { driveId: string; draft: string }) => Promise<void>;
   connectWithKey: (key: string) => Promise<boolean>;
   disconnect: () => void;
@@ -182,6 +223,7 @@ export function useOpenRouter(): UseOpenRouter {
   }, []);
 
   const { model, fellBack } = resolveModel(stored, models);
+  const modelIsFree = models.find((m) => m.id === model)?.free ?? false;
 
   return {
     key,
@@ -191,6 +233,7 @@ export function useOpenRouter(): UseOpenRouter {
     models,
     modelsLoading,
     modelFellBack: fellBack,
+    modelIsFree,
     connect,
     connectWithKey,
     disconnect,

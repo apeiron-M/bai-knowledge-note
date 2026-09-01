@@ -219,6 +219,13 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
                   role="alert"
                 >
                   {chat.error}
+                  {/402|credits/i.test(chat.error) && !or.modelIsFree && (
+                    <p className="mt-1.5 opacity-80">
+                      This model bills per token. Pick one marked{" "}
+                      <span className="font-semibold">free</span> from the model
+                      menu above, or add credits on OpenRouter.
+                    </p>
+                  )}
                 </div>
               )}
             </div>
