@@ -463,50 +463,64 @@ function CreateMenu() {
           New
         </button>
         {menuOpen && (
-          <div
-            className="absolute right-0 z-20 mt-1 w-56 rounded-lg py-1 shadow-xl"
-            style={{
-              border: "1px solid var(--bai-border)",
-              backgroundColor: "var(--bai-surface)",
-            }}
-          >
-            {CREATE_ITEMS.map((item) => (
-              <button
-                key={item.type}
-                type="button"
-                onClick={() => {
-                  setDialogItem(item);
-                  setMenuOpen(false);
-                }}
-                className="flex w-full flex-col px-3 py-2 text-left"
-                style={{
-                  borderBottom: item.primary
-                    ? "1px solid var(--bai-border)"
-                    : undefined,
-                }}
-              >
-                <span
-                  className="text-xs"
+          <>
+            {/*
+              Click-catcher behind the menu: a click anywhere else lands here
+              and closes it, so the dropdown does not sit open while the user
+              works elsewhere. Same approach as the status menus in
+              project-editor — no document-level listener to leak, and it
+              stays below the menu's own z-index so the items remain
+              clickable.
+            */}
+            <div
+              className="fixed inset-0 z-10"
+              onClick={() => setMenuOpen(false)}
+            />
+            <div
+              className="absolute right-0 z-20 mt-1 w-56 rounded-lg py-1 shadow-xl"
+              style={{
+                border: "1px solid var(--bai-border)",
+                backgroundColor: "var(--bai-surface)",
+              }}
+            >
+              {CREATE_ITEMS.map((item) => (
+                <button
+                  key={item.type}
+                  type="button"
+                  onClick={() => {
+                    setDialogItem(item);
+                    setMenuOpen(false);
+                  }}
+                  className="flex w-full flex-col px-3 py-2 text-left"
                   style={{
-                    color: item.primary
-                      ? "var(--bai-accent)"
-                      : "var(--bai-text-secondary)",
-                    fontWeight: item.primary ? 600 : 400,
+                    borderBottom: item.primary
+                      ? "1px solid var(--bai-border)"
+                      : undefined,
                   }}
                 >
-                  {item.label}
-                </span>
-                {item.hint && (
                   <span
-                    className="text-[10px]"
-                    style={{ color: "var(--bai-text-faint)" }}
+                    className="text-xs"
+                    style={{
+                      color: item.primary
+                        ? "var(--bai-accent)"
+                        : "var(--bai-text-secondary)",
+                      fontWeight: item.primary ? 600 : 400,
+                    }}
                   >
-                    {item.hint}
+                    {item.label}
                   </span>
-                )}
-              </button>
-            ))}
-          </div>
+                  {item.hint && (
+                    <span
+                      className="text-[10px]"
+                      style={{ color: "var(--bai-text-faint)" }}
+                    >
+                      {item.hint}
+                    </span>
+                  )}
+                </button>
+              ))}
+            </div>
+          </>
         )}
       </div>
       <CreateDocumentDialog
