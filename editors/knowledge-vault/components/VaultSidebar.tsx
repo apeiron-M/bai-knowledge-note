@@ -215,21 +215,27 @@ export function VaultSidebar({
   const selectedConnectionTitle =
     connectionItems.find((i) => i.isSelected)?.title ?? "Selected node";
 
-  // Collapsed: show a thin strip with toggle button
+  // Collapsed: just the re-open button, floating over the content.
+  //
+  // This used to render a full-height `w-10` strip (its own background +
+  // right border), which kept taking horizontal space from the content
+  // after collapsing — the point of collapsing. `absolute` takes the
+  // button out of flow so the panel to the right reclaims the full width,
+  // and the zero-width wrapper is `relative` only so the button positions
+  // against it rather than some ancestor. A translucent background keeps
+  // the glyph legible over whatever it floats above.
   if (!sidebarOpen) {
     return (
-      <div
-        className="flex h-full w-10 shrink-0 flex-col items-center border-r py-3"
-        style={{
-          backgroundColor: "var(--bai-deep)",
-          borderColor: "var(--bai-border)",
-        }}
-      >
+      <div className="relative h-full w-0 shrink-0">
         <button
           type="button"
           onClick={() => setSidebarOpen(true)}
-          className="sidebar-collapse-btn rounded p-1.5 transition-colors"
-          style={{ color: "var(--bai-text-muted)" }}
+          className="sidebar-collapse-btn absolute left-1 top-2 z-20 rounded p-1.5 backdrop-blur transition-colors"
+          style={{
+            color: "var(--bai-text-muted)",
+            backgroundColor: "var(--bai-surface)",
+            border: "1px solid var(--bai-border)",
+          }}
           title="Open sidebar"
         >
           <svg
