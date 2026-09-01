@@ -84,15 +84,32 @@ export const controlClass =
 export function Row({
   label,
   unit,
+  why,
   children,
 }: {
   label: string;
   unit?: string;
+  /**
+   * What this setting is for. Shown on hover rather than always: seven of
+   * these expanded inline would bury the numbers they explain, and the label
+   * already carries the everyday meaning.
+   */
+  why?: string;
   children: ReactNode;
 }) {
   return (
     <div className="flex items-center justify-between gap-2 text-xs">
-      <span style={{ color: "var(--bai-text-tertiary)" }}>{label}</span>
+      <span
+        style={{ color: "var(--bai-text-tertiary)" }}
+        title={why}
+        className={
+          why
+            ? "cursor-help underline decoration-dotted underline-offset-4"
+            : undefined
+        }
+      >
+        {label}
+      </span>
       <span className="flex shrink-0 items-center gap-1.5">
         {children}
         {unit && (

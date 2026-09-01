@@ -39,7 +39,10 @@ export function VocabularySection({
       <div className="space-y-2">
         {entries.map(([key, value]) => (
           <label key={key} className="block text-xs">
-            <span className="capitalize" style={{ color: "var(--bai-text-faint)" }}>
+            <span
+              className="capitalize"
+              style={{ color: "var(--bai-text-faint)" }}
+            >
               {key}
             </span>
             <input

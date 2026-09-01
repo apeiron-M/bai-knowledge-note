@@ -42,10 +42,16 @@ export function InitForm({ dispatch }: { dispatch: Dispatch }) {
             }}
           >
             <div>
-              <h2 className="text-lg font-bold" style={{ color: "var(--bai-text)" }}>
+              <h2
+                className="text-lg font-bold"
+                style={{ color: "var(--bai-text)" }}
+              >
                 Name this vault
               </h2>
-              <p className="mt-1 text-xs" style={{ color: "var(--bai-text-muted)" }}>
+              <p
+                className="mt-1 text-xs"
+                style={{ color: "var(--bai-text-muted)" }}
+              >
                 The rest of the settings describe how it works. Start with what
                 it is.
               </p>

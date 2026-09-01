@@ -95,7 +95,10 @@ export function FeaturesSection({
         </button>
       </div>
       {duplicate && (
-        <p className="mt-1 text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
+        <p
+          className="mt-1 text-[10px]"
+          style={{ color: "var(--bai-text-faint)" }}
+        >
           {trimmed} is already on.
         </p>
       )}

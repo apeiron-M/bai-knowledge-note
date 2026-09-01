@@ -77,7 +77,10 @@ export function HeaderSection({
         style={{ color: "var(--bai-text-muted)" }}
       />
       {updatedAt && (
-        <p className="mt-1 text-[10px]" style={{ color: "var(--bai-text-faint)" }}>
+        <p
+          className="mt-1 text-[10px]"
+          style={{ color: "var(--bai-text-faint)" }}
+        >
           Last changed {new Date(updatedAt).toLocaleString()}
         </p>
       )}

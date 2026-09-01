@@ -30,16 +30,49 @@ const DIMENSIONS = [
   "automation",
 ] as const;
 
-/** The two poles each dimension runs between. */
-const POLES: Record<string, [string, string]> = {
-  granularity: ["Atomic", "Coarse"],
-  organization: ["Flat", "Hierarchical"],
-  linking: ["Implicit", "Explicit"],
-  processing: ["Minimal", "Intense"],
-  navigation: ["Linear", "3-Tier"],
-  maintenance: ["Manual", "Condition-based"],
-  schema: ["Convention", "Dense"],
-  automation: ["Manual", "Full"],
+/**
+ * The poles each dimension runs between, and what moving it is meant to
+ * change. Both columns come from the Ars Contexta spec's own 8-dimension
+ * table (§2.2 The Derivation Engine) — this is the vault's stated
+ * methodology, not a gloss invented for the UI.
+ */
+const DIMENSION_META: Record<
+  (typeof DIMENSIONS)[number],
+  { poles: [string, string]; controls: string }
+> = {
+  granularity: {
+    poles: ["Atomic", "Coarse"],
+    controls: "Note size, extraction depth, reweaving scope.",
+  },
+  organization: {
+    poles: ["Flat", "Hierarchical"],
+    controls: "Folder structure, map tier count, navigation paths.",
+  },
+  linking: {
+    poles: ["Implicit", "Explicit"],
+    controls: "How connections get found — semantic search or by hand.",
+  },
+  processing: {
+    poles: ["Minimal", "Intense"],
+    controls:
+      "Extraction selectivity, connection density, reweaving frequency.",
+  },
+  navigation: {
+    poles: ["Linear", "3-Tier"],
+    controls: "Map structure: one hub, then domains, then topics.",
+  },
+  maintenance: {
+    poles: ["Manual", "Condition-based"],
+    controls: "When health checks trigger and when reweaving happens.",
+  },
+  schema: {
+    poles: ["Convention", "Dense"],
+    controls: "Required fields, enum validation, template rigour.",
+  },
+  automation: {
+    poles: ["Manual", "Full"],
+    controls: "Which hooks are active and how much the pipeline does alone.",
+  },
 };
 
 type Position = {
@@ -69,7 +102,9 @@ export function DimensionsSection({
         {DIMENSIONS.map((dim) => {
           const d = byKey[dim];
           if (!d) return null;
-          const [left, right] = POLES[dim] ?? ["Low", "High"];
+          // Exhaustive over DIMENSIONS by type, so this is always defined.
+          const meta = DIMENSION_META[dim];
+          const [left, right] = meta.poles;
           const value = d.value ?? 3;
           const confidence = d.confidence ?? 0.5;
 
@@ -94,6 +129,7 @@ export function DimensionsSection({
                 <span
                   className="text-xs font-medium capitalize"
                   style={{ color: "var(--bai-text-secondary)" }}
+                  title={meta.controls}
                 >
                   {dim}
                 </span>
@@ -154,6 +190,13 @@ export function DimensionsSection({
                   {value}
                 </span>
               </div>
+
+              <p
+                className="text-[10px] leading-relaxed"
+                style={{ color: "var(--bai-text-faint)" }}
+              >
+                {meta.controls}
+              </p>
 
               <input
                 type="text"
