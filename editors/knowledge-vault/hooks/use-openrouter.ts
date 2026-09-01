@@ -105,19 +105,55 @@ export function storeModel(id: string): void {
   localStorage.setItem(MODEL_STORAGE, id);
 }
 
+/** Free, tool-capable, and roomy enough for the agent loop — newest first. */
+function freeCandidates(
+  catalog: ModelInfo[],
+  exclude: ReadonlySet<string>,
+): ModelInfo[] {
+  return catalog
+    .filter(
+      (m) =>
+        m.free && m.contextLength >= MIN_DEFAULT_CONTEXT && !exclude.has(m.id),
+    )
+    .sort((a, b) => b.created - a.created);
+}
+
 /**
  * The model to use when the user has not chosen one: the newest free,
  * tool-capable model with a usable context window. "Newest" follows the
  * catalog's `created` stamp so the default tracks what OpenRouter currently
  * offers for nothing, rather than a name hardcoded here that goes stale.
+ *
+ * `exclude` holds models that failed this session, so a default that went
+ * down is not chosen again until the page reloads.
  */
-export function pickDefaultModel(catalog: ModelInfo[]): string {
-  const free = catalog
-    .filter((m) => m.free && m.contextLength >= MIN_DEFAULT_CONTEXT)
-    .sort((a, b) => b.created - a.created);
+export function pickDefaultModel(
+  catalog: ModelInfo[],
+  exclude: ReadonlySet<string> = new Set(),
+): string {
+  const free = freeCandidates(catalog, exclude);
   if (free[0]) return free[0].id;
   if (catalog.some((m) => m.id === FALLBACK_MODEL)) return FALLBACK_MODEL;
   return catalog[0]?.id ?? FALLBACK_MODEL;
+}
+
+/** How many fallbacks ride along with each request. */
+export const MAX_FALLBACKS = 3;
+
+/**
+ * The next free candidates after `primary`, for OpenRouter's in-request
+ * `models` fallback. Server-side failover means one request, so a model
+ * that is down never costs a second attempt against the free quota.
+ */
+export function pickFallbackModels(
+  catalog: ModelInfo[],
+  primary: string,
+  exclude: ReadonlySet<string> = new Set(),
+): string[] {
+  return freeCandidates(catalog, exclude)
+    .map((m) => m.id)
+    .filter((id) => id !== primary)
+    .slice(0, MAX_FALLBACKS);
 }
 
 /**
@@ -132,12 +168,23 @@ export function pickDefaultModel(catalog: ModelInfo[]): string {
 export function resolveModel(
   stored: string | null,
   catalog: ModelInfo[],
-): { model: string; fellBack: boolean } {
-  if (catalog.length === 0)
-    return { model: stored ?? FALLBACK_MODEL, fellBack: false };
-  if (stored && catalog.some((m) => m.id === stored))
-    return { model: stored, fellBack: false };
-  return { model: pickDefaultModel(catalog), fellBack: stored !== null };
+  exclude: ReadonlySet<string> = new Set(),
+): { model: string; explicit: boolean; fellBack: boolean } {
+  if (catalog.length === 0) {
+    return {
+      model: stored ?? FALLBACK_MODEL,
+      explicit: stored !== null,
+      fellBack: false,
+    };
+  }
+  if (stored && catalog.some((m) => m.id === stored)) {
+    return { model: stored, explicit: true, fellBack: false };
+  }
+  return {
+    model: pickDefaultModel(catalog, exclude),
+    explicit: false,
+    fellBack: stored !== null,
+  };
 }
 
 export interface UseOpenRouter {
@@ -152,6 +199,17 @@ export interface UseOpenRouter {
   modelFellBack: boolean;
   /** The active model costs nothing per token. */
   modelIsFree: boolean;
+  /** False when the model was chosen automatically rather than by the user. */
+  modelIsExplicit: boolean;
+  /**
+   * Free models OpenRouter may fail over to within a request. Empty when the
+   * user chose a model explicitly — their choice is not silently swapped.
+   */
+  fallbackModels: string[];
+  /** Mark a model as unavailable for this session so it is not auto-chosen again. */
+  skipModel: (id: string) => void;
+  /** Display name for a model id, or the id itself if unknown. */
+  modelName: (id: string) => string;
   connect: (intent: { driveId: string; draft: string }) => Promise<void>;
   connectWithKey: (key: string) => Promise<boolean>;
   disconnect: () => void;
@@ -164,6 +222,7 @@ export function useOpenRouter(): UseOpenRouter {
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
   const [stored, setStored] = useState<string | null>(() => readStoredModel());
+  const [skipped, setSkipped] = useState<ReadonlySet<string>>(() => new Set());
   const completedRef = useRef(false);
 
   // Finish a redirect exactly once per mount. `completeOAuthFromUrl` is a
@@ -222,8 +281,20 @@ export function useOpenRouter(): UseOpenRouter {
     setStored(id);
   }, []);
 
-  const { model, fellBack } = resolveModel(stored, models);
+  const skipModel = useCallback((id: string) => {
+    setSkipped((prev) => (prev.has(id) ? prev : new Set([...prev, id])));
+  }, []);
+
+  const modelName = useCallback(
+    (id: string) => models.find((m) => m.id === id)?.name ?? id,
+    [models],
+  );
+
+  const { model, explicit, fellBack } = resolveModel(stored, models, skipped);
   const modelIsFree = models.find((m) => m.id === model)?.free ?? false;
+  const fallbackModels = explicit
+    ? []
+    : pickFallbackModels(models, model, skipped);
 
   return {
     key,
@@ -234,6 +305,10 @@ export function useOpenRouter(): UseOpenRouter {
     modelsLoading,
     modelFellBack: fellBack,
     modelIsFree,
+    modelIsExplicit: explicit,
+    fallbackModels,
+    skipModel,
+    modelName,
     connect,
     connectWithKey,
     disconnect,

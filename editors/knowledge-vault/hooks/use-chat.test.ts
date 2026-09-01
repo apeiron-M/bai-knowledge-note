@@ -16,13 +16,11 @@ const base = { key: "k", model: "m", driveId: "d" };
 
 describe("runAgentLoop", () => {
   it("returns a plain answer when the model asks for no tools", async () => {
-    const streamChat = vi
-      .fn()
-      .mockResolvedValue({
-        text: "Hi there",
-        toolCalls: [],
-        finishReason: "stop",
-      });
+    const streamChat = vi.fn().mockResolvedValue({
+      text: "Hi there",
+      toolCalls: [],
+      finishReason: "stop",
+    });
     const executeTool = vi.fn();
     const r = await runAgentLoop({
       ...base,
@@ -52,13 +50,11 @@ describe("runAgentLoop", () => {
         toolCalls: [],
         finishReason: "stop",
       });
-    const executeTool = vi
-      .fn()
-      .mockResolvedValue({
-        ok: true,
-        data: [{ documentId: "n1" }],
-        summary: 'searched "x" → 1 note',
-      });
+    const executeTool = vi.fn().mockResolvedValue({
+      ok: true,
+      data: [{ documentId: "n1" }],
+      summary: 'searched "x" → 1 note',
+    });
     const trail: TrailEntry[] = [];
 
     const r = await runAgentLoop({
@@ -248,6 +244,75 @@ describe("runAgentLoop", () => {
       deps: { streamChat, executeTool: vi.fn() } as never,
     });
     expect(seen).toEqual(["a", "b"]);
+  });
+});
+
+describe("runAgentLoop routing", () => {
+  it("forwards fallback models to every request", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValue({
+        text: "ok",
+        toolCalls: [],
+        finishReason: "stop",
+        model: "a/one",
+      });
+    await runAgentLoop({
+      ...base,
+      model: "a/one",
+      fallbackModels: ["b/two", "c/three"],
+      messages: [],
+      deps: { streamChat, executeTool: vi.fn() } as never,
+    });
+    expect(
+      (streamChat.mock.calls[0][0] as { fallbackModels?: string[] })
+        .fallbackModels,
+    ).toEqual(["b/two", "c/three"]);
+  });
+
+  it("records a router trail entry when a fallback answered, naming both models", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValue({
+        text: "ok",
+        toolCalls: [],
+        finishReason: "stop",
+        model: "b/two",
+      });
+    const names: Record<string, string> = { "a/one": "One", "b/two": "Two" };
+    const r = await runAgentLoop({
+      ...base,
+      model: "a/one",
+      fallbackModels: ["b/two"],
+      messages: [],
+      modelName: (id) => names[id] ?? id,
+      deps: { streamChat, executeTool: vi.fn() } as never,
+    });
+    expect(r.answeredBy).toBe("b/two");
+    expect(r.trail).toHaveLength(1);
+    expect(r.trail[0]).toMatchObject({ tool: "router", ok: true });
+    expect(r.trail[0].summary).toContain("Two");
+    expect(r.trail[0].summary).toContain("One");
+  });
+
+  it("adds no router entry when the requested model answered", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValue({
+        text: "ok",
+        toolCalls: [],
+        finishReason: "stop",
+        model: "a/one",
+      });
+    const r = await runAgentLoop({
+      ...base,
+      model: "a/one",
+      fallbackModels: ["b/two"],
+      messages: [],
+      deps: { streamChat, executeTool: vi.fn() } as never,
+    });
+    expect(r.answeredBy).toBe("a/one");
+    expect(r.trail).toEqual([]);
   });
 });
 

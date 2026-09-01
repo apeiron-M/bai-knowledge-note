@@ -5,6 +5,7 @@ import {
   MIN_DEFAULT_CONTEXT,
   fetchToolCapableModels,
   pickDefaultModel,
+  pickFallbackModels,
   readStoredModel,
   resolveModel,
   storeModel,
@@ -154,6 +155,48 @@ describe("pickDefaultModel", () => {
   });
 });
 
+describe("pickDefaultModel with exclusions", () => {
+  it("skips models marked unavailable this session", () => {
+    const catalog = [
+      m("a/free", { ...FREE, created: 300 }),
+      m("b/free", { ...FREE, created: 200 }),
+    ];
+    expect(pickDefaultModel(catalog, new Set(["a/free"]))).toBe("b/free");
+  });
+});
+
+describe("pickFallbackModels", () => {
+  const catalog = [
+    m("a/free", { ...FREE, created: 500 }),
+    m("b/free", { ...FREE, created: 400 }),
+    m("c/free", { ...FREE, created: 300 }),
+    m("d/free", { ...FREE, created: 200 }),
+    m("e/free", { ...FREE, created: 100 }),
+    m("tiny/free", { ...FREE, created: 450, contextLength: 1000 }),
+    m("p/paid", { created: 600 }),
+  ];
+
+  it("returns the next newest free models after the primary, capped at three", () => {
+    expect(pickFallbackModels(catalog, "a/free")).toEqual([
+      "b/free",
+      "c/free",
+      "d/free",
+    ]);
+  });
+
+  it("never includes the primary, paid models, skipped models, or tiny contexts", () => {
+    const got = pickFallbackModels(catalog, "b/free", new Set(["c/free"]));
+    expect(got).toEqual(["a/free", "d/free", "e/free"]);
+    expect(got).not.toContain("b/free");
+    expect(got).not.toContain("p/paid");
+    expect(got).not.toContain("tiny/free");
+  });
+
+  it("is empty when there is nothing free to fall back to", () => {
+    expect(pickFallbackModels([m("p/paid")], "p/paid")).toEqual([]);
+  });
+});
+
 describe("model preference", () => {
   const catalog = [
     m("a/one"),
@@ -170,6 +213,7 @@ describe("model preference", () => {
   it("keeps a stored model that is in the catalog, even if a free one exists", () => {
     expect(resolveModel("a/one", catalog)).toEqual({
       model: "a/one",
+      explicit: true,
       fellBack: false,
     });
   });
@@ -177,6 +221,7 @@ describe("model preference", () => {
   it("uses the newest free model without flagging when nothing is stored", () => {
     expect(resolveModel(null, catalog)).toEqual({
       model: "free/new",
+      explicit: false,
       fellBack: false,
     });
   });
@@ -184,6 +229,7 @@ describe("model preference", () => {
   it("falls back to the newest free model and says so when the stored model left the catalog", () => {
     expect(resolveModel("gone/model", catalog)).toEqual({
       model: "free/new",
+      explicit: false,
       fellBack: true,
     });
   });
@@ -192,10 +238,12 @@ describe("model preference", () => {
     // An unreachable catalog must not silently swap the user's choice.
     expect(resolveModel("a/one", [])).toEqual({
       model: "a/one",
+      explicit: true,
       fellBack: false,
     });
     expect(resolveModel(null, [])).toEqual({
       model: FALLBACK_MODEL,
+      explicit: false,
       fellBack: false,
     });
   });

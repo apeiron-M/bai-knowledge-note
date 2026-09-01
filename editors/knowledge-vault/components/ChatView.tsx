@@ -13,11 +13,11 @@
  * Everything runs in the browser: the model via OpenRouter, the data via the
  * same Switchboard endpoints the search field uses. Nothing here can write.
  */
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { useVaultName } from "../hooks/use-vault-name.js";
 import { useOpenRouter } from "../hooks/use-openrouter.js";
-import { useChat } from "../hooks/use-chat.js";
+import { useChat, type ChatFailure } from "../hooks/use-chat.js";
 import { executeTool } from "../lib/chat/vault-tools.js";
 import {
   buildSystemPrompt,
@@ -94,7 +94,26 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
     [vaultName, orientation.stats, orientation.topics],
   );
 
-  const chat = useChat({ driveId, key: or.key, model: or.model, systemPrompt });
+  const chat = useChat({
+    driveId,
+    key: or.key,
+    model: or.model,
+    fallbackModels: or.fallbackModels,
+    modelName: or.modelName,
+    systemPrompt,
+  });
+
+  // Automation only touches automatically chosen models. When one is down —
+  // either OpenRouter fell back mid-request, or the whole request failed for
+  // that model — skip it for the rest of the session so the next turn starts
+  // on a model that works. An explicit choice is never swapped out.
+  const { modelIsExplicit, skipModel } = or;
+  useEffect(() => {
+    if (modelIsExplicit) return;
+    if (chat.routedFrom) skipModel(chat.routedFrom);
+    if (chat.failure?.kind === "model-unavailable")
+      skipModel(chat.failure.model);
+  }, [chat.routedFrom, chat.failure, modelIsExplicit, skipModel]);
   const inConversation = chat.messages.length > 0 || chat.isStreaming;
 
   // Follow the stream, but only if the user is already near the bottom —
@@ -208,25 +227,14 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
                 chat.messages.at(-1)?.role === "assistant" && (
                   <TrailFooter count={chat.trail.length} />
                 )}
-              {chat.error && (
-                <div
-                  className="rounded-lg px-3 py-2 text-xs"
-                  style={{
-                    backgroundColor: "rgba(239,68,68,0.08)",
-                    color: "#ef4444",
-                    border: "1px solid rgba(239,68,68,0.25)",
-                  }}
-                  role="alert"
-                >
-                  {chat.error}
-                  {/402|credits/i.test(chat.error) && !or.modelIsFree && (
-                    <p className="mt-1.5 opacity-80">
-                      This model bills per token. Pick one marked{" "}
-                      <span className="font-semibold">free</span> from the model
-                      menu above, or add credits on OpenRouter.
-                    </p>
-                  )}
-                </div>
+              {chat.failure && chat.failure.kind !== "aborted" && (
+                <FailureNotice
+                  failure={chat.failure}
+                  modelIsFree={or.modelIsFree}
+                  modelIsExplicit={or.modelIsExplicit}
+                  nextModel={or.model}
+                  modelName={or.modelName}
+                />
               )}
             </div>
           </div>
@@ -296,5 +304,84 @@ function TrailFooter({ count }: { count: number }) {
     <p className="-mt-3 text-[11px]" style={{ color: "var(--bai-text-faint)" }}>
       {count} vault {count === 1 ? "query" : "queries"} behind this answer
     </p>
+  );
+}
+
+/**
+ * One notice per failure kind, each ending in the thing the user can do.
+ * The provider's own sentence comes first — for billing and quota it is the
+ * authoritative statement — and ours follows as the next step.
+ */
+function FailureNotice({
+  failure,
+  modelIsFree,
+  modelIsExplicit,
+  nextModel,
+  modelName,
+}: {
+  failure: ChatFailure;
+  modelIsFree: boolean;
+  modelIsExplicit: boolean;
+  /** The model the next turn will use (already re-resolved after a skip). */
+  nextModel: string;
+  modelName: (id: string) => string;
+}) {
+  let next: ReactNode = null;
+  switch (failure.kind) {
+    case "credits":
+      next = modelIsFree ? null : (
+        <>
+          This model bills per token. Pick one marked{" "}
+          <span className="font-semibold">free</span> from the model menu, or
+          add credits on OpenRouter.
+        </>
+      );
+      break;
+    case "free-quota":
+      next = (
+        <>
+          You have used today&apos;s free-model quota on OpenRouter — it is
+          shared across every free model, so switching will not help and each
+          retry counts against it. It resets daily. To continue now, add $10 of
+          credits (raises the free quota to 1,000 requests a day) or pick a paid
+          model.
+        </>
+      );
+      break;
+    case "model-unavailable":
+      next = modelIsExplicit ? (
+        <>
+          {modelName(failure.model)} is not responding right now. Pick another
+          model from the menu and send again.
+        </>
+      ) : nextModel !== failure.model ? (
+        <>
+          {modelName(failure.model)} is not responding right now. Your next
+          message will use {modelName(nextModel)} — just send it again.
+        </>
+      ) : (
+        <>
+          No free model is answering right now. Try again in a minute or pick a
+          paid model.
+        </>
+      );
+      break;
+    default:
+      next = null;
+  }
+
+  return (
+    <div
+      className="rounded-lg px-3 py-2 text-xs"
+      style={{
+        backgroundColor: "rgba(239,68,68,0.08)",
+        color: "#ef4444",
+        border: "1px solid rgba(239,68,68,0.25)",
+      }}
+      role="alert"
+    >
+      <p>{failure.message}</p>
+      {next && <p className="mt-1.5 opacity-80">{next}</p>}
+    </div>
   );
 }

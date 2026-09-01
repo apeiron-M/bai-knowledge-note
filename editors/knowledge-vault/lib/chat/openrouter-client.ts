@@ -43,6 +43,27 @@ export interface StreamResult {
   text: string;
   toolCalls: ToolCall[];
   finishReason: string | null;
+  /** The model that actually answered — differs from the request when OpenRouter fell back. */
+  model: string | null;
+}
+
+/**
+ * A non-OK response from OpenRouter, with enough structure for callers to
+ * tell "add credits" from "this model is down" from "today's free quota is
+ * spent". The provider's own wording is preserved: only the user can act on
+ * a billing message, so paraphrasing it would only lose information.
+ */
+export class OpenRouterError extends Error {
+  readonly status: number;
+  readonly providerMessage: string;
+  readonly raw: string;
+  constructor(status: number, providerMessage: string, raw: string) {
+    super(`OpenRouter ${status}: ${providerMessage || "request failed"}`);
+    this.name = "OpenRouterError";
+    this.status = status;
+    this.providerMessage = providerMessage;
+    this.raw = raw;
+  }
 }
 
 /**
@@ -65,6 +86,7 @@ interface DeltaToolCall {
 }
 
 interface StreamFrame {
+  model?: string;
   choices?: {
     delta?: { content?: string; tool_calls?: DeltaToolCall[] };
     finish_reason?: string | null;
@@ -77,6 +99,13 @@ export async function streamChat(opts: {
   messages: ChatMessage[];
   tools?: ToolSchema[];
   toolChoice?: "auto" | "none";
+  /**
+   * Models OpenRouter may fall back to, in priority order, when `model` is
+   * rate-limited, down, or rejects the request. Failover happens server-side
+   * within this one request — no client retries, so a failed attempt is
+   * never multiplied against the account's free-request quota.
+   */
+  fallbackModels?: string[];
   signal?: AbortSignal;
   onText?: (delta: string) => void;
 }): Promise<StreamResult> {
@@ -92,6 +121,9 @@ export async function streamChat(opts: {
     },
     body: JSON.stringify({
       model: opts.model,
+      ...(opts.fallbackModels?.length
+        ? { models: [opts.model, ...opts.fallbackModels] }
+        : {}),
       messages: opts.messages,
       stream: true,
       ...(opts.tools?.length
@@ -101,7 +133,6 @@ export async function streamChat(opts: {
   });
 
   if (!res.ok) {
-    // Surface the provider's own wording: only the user can fix a 402 or 429.
     const raw = await res.text().catch(() => "");
     let message = raw;
     try {
@@ -111,7 +142,7 @@ export async function streamChat(opts: {
     } catch {
       /* keep the raw body */
     }
-    throw new Error(`OpenRouter ${res.status}: ${message || "request failed"}`);
+    throw new OpenRouterError(res.status, message, raw);
   }
   if (!res.body) throw new Error("OpenRouter returned no response body");
 
@@ -121,6 +152,7 @@ export async function streamChat(opts: {
   let text = "";
   const partial = new Map<number, ToolCall>();
   let finishReason: string | null = null;
+  let model: string | null = null;
 
   for (;;) {
     const { done, value } = await reader.read();
@@ -143,6 +175,7 @@ export async function streamChat(opts: {
         continue; // a keep-alive or malformed frame must not kill the stream
       }
 
+      if (frame.model) model = frame.model;
       const choice = frame.choices?.[0];
       if (!choice) continue;
       if (choice.finish_reason) finishReason = choice.finish_reason;
@@ -175,5 +208,6 @@ export async function streamChat(opts: {
       .sort((a, b) => a[0] - b[0])
       .map(([, call]) => call),
     finishReason,
+    model,
   };
 }

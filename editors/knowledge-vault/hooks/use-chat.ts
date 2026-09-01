@@ -20,6 +20,7 @@ import {
   VAULT_TOOLS,
   executeTool as realExecuteTool,
 } from "../lib/chat/vault-tools.js";
+import { classifyFailure, type Failure } from "../lib/chat/failure.js";
 import {
   deleteThread,
   loadThreads,
@@ -53,6 +54,10 @@ interface LoopDeps {
 export interface LoopOptions {
   key: string;
   model: string;
+  /** Free models OpenRouter may fail over to inside each request. */
+  fallbackModels?: string[];
+  /** Display names for the router trail entry; defaults to the raw id. */
+  modelName?: (id: string) => string;
   driveId: string;
   messages: ChatMessage[];
   onText?: (delta: string) => void;
@@ -65,6 +70,8 @@ export interface LoopResult {
   text: string;
   trail: TrailEntry[];
   iterations: number;
+  /** The model that produced the final answer; differs from `model` after a fallback. */
+  answeredBy: string | null;
 }
 
 function parseArgs(call: ToolCall): Record<string, unknown> | null {
@@ -88,6 +95,8 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   const messages: ChatMessage[] = [...o.messages];
   const trail: TrailEntry[] = [];
   let iterations = 0;
+  let answeredBy: string | null = null;
+  let routed = false;
 
   for (;;) {
     iterations++;
@@ -95,6 +104,7 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
     const result = await deps.streamChat({
       key: o.key,
       model: o.model,
+      fallbackModels: o.fallbackModels,
       messages,
       tools: VAULT_TOOLS,
       toolChoice: forceAnswer ? "none" : "auto",
@@ -102,11 +112,28 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
       onText: o.onText,
     });
 
+    if (result.model) answeredBy = result.model;
+    // Say so once when OpenRouter answered with a fallback: the user should
+    // know which model they are talking to, and why it changed.
+    if (!routed && result.model && result.model !== o.model) {
+      routed = true;
+      const name = o.modelName ?? ((id: string) => id);
+      const entry: TrailEntry = {
+        tool: "router",
+        summary: `answered by ${name(result.model)} — ${name(o.model)} was unavailable`,
+        ok: true,
+        data: { requested: o.model, answeredBy: result.model },
+      };
+      trail.push(entry);
+      o.onTrail?.(entry);
+    }
+
     const wantsTools =
       !forceAnswer &&
       result.finishReason === "tool_calls" &&
       result.toolCalls.length > 0;
-    if (!wantsTools) return { text: result.text, trail, iterations };
+    if (!wantsTools)
+      return { text: result.text, trail, iterations, answeredBy };
 
     // The assistant turn that requested the tools must precede the results,
     // or the provider rejects the transcript.
@@ -207,7 +234,14 @@ export interface UseChatOptions {
   driveId: string | undefined;
   key: string | null;
   model: string;
+  fallbackModels?: string[];
+  modelName?: (id: string) => string;
   systemPrompt: string;
+}
+
+/** A failed turn, with the model it was addressed to so the UI can act. */
+export interface ChatFailure extends Failure {
+  model: string;
 }
 
 export interface UseChat {
@@ -217,7 +251,9 @@ export interface UseChat {
   streamingText: string;
   trail: TrailEntry[];
   isStreaming: boolean;
-  error: string | null;
+  failure: ChatFailure | null;
+  /** Set when the last turn was answered by a fallback: the model that was skipped. */
+  routedFrom: string | null;
   send: (text: string) => Promise<void>;
   stop: () => void;
   newThread: () => void;
@@ -232,13 +268,14 @@ function newId(): string {
 }
 
 export function useChat(o: UseChatOptions): UseChat {
-  const { driveId, key, model, systemPrompt } = o;
+  const { driveId, key, model, fallbackModels, modelName, systemPrompt } = o;
   const [threads, setThreads] = useState<Thread[]>([]);
   const [thread, setThread] = useState<Thread | null>(null);
   const [streamingText, setStreamingText] = useState("");
   const [trail, setTrail] = useState<TrailEntry[]>([]);
   const [isStreaming, setIsStreaming] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [failure, setFailure] = useState<ChatFailure | null>(null);
+  const [routedFrom, setRoutedFrom] = useState<string | null>(null);
   const abortRef = useRef<AbortController | null>(null);
   // Mirrors `streamingText` so the abort path can read the partial answer
   // synchronously — a setState callback would only run on the next render.
@@ -250,7 +287,7 @@ export function useChat(o: UseChatOptions): UseChat {
     setThread(null);
     setStreamingText("");
     setTrail([]);
-    setError(null);
+    setFailure(null);
     setThreads(driveId ? loadThreads(driveId) : []);
   }, [driveId]);
 
@@ -286,7 +323,7 @@ export function useChat(o: UseChatOptions): UseChat {
       setStreamingText("");
       streamedRef.current = "";
       setTrail([]);
-      setError(null);
+      setFailure(null);
       setIsStreaming(true);
       const ctrl = new AbortController();
       abortRef.current = ctrl;
@@ -301,10 +338,13 @@ export function useChat(o: UseChatOptions): UseChat {
 
       let finalText = "";
       const collected: TrailEntry[] = [];
+      setRoutedFrom(null);
       try {
         const r = await runAgentLoop({
           key,
           model,
+          fallbackModels,
+          modelName,
           driveId,
           messages: history,
           signal: ctrl.signal,
@@ -318,12 +358,13 @@ export function useChat(o: UseChatOptions): UseChat {
           },
         });
         finalText = r.text;
+        if (r.answeredBy && r.answeredBy !== model) setRoutedFrom(model);
       } catch (err) {
         if (ctrl.signal.aborted) {
           // Keep whatever streamed; the user asked for it to stop.
           finalText = streamedRef.current;
         } else {
-          setError(err instanceof Error ? err.message : String(err));
+          setFailure({ ...classifyFailure(err), model });
         }
       } finally {
         setIsStreaming(false);
@@ -348,7 +389,17 @@ export function useChat(o: UseChatOptions): UseChat {
         setStreamingText("");
       }
     },
-    [driveId, key, model, systemPrompt, thread, isStreaming, persist],
+    [
+      driveId,
+      key,
+      model,
+      fallbackModels,
+      modelName,
+      systemPrompt,
+      thread,
+      isStreaming,
+      persist,
+    ],
   );
 
   const stop = useCallback(() => abortRef.current?.abort(), []);
@@ -358,7 +409,7 @@ export function useChat(o: UseChatOptions): UseChat {
     setThread(null);
     setStreamingText("");
     setTrail([]);
-    setError(null);
+    setFailure(null);
   }, []);
 
   const openThread = useCallback(
@@ -369,7 +420,7 @@ export function useChat(o: UseChatOptions): UseChat {
       setThread(t);
       setStreamingText("");
       setTrail([]);
-      setError(null);
+      setFailure(null);
     },
     [threads],
   );
@@ -393,7 +444,8 @@ export function useChat(o: UseChatOptions): UseChat {
     streamingText,
     trail,
     isStreaming,
-    error,
+    failure,
+    routedFrom,
     send,
     stop,
     newThread,

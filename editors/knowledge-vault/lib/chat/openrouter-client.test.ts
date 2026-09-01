@@ -1,6 +1,10 @@
 import "../../../shared/test/browser-globals.js";
 import { afterEach, describe, expect, it, vi } from "vitest";
-import { parseSseChunk, streamChat } from "./openrouter-client.js";
+import {
+  OpenRouterError,
+  parseSseChunk,
+  streamChat,
+} from "./openrouter-client.js";
 
 afterEach(() => vi.restoreAllMocks());
 
@@ -152,6 +156,57 @@ describe("streamChat", () => {
     await expect(
       streamChat({ key: "k", model: "m", messages: [] }),
     ).rejects.toThrow(/402.*Insufficient credits/);
+  });
+
+  it("sends a models array for server-side fallback when fallbacks are given", async () => {
+    mockStream(["data: [DONE]\n\n"]);
+    await streamChat({
+      key: "k",
+      model: "a/primary",
+      messages: [],
+      fallbackModels: ["b/two", "c/three"],
+    });
+    const { body } = lastRequest();
+    expect(body.model).toBe("a/primary");
+    expect(body.models).toEqual(["a/primary", "b/two", "c/three"]);
+
+    mockStream(["data: [DONE]\n\n"]);
+    await streamChat({ key: "k", model: "a/primary", messages: [] });
+    expect(lastRequest().body).not.toHaveProperty("models");
+  });
+
+  it("reports which model actually answered", async () => {
+    mockStream([
+      'data: {"model":"b/two","choices":[{"delta":{"content":"hi"}}]}\n\n',
+      'data: {"model":"b/two","choices":[{"delta":{},"finish_reason":"stop"}]}\n\n',
+      "data: [DONE]\n\n",
+    ]);
+    const r = await streamChat({
+      key: "k",
+      model: "a/primary",
+      messages: [],
+      fallbackModels: ["b/two"],
+    });
+    expect(r.model).toBe("b/two");
+  });
+
+  it("throws an OpenRouterError carrying the status and raw body", async () => {
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 429,
+      text: () =>
+        Promise.resolve(
+          '{"error":{"code":429,"message":"Rate limit exceeded: free-models-per-day"}}',
+        ),
+    }) as unknown as typeof fetch;
+    const err = await streamChat({ key: "k", model: "m", messages: [] }).catch(
+      (e: unknown) => e,
+    );
+    expect(err).toBeInstanceOf(OpenRouterError);
+    const e = err as OpenRouterError;
+    expect(e.status).toBe(429);
+    expect(e.providerMessage).toBe("Rate limit exceeded: free-models-per-day");
+    expect(e.raw).toContain("free-models-per-day");
   });
 
   it("forwards the abort signal to fetch", async () => {
