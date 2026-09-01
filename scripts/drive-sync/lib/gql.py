@@ -32,6 +32,7 @@ synthesis bug.
 import http.client
 import json
 import os
+import socket
 import threading
 import time
 import uuid
@@ -52,7 +53,7 @@ _POOL: dict[str, Any] = {}
 _POOL_LOCK = threading.Lock()
 
 
-def _connection(endpoint: str):
+def _connection(endpoint: str, timeout: float | None = None):
     """One keep-alive connection per (scheme, host), reused across calls.
 
     `urllib.request.urlopen` opens a fresh TCP+TLS connection per request. A
@@ -66,10 +67,23 @@ def _connection(endpoint: str):
     p = urlsplit(endpoint)
     key = f"{p.scheme}://{p.netloc}"
     conn = _POOL.get(key)
-    if conn is None:
+    if conn is None or (timeout is not None and conn.timeout != timeout):
+        # Honour the caller's timeout. This used to be hard-coded to 60s while
+        # `post(timeout=...)` was silently ignored, which turned every
+        # long-running mutation into a false failure: the socket timed out at
+        # 60s, the retry loop re-sent the request, and an idempotent server-side
+        # job ran four times. Observed twice on `knowledgeGraphReindex` (~63s),
+        # which logged "Reindex complete" four times from a single call and
+        # saturated the reactor while doing it. A pooled connection whose
+        # timeout no longer matches the caller is replaced rather than reused.
+        if conn is not None:
+            try:
+                conn.close()
+            except Exception:
+                pass
         cls = (http.client.HTTPSConnection if p.scheme == "https"
                else http.client.HTTPConnection)
-        conn = cls(p.netloc, timeout=60)
+        conn = cls(p.netloc, timeout=timeout if timeout is not None else 60)
         _POOL[key] = conn
     return key, conn, (p.path or "/")
 
@@ -113,14 +127,25 @@ def post(
 
     last: Exception | None = None
     for attempt in range(attempts):
-        key, conn, path = _connection(endpoint)
+        key, conn, path = _connection(endpoint, timeout)
         try:
             with _POOL_LOCK:
                 conn.request("POST", path, payload, headers)
                 resp = conn.getresponse()
                 status = resp.status
                 raw = resp.read()
-        except Exception as e:  # transport-level: socket closed, TLS, timeout
+        except socket.timeout as e:
+            # NEVER retry a timeout. The request reached the server and may
+            # still be running there; re-sending it runs the work again. A
+            # `knowledgeGraphReindex` that outlived a too-short client timeout
+            # was observed executing four times from one call. Retrying is only
+            # safe when the request demonstrably did not arrive.
+            _drop(key)
+            raise GraphQLError(
+                f"timeout after {timeout}s - the server may still be running "
+                f"this request; check before re-sending: {e}"
+            ) from e
+        except Exception as e:  # transport-level: socket closed, TLS, refused
             _drop(key)
             last = e
             if attempt < attempts - 1:
