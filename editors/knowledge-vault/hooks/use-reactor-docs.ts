@@ -20,7 +20,7 @@
  */
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { PHDocument } from "document-model";
-import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
+import { fetchDocumentState } from "../../shared/document-state.js";
 import { withTransientRetry } from "../lib/remote-first.js";
 import {
   cachedDocsFor,
@@ -38,37 +38,6 @@ const FETCH_CONCURRENCY = 6;
 /** Attempts per document read, for transient transport failures. */
 const FETCH_ATTEMPTS = 3;
 
-const DOC_QUERY = `
-  query DocState($id: String!) {
-    document(identifier: $id) {
-      document {
-        id
-        name
-        documentType
-        createdAtUtcIso
-        lastModifiedAtUtcIso
-        state
-      }
-    }
-  }
-`;
-
-type RawDocResponse = {
-  data?: {
-    document?: {
-      document?: {
-        id?: string;
-        name?: string;
-        documentType?: string;
-        createdAtUtcIso?: string;
-        lastModifiedAtUtcIso?: string;
-        state?: { global?: Record<string, unknown> };
-      };
-    };
-  };
-  errors?: { message?: string }[];
-};
-
 /**
  * Read one document, classified so the cache can tell "gone" from
  * "unreachable":
@@ -84,34 +53,30 @@ type RawDocResponse = {
  * deterministic failures.
  */
 async function fetchDocOutcome(spec: ReactorDocSpec): Promise<DocFetchOutcome> {
-  let json: RawDocResponse;
+  let doc: Awaited<ReturnType<typeof fetchDocumentState>>;
   try {
-    json = await withTransientRetry(async () => {
-      const res = await fetch(resolveReactorEndpoint(), {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: DOC_QUERY, variables: { id: spec.id } }),
-      });
-      if (!res.ok) throw new Error(`reactor responded HTTP ${res.status}`);
-      return (await res.json()) as RawDocResponse;
-    }, FETCH_ATTEMPTS);
+    // `fetchDocumentState` throws on transport failure and resolves `null`
+    // when the reactor has no such document — exactly the split this
+    // classification needs, so no re-interpretation happens here.
+    doc = await withTransientRetry(
+      () => fetchDocumentState(spec.id),
+      FETCH_ATTEMPTS,
+    );
   } catch {
     return { kind: "error" };
   }
 
-  if (json.errors?.length) return { kind: "missing" };
-  const doc = json.data?.document?.document;
-  if (!doc?.state) return { kind: "missing" };
+  if (!doc) return { kind: "missing" };
   return {
     kind: "doc",
     // Stitch a header from server truth, falling back to the spec.
     doc: {
       header: {
-        id: doc.id ?? spec.id,
+        id: doc.id,
         documentType: doc.documentType ?? spec.documentType,
         name: doc.name ?? spec.name ?? spec.id,
-        createdAtUtcIso: doc.createdAtUtcIso,
-        lastModifiedAtUtcIso: doc.lastModifiedAtUtcIso,
+        createdAtUtcIso: doc.createdAtUtcIso ?? undefined,
+        lastModifiedAtUtcIso: doc.lastModifiedAtUtcIso ?? undefined,
       },
       state: doc.state,
     } as unknown as PHDocument,
