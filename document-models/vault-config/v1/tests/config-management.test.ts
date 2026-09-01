@@ -330,7 +330,7 @@ describe("ConfigManagementOperations scenarios", () => {
     );
 
     expect(updatedDocument.state.global.pipeline).toStrictEqual({
-      depth: "standard",
+      depth: "STANDARD",
       autoChain: false,
       extractionSelectivity: 0.1,
     });
@@ -345,31 +345,32 @@ describe("ConfigManagementOperations scenarios", () => {
     document = reducer(
       document,
       updatePipelineConfig({
-        depth: "deep",
+        depth: "DEEP",
         autoChain: true,
         extractionSelectivity: 0.5,
         updatedAt: ts,
       }),
     );
     expect(document.state.global.pipeline).toStrictEqual({
-      depth: "deep",
+      depth: "DEEP",
       autoChain: true,
       extractionSelectivity: 0.5,
     });
 
     // falsy-but-valid values: autoChain false and extractionSelectivity 0 are
-    // applied, empty-string depth is ignored (truthy check)
+    // applied. Depth is omitted rather than empty-string — PipelineDepth makes
+    // "" unrepresentable, so that branch is now unreachable by construction;
+    // the reducer's falsy-depth path stays covered by the explicit nulls below.
     document = reducer(
       document,
       updatePipelineConfig({
-        depth: "",
         autoChain: false,
         extractionSelectivity: 0,
         updatedAt: ts,
       }),
     );
     expect(document.state.global.pipeline).toStrictEqual({
-      depth: "deep",
+      depth: "DEEP",
       autoChain: false,
       extractionSelectivity: 0,
     });
@@ -385,7 +386,7 @@ describe("ConfigManagementOperations scenarios", () => {
       }),
     );
     expect(document.state.global.pipeline).toStrictEqual({
-      depth: "deep",
+      depth: "DEEP",
       autoChain: false,
       extractionSelectivity: 0,
     });

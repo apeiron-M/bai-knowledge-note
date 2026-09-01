@@ -11,6 +11,7 @@ import type {
   MocSchemaConfig,
   NoteSchemaConfig,
   PipelineConfig,
+  PipelineDepth,
   ToggleExtractionCategoryInput,
   ToggleFeatureInput,
   UpdateDimensionInput,
@@ -33,6 +34,8 @@ export const isDefinedNonNullAny = (v: any): v is definedNonNullAny =>
 export const definedNonNullAnySchema = z
   .any()
   .refine((v) => isDefinedNonNullAny(v));
+
+export const PipelineDepthSchema = z.enum(["DEEP", "QUICK", "STANDARD"]);
 
 export function AddExtractionCategoryInputSchema(): z.ZodObject<
   Properties<AddExtractionCategoryInput>
@@ -137,7 +140,7 @@ export function PipelineConfigSchema(): z.ZodObject<
   return z.object({
     __typename: z.literal("PipelineConfig").optional(),
     autoChain: z.boolean(),
-    depth: z.string(),
+    depth: PipelineDepthSchema,
     extractionSelectivity: z.number(),
   });
 }
@@ -187,7 +190,7 @@ export function UpdatePipelineConfigInputSchema(): z.ZodObject<
 > {
   return z.object({
     autoChain: z.boolean().nullish(),
-    depth: z.string().nullish(),
+    depth: PipelineDepthSchema.nullish(),
     extractionSelectivity: z.number().nullish(),
     updatedAt: z.iso.datetime(),
   });
