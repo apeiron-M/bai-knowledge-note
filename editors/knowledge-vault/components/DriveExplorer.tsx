@@ -22,7 +22,6 @@ import {
   type ReactorDocSpec,
 } from "../hooks/use-reactor-docs.js";
 import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
-import { ThemeToggle } from "../../shared/theme-context.js";
 
 type ViewMode =
   | "notes"
@@ -370,7 +369,6 @@ export function DriveExplorer({ children }: EditorProps) {
             >
               {notesLoading && notes.length === 0 ? "…" : `${notes.length}n`}
             </span>
-            <ThemeToggle />
             <GettingStartedButton />
             <CreateMenu />
           </div>
