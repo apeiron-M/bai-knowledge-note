@@ -297,10 +297,10 @@ export function useChat(o: UseChatOptions): UseChat {
     setThread(loaded.find((t) => t.id === currentId) ?? null);
   }, [driveId]);
 
-  // Record which thread is open (or that none is).
-  useEffect(() => {
-    if (driveId) writeCurrentThreadId(driveId, thread?.id ?? null);
-  }, [driveId, thread?.id]);
+  // The pointer to the open thread is written by the actions below, never
+  // from an effect: an effect's closure can lag one render behind, and under
+  // React StrictMode's mount/unmount/mount it would clear the pointer the
+  // restore above has just read.
 
   const persist = useCallback(
     (t: Thread) => {
@@ -329,6 +329,7 @@ export function useChat(o: UseChatOptions): UseChat {
         messages: [...current.messages, { role: "user", content }],
       };
       setThread(withUser);
+      writeCurrentThreadId(driveId, withUser.id);
       persist(withUser);
 
       setStreamingText("");
@@ -418,10 +419,11 @@ export function useChat(o: UseChatOptions): UseChat {
   const newThread = useCallback(() => {
     abortRef.current?.abort();
     setThread(null);
+    if (driveId) writeCurrentThreadId(driveId, null);
     setStreamingText("");
     setTrail([]);
     setFailure(null);
-  }, []);
+  }, [driveId]);
 
   const openThread = useCallback(
     (id: string) => {
@@ -429,11 +431,12 @@ export function useChat(o: UseChatOptions): UseChat {
       if (!t) return;
       abortRef.current?.abort();
       setThread(t);
+      if (driveId) writeCurrentThreadId(driveId, id);
       setStreamingText("");
       setTrail([]);
       setFailure(null);
     },
-    [threads],
+    [threads, driveId],
   );
 
   const removeThread = useCallback(
