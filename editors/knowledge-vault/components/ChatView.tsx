@@ -13,7 +13,13 @@
  * Everything runs in the browser: the model via OpenRouter, the data via the
  * same Switchboard endpoints the search field uses. Nothing here can write.
  */
-import { useEffect, useMemo, useRef, useState } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+} from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { useVaultName } from "../hooks/use-vault-name.js";
 import { useOpenRouter } from "../hooks/use-openrouter.js";
@@ -35,6 +41,20 @@ interface Orientation {
   topics: { name: string; noteCount: number }[];
   loaded: boolean;
 }
+
+/**
+ * Ambient glow behind the landing states, so the composer sits in a pool of
+ * light the way Gemini's does. Two stacked radial gradients — a tighter core
+ * and a wider halo — both mixed from the accent token, so each theme gets its
+ * own hue (lavender on dark, violet on light) with no new colour tokens. The
+ * conversation view stays flat: a glow behind text you are reading is noise.
+ */
+const LANDING_GLOW: CSSProperties = {
+  backgroundImage: [
+    "radial-gradient(ellipse 55% 45% at 50% 58%, color-mix(in srgb, var(--bai-accent) 16%, transparent) 0%, transparent 70%)",
+    "radial-gradient(ellipse 95% 75% at 50% 62%, color-mix(in srgb, var(--bai-accent) 7%, transparent) 0%, transparent 78%)",
+  ].join(", "),
+};
 
 /**
  * Stats and top topics, fetched once per drive through the same two tools the
@@ -109,7 +129,10 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
 
   if (!or.isConnected) {
     return (
-      <div className="flex h-full flex-col overflow-auto p-4">
+      <div
+        className="flex h-full flex-col overflow-auto p-4"
+        style={LANDING_GLOW}
+      >
         <ChatConnectPanel
           vaultName={vaultName}
           busy={or.isCompletingOAuth}
@@ -226,7 +249,10 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
           </div>
         </>
       ) : (
-        <div className="flex flex-1 flex-col items-center justify-center overflow-auto px-4 pb-16">
+        <div
+          className="flex flex-1 flex-col items-center justify-center overflow-auto px-4 pb-16"
+          style={LANDING_GLOW}
+        >
           <div className="motion-safe:animate-[fadeUp_.4s_ease-out] flex w-full max-w-3xl flex-col items-center">
             <h1
               className="text-center text-3xl font-semibold tracking-tight sm:text-4xl"
