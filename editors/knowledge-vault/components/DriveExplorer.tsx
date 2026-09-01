@@ -39,7 +39,7 @@ type ViewMode =
   | "config";
 
 export function DriveExplorer({ children }: EditorProps) {
-  const [viewMode, setViewMode] = useState<ViewMode>("search");
+  const [viewMode, setViewMode] = useState<ViewMode>("chat");
   const driveId = useSelectedDriveId();
   // Returning from OpenRouter remounts the app, and `viewMode` is component
   // state — without this the user lands on Search with their question gone.
