@@ -1,4 +1,5 @@
 import { useMemo } from "react";
+import { safeUrl } from "./sanitize-url.js";
 
 type MarkdownPreviewProps = {
   content: string;
@@ -204,10 +205,16 @@ function inlineFormat(text: string): string {
   out = out.replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
   // Italic
   out = out.replace(/\*([^*]+)\*/g, "<em>$1</em>");
-  // Links
+  // Links — the href is untrusted, so a rejected scheme renders as plain
+  // text rather than a dead link, keeping the label visible.
   out = out.replace(
     /\[([^\]]+)\]\(([^)]+)\)/g,
-    '<a class="md-link" href="$2">$1</a>',
+    (_match: string, label: string, href: string) => {
+      const safe = safeUrl(href);
+      return safe === null
+        ? label
+        : `<a class="md-link" href="${safe}" rel="noopener noreferrer" target="_blank">${label}</a>`;
+    },
   );
   // Wikilinks
   out = out.replace(/\[\[([^\]]+)\]\]/g, '<span class="md-wikilink">$1</span>');
