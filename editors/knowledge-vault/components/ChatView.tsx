@@ -249,13 +249,20 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
           </div>
         </>
       ) : (
+        /*
+         * Three rows: a flexible spacer, the greeting + composer, and a
+         * flexible tail holding the chips. Only the middle row is centred, so
+         * the pill sits exactly at the vertical centre of the pane the way
+         * Gemini's does, and the chips hang beneath it without pulling it up.
+         */
         <div
-          className="flex flex-1 flex-col items-center justify-center overflow-auto px-4 pb-16"
+          className="grid min-h-0 flex-1 grid-rows-[1fr_auto_1fr] overflow-auto px-4"
           style={LANDING_GLOW}
         >
-          <div className="motion-safe:animate-[fadeUp_.4s_ease-out] flex w-full max-w-3xl flex-col items-center">
+          <div />
+          <div className="motion-safe:animate-[fadeUp_.4s_ease-out] mx-auto flex w-full max-w-3xl flex-col items-center">
             <h1
-              className="text-center text-3xl font-semibold tracking-tight sm:text-4xl"
+              className="text-center text-3xl font-medium tracking-tight sm:text-4xl"
               style={{
                 backgroundImage:
                   "linear-gradient(90deg, var(--bai-text) 20%, var(--bai-accent) 100%)",
@@ -274,31 +281,29 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
                 ? `${orientation.stats.nodeCount.toLocaleString()} notes · ${orientation.stats.edgeCount.toLocaleString()} links · read-only`
                 : "Answers come from the vault's own notes, with citations you can open."}
             </p>
-
             <div className="mt-8 w-full">{composer}</div>
-
-            <div className="mt-6 flex min-h-8 flex-wrap justify-center gap-2">
-              {!orientation.loaded && (
-                <LoadingLine label="Reading the vault's topics…" />
-              )}
-              {orientation.topics.slice(0, 8).map((t) => (
-                <button
-                  key={t.name}
-                  type="button"
-                  onClick={() =>
-                    void chat.send(`What does the vault say about ${t.name}?`)
-                  }
-                  className="rounded-full px-3 py-1.5 text-xs transition-colors hover:bg-[var(--bai-accent-soft)]"
-                  style={{
-                    backgroundColor: "var(--bai-hover)",
-                    color: "var(--bai-accent)",
-                  }}
-                  title={`${t.noteCount} notes`}
-                >
-                  #{t.name}
-                </button>
-              ))}
-            </div>
+          </div>
+          <div className="mx-auto flex w-full max-w-3xl flex-wrap content-start justify-center gap-2 pt-6">
+            {!orientation.loaded && (
+              <LoadingLine label="Reading the vault's topics…" />
+            )}
+            {orientation.topics.slice(0, 8).map((t) => (
+              <button
+                key={t.name}
+                type="button"
+                onClick={() =>
+                  void chat.send(`What does the vault say about ${t.name}?`)
+                }
+                className="rounded-full px-3 py-1.5 text-xs transition-colors hover:bg-[var(--bai-accent-soft)]"
+                style={{
+                  backgroundColor: "var(--bai-hover)",
+                  color: "var(--bai-accent)",
+                }}
+                title={`${t.noteCount} notes`}
+              >
+                #{t.name}
+              </button>
+            ))}
           </div>
         </div>
       )}

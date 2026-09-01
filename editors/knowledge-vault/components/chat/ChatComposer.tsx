@@ -55,7 +55,7 @@ export function ChatComposer({
 
   return (
     <div
-      className="flex items-end gap-2 rounded-3xl py-2 pl-4 pr-2 transition-colors focus-within:border-[var(--bai-accent)]"
+      className="flex items-end gap-2 rounded-[28px] py-3 pl-5 pr-3 transition-colors focus-within:border-[var(--bai-accent)]"
       style={{
         backgroundColor: "var(--bai-surface)",
         border: "1px solid var(--bai-border)",
@@ -79,14 +79,14 @@ export function ChatComposer({
             submit();
           }
         }}
-        className="max-h-[200px] flex-1 resize-none bg-transparent py-1.5 text-sm leading-relaxed outline-none placeholder:opacity-60 disabled:opacity-50"
+        className="max-h-[200px] flex-1 resize-none bg-transparent py-1.5 text-base leading-6 outline-none placeholder:opacity-60 disabled:opacity-50"
         style={{ color: "var(--bai-text)" }}
       />
       {streaming ? (
         <button
           type="button"
           onClick={onStop}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors hover:opacity-80"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-colors hover:opacity-80"
           style={{
             backgroundColor: "var(--bai-hover)",
             color: "var(--bai-text)",
@@ -103,7 +103,7 @@ export function ChatComposer({
           type="button"
           onClick={submit}
           disabled={!canSend}
-          className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-all disabled:opacity-30"
+          className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full transition-all disabled:opacity-30"
           style={{
             backgroundColor: canSend ? "var(--bai-accent)" : "var(--bai-hover)",
             color: canSend ? "var(--bai-accent-text)" : "var(--bai-text-muted)",
