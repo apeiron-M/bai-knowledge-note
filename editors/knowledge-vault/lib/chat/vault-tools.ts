@@ -25,7 +25,10 @@ import {
   resolveReactorEndpoint,
 } from "../../../shared/subgraph-endpoint.js";
 import { fetchDocumentState } from "../../../shared/document-state.js";
+import type { ProjectState } from "document-models/project";
+import type { WorkBreakdownStructureState } from "document-models/work-breakdown-structure";
 import type { ToolSchema } from "./openrouter-client.js";
+import { renderProject, renderWbs } from "./project-view.js";
 
 export type ToolResult =
   | { ok: true; data: unknown; summary: string }
@@ -58,6 +61,8 @@ const LIMITS = {
   related: { default: 8, max: 20 },
   links: 15,
   documents: { default: 50, max: 100 },
+  projects: 25,
+  knowledgeRefTitles: 20,
   noteContent: 6000,
   documentWindow: 8000,
   metaString: 300,
@@ -209,9 +214,18 @@ export const VAULT_TOOLS: ToolSchema[] = [
   {
     type: "function",
     function: {
+      name: "list_projects",
+      description:
+        "Every project in the vault with its status (PLANNING, ACTIVE, ON_HOLD, COMPLETED, ARCHIVED), owner, target date, deliverable progress and the id of its work breakdown. Start here for any question about projects, deliverables, goals or who is working on what; then read_document a project id for its full outline.",
+      parameters: { type: "object", properties: {} },
+    },
+  },
+  {
+    type: "function",
+    function: {
       name: "read_document",
       description:
-        "Read any document by id, paged. Returns its metadata plus an 8,000-character window of its main text starting at offset; when hasMore is true, call again with nextOffset to continue. For a bai/source the metadata includes extractedClaims — the ids of notes derived from it — which you can then read_note. Note the reverse is not available: a note does not record which source it came from.",
+        "Read any document by id. For a bai/project this returns a full outline — status, team, deliverables each joined to their WBS goal, the whole work-breakdown goal tree with statuses, and linked knowledge notes — in one call. For a bai/wbs it returns the goal tree. For everything else (notably bai/source) it returns metadata plus an 8,000-character window of the main text starting at offset; when hasMore is true, call again with nextOffset. A source's metadata includes extractedClaims — ids of notes derived from it — which you can read_note. The reverse is not available: a note does not record its source.",
       parameters: {
         type: "object",
         properties: {
@@ -264,6 +278,59 @@ async function gql<T>(
 
 const graphEndpoint = () => resolveKnowledgeGraphEndpoint();
 const reactorEndpoint = () => resolveReactorEndpoint();
+
+/** Titles for up to `limit` note ids in ONE aliased request; unknown ids are absent. */
+async function noteTitles(
+  driveId: string,
+  ids: string[],
+  limit: number,
+): Promise<Map<string, string>> {
+  const wanted = ids.slice(0, limit);
+  const titles = new Map<string, string>();
+  if (wanted.length === 0) return titles;
+  const aliases = wanted
+    .map(
+      (_, i) =>
+        `n${i}: knowledgeGraphNodeByDocumentId(driveId: $driveId, documentId: $d${i}) { title }`,
+    )
+    .join("\n");
+  const vars = wanted.map((_, i) => `$d${i}: String!`).join(", ");
+  const variables: Record<string, unknown> = { driveId };
+  wanted.forEach((id, i) => {
+    variables[`d${i}`] = id;
+  });
+  const r = await gql<Record<string, { title: string | null } | null>>(
+    graphEndpoint(),
+    `query NT($driveId: ID!, ${vars}) { ${aliases} }`,
+    variables,
+  );
+  if ("error" in r) return titles;
+  wanted.forEach((id, i) => {
+    const t = r.data[`n${i}`]?.title;
+    if (t) titles.set(id, t);
+  });
+  return titles;
+}
+
+/** Read a document, or return the failure the tool should report. */
+async function readDoc(
+  documentId: string,
+): Promise<
+  | { doc: NonNullable<Awaited<ReturnType<typeof fetchDocumentState>>> }
+  | { error: string }
+> {
+  try {
+    const doc = await fetchDocumentState(documentId);
+    return doc ? { doc } : { error: `no document with id ${documentId}` };
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : String(err) };
+  }
+}
+
+const projectState = (state: Record<string, unknown>) =>
+  (state.global ?? {}) as ProjectState;
+const wbsState = (state: Record<string, unknown>) =>
+  (state.global ?? {}) as WorkBreakdownStructureState;
 
 /* ------------------------------------------------------------------ */
 /*  Argument helpers                                                  */
@@ -581,17 +648,101 @@ export async function executeTool(
       );
     }
 
+    case "list_projects": {
+      const r = await gql<{
+        findDocuments: {
+          totalCount: number;
+          items: { id: string; name: string | null }[];
+        };
+      }>(
+        reactorEndpoint(),
+        `query P($limit: Int) {
+          findDocuments(search: { type: "bai/project" }, paging: { limit: $limit }) {
+            totalCount items { id name }
+          }
+        }`,
+        { limit: LIMITS.projects },
+      );
+      if ("error" in r) return fail(r.error);
+      const { totalCount, items } = r.data.findDocuments;
+      // One state read per project. Projects are few (bounded above), and the
+      // status/owner/progress the question needs live in state, not the tree.
+      const rows = await Promise.all(
+        items.map(async (item) => {
+          const read = await readDoc(item.id);
+          if ("error" in read)
+            return { id: item.id, name: item.name, error: read.error };
+          const p = projectState(read.doc.state);
+          return {
+            id: item.id,
+            name: p.name ?? item.name,
+            status: p.status,
+            owner: p.owner ?? null,
+            targetDate: p.targetDate ? String(p.targetDate).slice(0, 10) : null,
+            deliverables: {
+              delivered: p.deliverables.filter((d) => d.status === "DELIVERED")
+                .length,
+              total: p.deliverables.length,
+            },
+            teamSize: p.team.length,
+            wbsRef: p.wbsRef ?? null,
+          };
+        }),
+      );
+      return ok(
+        { total: totalCount, projects: rows },
+        `listed ${rows.length} of ${totalCount} projects`,
+      );
+    }
+
     case "read_document": {
       const documentId = str(args, "documentId");
       if (!documentId) return fail("read_document needs a documentId");
       const offset = nonNegativeInt(args, "offset");
-      let doc: Awaited<ReturnType<typeof fetchDocumentState>>;
-      try {
-        doc = await fetchDocumentState(documentId);
-      } catch (err) {
-        return fail(err instanceof Error ? err.message : String(err));
+      const read = await readDoc(documentId);
+      if ("error" in read) return fail(read.error);
+      const { doc } = read;
+
+      // Projects and work breakdowns are structured, not prose: render them
+      // as an outline with their links resolved rather than paging a field.
+      if (doc.documentType === "bai/project") {
+        const p = projectState(doc.state);
+        const [wbsRead, titles] = await Promise.all([
+          p.wbsRef ? readDoc(p.wbsRef) : Promise.resolve(null),
+          noteTitles(driveId, p.knowledgeRefs, LIMITS.knowledgeRefTitles),
+        ]);
+        const wbs =
+          wbsRead && !("error" in wbsRead) ? wbsState(wbsRead.doc.state) : null;
+        const view = renderProject({
+          id: doc.id,
+          project: p,
+          wbs,
+          noteTitles: titles,
+        });
+        return ok(
+          { documentType: doc.documentType, text: view.text, ...view.data },
+          `read project "${p.name ?? doc.name ?? documentId}" (${p.status}${wbs ? `, ${view.data.goals?.completed}/${view.data.goals?.total} goals done` : ""})`,
+        );
       }
-      if (!doc) return fail(`no document with id ${documentId}`);
+
+      if (doc.documentType === "bai/wbs") {
+        const w = wbsState(doc.state);
+        const projectRead = w.projectRef ? await readDoc(w.projectRef) : null;
+        const projectName =
+          projectRead && !("error" in projectRead)
+            ? projectState(projectRead.doc.state).name
+            : null;
+        const view = renderWbs(w, { id: doc.id, projectName });
+        return ok(
+          {
+            documentType: doc.documentType,
+            name: doc.name,
+            text: view.text,
+            ...view.data,
+          },
+          `read work breakdown${projectName ? ` for "${projectName}"` : ""} (${view.data.progress.completed}/${view.data.progress.total} goals done)`,
+        );
+      }
 
       const global = (doc.state.global ?? {}) as Record<string, unknown>;
       // Models name their body differently; take the first non-empty.

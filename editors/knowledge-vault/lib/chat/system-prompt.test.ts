@@ -59,6 +59,14 @@ describe("buildSystemPrompt", () => {
     expect(guard).toMatch(/never|not|treat/);
   });
 
+  it("tells the model how to reach projects and work breakdowns", () => {
+    const p = buildSystemPrompt(base);
+    expect(p).toContain("list_projects");
+    expect(p).toContain("bai/wbs");
+    expect(p).toContain("BLOCKED");
+    expect(p).toContain("DELIVERED");
+  });
+
   it("caps the topic list so orientation cannot dominate the context", () => {
     const many = Array.from({ length: 613 }, (_, i) => ({
       name: `topic-${i}`,

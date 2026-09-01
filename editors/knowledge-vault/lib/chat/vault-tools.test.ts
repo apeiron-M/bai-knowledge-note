@@ -36,10 +36,11 @@ const lastRequest = () =>
 afterEach(() => vi.restoreAllMocks());
 
 describe("VAULT_TOOLS", () => {
-  it("exposes exactly the nine read-only tools", () => {
+  it("exposes exactly the ten read-only tools", () => {
     expect(VAULT_TOOLS.map((t) => t.function.name).sort()).toEqual([
       "linked_notes",
       "list_documents",
+      "list_projects",
       "list_topics",
       "notes_by_topic",
       "read_document",
@@ -378,13 +379,11 @@ describe("executeTool", () => {
       (await executeTool("read_document", { documentId: "x" }, CTX)).ok,
     ).toBe(false);
 
-    globalThis.fetch = vi
-      .fn()
-      .mockResolvedValue({
-        ok: false,
-        status: 502,
-        json: () => Promise.resolve({}),
-      }) as unknown as typeof fetch;
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: false,
+      status: 502,
+      json: () => Promise.resolve({}),
+    }) as unknown as typeof fetch;
     const r = await executeTool("read_document", { documentId: "x" }, CTX);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error).toMatch(/502/);
@@ -398,5 +397,178 @@ describe("executeTool", () => {
     const r = await executeTool("vault_stats", {}, CTX);
     expect(r.ok).toBe(false);
     if (!r.ok) expect(r.error).toContain("boom");
+  });
+});
+
+describe("projects and work breakdowns", () => {
+  const project = {
+    name: "Vault chat",
+    description: "d",
+    status: "ACTIVE",
+    owner: "liberuum",
+    targetDate: "2026-09-15T00:00:00.000Z",
+    wbsRef: "w1",
+    team: [{ id: "t1", name: "liberuum", role: "Lead", kind: "HUMAN" }],
+    deliverables: [
+      {
+        id: "d1",
+        title: "Chat tab",
+        description: null,
+        status: "DELIVERED",
+        goalRef: "g1",
+        url: null,
+        deliveredAt: null,
+      },
+      {
+        id: "d2",
+        title: "Docs",
+        description: null,
+        status: "PLANNED",
+        goalRef: "g2",
+        url: null,
+        deliveredAt: null,
+      },
+    ],
+    knowledgeRefs: ["n-a"],
+    references: [],
+    createdAt: null,
+  };
+  const wbs = {
+    projectRef: "p1",
+    owner: "liberuum",
+    references: [],
+    goals: [
+      {
+        id: "g1",
+        description: "Ship it",
+        status: "COMPLETED",
+        parentId: null,
+        assignee: null,
+        dependencies: [],
+        blockReason: null,
+        outcome: null,
+        notes: [],
+      },
+      {
+        id: "g2",
+        description: "Document it",
+        status: "TODO",
+        parentId: null,
+        assignee: null,
+        dependencies: [],
+        blockReason: null,
+        outcome: null,
+        notes: [],
+      },
+    ],
+  };
+  const docResponse = (
+    id: string,
+    documentType: string,
+    name: string,
+    global: unknown,
+  ) => ({
+    data: {
+      document: { document: { id, name, documentType, state: { global } } },
+    },
+  });
+
+  it("list_projects reads each project's state and summarises it", async () => {
+    mockGqlSequence(
+      {
+        data: {
+          findDocuments: {
+            totalCount: 1,
+            items: [{ id: "p1", name: "Vault chat" }],
+          },
+        },
+      },
+      docResponse("p1", "bai/project", "Vault chat", project),
+    );
+    const r = await executeTool("list_projects", {}, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const d = r.data as {
+        total: number;
+        projects: Record<string, unknown>[];
+      };
+      expect(d.total).toBe(1);
+      expect(d.projects[0]).toMatchObject({
+        id: "p1",
+        name: "Vault chat",
+        status: "ACTIVE",
+        owner: "liberuum",
+        targetDate: "2026-09-15",
+        deliverables: { delivered: 1, total: 2 },
+        teamSize: 1,
+        wbsRef: "w1",
+      });
+      expect(r.summary).toContain("1 of 1 projects");
+    }
+    expect(requestAt(0).url).toMatch(/\/graphql$/);
+  });
+
+  it("read_document on a project joins its WBS and resolves knowledge titles in one outline", async () => {
+    mockGqlSequence(
+      docResponse("p1", "bai/project", "Vault chat", project),
+      docResponse("w1", "bai/wbs", "WBS", wbs),
+      { data: { n0: { title: "A note about chat" } } },
+    );
+    const r = await executeTool("read_document", { documentId: "p1" }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const d = r.data as {
+        text: string;
+        status: string;
+        deliverables: { goal: { description: string } | null }[];
+        goals: { completed: number; total: number };
+      };
+      expect(d.status).toBe("ACTIVE");
+      expect(d.text).toContain(
+        "[DELIVERED] Chat tab — goal: Ship it (COMPLETED)",
+      );
+      expect(d.text).toContain("[TODO] Document it");
+      expect(d.text).toContain("A note about chat [[n-a]]");
+      expect(d.deliverables[0].goal?.description).toBe("Ship it");
+      expect(d.goals).toEqual({
+        completed: 1,
+        total: 2,
+        byStatus: { COMPLETED: 1, TODO: 1 },
+      });
+      expect(r.summary).toContain("1/2 goals done");
+    }
+    // project + wbs on the reactor endpoint, titles on the graph endpoint
+    expect(requestAt(0).url).toMatch(/\/graphql$/);
+    expect(requestAt(1).url).toMatch(/\/graphql$/);
+    expect(requestAt(2).url).toContain("/graphql/knowledgeGraph");
+  });
+
+  it("read_document on a project survives a missing WBS", async () => {
+    mockGqlSequence(
+      docResponse("p1", "bai/project", "Vault chat", project),
+      { errors: [{ message: "not found" }] },
+      { data: {} },
+    );
+    const r = await executeTool("read_document", { documentId: "p1" }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok)
+      expect((r.data as { text: string }).text).toContain(
+        "No work breakdown linked",
+      );
+  });
+
+  it("read_document on a WBS renders the goal tree and names its project", async () => {
+    mockGqlSequence(
+      docResponse("w1", "bai/wbs", "WBS", wbs),
+      docResponse("p1", "bai/project", "Vault chat", project),
+    );
+    const r = await executeTool("read_document", { documentId: "w1" }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok) {
+      const d = r.data as { text: string; goalCount: number };
+      expect(d.text).toContain("Work breakdown for Vault chat");
+      expect(d.text).toContain("[COMPLETED] Ship it");
+      expect(d.goalCount).toBe(2);
+    }
   });
 });
