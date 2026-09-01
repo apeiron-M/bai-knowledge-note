@@ -6,11 +6,14 @@ import {
   useSelectedDrive,
 } from "@powerhousedao/reactor-browser";
 import { prefetchOnHover } from "../lib/prefetch.js";
+import {
+  useReactorDocsWithRefetch,
+  type ReactorDocSpec,
+} from "../hooks/use-reactor-docs.js";
 import type { Node } from "@powerhousedao/shared/document-drive";
 import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import type { MocInfo } from "../hooks/use-knowledge-mocs.js";
 import type { GraphFocus } from "./GraphViewPixi.js";
-import { CreateDocumentDialog } from "./CreateDocumentDialog.js";
 import { LoadingLine, SidebarSkeleton, Spinner } from "./LoadingStates.js";
 
 type VaultSidebarProps = {
@@ -59,7 +62,6 @@ export function VaultSidebar({
   const [collapsed, setCollapsed] = useState<Record<string, boolean>>({
     ARCHIVED: true,
   });
-  const [createSourceOpen, setCreateSourceOpen] = useState(false);
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const [sidebarWidth, setSidebarWidth] = useState(DEFAULT_WIDTH);
   const resizing = useRef(false);
@@ -103,8 +105,50 @@ export function VaultSidebar({
     [sidebarWidth],
   );
 
-  // Drive header has the name; no doc-state fetch needed.
-  const vaultName = selectedDrive?.header.name || "Knowledge Vault";
+  /**
+   * Title shown above the sidebar.
+   *
+   * Prefers the name the vault gives itself in `bai/vault-config` over the
+   * drive's node name: the config is the vault describing what it is ("The
+   * Knowledge Vault"), while the drive name is whatever the drive happened to
+   * be created as ("knowledge vault"). Falls back to the drive name, then to a
+   * generic label, so a vault with no config still has a heading.
+   *
+   * The name lives in document state, not in the drive tree, so the node list
+   * above cannot answer this and neither can `useVaultDocIndex` (whose `title`
+   * is the tree's node name). This is a targeted state read through
+   * `useReactorDocsWithRefetch` — one document, served from the Switchboard via
+   * the shared reactor-doc cache, exactly as ProjectsView reads its projects.
+   * `useDocumentsInSelectedDrive` is deliberately avoided here for the same
+   * reason as the node list above: it would pull full state for the whole
+   * corpus.
+   */
+  const configSpecs = useMemo<ReactorDocSpec[]>(() => {
+    const node = fileNodes.find((n) => n.documentType === "bai/vault-config");
+    return node
+      ? [{ id: node.id, documentType: "bai/vault-config", name: node.name }]
+      : [];
+  }, [fileNodes]);
+  const { docs: configDocs } = useReactorDocsWithRefetch(configSpecs, {
+    // The name changes rarely, and the config editor announces its own writes,
+    // so this only needs to catch edits made elsewhere.
+    pollMs: 60_000,
+    retainKey: "vault-sidebar-config",
+  });
+  const configName = useMemo(() => {
+    // `.at()` rather than `[0]`: it is typed `T | undefined`, matching the
+    // real possibility of an empty list before the fetch resolves.
+    const doc = configDocs.at(0);
+    if (!doc) return null;
+    const global = (
+      doc.state as unknown as { global?: { name?: string | null } }
+    ).global;
+    const name = global?.name?.trim();
+    return name ? name : null;
+  }, [configDocs]);
+
+  const vaultName =
+    configName || selectedDrive?.header.name || "Knowledge Vault";
 
   const observations = useMemo(() => {
     return fileNodes
@@ -312,33 +356,6 @@ export function VaultSidebar({
           >
             {vaultName}
           </button>
-          <button
-            type="button"
-            onClick={() => setCreateSourceOpen(true)}
-            className="flex shrink-0 items-center gap-1 rounded-md px-2.5 py-1 text-[11px] font-medium transition-colors"
-            style={{
-              backgroundColor: "var(--bai-accent-soft)",
-              color: "var(--bai-accent)",
-            }}
-            title="Paste raw content — articles, notes, transcripts — for AI extraction"
-          >
-            <svg
-              className="h-3 w-3"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-            >
-              <path d="M12 5v14M5 12h14" />
-            </svg>
-            Add Source
-          </button>
-          <CreateDocumentDialog
-            open={createSourceOpen}
-            documentType="bai/source"
-            documentTypeLabel="Source"
-            onClose={() => setCreateSourceOpen(false)}
-          />
         </div>
       </div>
 
@@ -803,7 +820,9 @@ export function VaultSidebar({
                     ))}
                   </div>
                 )}
-                {showSignalsSkeleton && <LoadingLine label="Loading signals…" />}
+                {showSignalsSkeleton && (
+                  <LoadingLine label="Loading signals…" />
+                )}
                 {!showSignalsSkeleton &&
                   observations.length === 0 &&
                   tensions.length === 0 && (
