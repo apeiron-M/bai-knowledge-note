@@ -286,6 +286,27 @@ provenance link it cannot verify.
 Codes are single-use and expire after 10 minutes. `S256` is used, never
 `plain`.
 
+#### Surviving the redirect
+
+The flow leaves the page, so the app remounts on return. Two pieces of state
+must survive or the user comes back to a broken-feeling app:
+
+- **The view.** `viewMode` is component state (`DriveExplorer.tsx:38`) and no
+  vault code touches `window.location`, so the default `"search"` view would
+  render on return — connected, but with the chat gone.
+- **The draft.** Whatever the user had typed in the composer.
+
+Before redirecting, write `bai-chat:oauth-return:v1` to `sessionStorage`
+holding `{driveId, draft}`. On mount, `DriveExplorer` checks for the key; if
+present and the drive matches, it sets `viewMode` to `"chat"` and clears the
+key. `ChatView` restores the draft into the composer.
+
+`sessionStorage` (not `localStorage`) is correct here: the intent is scoped to
+this tab and this navigation, and must not resurrect in a tab opened next week.
+
+The key is cleared before the token exchange runs, so a failed exchange still
+lands the user in the chat view with an error rather than looping.
+
 ### Bring your own key
 
 A text field accepting an OpenRouter key directly, validated with a
@@ -382,6 +403,7 @@ Vitest, following `editors/knowledge-vault/lib/boot.test.ts`.
 |---|---|
 | `markdown-preview` | `javascript:`, `data:`, `vbscript:` dropped; http/https/mailto/relative preserved. **Written first, must fail before the fix** |
 | `openrouter-auth` | verifier/challenge round-trip against a known SHA-256 vector; code stripped from URL; spent verifier cleared |
+| oauth return | return intent restores the chat view and the draft; intent cleared after use; intent for a different drive is ignored |
 | `openrouter-client` | SSE frames split mid-JSON; tool-call arguments accumulated across deltas; `[DONE]` handling; comment payloads ignored |
 | `vault-tools` | each tool's projection and cap against a stubbed fetch; unknown tool name rejected; no mutation reachable |
 | `chat-storage` | 20-thread cap evicts oldest; drive scoping; quota exhaustion degrades to memory |
