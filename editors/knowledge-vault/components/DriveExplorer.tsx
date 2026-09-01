@@ -246,8 +246,6 @@ export function DriveExplorer({ children }: EditorProps) {
           }}
         >
           <div className="flex items-center gap-1">
-            {/* Creating comes before browsing, so it leads the row. */}
-            <CreateMenu />
             {TABS.map((tab) => (
               <button
                 key={tab.key}
@@ -304,6 +302,7 @@ export function DriveExplorer({ children }: EditorProps) {
           </div>
           <div className="flex items-center gap-3">
             <GettingStartedButton />
+            <CreateMenu />
             <SettingsMenu
               activeView={viewMode}
               isActive={!showDocumentEditor}
