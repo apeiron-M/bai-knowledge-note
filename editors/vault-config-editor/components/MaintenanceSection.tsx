@@ -16,6 +16,7 @@ import type {
   MaintenanceConfig,
   VaultConfigAction,
 } from "document-models/vault-config";
+import { UNSAVED_HINT } from "./defaults.js";
 import {
   Card,
   Row,
@@ -40,9 +41,12 @@ const LABELS: Record<string, { label: string; unit: string }> = {
 
 export function MaintenanceSection({
   maintenance,
+  unsaved,
   dispatch,
 }: {
   maintenance: MaintenanceConfig;
+  /** True while this branch is still null in state. */
+  unsaved?: boolean;
   dispatch: Dispatch;
 }) {
   // Every MaintenanceConfig field is `Int!`, so these entries are already
@@ -52,7 +56,7 @@ export function MaintenanceSection({
   return (
     <Card
       title="Maintenance limits"
-      hint="Health checks warn once the vault goes past these numbers."
+      hint={`Health checks warn once the vault goes past these numbers.${unsaved ? " " + UNSAVED_HINT : ""}`}
     >
       <div className="space-y-2">
         {entries.map(([key, value]) => {

@@ -14,6 +14,7 @@ import type {
   DimensionConfig,
   VaultConfigAction,
 } from "document-models/vault-config";
+import { UNSAVED_HINT } from "./defaults.js";
 import { Card, controlClass, controlStyle, ts } from "./ui.js";
 
 type Dispatch = DocumentDispatch<VaultConfigAction>;
@@ -49,9 +50,12 @@ type Position = {
 
 export function DimensionsSection({
   dimensions,
+  unsaved,
   dispatch,
 }: {
   dimensions: DimensionConfig;
+  /** True while this branch is still null in state. */
+  unsaved?: boolean;
   dispatch: Dispatch;
 }) {
   const byKey = dimensions as unknown as Record<string, Position | undefined>;
@@ -59,7 +63,7 @@ export function DimensionsSection({
   return (
     <Card
       title="Methodology dimensions"
-      hint="Where this vault sits between eight pairs of opposing practices, how sure it is, and why."
+      hint={`Where this vault sits between eight pairs of opposing practices, how sure it is, and why.${unsaved ? " " + UNSAVED_HINT : ""}`}
     >
       <div className="space-y-4">
         {DIMENSIONS.map((dim) => {

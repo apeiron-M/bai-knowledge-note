@@ -12,15 +12,19 @@ import type {
   VaultConfigAction,
   VocabularyMap,
 } from "document-models/vault-config";
+import { UNSAVED_HINT } from "./defaults.js";
 import { Card, controlClass, controlStyle, ts } from "./ui.js";
 
 type Dispatch = DocumentDispatch<VaultConfigAction>;
 
 export function VocabularySection({
   vocabulary,
+  unsaved,
   dispatch,
 }: {
   vocabulary: VocabularyMap;
+  /** True while this branch is still null in state. */
+  unsaved?: boolean;
   dispatch: Dispatch;
 }) {
   // Every VocabularyMap term is `String!`, so these entries are already
@@ -30,7 +34,7 @@ export function VocabularySection({
   return (
     <Card
       title="Vocabulary"
-      hint="What this vault calls each part of the pipeline."
+      hint={`What this vault calls each part of the pipeline.${unsaved ? " " + UNSAVED_HINT : ""}`}
     >
       <div className="space-y-2">
         {entries.map(([key, value]) => (

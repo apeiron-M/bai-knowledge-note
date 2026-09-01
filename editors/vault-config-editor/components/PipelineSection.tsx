@@ -12,6 +12,7 @@ import type {
   PipelineDepth,
   VaultConfigAction,
 } from "document-models/vault-config";
+import { UNSAVED_HINT } from "./defaults.js";
 import { Card, Row, controlClass, controlStyle, ts } from "./ui.js";
 
 type Dispatch = DocumentDispatch<VaultConfigAction>;
@@ -30,15 +31,18 @@ const DEPTHS: { value: PipelineDepth; label: string }[] = [
 
 export function PipelineSection({
   pipeline,
+  unsaved,
   dispatch,
 }: {
   pipeline: PipelineConfig;
+  /** True while this branch is still null in state. */
+  unsaved?: boolean;
   dispatch: Dispatch;
 }) {
   return (
     <Card
       title="Processing"
-      hint="How thoroughly the pipeline works through a source."
+      hint={`How thoroughly the pipeline works through a source.${unsaved ? " " + UNSAVED_HINT : ""}`}
     >
       <div className="space-y-2">
         <Row label="Depth">

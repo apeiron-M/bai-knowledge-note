@@ -6,15 +6,22 @@
  * setting shapes the vault: what it is, how it speaks, how it processes, then
  * the numbers that police it.
  *
- * Sections render only when their state branch exists. The reducers create
- * each branch lazily on first write, so a config initialized but never tuned
- * has null dimensions/vocabulary/pipeline/maintenance — showing a card of
- * empty controls for a branch that does not exist yet would invite writes
- * against defaults nobody chose.
+ * Every section always renders. `dimensions`, `vocabulary`, `pipeline` and
+ * `maintenance` are null until their first write (each reducer creates its own
+ * branch), so those sections fall back to the defaults the reducer would
+ * write and say so. Hiding them instead — as this file first did — left four
+ * of the model's eight operations reachable only by an agent, which is the
+ * problem this editor exists to fix.
  */
 import { DocumentToolbar } from "@powerhousedao/design-system/connect";
 import { useSelectedVaultConfigDocument } from "document-models/vault-config";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
+import {
+  DEFAULT_DIMENSIONS,
+  DEFAULT_MAINTENANCE,
+  DEFAULT_PIPELINE,
+  DEFAULT_VOCABULARY,
+} from "./components/defaults.js";
 import { DimensionsSection } from "./components/DimensionsSection.js";
 import { ExtractionCategoriesSection } from "./components/ExtractionCategoriesSection.js";
 import { FeaturesSection } from "./components/FeaturesSection.js";
@@ -45,35 +52,31 @@ export default function Editor() {
             dispatch={dispatch}
           />
 
-          {state.dimensions && (
-            <DimensionsSection
-              dimensions={state.dimensions}
-              dispatch={dispatch}
-            />
-          )}
+          <DimensionsSection
+            dimensions={state.dimensions ?? DEFAULT_DIMENSIONS}
+            unsaved={!state.dimensions}
+            dispatch={dispatch}
+          />
 
           <div className="grid gap-6 md:grid-cols-2">
-            {state.vocabulary && (
-              <VocabularySection
-                vocabulary={state.vocabulary}
-                dispatch={dispatch}
-              />
-            )}
+            <VocabularySection
+              vocabulary={state.vocabulary ?? DEFAULT_VOCABULARY}
+              unsaved={!state.vocabulary}
+              dispatch={dispatch}
+            />
 
             <div className="space-y-6">
-              {state.pipeline && (
-                <PipelineSection pipeline={state.pipeline} dispatch={dispatch} />
-              )}
-              {state.maintenance && (
-                <MaintenanceSection
-                  maintenance={state.maintenance}
-                  dispatch={dispatch}
-                />
-              )}
-              <FeaturesSection
-                features={state.features}
+              <PipelineSection
+                pipeline={state.pipeline ?? DEFAULT_PIPELINE}
+                unsaved={!state.pipeline}
                 dispatch={dispatch}
               />
+              <MaintenanceSection
+                maintenance={state.maintenance ?? DEFAULT_MAINTENANCE}
+                unsaved={!state.maintenance}
+                dispatch={dispatch}
+              />
+              <FeaturesSection features={state.features} dispatch={dispatch} />
             </div>
           </div>
 
