@@ -13,13 +13,7 @@
  * Everything runs in the browser: the model via OpenRouter, the data via the
  * same Switchboard endpoints the search field uses. Nothing here can write.
  */
-import {
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-  type CSSProperties,
-} from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSelectedDriveId } from "@powerhousedao/reactor-browser";
 import { useVaultName } from "../hooks/use-vault-name.js";
 import { useOpenRouter } from "../hooks/use-openrouter.js";
@@ -35,26 +29,13 @@ import { ChatConnectPanel } from "./chat/ChatConnectPanel.js";
 import { ChatHistoryMenu } from "./chat/ChatHistoryMenu.js";
 import { ChatMessage } from "./chat/ChatMessage.js";
 import { ModelPicker } from "./chat/ModelPicker.js";
+import { LandingStage } from "./chat/LandingStage.js";
 
 interface Orientation {
   stats: { nodeCount: number; edgeCount: number } | null;
   topics: { name: string; noteCount: number }[];
   loaded: boolean;
 }
-
-/**
- * Ambient glow behind the landing states, so the composer sits in a pool of
- * light the way Gemini's does. Two stacked radial gradients — a tighter core
- * and a wider halo — both mixed from the accent token, so each theme gets its
- * own hue (lavender on dark, violet on light) with no new colour tokens. The
- * conversation view stays flat: a glow behind text you are reading is noise.
- */
-const LANDING_GLOW: CSSProperties = {
-  backgroundImage: [
-    "radial-gradient(ellipse 55% 45% at 50% 58%, color-mix(in srgb, var(--bai-accent) 16%, transparent) 0%, transparent 70%)",
-    "radial-gradient(ellipse 95% 75% at 50% 62%, color-mix(in srgb, var(--bai-accent) 7%, transparent) 0%, transparent 78%)",
-  ].join(", "),
-};
 
 /**
  * Stats and top topics, fetched once per drive through the same two tools the
@@ -101,6 +82,7 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
   const or = useOpenRouter();
   const orientation = useOrientation(driveId, or.isConnected);
   const [draft, setDraft] = useState(initialDraft);
+  const composerAnchorRef = useRef<HTMLDivElement>(null);
 
   const systemPrompt = useMemo(
     () =>
@@ -129,10 +111,7 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
 
   if (!or.isConnected) {
     return (
-      <div
-        className="flex h-full flex-col overflow-auto p-4"
-        style={LANDING_GLOW}
-      >
+      <div className="flex h-full flex-col">
         <ChatConnectPanel
           vaultName={vaultName}
           busy={or.isCompletingOAuth}
@@ -249,68 +228,58 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
           </div>
         </>
       ) : (
-        /*
-         * Three rows: a flexible spacer, the greeting + composer, and a
-         * flexible tail holding the chips. Only the middle row is centred, so
-         * the pill sits exactly at the vertical centre of the pane the way
-         * Gemini's does, and the chips hang beneath it without pulling it up.
-         */
-        <div
-          className="grid min-h-0 flex-1 grid-rows-[1fr_auto_1fr] overflow-auto px-4"
-          style={LANDING_GLOW}
+        <LandingStage
+          anchorRef={composerAnchorRef}
+          tail={
+            <div className="flex w-full flex-wrap justify-center gap-2 pt-6">
+              {!orientation.loaded && (
+                <LoadingLine label="Reading the vault's topics…" />
+              )}
+              {orientation.topics.slice(0, 8).map((t) => (
+                <button
+                  key={t.name}
+                  type="button"
+                  onClick={() =>
+                    void chat.send(`What does the vault say about ${t.name}?`)
+                  }
+                  className="rounded-full px-3 py-1.5 text-xs transition-colors hover:bg-[var(--bai-accent-soft)]"
+                  style={{
+                    backgroundColor: "var(--bai-hover)",
+                    color: "var(--bai-accent)",
+                  }}
+                  title={`${t.noteCount} notes`}
+                >
+                  #{t.name}
+                </button>
+              ))}
+            </div>
+          }
         >
-          <div />
-          <div className="motion-safe:animate-[fadeUp_.4s_ease-out] mx-auto flex w-full max-w-3xl flex-col items-center">
-            <h1
-              className="text-center text-3xl font-medium tracking-tight sm:text-4xl"
-              style={{
-                backgroundImage:
-                  "linear-gradient(90deg, var(--bai-text) 20%, var(--bai-accent) 100%)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent",
-              }}
-            >
-              Ask {vaultName} anything
-            </h1>
-            <p
-              className="mt-3 text-sm"
-              style={{ color: "var(--bai-text-muted)" }}
-            >
-              {orientation.stats
-                ? `${orientation.stats.nodeCount.toLocaleString()} notes · ${orientation.stats.edgeCount.toLocaleString()} links · read-only`
-                : "Answers come from the vault's own notes, with citations you can open."}
-            </p>
-            <div className="mt-8 w-full">{composer}</div>
+          <h1
+            className="text-center text-3xl font-medium tracking-tight sm:text-4xl"
+            style={{
+              backgroundImage:
+                "linear-gradient(90deg, var(--bai-text) 20%, var(--bai-accent) 100%)",
+              WebkitBackgroundClip: "text",
+              backgroundClip: "text",
+              color: "transparent",
+            }}
+          >
+            Ask {vaultName} anything
+          </h1>
+          <p
+            className="mt-3 text-sm"
+            style={{ color: "var(--bai-text-muted)" }}
+          >
+            {orientation.stats
+              ? `${orientation.stats.nodeCount.toLocaleString()} notes · ${orientation.stats.edgeCount.toLocaleString()} links · read-only`
+              : "Answers come from the vault's own notes, with citations you can open."}
+          </p>
+          <div ref={composerAnchorRef} className="mt-8 w-full">
+            {composer}
           </div>
-          <div className="mx-auto flex w-full max-w-3xl flex-wrap content-start justify-center gap-2 pt-6">
-            {!orientation.loaded && (
-              <LoadingLine label="Reading the vault's topics…" />
-            )}
-            {orientation.topics.slice(0, 8).map((t) => (
-              <button
-                key={t.name}
-                type="button"
-                onClick={() =>
-                  void chat.send(`What does the vault say about ${t.name}?`)
-                }
-                className="rounded-full px-3 py-1.5 text-xs transition-colors hover:bg-[var(--bai-accent-soft)]"
-                style={{
-                  backgroundColor: "var(--bai-hover)",
-                  color: "var(--bai-accent)",
-                }}
-                title={`${t.noteCount} notes`}
-              >
-                #{t.name}
-              </button>
-            ))}
-          </div>
-        </div>
+        </LandingStage>
       )}
-
-      <style>{`
-        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
-      `}</style>
     </div>
   );
 }
