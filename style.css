@@ -67,6 +67,42 @@
 }
 
 /*
+ * Scrollbars follow the theme.
+ *
+ * Browser-default scrollbars stay light in dark mode and read as a white bar
+ * down the sidebar. The thumb takes `--bai-hover` — the same tone as an
+ * active chip — so it belongs to the surface it scrolls, and the track is
+ * transparent so nothing is drawn where there is nothing to scroll.
+ *
+ * Both APIs are set on purpose. Chrome 121+ and Firefox honour the standard
+ * `scrollbar-*` properties and ignore the `::-webkit-scrollbar` rules; Safari
+ * is the reverse. Setting both gives every engine the same result.
+ */
+.bai-theme,
+.bai-theme * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--bai-hover) transparent;
+}
+.bai-theme ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.bai-theme ::-webkit-scrollbar-track,
+.bai-theme ::-webkit-scrollbar-corner {
+  background: transparent;
+}
+.bai-theme ::-webkit-scrollbar-thumb {
+  background-color: var(--bai-hover);
+  border-radius: 999px;
+  /* A transparent border inset from the track reads as a thinner, rounded thumb. */
+  border: 2px solid transparent;
+  background-clip: padding-box;
+}
+.bai-theme ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--bai-text-faint);
+}
+
+/*
  * Theme overrides for the Revision History panel and DocumentToolbar
  * Applied to ALL bai/ document types via comma-separated selectors.
  *
