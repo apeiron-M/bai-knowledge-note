@@ -125,33 +125,43 @@ async function adopt(driveId: string, remote: Remote, sync: SyncManager) {
   const filter = meta.filter;
   const alreadyScoped =
     filter.documentId.length === 1 && filter.documentId[0] === SYNC_NOTHING;
-  if (alreadyScoped) return;
+  if (!alreadyScoped) {
+    // Re-add under a sentinel filter rather than removing: a removed channel
+    // makes Connect present the drive as local. See use-remote-first.ts.
+    const { DriveCollectionId } = await import(
+      "@powerhousedao/reactor-browser"
+    );
+    await sync.remove(meta.name);
+    await sync.add(
+      meta.name,
+      DriveCollectionId.forDrive(driveId, filter.branch || "main"),
+      meta.channelConfig,
+      {
+        documentId: [SYNC_NOTHING],
+        scope: filter.scope,
+        branch: filter.branch || "main",
+      },
+      meta.options,
+    );
+    console.info(
+      `[RemoteFirst] Sync neutralised at package load for drive ${driveId.slice(0, 8)} — ` +
+        `replication skipped, reads and writes go to the Switchboard.`,
+    );
+  }
 
-  // Re-add under a sentinel filter rather than removing: a removed channel
-  // makes Connect present the drive as local. See use-remote-first.ts.
-  const { DriveCollectionId } = await import("@powerhousedao/reactor-browser");
-  await sync.remove(meta.name);
-  await sync.add(
-    meta.name,
-    DriveCollectionId.forDrive(driveId, filter.branch || "main"),
-    meta.channelConfig,
-    {
-      documentId: [SYNC_NOTHING],
-      scope: filter.scope,
-      branch: filter.branch || "main",
-    },
-    meta.options,
-  );
-  console.info(
-    `[RemoteFirst] Sync neutralised at package load for drive ${driveId.slice(0, 8)} — ` +
-      `replication skipped, reads and writes go to the Switchboard.`,
-  );
-
-  // With nothing syncing, the local drive document is a node-less stub, so
-  // Connect has nothing to render. On a warm start the drive was already in
-  // the snapshot from a previous session; on a COLD ADD it never is, which is
-  // why the drive simply did not appear. Hydrate it here, before any editor
-  // mounts. `useRemoteFirst` keeps it fresh afterwards.
+  // Hydration must run on EVERY boot, warm or cold — this is the fix for
+  // the disappearing-drive bug. Nothing about a remote-first drive is
+  // persisted locally: `addRemoteDrive` registers only a sync channel (the
+  // drive document normally materialises via replication, which we
+  // neutralise above before the first envelope lands), and the snapshot
+  // written by `hydrateDriveSnapshot` lives in in-memory `ph.drives` state
+  // that dies with the tab. The sync manager persists remote registrations
+  // and recreates them at startup, so on a warm start `alreadyScoped` is
+  // true — and an early return from that branch, as this code originally
+  // did, skips the ONLY code path that can put the drive back on screen.
+  // Connect then boots to an empty sidebar until the user clears site data
+  // and re-adds the drive. `useRemoteFirst` takes over freshness once the
+  // editor mounts.
   await hydrateDriveSnapshot(driveId, handle.remoteClient);
   const timer = setInterval(() => {
     if (document.visibilityState !== "visible") return;
