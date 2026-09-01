@@ -92,6 +92,28 @@ export function deleteThread(driveId: string, threadId: string): void {
     driveId,
     loadThreads(driveId).filter((t) => t.id !== threadId),
   );
+  if (readCurrentThreadId(driveId) === threadId)
+    writeCurrentThreadId(driveId, null);
+}
+
+/*
+ * Which thread is open. This is tab navigation state, not history, so it
+ * lives in sessionStorage — like the search view's `bai-search-state`. It is
+ * what lets the chat come back to the same conversation after the user opens
+ * a cited note (which replaces the chat view) and closes it again.
+ */
+const currentKey = (driveId: string) => `bai-chat:current:v1:${driveId}`;
+
+export function readCurrentThreadId(driveId: string): string | null {
+  return sessionStorage.getItem(currentKey(driveId));
+}
+
+export function writeCurrentThreadId(
+  driveId: string,
+  threadId: string | null,
+): void {
+  if (threadId) sessionStorage.setItem(currentKey(driveId), threadId);
+  else sessionStorage.removeItem(currentKey(driveId));
 }
 
 /** A thread's title is its opening question, first line, trimmed. */

@@ -4,8 +4,10 @@ import {
   MAX_THREADS,
   deleteThread,
   loadThreads,
+  readCurrentThreadId,
   saveThread,
   threadTitleFrom,
+  writeCurrentThreadId,
   type Thread,
 } from "./chat-storage.js";
 
@@ -15,7 +17,10 @@ const thread = (id: string, updatedAt: string): Thread => ({
   updatedAt,
   messages: [{ role: "user", content: "hi" }],
 });
-beforeEach(() => localStorage.clear());
+beforeEach(() => {
+  localStorage.clear();
+  sessionStorage.clear();
+});
 
 describe("chat-storage", () => {
   it("returns an empty list for an unseen drive", () => {
@@ -108,5 +113,40 @@ describe("threadTitleFrom", () => {
     );
     expect(threadTitleFrom("x".repeat(200)).length).toBeLessThanOrEqual(61);
     expect(threadTitleFrom("   ")).toBe("New chat");
+  });
+});
+
+describe("current thread pointer", () => {
+  it("is null until set, round-trips, and clears", () => {
+    expect(readCurrentThreadId("d1")).toBeNull();
+    writeCurrentThreadId("d1", "t-abc");
+    expect(readCurrentThreadId("d1")).toBe("t-abc");
+    writeCurrentThreadId("d1", null);
+    expect(readCurrentThreadId("d1")).toBeNull();
+  });
+
+  it("is scoped per drive", () => {
+    writeCurrentThreadId("d1", "a");
+    writeCurrentThreadId("d2", "b");
+    expect(readCurrentThreadId("d1")).toBe("a");
+    expect(readCurrentThreadId("d2")).toBe("b");
+  });
+
+  it("lives in sessionStorage, not localStorage — it is tab navigation state", () => {
+    writeCurrentThreadId("d1", "a");
+    expect(sessionStorage.getItem("bai-chat:current:v1:d1")).toBe("a");
+    expect(localStorage.getItem("bai-chat:current:v1:d1")).toBeNull();
+  });
+
+  it("deleting the current thread clears the pointer", () => {
+    saveThread("d1", {
+      id: "a",
+      title: "A",
+      updatedAt: "2026-01-01T00:00:00Z",
+      messages: [],
+    });
+    writeCurrentThreadId("d1", "a");
+    deleteThread("d1", "a");
+    expect(readCurrentThreadId("d1")).toBeNull();
   });
 });

@@ -24,8 +24,10 @@ import { classifyFailure, type Failure } from "../lib/chat/failure.js";
 import {
   deleteThread,
   loadThreads,
+  readCurrentThreadId,
   saveThread,
   threadTitleFrom,
+  writeCurrentThreadId,
   type Citation,
   type StoredMessage,
   type Thread,
@@ -281,15 +283,24 @@ export function useChat(o: UseChatOptions): UseChat {
   // synchronously — a setState callback would only run on the next render.
   const streamedRef = useRef("");
 
-  // Load history when the drive changes; drop any in-flight stream.
+  // Load history when the drive changes; drop any in-flight stream. Reopen
+  // the thread that was current in this tab, so leaving the chat to read a
+  // cited note and coming back lands in the same conversation.
   useEffect(() => {
     abortRef.current?.abort();
-    setThread(null);
     setStreamingText("");
     setTrail([]);
     setFailure(null);
-    setThreads(driveId ? loadThreads(driveId) : []);
+    const loaded = driveId ? loadThreads(driveId) : [];
+    setThreads(loaded);
+    const currentId = driveId ? readCurrentThreadId(driveId) : null;
+    setThread(loaded.find((t) => t.id === currentId) ?? null);
   }, [driveId]);
+
+  // Record which thread is open (or that none is).
+  useEffect(() => {
+    if (driveId) writeCurrentThreadId(driveId, thread?.id ?? null);
+  }, [driveId, thread?.id]);
 
   const persist = useCallback(
     (t: Thread) => {

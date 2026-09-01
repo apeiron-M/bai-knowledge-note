@@ -81,7 +81,21 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
   const vaultName = useVaultName();
   const or = useOpenRouter();
   const orientation = useOrientation(driveId, or.isConnected);
-  const [draft, setDraft] = useState(initialDraft);
+  // The composer's draft survives the chat view being replaced by a note
+  // editor. Tab-scoped like the current-thread pointer; the OAuth return
+  // intent takes precedence when both exist.
+  const draftKey = driveId ? `bai-chat:draft:v1:${driveId}` : null;
+  const [draft, setDraftState] = useState(
+    () =>
+      initialDraft ||
+      (draftKey ? (sessionStorage.getItem(draftKey) ?? "") : ""),
+  );
+  const setDraft = (text: string) => {
+    setDraftState(text);
+    if (!draftKey) return;
+    if (text) sessionStorage.setItem(draftKey, text);
+    else sessionStorage.removeItem(draftKey);
+  };
   const composerAnchorRef = useRef<HTMLDivElement>(null);
 
   const systemPrompt = useMemo(
@@ -119,9 +133,17 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
   // Follow the stream, but only if the user is already near the bottom —
   // scrolling someone away from an earlier answer they are reading is rude.
   const scrollRef = useRef<HTMLDivElement>(null);
+  const openedAtBottom = useRef(false);
   useEffect(() => {
     const el = scrollRef.current;
     if (!el) return;
+    // A transcript restored on mount (coming back from a cited note) opens at
+    // the bottom, where the citation the user clicked was.
+    if (!openedAtBottom.current && chat.messages.length > 0) {
+      openedAtBottom.current = true;
+      el.scrollTop = el.scrollHeight;
+      return;
+    }
     const nearBottom = el.scrollHeight - el.scrollTop - el.clientHeight < 160;
     if (nearBottom) el.scrollTop = el.scrollHeight;
   }, [chat.messages, chat.streamingText, chat.trail]);
@@ -143,7 +165,7 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
 
   const composer = (
     <ChatComposer
-      initialDraft={initialDraft}
+      initialDraft={draft}
       placeholder={inConversation ? "Follow up…" : `Ask ${vaultName} anything`}
       streaming={chat.isStreaming}
       autoFocus
