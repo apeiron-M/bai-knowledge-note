@@ -225,21 +225,25 @@ export function VaultSidebar({
   // against it rather than some ancestor. A translucent background keeps
   // the glyph legible over whatever it floats above.
   //
-  // `top-[30px]` straddles the top bar's bottom border instead of sitting
+  // `top-[31px]` straddles the top bar's bottom border instead of sitting
   // inside the bar (where it overlapped the Search tab). The wrapper and
   // DriveExplorer's top bar are siblings in the same flex row, so they
   // share a y origin: the bar is 44px tall (`py-2` = 8+8, around a
   // `py-1.5 text-xs` tab of 6+16+6 = 28) and its border sits at y=44-45.
-  // This button is 30px tall (16px icon + `p-1.5` 6+6 + 1px border each
-  // side), so 44.5 - 15 = ~30 centres it on that line. Revisit if the top
-  // bar's padding or tab size changes.
+  // This button is 26px tall (16px icon + `p-1` 4+4 + 1px border each
+  // side), so 44.5 - 13 = ~31 centres it on that line. Revisit if the top
+  // bar's padding, the tab size, or this button's own padding changes.
+  //
+  // Round (`rounded-full`) rather than a rounded square: the circle pulls
+  // its corners away from the adjacent Search tab, so the two read as
+  // separate controls even where they come close.
   if (!sidebarOpen) {
     return (
       <div className="relative h-full w-0 shrink-0">
         <button
           type="button"
           onClick={() => setSidebarOpen(true)}
-          className="sidebar-collapse-btn absolute left-1 top-[30px] z-20 rounded p-1.5 backdrop-blur transition-colors"
+          className="sidebar-collapse-btn absolute left-0.5 top-[31px] z-20 rounded-full p-1 backdrop-blur transition-colors"
           style={{
             color: "var(--bai-text-muted)",
             backgroundColor: "var(--bai-surface)",
