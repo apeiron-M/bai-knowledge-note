@@ -33,7 +33,7 @@ export const initialGlobalState: WorkBreakdownStructureGlobalState = {
 export const initialLocalState: WorkBreakdownStructureLocalState = {};
 
 export const utils: DocumentModelUtils<WorkBreakdownStructurePHState> = {
-  fileExtension: ".wbs",
+  fileExtension: "",
   createState(state) {
     return {
       ...createBaseState(state?.auth, { version: 1, ...state?.document }),

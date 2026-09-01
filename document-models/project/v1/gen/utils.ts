@@ -40,7 +40,7 @@ export const initialGlobalState: ProjectGlobalState = {
 export const initialLocalState: ProjectLocalState = {};
 
 export const utils: DocumentModelUtils<ProjectPHState> = {
-  fileExtension: ".proj",
+  fileExtension: "",
   createState(state) {
     return {
       ...createBaseState(state?.auth, { version: 1, ...state?.document }),
