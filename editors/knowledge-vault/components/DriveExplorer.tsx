@@ -363,12 +363,6 @@ export function DriveExplorer({ children }: EditorProps) {
             )}
           </div>
           <div className="flex items-center gap-3">
-            <span
-              className="text-[10px]"
-              style={{ color: "var(--bai-text-faint)" }}
-            >
-              {notesLoading && notes.length === 0 ? "…" : `${notes.length}n`}
-            </span>
             <GettingStartedButton />
             <CreateMenu />
           </div>
