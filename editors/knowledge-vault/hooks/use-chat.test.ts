@@ -408,6 +408,26 @@ describe("extractCitations / resolveCitations", () => {
     expect(r.text).toBe(`As before: [[${N1}]] and [[${N1}]]`);
   });
 
+  it("accepts the single-bracket form models drift to — a UUID or an exact title — and leaves other brackets alone", () => {
+    const text =
+      `Sessions live in a cookie [1], [${P1}]. Every op passes four gates [${N1}]. ` +
+      `No hooks for authorization [linked_notes]. Mapped in the [Auth Scope Enforcement] project. ` +
+      `See [the docs](https://example.com) and [[n1]].`;
+    const r = resolveCitations(text, trail);
+    expect(r.citations.map((c) => c.documentId)).toEqual([P1, N1, "n1"]);
+    expect(r.text).toBe(
+      `Sessions live in a cookie [1], [[${P1}]]. Every op passes four gates [[${N1}]]. ` +
+        `No hooks for authorization [linked_notes]. Mapped in the [[${P1}]] project. ` +
+        `See [the docs](https://example.com) and [[n1]].`,
+    );
+  });
+
+  it("does not let single brackets resolve by prefix — prose is not a citation", () => {
+    const r = resolveCitations("The [AuthScope] work and [[AuthScope]] again", trail);
+    expect(r.citations.map((c) => c.documentId)).toEqual([P1]);
+    expect(r.text).toBe(`The [AuthScope] work and [[${P1}]] again`);
+  });
+
   it("returns an empty list when nothing is cited", () => {
     expect(extractCitations("no citations here", trail)).toEqual([]);
   });

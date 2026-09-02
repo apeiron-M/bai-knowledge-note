@@ -186,7 +186,15 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
 /*  Citations                                                         */
 /* ------------------------------------------------------------------ */
 
-const CITATION_RE = /\[\[([^\]]+?)\]\]/g;
+/**
+ * Citation markers as models actually write them. Group 1 is the canonical
+ * `[[…]]`; group 2 is a single-bracket `[…]` that is not a markdown link
+ * (`[text](url)`) — models drift to that form mid-answer, and a UUID or an
+ * exact document title inside single brackets is unmistakably a citation.
+ * Footnote numbers, tool names and ordinary bracketed prose fall through
+ * the resolver and are left exactly as written.
+ */
+const CITATION_RE = /\[\[([^\]]+?)\]\]|\[([^[\]]+?)\](?!\()/g;
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -234,6 +242,14 @@ function aliasKey(s: string): string {
 
 const MIN_EXACT_LABEL = 3;
 const MIN_PREFIX_LABEL = 6;
+
+/** The known document whose title equals this label, ignoring case and punctuation. */
+function exactTitle(label: string, known: Map<string, KnownDocument>): KnownDocument | null {
+  const key = aliasKey(label);
+  if (key.length < MIN_EXACT_LABEL) return null;
+  for (const doc of known.values()) if (aliasKey(doc.title) === key) return doc;
+  return null;
+}
 
 /**
  * The model sometimes cites by label instead of id — `[[AuthScope]]` for a
@@ -286,25 +302,34 @@ export function resolveCitations(
   }
   const order: string[] = [];
   const byId = new Map<string, Citation>();
-  const rewritten = text.replace(CITATION_RE, (_m, raw: string) => {
-    const label = raw.trim();
-    let doc: KnownDocument | null;
-    if (UUID_RE.test(label)) {
-      doc = known.get(label) ?? { documentId: label, title: label, documentType: null };
-    } else {
-      doc = known.get(label) ?? resolveLabel(label, known);
-    }
-    if (!doc) return "";
-    if (!byId.has(doc.documentId)) {
-      order.push(doc.documentId);
-      byId.set(doc.documentId, {
-        documentId: doc.documentId,
-        title: doc.title,
-        documentType: doc.documentType,
-      });
-    }
-    return `[[${doc.documentId}]]`;
-  });
+  const rewritten = text.replace(
+    CITATION_RE,
+    (match: string, double: string | undefined, single: string | undefined) => {
+      const label = (double ?? single ?? "").trim();
+      let doc: KnownDocument | null;
+      if (UUID_RE.test(label)) {
+        doc = known.get(label) ?? { documentId: label, title: label, documentType: null };
+      } else if (double !== undefined) {
+        // Explicit citation syntax: resolve generously, drop what fails.
+        doc = known.get(label) ?? resolveLabel(label, known);
+      } else {
+        // Single brackets are also ordinary prose: only an exact title counts,
+        // and anything else stays as the author wrote it.
+        doc = known.get(label) ?? exactTitle(label, known);
+        if (!doc) return match;
+      }
+      if (!doc) return "";
+      if (!byId.has(doc.documentId)) {
+        order.push(doc.documentId);
+        byId.set(doc.documentId, {
+          documentId: doc.documentId,
+          title: doc.title,
+          documentType: doc.documentType,
+        });
+      }
+      return `[[${doc.documentId}]]`;
+    },
+  );
   return {
     text: rewritten,
     citations: order.map((id) => byId.get(id)!),
