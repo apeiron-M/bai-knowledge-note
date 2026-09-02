@@ -11,6 +11,7 @@ import { TopicsBar } from "./components/topics-bar.js";
 import { LinksSection } from "./components/links-section.js";
 import { ProvenanceInfo } from "./components/provenance-info.js";
 import { LifecycleTimeline } from "./components/lifecycle-timeline.js";
+import { RevisionHistory } from "./components/revision-history.js";
 import { MetadataPanel } from "./components/metadata-panel.js";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
@@ -479,7 +480,26 @@ export default function Editor() {
             )}
 
             {activeTab === "history" && (
-              <LifecycleTimeline events={state.lifecycleEvents} />
+              <div className="space-y-6">
+                <RevisionHistory
+                  documentId={document.header.id}
+                  revisionKey={document.header.revision.global ?? 0}
+                  current={{
+                    title: state.title ?? null,
+                    description: state.description ?? null,
+                    content: state.content ?? null,
+                  }}
+                />
+                <div>
+                  <h4
+                    className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--bai-text-muted)" }}
+                  >
+                    Lifecycle
+                  </h4>
+                  <LifecycleTimeline events={state.lifecycleEvents} />
+                </div>
+              </div>
             )}
           </div>
 

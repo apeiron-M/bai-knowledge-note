@@ -17,6 +17,10 @@ type OperationRecord = {
   summary: string | null;
   signerAddress: string | null;
   signerApp: string | null;
+  /** did:key of the signing app instance; null when unsigned. */
+  signerKey: string | null;
+  /** The stored signature tuple, verifiable client-side (see SignerBadge). */
+  signature: string | null;
 };
 
 type FilterType = "all" | "content" | "links" | "lifecycle" | "topics";
@@ -69,11 +73,15 @@ const OP_ICONS: Record<string, string> = {
 /* ------------------------------------------------------------------ */
 
 import { resolveKnowledgeGraphEndpoint } from "../hooks/subgraph-endpoint.js";
+import { SignerBadge } from "../../shared/signer-badge.js";
+import { debounced, onVaultRemoteChange } from "../../shared/vault-live.js";
+import { useSignatureVerification } from "../../shared/use-signature-verification.js";
+import type { VerificationResult } from "../../shared/verify-signature.js";
 
 const ACTIVITY_QUERY = `
   query Activity($driveId: ID!, $limit: Int) {
     knowledgeGraphActivity(driveId: $driveId, limit: $limit) {
-      id documentId operationType timestamp index summary signerAddress signerApp
+      id documentId operationType timestamp index summary signerAddress signerApp signerKey signature
     }
   }
 `;
@@ -123,6 +131,25 @@ export function ActivityView() {
   useEffect(() => {
     void loadActivity();
   }, [loadActivity]);
+
+  // Live: any change in this drive lands in the projection a beat later;
+  // coalesce a burst of operations into one reload.
+  useEffect(() => {
+    if (!driveId) return;
+    const reload = debounced(() => {
+      if (!driveId) return;
+      void fetchActivity(driveId, 200).then(setOperations);
+    }, 1_500);
+    return onVaultRemoteChange((change) => {
+      if (change.driveId === driveId) reload();
+    });
+  }, [driveId]);
+
+  const sigItems = useMemo(
+    () => operations.map((op) => ({ id: op.id, signature: op.signature })),
+    [operations],
+  );
+  const verdicts = useSignatureVerification(sigItems);
 
   const filtered = useMemo(() => {
     if (filter === "all") return operations;
@@ -243,7 +270,11 @@ export function ActivityView() {
             </h3>
             <div className="space-y-1">
               {ops.map((op) => (
-                <OperationRow key={op.id} op={op} />
+                <OperationRow
+                  key={op.id}
+                  op={op}
+                  verdict={verdicts.get(op.id)}
+                />
               ))}
             </div>
           </div>
@@ -257,7 +288,13 @@ export function ActivityView() {
 /*  Operation row                                                     */
 /* ------------------------------------------------------------------ */
 
-function OperationRow({ op }: { op: OperationRecord }) {
+function OperationRow({
+  op,
+  verdict,
+}: {
+  op: OperationRecord;
+  verdict: VerificationResult | undefined;
+}) {
   const icon = OP_ICONS[op.operationType] ?? "?";
   const time = op.timestamp.slice(11, 16);
 
@@ -288,34 +325,19 @@ function OperationRow({ op }: { op: OperationRecord }) {
           style={{ color: "var(--bai-text-faint)" }}
         >
           {op.documentId.slice(0, 8)}...
-          {op.signerAddress || op.signerApp ? (
-            <span
-              title={op.signerAddress ?? op.signerApp ?? ""}
-              className="cursor-pointer"
-              style={{ color: "var(--bai-accent)", opacity: 0.7 }}
-              onClick={(e) => {
-                e.stopPropagation();
-                const text = op.signerAddress ?? op.signerApp ?? "";
-                void navigator.clipboard.writeText(text);
-              }}
-            >
-              {" by "}
-              {op.signerAddress
-                ? `${op.signerAddress.slice(0, 6)}...${op.signerAddress.slice(-4)}`
-                : op.signerApp}{" "}
-              <svg
-                className="inline-block h-2.5 w-2.5 opacity-0 group-hover:opacity-50"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <rect x="9" y="9" width="13" height="13" rx="2" />
-                <path d="M5 15H4a2 2 0 01-2-2V4a2 2 0 012-2h9a2 2 0 012 2v1" />
-              </svg>
-            </span>
-          ) : null}
         </p>
+        {(op.signerAddress || op.signerApp || op.signature) && (
+          <div className="mt-0.5">
+            <SignerBadge
+              signer={{
+                address: op.signerAddress,
+                app: op.signerApp,
+                key: op.signerKey,
+              }}
+              verdict={verdict}
+            />
+          </div>
+        )}
       </div>
 
       {/* Time */}

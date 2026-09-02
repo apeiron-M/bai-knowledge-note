@@ -57,7 +57,30 @@ import type {
   IReactorBrowserClient,
 } from "@powerhousedao/reactor-browser";
 import type { PHDocument } from "document-model";
+import type { DocumentModelModule } from "document-model";
+import * as vaultModels from "../../../document-models/index.js";
 import { announceDocumentMutation } from "./remote-reactor.js";
+
+/**
+ * The vault's document-model modules, for the remote client to sign BATCHES.
+ *
+ * `GraphQLReactorClient` signs every push with the logged-in Renown user's
+ * key (resolved per push from `window.ph.renown`), and signing action N+1 of
+ * a batch needs the state action N leaves behind — which only the document's
+ * own reducer can predict. Without the modules a multi-action dispatch from a
+ * logged-in user throws before the mutation ("a batch that cannot be
+ * predicted must fail, never be downgraded to unsigned"). Every editor here
+ * dispatches single actions today; this keeps that from being a trap.
+ */
+const VAULT_DOCUMENT_MODELS: readonly DocumentModelModule<any>[] = (
+  Object.values(vaultModels) as unknown[]
+).filter(
+  (m): m is DocumentModelModule<any> =>
+    typeof m === "object" &&
+    m !== null &&
+    "documentModel" in m &&
+    "reducer" in m,
+);
 
 /**
  * The `window.ph` slots this module swaps. `getGlobal`'s key union lags
@@ -454,6 +477,7 @@ export function enableRemoteFirst(options: {
   const remoteClient = new GraphQLReactorClient({
     url: options.endpoint,
     graphqlClient: sdk,
+    documentModels: VAULT_DOCUMENT_MODELS,
   });
 
   const previousClient = phSlots().reactorClient;
