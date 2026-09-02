@@ -450,7 +450,8 @@
       "Bash(grep -c \"\\\\.json$\")",
       "Bash(grep \"\\\\.json$\")",
       "Bash(grep -c \"pyc$\")",
-      "Bash(node -e \"const s=require\\('./package.json'\\).scripts; console.log\\(JSON.stringify\\(s,null,1\\)\\)\")"
+      "Bash(node -e \"const s=require\\('./package.json'\\).scripts; console.log\\(JSON.stringify\\(s,null,1\\)\\)\")",
+      "Bash(python3 -c \"import json;print\\(json.load\\(open\\('package.json'\\)\\)['scripts']\\)\")"
     ]
   },
   "enabledPlugins": {
