@@ -193,10 +193,15 @@ export const schema: DocumentNode = gql`
     ): [KnowledgeGraphEdge!]!
     knowledgeGraphDensity(driveId: ID!): Float!
 
+    """
+    Keyword search on title + description. ARCHIVED notes are excluded —
+    they are no longer held as current — unless includeArchived is true.
+    """
     knowledgeGraphSearch(
       driveId: ID!
       query: String!
       limit: Int
+      includeArchived: Boolean
     ): [KnowledgeGraphNode!]!
     knowledgeGraphTriangles(driveId: ID!, limit: Int): [Triangle!]!
     knowledgeGraphBridges(driveId: ID!): [KnowledgeGraphNode!]!
@@ -206,16 +211,22 @@ export const schema: DocumentNode = gql`
     ): [KnowledgeGraphEdge!]!
 
     knowledgeGraphTopics(driveId: ID!): [TopicInfo!]!
-    knowledgeGraphByTopic(driveId: ID!, topic: String!): [KnowledgeGraphNode!]!
+    knowledgeGraphByTopic(
+      driveId: ID!
+      topic: String!
+      includeArchived: Boolean
+    ): [KnowledgeGraphNode!]!
     knowledgeGraphRelatedByTopic(
       driveId: ID!
       documentId: String!
       limit: Int
+      includeArchived: Boolean
     ): [RelatedNode!]!
     knowledgeGraphFullSearch(
       driveId: ID!
       query: String!
       limit: Int
+      includeArchived: Boolean
     ): [KnowledgeGraphNode!]!
     knowledgeGraphByAuthor(
       driveId: ID!
@@ -235,6 +246,7 @@ export const schema: DocumentNode = gql`
       driveId: ID!
       documentId: String!
       limit: Int
+      includeArchived: Boolean
     ): [SemanticResult!]!
     knowledgeGraphSearchByEmbedding(
       driveId: ID!
@@ -242,6 +254,7 @@ export const schema: DocumentNode = gql`
       embedding: [Float!]!
       mode: SearchMode!
       limit: Int
+      includeArchived: Boolean
     ): [SemanticResult!]!
     """
     Semantic/hybrid search from plain query text — the query is embedded
@@ -254,6 +267,7 @@ export const schema: DocumentNode = gql`
       query: String!
       mode: SearchMode
       limit: Int
+      includeArchived: Boolean
     ): [SemanticResult!]!
     knowledgeGraphMissingEmbeddings(driveId: ID!): [ID!]!
 

@@ -9,6 +9,8 @@ import {
 import { StatusBar } from "./components/status-bar.js";
 import { TopicsBar } from "./components/topics-bar.js";
 import { LinksSection } from "./components/links-section.js";
+import { SupersededBanner } from "./components/superseded-banner.js";
+import { supersededBy as findSupersededBy } from "../knowledge-vault/lib/supersession.js";
 import {
   articulationToMetadata,
   isEdgeConfidence,
@@ -62,6 +64,11 @@ export default function Editor() {
     if (!document) return [];
     return noteMap.get(document.header.id)?.links ?? [];
   }, [noteMap, document]);
+  // Incoming SUPERSEDES edges: the notes that retired this one, if any.
+  const supersededBy = useMemo(
+    () => (document ? findSupersededBy(noteMap.values(), document.header.id) : []),
+    [noteMap, document],
+  );
 
   // Read state optionally here so the callbacks below can be declared
   // unconditionally (rules-of-hooks) even while the doc is still loading.
@@ -164,6 +171,11 @@ export default function Editor() {
               border: "1px solid var(--bai-border)",
             }}
           >
+            <SupersededBanner
+              status={state.status ?? null}
+              supersededBy={supersededBy}
+            />
+
             {/* Status + Title */}
             <div className="space-y-3">
               <StatusBar

@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { MarkdownPreview } from "../../../shared/markdown-preview.js";
 import type { StoredMessage } from "../../lib/chat/chat-storage.js";
 import type { TrailEntry } from "../../hooks/use-chat.js";
+import type { CitationCurrency } from "../../lib/supersession.js";
 import { ChatCitation } from "./ChatCitation.js";
 import { ChatToolTrail } from "./ChatToolTrail.js";
 
@@ -27,11 +28,14 @@ export function ChatMessage({
   message,
   trail,
   streaming = false,
+  currency,
 }: {
   message: StoredMessage;
   /** Only the latest assistant turn carries a live trail. */
   trail?: TrailEntry[];
   streaming?: boolean;
+  /** Is a cited document still current? Marks superseded/archived chips. */
+  currency?: (documentId: string) => CitationCurrency | null;
 }) {
   if (message.role === "user") {
     return (
@@ -49,7 +53,12 @@ export function ChatMessage({
     );
   }
   return (
-    <AssistantTurn message={message} trail={trail} streaming={streaming} />
+    <AssistantTurn
+      message={message}
+      trail={trail}
+      streaming={streaming}
+      currency={currency}
+    />
   );
 }
 
@@ -57,10 +66,12 @@ function AssistantTurn({
   message,
   trail,
   streaming,
+  currency,
 }: {
   message: StoredMessage;
   trail?: TrailEntry[];
   streaming: boolean;
+  currency?: (documentId: string) => CitationCurrency | null;
 }) {
   // Depend on the stored array itself (stable across renders), not a
   // fresh `?? []` fallback that would defeat the memo.
@@ -97,10 +108,19 @@ function AssistantTurn({
         (message.consulted && message.consulted.length > 0)) && (
         <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Sources">
           {(citations ?? []).map((c, i) => (
-            <ChatCitation key={c.documentId} index={i + 1} citation={c} />
+            <ChatCitation
+              key={c.documentId}
+              index={i + 1}
+              citation={c}
+              currency={currency?.(c.documentId)}
+            />
           ))}
           {(message.consulted ?? []).map((c) => (
-            <ChatCitation key={c.documentId} citation={c} />
+            <ChatCitation
+              key={c.documentId}
+              citation={c}
+              currency={currency?.(c.documentId)}
+            />
           ))}
         </div>
       )}

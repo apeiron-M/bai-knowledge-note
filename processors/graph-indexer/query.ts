@@ -194,6 +194,23 @@ export interface OperationRecord {
   inputJson: string | null;
 }
 
+/**
+ * Discovery excludes what the vault no longer holds as current. An ARCHIVED
+ * note stays in the index — its history, backlinks and SUPERSEDES chain are
+ * knowledge — but search, topic browsing and semantic neighbours skip it
+ * unless the caller asks for archaeology with `includeArchived`.
+ */
+export type DiscoveryOptions = { includeArchived?: boolean };
+
+function isCurrent(eb: ExpressionBuilder<DB, "graph_nodes">) {
+  return eb.or([eb("status", "is", null), eb("status", "!=", "ARCHIVED")]);
+}
+
+/** Post-hoc form of `isCurrent`, for results that came from the embedding store. */
+export function isCurrentNode(node: { status: string | null } | null | undefined): boolean {
+  return !!node && node.status !== "ARCHIVED";
+}
+
 function rowToNode(row: GraphNode): GraphNodeResult {
   return {
     id: row.id,
@@ -476,7 +493,11 @@ export function createGraphQuery(db: Kysely<DB>) {
       return edgeCount / (nodeCount * (nodeCount - 1));
     },
 
-    async searchNodes(query: string, limit = 50): Promise<GraphNodeResult[]> {
+    async searchNodes(
+      query: string,
+      limit = 50,
+      opts: DiscoveryOptions = {},
+    ): Promise<GraphNodeResult[]> {
       const q = `%${query.toLowerCase()}%`;
       const rows = await db
         .selectFrom("graph_nodes")
@@ -486,6 +507,7 @@ export function createGraphQuery(db: Kysely<DB>) {
             eb(eb.fn("lower", ["description"]), "like", q),
           ]),
         )
+        .$if(!opts.includeArchived, (qb) => qb.where(isCurrent))
         .selectAll()
         .limit(limit)
         .execute();
@@ -684,7 +706,10 @@ export function createGraphQuery(db: Kysely<DB>) {
       return rows.map((r) => r.name);
     },
 
-    async nodesByTopic(topic: string): Promise<GraphNodeResult[]> {
+    async nodesByTopic(
+      topic: string,
+      opts: DiscoveryOptions = {},
+    ): Promise<GraphNodeResult[]> {
       const rows = await db
         .selectFrom("graph_nodes")
         .innerJoin(
@@ -693,6 +718,14 @@ export function createGraphQuery(db: Kysely<DB>) {
           "graph_topics.document_id",
         )
         .where("graph_topics.name", "=", topic)
+        .$if(!opts.includeArchived, (qb) =>
+          qb.where((eb) =>
+            eb.or([
+              eb("graph_nodes.status", "is", null),
+              eb("graph_nodes.status", "!=", "ARCHIVED"),
+            ]),
+          ),
+        )
         .selectAll("graph_nodes")
         .execute();
       return rows.map(rowToNode);
@@ -701,6 +734,7 @@ export function createGraphQuery(db: Kysely<DB>) {
     async relatedByTopic(
       documentId: string,
       limit = 10,
+      opts: DiscoveryOptions = {},
     ): Promise<RelatedByTopicResult[]> {
       // Get topics of the source document
       const sourceTopics = await db
@@ -739,6 +773,7 @@ export function createGraphQuery(db: Kysely<DB>) {
         const node = await db
           .selectFrom("graph_nodes")
           .where("document_id", "=", docId)
+          .$if(!opts.includeArchived, (qb) => qb.where(isCurrent))
           .selectAll()
           .executeTakeFirst();
         if (node) {
@@ -765,7 +800,11 @@ export function createGraphQuery(db: Kysely<DB>) {
      * title fell outside the `limit` window and scored nothing at all.
      * `updated_at` breaks ties so paging is deterministic.
      */
-    async fullSearch(query: string, limit = 50): Promise<GraphNodeResult[]> {
+    async fullSearch(
+      query: string,
+      limit = 50,
+      opts: DiscoveryOptions = {},
+    ): Promise<GraphNodeResult[]> {
       const q = `%${query.toLowerCase()}%`;
       const rows = await db
         .selectFrom("graph_nodes")
@@ -776,6 +815,7 @@ export function createGraphQuery(db: Kysely<DB>) {
             eb(eb.fn("lower", ["content"]), "like", q),
           ]),
         )
+        .$if(!opts.includeArchived, (qb) => qb.where(isCurrent))
         .selectAll()
         .orderBy(
           sql`case
@@ -832,6 +872,7 @@ export function createGraphQuery(db: Kysely<DB>) {
       keywordQuery: string,
       semanticResults: Array<{ documentId: string; similarity: number }>,
       limit = 20,
+      opts: DiscoveryOptions = {},
     ): Promise<HybridSearchResult[]> {
       const K = RRF_K;
       const scores = new Map<
@@ -840,7 +881,7 @@ export function createGraphQuery(db: Kysely<DB>) {
       >();
 
       // Keyword leg
-      const keywordResults = await this.fullSearch(keywordQuery, limit * 2);
+      const keywordResults = await this.fullSearch(keywordQuery, limit * 2, opts);
       keywordResults.forEach((node, rank) => {
         const existing = scores.get(node.documentId) ?? {
           score: 0,
@@ -863,9 +904,13 @@ export function createGraphQuery(db: Kysely<DB>) {
         if (!existing.matchedBy.includes("semantic")) {
           existing.matchedBy.push("semantic");
         }
-        // Fetch node data if we don't have it from keyword results
+        // Fetch node data if we don't have it from keyword results. The
+        // embedding store knows nothing about status, so archived notes
+        // are dropped here unless asked for.
         if (!existing.node) {
-          existing.node = await this.nodeByDocumentId(sr.documentId);
+          const node = await this.nodeByDocumentId(sr.documentId);
+          if (!opts.includeArchived && !isCurrentNode(node)) continue;
+          existing.node = node;
         }
         scores.set(sr.documentId, existing);
       }

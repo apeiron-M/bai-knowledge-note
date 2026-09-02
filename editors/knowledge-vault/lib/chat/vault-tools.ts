@@ -85,7 +85,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "search_vault",
       description:
-        "Default entry point. Semantic + keyword search over the vault's knowledge notes and maps of content. Pass the user's question or a short phrase as-is. Returns ranked hits with a 0–1 similarity; use read_note on the promising ones for their full text. Does NOT search sources — use list_documents for those.",
+        "Default entry point. Semantic + keyword search over the vault's knowledge notes and maps of content. Pass the user's question or a short phrase as-is. Returns ranked hits with a 0–1 similarity; use read_note on the promising ones for their full text. Does NOT search sources — use list_documents for those. ARCHIVED notes — claims the vault no longer holds as current — are excluded unless includeArchived is true; set it only when the user asks what the vault USED to say.",
       parameters: {
         type: "object",
         properties: {
@@ -96,6 +96,10 @@ export const VAULT_TOOLS: ToolSchema[] = [
           limit: {
             type: "integer",
             description: `Hits to return (default ${LIMITS.search.default}, max ${LIMITS.search.max}).`,
+          },
+          includeArchived: {
+            type: "boolean",
+            description: "Also return ARCHIVED notes (superseded or retired claims). Default false.",
           },
         },
         required: ["query"],
@@ -146,6 +150,10 @@ export const VAULT_TOOLS: ToolSchema[] = [
       parameters: {
         type: "object",
         properties: {
+          includeArchived: {
+            type: "boolean",
+            description: "Also include ARCHIVED (retired) notes. Default false.",
+          },
           topic: { type: "string", description: "Exact topic name." },
           limit: {
             type: "integer",
@@ -165,6 +173,10 @@ export const VAULT_TOOLS: ToolSchema[] = [
       parameters: {
         type: "object",
         properties: {
+          includeArchived: {
+            type: "boolean",
+            description: "Also include ARCHIVED (retired) notes. Default false.",
+          },
           documentId: { type: "string" },
           limit: {
             type: "integer",
@@ -340,6 +352,11 @@ const wbsState = (state: Record<string, unknown>) =>
 /*  Argument helpers                                                  */
 /* ------------------------------------------------------------------ */
 
+function bool(args: Record<string, unknown>, key: string): boolean {
+  const v = args[key];
+  return v === true || v === "true";
+}
+
 function str(args: Record<string, unknown>, key: string): string | null {
   const v = args[key];
   return typeof v === "string" && v.trim() ? v.trim() : null;
@@ -393,6 +410,7 @@ export async function executeTool(
         LIMITS.search.default,
         LIMITS.search.max,
       );
+      const includeArchived = bool(args, "includeArchived");
       const r = await gql<{
         knowledgeGraphSemanticSearch: {
           similarity: number;
@@ -401,12 +419,12 @@ export async function executeTool(
         }[];
       }>(
         graphEndpoint(),
-        `query S($driveId: ID!, $query: String!, $limit: Int) {
-          knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: HYBRID, limit: $limit) {
+        `query S($driveId: ID!, $query: String!, $limit: Int, $includeArchived: Boolean) {
+          knowledgeGraphSemanticSearch(driveId: $driveId, query: $query, mode: HYBRID, limit: $limit, includeArchived: $includeArchived) {
             similarity matchedBy node { ${NOTE_FIELDS} }
           }
         }`,
-        { driveId, query, limit },
+        { driveId, query, limit, includeArchived },
       );
       if ("error" in r) return fail(r.error);
       const hits = r.data.knowledgeGraphSemanticSearch.map((h) => ({
@@ -483,10 +501,10 @@ export async function executeTool(
       );
       const r = await gql<{ knowledgeGraphByTopic: Record<string, unknown>[] }>(
         graphEndpoint(),
-        `query B($driveId: ID!, $topic: String!) {
-          knowledgeGraphByTopic(driveId: $driveId, topic: $topic) { ${NOTE_FIELDS} }
+        `query B($driveId: ID!, $topic: String!, $includeArchived: Boolean) {
+          knowledgeGraphByTopic(driveId: $driveId, topic: $topic, includeArchived: $includeArchived) { ${NOTE_FIELDS} }
         }`,
-        { driveId, topic },
+        { driveId, topic, includeArchived: bool(args, "includeArchived") },
       );
       if ("error" in r) return fail(r.error);
       const all = r.data.knowledgeGraphByTopic;
@@ -512,12 +530,12 @@ export async function executeTool(
         }[];
       }>(
         graphEndpoint(),
-        `query R($driveId: ID!, $documentId: String!, $limit: Int) {
-          knowledgeGraphSimilar(driveId: $driveId, documentId: $documentId, limit: $limit) {
+        `query R($driveId: ID!, $documentId: String!, $limit: Int, $includeArchived: Boolean) {
+          knowledgeGraphSimilar(driveId: $driveId, documentId: $documentId, limit: $limit, includeArchived: $includeArchived) {
             similarity node { ${NOTE_FIELDS} }
           }
         }`,
-        { driveId, documentId, limit },
+        { driveId, documentId, limit, includeArchived: bool(args, "includeArchived") },
       );
       if ("error" in r) return fail(r.error);
       const hits = r.data.knowledgeGraphSimilar.map((h) => ({

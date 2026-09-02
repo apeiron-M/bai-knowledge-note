@@ -1,6 +1,7 @@
 import { setSelectedNode } from "@powerhousedao/reactor-browser";
 import { prefetchOnHover } from "../../lib/prefetch.js";
 import type { Citation } from "../../lib/chat/chat-storage.js";
+import type { CitationCurrency } from "../../lib/supersession.js";
 
 /** Short human label for a cited document's kind. */
 export function citationKind(documentType: string | null | undefined): string | null {
@@ -36,13 +37,22 @@ export function citationKind(documentType: string | null | undefined): string | 
 export function ChatCitation({
   index,
   citation,
+  currency,
 }: {
   /** Position in the numbered Sources list; omitted for a source the answer
    * drew on without an inline [n] marker (read in full, not cited). */
   index?: number;
   citation: Citation;
+  /** Whether the vault still holds this document as current; null = unknown kind. */
+  currency?: CitationCurrency | null;
 }) {
   const kind = citationKind(citation.documentType);
+  const superseded = (currency?.supersededBy.length ?? 0) > 0;
+  const stale = superseded || currency?.archived === true;
+  const staleLabel = superseded ? "superseded" : "archived";
+  const staleTitle = superseded
+    ? `Superseded by: ${currency!.supersededBy.map((s) => s.title).join("; ")}`
+    : "Archived — no longer held as current";
   return (
     <button
       type="button"
@@ -52,9 +62,9 @@ export function ChatCitation({
       style={{
         backgroundColor: "var(--bai-hover)",
         color: "var(--bai-text-secondary)",
-        border: "1px solid var(--bai-border)",
+        border: `1px solid ${stale ? "rgba(250, 179, 135, 0.45)" : "var(--bai-border)"}`,
       }}
-      title={`Open ${kind ? `${kind} ` : ""}"${citation.title}"`}
+      title={`Open ${kind ? `${kind} ` : ""}"${citation.title}"${stale ? `\n${staleTitle}` : ""}`}
     >
       {index !== undefined ? (
         <span
@@ -84,9 +94,19 @@ export function ChatCitation({
           {kind}
         </span>
       )}
-      <span className="truncate group-hover:text-[var(--bai-accent)]">
+      <span
+        className={`truncate group-hover:text-[var(--bai-accent)] ${stale ? "line-through decoration-[rgba(250,179,135,0.7)]" : ""}`}
+      >
         {citation.title}
       </span>
+      {stale && (
+        <span
+          className="shrink-0 rounded px-1 text-[9px] font-medium uppercase tracking-wide"
+          style={{ backgroundColor: "rgba(250, 179, 135, 0.15)", color: "#fab387" }}
+        >
+          {staleLabel}
+        </span>
+      )}
     </button>
   );
 }

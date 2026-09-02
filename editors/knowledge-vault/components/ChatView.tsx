@@ -28,6 +28,8 @@ import { ChatComposer } from "./chat/ChatComposer.js";
 import { ChatConnectPanel } from "./chat/ChatConnectPanel.js";
 import { ChatHistoryMenu } from "./chat/ChatHistoryMenu.js";
 import { ChatMessage } from "./chat/ChatMessage.js";
+import { currencyLookup } from "../lib/supersession.js";
+import type { KnowledgeNoteInfo } from "../hooks/use-knowledge-notes.js";
 import { ModelPicker } from "./chat/ModelPicker.js";
 import { LandingStage } from "./chat/LandingStage.js";
 
@@ -82,7 +84,15 @@ function useOrientation(
   return o;
 }
 
-export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
+export function ChatView({
+  initialDraft = "",
+  notes = [],
+}: {
+  initialDraft?: string;
+  /** The drive's notes, for marking cited documents that are superseded or archived. */
+  notes?: KnowledgeNoteInfo[];
+}) {
+  const currency = useMemo(() => currencyLookup(notes), [notes]);
   const driveId = useSelectedDriveId();
   const vaultName = useVaultName();
   const or = useOpenRouter();
@@ -242,13 +252,14 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
               {/* Persisted turns carry no trail by design — tool payloads are
                   not stored — so only the live turn below renders one. */}
               {chat.messages.map((m, i) => (
-                <ChatMessage key={i} message={m} />
+                <ChatMessage key={i} message={m} currency={currency} />
               ))}
               {chat.isStreaming && (
                 <ChatMessage
                   message={{ role: "assistant", content: chat.streamingText }}
                   trail={chat.trail}
                   streaming
+                  currency={currency}
                 />
               )}
               {!chat.isStreaming &&

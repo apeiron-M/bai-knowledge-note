@@ -11,6 +11,7 @@ import {
 import { embedQuery } from "./helpers/query-embedder.js";
 import {
   RRF_K,
+  isCurrentNode,
   normalizeFusedScore,
 } from "../../processors/graph-indexer/query.js";
 
@@ -65,6 +66,7 @@ async function searchWithEmbedding(
   embedding: number[],
   mode: "SEMANTIC" | "HYBRID",
   limit: number,
+  includeArchived = false,
 ) {
   const db = getDb(subgraph, driveId);
   const semanticHits = await searchSimilar(db, embedding, limit * 2);
@@ -72,9 +74,12 @@ async function searchWithEmbedding(
 
   if (mode === "SEMANTIC") {
     const out = [];
-    for (const hit of semanticHits.slice(0, limit)) {
+    // The embedding store knows nothing about status: archived notes are
+    // still embedded (their history is knowledge) and are dropped here.
+    for (const hit of semanticHits) {
+      if (out.length >= limit) break;
       const node = await graphQuery.nodeByDocumentId(hit.documentId);
-      if (node) {
+      if (node && (includeArchived || isCurrentNode(node))) {
         out.push({
           node: { ...node, _driveId: driveId },
           similarity: hit.similarity,
@@ -90,6 +95,7 @@ async function searchWithEmbedding(
     query,
     semanticHits,
     limit,
+    { includeArchived },
   );
   return hybridResults.map((r) => ({
     node: { ...r.node, _driveId: driveId },
@@ -252,10 +258,12 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       knowledgeGraphSearch: async (
         _: unknown,
-        args: { driveId: string; query: string; limit?: number },
+        args: { driveId: string; query: string; limit?: number; includeArchived?: boolean | null },
       ) => {
         const query = getQuery(subgraph, args.driveId);
-        const nodes = await query.searchNodes(args.query, args.limit ?? 50);
+        const nodes = await query.searchNodes(args.query, args.limit ?? 50, {
+          includeArchived: args.includeArchived ?? false,
+        });
         return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
@@ -295,21 +303,24 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       knowledgeGraphByTopic: async (
         _: unknown,
-        args: { driveId: string; topic: string },
+        args: { driveId: string; topic: string; includeArchived?: boolean | null },
       ) => {
         const query = getQuery(subgraph, args.driveId);
-        const nodes = await query.nodesByTopic(args.topic);
+        const nodes = await query.nodesByTopic(args.topic, {
+          includeArchived: args.includeArchived ?? false,
+        });
         return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
       knowledgeGraphRelatedByTopic: async (
         _: unknown,
-        args: { driveId: string; documentId: string; limit?: number },
+        args: { driveId: string; documentId: string; limit?: number; includeArchived?: boolean | null },
       ) => {
         const query = getQuery(subgraph, args.driveId);
         const results = await query.relatedByTopic(
           args.documentId,
           args.limit ?? 10,
+          { includeArchived: args.includeArchived ?? false },
         );
         return results.map((r) => ({
           ...r,
@@ -319,10 +330,12 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       knowledgeGraphFullSearch: async (
         _: unknown,
-        args: { driveId: string; query: string; limit?: number },
+        args: { driveId: string; query: string; limit?: number; includeArchived?: boolean | null },
       ) => {
         const query = getQuery(subgraph, args.driveId);
-        const nodes = await query.fullSearch(args.query, args.limit ?? 50);
+        const nodes = await query.fullSearch(args.query, args.limit ?? 50, {
+          includeArchived: args.includeArchived ?? false,
+        });
         return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
@@ -362,20 +375,22 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
 
       knowledgeGraphSimilar: async (
         _: unknown,
-        args: { driveId: string; documentId: string; limit?: number },
+        args: { driveId: string; documentId: string; limit?: number; includeArchived?: boolean | null },
       ) => {
         const db = getDb(subgraph, args.driveId);
         const embedding = await getEmbedding(db, args.documentId);
         if (!embedding) return [];
 
-        const results = await searchSimilar(db, embedding, (args.limit ?? 10) + 1);
+        // Over-fetch: the source note itself and any archived neighbours
+        // come back from the vector store and are filtered out here.
+        const results = await searchSimilar(db, embedding, (args.limit ?? 10) * 2 + 1);
         const graphQuery = getQuery(subgraph, args.driveId);
 
         const semanticResults = [];
         for (const result of results) {
           if (result.documentId === args.documentId) continue;
           const node = await graphQuery.nodeByDocumentId(result.documentId);
-          if (node) {
+          if (node && (args.includeArchived || isCurrentNode(node))) {
             semanticResults.push({
               node: { ...node, _driveId: args.driveId },
               similarity: result.similarity,
@@ -395,6 +410,7 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
           embedding: number[];
           mode: "SEMANTIC" | "HYBRID";
           limit?: number;
+          includeArchived?: boolean | null;
         },
       ) => {
         return searchWithEmbedding(
@@ -404,6 +420,7 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
           args.embedding,
           args.mode,
           args.limit ?? 20,
+          args.includeArchived ?? false,
         );
       },
 
@@ -414,6 +431,7 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
           query: string;
           mode?: "SEMANTIC" | "HYBRID" | null;
           limit?: number;
+          includeArchived?: boolean | null;
         },
       ) => {
         // The query is embedded HERE so clients never load the model. Any
@@ -432,6 +450,7 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
               embedding,
               args.mode ?? "HYBRID",
               limit,
+              args.includeArchived ?? false,
             );
           } catch (err) {
             console.warn(
@@ -440,7 +459,9 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
           }
         }
         const graphQuery = getQuery(subgraph, args.driveId);
-        const keywordHits = await graphQuery.fullSearch(args.query, limit);
+        const keywordHits = await graphQuery.fullSearch(args.query, limit, {
+          includeArchived: args.includeArchived ?? false,
+        });
         // Only one leg ran, so score these on the same rank-decay curve RRF
         // uses and rescale against a SINGLE leg's ceiling. The old flat
         // `similarity: 0` rendered every perfectly good keyword hit as "0%".

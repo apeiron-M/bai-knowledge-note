@@ -353,7 +353,7 @@ export function DriveExplorer({ children }: EditorProps) {
               clearFocusNonce={graphClearNonce}
             />
           ) : viewMode === "chat" ? (
-            <ChatView initialDraft={chatReturnDraft} />
+            <ChatView initialDraft={chatReturnDraft} notes={notes} />
           ) : viewMode === "search" ? (
             <SearchView isLoading={notesLoading} />
           ) : viewMode === "activity" ? (
