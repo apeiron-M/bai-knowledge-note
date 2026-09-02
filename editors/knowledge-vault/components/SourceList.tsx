@@ -271,7 +271,8 @@ export function SourceList() {
           </svg>
           <input
             ref={searchRef}
-            type="search"
+            type="text"
+            role="searchbox"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -282,11 +283,16 @@ export function SourceList() {
             }}
             placeholder="Filter sources by title, author, URL, type…  ( / )"
             aria-label="Filter sources"
-            className="w-full rounded-lg py-2 pl-9 pr-20 text-sm outline-none placeholder:opacity-50 focus:border-[#cba6f7]/50"
+            className="w-full rounded-lg text-sm outline-none placeholder:opacity-50 focus:border-[#cba6f7]/50"
+            // Padding inline, not via Tailwind: Connect's global input
+            // styles outrank the utility classes here and the text ended
+            // up under the magnifier.
             style={{
               backgroundColor: "var(--bai-bg)",
               color: "var(--bai-text)",
               border: "1px solid var(--bai-border)",
+              padding: "8px 88px 8px 38px",
+              boxSizing: "border-box",
             }}
           />
           {searching && (
