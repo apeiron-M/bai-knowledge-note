@@ -260,7 +260,17 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
  * Footnote numbers, tool names and ordinary bracketed prose fall through
  * the resolver and are left exactly as written.
  */
-const CITATION_RE = /\[\[([^\]]+?)\]\]|\[([^[\]]+?)\](?!\()/g;
+const UUID_SRC =
+  "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+const CITATION_RE = new RegExp(
+  [
+    String.raw`\[\[([^\]]+?)\]\]`, // 1: [[…]] canonical
+    String.raw`\[([^[\]]+?)\](?!\()`, // 2: […] not a markdown link
+    String.raw`\(\s*(${UUID_SRC})\s*\)`, // 3: (uuid) — parenthesised id
+    String.raw`(?<![\w[(-])(${UUID_SRC})(?![\w\])-])`, // 4: bare uuid in prose
+  ].join("|"),
+  "gi",
+);
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -444,10 +454,21 @@ export function resolveCitations(
   const byId = new Map<string, Citation>();
   const rewritten = text.replace(
     CITATION_RE,
-    (match: string, double: string | undefined, single: string | undefined) => {
-      const label = (double ?? single ?? "").trim();
+    (
+      match: string,
+      double: string | undefined,
+      single: string | undefined,
+      parenthesised: string | undefined,
+      bare: string | undefined,
+    ) => {
+      const label = (double ?? single ?? parenthesised ?? bare ?? "").trim();
       let doc: KnownDocument | null;
-      if (UUID_RE.test(label)) {
+      if (bare !== undefined) {
+        // A naked UUID in prose is a citation only when we know the
+        // document; an id being discussed as data stays as written.
+        doc = known.get(label) ?? null;
+        if (!doc) return match;
+      } else if (UUID_RE.test(label)) {
         doc = known.get(label) ?? { documentId: label, title: label, documentType: null };
       } else if (double !== undefined) {
         // Explicit citation syntax: resolve generously, drop what fails.

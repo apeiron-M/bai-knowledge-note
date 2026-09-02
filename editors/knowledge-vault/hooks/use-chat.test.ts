@@ -497,6 +497,18 @@ describe("extractCitations / resolveCitations", () => {
     );
   });
 
+  it("treats a parenthesised UUID as a citation, and a bare one only when the document is known", () => {
+    const r = resolveCitations(
+      `No hooks exist (${N1}). Also ${P1} is active. Unknown id 11111111-2222-3333-4444-555555555555 stays.`,
+      [...trail],
+      [{ documentId: N1, title: "No hooks", documentType: "bai/knowledge-note" }],
+    );
+    expect(r.citations.map((c) => c.documentId)).toEqual([N1, P1]);
+    expect(r.text).toBe(
+      `No hooks exist [[${N1}]]. Also [[${P1}]] is active. Unknown id 11111111-2222-3333-4444-555555555555 stays.`,
+    );
+  });
+
   it("does not let single brackets resolve by prefix — prose is not a citation", () => {
     const r = resolveCitations("The [AuthScope] work and [[AuthScope]] again", trail);
     expect(r.citations.map((c) => c.documentId)).toEqual([P1]);
