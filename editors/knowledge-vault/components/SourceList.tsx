@@ -1,4 +1,4 @@
-import { useState, useMemo, useCallback } from "react";
+import { useState, useMemo, useCallback, useRef, useEffect } from "react";
 import {
   setSelectedNode,
   useSelectedDriveId,
@@ -12,6 +12,7 @@ import {
 import { deleteDocumentRemote } from "../lib/remote-reactor.js";
 import { prefetchOnHover } from "../lib/prefetch.js";
 import { triggerVaultPull } from "../hooks/use-remote-first.js";
+import { filterSources } from "../lib/source-search.js";
 
 type DeleteTarget = { id: string; title: string } | null;
 
@@ -123,6 +124,20 @@ const STATUS_COLORS: Record<string, string> = {
 export function SourceList() {
   const [createOpen, setCreateOpen] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<DeleteTarget>(null);
+  const [query, setQuery] = useState("");
+  const searchRef = useRef<HTMLInputElement>(null);
+  // "/" focuses the filter from anywhere in the list, like GitHub.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== "/" || e.metaKey || e.ctrlKey || e.altKey) return;
+      const t = e.target as HTMLElement | null;
+      if (t && (t.tagName === "INPUT" || t.tagName === "TEXTAREA" || t.isContentEditable)) return;
+      e.preventDefault();
+      searchRef.current?.focus();
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
   // Work queues start open (small, actionable); the ever-growing terminal
   // groups start collapsed to a one-line header with the count.
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({
@@ -177,6 +192,9 @@ export function SourceList() {
           id: d.header.id,
           name: d.header.name,
           title: (state.title as string) ?? d.header.name,
+          description: (state.description as string) ?? null,
+          author: (state.author as string) ?? null,
+          url: (state.url as string) ?? null,
           sourceType: (state.sourceType as string) ?? null,
           status: (state.status as string) ?? "INBOX",
           claimCount: ((state.extractedClaims as string[]) ?? []).length,
@@ -185,6 +203,12 @@ export function SourceList() {
       });
   }, [documents]);
 
+  // The filter narrows what the groups show; an active query also opens
+  // every group, because a match hidden behind a collapsed header is a
+  // search that looks broken.
+  const searching = query.trim().length > 0;
+  const visible = useMemo(() => filterSources(sources, query), [sources, query]);
+
   const grouped = useMemo(() => {
     const groups: Record<string, typeof sources> = {
       INBOX: [],
@@ -192,12 +216,12 @@ export function SourceList() {
       EXTRACTED: [],
       ARCHIVED: [],
     };
-    for (const s of sources) {
+    for (const s of visible) {
       const bucket = groups[s.status] ?? groups.INBOX;
       bucket.push(s);
     }
     return groups;
-  }, [sources]);
+  }, [visible]);
 
   return (
     <div className="p-4 space-y-4">
@@ -230,6 +254,66 @@ export function SourceList() {
           Ingest Source
         </button>
       </div>
+
+      {/* Filter */}
+      {sources.length > 0 && (
+        <div className="relative">
+          <svg
+            className="pointer-events-none absolute left-3 top-1/2 h-3.5 w-3.5 -translate-y-1/2"
+            style={{ color: "var(--bai-text-faint)" }}
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <circle cx="11" cy="11" r="7" />
+            <path d="M20 20l-3.5-3.5" />
+          </svg>
+          <input
+            ref={searchRef}
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") {
+                setQuery("");
+                (e.target as HTMLInputElement).blur();
+              }
+            }}
+            placeholder="Filter sources by title, author, URL, type…  ( / )"
+            aria-label="Filter sources"
+            className="w-full rounded-lg py-2 pl-9 pr-20 text-sm outline-none placeholder:opacity-50 focus:border-[#cba6f7]/50"
+            style={{
+              backgroundColor: "var(--bai-bg)",
+              color: "var(--bai-text)",
+              border: "1px solid var(--bai-border)",
+            }}
+          />
+          {searching && (
+            <div className="absolute right-2 top-1/2 flex -translate-y-1/2 items-center gap-2">
+              <span
+                className="text-[10px]"
+                style={{ color: "var(--bai-text-faint)" }}
+              >
+                {visible.length} of {sources.length}
+              </span>
+              <button
+                type="button"
+                onClick={() => {
+                  setQuery("");
+                  searchRef.current?.focus();
+                }}
+                className="rounded p-0.5 text-xs hover:bg-white/10"
+                style={{ color: "var(--bai-text-muted)" }}
+                aria-label="Clear filter"
+                title="Clear (Esc)"
+              >
+                &times;
+              </button>
+            </div>
+          )}
+        </div>
+      )}
 
       {isLoading && sources.length === 0 ? (
         <div
@@ -275,13 +359,25 @@ export function SourceList() {
             </p>
           </div>
         </div>
+      ) : searching && visible.length === 0 ? (
+        <div
+          className="flex h-32 items-center justify-center rounded-xl"
+          style={{
+            backgroundColor: "var(--bai-surface)",
+            border: "1px solid var(--bai-border)",
+          }}
+        >
+          <p className="text-sm" style={{ color: "var(--bai-text-muted)" }}>
+            No sources match “{query.trim()}”
+          </p>
+        </div>
       ) : (
         <>
           {(["INBOX", "EXTRACTING", "EXTRACTED", "ARCHIVED"] as const).map(
             (status) => {
               const items = grouped[status];
               if (items.length === 0) return null;
-              const isOpen = openGroups[status] ?? false;
+              const isOpen = searching || (openGroups[status] ?? false);
               return (
                 <div key={status}>
                   <button
