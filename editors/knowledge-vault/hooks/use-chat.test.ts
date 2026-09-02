@@ -508,6 +508,64 @@ describe("extractCitations / resolveCitations", () => {
   });
 });
 
+describe("foldSourcesSection (a model's own Sources list)", () => {
+  const MOC = "719fa61f-2e0b-4309-84ab-1240dcfdfdb0";
+  const trail: TrailEntry[] = [
+    {
+      tool: "search_vault",
+      summary: "s",
+      ok: true,
+      data: [
+        { documentId: MOC, title: "Authorization and Identity", documentType: "bai/moc" },
+        { documentId: "n-renown", title: "Renown authentication creates a Decentralized Identifier (DID) from the user's Ethereum wallet, enabling pseudonymous but verifiable identity", documentType: "bai/knowledge-note" },
+        { documentId: "n-sign", title: "Powerhouse uses header signing (document ID = cryptographic signature of creator) and action signing (every mutation signed with ECDSA P-256)", documentType: "bai/knowledge-note" },
+      ],
+    },
+  ];
+
+  it("turns the LFM-style trailing Sources list into chips and removes it from the text", () => {
+    const text = [
+      "Authorization is layered.",
+      "",
+      "Sources:",
+      "",
+      "Authorization and Identity (MOC) – Overview of decentralized identity",
+      "Renown authentication (ARCHITECTURE) – Detailed login flow and verification process",
+      "Powerhouse uses header signing (ARCHITECTURE) – Technical details of header and action signing",
+    ].join("\n");
+    const r = resolveCitations(text, trail);
+    expect(r.text).toBe("Authorization is layered.");
+    expect(r.citations.map((c) => c.documentId)).toEqual([MOC, "n-renown", "n-sign"]);
+    expect(r.citations[0].documentType).toBe("bai/moc");
+  });
+
+  it("unwraps invented markdown links and accepts bullets, numbers and heading variants", () => {
+    const text = [
+      "Body [[n-sign]].",
+      "## References",
+      "1. [Authorization and Identity](https://light-colt.example/d/nowhere) — the map",
+      "- **Renown authentication** – login flow",
+    ].join("\n");
+    const r = resolveCitations(text, trail);
+    expect(r.text).toBe("Body [[n-sign]].");
+    // Inline citation first, then the list, deduplicated against it.
+    expect(r.citations.map((c) => c.documentId)).toEqual(["n-sign", MOC, "n-renown"]);
+  });
+
+  it("keeps the section in place when a line names nothing it knows, but still adds what it could resolve", () => {
+    const text = "Body.\n\nSources:\n- Authorization and Identity\n- Some paper from outside the vault";
+    const r = resolveCitations(text, trail);
+    expect(r.text).toBe(text);
+    expect(r.citations.map((c) => c.documentId)).toEqual([MOC]);
+  });
+
+  it("ignores a Sources heading that is not followed by a list, and ordinary prose", () => {
+    expect(resolveCitations("Sources:\n", trail).text).toBe("Sources:\n");
+    const prose = "The sources of truth are the reactor tables.";
+    expect(resolveCitations(prose, trail)).toEqual({ text: prose, citations: [] });
+  });
+});
+
 describe("consultedDocuments", () => {
   const trail: TrailEntry[] = [
     { tool: "search_vault", summary: "s", ok: true, data: [{ documentId: "hit", title: "A hit", documentType: "bai/knowledge-note" }] },

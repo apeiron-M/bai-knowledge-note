@@ -341,12 +341,86 @@ function resolveLabel(label: string, known: Map<string, KnownDocument>): KnownDo
   return prefixed.length === 1 ? prefixed[0] : null;
 }
 
+/** `Sources:` / `## References` / `**Citations**` — a model's own bibliography heading. */
+const SOURCES_HEADING_RE =
+  /^\s*(?:#{1,6}\s*)?(?:\*\*|__)?\s*(?:sources?|references?|citations?|cited (?:notes|documents)|sources? (?:cited|used))\s*(?:\*\*|__)?\s*:?\s*(?:\*\*|__)?\s*$/i;
+const LIST_MARK_RE = /^\s*(?:[-*•–—]|\d+[.)])\s+/;
+const MAX_SOURCES_LINES = 15;
+const UUID_ANYWHERE_RE =
+  /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/i;
+
+/**
+ * The document a line of a model-written Sources list names.
+ *
+ *   - "Renown authentication (ARCHITECTURE) – Detailed login flow…"
+ *   - "[Authorization and Identity](https://made.up/url) — overview"
+ *   - "3. Powerhouse uses header signing …"
+ *
+ * A UUID anywhere on the line wins; otherwise the label is the text before
+ * the first " – ", " — ", ": " or " (", with markdown link syntax unwrapped,
+ * matched against known titles (exact, else unique prefix).
+ */
+function resolveSourceLine(line: string, known: Map<string, KnownDocument>): KnownDocument | null {
+  const uuid = UUID_ANYWHERE_RE.exec(line)?.[0];
+  if (uuid) return known.get(uuid) ?? { documentId: uuid, title: uuid, documentType: null };
+  let label = line.replace(LIST_MARK_RE, "").trim();
+  label = label.replace(/\[([^\]]+)\]\([^)]*\)/g, "$1"); // [text](url) → text
+  label = label.replace(/^\*\*(.+?)\*\*/, "$1").replace(/^["'“‘]|["'”’]$/g, "");
+  const cut = label.search(/\s[–—]\s|:\s|\s\(|\s-\s/);
+  if (cut > 0) label = label.slice(0, cut);
+  label = label.trim();
+  return known.get(label) ?? resolveLabel(label, known);
+}
+
+/**
+ * Small models write a "Sources:" section of their own at the end of the
+ * answer — plain titles, sometimes wrapped in invented links that lead out
+ * of the app. The interface already renders sources as chips, so fold the
+ * section into them: every line that names a known document becomes a
+ * citation, and when every line resolved the section itself is removed
+ * from the text. A line that resolves to nothing keeps the whole section
+ * in place — the reader loses no information the chips cannot carry.
+ */
+export function foldSourcesSection(
+  text: string,
+  known: Map<string, KnownDocument>,
+): { text: string; sources: KnownDocument[] } {
+  const lines = text.split("\n");
+  let heading = -1;
+  for (let i = lines.length - 1; i >= 0; i--) {
+    if (SOURCES_HEADING_RE.test(lines[i])) {
+      heading = i;
+      break;
+    }
+  }
+  if (heading < 0) return { text, sources: [] };
+  const items = lines.slice(heading + 1).filter((l) => l.trim() !== "");
+  if (items.length === 0 || items.length > MAX_SOURCES_LINES) return { text, sources: [] };
+  const sources: KnownDocument[] = [];
+  let unresolved = false;
+  for (const line of items) {
+    const doc = resolveSourceLine(line, known);
+    if (doc) {
+      if (!sources.some((d) => d.documentId === doc.documentId)) sources.push(doc);
+    } else {
+      unresolved = true;
+    }
+  }
+  if (sources.length === 0) return { text, sources: [] };
+  return {
+    text: unresolved ? text : lines.slice(0, heading).join("\n").trimEnd(),
+    sources,
+  };
+}
+
 /**
  * Resolve every `[[…]]` marker in an answer. A UUID stands for itself, with
  * the title the trail (or an earlier turn) knew for it — an unseen UUID is
  * still a door the user can try. A non-UUID label is matched to a known
  * document's title; when that fails the marker is dropped from the text so
- * the reader is not handed a link that cannot open.
+ * the reader is not handed a link that cannot open. A model-written
+ * "Sources:" section at the end is folded into the citations (see
+ * `foldSourcesSection`).
  *
  * Returns the citations in order of first mention and the text with every
  * kept marker rewritten to its `[[documentId]]` form.
@@ -396,8 +470,19 @@ export function resolveCitations(
       return `[[${doc.documentId}]]`;
     },
   );
+  const folded = foldSourcesSection(rewritten, known);
+  for (const doc of folded.sources) {
+    if (!byId.has(doc.documentId)) {
+      order.push(doc.documentId);
+      byId.set(doc.documentId, {
+        documentId: doc.documentId,
+        title: doc.title,
+        documentType: doc.documentType,
+      });
+    }
+  }
   return {
-    text: rewritten,
+    text: folded.text,
     citations: order.map((id) => byId.get(id)!),
   };
 }
