@@ -88,10 +88,12 @@ const SELECTED_DOC_REFRESH_MS = 20_000;
 const DRIVE_HYDRATE_MS = 30_000;
 
 /**
- * Safety-net cadence for both polls while the change socket is live. Not
- * zero: a socket can be up and still miss an event (server restart between
- * pings, a filtered event we mis-classified), and five minutes bounds how
- * long such a miss can go unnoticed.
+ * Safety-net cadence for both polls while the change socket is live — and
+ * "live" means an event has actually been delivered on it, not merely that
+ * the handshake was acked (see the feed effect). Not zero: a socket can be
+ * up and still miss an event (server restart between pings, a filtered
+ * event we mis-classified), and five minutes bounds how long such a miss
+ * can go unnoticed.
  */
 const LIVE_SAFETY_NET_MS = 5 * 60_000;
 
@@ -363,9 +365,13 @@ export function useRemoteFirst(): void {
       on: {
         connected: () => {
           if (stopped) return;
-          setVaultLive(true);
+          // Connected is not yet LIVE. "Live" — which backs the safety-net
+          // polls off to five minutes — is earned by the first event that
+          // actually arrives (see `next`). A server or proxy that acks the
+          // handshake but never delivers would otherwise make the app
+          // slower than it was before the feed existed.
           console.info(
-            `[RemoteFirst] Live change feed connected (${wsUrl}) for drive ${driveId.slice(0, 8)}.`,
+            `[RemoteFirst] Live change feed connected (${wsUrl}) for drive ${driveId.slice(0, 8)}; awaiting first event.`,
           );
           // Anything that happened while the socket was down is unknown
           // to us; one hydrate closes the gap. The cache's own
@@ -408,6 +414,9 @@ export function useRemoteFirst(): void {
         next: (result) => {
           const event = result.data?.documentChanges;
           if (!event || stopped) return;
+          // Proof the socket delivers, not just connects: any event —
+          // ours or another drive's — is enough to trust it.
+          if (!isVaultLive()) setVaultLive(true);
 
           const members = driveMembers();
           const structural =
