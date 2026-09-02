@@ -21,6 +21,7 @@ import {
   executeTool as realExecuteTool,
 } from "../lib/chat/vault-tools.js";
 import { classifyFailure, type Failure } from "../lib/chat/failure.js";
+import { parseTextToolCalls } from "../lib/chat/text-tool-calls.js";
 import {
   deleteThread,
   loadThreads,
@@ -34,11 +35,26 @@ import {
 } from "../lib/chat/chat-storage.js";
 
 /**
- * Rounds of tool calls before the loop forces an answer. Six is enough for
- * search → read → widen → read → link → read; more than that on a paid API
- * is a runaway-cost bug, not diligence.
+ * Rounds of tool calls before the loop forces an answer. Ten covers
+ * search → read × several → widen → read for a model that reads one note
+ * per round; more than that on a paid API is a runaway-cost bug, not
+ * diligence. When the cap is hit the model is TOLD to answer (see
+ * `ANSWER_NOW`) rather than merely denied tools — a model that is denied
+ * tools mid-investigation tends to write the calls it wanted as text and
+ * answer nothing.
  */
-export const MAX_ITERATIONS = 6;
+export const MAX_ITERATIONS = 10;
+
+/** The instruction that ends the investigation when the round cap is hit. */
+export const ANSWER_NOW =
+  "The tool budget for this answer is used up and no further tool calls will run. " +
+  "Write the final answer now from the results you already have, citing each document as [[documentId]]. " +
+  "If something important is still unread, say so in one sentence instead of calling a tool.";
+
+/** One more nudge when a forced answer still contains nothing but tool calls. */
+const ANSWER_NOW_RETRY =
+  "That reply contained tool calls written as text; they were not run and were removed. " +
+  "Answer in prose now, from the results above, with [[documentId]] citations.";
 
 export interface TrailEntry {
   tool: string;
@@ -64,6 +80,8 @@ export interface LoopOptions {
   messages: ChatMessage[];
   onText?: (delta: string) => void;
   onTrail?: (entry: TrailEntry) => void;
+  /** Fires when a new round starts; the UI clears the streamed text of the previous one. */
+  onRound?: (iteration: number) => void;
   signal?: AbortSignal;
   deps?: LoopDeps;
 }
@@ -100,9 +118,15 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
   let answeredBy: string | null = null;
   let routed = false;
 
+  let retriedForcedAnswer = false;
+
   for (;;) {
     iterations++;
+    o.onRound?.(iterations);
     const forceAnswer = iterations > MAX_ITERATIONS;
+    if (forceAnswer && iterations === MAX_ITERATIONS + 1) {
+      messages.push({ role: "system", content: ANSWER_NOW });
+    }
     const result = await deps.streamChat({
       key: o.key,
       model: o.model,
@@ -130,22 +154,64 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
       o.onTrail?.(entry);
     }
 
-    const wantsTools =
-      !forceAnswer &&
-      result.finishReason === "tool_calls" &&
-      result.toolCalls.length > 0;
-    if (!wantsTools)
-      return { text: result.text, trail, iterations, answeredBy };
+    // Some model/provider routes write their tool calls into the text in
+    // their training-time template instead of returning `tool_calls`. Run
+    // them anyway: the user asked a question, not for a template.
+    let toolCalls = result.toolCalls;
+    let text = result.text;
+    if (toolCalls.length === 0) {
+      const parsed = parseTextToolCalls(result.text, `text-${iterations}`);
+      if (parsed.calls.length > 0) {
+        text = parsed.text;
+        if (!forceAnswer) {
+          toolCalls = parsed.calls;
+          const entry: TrailEntry = {
+            tool: "compat",
+            summary: `model wrote ${parsed.calls.length} tool call${parsed.calls.length === 1 ? "" : "s"} as text — parsed and run`,
+            ok: true,
+            data: { calls: parsed.calls.map((c) => c.function.name) },
+          };
+          trail.push(entry);
+          o.onTrail?.(entry);
+        }
+      }
+    }
+
+    const wantsTools = !forceAnswer && toolCalls.length > 0;
+    if (!wantsTools) {
+      // A forced answer that was nothing but stripped tool calls gets one
+      // more chance, with the reason spelled out; after that the user gets
+      // an honest note instead of an empty bubble.
+      if (forceAnswer && !text.trim()) {
+        if (!retriedForcedAnswer) {
+          retriedForcedAnswer = true;
+          messages.push({ role: "assistant", content: result.text });
+          messages.push({ role: "system", content: ANSWER_NOW_RETRY });
+          continue;
+        }
+        const entry: TrailEntry = {
+          tool: "compat",
+          summary: "model kept writing tool calls instead of answering",
+          ok: false,
+          error: "no prose in the forced answer",
+        };
+        trail.push(entry);
+        o.onTrail?.(entry);
+        text =
+          "The model kept trying to read more instead of answering. The documents it read are listed below — try asking again, or pick another model.";
+      }
+      return { text, trail, iterations, answeredBy };
+    }
 
     // The assistant turn that requested the tools must precede the results,
     // or the provider rejects the transcript.
     messages.push({
       role: "assistant",
-      content: result.text,
-      tool_calls: result.toolCalls,
+      content: text,
+      tool_calls: toolCalls,
     });
 
-    for (const call of result.toolCalls) {
+    for (const call of toolCalls) {
       const name = call.function.name;
       const args = parseArgs(call);
       let entry: TrailEntry;
@@ -512,6 +578,13 @@ export function useChat(o: UseChatOptions): UseChat {
           onText: (d) => {
             streamedRef.current += d;
             setStreamingText(streamedRef.current);
+          },
+          // Each round starts with a clean slate: whatever the model said
+          // while asking for tools (or the template it wrote them in) is
+          // not part of the answer.
+          onRound: () => {
+            streamedRef.current = "";
+            setStreamingText("");
           },
           onTrail: (e) => {
             collected.push(e);

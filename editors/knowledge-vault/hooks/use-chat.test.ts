@@ -1,6 +1,7 @@
 import "../../shared/test/browser-globals.js";
 import { describe, expect, it, vi } from "vitest";
 import {
+  ANSWER_NOW,
   MAX_ITERATIONS,
   consultedDocuments,
   extractCitations,
@@ -216,9 +217,82 @@ describe("runAgentLoop", () => {
     expect(r.iterations).toBe(MAX_ITERATIONS + 1);
     expect(executeTool).toHaveBeenCalledTimes(MAX_ITERATIONS);
     expect(r.text).toBe("Forced");
-    expect(
-      (streamChat.mock.calls.at(-1)![0] as { toolChoice?: string }).toolChoice,
-    ).toBe("none");
+    const last = streamChat.mock.calls.at(-1)![0] as {
+      toolChoice?: string;
+      messages: { role: string; content: string }[];
+    };
+    expect(last.toolChoice).toBe("none");
+    // The model is told to answer, not just denied tools.
+    expect(last.messages.at(-1)).toEqual({ role: "system", content: ANSWER_NOW });
+  });
+
+  it("runs tool calls a model wrote as text, and records that it had to", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce({
+        text:
+          "<tool_call>read_note\n<arg_key>documentId</arg_key>\n<arg_value>n1</arg_value>\n</tool_call>",
+        toolCalls: [],
+        finishReason: "stop",
+      })
+      .mockResolvedValueOnce({ text: "Grounded answer [[n1]]", toolCalls: [], finishReason: "stop" });
+    const executeTool = vi.fn().mockResolvedValue({
+      ok: true,
+      data: { documentId: "n1", title: "Note" },
+      summary: 'read "Note"',
+    });
+    const r = await runAgentLoop({
+      ...base,
+      messages: [{ role: "user", content: "q" }],
+      deps: { streamChat, executeTool } as never,
+    });
+    expect(executeTool).toHaveBeenCalledWith("read_note", { documentId: "n1" }, { driveId: "d" });
+    expect(r.text).toBe("Grounded answer [[n1]]");
+    expect(r.trail.map((t) => t.tool)).toEqual(["compat", "read_note"]);
+    expect(r.trail[0].summary).toContain("as text");
+    // The transcript the model sees next carries structured calls, and the
+    // template is gone from the assistant turn.
+    const second = streamChat.mock.calls[1][0] as {
+      messages: { role: string; content: string; tool_calls?: unknown[]; tool_call_id?: string }[];
+    };
+    const assistant = second.messages.find((m) => m.role === "assistant")!;
+    expect(assistant.content).toBe("");
+    expect(assistant.tool_calls).toHaveLength(1);
+    expect(second.messages.at(-1)).toMatchObject({ role: "tool", tool_call_id: "text-1-1" });
+  });
+
+  it("clears the streamed text between rounds so a template never lingers", async () => {
+    const streamChat = vi
+      .fn()
+      .mockResolvedValueOnce({ text: "", toolCalls: [tc("vault_stats", "{}")], finishReason: "tool_calls" })
+      .mockResolvedValueOnce({ text: "Done", toolCalls: [], finishReason: "stop" });
+    const executeTool = vi.fn().mockResolvedValue({ ok: true, data: {}, summary: "s" });
+    const rounds: number[] = [];
+    await runAgentLoop({
+      ...base,
+      messages: [],
+      onRound: (n) => rounds.push(n),
+      deps: { streamChat, executeTool } as never,
+    });
+    expect(rounds).toEqual([1, 2]);
+  });
+
+  it("gives a forced answer made only of tool-call text one retry, then says so honestly", async () => {
+    const template = '<function_calls><invoke name="read_note"><parameter name="documentId">n9</parameter></invoke></function_calls>';
+    const streamChat = vi.fn().mockImplementation((o: { toolChoice?: string }) =>
+      o.toolChoice === "none"
+        ? Promise.resolve({ text: template, toolCalls: [], finishReason: "stop" })
+        : Promise.resolve({ text: "", toolCalls: [tc("vault_stats", "{}")], finishReason: "tool_calls" }),
+    );
+    const executeTool = vi.fn().mockResolvedValue({ ok: true, data: {}, summary: "stats" });
+    const r = await runAgentLoop({ ...base, messages: [], deps: { streamChat, executeTool } as never });
+    // Only the real rounds ran tools; the text call in the forced answer did not.
+    expect(executeTool).toHaveBeenCalledTimes(MAX_ITERATIONS);
+    expect(r.iterations).toBe(MAX_ITERATIONS + 2);
+    expect(r.text).toContain("kept trying to read");
+    expect(r.trail.at(-1)).toMatchObject({ tool: "compat", ok: false });
+    const retry = streamChat.mock.calls.at(-1)![0] as { messages: { role: string; content: string }[] };
+    expect(retry.messages.at(-1)!.content).toContain("written as text");
   });
 
   it("forwards text deltas and the abort signal", async () => {
