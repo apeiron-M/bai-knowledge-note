@@ -490,10 +490,12 @@ describe("extractCitations / resolveCitations", () => {
       `See [the docs](https://example.com) and [[n1]].`;
     const r = resolveCitations(text, trail);
     expect(r.citations.map((c) => c.documentId)).toEqual([P1, N1, "n1"]);
+    // The example.com link is unwrapped: no tool result produced that URL,
+    // so it is the model's invention, not something the vault knows.
     expect(r.text).toBe(
       `Sessions live in a cookie [1], [[${P1}]]. Every op passes four gates [[${N1}]]. ` +
         `No hooks for authorization [linked_notes]. Mapped in the [[${P1}]] project. ` +
-        `See [the docs](https://example.com) and [[n1]].`,
+        `See the docs and [[n1]].`,
     );
   });
 
@@ -517,6 +519,61 @@ describe("extractCitations / resolveCitations", () => {
 
   it("returns an empty list when nothing is cited", () => {
     expect(extractCitations("no citations here", trail)).toEqual([]);
+  });
+});
+
+describe("groundMarkdownLinks (links the vault did not produce)", () => {
+  const RBAC = "f1e2d3c4-0000-4000-8000-000000000001";
+  const trail: TrailEntry[] = [
+    {
+      tool: "read_note",
+      summary: "r",
+      ok: true,
+      data: {
+        documentId: RBAC,
+        title: "Reducer-level RBAC gates operations on action.context.signer.user.address so access control replicates with the document",
+        documentType: "bai/knowledge-note",
+        content: "See https://docs.powerhouse.io/recipes/rbac for the walkthrough.",
+      },
+    },
+    {
+      tool: "read_document",
+      summary: "d",
+      ok: true,
+      data: { documentId: "p1", title: "Vault chat", documentType: "bai/project", deliverables: [{ url: "https://github.com/powerhouse/vault/pull/7" }] },
+    },
+  ];
+
+  it("turns an invented link whose text names a known document into a citation, keeping the text", () => {
+    const r = resolveCitations(
+      "See the [Reducer-level RBAC gates operations](https://powerhouse.vault.io/moc/role-based-auth) for details.",
+      trail,
+    );
+    expect(r.text).toBe(`See the Reducer-level RBAC gates operations [[${RBAC}]] for details.`);
+    expect(r.citations.map((c) => c.documentId)).toEqual([RBAC]);
+  });
+
+  it("drops an invented URL whose text names nothing, leaving the text", () => {
+    const r = resolveCitations("Read the [Role-Based Auth recipe](https://powerhouse.vault.io/recipe) now.", trail);
+    expect(r.text).toBe("Read the Role-Based Auth recipe now.");
+    expect(r.citations).toEqual([]);
+  });
+
+  it("keeps a link whose URL the vault itself produced, wherever it sat in the tool results", () => {
+    const text =
+      "Walkthrough: [rbac](https://docs.powerhouse.io/recipes/rbac). PR: [seven](https://github.com/powerhouse/vault/pull/7).";
+    expect(resolveCitations(text, trail).text).toBe(text);
+  });
+
+  it("uses a UUID in the URL when the model linked to a document path", () => {
+    const r = resolveCitations(`Open [the note](https://app.example/d/vault/${RBAC}).`, trail);
+    expect(r.text).toBe(`Open the note [[${RBAC}]].`);
+    expect(r.citations[0].documentId).toBe(RBAC);
+  });
+
+  it("leaves images alone", () => {
+    const text = "![diagram](https://made.up/x.png)";
+    expect(resolveCitations(text, trail).text).toBe(text);
   });
 });
 

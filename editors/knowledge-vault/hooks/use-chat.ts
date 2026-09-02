@@ -311,6 +311,32 @@ export function collectKnownDocuments(trail: TrailEntry[]): Map<string, KnownDoc
   return known;
 }
 
+const URL_IN_TEXT_RE = /https?:\/\/[^\s)"'<>\]]+/gi;
+
+/**
+ * Every URL that appeared in a tool result this turn — a source's url, a
+ * deliverable link, a reference in a note body. These are the only URLs the
+ * answer may link to: anything else is the model's invention.
+ */
+export function collectKnownUrls(trail: TrailEntry[]): Set<string> {
+  const urls = new Set<string>();
+  const visit = (v: unknown, depth: number) => {
+    if (depth > 6 || v === null) return;
+    if (typeof v === "string") {
+      for (const m of v.matchAll(URL_IN_TEXT_RE)) urls.add(m[0].replace(/[.,;:]+$/, ""));
+      return;
+    }
+    if (typeof v !== "object") return;
+    if (Array.isArray(v)) {
+      for (const item of v) visit(item, depth + 1);
+      return;
+    }
+    for (const value of Object.values(v as Record<string, unknown>)) visit(value, depth + 1);
+  };
+  for (const e of trail) if (e.ok) visit(e.data, 0);
+  return urls;
+}
+
 /** Case- and punctuation-insensitive key for matching a label to a title. */
 function aliasKey(s: string): string {
   return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
@@ -349,6 +375,34 @@ function resolveLabel(label: string, known: Map<string, KnownDocument>): KnownDo
   }
   if (exact) return exact;
   return prefixed.length === 1 ? prefixed[0] : null;
+}
+
+/** `[text](url)` — not an image, title attribute tolerated. */
+const MARKDOWN_LINK_RE = /(?<!!)\[([^\]]+)\]\((\S+?)(?:\s+"[^"]*")?\)/g;
+
+/**
+ * Markdown links in an answer. The vault is the only source of truth the
+ * model has, so a URL is kept only when a tool result contained it; every
+ * other link is the model's guess at where a document might live. When its
+ * text (or a UUID in the URL) names a known document, the link becomes a
+ * citation — text kept, marker appended — otherwise the text stays and the
+ * invented URL goes.
+ */
+export function groundMarkdownLinks(
+  text: string,
+  known: Map<string, KnownDocument>,
+  knownUrls: Set<string>,
+): string {
+  return text.replace(MARKDOWN_LINK_RE, (match: string, label: string, url: string) => {
+    const cleanUrl = url.replace(/[.,;:]+$/, "");
+    if (knownUrls.has(cleanUrl)) return match;
+    const uuid = UUID_ANYWHERE_RE.exec(url)?.[0];
+    const doc =
+      (uuid ? (known.get(uuid) ?? { documentId: uuid, title: uuid, documentType: null }) : null) ??
+      known.get(label.trim()) ??
+      resolveLabel(label.trim(), known);
+    return doc ? `${label} [[${doc.documentId}]]` : label;
+  });
 }
 
 /** `Sources:` / `## References` / `**Citations**` — a model's own bibliography heading. */
@@ -452,7 +506,8 @@ export function resolveCitations(
   }
   const order: string[] = [];
   const byId = new Map<string, Citation>();
-  const rewritten = text.replace(
+  const grounded = groundMarkdownLinks(text, known, collectKnownUrls(trail));
+  const rewritten = grounded.replace(
     CITATION_RE,
     (
       match: string,
