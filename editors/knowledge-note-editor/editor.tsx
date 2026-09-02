@@ -17,7 +17,13 @@ import {
 } from "../shared/edge-articulation.js";
 import { ProvenanceInfo } from "./components/provenance-info.js";
 import { LifecycleTimeline } from "./components/lifecycle-timeline.js";
-import { RevisionHistory } from "./components/revision-history.js";
+import {
+  RevisionOperationList,
+  RevisionScrubber,
+  RevisionSnapshotPanel,
+} from "../shared/revision-history.js";
+import { useRevisionHistory } from "../shared/use-revision-history.js";
+import { NOTE_REVISION_MODEL } from "./lib/revision-model.js";
 import { MetadataPanel } from "./components/metadata-panel.js";
 import { MarkdownPreview } from "../shared/markdown-preview.js";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
@@ -75,6 +81,15 @@ export default function Editor() {
   const globalState = document?.state.global;
   const stateTitle = globalState?.title;
   const stateDescription = globalState?.description;
+
+  // History is fetched only while its tab is open: passing an empty id
+  // keeps the hook mounted (rules-of-hooks) without hitting the reactor.
+  const history = useRevisionHistory(
+    activeTab === "history" ? (document?.header.id ?? "") : "",
+    document?.header.revision.global ?? 0,
+    globalState,
+    NOTE_REVISION_MODEL,
+  );
 
   const handleSetTitle = useCallback(
     (title: string) => {
@@ -540,65 +555,85 @@ export default function Editor() {
             )}
 
             {activeTab === "history" && (
-              <div className="space-y-6">
-                <RevisionHistory
-                  documentId={document.header.id}
-                  revisionKey={document.header.revision.global ?? 0}
-                  current={{
-                    title: state.title ?? null,
-                    description: state.description ?? null,
-                    content: state.content ?? null,
-                  }}
-                />
-                <div>
-                  <h4
-                    className="mb-2 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "var(--bai-text-muted)" }}
-                  >
-                    Lifecycle
-                  </h4>
-                  <LifecycleTimeline events={state.lifecycleEvents} />
-                </div>
+              <div className="space-y-4">
+                <RevisionScrubber history={history} />
+                <RevisionSnapshotPanel history={history} />
               </div>
             )}
           </div>
 
           {/* Right sidebar — independently scrollable so tall metadata
               (Provenance + many Metadata fields) stays reachable when the
-              Connect host clips page scroll short of the panel bottom. */}
+              Connect host clips page scroll short of the panel bottom.
+
+              In history view it carries the operation log instead: reading
+              a past revision has nothing to do with editing provenance, and
+              the log belongs beside the snapshot rather than under it, where
+              scrubbing would push it off screen. */}
           <div
-            className="w-64 shrink-0 space-y-6 self-start rounded-xl p-5 max-h-[calc(100dvh-8rem)] overflow-y-auto pb-8"
+            className={`shrink-0 self-start rounded-xl p-5 max-h-[calc(100dvh-8rem)] ${
+              activeTab === "history"
+                ? // One scroll region, owned by the operation list below.
+                  "flex w-80 flex-col gap-4 overflow-hidden"
+                : "w-64 space-y-6 overflow-y-auto pb-8"
+            }`}
             style={{
               backgroundColor: "var(--bai-surface)",
               border: "1px solid var(--bai-border)",
             }}
           >
-            <div>
-              <h4
-                className="mb-2 text-xs font-semibold uppercase tracking-wider"
-                style={{ color: "var(--bai-text-muted)" }}
-              >
-                Provenance
-              </h4>
-              <ProvenanceInfo
-                provenance={state.provenance ?? null}
-                onSetProvenance={(author, sourceOrigin) =>
-                  dispatch(
-                    actions.setProvenance({
-                      author,
-                      sourceOrigin,
-                      createdAt: timestamp(),
-                    }),
-                  )
-                }
-              />
-            </div>
-            <hr style={{ borderColor: "var(--bai-border)" }} />
-            <MetadataPanel
-              state={state}
-              onSetField={handleSetMetadataField}
-              onSetListField={handleSetMetadataListField}
-            />
+            {activeTab === "history" ? (
+              <>
+                {/* Lifecycle first and fixed: it is a handful of rows and
+                    static, so the operation log gets the rest of the panel
+                    and does the scrolling. */}
+                {state.lifecycleEvents.length > 0 && (
+                  <div className="shrink-0">
+                    <h4
+                      className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: "var(--bai-text-muted)" }}
+                    >
+                      Lifecycle
+                    </h4>
+                    <LifecycleTimeline events={state.lifecycleEvents} />
+                    <hr
+                      className="mt-4"
+                      style={{ borderColor: "var(--bai-border)" }}
+                    />
+                  </div>
+                )}
+                <RevisionOperationList history={history} />
+              </>
+            ) : (
+              <>
+                <div>
+                  <h4
+                    className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--bai-text-muted)" }}
+                  >
+                    Provenance
+                  </h4>
+                  <ProvenanceInfo
+                    provenance={state.provenance ?? null}
+                    onSetProvenance={(author, sourceOrigin) =>
+                      dispatch(
+                        actions.setProvenance({
+                          author,
+                          sourceOrigin,
+                          createdAt: timestamp(),
+                        }),
+                      )
+                    }
+                  />
+                </div>
+                <hr style={{ borderColor: "var(--bai-border)" }} />
+                <MetadataPanel
+                  state={state}
+                  onSetField={handleSetMetadataField}
+                  onSetListField={handleSetMetadataListField}
+                />
+              </>
+            )}
           </div>
         </div>
       </div>

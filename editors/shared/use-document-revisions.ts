@@ -1,28 +1,31 @@
 /**
- * Operation history of one note, from the reactor.
+ * Operation history of one document, from the reactor.
  *
  * Refetches when the document's global revision changes (the editor's own
  * dispatches and background revalidations both move it) and when the live
  * change feed announces an update to this document — so an agent's edit
- * shows up in the History tab within a second of landing.
+ * shows up in a History tab within a second of landing.
  */
 import { useCallback, useEffect, useRef, useState } from "react";
-import { resolveReactorEndpoint } from "../../shared/subgraph-endpoint.js";
-import { onVaultRemoteChange } from "../../shared/vault-live.js";
-import { fetchNoteOperations, type NoteOperation } from "../lib/revisions.js";
+import {
+  fetchDocumentOperations,
+  type DocumentOperation,
+} from "./document-revisions.js";
+import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
+import { onVaultRemoteChange } from "./vault-live.js";
 
-export type UseNoteRevisionsResult = {
-  operations: NoteOperation[];
+export type UseDocumentRevisionsResult = {
+  operations: DocumentOperation[];
   isLoading: boolean;
   error: string | null;
   refetch: () => void;
 };
 
-export function useNoteRevisions(
+export function useDocumentRevisions(
   documentId: string | undefined,
   revisionKey: number,
-): UseNoteRevisionsResult {
-  const [operations, setOperations] = useState<NoteOperation[]>([]);
+): UseDocumentRevisionsResult {
+  const [operations, setOperations] = useState<DocumentOperation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
@@ -37,14 +40,14 @@ export function useNoteRevisions(
     }
     let cancelled = false;
     // Only blank the list when switching documents; a refetch of the same
-    // note keeps the previous history on screen while the new one loads.
+    // document keeps the previous history on screen while the new one loads.
     if (lastDocRef.current !== documentId) {
       setOperations([]);
       lastDocRef.current = documentId;
     }
     setIsLoading(true);
     setError(null);
-    fetchNoteOperations(resolveReactorEndpoint(), documentId)
+    fetchDocumentOperations(resolveReactorEndpoint(), documentId)
       .then((ops) => {
         if (cancelled) return;
         setOperations(ops);

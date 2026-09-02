@@ -104,6 +104,9 @@ describe("presentation helpers", () => {
   });
   it("classifies operation kinds", () => {
     expect(operationKind("SET_CONTENT")).toBe("content");
+    expect(operationKind("SET_TITLE")).toBe("content");
+    // A type is a classification, not text — the steppers must skip it.
+    expect(operationKind("SET_NOTE_TYPE")).toBe("metadata");
     expect(operationKind("APPROVE_NOTE")).toBe("lifecycle");
     expect(operationKind("ADD_TOPIC")).toBe("topics");
     expect(operationKind("SET_METADATA_FIELD")).toBe("metadata");

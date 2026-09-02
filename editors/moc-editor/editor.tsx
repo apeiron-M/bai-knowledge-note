@@ -9,6 +9,13 @@ import { useVaultDocIndex } from "../shared/use-vault-doc-index.js";
 import { useSelectedMocDocument, actions } from "document-models/moc";
 import { TOOLBAR_CLASS } from "../shared/theme-context.js";
 import { useKnowledgeMocs } from "../knowledge-vault/hooks/use-knowledge-mocs.js";
+import {
+  RevisionOperationList,
+  RevisionScrubber,
+  RevisionSnapshotPanel,
+} from "../shared/revision-history.js";
+import { useRevisionHistory } from "../shared/use-revision-history.js";
+import { MOC_REVISION_MODEL } from "./lib/revision-model.js";
 
 const TIERS = ["HUB", "DOMAIN", "TOPIC"] as const;
 const TIER_COLORS: Record<string, string> = {
@@ -46,6 +53,15 @@ export default function Editor() {
   const [newQuestion, setNewQuestion] = useState("");
   const [newIdeaRef, setNewIdeaRef] = useState("");
   const [newIdeaPhrase, setNewIdeaPhrase] = useState("");
+  // History is opt-in: opening it is what fetches the operation log, so a
+  // MoC with a long rewrite history costs nothing until someone asks.
+  const [showHistory, setShowHistory] = useState(false);
+  const history = useRevisionHistory(
+    showHistory ? document.header.id : "",
+    document.header.revision.global ?? 0,
+    state,
+    MOC_REVISION_MODEL,
+  );
   const initialized = !!state.title;
 
   if (!initialized) {
@@ -101,6 +117,44 @@ export default function Editor() {
                   {state.version}
                 </span>
               ) : null}
+              {/* Top-right of the first card: the way in and out of history.
+                  It reads as a mode switch for the whole map, which is what
+                  it is — the sections below are replaced, not appended to. */}
+              <button
+                type="button"
+                onClick={() => setShowHistory((v) => !v)}
+                aria-pressed={showHistory}
+                className="ml-auto flex items-center gap-1.5 rounded-lg px-2.5 py-1 text-xs transition-colors"
+                style={
+                  showHistory
+                    ? {
+                        backgroundColor: "rgba(203, 166, 247, 0.15)",
+                        color: "var(--bai-accent)",
+                      }
+                    : {
+                        backgroundColor: "var(--bai-hover)",
+                        color: "var(--bai-text-tertiary)",
+                      }
+                }
+                title={
+                  showHistory
+                    ? "Back to the current map"
+                    : "How this map was re-stated over time"
+                }
+              >
+                <svg
+                  className="h-3.5 w-3.5"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M12 8v4l3 2" />
+                  <path d="M3.05 11a9 9 0 1 1 .5 4" />
+                  <path d="M3 21v-6h6" />
+                </svg>
+                {showHistory ? "Close history" : "History"}
+              </button>
             </div>
             <h1
               className="text-2xl font-bold"
@@ -129,51 +183,30 @@ export default function Editor() {
             />
           </div>
 
-          {/* Orientation */}
-          <div
-            className="rounded-xl p-6"
-            style={{
-              backgroundColor: "var(--bai-surface)",
-              border: "1px solid var(--bai-border)",
-            }}
-          >
-            <h3
-              className="mb-2 text-xs font-semibold uppercase tracking-wider"
-              style={{ color: "var(--bai-text-muted)" }}
-            >
-              Orientation
-            </h3>
-            <p
-              className="mb-1.5 text-[10px]"
-              style={{ color: "var(--bai-text-faint)" }}
-            >
-              A synthesis paragraph explaining what this topic covers, key
-              themes, and how the core ideas relate to each other.
-            </p>
-            <textarea
-              defaultValue={state.orientation ?? ""}
-              placeholder="Write a 2-3 paragraph synthesis of this topic area — what are the key themes, how do the core ideas connect, and what's the current state of understanding..."
-              onBlur={(e) =>
-                dispatch(
-                  actions.updateOrientation({
-                    orientation: e.target.value.trim(),
-                    updatedAt: ts(),
-                  }),
-                )
-              }
-              className="w-full resize-y rounded-lg px-4 py-3 text-sm leading-relaxed outline-none placeholder:opacity-50 focus:border-[#cba6f7]/50"
-              rows={10}
-              style={{
-                backgroundColor: "var(--bai-deep)",
-                color: "var(--bai-text-secondary)",
-                border: "1px solid var(--bai-border)",
-                minHeight: "160px",
-              }}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-6">
-            {/* Core Ideas */}
+          {showHistory ? (
+            <div className="space-y-4">
+              <RevisionScrubber history={history} />
+              {/* Snapshot beside the log, not above it: scrubbing a long
+                  orientation would otherwise push the operations off
+                  screen just as you start comparing them. */}
+              <div className="flex gap-6">
+                <div className="min-w-0 flex-1">
+                  <RevisionSnapshotPanel history={history} />
+                </div>
+                <aside
+                  className="flex w-80 shrink-0 flex-col self-start overflow-hidden rounded-xl p-5 max-h-[calc(100dvh-8rem)]"
+                  style={{
+                    backgroundColor: "var(--bai-surface)",
+                    border: "1px solid var(--bai-border)",
+                  }}
+                >
+                  <RevisionOperationList history={history} />
+                </aside>
+              </div>
+            </div>
+          ) : (
+            <>
+            {/* Orientation */}
             <div
               className="rounded-xl p-6"
               style={{
@@ -182,167 +215,332 @@ export default function Editor() {
               }}
             >
               <h3
-                className="mb-3 text-xs font-semibold uppercase tracking-wider"
+                className="mb-2 text-xs font-semibold uppercase tracking-wider"
                 style={{ color: "var(--bai-text-muted)" }}
               >
-                Core Ideas ({coreIdeas.length})
+                Orientation
               </h3>
-              <div className="space-y-2">
-                {coreIdeas.map((idea) => {
-                  const noteTitle = byId.get(idea.noteRef)?.title ?? null;
-                  const ideaKey = `${document.header.id}-${idea.noteRef}`;
-                  return (
+              <p
+                className="mb-1.5 text-[10px]"
+                style={{ color: "var(--bai-text-faint)" }}
+              >
+                A synthesis paragraph explaining what this topic covers, key
+                themes, and how the core ideas relate to each other.
+              </p>
+              <textarea
+                defaultValue={state.orientation ?? ""}
+                placeholder="Write a 2-3 paragraph synthesis of this topic area — what are the key themes, how do the core ideas connect, and what's the current state of understanding..."
+                onBlur={(e) =>
+                  dispatch(
+                    actions.updateOrientation({
+                      orientation: e.target.value.trim(),
+                      updatedAt: ts(),
+                    }),
+                  )
+                }
+                className="w-full resize-y rounded-lg px-4 py-3 text-sm leading-relaxed outline-none placeholder:opacity-50 focus:border-[#cba6f7]/50"
+                rows={10}
+                style={{
+                  backgroundColor: "var(--bai-deep)",
+                  color: "var(--bai-text-secondary)",
+                  border: "1px solid var(--bai-border)",
+                  minHeight: "160px",
+                }}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-6">
+              {/* Core Ideas */}
+              <div
+                className="rounded-xl p-6"
+                style={{
+                  backgroundColor: "var(--bai-surface)",
+                  border: "1px solid var(--bai-border)",
+                }}
+              >
+                <h3
+                  className="mb-3 text-xs font-semibold uppercase tracking-wider"
+                  style={{ color: "var(--bai-text-muted)" }}
+                >
+                  Core Ideas ({coreIdeas.length})
+                </h3>
+                <div className="space-y-2">
+                  {coreIdeas.map((idea) => {
+                    const noteTitle = byId.get(idea.noteRef)?.title ?? null;
+                    const ideaKey = `${document.header.id}-${idea.noteRef}`;
+                    return (
+                      <div
+                        key={ideaKey}
+                        className="group flex items-start gap-2 rounded-lg px-3 py-2"
+                        style={{
+                          backgroundColor: "var(--bai-bg)",
+                          boxShadow: "0 0 0 1px var(--bai-ring)",
+                        }}
+                      >
+                        <div className="flex-1 min-w-0">
+                          <p
+                            className="text-xs"
+                            style={{ color: "var(--bai-text-secondary)" }}
+                          >
+                            {idea.contextPhrase}
+                          </p>
+                          {idea.noteRef &&
+                            (noteTitle ? (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedNode(idea.noteRef)}
+                                className="mt-0.5 text-[10px] text-left truncate max-w-full transition-colors hover:underline"
+                                style={{ color: "var(--bai-accent)" }}
+                                title={`Open note: ${noteTitle}`}
+                              >
+                                {noteTitle}
+                                <svg
+                                  className="ml-1 inline h-2.5 w-2.5"
+                                  style={{ color: "var(--bai-text-faint)" }}
+                                  viewBox="0 0 24 24"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  strokeWidth="2"
+                                >
+                                  <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
+                                  <path d="M15 3h6v6" />
+                                  <path d="M10 14L21 3" />
+                                </svg>
+                              </button>
+                            ) : (
+                              <button
+                                type="button"
+                                onClick={() => setSelectedNode(idea.noteRef)}
+                                className="mt-0.5 text-[10px] font-mono text-left truncate max-w-full transition-colors hover:underline"
+                                style={{ color: "var(--bai-text-faint)" }}
+                                title={`Open document: ${idea.noteRef}`}
+                              >
+                                {idea.noteRef.slice(0, 12)}...
+                              </button>
+                            ))}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            // Remove the underlying DocumentRelationship row;
+                            // the indexer mirrors the deletion into graph_edges.
+                            void dispatchActions(
+                              [
+                                {
+                                  id: generateId(),
+                                  type: "REMOVE_RELATIONSHIP",
+                                  scope: "document",
+                                  timestampUtcMs: ts(),
+                                  input: {
+                                    sourceId: document.header.id,
+                                    targetId: idea.noteRef,
+                                    relationshipType: "CORE_IDEA",
+                                  },
+                                } as never,
+                              ],
+                              document.header.id,
+                            );
+                          }}
+                          className="opacity-0 hover:text-red-400 group-hover:opacity-100"
+                          style={{ color: "var(--bai-text-faint)" }}
+                        >
+                          &times;
+                        </button>
+                      </div>
+                    );
+                  })}
+                  <form
+                    className="flex gap-2"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (!newIdeaRef.trim()) return;
+                      // contextPhrase used to live on the inline coreIdea
+                      // entry; the relationship table has no slot for it.
+                      // The phrase input is kept for future re-introduction
+                      // (e.g., as a `bai/derivation` document linking the
+                      // MoC to the note with annotation), but it's not
+                      // persisted by ADD_RELATIONSHIP today.
+                      void dispatchActions(
+                        [
+                          {
+                            id: generateId(),
+                            type: "ADD_RELATIONSHIP",
+                            scope: "document",
+                            timestampUtcMs: ts(),
+                            input: {
+                              sourceId: document.header.id,
+                              targetId: newIdeaRef.trim(),
+                              relationshipType: "CORE_IDEA",
+                            },
+                          } as never,
+                        ],
+                        document.header.id,
+                      );
+                      setNewIdeaRef("");
+                      setNewIdeaPhrase("");
+                    }}
+                  >
+                    <input
+                      type="text"
+                      value={newIdeaRef}
+                      onChange={(e) => setNewIdeaRef(e.target.value)}
+                      placeholder="Note ID..."
+                      className="w-24 rounded px-2 py-1 text-xs font-mono outline-none focus:border-[#cba6f7]/50"
+                      style={{
+                        backgroundColor: "var(--bai-deep)",
+                        color: "var(--bai-text-tertiary)",
+                        border: "1px solid var(--bai-border)",
+                      }}
+                    />
+                    <input
+                      type="text"
+                      value={newIdeaPhrase}
+                      onChange={(e) => setNewIdeaPhrase(e.target.value)}
+                      placeholder="Why it matters here..."
+                      className="flex-1 rounded px-2 py-1 text-xs outline-none focus:border-[#cba6f7]/50"
+                      style={{
+                        backgroundColor: "var(--bai-deep)",
+                        color: "var(--bai-text-secondary)",
+                        border: "1px solid var(--bai-border)",
+                      }}
+                    />
+                    <button
+                      type="submit"
+                      className="rounded px-2 py-1 text-xs font-medium"
+                      style={{
+                        backgroundColor: "var(--bai-accent)",
+                        color: "var(--bai-accent-text)",
+                      }}
+                    >
+                      Add
+                    </button>
+                  </form>
+                </div>
+              </div>
+
+              {/* Tensions + Questions */}
+              <div className="space-y-6">
+                <div
+                  className="rounded-xl p-6"
+                  style={{
+                    backgroundColor: "var(--bai-surface)",
+                    border: "1px solid var(--bai-border)",
+                  }}
+                >
+                  <h3
+                    className="mb-3 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--bai-text-muted)" }}
+                  >
+                    Tensions
+                  </h3>
+                  {(state.tensions ?? []).map((t) => (
                     <div
-                      key={ideaKey}
-                      className="group flex items-start gap-2 rounded-lg px-3 py-2"
+                      key={t.id}
+                      className="group flex items-center gap-2 rounded-lg px-3 py-2 mb-1"
                       style={{
                         backgroundColor: "var(--bai-bg)",
                         boxShadow: "0 0 0 1px var(--bai-ring)",
                       }}
                     >
-                      <div className="flex-1 min-w-0">
-                        <p
-                          className="text-xs"
-                          style={{ color: "var(--bai-text-secondary)" }}
-                        >
-                          {idea.contextPhrase}
-                        </p>
-                        {idea.noteRef &&
-                          (noteTitle ? (
-                            <button
-                              type="button"
-                              onClick={() => setSelectedNode(idea.noteRef)}
-                              className="mt-0.5 text-[10px] text-left truncate max-w-full transition-colors hover:underline"
-                              style={{ color: "var(--bai-accent)" }}
-                              title={`Open note: ${noteTitle}`}
-                            >
-                              {noteTitle}
-                              <svg
-                                className="ml-1 inline h-2.5 w-2.5"
-                                style={{ color: "var(--bai-text-faint)" }}
-                                viewBox="0 0 24 24"
-                                fill="none"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                              >
-                                <path d="M18 13v6a2 2 0 01-2 2H5a2 2 0 01-2-2V8a2 2 0 012-2h6" />
-                                <path d="M15 3h6v6" />
-                                <path d="M10 14L21 3" />
-                              </svg>
-                            </button>
-                          ) : (
-                            <button
-                              type="button"
-                              onClick={() => setSelectedNode(idea.noteRef)}
-                              className="mt-0.5 text-[10px] font-mono text-left truncate max-w-full transition-colors hover:underline"
-                              style={{ color: "var(--bai-text-faint)" }}
-                              title={`Open document: ${idea.noteRef}`}
-                            >
-                              {idea.noteRef.slice(0, 12)}...
-                            </button>
-                          ))}
-                      </div>
+                      <span className="h-2 w-2 shrink-0 rounded-full bg-red-400" />
+                      <span
+                        className="flex-1 text-xs"
+                        style={{ color: "var(--bai-text-secondary)" }}
+                      >
+                        {t.description}
+                      </span>
                       <button
                         type="button"
-                        onClick={() => {
-                          // Remove the underlying DocumentRelationship row;
-                          // the indexer mirrors the deletion into graph_edges.
-                          void dispatchActions(
-                            [
-                              {
-                                id: generateId(),
-                                type: "REMOVE_RELATIONSHIP",
-                                scope: "document",
-                                timestampUtcMs: ts(),
-                                input: {
-                                  sourceId: document.header.id,
-                                  targetId: idea.noteRef,
-                                  relationshipType: "CORE_IDEA",
-                                },
-                              } as never,
-                            ],
-                            document.header.id,
-                          );
-                        }}
+                        onClick={() =>
+                          dispatch(actions.removeTension({ id: t.id }))
+                        }
                         className="opacity-0 hover:text-red-400 group-hover:opacity-100"
                         style={{ color: "var(--bai-text-faint)" }}
                       >
                         &times;
                       </button>
                     </div>
-                  );
-                })}
-                <form
-                  className="flex gap-2"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (!newIdeaRef.trim()) return;
-                    // contextPhrase used to live on the inline coreIdea
-                    // entry; the relationship table has no slot for it.
-                    // The phrase input is kept for future re-introduction
-                    // (e.g., as a `bai/derivation` document linking the
-                    // MoC to the note with annotation), but it's not
-                    // persisted by ADD_RELATIONSHIP today.
-                    void dispatchActions(
-                      [
-                        {
-                          id: generateId(),
-                          type: "ADD_RELATIONSHIP",
-                          scope: "document",
-                          timestampUtcMs: ts(),
-                          input: {
-                            sourceId: document.header.id,
-                            targetId: newIdeaRef.trim(),
-                            relationshipType: "CORE_IDEA",
-                          },
-                        } as never,
-                      ],
-                      document.header.id,
-                    );
-                    setNewIdeaRef("");
-                    setNewIdeaPhrase("");
+                  ))}
+                </div>
+                <div
+                  className="rounded-xl p-6"
+                  style={{
+                    backgroundColor: "var(--bai-surface)",
+                    border: "1px solid var(--bai-border)",
                   }}
                 >
-                  <input
-                    type="text"
-                    value={newIdeaRef}
-                    onChange={(e) => setNewIdeaRef(e.target.value)}
-                    placeholder="Note ID..."
-                    className="w-24 rounded px-2 py-1 text-xs font-mono outline-none focus:border-[#cba6f7]/50"
-                    style={{
-                      backgroundColor: "var(--bai-deep)",
-                      color: "var(--bai-text-tertiary)",
-                      border: "1px solid var(--bai-border)",
-                    }}
-                  />
-                  <input
-                    type="text"
-                    value={newIdeaPhrase}
-                    onChange={(e) => setNewIdeaPhrase(e.target.value)}
-                    placeholder="Why it matters here..."
-                    className="flex-1 rounded px-2 py-1 text-xs outline-none focus:border-[#cba6f7]/50"
-                    style={{
-                      backgroundColor: "var(--bai-deep)",
-                      color: "var(--bai-text-secondary)",
-                      border: "1px solid var(--bai-border)",
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    className="rounded px-2 py-1 text-xs font-medium"
-                    style={{
-                      backgroundColor: "var(--bai-accent)",
-                      color: "var(--bai-accent-text)",
+                  <h3
+                    className="mb-3 text-xs font-semibold uppercase tracking-wider"
+                    style={{ color: "var(--bai-text-muted)" }}
+                  >
+                    Open Questions
+                  </h3>
+                  {(state.openQuestions ?? []).map((q, i) => (
+                    <div
+                      key={i}
+                      className="group flex items-center gap-2 rounded-lg px-3 py-2 mb-1"
+                      style={{
+                        backgroundColor: "var(--bai-bg)",
+                        boxShadow: "0 0 0 1px var(--bai-ring)",
+                      }}
+                    >
+                      <span
+                        className="flex-1 text-xs"
+                        style={{ color: "var(--bai-text-secondary)" }}
+                      >
+                        {q}
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          dispatch(actions.removeOpenQuestion({ question: q }))
+                        }
+                        className="opacity-0 hover:text-red-400 group-hover:opacity-100"
+                        style={{ color: "var(--bai-text-faint)" }}
+                      >
+                        &times;
+                      </button>
+                    </div>
+                  ))}
+                  <form
+                    className="flex gap-2 mt-2"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (!newQuestion.trim()) return;
+                      dispatch(
+                        actions.addOpenQuestion({ question: newQuestion.trim() }),
+                      );
+                      setNewQuestion("");
                     }}
                   >
-                    Add
-                  </button>
-                </form>
+                    <input
+                      type="text"
+                      value={newQuestion}
+                      onChange={(e) => setNewQuestion(e.target.value)}
+                      placeholder="Add question..."
+                      className="flex-1 rounded px-2 py-1 text-xs outline-none focus:border-[#cba6f7]/50"
+                      style={{
+                        backgroundColor: "var(--bai-deep)",
+                        color: "var(--bai-text-secondary)",
+                        border: "1px solid var(--bai-border)",
+                      }}
+                    />
+                    <button
+                      type="submit"
+                      className="rounded px-2 py-1 text-xs font-medium"
+                      style={{
+                        backgroundColor: "var(--bai-accent)",
+                        color: "var(--bai-accent-text)",
+                      }}
+                    >
+                      Add
+                    </button>
+                  </form>
+                </div>
               </div>
             </div>
-
-            {/* Tensions + Questions */}
-            <div className="space-y-6">
+            {/* MoC hierarchy — parents and children */}
+            {(childMocs.length > 0 || parentMocs.length > 0) && (
               <div
                 className="rounded-xl p-6"
                 style={{
@@ -350,197 +548,78 @@ export default function Editor() {
                   border: "1px solid var(--bai-border)",
                 }}
               >
-                <h3
-                  className="mb-3 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-muted)" }}
-                >
-                  Tensions
-                </h3>
-                {(state.tensions ?? []).map((t) => (
-                  <div
-                    key={t.id}
-                    className="group flex items-center gap-2 rounded-lg px-3 py-2 mb-1"
-                    style={{
-                      backgroundColor: "var(--bai-bg)",
-                      boxShadow: "0 0 0 1px var(--bai-ring)",
-                    }}
-                  >
-                    <span className="h-2 w-2 shrink-0 rounded-full bg-red-400" />
-                    <span
-                      className="flex-1 text-xs"
-                      style={{ color: "var(--bai-text-secondary)" }}
+                {parentMocs.length > 0 && (
+                  <div className="mb-4">
+                    <h3
+                      className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: "var(--bai-text-muted)" }}
                     >
-                      {t.description}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        dispatch(actions.removeTension({ id: t.id }))
-                      }
-                      className="opacity-0 hover:text-red-400 group-hover:opacity-100"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      &times;
-                    </button>
+                      Part of
+                    </h3>
+                    <div className="flex flex-wrap gap-2">
+                      {parentMocs.map((m) => (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => setSelectedNode(m.id)}
+                          className="rounded-lg px-3 py-1.5 text-xs transition-colors hover:opacity-80"
+                          style={{
+                            backgroundColor: "var(--bai-bg)",
+                            boxShadow: "0 0 0 1px var(--bai-ring)",
+                            color: "var(--bai-accent)",
+                          }}
+                        >
+                          ↑ {m.title}
+                        </button>
+                      ))}
+                    </div>
                   </div>
-                ))}
+                )}
+                {childMocs.length > 0 && (
+                  <div>
+                    <h3
+                      className="mb-2 text-xs font-semibold uppercase tracking-wider"
+                      style={{ color: "var(--bai-text-muted)" }}
+                    >
+                      Child MoCs ({childMocs.length})
+                    </h3>
+                    <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
+                      {childMocs.map((m) => (
+                        <button
+                          key={m.id}
+                          type="button"
+                          onClick={() => setSelectedNode(m.id)}
+                          className="flex items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:opacity-80"
+                          style={{
+                            backgroundColor: "var(--bai-bg)",
+                            boxShadow: "0 0 0 1px var(--bai-ring)",
+                          }}
+                        >
+                          <span
+                            className={`shrink-0 rounded-full border px-1.5 py-0.5 text-[9px] font-semibold ${TIER_COLORS[m.tier ?? ""] ?? "bg-gray-500/20 text-gray-400 border-gray-500/30"}`}
+                          >
+                            {m.tier ?? "MOC"}
+                          </span>
+                          <span
+                            className="truncate text-xs"
+                            style={{ color: "var(--bai-text-secondary)" }}
+                          >
+                            {m.title}
+                          </span>
+                          <span
+                            className="ml-auto shrink-0 text-[10px]"
+                            style={{ color: "var(--bai-text-faint)" }}
+                          >
+                            {m.noteCount} notes
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-              <div
-                className="rounded-xl p-6"
-                style={{
-                  backgroundColor: "var(--bai-surface)",
-                  border: "1px solid var(--bai-border)",
-                }}
-              >
-                <h3
-                  className="mb-3 text-xs font-semibold uppercase tracking-wider"
-                  style={{ color: "var(--bai-text-muted)" }}
-                >
-                  Open Questions
-                </h3>
-                {(state.openQuestions ?? []).map((q, i) => (
-                  <div
-                    key={i}
-                    className="group flex items-center gap-2 rounded-lg px-3 py-2 mb-1"
-                    style={{
-                      backgroundColor: "var(--bai-bg)",
-                      boxShadow: "0 0 0 1px var(--bai-ring)",
-                    }}
-                  >
-                    <span
-                      className="flex-1 text-xs"
-                      style={{ color: "var(--bai-text-secondary)" }}
-                    >
-                      {q}
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() =>
-                        dispatch(actions.removeOpenQuestion({ question: q }))
-                      }
-                      className="opacity-0 hover:text-red-400 group-hover:opacity-100"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      &times;
-                    </button>
-                  </div>
-                ))}
-                <form
-                  className="flex gap-2 mt-2"
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    if (!newQuestion.trim()) return;
-                    dispatch(
-                      actions.addOpenQuestion({ question: newQuestion.trim() }),
-                    );
-                    setNewQuestion("");
-                  }}
-                >
-                  <input
-                    type="text"
-                    value={newQuestion}
-                    onChange={(e) => setNewQuestion(e.target.value)}
-                    placeholder="Add question..."
-                    className="flex-1 rounded px-2 py-1 text-xs outline-none focus:border-[#cba6f7]/50"
-                    style={{
-                      backgroundColor: "var(--bai-deep)",
-                      color: "var(--bai-text-secondary)",
-                      border: "1px solid var(--bai-border)",
-                    }}
-                  />
-                  <button
-                    type="submit"
-                    className="rounded px-2 py-1 text-xs font-medium"
-                    style={{
-                      backgroundColor: "var(--bai-accent)",
-                      color: "var(--bai-accent-text)",
-                    }}
-                  >
-                    Add
-                  </button>
-                </form>
-              </div>
-            </div>
-          </div>
-          {/* MoC hierarchy — parents and children */}
-          {(childMocs.length > 0 || parentMocs.length > 0) && (
-            <div
-              className="rounded-xl p-6"
-              style={{
-                backgroundColor: "var(--bai-surface)",
-                border: "1px solid var(--bai-border)",
-              }}
-            >
-              {parentMocs.length > 0 && (
-                <div className="mb-4">
-                  <h3
-                    className="mb-2 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "var(--bai-text-muted)" }}
-                  >
-                    Part of
-                  </h3>
-                  <div className="flex flex-wrap gap-2">
-                    {parentMocs.map((m) => (
-                      <button
-                        key={m.id}
-                        type="button"
-                        onClick={() => setSelectedNode(m.id)}
-                        className="rounded-lg px-3 py-1.5 text-xs transition-colors hover:opacity-80"
-                        style={{
-                          backgroundColor: "var(--bai-bg)",
-                          boxShadow: "0 0 0 1px var(--bai-ring)",
-                          color: "var(--bai-accent)",
-                        }}
-                      >
-                        ↑ {m.title}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-              {childMocs.length > 0 && (
-                <div>
-                  <h3
-                    className="mb-2 text-xs font-semibold uppercase tracking-wider"
-                    style={{ color: "var(--bai-text-muted)" }}
-                  >
-                    Child MoCs ({childMocs.length})
-                  </h3>
-                  <div className="grid grid-cols-1 gap-1.5 sm:grid-cols-2">
-                    {childMocs.map((m) => (
-                      <button
-                        key={m.id}
-                        type="button"
-                        onClick={() => setSelectedNode(m.id)}
-                        className="flex items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors hover:opacity-80"
-                        style={{
-                          backgroundColor: "var(--bai-bg)",
-                          boxShadow: "0 0 0 1px var(--bai-ring)",
-                        }}
-                      >
-                        <span
-                          className={`shrink-0 rounded-full border px-1.5 py-0.5 text-[9px] font-semibold ${TIER_COLORS[m.tier ?? ""] ?? "bg-gray-500/20 text-gray-400 border-gray-500/30"}`}
-                        >
-                          {m.tier ?? "MOC"}
-                        </span>
-                        <span
-                          className="truncate text-xs"
-                          style={{ color: "var(--bai-text-secondary)" }}
-                        >
-                          {m.title}
-                        </span>
-                        <span
-                          className="ml-auto shrink-0 text-[10px]"
-                          style={{ color: "var(--bai-text-faint)" }}
-                        >
-                          {m.noteCount} notes
-                        </span>
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-            </div>
+            )}
+            </>
           )}
         </div>
       </div>
