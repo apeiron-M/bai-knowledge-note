@@ -2,7 +2,11 @@ import type { ExpressionBuilder, Kysely } from "kysely";
 import { sql } from "kysely";
 import type { DB, GraphNode, GraphEdge } from "./schema.js";
 import { ACTIVE_MODEL } from "./embedding-store.js";
-import { KNOWLEDGE_LINK_TYPE_LIST } from "./link-types.js";
+import {
+  INDEXED_LINK_TYPE_LIST,
+  KNOWLEDGE_LINK_TYPE_LIST,
+} from "./link-types.js";
+import { KNOWLEDGE_NODE_TYPE_LIST } from "./project.js";
 
 /**
  * `graph_edges` holds only knowledge edges going forward (the processor stopped
@@ -15,6 +19,31 @@ import { KNOWLEDGE_LINK_TYPE_LIST } from "./link-types.js";
  */
 function isKnowledgeEdge(eb: ExpressionBuilder<DB, "graph_edges">) {
   return eb("link_type", "in", KNOWLEDGE_LINK_TYPE_LIST);
+}
+
+/**
+ * Knowledge edges PLUS the derived ones (`INVOLVES`, `PROMOTED_TO`). This is
+ * the population for anything that *shows a neighbourhood* — backlinks,
+ * forward links, the full edge list, traversal — because a reader looking at
+ * a note wants to know a tension involves it. Structural metrics keep using
+ * `isKnowledgeEdge`; see `link-types.ts` for why the two must differ.
+ */
+function isIndexedEdge(eb: ExpressionBuilder<DB, "graph_edges">) {
+  return eb("link_type", "in", INDEXED_LINK_TYPE_LIST);
+}
+
+/**
+ * Nodes that can meaningfully be orphans: notes, MoCs, research claims. A
+ * tension or observation has nothing pointing at it by design — it is the
+ * pointer — so counting it would report a structural fact as a defect.
+ * Legacy rows (null `document_type`) are knowledge by construction; the
+ * migration backfills them, but the predicate is null-safe regardless.
+ */
+function isKnowledgeNode(eb: ExpressionBuilder<DB, "graph_nodes">) {
+  return eb.or([
+    eb("graph_nodes.document_type", "is", null),
+    eb("graph_nodes.document_type", "in", KNOWLEDGE_NODE_TYPE_LIST),
+  ]);
 }
 
 /**
@@ -84,6 +113,10 @@ export interface GraphNodeResult {
   sourceOrigin: string | null;
   createdAt: string | null;
   updatedAt: string;
+  /** `bai/knowledge-note`, `bai/moc`, `bai/tension`, `bai/observation`,
+   * `bai/research-claim`. Null only on rows that predate the column AND
+   * were never re-touched — the migration backfills, so in practice set. */
+  documentType: string | null;
 }
 
 export interface GraphEdgeResult {
@@ -96,9 +129,18 @@ export interface GraphEdgeResult {
 }
 
 export interface GraphStatsResult {
+  /** Every indexed node, all kinds. Kept as the total so existing dashboards
+   * that read it keep reading the same thing; the per-kind counts below are
+   * what a health check should divide by. */
   nodeCount: number;
   edgeCount: number;
   orphanCount: number;
+  noteCount: number;
+  mocCount: number;
+  claimCount: number;
+  tensionCount: number;
+  openTensionCount: number;
+  observationCount: number;
 }
 
 export interface ConnectionResult {
@@ -134,6 +176,10 @@ export interface OperationRecord {
   summary: string | null;
   signerAddress: string | null;
   signerApp: string | null;
+  signerKey: string | null;
+  signature: string | null;
+  /** The action input as JSON text — the diff payload for a history view. */
+  inputJson: string | null;
 }
 
 function rowToNode(row: GraphNode): GraphNodeResult {
@@ -149,6 +195,7 @@ function rowToNode(row: GraphNode): GraphNodeResult {
     sourceOrigin: row.source_origin,
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    documentType: row.document_type,
   };
 }
 
@@ -174,6 +221,8 @@ function rowToOperation(row: {
   input_json: string | null;
   signer_address: string | null;
   signer_app: string | null;
+  signer_key: string | null;
+  signature: string | null;
 }): OperationRecord {
   return {
     id: row.id,
@@ -185,6 +234,9 @@ function rowToOperation(row: {
     summary: row.summary,
     signerAddress: row.signer_address,
     signerApp: row.signer_app,
+    signerKey: row.signer_key,
+    signature: row.signature,
+    inputJson: row.input_json,
   };
 }
 
@@ -205,10 +257,22 @@ export function createGraphQuery(db: Kysely<DB>) {
     async allEdges(): Promise<GraphEdgeResult[]> {
       const rows = await db
         .selectFrom("graph_edges")
-        .where(isKnowledgeEdge)
+        .where(isIndexedEdge)
         .selectAll()
         .execute();
       return rows.map(rowToEdge);
+    },
+
+    /** Every node of one kind — `bai/tension`, `bai/observation`, … */
+    async nodesByDocumentType(
+      documentType: string,
+    ): Promise<GraphNodeResult[]> {
+      const rows = await db
+        .selectFrom("graph_nodes")
+        .where("document_type", "=", documentType)
+        .selectAll()
+        .execute();
+      return rows.map(rowToNode);
     },
 
     async nodeByDocumentId(
@@ -240,6 +304,7 @@ export function createGraphQuery(db: Kysely<DB>) {
       const rows = await db
         .selectFrom("graph_nodes")
         .selectAll()
+        .where(isKnowledgeNode)
         .where(hasNoIncomingKnowledgeEdge)
         .execute();
       return rows.map(rowToNode);
@@ -258,17 +323,40 @@ export function createGraphQuery(db: Kysely<DB>) {
         .select(sql<number>`count(*)`.as("cnt"))
         .executeTakeFirstOrThrow();
 
-      // Orphans: nodes no knowledge edge points at.
+      // Orphans: knowledge nodes no knowledge edge points at.
       const orphanResult = await db
         .selectFrom("graph_nodes")
         .select(sql<number>`count(*)`.as("cnt"))
+        .where(isKnowledgeNode)
         .where(hasNoIncomingKnowledgeEdge)
         .executeTakeFirstOrThrow();
+
+      // Per-kind counts in one pass. Legacy null rows count as notes, the
+      // same way the migration backfills them.
+      const byKind = await db
+        .selectFrom("graph_nodes")
+        .select([
+          sql<string>`coalesce(document_type, 'bai/knowledge-note')`.as("kind"),
+          sql<number>`count(*)`.as("cnt"),
+          sql<number>`count(*) filter (where status = 'OPEN')`.as("open_cnt"),
+        ])
+        .groupBy(sql`coalesce(document_type, 'bai/knowledge-note')`)
+        .execute();
+      const count = (kind: string) =>
+        Number(byKind.find((r) => r.kind === kind)?.cnt ?? 0);
 
       return {
         nodeCount: Number(nodeCountResult.cnt),
         edgeCount: Number(edgeCountResult.cnt),
         orphanCount: Number(orphanResult.cnt),
+        noteCount: count("bai/knowledge-note"),
+        mocCount: count("bai/moc"),
+        claimCount: count("bai/research-claim"),
+        tensionCount: count("bai/tension"),
+        openTensionCount: Number(
+          byKind.find((r) => r.kind === "bai/tension")?.open_cnt ?? 0,
+        ),
+        observationCount: count("bai/observation"),
       };
     },
 
@@ -292,7 +380,7 @@ export function createGraphQuery(db: Kysely<DB>) {
         const edges = await db
           .selectFrom("graph_edges")
           .where("source_document_id", "in", frontier)
-          .where(isKnowledgeEdge)
+          .where(isIndexedEdge)
           .selectAll()
           .execute();
 
@@ -332,7 +420,7 @@ export function createGraphQuery(db: Kysely<DB>) {
       const rows = await db
         .selectFrom("graph_edges")
         .where("target_document_id", "=", documentId)
-        .where(isKnowledgeEdge)
+        .where(isIndexedEdge)
         .selectAll()
         .execute();
       return rows.map(rowToEdge);
@@ -344,9 +432,13 @@ export function createGraphQuery(db: Kysely<DB>) {
      * connected the same vault is.
      */
     async density(): Promise<number> {
+      // Knowledge nodes only: a tension is not a vertex of the knowledge
+      // graph, and adding it to the denominator would make the vault look
+      // sparser every time someone records a contradiction.
       const nodeCountResult = await db
         .selectFrom("graph_nodes")
         .select(sql<number>`count(*)`.as("cnt"))
+        .where(isKnowledgeNode)
         .executeTakeFirstOrThrow();
       const edgeCountResult = await db
         .selectFrom("graph_edges")
@@ -375,12 +467,31 @@ export function createGraphQuery(db: Kysely<DB>) {
       return rows.map(rowToNode);
     },
 
+    /**
+     * Number of knowledge edges into (`in`) or out of (`out`) a node — the
+     * same population as the orphan predicate, so `in === 0` ⇔ orphan.
+     */
+    async knowledgeDegree(
+      documentId: string,
+      direction: "in" | "out",
+    ): Promise<number> {
+      const column =
+        direction === "in" ? "target_document_id" : "source_document_id";
+      const row = await db
+        .selectFrom("graph_edges")
+        .where(column, "=", documentId)
+        .where(isKnowledgeEdge)
+        .select(sql<number>`count(*)`.as("cnt"))
+        .executeTakeFirstOrThrow();
+      return Number(row.cnt);
+    },
+
     /** The mirror of `backlinks` — a note's own outgoing knowledge links. */
     async forwardLinks(documentId: string): Promise<GraphEdgeResult[]> {
       const rows = await db
         .selectFrom("graph_edges")
         .where("source_document_id", "=", documentId)
-        .where(isKnowledgeEdge)
+        .where(isIndexedEdge)
         .selectAll()
         .execute();
       return rows.map(rowToEdge);

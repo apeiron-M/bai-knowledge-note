@@ -15,6 +15,21 @@ export const schema: DocumentNode = gql`
     createdAt: String
     topics: [String!]!
     updatedAt: String!
+    """
+    The document's kind: bai/knowledge-note, bai/moc, bai/research-claim,
+    bai/tension or bai/observation. Tensions and observations are indexed
+    so search finds them and a note can show what involves it; they are
+    not knowledge nodes and never count as orphans.
+    """
+    documentType: String
+    """
+    Incoming knowledge edges (RELATES_TO, BUILDS_ON, …, CORE_IDEA, CHILD_MOC).
+    Derived edges (INVOLVES, PROMOTED_TO) are excluded — the same population
+    the orphan predicate uses, so inDegree = 0 means "orphan".
+    """
+    inDegree: Int!
+    """Outgoing knowledge edges, same population as inDegree."""
+    outDegree: Int!
   }
 
   type KnowledgeGraphEdge {
@@ -27,9 +42,18 @@ export const schema: DocumentNode = gql`
   }
 
   type GraphStats {
+    """Every indexed node, all kinds. Divide by the per-kind counts below."""
     nodeCount: Int!
+    """Knowledge edges only (derived INVOLVES / PROMOTED_TO are excluded)."""
     edgeCount: Int!
+    """Knowledge nodes (notes, MoCs, research claims) with no incoming knowledge edge."""
     orphanCount: Int!
+    noteCount: Int!
+    mocCount: Int!
+    claimCount: Int!
+    tensionCount: Int!
+    openTensionCount: Int!
+    observationCount: Int!
   }
 
   type ConnectionResult {
@@ -101,6 +125,17 @@ export const schema: DocumentNode = gql`
     summary: String
     signerAddress: String
     signerApp: String
+    """did:key of the app instance whose key signed this operation."""
+    signerKey: String
+    """
+    The signature tuple as stored: "timestamp, did:key, actionHash,
+    prevStateHash, 0xsig". ECDSA P-256 / SHA-256 over
+    "Signed Operation:\n" + len + timestamp + did + hash + prevStateHash.
+    Verifiable by any reader with the did:key alone.
+    """
+    signature: String
+    """The action's input, JSON-encoded — what this operation changed."""
+    inputJson: String
   }
 
   type GraphDebugInfo {
@@ -134,6 +169,11 @@ export const schema: DocumentNode = gql`
     knowledgeGraphNodesByStatus(
       driveId: ID!
       status: String!
+    ): [KnowledgeGraphNode!]!
+    """Every node of one document type, e.g. "bai/tension"."""
+    knowledgeGraphNodesByType(
+      driveId: ID!
+      documentType: String!
     ): [KnowledgeGraphNode!]!
     knowledgeGraphBacklinks(
       driveId: ID!
@@ -234,8 +274,9 @@ export const schema: DocumentNode = gql`
 
   extend type Mutation {
     """
-    Backfill the graph index by reading all bai/knowledge-note and bai/moc documents
-    in the drive. Use when the processor missed historical operations.
+    Backfill the graph index by reading every indexed document in the drive
+    (knowledge notes, MoCs, research claims, tensions, observations). Use when
+    the processor missed historical operations.
     """
     knowledgeGraphReindex(driveId: ID!): ReindexResult!
     """

@@ -117,6 +117,19 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
         }
         return [];
       },
+      // Degree fields are resolved per node on demand (one query each) so
+      // the common list queries stay one round-trip; select them only when
+      // you need them, as with `topics`.
+      inDegree: async (parent: { documentId: string; _driveId?: string }) => {
+        if (!parent._driveId) return 0;
+        const query = getQuery(subgraph, parent._driveId);
+        return query.knowledgeDegree(parent.documentId, "in");
+      },
+      outDegree: async (parent: { documentId: string; _driveId?: string }) => {
+        if (!parent._driveId) return 0;
+        const query = getQuery(subgraph, parent._driveId);
+        return query.knowledgeDegree(parent.documentId, "out");
+      },
     },
 
     Mutation: withCanonicalDriveIds(subgraph, {
@@ -210,6 +223,15 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
       ) => {
         const query = getQuery(subgraph, args.driveId);
         const nodes = await query.nodesByStatus(args.status);
+        return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
+      },
+
+      knowledgeGraphNodesByType: async (
+        _: unknown,
+        args: { driveId: string; documentType: string },
+      ) => {
+        const query = getQuery(subgraph, args.driveId);
+        const nodes = await query.nodesByDocumentType(args.documentType);
         return nodes.map((n) => ({ ...n, _driveId: args.driveId }));
       },
 
@@ -506,6 +528,7 @@ export const getResolvers = (subgraph: ISubgraph): Record<string, unknown> => {
               createdAt: r.created_at,
               topics: [],
               updatedAt: r.updated_at,
+              documentType: r.document_type,
               _driveId: args.driveId,
             })),
             rawEdges: rawEdges.map((r) => ({

@@ -1,15 +1,20 @@
 /**
- * Reindex mutation: backfill the graph index by reading all bai/knowledge-note
- * and bai/moc documents in the drive.
+ * Reindex mutation: backfill the graph index by reading every indexed
+ * document in the drive (see `processors/graph-indexer/project.ts` for the
+ * list) and rebuilding its projection row, topics and edges.
  */
 import type { Kysely } from "kysely";
 import type { ISubgraph } from "@powerhousedao/reactor-api";
 import { getWritableDb } from "./db.js";
 import type { DB } from "../../../processors/graph-indexer/schema.js";
 import {
+  INDEXED_LINK_TYPE_LIST,
   KNOWLEDGE_LINK_TYPES,
-  KNOWLEDGE_LINK_TYPE_LIST,
 } from "../../../processors/graph-indexer/link-types.js";
+import {
+  isIndexedDocumentType,
+  projectNode,
+} from "../../../processors/graph-indexer/project.js";
 import {
   collectRelationshipIds,
   type RelationshipPage,
@@ -30,7 +35,7 @@ type RecoveredEdge = {
 };
 
 /**
- * Drop rows that are not knowledge edges — in practice the reactor's
+ * Drop rows that are not indexed edges — in practice the reactor's
  * drive→document `child` containment relationships, which the processor
  * mirrored into `graph_edges` before it learned to filter them out.
  *
@@ -40,9 +45,12 @@ type RecoveredEdge = {
  * misleading, and they are pure dead weight (their source is the drive, which
  * never has a `graph_nodes` row, so they dangle by construction).
  *
- * NULL `link_type` is pruned too, matching `isKnowledgeLinkType` — an untyped
- * relationship is not a knowledge link. Written as `is null or not in (...)`
- * because a bare `not in` never matches a NULL.
+ * Keeps knowledge edges AND the derived `INVOLVES` / `PROMOTED_TO` rows the
+ * indexer reconciles from tension/observation state — those are the
+ * projection's own, not reactor bookkeeping. NULL `link_type` is pruned,
+ * matching `isIndexedLinkType` — an untyped relationship is not a knowledge
+ * link. Written as `is null or not in (...)` because a bare `not in` never
+ * matches a NULL.
  *
  * Returns the number of rows removed.
  */
@@ -52,7 +60,7 @@ export async function pruneNonKnowledgeEdges(db: Kysely<DB>): Promise<number> {
     .where((eb) =>
       eb.or([
         eb("link_type", "is", null),
-        eb.not(eb("link_type", "in", KNOWLEDGE_LINK_TYPE_LIST)),
+        eb.not(eb("link_type", "in", INDEXED_LINK_TYPE_LIST)),
       ]),
     )
     .executeTakeFirst();
@@ -98,10 +106,7 @@ export async function reindexDrive(
     ).global.nodes;
 
     const noteNodes = nodes.filter(
-      (n) =>
-        n.kind === "file" &&
-        (n.documentType === "bai/knowledge-note" ||
-          n.documentType === "bai/moc"),
+      (n) => n.kind === "file" && isIndexedDocumentType(n.documentType),
     );
 
     const db = await getWritableDb(subgraph, canonicalDriveId);
@@ -115,21 +120,6 @@ export async function reindexDrive(
         };
         const global = state.global;
 
-        const provenance = global.provenance as
-          | {
-              author?: string;
-              sourceOrigin?: string;
-              createdAt?: string;
-            }
-          | undefined;
-
-        // MoCs have `tier` (HUB/DOMAIN/TOPIC) and no `noteType` field;
-        // notes have `noteType` and no `tier`. Tag the projection's
-        // `note_type` accordingly so the frontend filter
-        // (`noteType.startsWith("MOC (")`) sees them. This mirrors
-        // the per-op processor logic in
-        // processors/graph-indexer/index.ts so reindexed and
-        // live-indexed rows look identical.
         // Mirror the processor: `updated_at` is the DOCUMENT's modification
         // time, never the indexer's wall clock. Stamping `now` here is what
         // flattened all 1,502 nodes to a single instant on every reindex,
@@ -137,46 +127,28 @@ export async function reindexDrive(
         const documentUpdatedAt =
           (doc as unknown as { header?: { lastModifiedAtUtcIso?: string } })
             .header?.lastModifiedAtUtcIso ?? now;
-        // Notes carry `createdAt` in provenance; MoCs carry it at the top
-        // level (which is why MoC rows had a null created_at). Read both,
-        // matching processors/graph-indexer/index.ts.
-        const documentCreatedAt =
-          (global.createdAt as string) ?? provenance?.createdAt ?? null;
 
-        const isMoc = node.documentType === "bai/moc";
-        const noteType = isMoc
-          ? `MOC (${(global.tier as string) ?? "TOPIC"})`
-          : ((global.noteType as string) ?? null);
-        const content = isMoc
-          ? ((global.orientation as string) ?? null)
-          : ((global.content as string) ?? null);
-        const status = isMoc ? "MOC" : ((global.status as string) ?? "DRAFT");
+        // One projection for every kind, shared with the live processor
+        // (processors/graph-indexer/project.ts) so reindexed and
+        // live-indexed rows are identical.
+        const documentType = node.documentType;
+        if (!isIndexedDocumentType(documentType)) continue;
+        const { topics, derivedEdges, ...row } = projectNode(
+          documentType,
+          global,
+        );
 
         await db
           .insertInto("graph_nodes")
           .values({
             id: node.id,
             document_id: node.id,
-            title: (global.title as string) ?? null,
-            description: (global.description as string) ?? null,
-            note_type: noteType,
-            status,
-            content,
-            author: provenance?.author ?? null,
-            source_origin: provenance?.sourceOrigin ?? null,
-            created_at: documentCreatedAt,
+            ...row,
             updated_at: documentUpdatedAt,
           })
           .onConflict((oc) =>
             oc.column("document_id").doUpdateSet({
-              title: (global.title as string) ?? null,
-              description: (global.description as string) ?? null,
-              note_type: noteType,
-              status,
-              content,
-              author: provenance?.author ?? null,
-              source_origin: provenance?.sourceOrigin ?? null,
-              created_at: documentCreatedAt,
+              ...row,
               updated_at: documentUpdatedAt,
             }),
           )
@@ -189,24 +161,16 @@ export async function reindexDrive(
           .where("document_id", "=", node.id)
           .execute();
 
-        const topics =
-          (global.topics as Array<string | Record<string, unknown>>) ?? [];
         if (topics.length > 0) {
           await db
             .insertInto("graph_topics")
             .values(
-              topics.map((topic, idx) => {
-                const name =
-                  typeof topic === "string"
-                    ? topic
-                    : ((topic.name as string) ?? "");
-                return {
-                  id: `${node.id}-topic-${idx}`,
-                  document_id: node.id,
-                  name,
-                  updated_at: documentUpdatedAt,
-                };
-              }),
+              topics.map((name, idx) => ({
+                id: `${node.id}-topic-${idx}`,
+                document_id: node.id,
+                name,
+                updated_at: documentUpdatedAt,
+              })),
             )
             .execute();
         }
@@ -234,6 +198,20 @@ export async function reindexDrive(
             updated_at: string;
           }
         >();
+
+        // Derived edges come from the document's own state, not from the
+        // relationship table — the same reconciliation the processor does.
+        for (const e of derivedEdges) {
+          const id = `${node.id}-${e.targetId}-${e.linkType}`;
+          edgeValues.set(id, {
+            id,
+            source_document_id: node.id,
+            target_document_id: e.targetId,
+            link_type: e.linkType,
+            target_title: null,
+            updated_at: documentUpdatedAt,
+          });
+        }
 
         // Fan out over exactly the knowledge types the projection indexes —
         // one definition, shared with the processor's write path and the

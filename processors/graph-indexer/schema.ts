@@ -10,6 +10,13 @@ export interface GraphNode {
   source_origin: string | null;
   created_at: string | null;
   updated_at: string;
+  /**
+   * The document's type — `bai/knowledge-note`, `bai/moc`, `bai/tension`,
+   * `bai/observation`, `bai/research-claim`. Nullable only because rows
+   * written before the column existed are backfilled by the migration from
+   * the MoC status sentinel; the processor always sets it.
+   */
+  document_type: string | null;
 }
 
 export interface GraphTopic {
@@ -39,6 +46,14 @@ export interface GraphOperation {
   input_json: string | null;
   signer_address: string | null;
   signer_app: string | null;
+  /** did:key of the app instance that signed the operation, if signed. */
+  signer_key: string | null;
+  /**
+   * The serialized signature tuple (`timestamp, did, hash, prevStateHash,
+   * sig`) exactly as the reactor stores it — enough for a reader to verify
+   * the operation without trusting this projection.
+   */
+  signature: string | null;
 }
 
 export interface NoteEmbedding {

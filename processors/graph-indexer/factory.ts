@@ -10,7 +10,9 @@ import type {
   ProcessorRecord,
 } from "@powerhousedao/reactor-browser";
 import type { PHDocumentHeader } from "document-model";
+import type { IReactorClient } from "@powerhousedao/reactor";
 import { GraphIndexerProcessor } from "./index.js";
+import { INDEXED_DOCUMENT_TYPES } from "./project.js";
 
 /** The drive-app whose drives this processor indexes and embeds. */
 const KNOWLEDGE_VAULT_APP = "knowledge-vault";
@@ -66,22 +68,40 @@ export const graphIndexerFactoryBuilder =
     // system actions dispatched in `document` scope. Without that scope in
     // the filter, our indexer is blind to every edge change and
     // graph_edges never updates.
+    //
+    // `documentType` is every kind the projection indexes (see project.ts)
+    // plus the drive document itself, whose DELETE_NODE is how a deleted
+    // document leaves the projection.
     const filter: ProcessorFilter = {
       branch: ["main"],
       documentId: ["*"],
-      documentType: [
-        "bai/knowledge-note",
-        "bai/moc",
-        "powerhouse/document-drive",
-      ],
+      documentType: [...INDEXED_DOCUMENT_TYPES, "powerhouse/document-drive"],
       scope: ["global", "document"],
     };
 
-    const processor = new GraphIndexerProcessor(namespace, filter, store);
+    // Derived-document automation runs on the Switchboard host only. The
+    // browser instance indexes for its own reads but must never write, or
+    // both hosts would open a tension for the same contradiction. `client`
+    // is typed on the host module; guard structurally anyway so an older
+    // host that lacks it degrades to read-only instead of throwing.
+    const client = (module as { client?: IReactorClient }).client;
+    const automate =
+      module.processorApp !== "connect" &&
+      typeof window === "undefined" &&
+      client !== undefined;
+
+    const processor = new GraphIndexerProcessor(namespace, filter, store, {
+      automation: automate
+        ? { driveId: driveHeader.id, client }
+        : undefined,
+    });
     await processor.initAndUpgrade();
 
     console.log(
-      `[GraphIndexer] Processor created for drive: ${driveHeader.id}`,
+      `[GraphIndexer] Processor created for drive: ${driveHeader.id}` +
+        (processor.automationEnabled
+          ? " (automation: CONTRADICTS → tension)"
+          : " (read-only)"),
     );
 
     return [

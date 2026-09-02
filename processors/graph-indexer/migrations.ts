@@ -1,4 +1,5 @@
 import type { IRelationalDb } from "@powerhousedao/shared/processors";
+import { sql } from "kysely";
 
 export async function up(db: IRelationalDb<any>): Promise<void> {
   await db.schema
@@ -123,7 +124,7 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     .execute();
 
   // Add signer columns to graph_operations (idempotent)
-  for (const col of ["signer_address", "signer_app"]) {
+  for (const col of ["signer_address", "signer_app", "signer_key"]) {
     try {
       await db.schema
         .alterTable("graph_operations")
@@ -133,6 +134,46 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
       // column likely already exists — ignore
     }
   }
+  // The full signature tuple. `text`, not varchar: a tuple is ~300 chars
+  // today and the format is the reactor's to grow.
+  try {
+    await db.schema
+      .alterTable("graph_operations")
+      .addColumn("signature", "text")
+      .execute();
+  } catch {
+    // column likely already exists — ignore
+  }
+
+  // --- Document kind ---
+  //
+  // `document_type` lets consumers separate knowledge (notes, MoCs, research
+  // claims) from the meta-documents indexed alongside them (tensions,
+  // observations). Rows that predate the column are backfilled from the only
+  // signal they carry: the MoC status sentinel. Everything else in a
+  // pre-existing projection was a knowledge note, because nothing else was
+  // indexed before this column existed.
+  try {
+    await db.schema
+      .alterTable("graph_nodes")
+      .addColumn("document_type", "varchar(100)")
+      .execute();
+  } catch {
+    // column likely already exists — ignore
+  }
+  await db
+    .updateTable("graph_nodes")
+    .set({
+      document_type: sql`case when status = 'MOC' then 'bai/moc' else 'bai/knowledge-note' end`,
+    })
+    .where("document_type", "is", null)
+    .execute();
+  await db.schema
+    .createIndex("idx_graph_nodes_document_type")
+    .on("graph_nodes")
+    .column("document_type")
+    .ifNotExists()
+    .execute();
 
   // Durable embedding store — replaces the separate memory:// PGlite that
   // lost every vector on restart. Lives in the same per-drive namespace as
