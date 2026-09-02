@@ -17,6 +17,7 @@ import {
   completeOAuthFromUrl,
   getStoredKey,
   storeKey,
+  takeInterruptedAttempt,
   validateKey,
 } from "../lib/chat/openrouter-auth.js";
 
@@ -196,6 +197,12 @@ export interface UseOpenRouter {
   isConnected: boolean;
   /** True while the post-redirect code exchange is in flight. */
   isCompletingOAuth: boolean;
+  /**
+   * Connect was started in this tab and the user came back without a code —
+   * typically after creating a new OpenRouter account, whose sign-up flow
+   * drops our callback. One more click will complete.
+   */
+  interruptedAttempt: boolean;
   model: string;
   models: ModelInfo[];
   modelsLoading: boolean;
@@ -223,6 +230,10 @@ export interface UseOpenRouter {
 export function useOpenRouter(): UseOpenRouter {
   const [key, setKey] = useState<string | null>(() => getStoredKey());
   const [isCompletingOAuth, setCompleting] = useState(false);
+  // Read once at mount; the flag is consumed by reading it.
+  const [interruptedAttempt] = useState(
+    () => !getStoredKey() && takeInterruptedAttempt(),
+  );
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [modelsLoading, setModelsLoading] = useState(false);
   const [stored, setStored] = useState<string | null>(() => readStoredModel());
@@ -304,6 +315,7 @@ export function useOpenRouter(): UseOpenRouter {
     key,
     isConnected: key !== null,
     isCompletingOAuth,
+    interruptedAttempt,
     model,
     models,
     modelsLoading,

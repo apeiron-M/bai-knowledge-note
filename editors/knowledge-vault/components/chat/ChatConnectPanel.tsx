@@ -1,4 +1,5 @@
 import { useRef, useState } from "react";
+import { SIGN_UP_URL } from "../../lib/chat/openrouter-auth.js";
 import { Spinner } from "../LoadingStates.js";
 import { LandingStage } from "./LandingStage.js";
 
@@ -12,12 +13,15 @@ import { LandingStage } from "./LandingStage.js";
 export function ChatConnectPanel({
   vaultName,
   busy,
+  interrupted = false,
   onConnect,
   onConnectWithKey,
 }: {
   vaultName: string;
   /** True while a redirect's code exchange is finishing. */
   busy: boolean;
+  /** The user started Connect and came back without finishing — see useOpenRouter. */
+  interrupted?: boolean;
   onConnect: () => void;
   onConnectWithKey: (key: string) => Promise<boolean>;
 }) {
@@ -53,7 +57,24 @@ export function ChatConnectPanel({
   }
 
   const tail = (
-    <div className="flex w-full max-w-md flex-col items-center pt-6">
+    <div className="flex w-full max-w-md flex-col items-center gap-3 pt-6">
+      <p
+        className="text-center text-xs leading-relaxed"
+        style={{ color: "var(--bai-text-muted)" }}
+      >
+        New to OpenRouter?{" "}
+        <a
+          href={SIGN_UP_URL}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="underline decoration-dotted underline-offset-4"
+          style={{ color: "var(--bai-text-secondary)" }}
+        >
+          Create an account
+        </a>{" "}
+        — it opens in a new tab, so this one stays put. Then come back and click
+        Connect.
+      </p>
       <button
         type="button"
         onClick={() => setShowKey((v) => !v)}
@@ -134,7 +155,24 @@ export function ChatConnectPanel({
           can never change anything in the vault.
         </p>
 
-        <div ref={anchorRef} className="mt-6">
+        {interrupted && (
+          <p
+            className="mt-5 max-w-sm rounded-lg px-3 py-2 text-xs leading-relaxed"
+            style={{
+              backgroundColor: "var(--bai-accent-soft)",
+              color: "var(--bai-text-secondary)",
+              border: "1px solid var(--bai-border)",
+            }}
+            role="status"
+          >
+            Looks like the sign-in didn&apos;t finish — that happens when you
+            create a new OpenRouter account along the way. You&apos;re signed in
+            now, so click <span className="font-semibold">Connect</span> once
+            more and you&apos;ll come straight back.
+          </p>
+        )}
+
+        <div ref={anchorRef} className={interrupted ? "mt-4" : "mt-6"}>
           <button
             type="button"
             onClick={onConnect}

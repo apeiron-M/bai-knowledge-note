@@ -8,6 +8,7 @@ import {
   pkceChallenge,
   readReturnIntent,
   storeKey,
+  takeInterruptedAttempt,
   validateKey,
 } from "./openrouter-auth.js";
 
@@ -163,5 +164,48 @@ describe("validateKey", () => {
     expect((init.headers as Record<string, string>).Authorization).toBe(
       "Bearer sk-test",
     );
+  });
+});
+
+describe("interrupted attempt", () => {
+  it("is not reported when no attempt was started", () => {
+    expect(takeInterruptedAttempt()).toBe(false);
+  });
+
+  it("is reported once when Connect was started but no code came back", async () => {
+    await beginOAuth({ driveId: "d1", draft: "" });
+    resetLocation("http://localhost:3000/app"); // user navigated back by hand, no ?code=
+    expect(takeInterruptedAttempt()).toBe(true);
+    expect(takeInterruptedAttempt()).toBe(false); // consumed
+  });
+
+  it("is cleared by a completed exchange, successful or not", async () => {
+    await beginOAuth({ driveId: "d1", draft: "" });
+    resetLocation("http://localhost:3000/app?code=abc");
+    globalThis.fetch = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ key: "sk-or-v1-x" }),
+    }) as unknown as typeof fetch;
+    await completeOAuthFromUrl();
+    expect(takeInterruptedAttempt()).toBe(false);
+
+    await beginOAuth({ driveId: "d1", draft: "" });
+    resetLocation("http://localhost:3000/app?code=abc");
+    globalThis.fetch = vi
+      .fn()
+      .mockResolvedValue({
+        ok: false,
+        json: () => Promise.resolve({}),
+      }) as unknown as typeof fetch;
+    await completeOAuthFromUrl();
+    expect(takeInterruptedAttempt()).toBe(false);
+  });
+
+  it("is not reported while a code is still in the URL (the exchange is about to run)", async () => {
+    await beginOAuth({ driveId: "d1", draft: "" });
+    resetLocation("http://localhost:3000/app?code=abc");
+    expect(takeInterruptedAttempt()).toBe(false);
+    // and the flag survives, so it can still be cleared by the exchange
+    expect(sessionStorage.getItem("bai-chat:oauth-pending:v1")).not.toBeNull();
   });
 });

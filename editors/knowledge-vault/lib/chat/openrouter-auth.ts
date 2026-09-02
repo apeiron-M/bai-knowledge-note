@@ -20,6 +20,10 @@ const KEY_PROBE_URL = "https://openrouter.ai/api/v1/key";
 const KEY_STORAGE = "bai-chat-credentials:v1";
 const VERIFIER_STORAGE = "bai-chat:pkce-verifier:v1";
 const RETURN_STORAGE = "bai-chat:oauth-return:v1";
+const PENDING_STORAGE = "bai-chat:oauth-pending:v1";
+
+/** Where a new user creates an account. Opened in a new tab — see below. */
+export const SIGN_UP_URL = "https://openrouter.ai/sign-up";
 
 export interface ReturnIntent {
   driveId: string;
@@ -52,6 +56,7 @@ export async function beginOAuth(intent: ReturnIntent): Promise<void> {
   const verifier = randomVerifier();
   sessionStorage.setItem(VERIFIER_STORAGE, verifier);
   sessionStorage.setItem(RETURN_STORAGE, JSON.stringify(intent));
+  sessionStorage.setItem(PENDING_STORAGE, "1");
 
   // The callback must be this exact page so the app remounts where it left.
   const callback = `${location.origin}${location.pathname}${location.search}`;
@@ -96,6 +101,9 @@ export async function completeOAuthFromUrl(): Promise<{ key: string } | null> {
   const code = new URL(location.href).searchParams.get("code");
   if (!code) return null;
 
+  // A code came back, so the attempt was not interrupted — whatever the
+  // exchange's outcome, the "did you get lost?" hint would be wrong.
+  sessionStorage.removeItem(PENDING_STORAGE);
   const verifier = sessionStorage.getItem(VERIFIER_STORAGE);
   sessionStorage.removeItem(VERIFIER_STORAGE);
   stripCodeFromUrl();
@@ -119,6 +127,27 @@ export async function completeOAuthFromUrl(): Promise<{ key: string } | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * True, once, if Connect was started in this tab and the user came back
+ * without a code.
+ *
+ * OpenRouter's login flow preserves our `/auth?callback_url=…` request, but
+ * its sign-up flow drops the query string, so a brand-new user finishes
+ * account creation logged in with nowhere to return to. They find their way
+ * back by hand. Rather than show them the untouched connect panel as if
+ * nothing happened, the panel can say what happened and that one more click
+ * will now complete — which it will, because they are logged in.
+ *
+ * Not reported while a code is in the URL: the exchange is about to run and
+ * will clear the flag itself.
+ */
+export function takeInterruptedAttempt(): boolean {
+  if (sessionStorage.getItem(PENDING_STORAGE) === null) return false;
+  if (new URL(location.href).searchParams.has("code")) return false;
+  sessionStorage.removeItem(PENDING_STORAGE);
+  return true;
 }
 
 export function getStoredKey(): string | null {

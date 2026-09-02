@@ -156,6 +156,7 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
         <ChatConnectPanel
           vaultName={vaultName}
           busy={or.isCompletingOAuth}
+          interrupted={or.interruptedAttempt}
           onConnect={() => void or.connect({ driveId, draft })}
           onConnectWithKey={or.connectWithKey}
         />
