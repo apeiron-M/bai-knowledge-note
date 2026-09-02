@@ -7,6 +7,7 @@ import {
   KNOWLEDGE_LINK_TYPE_LIST,
 } from "./link-types.js";
 import { KNOWLEDGE_NODE_TYPE_LIST } from "./project.js";
+import { parseEdgeMetadata, type EdgeConfidence } from "./edge-metadata.js";
 
 /**
  * `graph_edges` holds only knowledge edges going forward (the processor stopped
@@ -126,6 +127,12 @@ export interface GraphEdgeResult {
   linkType: string | null;
   targetTitle: string | null;
   updatedAt: string;
+  /** The articulation — why this edge exists. Null when never given. */
+  reason: string | null;
+  /** grounded | established | speculative, when the author said. */
+  confidence: EdgeConfidence | null;
+  /** The whole metadata object as stored, for anything beyond the two above. */
+  metadataJson: string | null;
 }
 
 export interface GraphStatsResult {
@@ -141,6 +148,11 @@ export interface GraphStatsResult {
   tensionCount: number;
   openTensionCount: number;
   observationCount: number;
+  /**
+   * Knowledge edges that carry a `reason` — the articulation test, in data.
+   * Divide by `edgeCount` for coverage; the health check reports the gap.
+   */
+  articulatedEdgeCount: number;
 }
 
 export interface ConnectionResult {
@@ -200,6 +212,7 @@ function rowToNode(row: GraphNode): GraphNodeResult {
 }
 
 function rowToEdge(row: GraphEdge): GraphEdgeResult {
+  const metadata = parseEdgeMetadata(row.metadata);
   return {
     id: row.id,
     sourceDocumentId: row.source_document_id,
@@ -207,6 +220,9 @@ function rowToEdge(row: GraphEdge): GraphEdgeResult {
     linkType: row.link_type,
     targetTitle: row.target_title,
     updatedAt: row.updated_at,
+    reason: metadata?.reason ?? null,
+    confidence: metadata?.confidence ?? null,
+    metadataJson: metadata ? row.metadata : null,
   };
 }
 
@@ -320,7 +336,15 @@ export function createGraphQuery(db: Kysely<DB>) {
       const edgeCountResult = await db
         .selectFrom("graph_edges")
         .where(isKnowledgeEdge)
-        .select(sql<number>`count(*)`.as("cnt"))
+        .select([
+          sql<number>`count(*)`.as("cnt"),
+          // A reason is the only metadata key that counts as articulation;
+          // the JSON test mirrors `parseEdgeMetadata` closely enough for a
+          // count (a blank reason is normalized away before it is stored).
+          sql<number>`count(*) filter (where metadata is not null and metadata like '%"reason":%')`.as(
+            "articulated",
+          ),
+        ])
         .executeTakeFirstOrThrow();
 
       // Orphans: knowledge nodes no knowledge edge points at.
@@ -357,6 +381,7 @@ export function createGraphQuery(db: Kysely<DB>) {
           byKind.find((r) => r.kind === "bai/tension")?.open_cnt ?? 0,
         ),
         observationCount: count("bai/observation"),
+        articulatedEdgeCount: Number(edgeCountResult.articulated),
       };
     },
 

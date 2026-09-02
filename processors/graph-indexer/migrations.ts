@@ -145,6 +145,20 @@ export async function up(db: IRelationalDb<any>): Promise<void> {
     // column likely already exists — ignore
   }
 
+  // --- Edge metadata ---
+  //
+  // The reactor stores an opaque jsonb per relationship; the vault reads
+  // `reason` / `confidence` out of it (edge-metadata.ts). Kept as text here
+  // so the projection has no dialect-specific column type.
+  try {
+    await db.schema
+      .alterTable("graph_edges")
+      .addColumn("metadata", "text")
+      .execute();
+  } catch {
+    // column likely already exists — ignore
+  }
+
   // --- Document kind ---
   //
   // `document_type` lets consumers separate knowledge (notes, MoCs, research

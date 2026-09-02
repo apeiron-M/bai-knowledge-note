@@ -180,7 +180,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "linked_notes",
       description:
-        "Explicit graph links of a note in both directions: what it links to (outgoing) and what links to it (incoming), each with the link type (RELATES_TO, BUILDS_ON, CONTRADICTS, SUPERSEDES, DERIVED_FROM, CORE_IDEA, CHILD_MOC). Use to follow an argument, find contradictions, or see which map of content owns a note.",
+        "Explicit graph links of a note in both directions: what it links to (outgoing) and what links to it (incoming), each with the link type (RELATES_TO, BUILDS_ON, CONTRADICTS, SUPERSEDES, DERIVED_FROM, CORE_IDEA, CHILD_MOC) and, when the author recorded one, the `reason` the link exists and a `confidence` (grounded, established, speculative). Use to follow an argument, find contradictions, or see which map of content owns a note.",
       parameters: {
         type: "object",
         properties: { documentId: { type: "string" } },
@@ -538,21 +538,32 @@ export async function executeTool(
           targetDocumentId: string;
           linkType: string | null;
           targetTitle: string | null;
+          reason: string | null;
+          confidence: string | null;
         }[];
-        inc: { sourceDocumentId: string; linkType: string | null }[];
+        inc: {
+          sourceDocumentId: string;
+          linkType: string | null;
+          reason: string | null;
+          confidence: string | null;
+        }[];
       }>(
         graphEndpoint(),
         `query L($driveId: ID!, $documentId: String!) {
-          out: knowledgeGraphForwardLinks(driveId: $driveId, documentId: $documentId) { targetDocumentId linkType targetTitle }
-          inc: knowledgeGraphBacklinks(driveId: $driveId, documentId: $documentId) { sourceDocumentId linkType }
+          out: knowledgeGraphForwardLinks(driveId: $driveId, documentId: $documentId) { targetDocumentId linkType targetTitle reason confidence }
+          inc: knowledgeGraphBacklinks(driveId: $driveId, documentId: $documentId) { sourceDocumentId linkType reason confidence }
         }`,
         { driveId, documentId },
       );
       if ("error" in r) return fail(r.error);
+      // `reason` is the edge's articulation — why the link exists — read
+      // from relationship metadata. Null means nobody has said yet.
       const outgoing = r.data.out.slice(0, LIMITS.links).map((e) => ({
         documentId: e.targetDocumentId,
         title: e.targetTitle,
         linkType: e.linkType,
+        reason: e.reason,
+        confidence: e.confidence,
       }));
       const incomingEdges = r.data.inc.slice(0, LIMITS.links);
 
@@ -582,6 +593,8 @@ export async function executeTool(
         documentId: e.sourceDocumentId,
         title: titles[`n${i}`]?.title ?? null,
         linkType: e.linkType,
+        reason: e.reason,
+        confidence: e.confidence,
       }));
       return ok(
         { outgoing, incoming },

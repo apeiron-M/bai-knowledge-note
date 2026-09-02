@@ -9,6 +9,10 @@ import {
 import { StatusBar } from "./components/status-bar.js";
 import { TopicsBar } from "./components/topics-bar.js";
 import { LinksSection } from "./components/links-section.js";
+import {
+  articulationToMetadata,
+  isEdgeConfidence,
+} from "../shared/edge-articulation.js";
 import { ProvenanceInfo } from "./components/provenance-info.js";
 import { LifecycleTimeline } from "./components/lifecycle-timeline.js";
 import { RevisionHistory } from "./components/revision-history.js";
@@ -22,6 +26,8 @@ type NoteLinkLite = {
   targetDocumentId: string | null;
   targetTitle: string | null;
   linkType: string | null;
+  reason: string | null;
+  confidence: string | null;
 };
 
 const NOTE_TYPES = [
@@ -398,11 +404,19 @@ export default function Editor() {
               <LinksSection
                 links={links}
                 currentDocId={document.header.id}
-                onAddLink={(_id, targetDocumentId, _targetTitle, linkType) => {
+                onAddLink={(
+                  _id,
+                  targetDocumentId,
+                  _targetTitle,
+                  linkType,
+                  articulation,
+                ) => {
                   // ADD_RELATIONSHIP is a reactor system action (scope:
                   // "document") on the SOURCE document. The reactor
-                  // writes one row to DocumentRelationship and the
-                  // graph-indexer mirrors it into graph_edges.
+                  // writes one row to DocumentRelationship — with the
+                  // articulation as its `metadata` — and the
+                  // graph-indexer mirrors both into graph_edges.
+                  const metadata = articulationToMetadata(articulation);
                   void dispatchActions(
                     [
                       {
@@ -414,6 +428,30 @@ export default function Editor() {
                           sourceId: document.header.id,
                           targetId: targetDocumentId,
                           relationshipType: linkType,
+                          ...(metadata ? { metadata } : {}),
+                        },
+                      } as never,
+                    ],
+                    document.header.id,
+                  );
+                }}
+                onArticulate={(id, articulation) => {
+                  // UPDATE_RELATIONSHIP replaces the edge's metadata in
+                  // place, keeping its createdAt ordering.
+                  const link = links.find((l) => l.id === id);
+                  if (!link?.targetDocumentId) return;
+                  void dispatchActions(
+                    [
+                      {
+                        id: generateId(),
+                        type: "UPDATE_RELATIONSHIP",
+                        scope: "document",
+                        timestampUtcMs: timestamp(),
+                        input: {
+                          sourceId: document.header.id,
+                          targetId: link.targetDocumentId,
+                          relationshipType: link.linkType ?? "RELATES_TO",
+                          metadata: articulationToMetadata(articulation) ?? null,
                         },
                       } as never,
                     ],
@@ -444,10 +482,19 @@ export default function Editor() {
                   );
                 }}
                 onUpdateLinkType={(id, linkType) => {
-                  // No native UPDATE_RELATIONSHIP — emulate as remove + add.
+                  // The type is part of the relationship's identity
+                  // (source, target, type), so a type change is remove +
+                  // add. UPDATE_RELATIONSHIP only touches metadata. The
+                  // articulation travels with the pair.
                   const link = links.find((l) => l.id === id);
                   if (!link?.targetDocumentId) return;
                   const now = timestamp();
+                  const metadata = articulationToMetadata({
+                    reason: link.reason ?? "",
+                    confidence: isEdgeConfidence(link.confidence)
+                      ? link.confidence
+                      : null,
+                  });
                   void dispatchActions(
                     [
                       {
@@ -470,6 +517,7 @@ export default function Editor() {
                           sourceId: document.header.id,
                           targetId: link.targetDocumentId,
                           relationshipType: linkType,
+                          ...(metadata ? { metadata } : {}),
                         },
                       } as never,
                     ],

@@ -174,7 +174,21 @@ export function VaultSidebar({
       selectedId,
       ...graphFocus.focusedIds.filter((id) => id !== selectedId),
     ];
+    // The edge between the selected note and a neighbour, either
+    // direction, with its articulation when one was recorded — so the
+    // list says not just WHAT is connected but WHY.
+    const selectedNote = noteMap.get(selectedId);
+    const edgeTo = (
+      id: string,
+    ): { linkType: string | null; reason: string | null; direction: "out" | "in" } | null => {
+      const out = selectedNote?.links.find((l) => l.targetDocumentId === id);
+      if (out) return { linkType: out.linkType, reason: out.reason, direction: "out" };
+      const back = noteMap.get(id)?.links.find((l) => l.targetDocumentId === selectedId);
+      if (back) return { linkType: back.linkType, reason: back.reason, direction: "in" };
+      return null;
+    };
     return ordered.map((id) => {
+      const edge = id === selectedId ? null : edgeTo(id);
       const note = noteMap.get(id);
       if (note) {
         return {
@@ -184,6 +198,7 @@ export function VaultSidebar({
           meta: note.noteType,
           topics: note.topics,
           isSelected: id === selectedId,
+          edge,
         };
       }
       const moc = mocMap.get(id);
@@ -195,6 +210,7 @@ export function VaultSidebar({
           meta: moc.tier,
           topics: [] as { id: string; name: string }[],
           isSelected: id === selectedId,
+          edge,
         };
       }
       return {
@@ -204,6 +220,7 @@ export function VaultSidebar({
         meta: null as string | null,
         topics: [] as { id: string; name: string }[],
         isSelected: id === selectedId,
+        edge,
       };
     });
   }, [graphFocus, noteMap, mocMap]);
@@ -464,7 +481,32 @@ export function VaultSidebar({
                       #{t.name}
                     </span>
                   ))}
+                  {item.edge && (
+                    <span
+                      className="ml-auto shrink-0 text-[10px]"
+                      style={{ color: "var(--bai-text-faint)" }}
+                      title={
+                        item.edge.direction === "out"
+                          ? `${selectedConnectionTitle} → ${item.title}`
+                          : `${item.title} → ${selectedConnectionTitle}`
+                      }
+                    >
+                      {item.edge.direction === "out" ? "→ " : "← "}
+                      {(item.edge.linkType ?? "linked")
+                        .replace(/_/g, " ")
+                        .toLowerCase()}
+                    </span>
+                  )}
                 </div>
+                {item.edge?.reason && (
+                  <span
+                    className="line-clamp-2 text-[10px] italic leading-snug"
+                    style={{ color: "var(--bai-text-faint)" }}
+                    title={item.edge.reason}
+                  >
+                    {item.edge.reason}
+                  </span>
+                )}
               </button>
             ))}
           </div>

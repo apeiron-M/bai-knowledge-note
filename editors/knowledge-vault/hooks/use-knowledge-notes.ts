@@ -21,6 +21,8 @@ export type KnowledgeNoteInfo = {
     targetDocumentId: string | null;
     targetTitle: string | null;
     linkType: string | null;
+    reason: string | null;
+    confidence: string | null;
   }[];
   provenance: {
     author: string | null;
@@ -99,6 +101,8 @@ export function useKnowledgeNotes(): UseKnowledgeNotesResult {
         targetDocumentId: e.targetDocumentId,
         targetTitle: e.targetTitle,
         linkType: e.linkType,
+        reason: e.reason,
+        confidence: e.confidence,
       });
     }
     return map;

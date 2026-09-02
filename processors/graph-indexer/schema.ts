@@ -33,6 +33,12 @@ export interface GraphEdge {
   link_type: string | null;
   target_title: string | null;
   updated_at: string;
+  /**
+   * The reactor's `DocumentRelationship.metadata`, serialized — see
+   * `edge-metadata.ts` for the shape the vault gives it (`reason`,
+   * `confidence`). Null for edges that were never articulated.
+   */
+  metadata: string | null;
 }
 
 export interface GraphOperation {

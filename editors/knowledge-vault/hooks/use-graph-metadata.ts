@@ -85,6 +85,10 @@ export type GraphEdgeMetadata = {
   targetDocumentId: string;
   linkType: string | null;
   targetTitle: string | null;
+  /** Why the edge exists — the articulation, from relationship metadata. */
+  reason: string | null;
+  /** grounded | established | speculative, when given. */
+  confidence: string | null;
 };
 
 /**
@@ -148,6 +152,8 @@ const NODES_QUERY = `
       targetDocumentId
       linkType
       targetTitle
+      reason
+      confidence
     }
   }
 `;

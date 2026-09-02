@@ -28,6 +28,8 @@ type PersistedGraphState = {
     sourceDocumentId: string;
     targetDocumentId: string;
     linkType?: string | null;
+    /** The edge's articulation, when recorded. */
+    reason?: string | null;
   }[];
   lastSyncedAt?: string | null;
 } | null;
@@ -54,7 +56,13 @@ type NodeDetail = {
   description: string | null;
   topics: { id: string; name: string }[];
   linkCount: number;
-  neighbors: { id: string; label: string; edgeType: string | null }[];
+  neighbors: {
+    id: string;
+    label: string;
+    edgeType: string | null;
+    /** Why the two notes connect, from the edge's metadata. */
+    reason: string | null;
+  }[];
 };
 
 /* ------------------------------------------------------------------ */
@@ -204,6 +212,7 @@ function buildElements(
           source: edge.sourceDocumentId,
           target: edge.targetDocumentId,
           linkType: edge.linkType ?? null,
+          reason: edge.reason ?? null,
           crossCluster: isCrossCluster(
             edge.sourceDocumentId,
             edge.targetDocumentId,
@@ -218,6 +227,7 @@ function buildElements(
       source: string;
       target: string;
       linkType: string | null;
+      reason: string | null;
     }[] = [];
 
     for (const note of notes) {
@@ -227,6 +237,7 @@ function buildElements(
             source: note.id,
             target: link.targetDocumentId,
             linkType: link.linkType,
+            reason: link.reason,
           });
         }
       }
@@ -262,6 +273,7 @@ function buildElements(
           source: edge.source,
           target: edge.target,
           linkType: edge.linkType ?? null,
+          reason: edge.reason,
           crossCluster: isCrossCluster(edge.source, edge.target),
           color: LINK_TYPE_COLORS[edge.linkType ?? ""] ?? DEFAULT_EDGE_COLOR,
         },
@@ -786,12 +798,16 @@ export function GraphView({
           (e.source().id() === nodeId && e.target().id() === n.id()) ||
           (e.target().id() === nodeId && e.source().id() === n.id()),
       );
+      const reasonData: unknown = connectingEdge.length
+        ? connectingEdge.first().data("reason")
+        : null;
       neighbors.push({
         id: n.id(),
         label: String(n.data("label") ?? ""),
         edgeType: connectingEdge.length
           ? String(connectingEdge.first().data("linkType") ?? "") || null
           : null,
+        reason: typeof reasonData === "string" && reasonData ? reasonData : null,
       });
     });
 
@@ -1503,28 +1519,39 @@ export function GraphView({
                     key={neighbor.id}
                     type="button"
                     onClick={() => handleFocusNode(neighbor.id)}
-                    className="flex w-full items-center gap-2 rounded px-2 py-1 text-left text-xs transition-colors"
+                    className="flex w-full flex-col gap-0.5 rounded px-2 py-1 text-left text-xs transition-colors"
                     style={{ color: "var(--bai-text-secondary)" }}
+                    title={neighbor.reason ?? undefined}
                   >
-                    <span
-                      className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
-                      style={{
-                        backgroundColor:
-                          LINK_TYPE_COLORS[neighbor.edgeType ?? ""] ??
-                          DEFAULT_EDGE_COLOR,
-                      }}
-                    />
-                    <span className="min-w-0 flex-1 truncate">
-                      {neighbor.label}
+                    <span className="flex w-full items-center gap-2">
+                      <span
+                        className="h-1.5 w-1.5 flex-shrink-0 rounded-full"
+                        style={{
+                          backgroundColor:
+                            LINK_TYPE_COLORS[neighbor.edgeType ?? ""] ??
+                            DEFAULT_EDGE_COLOR,
+                        }}
+                      />
+                      <span className="min-w-0 flex-1 truncate">
+                        {neighbor.label}
+                      </span>
+                      <span
+                        className="flex-shrink-0 text-[9px]"
+                        style={{ color: "var(--bai-text-faint)" }}
+                      >
+                        {(neighbor.edgeType ?? "untyped")
+                          .replace(/_/g, " ")
+                          .toLowerCase()}
+                      </span>
                     </span>
-                    <span
-                      className="flex-shrink-0 text-[9px]"
-                      style={{ color: "var(--bai-text-faint)" }}
-                    >
-                      {(neighbor.edgeType ?? "untyped")
-                        .replace(/_/g, " ")
-                        .toLowerCase()}
-                    </span>
+                    {neighbor.reason && (
+                      <span
+                        className="line-clamp-2 pl-3.5 text-[10px] italic leading-snug"
+                        style={{ color: "var(--bai-text-faint)" }}
+                      >
+                        {neighbor.reason}
+                      </span>
+                    )}
                   </button>
                 ))}
               </div>

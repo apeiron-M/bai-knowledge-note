@@ -39,6 +39,16 @@ export const schema: DocumentNode = gql`
     linkType: String
     targetTitle: String
     updatedAt: String!
+    """
+    Why this edge exists — the articulation test in data. Set through the
+    relationship's metadata (ADD_RELATIONSHIP / UPDATE_RELATIONSHIP with
+    { reason, confidence }); null for edges never articulated.
+    """
+    reason: String
+    """grounded | established | speculative — the author's confidence in the link."""
+    confidence: String
+    """The full relationship metadata object as stored, serialized."""
+    metadataJson: String
   }
 
   type GraphStats {
@@ -54,6 +64,8 @@ export const schema: DocumentNode = gql`
     tensionCount: Int!
     openTensionCount: Int!
     observationCount: Int!
+    """Knowledge edges carrying a reason. Coverage = this / edgeCount."""
+    articulatedEdgeCount: Int!
   }
 
   type ConnectionResult {

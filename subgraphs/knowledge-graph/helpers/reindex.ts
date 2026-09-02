@@ -19,6 +19,11 @@ import {
   collectRelationshipIds,
   type RelationshipPage,
 } from "./relationship-paging.js";
+import {
+  documentIndexerOf,
+  readIncomingMetadata,
+  readOutgoingMetadata,
+} from "./edge-metadata-reader.js";
 
 // Source-of-truth for edges since the drive-override migration. ADD_LINK /
 // ADD_CORE_IDEA / ADD_CHILD_MOC are gone; edges live in the reactor's
@@ -32,6 +37,7 @@ type RecoveredEdge = {
   link_type: string | null;
   target_title: string | null;
   updated_at: string;
+  metadata: string | null;
 };
 
 /**
@@ -80,6 +86,13 @@ export async function reindexDrive(
   // Edge ids written by pass 1, so pass 2 counts only what pass 1 could
   // not reach — a target-side read re-derives edges pass 1 already wrote.
   const writtenEdgeIds = new Set<string>();
+  // Edge metadata (the articulation) the projection already held before
+  // pass 1 deleted the rows. The fallback when the reactor's relationship
+  // rows cannot be read from here — a reindex must never erase a reason.
+  const preservedMetadata = new Map<string, string>();
+  // The reactor's document indexer, when this is the in-process client.
+  // It is the only place relationship metadata can be read from.
+  const indexer = documentIndexerOf(subgraph.reactorClient);
 
   try {
     const drive = await subgraph.reactorClient.get(driveId);
@@ -182,22 +195,38 @@ export async function reindexDrive(
         // but for a backfill we need to read existing rows directly. The
         // GraphQL field requires a specific `relationshipType`, so we fan
         // out per known type.
+        const existing = await db
+          .selectFrom("graph_edges")
+          .select(["id", "metadata"])
+          .where("source_document_id", "=", node.id)
+          .where("metadata", "is not", null)
+          .execute();
+        for (const row of existing) {
+          if (row.metadata) preservedMetadata.set(row.id, row.metadata);
+        }
+        let freshMetadata = new Map<string, string>();
+        if (indexer) {
+          try {
+            freshMetadata = await readOutgoingMetadata(
+              indexer,
+              node.id,
+              KNOWLEDGE_LINK_TYPES,
+            );
+          } catch (err) {
+            errors.push(
+              `${node.id}: relationship metadata unreadable (${err instanceof Error ? err.message : String(err)}); kept existing`,
+            );
+          }
+        }
+        const metadataFor = (id: string) =>
+          freshMetadata.get(id) ?? preservedMetadata.get(id) ?? null;
+
         await db
           .deleteFrom("graph_edges")
           .where("source_document_id", "=", node.id)
           .execute();
 
-        const edgeValues = new Map<
-          string,
-          {
-            id: string;
-            source_document_id: string;
-            target_document_id: string;
-            link_type: string | null;
-            target_title: string | null;
-            updated_at: string;
-          }
-        >();
+        const edgeValues = new Map<string, RecoveredEdge>();
 
         // Derived edges come from the document's own state, not from the
         // relationship table — the same reconciliation the processor does.
@@ -210,6 +239,7 @@ export async function reindexDrive(
             link_type: e.linkType,
             target_title: null,
             updated_at: documentUpdatedAt,
+            metadata: null,
           });
         }
 
@@ -239,13 +269,15 @@ export async function reindexDrive(
             // target side, where the fan-out is small.
             if (saturated) saturatedTypes.add(relType);
             for (const targetId of ids) {
-              edgeValues.set(`${node.id}-${targetId}-${relType}`, {
-                id: `${node.id}-${targetId}-${relType}`,
+              const id = `${node.id}-${targetId}-${relType}`;
+              edgeValues.set(id, {
+                id,
                 source_document_id: node.id,
                 target_document_id: targetId,
                 link_type: relType,
                 target_title: null,
                 updated_at: now,
+                metadata: metadataFor(id),
               });
             }
           } catch {
@@ -262,6 +294,7 @@ export async function reindexDrive(
               oc.column("id").doUpdateSet({
                 link_type: (eb) => eb.ref("excluded.link_type"),
                 updated_at: (eb) => eb.ref("excluded.updated_at"),
+                metadata: (eb) => eb.ref("excluded.metadata"),
               }),
             )
             .execute();
@@ -290,6 +323,20 @@ export async function reindexDrive(
       const recovered = new Map<string, RecoveredEdge>();
 
       for (const node of noteNodes) {
+        // Target-side metadata for this node, one walk for all saturated
+        // types; falls back to what pass 1 preserved.
+        let incomingMetadata = new Map<string, string>();
+        if (indexer) {
+          try {
+            incomingMetadata = await readIncomingMetadata(
+              indexer,
+              node.id,
+              [...saturatedTypes],
+            );
+          } catch {
+            // preserved metadata below still applies
+          }
+        }
         for (const relType of saturatedTypes) {
           try {
             const { ids, saturated } = await collectRelationshipIds(
@@ -313,13 +360,16 @@ export async function reindexDrive(
               // pass 1 — an edge from a document with no graph_nodes row
               // would dangle.
               if (!indexedIds.has(sourceId)) continue;
-              recovered.set(`${sourceId}-${node.id}-${relType}`, {
-                id: `${sourceId}-${node.id}-${relType}`,
+              const id = `${sourceId}-${node.id}-${relType}`;
+              recovered.set(id, {
+                id,
                 source_document_id: sourceId,
                 target_document_id: node.id,
                 link_type: relType,
                 target_title: null,
                 updated_at: now,
+                metadata:
+                  incomingMetadata.get(id) ?? preservedMetadata.get(id) ?? null,
               });
             }
           } catch {
@@ -338,6 +388,10 @@ export async function reindexDrive(
               oc.column("id").doUpdateSet({
                 link_type: (eb) => eb.ref("excluded.link_type"),
                 updated_at: (eb) => eb.ref("excluded.updated_at"),
+                // Pass 1 may have written this row with metadata already;
+                // never replace a reason with nothing.
+                metadata: (eb) =>
+                  eb.fn.coalesce("excluded.metadata", "graph_edges.metadata"),
               }),
             )
             .execute();

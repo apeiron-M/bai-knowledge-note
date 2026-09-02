@@ -20,6 +20,10 @@ import {
   type TensionAutomationDeps,
 } from "./automation.js";
 import { DriveMembership, type DriveMembershipDeps } from "./membership.js";
+import {
+  normalizeEdgeMetadata,
+  serializeEdgeMetadata,
+} from "./edge-metadata.js";
 
 /**
  * Embedding is SERVER-only. This processor also runs inside Connect's
@@ -354,6 +358,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           sourceId: string;
           targetId: string;
           relationshipType?: string;
+          metadata?: unknown;
         };
         if (!(await this.isOurs(input.sourceId))) continue;
         await this.applyAddRelationship(input);
@@ -387,6 +392,19 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         };
         if (!(await this.isOurs(input.sourceId))) continue;
         await this.applyRemoveRelationship(input);
+        continue;
+      }
+      // Articulation after the fact: the reactor's UPDATE_RELATIONSHIP
+      // replaces an edge's metadata without touching its ordering.
+      if (operation.action.type === "UPDATE_RELATIONSHIP") {
+        const input = operation.action.input as {
+          sourceId: string;
+          targetId: string;
+          relationshipType?: string;
+          metadata?: unknown;
+        };
+        if (!(await this.isOurs(input.sourceId))) continue;
+        await this.applyUpdateRelationship(input, operation.timestampUtcMs);
         continue;
       }
 
@@ -599,12 +617,14 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     sourceId: string;
     targetId: string;
     relationshipType?: string;
+    metadata?: unknown;
   }): Promise<void> {
     if (!input.sourceId || !input.targetId) return;
     const relType = input.relationshipType ?? null;
     if (!isIndexedLinkType(relType)) return;
     const now = new Date().toISOString();
     const edgeId = `${input.sourceId}-${input.targetId}-${relType}`;
+    const metadata = serializeEdgeMetadata(normalizeEdgeMetadata(input.metadata));
 
     let targetTitle: string | null = null;
     try {
@@ -627,14 +647,42 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         link_type: relType,
         target_title: targetTitle,
         updated_at: now,
+        metadata,
       })
       .onConflict((oc) =>
         oc.column("id").doUpdateSet({
           link_type: (eb) => eb.ref("excluded.link_type"),
           target_title: (eb) => eb.ref("excluded.target_title"),
           updated_at: (eb) => eb.ref("excluded.updated_at"),
+          // Mirror the reactor: a repeated ADD is a no-op for metadata,
+          // UPDATE_RELATIONSHIP is how it changes. A row that has none yet
+          // (pre-metadata projection) takes what the replay offers.
+          metadata: (eb) =>
+            eb.fn.coalesce("graph_edges.metadata", eb.ref("excluded.metadata")),
         }),
       )
+      .execute();
+  }
+
+  private async applyUpdateRelationship(
+    input: {
+      sourceId: string;
+      targetId: string;
+      relationshipType?: string;
+      metadata?: unknown;
+    },
+    timestampUtcMs: string | undefined,
+  ): Promise<void> {
+    if (!input.sourceId || !input.targetId) return;
+    const relType = input.relationshipType ?? null;
+    if (!isIndexedLinkType(relType)) return;
+    await this.relationalDb
+      .updateTable("graph_edges")
+      .set({
+        metadata: serializeEdgeMetadata(normalizeEdgeMetadata(input.metadata)),
+        updated_at: timestampUtcMs ?? new Date().toISOString(),
+      })
+      .where("id", "=", `${input.sourceId}-${input.targetId}-${relType}`)
       .execute();
   }
 
