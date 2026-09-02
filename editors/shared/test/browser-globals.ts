@@ -4,7 +4,8 @@
  * The repo has no DOM test environment installed (neither jsdom nor
  * happy-dom), and pulling one in for four globals is not worth a dependency.
  * These stubs implement exactly the surface the vault's browser-side modules
- * use: Web Storage, a mutable `location`, and `history.replaceState`.
+ * use: Web Storage, a mutable `location`, `history.replaceState`, and a
+ * `window` that can dispatch and listen for events.
  *
  * Import for side effects at the top of a test file:
  *   import "../../shared/test/browser-globals.js";
@@ -81,6 +82,16 @@ define("localStorage", new MemoryStorage());
 define("sessionStorage", new MemoryStorage());
 define("location", location);
 define("history", history);
+
+// `window` as an event target only — enough for modules that broadcast on
+// it (`shared/vault-live.ts`) and for `typeof window === "undefined"` gates
+// to take the browser branch. Node ships `EventTarget` and `CustomEvent`.
+if (typeof (globalThis as { window?: unknown }).window === "undefined") {
+  define(
+    "window",
+    Object.assign(new EventTarget(), { location, history }),
+  );
+}
 
 /** Reset the URL between tests. */
 export function resetLocation(url = "http://localhost:3000/app"): void {

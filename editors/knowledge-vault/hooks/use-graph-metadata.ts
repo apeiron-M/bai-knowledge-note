@@ -54,6 +54,11 @@ import {
   resolveKnowledgeGraphEndpoint,
   resolveReactorEndpoint,
 } from "./subgraph-endpoint.js";
+import {
+  debounced,
+  isVaultLive,
+  onVaultRemoteChange,
+} from "../../shared/vault-live.js";
 
 export type GraphNodeMetadata = {
   documentId: string;
@@ -66,6 +71,12 @@ export type GraphNodeMetadata = {
   sourceOrigin: string | null;
   createdAt: string | null;
   updatedAt: string | null;
+  /**
+   * `bai/knowledge-note`, `bai/moc`, `bai/tension`, `bai/observation`,
+   * `bai/research-claim`. Undefined only from a snapshot cached before the
+   * field existed; treat as a knowledge note.
+   */
+  documentType?: string | null;
 };
 
 export type GraphEdgeMetadata = {
@@ -129,6 +140,7 @@ const NODES_QUERY = `
       sourceOrigin
       createdAt
       updatedAt
+      documentType
     }
     knowledgeGraphEdges(driveId: $driveId) {
       id
@@ -454,13 +466,44 @@ export function useGraphMetadata(): GraphMetadata {
   // via GraphQL) without any browser event and without the file count
   // moving — a graph edge added by an agent would otherwise be invisible
   // until a manual reload. Visibility-gated so background tabs stay quiet.
+  // While the live change feed is connected (see `useRemoteFirst` step 5)
+  // the pushed events below drive refetches and this poll backs off to a
+  // five-minute safety net.
   useEffect(() => {
+    let lastPollAt = Date.now();
     const interval = setInterval(() => {
       if (typeof document !== "undefined" && document.visibilityState !== "visible") return;
+      if (isVaultLive() && Date.now() - lastPollAt < 5 * 60_000) return;
+      lastPollAt = Date.now();
       setRefetchKey((k) => k + 1);
     }, 60_000);
     return () => clearInterval(interval);
   }, []);
+
+  // Live refresh: any change to a document this projection indexes, or to
+  // the drive tree, refetches — coalesced, because an agent's `docs apply`
+  // lands several operations within milliseconds and the indexer updates
+  // the projection a beat after the reactor commits.
+  useEffect(() => {
+    if (!driveId) return;
+    const refetchSoon = debounced(() => setRefetchKey((k) => k + 1), 1_500);
+    return onVaultRemoteChange((change) => {
+      if (change.driveId !== driveId) return;
+      const touchesProjection = change.documents.some((d) => {
+        const t = d.documentType ?? "";
+        return (
+          t === "bai/knowledge-note" ||
+          t === "bai/moc" ||
+          t === "bai/tension" ||
+          t === "bai/observation" ||
+          t === "bai/research-claim" ||
+          // Before the drive snapshot exists the type may be unknown.
+          t === ""
+        );
+      });
+      if (touchesProjection || change.structural) refetchSoon();
+    });
+  }, [driveId]);
 
   // Debounced count-driven refetch: when fileNodes.length changes (new
   // docs landed), bump the refetch key after 1.5s of stability.

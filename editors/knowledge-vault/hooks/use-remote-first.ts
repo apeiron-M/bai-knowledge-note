@@ -31,20 +31,43 @@
  *  4. Keep the selected document fresh: agents write to the vault
  *     server-side and those writes fire no browser event, so an open
  *     document's cache entry is refetched on an interval.
+ *
+ *  5. Listen. The Switchboard pushes every document change over a
+ *     `documentChanges` WebSocket subscription. One socket per selected
+ *     drive: an event about a document in this drive revalidates its
+ *     cache entry (if held), re-hydrates the tree when the change was
+ *     structural, and is re-broadcast on the `vault:remote-change` bus
+ *     for the sidebar and any other listener. While the socket is up the
+ *     polls in 3 and 4 back off to a slow safety-net cadence; the moment
+ *     it drops they resume, so a dead socket can never freeze the UI.
+ *
+ *     The subscription is a firehose by design — the server's `search`
+ *     filter matches `parentId` only on structural events and would drop
+ *     every UPDATE — so membership is decided here, against the hydrated
+ *     drive snapshot.
  */
 import { useEffect, useRef } from "react";
 import {
   DriveCollectionId,
   setDrives,
+  subscriptionsUrlFromGraphqlUrl,
   useDrives,
   useSelectedDrive,
   useSelectedNode,
   useSync,
 } from "@powerhousedao/reactor-browser";
 import type { IDocumentCache } from "@powerhousedao/reactor-browser";
+import { createClient as createWsClient } from "graphql-ws";
 import { resolveReactorEndpoint } from "./subgraph-endpoint.js";
 import { enableRemoteFirst, withTransientRetry } from "../lib/remote-first.js";
 import { registerVaultHydrator } from "../../shared/vault-pull.js";
+import {
+  announceVaultRemoteChange,
+  isStructuralChange,
+  isVaultLive,
+  setVaultLive,
+  type VaultRemoteChangeType,
+} from "../../shared/vault-live.js";
 
 /**
  * Re-exported from `shared/vault-pull.ts`, where the registration slot
@@ -53,15 +76,41 @@ import { registerVaultHydrator } from "../../shared/vault-pull.js";
  */
 export { triggerVaultPull } from "../../shared/vault-pull.js";
 
-/** How often an open document is refreshed from the server. */
+/** How often an open document is refreshed from the server (socket down). */
 const SELECTED_DOC_REFRESH_MS = 20_000;
 
 /**
- * How often the drive tree snapshot is refreshed from the server.
- * Local writes refresh immediately via MutateDocument events; this poll
- * only covers tree changes made by agents server-side, so it can be lazy.
+ * How often the drive tree snapshot is refreshed from the server (socket
+ * down). Local writes refresh immediately via MutateDocument events; this
+ * poll only covers tree changes made by agents server-side, so it can be
+ * lazy.
  */
 const DRIVE_HYDRATE_MS = 30_000;
+
+/**
+ * Safety-net cadence for both polls while the change socket is live. Not
+ * zero: a socket can be up and still miss an event (server restart between
+ * pings, a filtered event we mis-classified), and five minutes bounds how
+ * long such a miss can go unnoticed.
+ */
+const LIVE_SAFETY_NET_MS = 5 * 60_000;
+
+/** The `documentChanges` subscription — narrow selection, we only need ids. */
+const DOCUMENT_CHANGES_QUERY = `
+  subscription VaultDocumentChanges {
+    documentChanges {
+      type
+      documents { id documentType }
+      context { parentId childId }
+    }
+  }
+`;
+
+type DocumentChangesEvent = {
+  type: VaultRemoteChangeType;
+  documents: Array<{ id: string; documentType: string | null }>;
+  context: { parentId: string | null; childId: string | null } | null;
+};
 
 /** Drives whose sync channel we already neutralised this session. */
 /** Drives whose sync channel has already been scoped to nothing. */
@@ -88,6 +137,8 @@ export function useRemoteFirst(): void {
   const drives = useDrives();
   const drivesRef = useRef(drives);
   drivesRef.current = drives;
+  /** Step 3's hydrator, for step 5 to call on structural events. */
+  const hydrateRef = useRef<(() => void) | null>(null);
 
   // ── 1. Client + cache swap (render-time, idempotent per drive) ────
   const handleRef = useRef<ReturnType<typeof enableRemoteFirst> | null>(null);
@@ -222,9 +273,15 @@ export function useRemoteFirst(): void {
     };
 
     registerVaultHydrator(() => void hydrate());
+    hydrateRef.current = () => void hydrate();
     void hydrate();
+    let lastPollAt = Date.now();
     const interval = setInterval(() => {
       if (document.visibilityState !== "visible") return;
+      // Socket up: the tree is pushed to us; poll only as a safety net.
+      if (isVaultLive() && Date.now() - lastPollAt < LIVE_SAFETY_NET_MS)
+        return;
+      lastPollAt = Date.now();
       void hydrate();
     }, DRIVE_HYDRATE_MS);
     // Any announced mutation may have changed the tree.
@@ -233,6 +290,7 @@ export function useRemoteFirst(): void {
     return () => {
       cancelled = true;
       registerVaultHydrator(null);
+      hydrateRef.current = null;
       clearInterval(interval);
       window.removeEventListener("MutateDocument", onMutation);
     };
@@ -242,8 +300,14 @@ export function useRemoteFirst(): void {
   const selectedId = selectedNode?.id;
   useEffect(() => {
     if (!selectedId || !driveId || selectedId === driveId) return;
+    let lastPollAt = Date.now();
     const interval = setInterval(() => {
       if (document.visibilityState !== "visible") return;
+      // Socket up: an UPDATED event revalidates this document the moment
+      // it changes; poll only as a safety net.
+      if (isVaultLive() && Date.now() - lastPollAt < LIVE_SAFETY_NET_MS)
+        return;
+      lastPollAt = Date.now();
       // Never revalidate under the user's cursor. The cache swap itself
       // is now invisible (stale-while-revalidate), but a remote edit
       // landing mid-sentence would still move content the user is
@@ -279,4 +343,134 @@ export function useRemoteFirst(): void {
     }, SELECTED_DOC_REFRESH_MS);
     return () => clearInterval(interval);
   }, [selectedId, driveId]);
+
+  // ── 5. Live change feed ───────────────────────────────────────────
+  useEffect(() => {
+    if (!driveId) return;
+    let stopped = false;
+
+    const wsUrl = subscriptionsUrlFromGraphqlUrl(resolveReactorEndpoint());
+    const client = createWsClient({
+      url: wsUrl,
+      // Keep trying for as long as the drive is selected: the Switchboard
+      // restarts during development and deploys, and a socket that gives
+      // up after five attempts silently degrades the app to polling.
+      retryAttempts: Number.POSITIVE_INFINITY,
+      shouldRetry: () => !stopped,
+      // Note when the SERVER stops answering, not just when the TCP link
+      // is up; a half-open connection would otherwise report live.
+      keepAlive: 30_000,
+      on: {
+        connected: () => {
+          if (stopped) return;
+          setVaultLive(true);
+          console.info(
+            `[RemoteFirst] Live change feed connected (${wsUrl}) for drive ${driveId.slice(0, 8)}.`,
+          );
+          // Anything that happened while the socket was down is unknown
+          // to us; one hydrate closes the gap. The cache's own
+          // revalidation covers the selected document on its next poll.
+          hydrateRef.current?.();
+        },
+        closed: () => setVaultLive(false),
+        error: () => setVaultLive(false),
+      },
+    });
+
+    /** Ids the hydrated snapshot says are in this drive. */
+    const driveMembers = (): Set<string> | null => {
+      const drive = (drivesRef.current ?? []).find(
+        (d) => d.header.id === driveId,
+      ) as unknown as
+        | { state?: { global?: { nodes?: Array<{ id: string }> } } }
+        | undefined;
+      const nodes = drive?.state?.global?.nodes;
+      if (!nodes) return null;
+      return new Set(nodes.map((n) => n.id));
+    };
+
+    const cacheOf = () =>
+      (
+        window as unknown as {
+          ph?: {
+            documentCache?: IDocumentCache & {
+              revalidateInBackground?: (id: string) => void;
+            };
+          };
+        }
+      ).ph?.documentCache;
+
+    const unsubscribe = client.subscribe<{
+      documentChanges: DocumentChangesEvent;
+    }>(
+      { query: DOCUMENT_CHANGES_QUERY },
+      {
+        next: (result) => {
+          const event = result.data?.documentChanges;
+          if (!event || stopped) return;
+
+          const members = driveMembers();
+          const structural =
+            isStructuralChange(event.type) &&
+            (event.context?.parentId === driveId ||
+              event.documents.some((d) => d.id === driveId));
+          // Membership: the drive itself, anything the snapshot lists, or
+          // — before the snapshot exists — any vault document type, so a
+          // cold open is not blind to its own first events.
+          const documents = event.documents.filter(
+            (d) =>
+              d.id === driveId ||
+              (members
+                ? members.has(d.id)
+                : (d.documentType ?? "").startsWith("bai/")),
+          );
+          if (documents.length === 0 && !structural) return;
+
+          // 1. Refresh what we hold. No-op for documents not in the cache,
+          //    so a firehose of edits elsewhere costs nothing here.
+          const cache = cacheOf();
+          if (cache?.revalidateInBackground) {
+            for (const d of documents) {
+              if (d.id !== driveId) cache.revalidateInBackground(d.id);
+            }
+          }
+
+          // 2. The tree changed, or the drive document itself did.
+          if (structural || documents.some((d) => d.id === driveId)) {
+            hydrateRef.current?.();
+          }
+
+          // 3. Tell everyone else (sidebar projection, graph, health).
+          announceVaultRemoteChange({
+            driveId,
+            type: event.type,
+            documents,
+            structural,
+            at: Date.now(),
+          });
+        },
+        error: (error) => {
+          // graphql-ws delivers this when retries are exhausted or the
+          // server rejected the subscription; with infinite retries it is
+          // effectively "rejected". Polling is still running.
+          console.warn(
+            "[RemoteFirst] Live change feed unavailable; polling continues:",
+            error,
+          );
+          setVaultLive(false);
+        },
+        complete: () => setVaultLive(false),
+      },
+    );
+
+    return () => {
+      stopped = true;
+      setVaultLive(false);
+      try {
+        unsubscribe();
+      } finally {
+        void client.dispose();
+      }
+    };
+  }, [driveId]);
 }
