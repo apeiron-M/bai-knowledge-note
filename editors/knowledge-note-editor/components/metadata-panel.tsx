@@ -12,7 +12,7 @@ const STRING_FIELDS = [
   {
     key: "confidence",
     label: "Confidence",
-    placeholder: "e.g. high, medium, low",
+    placeholder: "grounded, established, or speculative",
   },
   {
     key: "severity",
