@@ -186,11 +186,21 @@ export async function runAgentLoop(o: LoopOptions): Promise<LoopResult> {
 /*  Citations                                                         */
 /* ------------------------------------------------------------------ */
 
-const CITATION_RE = /\[\[([^\]\s]+)\]\]/g;
+const CITATION_RE = /\[\[([^\]]+?)\]\]/g;
 
-/** Walk tool results collecting every `{documentId, title}` pair seen. */
-function collectTitles(trail: TrailEntry[]): Map<string, string> {
-  const titles = new Map<string, string>();
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/** What a tool told us about a document: enough to label and open it. */
+type KnownDocument = { documentId: string; title: string; documentType: string | null };
+
+/**
+ * Walk tool results collecting every `{documentId, title[, documentType]}`
+ * seen — every tool follows that contract for every kind of document, so
+ * a project, a source or a tension is picked up exactly like a note.
+ */
+export function collectKnownDocuments(trail: TrailEntry[]): Map<string, KnownDocument> {
+  const known = new Map<string, KnownDocument>();
   const visit = (v: unknown, depth: number) => {
     if (depth > 6 || v === null || typeof v !== "object") return;
     if (Array.isArray(v)) {
@@ -198,34 +208,116 @@ function collectTitles(trail: TrailEntry[]): Map<string, string> {
       return;
     }
     const obj = v as Record<string, unknown>;
-    if (typeof obj.documentId === "string" && typeof obj.title === "string") {
-      if (!titles.has(obj.documentId)) titles.set(obj.documentId, obj.title);
+    if (typeof obj.documentId === "string") {
+      const prev = known.get(obj.documentId);
+      const title = typeof obj.title === "string" && obj.title ? obj.title : null;
+      const documentType =
+        typeof obj.documentType === "string" ? obj.documentType : null;
+      if (!prev) {
+        if (title) {
+          known.set(obj.documentId, { documentId: obj.documentId, title, documentType });
+        }
+      } else if (!prev.documentType && documentType) {
+        prev.documentType = documentType;
+      }
     }
     for (const value of Object.values(obj)) visit(value, depth + 1);
   };
   for (const e of trail) if (e.ok) visit(e.data, 0);
-  return titles;
+  return known;
+}
+
+/** Case- and punctuation-insensitive key for matching a label to a title. */
+function aliasKey(s: string): string {
+  return s.toLowerCase().replace(/[^\p{L}\p{N}]+/gu, "");
+}
+
+const MIN_EXACT_LABEL = 3;
+const MIN_PREFIX_LABEL = 6;
+
+/**
+ * The model sometimes cites by label instead of id — `[[AuthScope]]` for a
+ * project titled "Auth Scope Enforcement". A label that names exactly one
+ * known document — its whole title, or a unique prefix of it at least six
+ * characters long — resolves to that document; anything else resolves to
+ * nothing, because a chip that navigates to a slug is a door that never opens.
+ */
+function resolveLabel(label: string, known: Map<string, KnownDocument>): KnownDocument | null {
+  const key = aliasKey(label);
+  if (key.length < MIN_EXACT_LABEL) return null;
+  let exact: KnownDocument | null = null;
+  const prefixed: KnownDocument[] = [];
+  for (const doc of known.values()) {
+    const k = aliasKey(doc.title);
+    if (k === key) {
+      exact = doc;
+      break;
+    }
+    if (key.length >= MIN_PREFIX_LABEL && k.startsWith(key)) prefixed.push(doc);
+  }
+  if (exact) return exact;
+  return prefixed.length === 1 ? prefixed[0] : null;
 }
 
 /**
- * Resolve `[[documentId]]` markers in the answer to citation stubs, in order
- * of first mention. An id the trail never saw keeps a fallback title rather
- * than vanishing — a dangling citation is still a door the user can try.
+ * Resolve every `[[…]]` marker in an answer. A UUID stands for itself, with
+ * the title the trail (or an earlier turn) knew for it — an unseen UUID is
+ * still a door the user can try. A non-UUID label is matched to a known
+ * document's title; when that fails the marker is dropped from the text so
+ * the reader is not handed a link that cannot open.
+ *
+ * Returns the citations in order of first mention and the text with every
+ * kept marker rewritten to its `[[documentId]]` form.
  */
+export function resolveCitations(
+  text: string,
+  trail: TrailEntry[],
+  priorCitations: Citation[] = [],
+): { text: string; citations: Citation[] } {
+  const known = collectKnownDocuments(trail);
+  for (const c of priorCitations) {
+    if (!known.has(c.documentId)) {
+      known.set(c.documentId, {
+        documentId: c.documentId,
+        title: c.title,
+        documentType: c.documentType ?? null,
+      });
+    }
+  }
+  const order: string[] = [];
+  const byId = new Map<string, Citation>();
+  const rewritten = text.replace(CITATION_RE, (_m, raw: string) => {
+    const label = raw.trim();
+    let doc: KnownDocument | null;
+    if (UUID_RE.test(label)) {
+      doc = known.get(label) ?? { documentId: label, title: label, documentType: null };
+    } else {
+      doc = known.get(label) ?? resolveLabel(label, known);
+    }
+    if (!doc) return "";
+    if (!byId.has(doc.documentId)) {
+      order.push(doc.documentId);
+      byId.set(doc.documentId, {
+        documentId: doc.documentId,
+        title: doc.title,
+        documentType: doc.documentType,
+      });
+    }
+    return `[[${doc.documentId}]]`;
+  });
+  return {
+    text: rewritten,
+    citations: order.map((id) => byId.get(id)!),
+  };
+}
+
+/** Citations only — see `resolveCitations` for the text rewrite. */
 export function extractCitations(
   text: string,
   trail: TrailEntry[],
+  priorCitations: Citation[] = [],
 ): Citation[] {
-  const titles = collectTitles(trail);
-  const seen = new Set<string>();
-  const out: Citation[] = [];
-  for (const m of text.matchAll(CITATION_RE)) {
-    const id = m[1];
-    if (seen.has(id)) continue;
-    seen.add(id);
-    out.push({ documentId: id, title: titles.get(id) ?? id });
-  }
-  return out;
+  return resolveCitations(text, trail, priorCitations).citations;
 }
 
 /* ------------------------------------------------------------------ */
@@ -386,10 +478,14 @@ export function useChat(o: UseChatOptions): UseChat {
       // Persist the turn if anything came back — a partial answer after Stop,
       // or an answer that was only tool activity, is still worth keeping.
       if (finalText || collected.length > 0) {
+        // Earlier turns' citations let a later "[[id]]" keep its title (and
+        // let a by-name citation resolve) without re-running the tools.
+        const prior = withUser.messages.flatMap((m) => m.citations ?? []);
+        const resolved = resolveCitations(finalText, collected, prior);
         const assistant: StoredMessage = {
           role: "assistant",
-          content: finalText,
-          citations: extractCitations(finalText, collected),
+          content: resolved.text,
+          citations: resolved.citations,
         };
         const done: Thread = {
           ...withUser,

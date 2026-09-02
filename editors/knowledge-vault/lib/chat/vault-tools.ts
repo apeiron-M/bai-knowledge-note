@@ -201,7 +201,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     type: "function",
     function: {
       name: "list_documents",
-      description: `List documents of one type with their ids and names. The graph tools only cover knowledge notes and maps of content; everything else — especially bai/source, the long-form material notes were extracted from — is reached through this tool and then read_document. Valid types: ${DOCUMENT_TYPES.join(", ")}.`,
+      description: `List documents of one type with their documentId and title. The graph tools only cover knowledge notes and maps of content; everything else — especially bai/source, the long-form material notes were extracted from — is reached through this tool and then read_document. Every documentId returned is citable as [[documentId]]. Valid types: ${DOCUMENT_TYPES.join(", ")}.`,
       parameters: {
         type: "object",
         properties: {
@@ -220,7 +220,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "list_projects",
       description:
-        "Every project in the vault with its status (PLANNING, ACTIVE, ON_HOLD, COMPLETED, ARCHIVED), owner, target date, deliverable progress and the id of its work breakdown. Start here for any question about projects, deliverables, goals or who is working on what; then read_document a project id for its full outline.",
+        "Every project in the vault with its documentId, title, status (PLANNING, ACTIVE, ON_HOLD, COMPLETED, ARCHIVED), owner, target date, deliverable progress and its work breakdown's documentId. Start here for any question about projects, deliverables, goals or who is working on what; then read_document a project's documentId for its full outline. Cite a project as [[documentId]] — the UUID, never its name.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -229,7 +229,7 @@ export const VAULT_TOOLS: ToolSchema[] = [
     function: {
       name: "read_document",
       description:
-        "Read any document by id. For a bai/project this returns a full outline — status, team, deliverables each joined to their WBS goal, the whole work-breakdown goal tree with statuses, and linked knowledge notes — in one call. For a bai/wbs it returns the goal tree. For everything else (notably bai/source) it returns metadata plus an 8,000-character window of the main text starting at offset; when hasMore is true, call again with nextOffset. A source's metadata includes extractedClaims — ids of notes derived from it — which you can read_note. The reverse is not available: a note does not record its source.",
+        "Read any document by documentId. For a bai/project this returns a full outline — status, team, deliverables each joined to their WBS goal, the whole work-breakdown goal tree with statuses, and linked knowledge notes — in one call. For a bai/wbs it returns the goal tree. For everything else (notably bai/source) it returns metadata plus an 8,000-character window of the main text starting at offset; when hasMore is true, call again with nextOffset. A source's metadata includes extractedClaims — ids of notes derived from it — which you can read_note. The reverse is not available: a note does not record its source. Every result carries the documentId you cite it by.",
       parameters: {
         type: "object",
         properties: {
@@ -668,9 +668,17 @@ export async function executeTool(
       );
       if ("error" in r) return fail(r.error);
       const { totalCount, items } = r.data.findDocuments;
+      // Same citation contract as every other tool: documentId + title (+
+      // documentType), so [[documentId]] works for a source or a tension
+      // exactly as it does for a note.
+      const listed = items.map((d) => ({
+        documentId: d.id,
+        title: d.name ?? d.id,
+        documentType: d.documentType ?? type,
+      }));
       return ok(
-        { total: totalCount, items },
-        `listed ${items.length} of ${totalCount} ${type}`,
+        { total: totalCount, items: listed },
+        `listed ${listed.length} of ${totalCount} ${type}`,
       );
     }
 
@@ -697,11 +705,17 @@ export async function executeTool(
         items.map(async (item) => {
           const read = await readDoc(item.id);
           if ("error" in read)
-            return { id: item.id, name: item.name, error: read.error };
+            return {
+              documentId: item.id,
+              title: item.name ?? item.id,
+              documentType: "bai/project",
+              error: read.error,
+            };
           const p = projectState(read.doc.state);
           return {
-            id: item.id,
-            name: p.name ?? item.name,
+            documentId: item.id,
+            title: p.name ?? item.name ?? item.id,
+            documentType: "bai/project",
             status: p.status,
             owner: p.owner ?? null,
             targetDate: p.targetDate ? String(p.targetDate).slice(0, 10) : null,
@@ -711,7 +725,10 @@ export async function executeTool(
               total: p.deliverables.length,
             },
             teamSize: p.team.length,
-            wbsRef: p.wbsRef ?? null,
+            // The work breakdown is a document of its own, citable like the project.
+            wbs: p.wbsRef
+              ? { documentId: p.wbsRef, documentType: "bai/wbs" }
+              : null,
           };
         }),
       );
@@ -746,7 +763,7 @@ export async function executeTool(
           noteTitles: titles,
         });
         return ok(
-          { documentType: doc.documentType, text: view.text, ...view.data },
+          { text: view.text, ...view.data },
           `read project "${p.name ?? doc.name ?? documentId}" (${p.status}${wbs ? `, ${view.data.goals?.completed}/${view.data.goals?.total} goals done` : ""})`,
         );
       }
@@ -761,10 +778,9 @@ export async function executeTool(
         const view = renderWbs(w, { id: doc.id, projectName });
         return ok(
           {
-            documentType: doc.documentType,
-            name: doc.name,
             text: view.text,
             ...view.data,
+            title: doc.name ?? view.data.title,
           },
           `read work breakdown${projectName ? ` for "${projectName}"` : ""} (${view.data.progress.completed}/${view.data.progress.total} goals done)`,
         );
@@ -799,10 +815,14 @@ export async function executeTool(
         }
       }
 
+      const stateTitle = global.title;
       return ok(
         {
-          id: doc.id,
-          name: doc.name,
+          documentId: doc.id,
+          title:
+            (typeof stateTitle === "string" && stateTitle.trim()) ||
+            doc.name ||
+            doc.id,
           documentType: doc.documentType,
           textField,
           text,

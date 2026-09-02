@@ -15,8 +15,8 @@ export function numberCitations(
   citations: { documentId: string }[],
 ): string {
   const index = new Map(citations.map((c, i) => [c.documentId, i + 1]));
-  return text.replace(/\[\[([^\]\s]+)\]\]/g, (_m, id: string) => {
-    const n = index.get(id);
+  return text.replace(/\[\[([^\]]+?)\]\]/g, (_m, id: string) => {
+    const n = index.get(id.trim());
     return n ? ` [${n}]` : "";
   });
 }

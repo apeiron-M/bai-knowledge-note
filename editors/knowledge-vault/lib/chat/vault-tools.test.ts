@@ -493,16 +493,20 @@ describe("projects and work breakdowns", () => {
         projects: Record<string, unknown>[];
       };
       expect(d.total).toBe(1);
+      // The citation contract: documentId + title + documentType, so a
+      // project is citable as [[documentId]] exactly like a note.
       expect(d.projects[0]).toMatchObject({
-        id: "p1",
-        name: "Vault chat",
+        documentId: "p1",
+        title: "Vault chat",
+        documentType: "bai/project",
         status: "ACTIVE",
         owner: "liberuum",
         targetDate: "2026-09-15",
         deliverables: { delivered: 1, total: 2 },
         teamSize: 1,
-        wbsRef: "w1",
+        wbs: { documentId: "w1", documentType: "bai/wbs" },
       });
+      expect(d.projects[0]).not.toHaveProperty("id");
       expect(r.summary).toContain("1 of 1 projects");
     }
     expect(requestAt(0).url).toMatch(/\/graphql$/);
@@ -518,12 +522,19 @@ describe("projects and work breakdowns", () => {
     expect(r.ok).toBe(true);
     if (r.ok) {
       const d = r.data as {
+        documentId: string;
+        title: string;
+        documentType: string;
         text: string;
         status: string;
         deliverables: { goal: { description: string } | null }[];
         goals: { completed: number; total: number };
       };
+      expect(d).toMatchObject({ documentId: "p1", title: "Vault chat", documentType: "bai/project" });
       expect(d.status).toBe("ACTIVE");
+      // The outline opens with its own citation marker, so the model cites
+      // the document it read rather than a label it made up.
+      expect(d.text.split("\n")[0]).toBe("# Project: Vault chat — ACTIVE [[p1]]");
       expect(d.text).toContain(
         "[DELIVERED] Chat tab — goal: Ship it (COMPLETED)",
       );
@@ -565,10 +576,49 @@ describe("projects and work breakdowns", () => {
     const r = await executeTool("read_document", { documentId: "w1" }, CTX);
     expect(r.ok).toBe(true);
     if (r.ok) {
-      const d = r.data as { text: string; goalCount: number };
-      expect(d.text).toContain("Work breakdown for Vault chat");
+      const d = r.data as {
+        documentId: string;
+        title: string;
+        documentType: string;
+        text: string;
+        goalCount: number;
+      };
+      expect(d).toMatchObject({ documentId: "w1", title: "WBS", documentType: "bai/wbs" });
+      expect(d.text.split("\n")[0]).toBe("# Work breakdown for Vault chat [[w1]]");
       expect(d.text).toContain("[COMPLETED] Ship it");
       expect(d.goalCount).toBe(2);
     }
+  });
+
+  it("list_documents returns the citation contract for every kind", async () => {
+    mockGql({
+      findDocuments: {
+        totalCount: 1,
+        items: [{ id: "s1", name: "Src", documentType: "bai/source" }],
+      },
+    });
+    const r = await executeTool("list_documents", { documentType: "bai/source" }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok)
+      expect((r.data as { items: unknown[] }).items).toEqual([
+        { documentId: "s1", title: "Src", documentType: "bai/source" },
+      ]);
+  });
+
+  it("read_document on a source carries documentId and its title", async () => {
+    mockGql({
+      document: {
+        document: {
+          id: "s1",
+          name: "Src file",
+          documentType: "bai/source",
+          state: { global: { title: "The Source", content: "body" } },
+        },
+      },
+    });
+    const r = await executeTool("read_document", { documentId: "s1" }, CTX);
+    expect(r.ok).toBe(true);
+    if (r.ok)
+      expect(r.data).toMatchObject({ documentId: "s1", title: "The Source", documentType: "bai/source" });
   });
 });

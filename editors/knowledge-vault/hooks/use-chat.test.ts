@@ -3,6 +3,7 @@ import { describe, expect, it, vi } from "vitest";
 import {
   MAX_ITERATIONS,
   extractCitations,
+  resolveCitations,
   runAgentLoop,
   type TrailEntry,
 } from "./use-chat.js";
@@ -316,15 +317,17 @@ describe("runAgentLoop routing", () => {
   });
 });
 
-describe("extractCitations", () => {
+describe("extractCitations / resolveCitations", () => {
+  const P1 = "8360bb12-3c20-4a31-88cf-7258d957c24b";
+  const N1 = "cd5a7a91-a92d-48cd-874c-87d1c180703f";
   const trail: TrailEntry[] = [
     {
       tool: "search_vault",
       summary: "s",
       ok: true,
       data: [
-        { documentId: "n1", title: "First" },
-        { documentId: "n2", title: "Second" },
+        { documentId: "n1", title: "First", documentType: "bai/knowledge-note" },
+        { documentId: "n2", title: "Second", documentType: "bai/moc" },
       ],
     },
     {
@@ -339,6 +342,18 @@ describe("extractCitations", () => {
       ok: true,
       data: { outgoing: [{ documentId: "n4", title: "Fourth" }], incoming: [] },
     },
+    {
+      tool: "list_projects",
+      summary: "p",
+      ok: true,
+      data: {
+        total: 2,
+        projects: [
+          { documentId: P1, title: "Auth Scope Enforcement", documentType: "bai/project", wbs: { documentId: "w1", documentType: "bai/wbs" } },
+          { documentId: "p2", title: "Paperless × Powerhouse demo", documentType: "bai/project" },
+        ],
+      },
+    },
     { tool: "vault_stats", summary: "v", ok: false },
   ];
 
@@ -348,21 +363,49 @@ describe("extractCitations", () => {
       trail,
     );
     expect(c).toEqual([
-      { documentId: "n3", title: "Third" },
-      { documentId: "n1", title: "First" },
+      { documentId: "n3", title: "Third", documentType: null },
+      { documentId: "n1", title: "First", documentType: "bai/knowledge-note" },
     ]);
   });
 
-  it("finds ids nested inside tool result objects", () => {
-    expect(extractCitations("[[n4]]", trail)).toEqual([
-      { documentId: "n4", title: "Fourth" },
+  it("finds ids nested inside tool result objects and keeps their kind", () => {
+    expect(extractCitations("[[n4]] [[n2]]", trail)).toEqual([
+      { documentId: "n4", title: "Fourth", documentType: null },
+      { documentId: "n2", title: "Second", documentType: "bai/moc" },
     ]);
   });
 
-  it("keeps an unknown id with a fallback title rather than dropping the citation", () => {
-    expect(extractCitations("[[zzz]]", trail)).toEqual([
-      { documentId: "zzz", title: "zzz" },
+  it("cites projects exactly like notes — any document with a documentId", () => {
+    expect(extractCitations(`The project [[${P1}]] is active.`, trail)).toEqual([
+      { documentId: P1, title: "Auth Scope Enforcement", documentType: "bai/project" },
     ]);
+  });
+
+  it("resolves a by-name citation to the one document it names, and rewrites the marker", () => {
+    const r = resolveCitations("See [[AuthScope]] and [[Paperless × Powerhouse demo]].", trail);
+    expect(r.citations.map((c) => c.documentId)).toEqual([P1, "p2"]);
+    expect(r.text).toBe(`See [[${P1}]] and [[p2]].`);
+  });
+
+  it("drops a label that names nothing, or more than one thing, instead of rendering a dead link", () => {
+    const r = resolveCitations("[[zzz]] and [[Auth]] and [[Pa]] and [[First]]", trail);
+    // "zzz" matches nothing; "Auth" is a prefix but too short to trust;
+    // "Pa" is too short for anything; "First" is an exact title.
+    expect(r.citations).toEqual([{ documentId: "n1", title: "First", documentType: "bai/knowledge-note" }]);
+    expect(r.text).toBe(" and  and  and [[n1]]");
+  });
+
+  it("keeps an unseen UUID with a fallback title — still a door the user can try", () => {
+    expect(extractCitations(`[[${N1}]]`, trail)).toEqual([
+      { documentId: N1, title: N1, documentType: null },
+    ]);
+  });
+
+  it("uses earlier turns' citations for titles and by-name resolution", () => {
+    const prior = [{ documentId: N1, title: "Powerhouse trades consultancy for scalability", documentType: "bai/knowledge-note" }];
+    const r = resolveCitations(`As before: [[${N1}]] and [[Powerhouse trades consultancy for scalability]]`, [], prior);
+    expect(r.citations).toEqual([prior[0]]);
+    expect(r.text).toBe(`As before: [[${N1}]] and [[${N1}]]`);
   });
 
   it("returns an empty list when nothing is cited", () => {

@@ -93,7 +93,10 @@ function goalLines(
 export interface WbsRendering {
   text: string;
   data: {
-    id: string;
+    /** The WBS document's id — what a citation of this outline points at. */
+    documentId: string;
+    documentType: "bai/wbs";
+    title: string;
     projectRef: string | null;
     owner: string | null;
     goalCount: number;
@@ -108,9 +111,10 @@ export function renderWbs(
   const all = new Map(wbs.goals.map((g) => [g.id, g]));
   const progress = goalProgress(wbs.goals);
   const lines: string[] = [];
-  lines.push(
-    `# Work breakdown${ctx.projectName ? ` for ${ctx.projectName}` : ""}`,
-  );
+  const title = `Work breakdown${ctx.projectName ? ` for ${ctx.projectName}` : ""}`;
+  // The id rides along in the text as a ready-made citation marker, so the
+  // model cites the document it is reading rather than inventing a label.
+  lines.push(`# ${title}${ctx.id ? ` [[${ctx.id}]]` : ""}`);
   if (wbs.owner) lines.push(`Owner: ${wbs.owner}`);
   lines.push(`${progress.completed}/${progress.total} goals completed`);
   lines.push("");
@@ -122,7 +126,9 @@ export function renderWbs(
   return {
     text: lines.join("\n"),
     data: {
-      id: ctx.id,
+      documentId: ctx.id,
+      documentType: "bai/wbs",
+      title,
       projectRef: wbs.projectRef ?? null,
       owner: wbs.owner ?? null,
       goalCount: wbs.goals.length,
@@ -134,8 +140,10 @@ export function renderWbs(
 export interface ProjectRendering {
   text: string;
   data: {
-    id: string;
-    name: string | null;
+    /** The project document's id — what a citation of this outline points at. */
+    documentId: string;
+    documentType: "bai/project";
+    title: string;
     status: ProjectState["status"];
     owner: string | null;
     targetDate: string | null;
@@ -166,7 +174,8 @@ export function renderProject(o: {
   const goals = new Map((wbs?.goals ?? []).map((g) => [g.id, g]));
   const lines: string[] = [];
 
-  lines.push(`# Project: ${p.name ?? "(unnamed)"} — ${p.status}`);
+  const title = p.name ?? "(unnamed)";
+  lines.push(`# Project: ${title} — ${p.status} [[${o.id}]]`);
   const meta: string[] = [];
   if (p.owner) meta.push(`Owner: ${p.owner}`);
   if (p.targetDate) meta.push(`Target: ${String(p.targetDate).slice(0, 10)}`);
@@ -228,8 +237,9 @@ export function renderProject(o: {
   return {
     text: lines.join("\n"),
     data: {
-      id: o.id,
-      name: p.name ?? null,
+      documentId: o.id,
+      documentType: "bai/project",
+      title,
       status: p.status,
       owner: p.owner ?? null,
       targetDate: p.targetDate ? String(p.targetDate) : null,
