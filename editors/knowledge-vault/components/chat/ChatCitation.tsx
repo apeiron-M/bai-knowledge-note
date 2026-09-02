@@ -37,7 +37,8 @@ export function ChatCitation({
   index,
   citation,
 }: {
-  index: number;
+  /** Position in the numbered Sources list; omitted for "also read" chips. */
+  index?: number;
   citation: Citation;
 }) {
   const kind = citationKind(citation.documentType);
@@ -54,15 +55,23 @@ export function ChatCitation({
       }}
       title={`Open ${kind ? `${kind} ` : ""}"${citation.title}"`}
     >
-      <span
-        className="inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 font-mono text-[10px] font-semibold"
-        style={{
-          backgroundColor: "var(--bai-accent)",
-          color: "var(--bai-accent-text)",
-        }}
-      >
-        {index}
-      </span>
+      {index !== undefined ? (
+        <span
+          className="inline-flex h-4 min-w-4 items-center justify-center rounded-full px-1 font-mono text-[10px] font-semibold"
+          style={{
+            backgroundColor: "var(--bai-accent)",
+            color: "var(--bai-accent-text)",
+          }}
+        >
+          {index}
+        </span>
+      ) : (
+        <span
+          className="inline-block h-1.5 w-1.5 rounded-full"
+          style={{ backgroundColor: "var(--bai-text-faint)" }}
+          aria-hidden
+        />
+      )}
       {kind && (
         <span
           className="shrink-0 rounded px-1 text-[9px] font-medium uppercase tracking-wide"

@@ -2,6 +2,7 @@ import "../../shared/test/browser-globals.js";
 import { describe, expect, it, vi } from "vitest";
 import {
   MAX_ITERATIONS,
+  consultedDocuments,
   extractCitations,
   resolveCitations,
   runAgentLoop,
@@ -430,5 +431,32 @@ describe("extractCitations / resolveCitations", () => {
 
   it("returns an empty list when nothing is cited", () => {
     expect(extractCitations("no citations here", trail)).toEqual([]);
+  });
+});
+
+describe("consultedDocuments", () => {
+  const trail: TrailEntry[] = [
+    { tool: "search_vault", summary: "s", ok: true, data: [{ documentId: "hit", title: "A hit", documentType: "bai/knowledge-note" }] },
+    { tool: "read_note", summary: "r", ok: true, data: { documentId: "n1", title: "Read one", documentType: "bai/knowledge-note", content: "…" } },
+    { tool: "read_note", summary: "r", ok: true, data: { documentId: "n2", title: "Read two", documentType: "bai/moc", content: "…" } },
+    { tool: "read_note", summary: "r", ok: true, data: { documentId: "n1", title: "Read one", content: "…" } },
+    { tool: "read_document", summary: "d", ok: true, data: { documentId: "p1", title: "A project", documentType: "bai/project", text: "…" } },
+    { tool: "read_note", summary: "x", ok: false, error: "gone" },
+  ];
+
+  it("lists documents read in full and not cited, once each, in read order", () => {
+    expect(consultedDocuments(trail, [{ documentId: "n2", title: "Read two" }])).toEqual([
+      { documentId: "n1", title: "Read one", documentType: "bai/knowledge-note" },
+      { documentId: "p1", title: "A project", documentType: "bai/project" },
+    ]);
+  });
+
+  it("does not count search hits the model merely saw", () => {
+    expect(consultedDocuments(trail, []).map((c) => c.documentId)).not.toContain("hit");
+  });
+
+  it("is empty when everything read was cited", () => {
+    const cited = ["n1", "n2", "p1"].map((id) => ({ documentId: id, title: id }));
+    expect(consultedDocuments(trail, cited)).toEqual([]);
   });
 });

@@ -336,6 +336,38 @@ export function resolveCitations(
   };
 }
 
+/** Tools whose result is one document read in full — a source consulted. */
+const FULL_READ_TOOLS = new Set(["read_note", "read_document"]);
+
+/**
+ * Documents the model read in full this turn and did not cite. Search hits
+ * it merely saw are not sources; a note it opened and read is, whether or
+ * not it remembered to say so. Ordered by first read, deduplicated.
+ */
+export function consultedDocuments(
+  trail: TrailEntry[],
+  cited: Citation[],
+): Citation[] {
+  const citedIds = new Set(cited.map((c) => c.documentId));
+  const seen = new Set<string>();
+  const out: Citation[] = [];
+  for (const e of trail) {
+    if (!e.ok || !FULL_READ_TOOLS.has(e.tool)) continue;
+    const d = e.data as
+      | { documentId?: unknown; title?: unknown; documentType?: unknown }
+      | undefined;
+    if (!d || typeof d.documentId !== "string") continue;
+    if (citedIds.has(d.documentId) || seen.has(d.documentId)) continue;
+    seen.add(d.documentId);
+    out.push({
+      documentId: d.documentId,
+      title: typeof d.title === "string" && d.title ? d.title : d.documentId,
+      documentType: typeof d.documentType === "string" ? d.documentType : null,
+    });
+  }
+  return out;
+}
+
 /** Citations only — see `resolveCitations` for the text rewrite. */
 export function extractCitations(
   text: string,
@@ -507,10 +539,12 @@ export function useChat(o: UseChatOptions): UseChat {
         // let a by-name citation resolve) without re-running the tools.
         const prior = withUser.messages.flatMap((m) => m.citations ?? []);
         const resolved = resolveCitations(finalText, collected, prior);
+        const consulted = consultedDocuments(collected, resolved.citations);
         const assistant: StoredMessage = {
           role: "assistant",
           content: resolved.text,
           citations: resolved.citations,
+          ...(consulted.length > 0 ? { consulted } : {}),
         };
         const done: Thread = {
           ...withUser,

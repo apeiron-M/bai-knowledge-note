@@ -94,6 +94,23 @@ function AssistantTurn({
           ))}
         </div>
       )}
+      {message.consulted && message.consulted.length > 0 && (
+        <div
+          className="mt-2 flex flex-wrap items-center gap-1.5"
+          aria-label="Also read"
+        >
+          <span
+            className="text-[10px] uppercase tracking-wider"
+            style={{ color: "var(--bai-text-faint)" }}
+            title="Documents the assistant read in full for this answer but did not cite"
+          >
+            also read
+          </span>
+          {message.consulted.map((c) => (
+            <ChatCitation key={c.documentId} citation={c} />
+          ))}
+        </div>
+      )}
     </div>
   );
 }

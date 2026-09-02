@@ -24,7 +24,14 @@ export interface Citation {
 export interface StoredMessage {
   role: "user" | "assistant";
   content: string;
+  /** Documents the answer cites inline, in order of first mention. */
   citations?: Citation[];
+  /**
+   * Documents the model read in full during this turn but did not cite.
+   * Provenance the reader can always see, whatever the model's citing
+   * discipline was on the day.
+   */
+  consulted?: Citation[];
 }
 
 export interface Thread {
