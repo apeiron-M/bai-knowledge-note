@@ -99,7 +99,7 @@ function TeamChips({ team }: { team: TeamMember[] }) {
       {shown.map((member) => (
         <span
           key={member.id}
-          className="rounded px-1.5 py-0.5 text-[10px]"
+          className="rounded px-1.5 py-0.5 text-xs"
           style={{
             backgroundColor: "var(--bai-hover)",
             color: "var(--bai-text-muted)",
@@ -110,8 +110,8 @@ function TeamChips({ team }: { team: TeamMember[] }) {
       ))}
       {extra > 0 && (
         <span
-          className="text-[10px]"
-          style={{ color: "var(--bai-text-faint)" }}
+          className="text-xs"
+          style={{ color: "var(--bai-text-muted)" }}
         >
           +{extra}
         </span>
@@ -157,7 +157,7 @@ const ProjectCard = memo(function ProjectCard({
         </span>
         {project.rollup.blocked > 0 && (
           <span
-            className="shrink-0 text-[10px] font-semibold"
+            className="shrink-0 text-[11px] font-semibold"
             style={{ color: GOAL_STATUS_META.BLOCKED.fg }}
           >
             ⚠ {project.rollup.blocked} blocked
@@ -165,11 +165,11 @@ const ProjectCard = memo(function ProjectCard({
         )}
       </div>
 
-      <div className="mt-1.5 flex flex-wrap items-center gap-2">
+      <div className="mt-2 flex flex-wrap items-center gap-x-2.5 gap-y-1">
         {project.owner && (
           <span
-            className="text-[10px]"
-            style={{ color: "var(--bai-text-faint)" }}
+            className="text-xs"
+            style={{ color: "var(--bai-text-muted)" }}
           >
             by {project.owner}
           </span>
@@ -177,23 +177,23 @@ const ProjectCard = memo(function ProjectCard({
         <TeamChips team={project.team} />
         {totalDeliverables > 0 && (
           <span
-            className="text-[10px]"
-            style={{ color: "var(--bai-text-faint)" }}
+            className="text-xs"
+            style={{ color: "var(--bai-text-muted)" }}
           >
             {deliveredCount}/{totalDeliverables} delivered
           </span>
         )}
         {project.targetDate && (
           <span
-            className="text-[10px]"
-            style={{ color: "var(--bai-text-faint)" }}
+            className="text-xs"
+            style={{ color: "var(--bai-text-muted)" }}
           >
             Due {project.targetDate.slice(0, 10)}
           </span>
         )}
         <span
-          className="ml-auto text-[10px]"
-          style={{ color: "var(--bai-text-faint)" }}
+          className="ml-auto text-xs"
+          style={{ color: "var(--bai-text-muted)" }}
         >
           {formatLastModified(project.lastModified)}
         </span>
@@ -202,8 +202,8 @@ const ProjectCard = memo(function ProjectCard({
       {hasWbs && (
         <div className="mt-2">
           <div
-            className="flex items-center justify-between text-[10px]"
-            style={{ color: "var(--bai-text-faint)" }}
+            className="flex items-center justify-between text-xs"
+            style={{ color: "var(--bai-text-muted)" }}
           >
             <span>
               {project.rollup.finished}/{project.rollup.total} goals
