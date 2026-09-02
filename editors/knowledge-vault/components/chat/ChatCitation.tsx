@@ -37,7 +37,8 @@ export function ChatCitation({
   index,
   citation,
 }: {
-  /** Position in the numbered Sources list; omitted for "also read" chips. */
+  /** Position in the numbered Sources list; omitted for a source the answer
+   * drew on without an inline [n] marker (read in full, not cited). */
   index?: number;
   citation: Citation;
 }) {

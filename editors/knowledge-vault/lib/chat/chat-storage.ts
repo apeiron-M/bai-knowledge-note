@@ -28,7 +28,8 @@ export interface StoredMessage {
   citations?: Citation[];
   /**
    * Documents the model read in full during this turn but did not cite.
-   * Provenance the reader can always see, whatever the model's citing
+   * Listed in the same Sources row after the cited ones, so the reader sees
+   * everything the answer was generated from whatever the model's citing
    * discipline was on the day.
    */
   consulted?: Citation[];

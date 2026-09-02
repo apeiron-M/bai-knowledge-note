@@ -87,26 +87,17 @@ function AssistantTurn({
           aria-hidden
         />
       )}
-      {citations && citations.length > 0 && (
+      {/* Sources: every document the answer was generated from — the ones
+          cited inline (numbered to match the [n] markers) followed by the
+          ones the model read in full but did not cite. One row, no
+          sub-headings: a reader wants the list, not the taxonomy. */}
+      {((citations && citations.length > 0) ||
+        (message.consulted && message.consulted.length > 0)) && (
         <div className="mt-3 flex flex-wrap gap-1.5" aria-label="Sources">
-          {citations.map((c, i) => (
+          {(citations ?? []).map((c, i) => (
             <ChatCitation key={c.documentId} index={i + 1} citation={c} />
           ))}
-        </div>
-      )}
-      {message.consulted && message.consulted.length > 0 && (
-        <div
-          className="mt-2 flex flex-wrap items-center gap-1.5"
-          aria-label="Also read"
-        >
-          <span
-            className="text-[10px] uppercase tracking-wider"
-            style={{ color: "var(--bai-text-faint)" }}
-            title="Documents the assistant read in full for this answer but did not cite"
-          >
-            also read
-          </span>
-          {message.consulted.map((c) => (
+          {(message.consulted ?? []).map((c) => (
             <ChatCitation key={c.documentId} citation={c} />
           ))}
         </div>
