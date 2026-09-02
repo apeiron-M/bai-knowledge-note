@@ -16,13 +16,19 @@ export const MAX_ORIENTATION_TOPICS = 25;
 
 export interface PromptInputs {
   vaultName: string;
-  stats: { nodeCount: number; edgeCount: number } | null;
+  stats: {
+    nodeCount: number;
+    noteCount?: number;
+    mocCount?: number;
+    openTensionCount?: number;
+    edgeCount: number;
+  } | null;
   topics: { name: string; noteCount: number }[];
 }
 
 export function buildSystemPrompt(o: PromptInputs): string {
   const size = o.stats
-    ? `It currently holds ${o.stats.nodeCount} notes and maps of content connected by ${o.stats.edgeCount} typed links.`
+    ? `It currently holds ${o.stats.noteCount ?? o.stats.nodeCount} notes${o.stats.mocCount ? ` in ${o.stats.mocCount} maps of content` : " and maps of content"}, connected by ${o.stats.edgeCount} typed links${o.stats.openTensionCount ? `, with ${o.stats.openTensionCount} open tension${o.stats.openTensionCount === 1 ? "" : "s"} between notes` : ""}.`
     : "Its size is not known yet; call vault_stats if it matters to the answer.";
 
   const topTopics = [...o.topics]
@@ -50,6 +56,7 @@ You have read-only access. You cannot create, modify, delete, or link anything. 
 5. Cite by documentId. After each claim you draw from a note, add its id in double brackets like [[documentId]] so the interface can turn it into a link the user can open. Cite the specific note, not a search result list.
 6. When notes disagree, say so and cite both sides. A CONTRADICTS link is a finding, not a problem to smooth over.
 7. If the vault does not contain an answer, say that. Do not fill the gap with outside knowledge unless the user asks you to, and label it as outside the vault if you do.
+8. Every search hit carries a documentType. bai/knowledge-note and bai/research-claim are claims you may cite as knowledge. bai/moc is a map of a cluster — use its description as orientation, not as a claim. bai/tension is a recorded DISAGREEMENT between notes (status OPEN, RESOLVED or DISSOLVED) and bai/observation is a note about the vault's own process — report them as what they are, never as facts about the subject. A note's linked_notes may include an INVOLVES edge from a tension: that is how you learn a note is contested.
 
 ## Sources
 

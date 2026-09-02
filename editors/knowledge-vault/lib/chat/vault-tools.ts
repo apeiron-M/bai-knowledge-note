@@ -73,7 +73,11 @@ const LIMITS = {
 /*  Schemas                                                           */
 /* ------------------------------------------------------------------ */
 
-const NOTE_FIELDS = "documentId title description noteType status";
+// `documentType` tells the model what kind of node a hit is: a knowledge
+// note, a MoC, a research claim, or a tension / observation ABOUT the notes.
+// Search ranks them together; the model should not cite a tension as a claim.
+const NOTE_FIELDS =
+  "documentId title description noteType status documentType";
 
 export const VAULT_TOOLS: ToolSchema[] = [
   {
@@ -589,6 +593,12 @@ export async function executeTool(
       const r = await gql<{
         knowledgeGraphStats: {
           nodeCount: number;
+          noteCount: number;
+          mocCount: number;
+          claimCount: number;
+          tensionCount: number;
+          openTensionCount: number;
+          observationCount: number;
           edgeCount: number;
           orphanCount: number;
         };
@@ -596,7 +606,10 @@ export async function executeTool(
       }>(
         graphEndpoint(),
         `query V($driveId: ID!) {
-          knowledgeGraphStats(driveId: $driveId) { nodeCount edgeCount orphanCount }
+          knowledgeGraphStats(driveId: $driveId) {
+            nodeCount noteCount mocCount claimCount tensionCount openTensionCount observationCount
+            edgeCount orphanCount
+          }
           knowledgeGraphDensity(driveId: $driveId)
         }`,
         { driveId },
@@ -605,7 +618,7 @@ export async function executeTool(
       const s = r.data.knowledgeGraphStats;
       return ok(
         { ...s, density: r.data.knowledgeGraphDensity },
-        `vault: ${s.nodeCount} notes, ${s.edgeCount} links, ${s.orphanCount} orphans`,
+        `vault: ${s.noteCount} notes, ${s.mocCount} maps, ${s.edgeCount} links, ${s.orphanCount} orphans, ${s.openTensionCount} open tension${s.openTensionCount === 1 ? "" : "s"}`,
       );
     }
 

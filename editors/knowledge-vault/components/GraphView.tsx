@@ -367,7 +367,7 @@ function buildElements(
                 id: `ten-${tension.id}-${ref}`,
                 source: tension.id,
                 target: ref,
-                linkType: "CONTRADICTS",
+                linkType: "INVOLVES",
                 color: TENSION_EDGE_COLOR,
               },
             });
@@ -741,6 +741,15 @@ export function GraphView({
   const cyRef = useRef<cytoscape.Core | null>(null);
   const [selectedDetail, setSelectedDetail] = useState<NodeDetail | null>(null);
   const [zoomLevel, setZoomLevel] = useState(1);
+  // Tensions are an opt-in layer, OFF by default. A vault with hundreds of
+  // notes is already dense; a reader who wants to see where the graph
+  // disagrees with itself turns the layer on, and only OPEN tensions are
+  // drawn — a resolved one is history, not structure.
+  const [showTensions, setShowTensions] = useState(false);
+  const openTensionCount = useMemo(
+    () => (tensions ?? []).filter((t) => t.status === "OPEN").length,
+    [tensions],
+  );
   const [hoverInfo, setHoverInfo] = useState<{
     node: NodeDetail;
     x: number;
@@ -749,8 +758,14 @@ export function GraphView({
 
   // Build elements from data
   const elements = useMemo(
-    () => buildElements(notes, graphState ?? null, mocs, tensions),
-    [notes, graphState, mocs, tensions],
+    () =>
+      buildElements(
+        notes,
+        graphState ?? null,
+        mocs,
+        showTensions ? tensions : undefined,
+      ),
+    [notes, graphState, mocs, tensions, showTensions],
   );
 
   // Gather neighbor info for the detail panel
@@ -1170,6 +1185,40 @@ export function GraphView({
             <path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15" />
           </svg>
         </button>
+        <button
+          type="button"
+          onClick={() => setShowTensions((v) => !v)}
+          className="flex h-8 items-center justify-center gap-1.5 rounded-md px-2 backdrop-blur-sm transition-colors"
+          style={{
+            backgroundColor: showTensions
+              ? "color-mix(in srgb, #ef4444 22%, var(--bai-bg))"
+              : "color-mix(in srgb, var(--bai-bg) 90%, transparent)",
+            color: showTensions ? "#fca5a5" : "var(--bai-text-secondary)",
+          }}
+          title={
+            showTensions
+              ? "Hide tensions"
+              : openTensionCount > 0
+                ? `Show ${openTensionCount} open tension${openTensionCount === 1 ? "" : "s"}`
+                : "Show tensions (none open)"
+          }
+          aria-pressed={showTensions}
+        >
+          <svg
+            className="h-4 w-4"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+          >
+            <path d="M12 3 2 21h20L12 3zM12 10v4M12 17v.5" />
+          </svg>
+          {openTensionCount > 0 && (
+            <span className="text-[10px] font-semibold tabular-nums">
+              {openTensionCount}
+            </span>
+          )}
+        </button>
         <div
           className="mt-1 rounded-md px-1.5 py-1 text-center text-[9px] backdrop-blur-sm"
           style={{
@@ -1213,16 +1262,20 @@ export function GraphView({
             />
             <span style={{ color: "var(--bai-text-tertiary)" }}>MOC</span>
           </div>
-          <div className="flex items-center gap-1.5">
-            <span
-              className="inline-block h-3 w-3"
-              style={{
-                backgroundColor: TENSION_NODE_COLOR,
-                clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
-              }}
-            />
-            <span style={{ color: "var(--bai-text-tertiary)" }}>Tension</span>
-          </div>
+          {showTensions && (
+            <div className="flex items-center gap-1.5">
+              <span
+                className="inline-block h-3 w-3"
+                style={{
+                  backgroundColor: TENSION_NODE_COLOR,
+                  clipPath: "polygon(50% 0%, 100% 100%, 0% 100%)",
+                }}
+              />
+              <span style={{ color: "var(--bai-text-tertiary)" }}>
+                Tension
+              </span>
+            </div>
+          )}
         </div>
         {/* Edge types */}
         <div className="flex items-center gap-3">

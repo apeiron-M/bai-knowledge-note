@@ -32,7 +32,13 @@ import { ModelPicker } from "./chat/ModelPicker.js";
 import { LandingStage } from "./chat/LandingStage.js";
 
 interface Orientation {
-  stats: { nodeCount: number; edgeCount: number } | null;
+  stats: {
+    nodeCount: number;
+    noteCount?: number;
+    mocCount?: number;
+    openTensionCount?: number;
+    edgeCount: number;
+  } | null;
   topics: { name: string; noteCount: number }[];
   loaded: boolean;
 }
@@ -310,7 +316,7 @@ export function ChatView({ initialDraft = "" }: { initialDraft?: string }) {
             style={{ color: "var(--bai-text-muted)" }}
           >
             {orientation.stats
-              ? `${orientation.stats.nodeCount.toLocaleString()} notes · ${orientation.stats.edgeCount.toLocaleString()} links · read-only`
+              ? `${(orientation.stats.noteCount ?? orientation.stats.nodeCount).toLocaleString()} notes · ${orientation.stats.edgeCount.toLocaleString()} links${orientation.stats.openTensionCount ? ` · ${orientation.stats.openTensionCount} open tension${orientation.stats.openTensionCount === 1 ? "" : "s"}` : ""} · read-only`
               : "Answers come from the vault's own notes, with citations you can open."}
           </p>
           <div ref={composerAnchorRef} className="mt-8 w-full">

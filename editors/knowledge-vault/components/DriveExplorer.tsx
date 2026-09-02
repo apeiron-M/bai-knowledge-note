@@ -25,6 +25,7 @@ import {
   type ReactorDocSpec,
 } from "../hooks/use-reactor-docs.js";
 import { useKnowledgeMocs } from "../hooks/use-knowledge-mocs.js";
+import { useKnowledgeTensions } from "../hooks/use-knowledge-tensions.js";
 
 type ViewMode =
   | "chat"
@@ -77,19 +78,13 @@ export function DriveExplorer({ children }: EditorProps) {
     setGraphClearNonce((n) => n + 1);
   }, []);
 
-  // MoCs sourced from the knowledgeGraph subgraph projection — same
-  // round-trip the notes sidebar already makes (no extra fetch). Tensions
-  // remain stubbed: the graph-indexer doesn't ingest bai/tension yet, so
-  // there's no projection to read; revisit when that lands.
+  // MoCs and tensions both come from the knowledgeGraph subgraph projection
+  // — the same round-trip the notes sidebar already makes (no extra fetch).
+  // The graph-indexer indexes bai/tension with one INVOLVES edge per
+  // involved note; the graph view draws them only when the reader turns the
+  // layer on.
   const { mocs } = useKnowledgeMocs();
-  const tensions = useMemo<
-    Array<{
-      id: string;
-      title: string;
-      status: string | null;
-      involvedRefs: string[];
-    }>
-  >(() => [], []);
+  const { tensions } = useKnowledgeTensions();
 
   // Count doc types
   const allFiles = useMemo(() => fileNodes ?? [], [fileNodes]);
