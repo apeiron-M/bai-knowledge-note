@@ -78,8 +78,16 @@ export default function Editor() {
               <span
                 className="text-xs"
                 style={{ color: "var(--bai-text-muted)" }}
+                title={
+                  childMocs.length > 0
+                    ? `${coreIdeas.length} core-idea notes · ${childMocs.length} child MoCs (from CORE_IDEA / CHILD_MOC edges)`
+                    : "Counted from this MoC's CORE_IDEA edges"
+                }
               >
-                {state.noteCount ?? 0} notes
+                {coreIdeas.length} {coreIdeas.length === 1 ? "note" : "notes"}
+                {childMocs.length > 0
+                  ? ` · ${childMocs.length} child ${childMocs.length === 1 ? "MoC" : "MoCs"}`
+                  : ""}
               </span>
               {state.version ? (
                 <span

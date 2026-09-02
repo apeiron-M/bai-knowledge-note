@@ -19,6 +19,7 @@ import {
   TensionAutomation,
   type TensionAutomationDeps,
 } from "./automation.js";
+import { DriveMembership, type DriveMembershipDeps } from "./membership.js";
 
 /**
  * Embedding is SERVER-only. This processor also runs inside Connect's
@@ -46,6 +47,12 @@ export type GraphIndexerOptions = {
    * reads. The factory enables it on the Switchboard host only.
    */
   automation?: TensionAutomationDeps;
+  /**
+   * Restrict indexing to documents that belong to one drive (see
+   * `membership.ts`). Absent → every operation the filter admits is indexed,
+   * whichever drive it came from — the pre-gate behaviour, kept for tests.
+   */
+  membership?: DriveMembershipDeps;
   /** Injectable clock (ms since epoch) for tests. */
   now?: () => number;
 };
@@ -161,6 +168,8 @@ function truncate(val: unknown, max = 60): string {
 export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
   private readonly embeddingEnabled: boolean;
   private readonly automation: TensionAutomation | null;
+  /** Drive-membership gate; `null` means "index everything" (tests). */
+  private readonly membership: DriveMembership | null;
   /** Wall-clock ms when this instance was created — see `isLiveOperation`. */
   private readonly startedAtMs: number;
 
@@ -181,6 +190,25 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           options.automation,
         )
       : null;
+    this.membership = options.membership
+      ? new DriveMembership({ now: options.now, ...options.membership })
+      : null;
+  }
+
+  /** Exposed for tests and for the factory's log line. */
+  get membershipGated(): boolean {
+    return this.membership !== null;
+  }
+
+  /**
+   * Does this operation concern one of our documents? Relationship actions
+   * are gated on their SOURCE (the note that carries the edge), deletions on
+   * the document being deleted, everything else on the document the
+   * operation was applied to. Open when no gate is configured.
+   */
+  private async isOurs(documentId: string): Promise<boolean> {
+    if (!this.membership) return true;
+    return this.membership.has(documentId);
   }
 
   /** Exposed for tests and for the factory's log line. */
@@ -300,6 +328,19 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
     // of doc state.
     const lastByDocument = new Map<string, OperationWithContext>();
 
+    // Membership first, for the whole batch: the containment edge that
+    // makes a new document "ours" travels in the same job as its initial
+    // state, so the gate must have seen it before judging that state.
+    if (this.membership) {
+      for (const { operation, context } of operations) {
+        this.membership.observe({
+          documentId: context.documentId,
+          actionType: operation.action.type,
+          input: operation.action.input,
+        });
+      }
+    }
+
     for (const entry of operations) {
       const { operation, context } = entry;
       const documentId = context.documentId;
@@ -314,6 +355,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
           targetId: string;
           relationshipType?: string;
         };
+        if (!(await this.isOurs(input.sourceId))) continue;
         await this.applyAddRelationship(input);
         // A recorded contradiction implies an open tension. Fire and
         // forget: the write must never hold the indexing cursor, and its
@@ -338,11 +380,13 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         continue;
       }
       if (operation.action.type === "REMOVE_RELATIONSHIP") {
-        await this.applyRemoveRelationship(operation.action.input as {
+        const input = operation.action.input as {
           sourceId: string;
           targetId: string;
           relationshipType?: string;
-        });
+        };
+        if (!(await this.isOurs(input.sourceId))) continue;
+        await this.applyRemoveRelationship(input);
         continue;
       }
 
@@ -356,6 +400,8 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         context.documentType === "powerhouse/document-drive" &&
         operation.action.type === "DELETE_NODE"
       ) {
+        // Another drive removing a file says nothing about our index.
+        if (this.membership && documentId !== this.membership.driveId) continue;
         const deleteInput = operation.action.input as { id: string };
         await this.deleteNode(deleteInput.id);
         lastByDocument.delete(deleteInput.id);
@@ -365,6 +411,9 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
         const target =
           (operation.action.input as { documentId?: string }).documentId ??
           documentId;
+        // Membership is gone by now (the reactor drops containment first),
+        // so use the index itself as the answer: deleting a row we never
+        // had is a no-op.
         await this.deleteNode(target);
         lastByDocument.delete(target);
         continue;
@@ -373,6 +422,7 @@ export class GraphIndexerProcessor extends RelationalDbProcessor<DB> {
       // Only indexed document types take part in state reconciliation —
       // see `project.ts` for the list and why tensions/observations are in.
       if (!isIndexedDocumentType(context.documentType)) continue;
+      if (!(await this.isOurs(documentId))) continue;
 
       // Index operation for history tracking
       try {
