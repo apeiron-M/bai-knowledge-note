@@ -23,6 +23,12 @@
  * always writes a timestamped backup of `snapshot.bin` beside it.
  *
  *   node scripts/repair-ordinal-gap.mjs [.ph/reactor-storage] [--dry-run]
+ *
+ * Safe as a pre-start step (`bun run vetra` runs it first): when no read
+ * model is stuck it changes nothing and writes no backup. The attachment
+ * read model's registration in @powerhousedao/switchboard is unconditional —
+ * there is no flag to turn it off — so healing the hole before boot is the
+ * only fix available on this side of the dependency.
  */
 import { PGlite } from "@electric-sql/pglite";
 import { AtomicNodeFs } from "@powerhousedao/pglite-fs";
@@ -43,9 +49,13 @@ if (existsSync(path.join(dir, "snapshot.bin.tmp"))) {
 }
 
 const stamp = new Date().toISOString().replace(/[:.]/g, "-");
-if (!dryRun) {
+let backedUp = false;
+/** Back up the snapshot once, right before the first real write. */
+function backupOnce() {
+  if (dryRun || backedUp) return;
   copyFileSync(snap, `${snap}.bak-${stamp}`);
   console.log(`backup: ${snap}.bak-${stamp}`);
+  backedUp = true;
 }
 
 const pg = await PGlite.create({ fs: new AtomicNodeFs(dir) });
@@ -72,6 +82,7 @@ for (const v of views) {
   const target = next - 1;
   console.log(`${v.readModelId}: stuck at ${last}; next existing ordinal is ${next} → checkpoint → ${target}`);
   if (!dryRun) {
+    backupOnce();
     await q(`update "reactor"."ViewState" set "lastOrdinal" = $1 where "readModelId" = $2`, [target, v.readModelId]);
     changed = true;
   }
@@ -89,6 +100,7 @@ for (const [name, maxSql] of seqs) {
   if (Number(last_value) !== Number(m)) {
     console.log(`${name}: last_value ${last_value} → ${m} (rows end at ${m})`);
     if (!dryRun) {
+      backupOnce();
       await q(`select setval('reactor."${name}"', $1, true)`, [Number(m)]);
       changed = true;
     }
