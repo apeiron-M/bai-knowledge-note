@@ -6,6 +6,7 @@ import type {
   ExtractionStats,
   IngestSourceInput,
   RecordExtractionStatsInput,
+  RemoveExtractedClaimInput,
   SetSourceStatusInput,
   SourceProvenance,
   SourceState,
@@ -92,6 +93,14 @@ export function RecordExtractionStatsInputSchema(): z.ZodObject<
     extractedBy: z.string().nullish(),
     skipRate: z.number(),
     skippedCount: z.number(),
+  });
+}
+
+export function RemoveExtractedClaimInputSchema(): z.ZodObject<
+  Properties<RemoveExtractedClaimInput>
+> {
+  return z.object({
+    claimRef: z.string(),
   });
 }
 

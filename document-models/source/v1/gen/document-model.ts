@@ -63,10 +63,12 @@ export const documentModel: DocumentModelGlobalState = {
               errors: [],
               schema:
                 "input AddExtractedClaimInput {\n    claimRef: String!\n}",
-              reducer: "state.extractedClaims.push(action.input.claimRef);",
+              reducer:
+                "// Idempotent on claimRef: a claim is listed once, however many times an\n// extraction, a sync or a retry asserts it. Re-adding is a no-op, not an\n// error, so pipelines can assert membership without reading state first.\nif (state.extractedClaims.includes(action.input.claimRef)) {\n  return;\n}\nstate.extractedClaims.push(action.input.claimRef);",
               examples: [],
               template: "Link an extracted claim to this source",
-              description: "Link an extracted claim to this source",
+              description:
+                "Record that a knowledge note was extracted from this source. Idempotent on claimRef: re-adding a listed claim is a no-op.",
             },
             {
               id: "record-extraction-stats",
@@ -80,6 +82,30 @@ export const documentModel: DocumentModelGlobalState = {
               examples: [],
               template: "Record extraction statistics",
               description: "Record extraction statistics",
+            },
+            {
+              id: "remove-extracted-claim",
+              name: "REMOVE_EXTRACTED_CLAIM",
+              description:
+                "Remove a claim reference from extractedClaims \u2014 every occurrence, so it also repairs lists that grew duplicates before ADD_EXTRACTED_CLAIM became idempotent. Fails with CLAIM_NOT_FOUND when the ref is not listed.",
+              schema:
+                "input RemoveExtractedClaimInput {\n    claimRef: String!\n}",
+              template:
+                "Remove a claim reference from extractedClaims \u2014 every occurrence, so it also repairs lists that grew duplicates before ADD_EXTRACTED_CLAIM became idempotent. Fails with CLAIM_NOT_FOUND when the ref is not listed.",
+              reducer:
+                "if (!state.extractedClaims.includes(action.input.claimRef)) {\n  throw new ClaimNotFoundError(\n    `Claim ${action.input.claimRef} is not listed on this source`,\n  );\n}\n// Every occurrence: this also repairs lists that grew duplicates before\n// ADD_EXTRACTED_CLAIM became idempotent.\nstate.extractedClaims = state.extractedClaims.filter(\n  (ref) => ref !== action.input.claimRef,\n);",
+              errors: [
+                {
+                  id: "claim-not-found",
+                  name: "ClaimNotFoundError",
+                  code: "CLAIM_NOT_FOUND",
+                  description:
+                    "The claim reference is not listed in this source's extractedClaims",
+                  template: "",
+                },
+              ],
+              examples: [],
+              scope: "global",
             },
           ],
           description: "Source lifecycle and extraction tracking",

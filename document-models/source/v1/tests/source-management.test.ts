@@ -8,6 +8,8 @@ import {
   recordExtractionStats,
   RecordExtractionStatsInputSchema,
   reducer,
+  removeExtractedClaim,
+  RemoveExtractedClaimInputSchema,
   setSourceStatus,
   SetSourceStatusInputSchema,
   utils,
@@ -283,5 +285,70 @@ describe("SourceManagementOperations", () => {
     );
     expect(updatedDocument.state.global.status).toBe("EXTRACTED");
     expect(updatedDocument.operations.global).toHaveLength(7);
+  });
+
+  it("should handle removeExtractedClaim operation", () => {
+    const document = utils.createDocument();
+    const input = generateMock(RemoveExtractedClaimInputSchema());
+
+    const updatedDocument = reducer(document, removeExtractedClaim(input));
+
+    expect(isSourceDocument(updatedDocument)).toBe(true);
+    expect(updatedDocument.operations.global).toHaveLength(1);
+    expect(updatedDocument.operations.global[0].action.type).toBe(
+      "REMOVE_EXTRACTED_CLAIM",
+    );
+    expect(updatedDocument.operations.global[0].action.input).toStrictEqual(
+      input,
+    );
+    expect(updatedDocument.operations.global[0].index).toEqual(0);
+  });
+
+  // The claim list as a set: this is the contract the skill sync and the
+  // extraction pipeline rely on. Before it, every re-sync appended the same
+  // note id again and the Sources list showed "4 claims" for one note.
+  it("lists a claim once however many times it is added, and removes every occurrence", () => {
+    let document = utils.createDocument();
+    document = reducer(document, addExtractedClaim({ claimRef: "note-a" }));
+    document = reducer(document, addExtractedClaim({ claimRef: "note-b" }));
+    document = reducer(document, addExtractedClaim({ claimRef: "note-a" }));
+    document = reducer(document, addExtractedClaim({ claimRef: "note-a" }));
+
+    expect(document.state.global.extractedClaims).toStrictEqual([
+      "note-a",
+      "note-b",
+    ]);
+    // The repeated adds are recorded as operations without error — a
+    // pipeline may assert membership blindly — but change nothing.
+    expect(document.operations.global).toHaveLength(4);
+    expect(document.operations.global.every((op) => !op.error)).toBe(true);
+
+    document = reducer(document, removeExtractedClaim({ claimRef: "note-a" }));
+    expect(document.state.global.extractedClaims).toStrictEqual(["note-b"]);
+    expect(document.operations.global[4].error).toBeUndefined();
+  });
+
+  it("repairs a list that already holds duplicates: one remove clears them all", () => {
+    // A document whose history predates the idempotent add: build the
+    // duplicate state through the initial value, as the migration would find it.
+    const document = utils.createDocument();
+    document.state.global.extractedClaims = ["note-a", "note-a", "note-b", "note-a"];
+
+    const updated = reducer(document, removeExtractedClaim({ claimRef: "note-a" }));
+
+    expect(updated.state.global.extractedClaims).toStrictEqual(["note-b"]);
+    expect(updated.operations.global[0].error).toBeUndefined();
+  });
+
+  it("records CLAIM_NOT_FOUND and leaves state untouched when removing an unlisted claim", () => {
+    let document = utils.createDocument();
+    document = reducer(document, addExtractedClaim({ claimRef: "note-a" }));
+
+    const updated = reducer(document, removeExtractedClaim({ claimRef: "note-zzz" }));
+
+    expect(updated.operations.global[1].error).toBe(
+      "Claim note-zzz is not listed on this source",
+    );
+    expect(updated.state.global.extractedClaims).toStrictEqual(["note-a"]);
   });
 });

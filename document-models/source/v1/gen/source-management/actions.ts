@@ -7,6 +7,7 @@ import type {
   AddExtractedClaimInput,
   IngestSourceInput,
   RecordExtractionStatsInput,
+  RemoveExtractedClaimInput,
   SetSourceStatusInput,
 } from "../types.js";
 
@@ -26,9 +27,14 @@ export type RecordExtractionStatsAction = Action & {
   type: "RECORD_EXTRACTION_STATS";
   input: RecordExtractionStatsInput;
 };
+export type RemoveExtractedClaimAction = Action & {
+  type: "REMOVE_EXTRACTED_CLAIM";
+  input: RemoveExtractedClaimInput;
+};
 
 export type SourceSourceManagementAction =
   | IngestSourceAction
   | SetSourceStatusAction
   | AddExtractedClaimAction
-  | RecordExtractionStatsAction;
+  | RecordExtractionStatsAction
+  | RemoveExtractedClaimAction;

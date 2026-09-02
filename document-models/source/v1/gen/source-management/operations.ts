@@ -8,6 +8,7 @@ import type {
   AddExtractedClaimAction,
   IngestSourceAction,
   RecordExtractionStatsAction,
+  RemoveExtractedClaimAction,
   SetSourceStatusAction,
 } from "./actions.js";
 
@@ -30,6 +31,11 @@ export interface SourceSourceManagementOperations {
   recordExtractionStatsOperation: (
     state: SourceGlobalState,
     action: RecordExtractionStatsAction,
+    dispatch?: SignalDispatch,
+  ) => void;
+  removeExtractedClaimOperation: (
+    state: SourceGlobalState,
+    action: RemoveExtractedClaimAction,
     dispatch?: SignalDispatch,
   ) => void;
 }

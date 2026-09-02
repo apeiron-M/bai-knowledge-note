@@ -10,6 +10,7 @@ import {
   AddExtractedClaimInputSchema,
   IngestSourceInputSchema,
   RecordExtractionStatsInputSchema,
+  RemoveExtractedClaimInputSchema,
   SetSourceStatusInputSchema,
 } from "./schema/zod.js";
 
@@ -58,6 +59,18 @@ const stateReducer: StateReducer<SourcePHState> = (state, action, dispatch) => {
       RecordExtractionStatsInputSchema().parse(action.input);
 
       sourceSourceManagementOperations.recordExtractionStatsOperation(
+        (state as any)[action.scope],
+        action as any,
+        dispatch,
+      );
+
+      break;
+    }
+
+    case "REMOVE_EXTRACTED_CLAIM": {
+      RemoveExtractedClaimInputSchema().parse(action.input);
+
+      sourceSourceManagementOperations.removeExtractedClaimOperation(
         (state as any)[action.scope],
         action as any,
         dispatch,
