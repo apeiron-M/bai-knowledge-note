@@ -51,6 +51,33 @@ const LINK_TYPE_COLORS: Record<LinkType, string> = {
 
 type DocOption = { id: string; title: string };
 
+type ResolvedTarget = { title: string; kind: string | null };
+
+/**
+ * The graph denormalises `targetTitle` onto the edge at link time, but only
+ * for targets it indexes (knowledge notes and MoCs). A `DERIVED_FROM` edge
+ * points at a `bai/source`, which is not indexed, so the edge carries no
+ * title and the row used to show a bare id. The drive index resolves any
+ * document to at least its node name, so fall back to that — and say what
+ * kind of document it is when it is not a note, so a source reads as one.
+ */
+function resolveTarget(
+  link: LinkRow,
+  byId: Map<string, { title: string; documentType: string }>,
+): ResolvedTarget {
+  const doc = link.targetDocumentId
+    ? byId.get(link.targetDocumentId)
+    : undefined;
+  const title =
+    link.targetTitle || doc?.title || link.targetDocumentId || "Untitled";
+  const type = doc?.documentType ?? null;
+  const kind =
+    type && type !== "bai/knowledge-note"
+      ? type.replace(/^bai\//, "").replace(/-/g, " ")
+      : null;
+  return { title, kind };
+}
+
 export function LinksSection({
   links,
   currentDocId,
@@ -63,7 +90,7 @@ export function LinksSection({
 
   // Picker candidates from the lightweight index (subgraph + drive
   // tree) — real titles, no full-state loads.
-  const { knowledgeDocs } = useVaultDocIndex();
+  const { knowledgeDocs, byId } = useVaultDocIndex();
   const allDocs = useMemo(
     () => knowledgeDocs.filter((d) => d.documentType === "bai/knowledge-note"),
     [knowledgeDocs],
@@ -112,6 +139,7 @@ export function LinksSection({
         <LinkCard
           key={link.id}
           link={link}
+          resolved={resolveTarget(link, byId)}
           isEditing={editingLinkId === link.id}
           allDocOptions={allDocOptions}
           onStartEdit={() => setEditingLinkId(link.id)}
@@ -153,6 +181,7 @@ export function LinksSection({
 
 function LinkCard({
   link,
+  resolved,
   isEditing,
   allDocOptions,
   onStartEdit,
@@ -162,6 +191,8 @@ function LinkCard({
   onChangeTarget,
 }: {
   link: LinkRow;
+  /** Display title and kind for the target, resolved beyond the graph's denormalised title. */
+  resolved: ResolvedTarget;
   isEditing: boolean;
   allDocOptions: DocOption[];
   onStartEdit: () => void;
@@ -221,9 +252,14 @@ function LinkCard({
           if (link.targetDocumentId) setSelectedNode(link.targetDocumentId);
         }}
         className="flex-1 truncate text-left text-sm text-gray-300 hover:text-[#cba6f7] hover:underline"
-        title={`Open: ${link.targetTitle || link.targetDocumentId || "Untitled"}`}
+        title={`Open: ${resolved.title}${resolved.kind ? ` (${resolved.kind})` : ""}`}
       >
-        {link.targetTitle || link.targetDocumentId || "Untitled"}
+        {resolved.kind && (
+          <span className="mr-1.5 rounded bg-white/5 px-1 py-px text-[9px] font-medium uppercase tracking-wide text-gray-400">
+            {resolved.kind}
+          </span>
+        )}
+        {resolved.title}
         <svg
           className="ml-1 inline-block h-3 w-3 opacity-0 group-hover:opacity-50"
           viewBox="0 0 24 24"
